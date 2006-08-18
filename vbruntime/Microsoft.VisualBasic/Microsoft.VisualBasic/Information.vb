@@ -1,0 +1,380 @@
+'
+' Information.vb
+'
+' Author:
+'   Mizrahi Rafael (rafim@mainsoft.com)
+'   Guy Cohen (guyc@mainsoft.com)
+
+'
+' Copyright (C) 2002-2006 Mainsoft Corporation.
+' Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+'
+' Permission is hereby granted, free of charge, to any person obtaining
+' a copy of this software and associated documentation files (the
+' "Software"), to deal in the Software without restriction, including
+' without limitation the rights to use, copy, modify, merge, publish,
+' distribute, sublicense, and/or sell copies of the Software, and to
+' permit persons to whom the Software is furnished to do so, subject to
+' the following conditions:
+' 
+' The above copyright notice and this permission notice shall be
+' included in all copies or substantial portions of the Software.
+' 
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+' EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+' MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+' NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+' LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'
+Imports System
+Imports Microsoft.VisualBasic.CompilerServices
+
+Namespace Microsoft.VisualBasic
+    <StandardModule()> _
+    Public NotInheritable Class Information
+        Private Sub New()
+            'Nobody should see constructor
+        End Sub
+        Public Shared Function Erl() As Integer
+            Return Err.Erl
+        End Function
+        Public Shared Function Err() As Microsoft.VisualBasic.ErrObject
+            ' VB Err keyword is compiled into ErrObject which is stored at ProjectData.
+            ' ProjectData is a singelton for all VB library.
+            Dim pd As ProjectData
+            pd = ProjectData.Instance
+
+            Return pd.projectError
+        End Function
+        Public Shared Function IsArray(ByVal VarName As Object) As Boolean
+            If VarName Is Nothing Then
+                Return False
+            End If
+            If TypeOf VarName Is Array Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Public Shared Function IsDate(ByVal Expression As Object) As Boolean
+            If Expression Is Nothing Then Return False
+            If TypeOf Expression Is Date Then Return True
+            If TypeOf Expression Is String Then
+                Try
+                    Convert.ToDateTime(Expression)
+                    Return True
+                Catch ex As Exception
+                    Return False
+                End Try
+
+            End If
+        End Function
+        Public Shared Function IsDBNull(ByVal Expression As Object) As Boolean
+            If Expression Is Nothing Then
+                Return False
+            End If
+            If TypeOf Expression Is DBNull Then
+                Return True
+            Else
+                Return False
+            End If
+
+        End Function
+        Public Shared Function IsError(ByVal Expression As Object) As Boolean
+            If TypeOf Expression Is System.Exception Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Public Shared Function IsNothing(ByVal Expression As Object) As Boolean
+            If Expression Is Nothing Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+        Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean
+
+            If (TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
+                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
+                Or (TypeOf Expression Is Boolean) Then Return True
+
+            Try
+                Dim tempStr As String
+                tempStr = CStr(Expression)
+                Convert.ToDouble(tempStr)
+                Return True
+            Catch ex As Exception
+                Return False
+            End Try
+
+        End Function
+        Public Shared Function IsReference(ByVal Expression As Object) As Boolean
+            If TypeOf Expression Is ValueType Then
+                Return False
+            Else
+                Return True
+            End If
+        End Function
+        Public Shared Function LBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
+            ' VB rank start at 1, but System.Array.Rank starts at 0
+            Dim RealRank As Integer
+            RealRank = Rank - 1
+
+            ' if single dimension
+            If RealRank = 0 Then
+                Return Array.GetLowerBound(RealRank)
+            Else
+                'FIXME: not implemented support for multi-dim arrays
+                Throw New NotImplementedException("Implement me: Rank <> 1")
+            End If
+        End Function
+        Public Shared Function QBColor(ByVal Color As Integer) As Integer
+            If (Color < 0 Or Color > 15) Then Throw New System.ArgumentException("Argument 'Color' is not a valid value")
+            Dim tmp_arr() As Integer = {0, 8388608, 32768, 8421376, 128, 8388736, 32896, _
+                                        12632256, 8421504, 16711680, 65280, 16776960, 255, _
+                                        16711935, 65535, 16777215}
+            Return tmp_arr(Color)
+
+        End Function
+        Public Shared Function RGB(ByVal Red As Integer, ByVal Green As Integer, ByVal Blue As Integer) As Integer
+            Dim tempStr As String = ""
+            Dim res As Integer
+
+            If (Red < 0) Then Throw New System.ArgumentException("Argument 'Red' is not a valid value")
+            If (Green < 0) Then Throw New System.ArgumentException("Argument 'Green' is not a valid value")
+            If (Blue < 0) Then Throw New System.ArgumentException("Argument 'Blue' is not a valid value")
+
+            If (Red > 255) Then Red = 255
+            If (Green > 255) Then Green = 255
+            If (Blue > 255) Then Blue = 255
+
+            Dim strRed, strGreen, strBlue As String
+            strRed = Conversion.Hex(Red)
+            strGreen = Conversion.Hex(Green)
+            strBlue = Conversion.Hex(Blue)
+
+            If strRed.Length = 1 Then tempStr = tempStr + "0" + strRed Else tempStr = tempStr + strRed
+            If strGreen.Length = 1 Then tempStr = tempStr + "0" + strGreen Else tempStr = tempStr + strGreen
+            If strBlue.Length = 1 Then tempStr = tempStr + "0" + strBlue Else tempStr = tempStr + strBlue
+
+            res = Convert.ToInt32(Conversion.Val("&H" + tempStr))
+
+            Return res
+        End Function
+        Public Shared Function SystemTypeName(ByVal VbName As String) As String
+
+            Select Case VbName.ToLower()
+                Case "boolean"
+                    Return "System.Boolean"
+                Case "byte"
+                    Return "System.Byte"
+                Case "char"
+                    Return "System.Char"
+                Case "date"
+                    Return "System.DateTime"
+                Case "decimal"
+                    Return "System.Decimal"
+                Case "double"
+                    Return "System.Double"
+                Case "integer"
+                    Return "System.Int32"
+                Case "long"
+                    Return "System.Int64"
+                Case "object"
+                    Return "System.Object"
+                Case "short"
+                    Return "System.Int16"
+                Case "single"
+                    Return "System.Single"
+                Case "string"
+                    Return "System.String"
+                Case Else
+                    Return Nothing
+            End Select
+        End Function
+        Public Shared Function TypeName(ByVal VarName As Object) As String
+
+            Dim TmpObjType1, TmpObjType2, tmpstr As String
+            Dim RetObjType As String
+            Dim ArrCh As String
+
+            If VarName Is Nothing Then Return "Nothing"
+            If TypeOf VarName Is DBNull Then Return "DBNull"
+
+            TmpObjType1 = VarName.GetType().Name.ToLower
+
+            If VarName.GetType.IsArray Then
+                Dim lastch As Integer = TmpObjType1.LastIndexOf("]") -1
+                Dim firstch As Integer = TmpObjType1.IndexOf("[") -1
+                TmpObjType2 = TmpObjType1.Remove(firstch + 1, (lastch - firstch + 1))
+            Else
+                TmpObjType2 = TmpObjType1
+            End If
+            Select Case TmpObjType2
+                Case "string"
+                    RetObjType = "String"
+                Case "int32"
+                    RetObjType = "Integer"
+                Case "int16"
+                    RetObjType = "Short"
+                Case "int64"
+                    RetObjType = "Long"
+                Case "byte"
+                    RetObjType = "Byte"
+                Case "boolean"
+                    RetObjType = "Boolean"
+                Case "char"
+                    RetObjType = "Char"
+                Case "datetime"
+                    RetObjType = "Date"
+                Case "single"
+                    RetObjType = "Single"
+                Case "object"
+                    RetObjType = "Object"
+                Case "decimal"
+                    RetObjType = "Decimal"
+                Case "double"
+                    RetObjType = "Double"
+                Case Else
+                    RetObjType = TmpObjType1
+            End Select
+
+            If VarName.GetType.IsArray Then
+                ArrCh = "()"
+
+                tmpstr = RetObjType.Replace(")", "]")
+                tmpstr = RetObjType.Replace("(", "[")
+                RetObjType = tmpstr
+            Else
+                ArrCh = ""
+            End If
+
+            Return (RetObjType + ArrCh)
+
+        End Function
+        Public Shared Function UBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
+
+            ' VB rank start at 1, but System.Array.Rank starts at 0
+            Dim RealRank As Integer
+            RealRank = Rank - 1
+
+            ' if single dimension
+            If RealRank = 0 Then
+                Return Array.GetUpperBound(RealRank)
+            Else
+                'FIXME: not implemented support for multi-dim arrays
+                Throw New NotImplementedException("Implement me: Rank <> 1")
+            End If
+
+        End Function
+        Public Shared Function VarType(ByVal VarName As Object) As Microsoft.VisualBasic.VariantType
+
+            Dim tmpVar As VariantType = VariantType.Empty
+            Dim TmpObjType, TmpStr As String
+
+            If VarName Is Nothing Then Return VariantType.Object
+            If TypeOf VarName Is System.Exception Then Return VariantType.Error
+            
+            TmpObjType = VarName.GetType.Name.ToLower
+                        
+            If VarName.GetType.IsEnum Then
+                TmpStr = System.Enum.GetUnderlyingType(VarName.GetType).ToString
+                '' remove the "System." from the type we get
+                TmpObjType = TmpStr.ToLower.Substring(7)
+            End If
+
+
+            Select Case TmpObjType
+                Case "string"
+                    tmpVar = VariantType.String
+                Case "dbnull"
+                    tmpVar = VariantType.Null
+                Case "boolean"
+                    tmpVar = VariantType.Boolean
+                Case "int16"
+                    tmpVar = VariantType.Short
+                Case "int32"
+                    tmpVar = VariantType.Integer
+                Case "int64"
+                    tmpVar = VariantType.Long
+                Case "decimal"
+                    tmpVar = VariantType.Decimal
+                Case "char"
+                    tmpVar = VariantType.Char
+                Case "byte"
+                    tmpVar = VariantType.Byte
+                Case "double"
+                    tmpVar = VariantType.Double
+                Case "single"
+                    tmpVar = VariantType.Single
+                Case "datetime"
+                    tmpVar = VariantType.Date
+                Case Else
+                    'class(Ref) or struct(Val)
+                    If VarName.GetType.IsValueType Then
+                        tmpVar = VariantType.UserDefinedType
+                    Else '' probably class
+                        tmpVar = VariantType.Object
+                    End If
+            End Select
+
+            '' FIXME: on .NET 2 this doesn`t pass compilation
+#If Not NET_2_0 Then
+            '' Check If got Array Of Arrays then should return VariantType.Array | VariantType.Object 
+               If (VarName.GetType.IsArray) And (TypeOf VarName.GetType.GetElementType Is System.Array) Then
+                  Return (VariantType.Array Or VariantType.Object)
+               End If
+#End If
+            If VarName.GetType.IsArray Then
+                Return (VariantType.Array Or tmpVar)
+            End If
+
+            Return tmpVar
+            
+        End Function
+        Public Shared Function VbTypeName(ByVal UrtName As String) As String
+
+            Dim tmpStr As String
+            Dim RetObjType As String
+
+
+            tmpStr = UrtName.ToLower
+            If UrtName.ToLower.StartsWith("system.") Then tmpStr = UrtName.ToLower.Substring(7)
+
+            Select Case tmpStr
+                Case "string"
+                    RetObjType = "String"
+                Case "int32"
+                    RetObjType = "Integer"
+                Case "int16"
+                    RetObjType = "Short"
+                Case "int64"
+                    RetObjType = "Long"
+                Case "byte"
+                    RetObjType = "Byte"
+                Case "boolean"
+                    RetObjType = "Boolean"
+                Case "double"
+                    RetObjType = "Double"
+                Case "char"
+                    RetObjType = "Char"
+                Case "datetime"
+                    RetObjType = "Date"
+                Case "single"
+                    RetObjType = "Single"
+                Case "object"
+                    RetObjType = "Object"
+                    case "decimal"
+                    RetObjType = "Decimal"
+                Case Else
+                    RetObjType = Nothing
+            End Select
+
+            Return RetObjType
+        End Function
+    End Class
+End Namespace
