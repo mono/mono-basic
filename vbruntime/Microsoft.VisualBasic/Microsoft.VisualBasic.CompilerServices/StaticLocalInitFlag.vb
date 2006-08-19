@@ -32,14 +32,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
     Public NotInheritable Class StaticLocalInitFlag
         Private m_State As Short
         Public Sub New()
-            Throw New NotImplementedException
+            m_State = 0
         End Sub
         Public Property State() As Short
             Get
-                Throw New NotImplementedException
+                Return m_State
             End Get
             Set(ByVal Value As Short)
-                Throw New NotImplementedException
+                m_State = Value
             End Set
         End Property
     End Class
