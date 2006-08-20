@@ -3,68 +3,65 @@ If you accomplished something, you can remove it from this file.
 
 
 ====================
-General TODO
+General SVN TODO
 ====================
-* change the VB.build.bat to build the dll using vbnc and .NET 2.0 as default. 
-* run the 3 test suites using the VB dll compiled with vbnc.
-* remove from SVN ($mcs\class\Microsoft.VisualBasic\Test\standalone) the tests which where converted into NUnit.
 * Integrate into the mono build system. Right now Microsoft.VisualBasic.dll is compiled using Microsoft vbc (running on a Windows machine). 
-* Create VS2005 project files for the NUnit tests and add them into the VS2005 solution.
-* Integrate the tests into the mono build system.
+* enable build output of VB 1.1 and VB 2.0 using mono profiles.
+* J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 1.8) jar.
+a vmwvbproj will not help here, because it will fail to build due to ambiguity errors.
+this must be done using the jcsc command line.
+
+====================
+Unit tests TODO
+====================
+* vbnc tests status - run the 3 test suites using the VB dll compiled with vbnc.
+* 2.0 - Create VS2005 project files for the NUnit tests and add them into the VB2005 solution.
+* clenaups - remove from standalone tests, the tests which where converted into NUnit.
+* clenaups - merge the NUnit tests from Test\OldTests\Microsoft.VisualBasic into the NUnit files at \Test
+* build - Integrate the tests into the mono build system.
+
+====================
+Application tests TODO
+====================
+* run a starter-kit application, such as IBuySpy using the new implementation built with Microsoft vbc and using .NET framework.
+* run a starter-kit application, such as IBuySpy using the new implementation and built with vbnc and using .NET framework.
+* run a starter-kit application, such as IBuySpy using the new implementation and built with vbnc and using mono XSP.
+* run a starter-kit application, such as IBuySpy using the new implementation built using Grasshopper J2EE.
 
 
 ======================
 .NET 1.1 and 2.0 TODO
 ======================
-* .NET 1.1
+ * CompilerServices.ObjectType - change code switch of
+  If TypeOf Value Is String Then
+    Into
+  Dim type1 As Type = Value.GetType()
+  Select Case Type.GetTypeCode(type1)
+  
+  In order to support Enums properly.
 
-  * CompilerServices.ObjectType - change code switch of
-
-    If TypeOf Value Is String Then
-
-      Into
-
-    Dim type1 As Type = Value.GetType()
-    Select Case Type.GetTypeCode(type1)
-    
-    In order to support Enums properly.
-
-  * Support UBound and LBound for arrays with a rank > 1 
-  * Support 'For Each' - FlowControl.ForEachInObj, ForEachNextObj
-  * CompilerServices.StringType.MidStmtStr
-  * Implement NotImplementedException API's which use System.Globalization.CultureInfo or System.Globalization.NumberFormatInfo
-  * Microsoft.VisualBasic.Interaction.CallByName
-  * Interaction Class - OS specific, beep, MessageBox etc’.
-  * FileSystem Class - binary files are hard and not well documented, start with text and random access files.
-  * NotImplemented API tests failures.
-  * mbas Tests TODO. (see below)
+* Support UBound and LBound for arrays with a rank > 1 
+* Support 'For Each' - FlowControl.ForEachInObj, ForEachNextObj
+* CompilerServices.StringType.MidStmtStr
+* go over FIXME. Add tests and imeplementations.
+* Implement NotImplementedException API's which use System.Globalization.CultureInfo or System.Globalization.NumberFormatInfo
+* Microsoft.VisualBasic.Interaction.CallByName
+* Interaction Class - OS specific, beep, MessageBox etc’.
+* FileSystem Class - binary files are hard and not well documented, start with text and random access files.
+* NotImplemented API tests failures.
+* mbas Tests TODO. (see below)
 
 ======================
 .NET 2.0 TODO
 ======================
-  * New language features. Add tests for new Data Types cases.
-  * Microsoft.VisualBasic.CompilerServices.Conversions
-  * NotImplemented API tests failures.
-  * NewLateBindings. delegate to 1.1 LateBindings.
-  * Implement Microsoft.VisualBasic.FileIO
-  * Implement Microsoft.VisualBasic.Logging
-  * Implement Microsoft.VisualBasic.MyServices
-  * Implement Microsoft.VisualBasic.MyServices.Internal
+* New language features. Add tests for new Data Types cases.
+* go over FIXME. Add tests and imeplementations.
+* Microsoft.VisualBasic.CompilerServices.Conversions
+* NotImplemented API tests failures.
+* NewLateBindings. delegate to 1.1 LateBindings.
+* Implement Microsoft.VisualBasic.FileIO
+* Implement Microsoft.VisualBasic.Logging
+* Implement Microsoft.VisualBasic.MyServices
+* Implement Microsoft.VisualBasic.MyServices.Internal
 
-
-====================
-mbas Tests TODO
-====================
-The following list was produced by running:
-
-	monodis --memberref $file
-
-For all the tests in mbas/Test/tests
-
-It is far from a comprehensive list, but it might help prioritize
-
-	Resolved: [Microsoft.VisualBasic]Microsoft.VisualBasic.CompilerServices.IncompleteInitialization..ctor
-	Resolved: [Microsoft.VisualBasic]Microsoft.VisualBasic.CompilerServices.ObjectType.NotObj
-	Resolved: [Microsoft.VisualBasic]Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag..ctor
-	Resolved: [Microsoft.VisualBasic]Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag.State
 
