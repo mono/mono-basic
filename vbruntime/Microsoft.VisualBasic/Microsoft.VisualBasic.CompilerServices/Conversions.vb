@@ -38,16 +38,16 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function ChangeType(ByVal Expression As Object, ByVal TargetType As Type) As Object
-            Throw New NotImplementedException
+            System.Convert.ChangeType(Expression, TargetType)
         End Function
         Public Shared Function FromCharAndCount(ByVal Value As Char, ByVal Count As Integer) As String
             Throw New NotImplementedException
         End Function
         Public Shared Function FromCharArray(ByVal Value As Char()) As String
-            Throw New NotImplementedException
+            Return New String(Value)
         End Function
         Public Shared Function FromCharArraySubset(ByVal Value As Char(), ByVal StartIndex As Integer, ByVal Length As Integer) As String
-            Throw New NotImplementedException
+            Return New String(Value, StartIndex, Length)
         End Function
         Public Shared Function ToBoolean(ByVal Value As Object) As Boolean
             Return BooleanType.FromObject(Value)
@@ -111,11 +111,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToSByte(ByVal Value As Object) As SByte
-            Throw New NotImplementedException
+            Return System.Convert.ToSByte(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToSByte(ByVal Value As String) As SByte
-            Throw New NotImplementedException
+            Return System.Convert.ToSByte(Value)
         End Function
         Public Shared Function ToShort(ByVal Value As Object) As Short
             Return ShortType.FromObject(Value)
@@ -164,44 +164,44 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         <CLSCompliant(False)> _
         Public Shared Shadows Function ToString(ByVal Value As UInteger) As String
-            Throw New NotImplementedException
+            Return System.Convert.ToString(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Shadows Function ToString(ByVal Value As ULong) As String
-            Throw New NotImplementedException
+            Return System.Convert.ToString(Value)
         End Function
         Public Shared Shadows Function ToString(ByVal Value As Decimal, ByVal NumberFormat As NumberFormatInfo) As String
-            Throw New NotImplementedException
+            Return System.Convert.ToString(Value, NumberFormat)
         End Function
         Public Shared Shadows Function ToString(ByVal Value As Double, ByVal NumberFormat As NumberFormatInfo) As String
-            Throw New NotImplementedException
+            Return System.Convert.ToString(Value, NumberFormat)
         End Function
         Public Shared Shadows Function ToString(ByVal Value As Single, ByVal NumberFormat As NumberFormatInfo) As String
-            Throw New NotImplementedException
+            Return System.Convert.ToString(Value, NumberFormat)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToUInteger(ByVal Value As Object) As UInteger
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt32(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToUInteger(ByVal Value As String) As UInteger
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt32(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToULong(ByVal Value As Object) As ULong
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt64(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToULong(ByVal Value As String) As ULong
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt64(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToUShort(ByVal Value As Object) As UShort
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt16(Value)
         End Function
         <CLSCompliant(False)> _
         Public Shared Function ToUShort(ByVal Value As String) As UShort
-            Throw New NotImplementedException
+            Return System.Convert.ToUInt16(Value)
         End Function
     End Class
 End Namespace
