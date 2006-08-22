@@ -414,7 +414,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Dim type1 As Type = value.GetType()
-            Dim o As Object
 
             If type1 Is type2 Then
                 Return value

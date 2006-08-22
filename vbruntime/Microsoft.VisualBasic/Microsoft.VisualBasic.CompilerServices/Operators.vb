@@ -60,6 +60,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New NotImplementedException
         End Function
         Public Shared Function CompareString(ByVal Left As String, ByVal Right As String, ByVal TextCompare As Boolean) As Integer
+            If DirectCast(Left, Object) Is Nothing Then
+                Left = ""
+            End If
+            If DirectCast(Right, Object) Is Nothing Then
+                Right = ""
+            End If
             If TextCompare Then
                 Return Left.CompareTo(Right)
             Else
