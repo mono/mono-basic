@@ -95,7 +95,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return DoubleType.FromString(Value)
         End Function
         Public Shared Function ToGenericParameter(Of T)(ByVal Value As Object) As T
-            Throw New NotImplementedException
+            Return DirectCast(Value, T)
         End Function
         Public Shared Function ToInteger(ByVal Value As Object) As Integer
             Return IntegerType.FromObject(Value)
@@ -129,54 +129,54 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function ToSingle(ByVal Value As String) As Single
             Return SingleType.FromString(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Boolean) As String
+        Public Shared Shadows Function ToString(ByVal Value As Boolean) As String
             Return StringType.FromBoolean(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Byte) As String
+        Public Shared Shadows Function ToString(ByVal Value As Byte) As String
             Return StringType.FromByte(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Char) As String
+        Public Shared Shadows Function ToString(ByVal Value As Char) As String
             Return StringType.FromChar(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As DateTime) As String
+        Public Shared Shadows Function ToString(ByVal Value As DateTime) As String
             Return StringType.FromDate(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Decimal) As String
+        Public Shared Shadows Function ToString(ByVal Value As Decimal) As String
             Return StringType.FromDecimal(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Double) As String
+        Public Shared Shadows Function ToString(ByVal Value As Double) As String
             Return StringType.FromDouble(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Short) As String
+        Public Shared Shadows Function ToString(ByVal Value As Short) As String
             Return StringType.FromShort(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Integer) As String
+        Public Shared Shadows Function ToString(ByVal Value As Integer) As String
             Return StringType.FromInteger(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Long) As String
+        Public Shared Shadows Function ToString(ByVal Value As Long) As String
             Return StringType.FromLong(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Object) As String
+        Public Shared Shadows Function ToString(ByVal Value As Object) As String
             Return StringType.FromObject(Value)
         End Function
-        Public Shared Function ToString(ByVal Value As Single) As String
+        Public Shared Shadows Function ToString(ByVal Value As Single) As String
             Return StringType.FromSingle(Value)
         End Function
         <CLSCompliant(False)> _
-        Public Shared Function ToString(ByVal Value As UInteger) As String
+        Public Shared Shadows Function ToString(ByVal Value As UInteger) As String
             Throw New NotImplementedException
         End Function
         <CLSCompliant(False)> _
-        Public Shared Function ToString(ByVal Value As ULong) As String
+        Public Shared Shadows Function ToString(ByVal Value As ULong) As String
             Throw New NotImplementedException
         End Function
-        Public Shared Function ToString(ByVal Value As Decimal, ByVal NumberFormat As NumberFormatInfo) As String
+        Public Shared Shadows Function ToString(ByVal Value As Decimal, ByVal NumberFormat As NumberFormatInfo) As String
             Throw New NotImplementedException
         End Function
-        Public Shared Function ToString(ByVal Value As Double, ByVal NumberFormat As NumberFormatInfo) As String
+        Public Shared Shadows Function ToString(ByVal Value As Double, ByVal NumberFormat As NumberFormatInfo) As String
             Throw New NotImplementedException
         End Function
-        Public Shared Function ToString(ByVal Value As Single, ByVal NumberFormat As NumberFormatInfo) As String
+        Public Shared Shadows Function ToString(ByVal Value As Single, ByVal NumberFormat As NumberFormatInfo) As String
             Throw New NotImplementedException
         End Function
         <CLSCompliant(False)> _

@@ -128,7 +128,7 @@ Namespace Microsoft.VisualBasic
             Dim form As Form
 
             form.Text = Title
-
+            Return ""
         End Function
         Public Shared Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
             'TODO: pure algorithm, Not OS specific.
