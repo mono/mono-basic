@@ -122,9 +122,9 @@ Microsoft.VisualBasic.ApplicationServices\User.vb ^
 Microsoft.VisualBasic.ApplicationServices\WindowsFormsApplicationBase.vb ^
 Microsoft.VisualBasic.Devices\Computer.vb
 
-IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
-SET VB_SOURCES=%VB_SOURCES% "My Project\Application.Designer.vb" "My Project\Resources.Designer.vb" "My Project\Settings.Designer.vb"
-)
+rem IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
+rem SET VB_SOURCES=%VB_SOURCES% "My Project\Application.Designer.vb" "My Project\Resources.Designer.vb" "My Project\Settings.Designer.vb"
+rem )
 
 echo compiling ...
 pushd Microsoft.VisualBasic

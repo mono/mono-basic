@@ -29,19 +29,21 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+Imports MS_VB = Microsoft.VisualBasic
+
 Namespace Microsoft.VisualBasic
     Public NotInheritable Class ControlChars
-        Public Const Back As Char = Strings.Chr(8)
-        Public Const Cr As Char = Strings.Chr(13)
-        Public Const CrLf As String = Strings.Chr(13) & Strings.Chr(10)
-        Public Const FormFeed As Char = Strings.Chr(12)
-        Public Const Lf As Char = Strings.Chr(10)
+        Public Const Back As Char = MS_VB.Strings.Chr(8)
+        Public Const Cr As Char = MS_VB.Strings.Chr(13)
+        Public Const CrLf As String = MS_VB.Strings.Chr(13) & MS_VB.Strings.Chr(10)
+        Public Const FormFeed As Char = MS_VB.Strings.Chr(12)
+        Public Const Lf As Char = MS_VB.Strings.Chr(10)
         'FIXME: platform specific can be NewLine = Strings.Chr(10) 
-        Public Const NewLine As String = Strings.Chr(13) & Strings.Chr(10)
-        Public Const NullChar As Char = Strings.Chr(0)
-        Public Const Tab As Char = Strings.Chr(9)
-        Public Const VerticalTab As Char = Strings.Chr(11)
-        Public Const Quote As Char = Strings.Chr(34)
+        Public Const NewLine As String = MS_VB.Strings.Chr(13) & MS_VB.Strings.Chr(10)
+        Public Const NullChar As Char = MS_VB.Strings.Chr(0)
+        Public Const Tab As Char = MS_VB.Strings.Chr(9)
+        Public Const VerticalTab As Char = MS_VB.Strings.Chr(11)
+        Public Const Quote As Char = MS_VB.Strings.Chr(34)
     End Class
 
 End Namespace

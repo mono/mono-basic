@@ -43,8 +43,8 @@ Namespace Microsoft.VisualBasic
         Public Shared Function Err() As Microsoft.VisualBasic.ErrObject
             ' VB Err keyword is compiled into ErrObject which is stored at ProjectData.
             ' ProjectData is a singelton for all VB library.
-            Dim pd As ProjectData
-            pd = ProjectData.Instance
+            Dim pd As CompilerServices.ProjectData
+            pd = CompilerServices.ProjectData.Instance
 
             Return pd.projectError
         End Function
