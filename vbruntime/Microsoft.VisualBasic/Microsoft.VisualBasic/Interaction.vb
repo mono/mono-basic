@@ -94,6 +94,9 @@ Namespace Microsoft.VisualBasic
                 End If
             End If
 
+            'Closes the key and flushes it to disk if the contents have been modified.
+            rkey.Close()
+
         End Sub
         Public Function Environ(ByVal Expression As Integer) As String
             Throw New NotImplementedException
@@ -139,6 +142,8 @@ Namespace Microsoft.VisualBasic
             rkey = rkey.OpenSubKey(AppName)
             rkey = rkey.OpenSubKey(Section)
             rkey.SetValue(Key, Setting)
+            'Closes the key and flushes it to disk if the contents have been modified.
+            rkey.Close()
         End Sub
         Public Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
             'TODO: OS Specific
