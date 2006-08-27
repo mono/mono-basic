@@ -54,7 +54,7 @@ Namespace Microsoft.VisualBasic
 
 
         '
-        ' A Friend constructor, so only VB dll can use this class.
+        ' A Friend constructor. only VB dll can use this class.
         '
         Friend Sub New()
             Clear()
@@ -105,12 +105,12 @@ Namespace Microsoft.VisualBasic
 
             If Not (HelpFile Is Nothing) Then
                 m_HelpFile = Convert.ToString(HelpFile)
-                'FIXME: implement me: HelpFile
+                'TODO: implement me: HelpFile
             End If
 
             If Not (HelpContext Is Nothing) Then
                 m_HelpContext = Convert.ToInt32(HelpContext)
-                'FIXME: implement me: HelpContext
+                'TODO: implement me: HelpContext
             End If
 
             Throw m_Exception
@@ -129,7 +129,7 @@ Namespace Microsoft.VisualBasic
         End Property
         Public ReadOnly Property Erl() As System.Int32
             Get
-                'FIXME: implement me
+                'TODO: implement me
                 Throw New NotImplementedException
             End Get
         End Property
@@ -151,7 +151,7 @@ Namespace Microsoft.VisualBasic
         End Property
         Public ReadOnly Property LastDllError() As System.Int32
             Get
-                'FIXME: go native and get the last dll error
+                'TODO: go native and get the last dll error
                 Throw New NotImplementedException
             End Get
         End Property

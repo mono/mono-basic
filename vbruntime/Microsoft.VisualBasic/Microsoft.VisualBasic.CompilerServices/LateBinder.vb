@@ -32,10 +32,9 @@ Imports System
 Imports System.Reflection
 Imports System.Globalization
 Imports System.ComponentModel
-
+'Helper Class for LateBinding. Not public.
 Namespace Microsoft.VisualBasic.CompilerServices
-    'FIXME : should be not public
-    Public Class LateBinder
+    Friend Class LateBinder
         Inherits Binder
 
         Private Enum TypeConversion
@@ -162,7 +161,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Overrides Sub ReorderArgumentArray(ByRef args() As Object, ByVal state As Object)
-            Dim bstate As BState = CType(state, BState)
+            Dim bstate As bstate = CType(state, bstate)
             Dim mapping() As Integer = bstate.mapping
             Dim parameters() As ParameterInfo = bstate.parameters
             Dim clone() As Object = CType(args.Clone(), Object())
@@ -986,7 +985,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Else
                 If type1.IsPrimitive Then
                     ' primitive can be converted to string or object
-                    'FIXME is char to string convert widens or narrows ?
+                    'FIXME: is char to string convert widens or narrows ?
                     If typeCode1 = TypeCode.Char And typeCode2 = TypeCode.String Then
                         Return TypeConversion.Widening
                     End If
@@ -1006,7 +1005,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return TypeConversion.Narrowing
                     End If
 
-                    ' FIXME : is this should be valid for IConvertible only?
+                    'FIXME: is this should be valid for IConvertible only?
                     Return TypeConversion.Narrowing
                 End If
 

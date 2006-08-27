@@ -43,7 +43,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Console.WriteLine("TRACE:DateType.FromObject:input:" + Value.ToString())
 #End If
 
-            'FIXME: This cause a recursive call to FromObject
+            'FIXME: Notice: The following code block will cause a recursive call to FromObject
             ' The 'Is' should be replaced with an alternative.
             'If Value Is Nothing Then
             '    Return Nothing

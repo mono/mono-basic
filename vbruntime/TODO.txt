@@ -49,7 +49,6 @@ Application tests TODO
 * Interaction Class - OS specific, beep, MessageBox etc’.
 * FileSystem Class - binary files are hard and not well documented, start with text and random access files.
 * NotImplemented API tests failures.
-* mbas Tests TODO. (see below)
 
 ======================
 .NET 2.0 TODO

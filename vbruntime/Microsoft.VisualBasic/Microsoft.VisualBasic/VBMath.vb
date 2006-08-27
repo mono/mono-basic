@@ -62,7 +62,7 @@ Namespace Microsoft.VisualBasic
         Public Sub Randomize()
             m_rnd = New Random
         End Sub
-        'TODO:"Rethink the double => int conversion") 
+        'TODO: Rethink the double => int conversion
         Public Sub Randomize(ByVal Number As Double)
             m_rnd = New Random(CType(Number, Integer))
         End Sub

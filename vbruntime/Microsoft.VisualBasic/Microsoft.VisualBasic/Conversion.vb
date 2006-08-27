@@ -33,7 +33,6 @@ Imports System.Reflection
 Imports Microsoft.VisualBasic.CompilerServices
 
 Namespace Microsoft.VisualBasic
-    'MONOTODO: finish all the Constants
     Public Module Conversion
         Public Function ErrorToString() As String
             Return Information.Err.Description

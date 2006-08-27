@@ -82,7 +82,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             'FIXME: Add ElseIf implementation for all types
-            ' Order the ElseIf by narrowing order of Data Types
             If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
@@ -266,7 +265,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             'FIXME: Add defense for checking overflow.
             'FIXME: Add support for Date
-            ' Order the ElseIf by narrowing order of Data Types
             If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
@@ -386,8 +384,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             'FIXME: Add defense for checking overflow.
-            '
-            ' Order the ElseIf by narrowing order of Data Types
             If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
@@ -495,8 +491,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             'FIXME: Add ElseIf implementation for all types.
             'FIXME: Add defense for checking overflow.
-            '
-            ' Order the ElseIf by narrowing order of Data Types
             If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
@@ -607,8 +601,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             'FIXME: Add ElseIf implementation for all types.
             'FIXME: Add defense for checking overflow.
-            '
-            ' Order the ElseIf by narrowing order of Data Types
             If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
