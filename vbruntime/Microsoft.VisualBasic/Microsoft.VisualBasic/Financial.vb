@@ -34,10 +34,9 @@ Imports System
 
 Namespace Microsoft.VisualBasic
     'MONOTODO: this is an empty class. implement it.
-    <StandardModule()> _
-    Public NotInheritable Class Financial
+    Public Module Financial
 
-        Public Shared Function DDB(ByVal Cost As Double, ByVal Salvage As Double, _
+        Public Function DDB(ByVal Cost As Double, ByVal Salvage As Double, _
                                     ByVal Life As Double, ByVal Period As Double, _
                                     Optional ByVal Factor As Double = 2.0) As Double
             If Period > Life Or Factor < 0 Or Salvage < 0 _
@@ -63,7 +62,7 @@ Namespace Microsoft.VisualBasic
             Return deprecation
         End Function
 
-        Public Shared Function SLN(ByVal Cost As Double, ByVal Salvage As Double, _
+        Public Function SLN(ByVal Cost As Double, ByVal Salvage As Double, _
                                     ByVal Life As Double) As Double
             If Life = 0 Then
                 Throw New ArgumentException("Argument 'Life' cannot be zero.")
@@ -72,7 +71,7 @@ Namespace Microsoft.VisualBasic
             Return ((Cost - Salvage) / Life)
         End Function
 
-        Public Shared Function SYD(ByVal Cost As Double, ByVal Salvage As Double, _
+        Public Function SYD(ByVal Cost As Double, ByVal Salvage As Double, _
                                     ByVal Life As Double, ByVal Period As Double) As Double
             If Salvage < 0 Then
                 Throw New ArgumentException("Argument 'Salvage' must be greater than or equal to zero.")
@@ -86,7 +85,7 @@ Namespace Microsoft.VisualBasic
             Return ((Cost - Salvage) * (Life - Period + 1) * 2 / Life) / (Life + 1)
         End Function
 
-        Public Shared Function FV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
+        Public Function FV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
                                     Optional ByVal PV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
 
             Dim result As Double = 0
@@ -112,17 +111,17 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Rate(ByVal NPer As Double, ByVal Pmt As Double, ByVal PV As Double, _
+        Public Function Rate(ByVal NPer As Double, ByVal Pmt As Double, ByVal PV As Double, _
                                     Optional ByVal FV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod, _
                                     Optional ByVal Guess As Double = 0.1) As Double
             Throw New NotImplementedException
         End Function
 
-        Public Shared Function IRR(ByRef ValueArray() As Double, Optional ByVal Guess As Double = 0.1) As Double
+        Public Function IRR(ByRef ValueArray() As Double, Optional ByVal Guess As Double = 0.1) As Double
             Throw New NotImplementedException
         End Function
 
-        Public Shared Function MIRR(ByRef ValueArray() As Double, ByVal FinanceRate As Double, _
+        Public Function MIRR(ByRef ValueArray() As Double, ByVal FinanceRate As Double, _
                                     ByVal ReinvestRate As Double) As Double
 
             If FinanceRate <= -1 Then
@@ -147,7 +146,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Function PNPV(ByVal ValueArray() As Double, ByVal Rate As Double) As Double
+        Private Function PNPV(ByVal ValueArray() As Double, ByVal Rate As Double) As Double
             Dim result As Double = 0
             For i As Integer = 1 To ValueArray.Length
                 Dim value As Double = ValueArray(i - 1)
@@ -158,7 +157,7 @@ Namespace Microsoft.VisualBasic
             Return result
         End Function
 
-        Private Shared Function NNPV(ByVal ValueArray() As Double, ByVal Rate As Double) As Double
+        Private Function NNPV(ByVal ValueArray() As Double, ByVal Rate As Double) As Double
             Dim result As Double = 0
             For i As Integer = 1 To ValueArray.Length
                 Dim value As Double = ValueArray(i - 1)
@@ -169,7 +168,7 @@ Namespace Microsoft.VisualBasic
             Return result
         End Function
 
-        Public Shared Function NPer(ByVal Rate As Double, ByVal Pmt As Double, ByVal PV As Double, _
+        Public Function NPer(ByVal Rate As Double, ByVal Pmt As Double, ByVal PV As Double, _
                                     Optional ByVal FV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
             If Rate = -1 Then
                 Throw New ArgumentException("Argument 'Rate' is not a valid value.")
@@ -239,7 +238,7 @@ Namespace Microsoft.VisualBasic
             Return pperiod + fperiod
         End Function
 
-        Public Shared Function IPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _
+        Public Function IPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _
                                     ByVal PV As Double, Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
             If Per > NPer Or NPer < 0 Then
@@ -266,7 +265,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Shared Function Pmt(ByVal Rate As Double, ByVal NPer As Double, ByVal PV As Double, _
+        Public Function Pmt(ByVal Rate As Double, ByVal NPer As Double, ByVal PV As Double, _
                                     Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
             If NPer = 0 Then
@@ -299,7 +298,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function PPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _
+        Public Function PPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _
                                     ByVal PV As Double, Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
 
@@ -328,7 +327,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Shared Function NPV(ByVal Rate As Double, ByRef ValueArray() As Double) As Double
+        Public Function NPV(ByVal Rate As Double, ByRef ValueArray() As Double) As Double
 
             If ValueArray Is Nothing Then
                 Throw New ArgumentException("Argument 'ValueArray' is Nothing.")
@@ -345,7 +344,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function PV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
+        Public Function PV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
                                     Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
             Dim result As Double = 0
@@ -363,5 +362,5 @@ Namespace Microsoft.VisualBasic
             End If
             Return result
         End Function
-    End Class
+    End Module
 End Namespace

@@ -32,11 +32,9 @@ Imports System
 Imports System.Runtime.InteropServices
 
 Namespace Microsoft.VisualBasic.CompilerServices
-    <StandardModule()> _
-    Public Class DoubleType
+    Public NotInheritable Class DoubleType
 
         Private Sub New()
-            'Nobody should see constructor
         End Sub
 
         ' FromObject(Value) -> FromObject(Value, Nothing)

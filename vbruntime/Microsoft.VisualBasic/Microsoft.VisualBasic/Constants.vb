@@ -31,8 +31,7 @@
 Imports Microsoft.VisualBasic.CompilerServices
 
 Namespace Microsoft.VisualBasic
-    <StandardModule()> _
-    Public NotInheritable Class Constants
+    Public Module Constants
         Public Const vbCrLf As String = ControlChars.Cr + ControlChars.Lf
         Public Const vbNewLine As String = vbCrLf
         Public Const vbCr As String = ControlChars.Cr
@@ -147,5 +146,5 @@ Namespace Microsoft.VisualBasic
         Public Const vbNormalNoFocus As AppWinStyle = AppWinStyle.NormalNoFocus
         Public Const vbMinimizedNoFocus As AppWinStyle = AppWinStyle.MinimizedNoFocus
 
-    End Class
+    End Module
 End Namespace

@@ -36,12 +36,11 @@ Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CompilerServices
 Namespace Microsoft.VisualBasic
-    <StandardModule()> _
-    Public NotInheritable Class Strings
+    Public Module Strings
 
-        Private Shared PredefinedNumericFormats As Hashtable
-        Private Shared PredefinedDateTimeFormats As Hashtable
-        Private Shared PredefinedNumbersAfterDigitalSign() As String = {".00", _
+        Private PredefinedNumericFormats As Hashtable
+        Private PredefinedDateTimeFormats As Hashtable
+        Private PredefinedNumbersAfterDigitalSign() As String = {".00", _
                                                     ".", _
                                                     ".0", _
                                                     ".00", _
@@ -54,11 +53,7 @@ Namespace Microsoft.VisualBasic
                                                     ".000000000", _
                                                     ".0000000000"}
 
-        Private Sub New()
-            'Nobody should see constructor
-        End Sub
-
-        Shared Sub New()
+        Sub New()
             PredefinedNumericFormats = New Hashtable
             PredefinedNumericFormats.Add("General Number", "{0:G}")
             PredefinedNumericFormats.Add("Currency", "{0:C}")
@@ -81,16 +76,16 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Shared Function Asc(ByVal c As Char) As Integer
+        Public Function Asc(ByVal c As Char) As Integer
             'FIXME : provide an implementation for non-ASCII chars
             Return Convert.ToInt32(c)
         End Function
 
-        Public Shared Function AscW(ByVal c As Char) As Integer
+        Public Function AscW(ByVal c As Char) As Integer
             Return Convert.ToInt32(c)
         End Function
 
-        Public Shared Function Asc(ByVal s As String) As Integer
+        Public Function Asc(ByVal s As String) As Integer
             If (s Is Nothing) Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
             End If
@@ -102,7 +97,7 @@ Namespace Microsoft.VisualBasic
             Return Asc(s.Chars(0))
         End Function
 
-        Public Shared Function AscW(ByVal s As String) As Integer
+        Public Function AscW(ByVal s As String) As Integer
             If (s Is Nothing) Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
             End If
@@ -115,7 +110,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         'MONOTODO: Chr should use the Encoding class in the System.Text. see the Chr documentation.
-        Public Shared Function Chr(ByVal CharCode As Integer) As Char
+        Public Function Chr(ByVal CharCode As Integer) As Char
 
             'FIXME: The docs state that CharCode can be: (CharCode >= -32768) OR (CharCode <= 65535)
             ' but .NET throws ArgumentException for: (CharCode < 0) AND (CharCode > 255)
@@ -130,7 +125,7 @@ Namespace Microsoft.VisualBasic
             Return System.Convert.ToChar(CharCode)
 
         End Function
-        Public Shared Function ChrW(ByVal CharCode As Integer) As Char
+        Public Function ChrW(ByVal CharCode As Integer) As Char
 
             If ((CharCode < -32768) Or (CharCode > 65535)) Then
                 Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
@@ -144,7 +139,7 @@ Namespace Microsoft.VisualBasic
             Return System.Convert.ToChar(CharCode)
         End Function
 
-        Public Shared Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
+        Public Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
                         Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
             Dim Temp(Source.Length) As String
 
@@ -178,14 +173,14 @@ Namespace Microsoft.VisualBasic
             Return Res
         End Function
 
-        Public Shared Function Filter(ByVal Source() As String, ByVal Match As String, Optional ByVal Include As Boolean = True, _
+        Public Function Filter(ByVal Source() As String, ByVal Match As String, Optional ByVal Include As Boolean = True, _
                             Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
             Dim oarr() As Object = Source
             Return Filter(oarr, Match, Include, Compare)
         End Function
 
 
-        Public Shared Function Format(ByVal Expression As Object, Optional ByVal Style As String = "") As String
+        Public Function Format(ByVal Expression As Object, Optional ByVal Style As String = "") As String
 
             If Expression Is Nothing Then
                 Return String.Empty
@@ -214,7 +209,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Function FormatDateTime(ByVal Expression As Object, ByVal Style As String) As String
+        Private Function FormatDateTime(ByVal Expression As Object, ByVal Style As String) As String
             Dim PredefinedStyle As Object = PredefinedDateTimeFormats(Style)
 
             If Not PredefinedStyle Is Nothing Then
@@ -226,7 +221,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
 
-        Private Shared Function FormatNumeric(ByVal Expression As Object, ByVal Style As String) As String
+        Private Function FormatNumeric(ByVal Expression As Object, ByVal Style As String) As String
             Dim PredefinedStyle As Object = PredefinedNumericFormats(Style)
 
             If Not PredefinedStyle Is Nothing Then
@@ -261,7 +256,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function FormatCurrency(ByVal Expression As Object, Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
+        Public Function FormatCurrency(ByVal Expression As Object, Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
                                             Optional ByVal IncludeLeadingDigit As TriState = TriState.UseDefault, _
                                             Optional ByVal UseParensForNegativeNumbers As TriState = TriState.UseDefault, _
                                             Optional ByVal GroupDigits As TriState = TriState.UseDefault) As String
@@ -301,7 +296,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Sub FormatCurrency(ByVal sb As StringBuilder, ByVal Expression As Object, ByVal NumDigitsAfterDecimal As Integer, _
+        Private Sub FormatCurrency(ByVal sb As StringBuilder, ByVal Expression As Object, ByVal NumDigitsAfterDecimal As Integer, _
                                             ByVal IncludeLeadingDigit As TriState, ByVal UseParensForNegativeNumbers As TriState, _
                                             ByVal GroupDigits As TriState)
 
@@ -313,7 +308,7 @@ Namespace Microsoft.VisualBasic
             
         End Sub
 
-        Public Shared Function FormatDateTime(ByVal Expression As DateTime, Optional ByVal NamedFormat As DateFormat = DateFormat.GeneralDate) As String
+        Public Function FormatDateTime(ByVal Expression As DateTime, Optional ByVal NamedFormat As DateFormat = DateFormat.GeneralDate) As String
 
             Dim format As String
             Select Case NamedFormat
@@ -342,7 +337,7 @@ Namespace Microsoft.VisualBasic
             Return String.Format("{0:" + format + "}", Expression)
         End Function
 
-        Public Shared Function FormatNumber(ByVal Expression As Object, _
+        Public Function FormatNumber(ByVal Expression As Object, _
                                 Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
                                 Optional ByVal IncludeLeadingDigit As TriState = TriState.UseDefault, _
                                 Optional ByVal UseParensForNegativeNumbers As TriState = TriState.UseDefault, _
@@ -384,7 +379,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Sub FormatNumber(ByVal sb As StringBuilder, ByVal Expression As Object, _
+        Private Sub FormatNumber(ByVal sb As StringBuilder, ByVal Expression As Object, _
                                 Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
                                 Optional ByVal IncludeLeadingDigit As TriState = TriState.UseDefault, _
                                 Optional ByVal UseParensForNegativeNumbers As TriState = TriState.UseDefault, _
@@ -411,7 +406,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Sub
 
-        Public Shared Function FormatPercent(ByVal Expression As Object, Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
+        Public Function FormatPercent(ByVal Expression As Object, Optional ByVal NumDigitsAfterDecimal As Integer = -1, _
                                             Optional ByVal IncludeLeadingDigit As TriState = TriState.UseDefault, _
                                             Optional ByVal UseParensForNegativeNumbers As TriState = TriState.UseDefault, _
                                             Optional ByVal GroupDigits As TriState = TriState.UseDefault) As String
@@ -450,7 +445,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Sub FormatPercent(ByVal sb As StringBuilder, ByVal Expression As Object, ByVal NumDigitsAfterDecimal As Integer, _
+        Private Sub FormatPercent(ByVal sb As StringBuilder, ByVal Expression As Object, ByVal NumDigitsAfterDecimal As Integer, _
                                             ByVal IncludeLeadingDigit As TriState, ByVal UseParensForNegativeNumbers As TriState, _
                                             ByVal GroupDigits As TriState)
 
@@ -462,7 +457,7 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Shared Function GetChar(ByVal Str As String, ByVal Index As Integer) As Char
+        Public Function GetChar(ByVal Str As String, ByVal Index As Integer) As Char
             If Str Is Nothing Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
             End If
@@ -480,7 +475,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
 
-        Public Shared Function InStr(ByVal Start As Integer, ByVal String1 As String, ByVal String2 As String, _
+        Public Function InStr(ByVal Start As Integer, ByVal String1 As String, ByVal String2 As String, _
                                 Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
 
             If Start < 1 Then
@@ -516,12 +511,12 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function InStr(ByVal String1 As String, ByVal String2 As String, _
+        Public Function InStr(ByVal String1 As String, ByVal String2 As String, _
                                 Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
             Return InStr(1, String1, String2, Compare)
         End Function
 
-        Public Shared Function InStrRev(ByVal StringCheck As String, ByVal StringMatch As String, _
+        Public Function InStrRev(ByVal StringCheck As String, ByVal StringMatch As String, _
                                         Optional ByVal Start As Integer = -1, _
                                         Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
             If Start = 0 Or Start < -1 Then
@@ -561,7 +556,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Join(ByVal SourceArray() As Object, Optional ByVal Delimiter As String = " ") As String
+        Public Function Join(ByVal SourceArray() As Object, Optional ByVal Delimiter As String = " ") As String
             Dim i As Integer
             Dim sb As StringBuilder = New StringBuilder
 
@@ -586,17 +581,17 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Join(ByVal SourceArray() As String, Optional ByVal Delimiter As String = " ") As String
+        Public Function Join(ByVal SourceArray() As String, Optional ByVal Delimiter As String = " ") As String
             Dim oarr() As Object
             oarr = SourceArray
             Return Join(oarr, Delimiter)
         End Function
 
-        Public Shared Function LCase(ByVal Value As Char) As Char
+        Public Function LCase(ByVal Value As Char) As Char
             Return Char.ToLower(Value)
         End Function
 
-        Public Shared Function LCase(ByVal Value As String) As String
+        Public Function LCase(ByVal Value As String) As String
             If Value Is Nothing Then
                 Return Nothing
             End If
@@ -604,7 +599,7 @@ Namespace Microsoft.VisualBasic
             Return Value.ToLower()
         End Function
 
-        Public Shared Function Left(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Left(ByVal Str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero.")
@@ -622,55 +617,55 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Len(ByVal Expression As Boolean) As Integer
+        Public Function Len(ByVal Expression As Boolean) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Byte) As Integer
+        Public Function Len(ByVal Expression As Byte) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Char) As Integer
+        Public Function Len(ByVal Expression As Char) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Double) As Integer
+        Public Function Len(ByVal Expression As Double) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Integer) As Integer
+        Public Function Len(ByVal Expression As Integer) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Long) As Integer
+        Public Function Len(ByVal Expression As Long) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Object) As Integer
+        Public Function Len(ByVal Expression As Object) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Short) As Integer
+        Public Function Len(ByVal Expression As Short) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Single) As Integer
+        Public Function Len(ByVal Expression As Single) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As String) As Integer
+        Public Function Len(ByVal Expression As String) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As DateTime) As Integer
+        Public Function Len(ByVal Expression As DateTime) As Integer
             Return GetSize(Expression)
         End Function
 
-        Public Shared Function Len(ByVal Expression As Decimal) As Integer
+        Public Function Len(ByVal Expression As Decimal) As Integer
             Return GetSize(Expression)
         End Function
 
-        Private Shared Function GetSize(ByVal Expression As Object) As Integer
+        Private Function GetSize(ByVal Expression As Object) As Integer
             If Expression Is Nothing Then
                 Return 0
             End If
@@ -718,7 +713,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function LSet(ByVal Source As String, ByVal Length As Integer) As String
+        Public Function LSet(ByVal Source As String, ByVal Length As Integer) As String
             If Source Is Nothing Then
                 Source = String.Empty
             End If
@@ -730,7 +725,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Shared Function LTrim(ByVal Str As String) As String
+        Public Function LTrim(ByVal Str As String) As String
             If Str Is Nothing Then
                 Return String.Empty
             End If
@@ -739,7 +734,7 @@ Namespace Microsoft.VisualBasic
             Return Str.TrimStart(carr)
         End Function
 
-        Public Shared Function Mid(ByVal str As String, ByVal Start As Integer, ByVal Length As Integer) As String
+        Public Function Mid(ByVal str As String, ByVal Start As Integer, ByVal Length As Integer) As String
 
             If Start <= 0 Then
                 Throw New ArgumentException("Argument 'Start' is not a valid value.")
@@ -765,7 +760,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Mid(ByVal str As String, ByVal Start As Integer) As String
+        Public Function Mid(ByVal str As String, ByVal Start As Integer) As String
             If str Is Nothing Then
                 Return Nothing
             End If
@@ -774,7 +769,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function Replace(ByVal Expression As String, ByVal Find As String, ByVal Replacement As String, _
+        Public Function Replace(ByVal Expression As String, ByVal Find As String, ByVal Replacement As String, _
                                 Optional ByVal Start As Integer = 1, Optional ByVal Count As Integer = -1, _
                                 Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String
             If Count < -1 Then
@@ -808,7 +803,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Shared Function Replace(ByVal Expression As String, ByVal Find As String, ByVal Replacement As String, _
+        Private Function Replace(ByVal Expression As String, ByVal Find As String, ByVal Replacement As String, _
                                 ByVal Start As Integer, ByVal Count As Integer, ByVal IgnoreCase As Boolean) As String
 
             Dim replaced As Integer = 0
@@ -834,7 +829,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
 
-        Public Shared Function Right(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Right(ByVal Str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero")
@@ -852,7 +847,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function RSet(ByVal Source As String, ByVal Length As Integer) As String
+        Public Function RSet(ByVal Source As String, ByVal Length As Integer) As String
             If Source Is Nothing Then
                 Source = String.Empty
             End If
@@ -864,7 +859,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Shared Function RTrim(ByVal Str As String) As String
+        Public Function RTrim(ByVal Str As String) As String
             If Str Is Nothing Then
                 Return String.Empty
             End If
@@ -873,7 +868,7 @@ Namespace Microsoft.VisualBasic
             Return Str.TrimEnd(carr)
         End Function
 
-        Public Shared Function Space(ByVal Number As Integer) As String
+        Public Function Space(ByVal Number As Integer) As String
             If Number < 0 Then
                 Throw New ArgumentException("Argument 'Number' must be greater or equal to zero.")
             End If
@@ -910,7 +905,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Shared Function Split(ByVal Expression As String, Optional ByVal Delimiter As String = " ", _
+        Public Function Split(ByVal Expression As String, Optional ByVal Delimiter As String = " ", _
                 Optional ByVal Limit As Integer = -1, _
                 Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
 
@@ -970,7 +965,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function StrComp(ByVal String1 As String, ByVal String2 As String, _
+        Public Function StrComp(ByVal String1 As String, ByVal String2 As String, _
                         Optional ByVal Compare As CompareMethod = 0) As Integer
 
             If String1 Is Nothing Then
@@ -998,7 +993,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function StrConv(ByVal str As String, _
+        Public Function StrConv(ByVal str As String, _
                                         ByVal Conversion As VbStrConv, _
                                         Optional ByVal LocaleID As Integer = 0) As String
 
@@ -1037,7 +1032,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function StrDup(ByVal Number As Integer, ByVal Character As Char) As String
+        Public Function StrDup(ByVal Number As Integer, ByVal Character As Char) As String
             If Character = Nothing Then
                 Throw New ArgumentException("Length of argument 'Character' must be greater than zero.")
             End If
@@ -1054,7 +1049,7 @@ Namespace Microsoft.VisualBasic
             Return New String(carr)
         End Function
 
-        Public Shared Function StrDup(ByVal Number As Integer, ByVal Character As String) As String
+        Public Function StrDup(ByVal Number As Integer, ByVal Character As String) As String
             If Character = Nothing Or Character = String.Empty Then
                 Throw New ArgumentException("Length of argument 'Character' must be greater than zero.")
             End If
@@ -1062,7 +1057,7 @@ Namespace Microsoft.VisualBasic
             Return StrDup(Number, Character.Chars(0))
         End Function
 
-        Public Shared Function StrDup(ByVal Number As Integer, ByVal Character As Object) As Object
+        Public Function StrDup(ByVal Number As Integer, ByVal Character As Object) As Object
             Dim c As Char = "c"c
             Try
                 c = DirectCast(Character, Char)
@@ -1081,7 +1076,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Shared Function StrReverse(ByVal Expression As String) As String
+        Public Function StrReverse(ByVal Expression As String) As String
             If Expression Is Nothing Or Expression = String.Empty Then
                 Return String.Empty
             End If
@@ -1091,7 +1086,7 @@ Namespace Microsoft.VisualBasic
             Return New String(carr)
         End Function
 
-        Public Shared Function Trim(ByVal Str As String) As String
+        Public Function Trim(ByVal Str As String) As String
             If Str Is Nothing Then
                 Return String.Empty
             End If
@@ -1100,11 +1095,11 @@ Namespace Microsoft.VisualBasic
             Return Str.Trim(carr)
         End Function
 
-        Public Shared Function UCase(ByVal Value As Char) As Char
+        Public Function UCase(ByVal Value As Char) As Char
             Return Char.ToUpper(Value)
         End Function
 
-        Public Shared Function UCase(ByVal Value As String) As String
+        Public Function UCase(ByVal Value As String) As String
             If Value Is Nothing Then
                 Return String.Empty
             End If
@@ -1112,7 +1107,7 @@ Namespace Microsoft.VisualBasic
             Return Value.ToUpper()
         End Function
 #If NET_2_0 Then
-        Public Shared Function Len(ByVal Expression As SByte) As Integer
+        Public Function Len(ByVal Expression As SByte) As Integer
             Return GetSize(Expression)
         End Function
         Public Function Len(ByVal Expression As UInteger) As Integer
@@ -1126,5 +1121,5 @@ Namespace Microsoft.VisualBasic
         End Function
 #End If
 
-    End Class
+    End Module
 End Namespace
