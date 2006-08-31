@@ -1,3 +1,6 @@
+2006-08-31  Rafael Mizrahi <rafim@mainsoft.com>
+	* removed tests which where moved into NUnit tests.
+
 2005-08-23  Satya Sudha K <ksathyasudha@novell.com>
 	* Fixed the filepaths in some testcases
 
