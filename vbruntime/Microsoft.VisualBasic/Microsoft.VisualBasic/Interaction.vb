@@ -106,6 +106,7 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
             'TODO: Registry
+
             Throw New NotImplementedException
         End Function
         Public Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
@@ -133,8 +134,61 @@ Namespace Microsoft.VisualBasic
             Return ""
         End Function
         Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
-            'TODO: pure algorithm, Not OS specific.
-            Throw New NotImplementedException
+
+            Dim strEnd, strStart As String
+            Dim lEnd, lStart As Long
+
+            If Start < 0 Then Throw New System.ArgumentException("Argument 'Start' is not a valid value.")
+            If [Stop] <= Start Then Throw New System.ArgumentException("Argument 'Stop' is not a valid value.")
+            If Interval < 1 Then Throw New System.ArgumentException("Argument 'Start' is not a valid value.")
+
+            If Number > [Stop] Then
+                strEnd = "Out Of Range"
+                lStart = [Stop] - 1
+            ElseIf Number < Start Then
+                strStart = "Out Of Range"
+                lEnd = Start - 1
+            ElseIf (Number = Start) Then
+                lStart = Number
+                If (lEnd < (Number + Interval)) Then
+                    lEnd = Number + Interval - 1
+                Else
+                    lEnd = [Stop]
+                End If
+            ElseIf (Number = [Stop]) Then
+                lEnd = [Stop]
+                If (lStart > (Number - Interval)) Then
+                    lStart = Number
+                Else
+                    lStart = Number - Interval + 1
+                End If
+            ElseIf Interval = 1 Then
+                lStart = Number
+                lEnd = Number
+            Else
+                lStart = Start
+                While (lStart < Number)
+                    lStart += Interval
+                End While
+                lStart = lStart - Interval
+                lEnd = lStart + Interval - 1
+            End If
+
+            If strEnd = "Out Of Range" Then
+                strEnd = ""
+            Else
+                strEnd = CStr(lEnd)
+            End If
+
+            If strStart = "Out Of Range" Then
+                strStart = ""
+            Else
+                strStart = CStr(lStart)
+            End If
+
+            'FIXME: problem with spaces, (with len of 1 doesn`t behave as MSDN says)
+            Return (strStart.PadLeft(CStr([Stop]).Length) + ":" + strEnd.PadLeft(CStr([Stop]).Length))
+
         End Function
         Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
             Dim rkey As RegistryKey
