@@ -1652,18 +1652,33 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void StrConv_1()
 		{
+#if NET_2_0
+            Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.Lowercase,0));
+            Assert.AreEqual("ABCD ABCD", Strings.StrConv("ABCD abcd", VbStrConv.Uppercase, 0));
+            Assert.AreEqual("ASD1234 SDF234 DXC234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.Uppercase, 0));
+#else
 			Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.LowerCase,0));
 			Assert.AreEqual("ABCD ABCD",Strings.StrConv("ABCD abcd", VbStrConv.UpperCase,0));
-			Assert.AreEqual("Abcd Abcd",Strings.StrConv("ABCD abcd", VbStrConv.ProperCase,0));
+			Assert.AreEqual("ASD1234 SDF234 DXC234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.UpperCase,0));
+#endif
+            Assert.AreEqual("Abcd Abcd",Strings.StrConv("ABCD abcd", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Abcd Ascd Ffff",Strings.StrConv("abcd ascd ffff", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Asd1234 Sdf234 Dxc234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.ProperCase,0));
-			Assert.AreEqual("ASD1234 SDF234 DXC234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.UpperCase,0));
 		}
 
 		[Test]
 		[Category("NotWorking")]
 		public void StrConv_2()
 		{
+#if NET_2_0
+            Assert.AreEqual("abcd abcd", Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
+            Assert.AreEqual("abcd ascd ffff", Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
+            Assert.AreEqual("asd1234 sdf234 dxc234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
+
+            Assert.AreEqual("ABCD ABCD", Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
+            Assert.AreEqual("ABCD ASCD FFFF", Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
+            Assert.AreEqual("ASD1234 SDF234 DXC234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
+#else
 			Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
 			Assert.AreEqual("abcd ascd ffff",Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
 			Assert.AreEqual("asd1234 sdf234 dxc234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
@@ -1671,7 +1686,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("ABCD ABCD",Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
 			Assert.AreEqual("ABCD ASCD FFFF",Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
 			Assert.AreEqual("ASD1234 SDF234 DXC234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
-		}
+#endif
+        }
 
 		[Test]
 		public void StrConv_ProperCase()
@@ -1752,8 +1768,12 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void StrConv_3()
 		{
-			Assert.AreEqual(String.Empty,Strings.StrConv(String.Empty, VbStrConv.UpperCase,0));
-		}
+#if NET_2_0
+			Assert.AreEqual(String.Empty,Strings.StrConv(String.Empty, VbStrConv.Uppercase,0));
+#else
+            Assert.AreEqual(String.Empty,Strings.StrConv(String.Empty, VbStrConv.UpperCase,0));
+#endif
+        }
 
 		[Test]
 		[ExpectedException(typeof (ArgumentException))]
@@ -1767,8 +1787,12 @@ namespace MonoTests.Microsoft_VisualBasic
 		public void StrConv_5()
 		{
 			//  Value cannot be null.
-			Strings.StrConv(null, VbStrConv.UpperCase,0);
-		}
+#if NET_2_0
+			Strings.StrConv(null, VbStrConv.Uppercase,0);
+#else
+            Strings.StrConv(null, VbStrConv.UpperCase,0);
+#endif
+        }
 
 
 		#endregion
