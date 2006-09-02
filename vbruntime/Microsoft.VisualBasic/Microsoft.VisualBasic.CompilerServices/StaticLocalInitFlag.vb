@@ -30,17 +30,6 @@
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
     Public NotInheritable Class StaticLocalInitFlag
-        Private m_State As Short
-        Public Sub New()
-            m_State = 0
-        End Sub
-        Public Property State() As Short
-            Get
-                Return m_State
-            End Get
-            Set(ByVal Value As Short)
-                m_State = Value
-            End Set
-        End Property
+        Public State As Short
     End Class
 End Namespace

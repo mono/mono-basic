@@ -1,0 +1,5 @@
+2006-09-02  Miguel de Icaza  <miguel@novell.com>
+
+	* StaticLocalInitFlag.vb: The "State" is actually a field, not a
+	property, hope this fixes the VB compiler.
+
