@@ -34,6 +34,16 @@ Imports Microsoft.VisualBasic.CompilerServices
 
 Namespace Microsoft.VisualBasic
     Public Module FileSystem
+
+	' Dir private members
+	Private m_index As Integer
+        Private m_files As FileInfo()
+        Private m_dirs As DirectoryInfo()
+        Private m_IsFile As Boolean = True
+        Private ResStr As String = ""
+        Private m_len As Integer = 0
+        Private m_IsLastElem As Boolean = Nothing
+
         Public Sub ChDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
 
@@ -80,10 +90,89 @@ Namespace Microsoft.VisualBasic
             Return Path.GetFullPath(Convert.ToString(Drive))
         End Function
         Public Function Dir() As String
-            Throw New NotImplementedException
+            
+            Dim strRes As String
+
+            If (m_files Is Nothing) And (m_Dirs Is Nothing) Then
+                Throw New System.ArgumentException("'Dir' function must first be called with a 'Pathname' argument.")
+            ElseIf (m_IsLastElem) Then
+                Throw New System.ArgumentException("'Dir' function must first be called with a 'Pathname' argument.")
+            End If
+
+            If m_index < m_len Then
+                If m_IsFile Then
+                    strRes = m_files(m_index).Name
+                Else
+                    strRes = m_dirs(m_index).Name
+                End If
+                m_index += 1
+            Else
+                strRes = Nothing
+                m_IsLastElem = True
+            End If
+            'If m_index = m_len Then m_IsLastElem = True
+
+            Return strRes
         End Function
         Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
-            Throw New NotImplementedException
+            Dim tmpstr, str_parent_dir, str_pattern As String
+            Dim last_ch As Integer
+            Dim di As DirectoryInfo
+
+            m_dirs = Nothing
+            m_files = Nothing
+            m_index = 0
+            m_len = 0
+            m_IsFile = Nothing
+
+            last_ch = Pathname.LastIndexOf(Path.DirectorySeparatorChar)
+            If (last_ch = -1) Then
+                str_parent_dir = Directory.GetCurrentDirectory()
+            Else
+                str_parent_dir = Pathname.Substring(0, last_ch)
+            End If
+            str_pattern = Pathname.Substring(last_ch + 1, Pathname.Length - last_ch - 1)
+            Try
+                '' dir() doesn`t throw any exception just return ""
+                di = New DirectoryInfo(str_parent_dir)
+            Catch ex As Exception
+                Return ("")
+            End Try
+
+            If (Attributes And FileAttributes.Directory) <> 0 Then
+
+                m_dirs = di.GetDirectories(str_pattern)
+                If m_dirs.Length = 0 Then
+                    ResStr = ""
+                Else
+                    m_IsFile = False
+                    m_len = m_dirs.Length
+                    ResStr = m_dirs(m_index).Name
+                    m_index += 1
+                End If
+            Else
+                m_files = di.GetFiles(str_pattern)
+                If m_files.Length = 0 Then
+                    ResStr = ""
+                Else
+                    m_IsFile = True
+                    m_len = m_files.Length
+                    ResStr = m_files(m_index).Name
+                    m_index += 1
+                End If
+            End If
+            If m_index - 1 = m_len Then m_IsLastElem = True
+            If ResStr = "" Then
+                '' reset all static members
+                m_dirs = Nothing
+                m_files = Nothing
+                m_index = 0
+                m_len = 0
+                m_IsFile = False
+                m_IsLastElem = False
+            End If
+
+            Return ResStr
         End Function
         Public Function EOF(ByVal FileNumber As Integer) As Boolean
             Throw New NotImplementedException

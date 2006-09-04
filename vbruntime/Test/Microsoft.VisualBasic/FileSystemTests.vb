@@ -707,6 +707,219 @@ Public Sub RMDir_5()
 #End Region
 
 
+#Region "DirTests"
+        <Test(), ExpectedException(GetType(ArgumentException))> _
+Public Sub Dir_1()
+            Dim test_dir As String = "Dir_test1"
+            FileSystem.Dir()
+        End Sub
+        <Test()> _
+Public Sub Dir_2()
+
+            Dim test_dir As String = "Dir_test2"
+            Dim res_dir As String
+
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + test_dir)
+
+            Assert.AreEqual("", res_dir)
+
+        End Sub
+
+        <Test()> _
+Public Sub Dir_3()
+
+            Dim test_dir As String = "Dir_test3"
+            Dim res_dir As String
+
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + test_dir, FileAttribute.Directory)
+
+            Assert.AreEqual(test_dir, res_dir)
+            ''  Directory.Delete(DATA_DIR + sep_ch + test_dir)
+
+        End Sub
+
+
+
+        <Test()> _
+Public Sub Dir_4()
+
+            Dim test_dir1 As String = "Dir_test4_1"
+            Dim test_dir2 As String = "Dir_test4_2"
+            Dim test_dir3 As String = "Dir_test4_3"
+            Dim res_dir As String
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir1)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir2)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir3)
+
+
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test4_?", FileAttribute.Directory)
+            Assert.AreEqual(test_dir1, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir2, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir3, res_dir)
+
+
+
+        End Sub
+
+        <Test()> _
+Public Sub Dir_5()
+
+            Dim test_dir1 As String = "Dir_test5_1"
+            Dim test_dir2 As String = "Dir_test5_2"
+            Dim res_dir As String
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir1)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir2)
+
+
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test5_?", FileAttribute.Directory)
+            Assert.AreEqual(test_dir1, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir2, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(Nothing, res_dir)  '' after last match retyrn null
+
+        End Sub
+
+
+        <Test(), ExpectedException(GetType(ArgumentException))> _
+Public Sub Dir_6()
+
+            Dim test_dir1 As String = "Dir_test5_1"
+            Dim test_dir2 As String = "Dir_test5_2"
+            Dim res_dir As String
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir1)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir2)
+
+
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test5_?", FileAttribute.Directory)
+            Assert.AreEqual(test_dir1, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir2, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(Nothing, res_dir)
+            res_dir = FileSystem.Dir()  '' this one should raise an exception 
+
+        End Sub
+
+        <Test()> _
+Public Sub Dir_7()
+
+            Dim test_file1 As String = "Dir_test_file7_1.check"
+            Dim test_file2 As String = "Dir_test_file7_2.check"
+            Dim res_file As String
+
+            Dim fs1 As FileStream = File.Create(DATA_DIR + sep_ch + test_file1, 1024)
+            fs1.Close()
+
+            Dim fs2 As FileStream = File.Create(DATA_DIR + sep_ch + test_file2, 1024)
+            fs2.Close()
+
+            res_file = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test_file7_*.*")
+            Assert.AreEqual(test_file1, res_file)
+            res_file = FileSystem.Dir()
+            Assert.AreEqual(test_file2, res_file)
+            res_file = FileSystem.Dir()
+            Assert.AreEqual(Nothing, res_file)  '' after last match return null
+
+        End Sub
+
+
+
+        <Test()> _
+Public Sub Dir_8()
+
+            Dim test_file1 As String = "Dir_test_file8_1.check"
+            Dim test_file2 As String = "Dir_test_file8_2.check"
+            Dim res_file As String
+
+            Dim fs1 As FileStream = File.Create(DATA_DIR + sep_ch + test_file1, 1024)
+            fs1.Close()
+
+            Dim fs2 As FileStream = File.Create(DATA_DIR + sep_ch + test_file2, 1024)
+            fs2.Close()
+
+            res_file = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test_file8_1.*")
+            Assert.AreEqual(test_file1, res_file)
+            res_file = FileSystem.Dir()
+            Assert.AreEqual(Nothing, res_file)  '' after last match retyrn null
+
+        End Sub
+
+
+        <Test()> _
+Public Sub Dir_9()
+
+            Dim test_file1 As String = "Dir_test_file9_1.check"
+            Dim res_file As String
+
+            res_file = FileSystem.Dir("c:\tes^~~^^^\Dir_test_file9_1.*")
+            Assert.AreEqual("", res_file) 
+        End Sub
+
+
+        <Test()> _
+Public Sub Dir_10()
+            Dim res_file As String
+            Dim test_dir1 As String = "Dir_test_10"
+
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir1)
+            Dim test_file1 As String = "Dir_test_11_file_1.check"
+            Dim test_file2 As String = "Dir_test_11_file_2.txt"
+
+            Dim fs1 As FileStream = File.Create(DATA_DIR + sep_ch + test_dir1 + sep_ch + test_file1, 1024)
+            fs1.Close()
+
+            Dim fs2 As FileStream = File.Create(DATA_DIR + sep_ch + test_dir1 + sep_ch + test_file2, 1024)
+            fs2.Close()
+
+
+            FileSystem.ChDir(DATA_DIR + sep_ch + test_dir1)
+
+            res_file = FileSystem.Dir("") '' returns all files with normal attr
+            Assert.AreEqual(test_file1, res_file)
+            res_file = FileSystem.Dir()
+            Assert.AreEqual(test_file2, res_file)
+
+        End Sub
+
+
+        <Test()> _
+Public Sub Dir_11()
+
+            Dim test_dir1 As String = "Dir_test_11_1"
+            Dim test_dir2 As String = "Dir_test_11_2"
+            Dim test_dir3 As String = "Dir_test_11_3"
+            Dim res_dir As String
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir1)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir2)
+            Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir3)
+            Dim test_file1 As String = "Dir_test_11_file_1.check"
+            Dim test_file2 As String = "Dir_test_11_file_2.check"
+            Dim res_file As String
+
+            Dim fs1 As FileStream = File.Create(DATA_DIR + sep_ch + test_file1, 1024)
+            fs1.Close()
+
+            Dim fs2 As FileStream = File.Create(DATA_DIR + sep_ch + test_file2, 1024)
+            fs2.Close()
+
+            res_dir = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test_11*", FileAttribute.Directory) '' all files and dirs
+            Assert.AreEqual(test_dir1, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir2, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_dir3, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_file1, res_dir)
+            res_dir = FileSystem.Dir()
+            Assert.AreEqual(test_file2, res_dir)
+
+        End Sub
+#End Region
+
     End Class
 End Namespace
 
