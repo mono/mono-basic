@@ -127,7 +127,7 @@ pushd Microsoft.VisualBasic
 resgen strings.txt
 rem TODO: replace vbc with C:\cygwin\monobuild\vbnc\vbnc\bin\vbnc.exe 
 echo on
-vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% -r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -keyfile:msfinal.pub /res:strings.resources %VB_SOURCES%
+vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% -r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -keyfile:msfinal.pub /res:strings.resources %VB_SOURCES%
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 :FINALLY

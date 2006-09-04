@@ -1,14 +1,17 @@
 echo off
 echo ====================================
-echo = 	Convert the Microsoft.VisualBasic.dll into Java jar
+echo = 	Build and Convert the Microsoft.VisualBasic.dll into Java jar
 echo =	
-echo =	NOTE: you should build the Microsoft.VisualBasic.dll using the J2EE define flags.
+echo =	NOTE: firest, build the Microsoft.VisualBasic.dll using the TARGET_JVM=True define flag.
 echo =	
 echo =	sample usage: 
 echo =	VB.J2EE.build.bat
 echo =	
 echo ====================================
 
+
+SET VB_COMPILE_OPTIONS_J2EE=/define:TARGET_JVM=True
+call VB.build.bat 1 debug
 
 rem ====================================
 rem set environment settings for running J2EE applications
@@ -39,9 +42,14 @@ set path=%path%;%NET_FRAMEWORK_DIR%
 
 pushd bin
 echo on
-"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /keep /verbose /bugreport:bug.txt /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre5";"%VMW4J2EE_DIR%\jgac"
+echo converting dll to jar
+"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre5";"%VMW4J2EE_DIR%\jgac"
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
+echo running java validator
+
 popd
+
+
 
 :FINALLY
 echo ======================
