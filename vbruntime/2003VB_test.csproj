@@ -124,7 +124,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\Microsoft.VisualBasic\InteractionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Test\Microsoft.VisualBasic\StringsTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Test\Microsoft.VisualBasic\VBMathTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -165,6 +175,11 @@
                 />
                 <File
                     RelPath = "Test\Microsoft.VisualBasic.CompilerServices\StringTypeTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Test\Microsoft.VisualBasic.CompilerServices\UtilsTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

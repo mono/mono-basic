@@ -91,7 +91,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Test\Microsoft.VisualBasic\FileSystemTests.vb"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Test\Microsoft.VisualBasic\InformationTests.vb"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Test\Microsoft.VisualBasic\InteractionTests.vb"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
