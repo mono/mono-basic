@@ -7,16 +7,11 @@ General SVN TODO
 ====================
 * Integrate into the mono build system. Right now Microsoft.VisualBasic.dll is compiled using Microsoft vbc (running on a Windows machine). 
 * enable build output of VB 1.1 and VB 2.0 using mono profiles.
-* J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 1.8) jar.
-a vmwvbproj will not help here, because it will fail to build due to ambiguity errors.
-this must be done using the jcsc command line.
 
 ====================
 Unit tests TODO
 ====================
 * vbnc tests status - run the 3 test suites using the VB dll compiled with vbnc.
-* 2.0 - Create VS2005 project files for the NUnit tests and add them into the VB2005 solution.
-* clenaups - remove from standalone tests, the tests which where converted into NUnit.
 * clenaups - merge the NUnit tests from Test\OldTests\Microsoft.VisualBasic into the NUnit files at \Test
 * build - Integrate the tests into the mono build system.
 
@@ -63,4 +58,10 @@ Application tests TODO
 * Implement Microsoft.VisualBasic.MyServices
 * Implement Microsoft.VisualBasic.MyServices.Internal
 
+======================
+Grasshopper Java TODO
+======================
+* J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 1.8) jar.
+* add java validator test to the build.
+* add TARGET_JVM defines to source code.
 
