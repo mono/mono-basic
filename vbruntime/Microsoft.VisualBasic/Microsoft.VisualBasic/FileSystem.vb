@@ -132,16 +132,18 @@ Namespace Microsoft.VisualBasic
                 str_parent_dir = Pathname.Substring(0, last_ch)
             End If
             str_pattern = Pathname.Substring(last_ch + 1, Pathname.Length - last_ch - 1)
-            Try
-                '' dir() doesn`t throw any exception just return ""
-                di = New DirectoryInfo(str_parent_dir)
-            Catch ex As Exception
-                Return ("")
-            End Try
+
+            '' dir() doesn`t throw any exception just return ""
+            di = New DirectoryInfo(str_parent_dir)
+            If Not di.Exists Then Return ("")
 
             If (Attributes And FileAttributes.Directory) <> 0 Then
 
-                m_dirs = di.GetDirectories(str_pattern)
+                If (str_pattern = "") Then
+                    m_dirs = di.GetDirectories()
+                Else
+                    m_dirs = di.GetDirectories(str_pattern)
+                End If
                 If m_dirs.Length = 0 Then
                     ResStr = ""
                 Else
@@ -151,7 +153,11 @@ Namespace Microsoft.VisualBasic
                     m_index += 1
                 End If
             Else
-                m_files = di.GetFiles(str_pattern)
+                If (str_pattern = "") Then
+                    m_files = di.GetFiles()
+                Else
+                    m_files = di.GetFiles(str_pattern)
+                End If
                 If m_files.Length = 0 Then
                     ResStr = ""
                 Else
