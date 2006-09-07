@@ -1,4 +1,4 @@
-// InteractionTests.cs - NUnit Test Cases for Microsoft.VisualBasic.Interaction 
+// InformationTests.cs - NUnit Test Cases for Microsoft.VisualBasic.Information 
 //
 // Guy Cohen (guyc@mainsoft.com)
 // 
@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Collections;
 using Microsoft.VisualBasic;
+using Microsoft.Win32;
 
 namespace MonoTests.Microsoft_VisualBasic
 {
@@ -94,6 +95,64 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		#endregion
+
+			
+		#region GetAllSettings tests
+
+		[Test]
+		public void GetAllSettings_1()
+		{
+
+		string[,] res_setting;
+        int index, elm_count;
+        string tmp_str;
+        RegistryKey regk;
+		string[] arr_str;
+
+
+		regk = Registry.CurrentUser;
+		regk = regk.CreateSubKey( "Test_APP");
+		regk = regk.OpenSubKey("GetAllSettings_1");
+
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go1", "Val_Go1");
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go2", "Val_Go2");
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go3", "Val_Go3");
+
+        res_setting = Interaction.GetAllSettings("Test_APP", "GetAllSettings_1");
+        
+        Assert.AreEqual("Go2",res_setting[1,0]);
+		Assert.AreEqual("Val_Go2",res_setting[1,1]);
+		}
+		[Test]
+		public void GetAllSettings_2()
+		{
+
+			string[,] res_setting;
+
+			res_setting = Interaction.GetAllSettings("Test_APP", "rterr");
+        
+			Assert.AreEqual(null,res_setting);
+			
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentException))]
+		public void GetAllSettings_3()
+		{
+			string[,] str_tmp;
+			str_tmp = Interaction.GetAllSettings("","TEST2");
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentException))]
+		public void GetAllSettings_4()
+		{
+			string[,] str_tmp;
+			str_tmp = Interaction.GetAllSettings("TEST",null);
+		}
+
+		#endregion
+
 	}
 }
 

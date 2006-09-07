@@ -105,9 +105,37 @@ Namespace Microsoft.VisualBasic
             Return Environment.GetEnvironmentVariable(Expression)
         End Function
         Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
-            'TODO: Registry
 
-            Throw New NotImplementedException
+            If (AppName = "") Or (AppName Is Nothing) Then Throw New System.ArgumentException(" Argument 'AppName' is Nothing or empty.")
+            If (Section = "") Or (Section Is Nothing) Then Throw New System.ArgumentException(" Argument 'Section' is Nothing or empty.")
+
+            Dim res_setting(,) As String
+            Dim index, elm_count As Integer
+            Dim tmp_str As String
+            Dim regk As RegistryKey
+            Dim arr_str() As String
+
+            regk = Registry.CurrentUser
+            Try
+                ''TODO: original dll set/get settings from this path
+                ''regk = regk.OpenSubKey("Software\VB and VBA Program Settings\" + AppName)
+                regk = regk.OpenSubKey(AppName)
+                regk = regk.OpenSubKey(Section)
+            Catch ex As Exception
+                Return Nothing
+            End Try
+
+            elm_count = regk.ValueCount
+            If elm_count = 0 Then Return Nothing
+
+            ReDim Preserve arr_str(elm_count)
+            ReDim Preserve res_setting(elm_count - 1, 1)
+            arr_str = regk.GetValueNames()
+            For index = 0 To elm_count - 1
+                res_setting(index, 0) = arr_str(index)
+                res_setting(index, 1) = Interaction.GetSetting(AppName, Section, arr_str(index))
+            Next
+            Return res_setting
         End Function
         Public Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
             'TODO: COM
