@@ -31,8 +31,10 @@
 '
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
+#If TARGET_JVM = False Then 'Win32,Windows.Forms Not Supported by Grasshopper
 Imports Microsoft.Win32
 Imports System.Windows.Forms
+#End If
 
 Namespace Microsoft.VisualBasic
     Public Module Interaction
@@ -81,6 +83,9 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
         End Function
         Public Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
+
+#If TARGET_JVM = False Then
+
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
             If Section = Nothing Then
@@ -96,7 +101,9 @@ Namespace Microsoft.VisualBasic
 
             'Closes the key and flushes it to disk if the contents have been modified.
             rkey.Close()
-
+#Else
+            Throw New NotImplementedException
+#End If
         End Sub
         Public Function Environ(ByVal Expression As Integer) As String
             Throw New NotImplementedException
@@ -105,6 +112,8 @@ Namespace Microsoft.VisualBasic
             Return Environment.GetEnvironmentVariable(Expression)
         End Function
         Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
+
+#If TARGET_JVM = False Then
 
             If (AppName = "") Or (AppName Is Nothing) Then Throw New System.ArgumentException(" Argument 'AppName' is Nothing or empty.")
             If (Section = "") Or (Section Is Nothing) Then Throw New System.ArgumentException(" Argument 'Section' is Nothing or empty.")
@@ -136,17 +145,25 @@ Namespace Microsoft.VisualBasic
                 res_setting(index, 1) = Interaction.GetSetting(AppName, Section, arr_str(index))
             Next
             Return res_setting
+
+#Else
+            Throw New NotImplementedException
+#End If
         End Function
         Public Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
             'TODO: COM
             Throw New NotImplementedException
         End Function
         Public Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
+#If TARGET_JVM = False Then
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
             rkey = rkey.OpenSubKey(AppName)
             rkey = rkey.OpenSubKey(Section)
             Return rkey.GetValue(Key, CObj([Default])).ToString
+#Else
+            Throw New NotImplementedException
+#End If
         End Function
         Public Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
             If Expression Then
@@ -156,10 +173,14 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
         Public Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
-            Dim form As Form
+#If TARGET_JVM = False Then
+            Dim form As form
 
             form.Text = Title
             Return ""
+#Else
+            Throw New NotImplementedException
+#End If
         End Function
         Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
@@ -219,6 +240,9 @@ Namespace Microsoft.VisualBasic
 
         End Function
         Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
+
+#If TARGET_JVM = False Then
+
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
             rkey = rkey.OpenSubKey(AppName)
@@ -226,6 +250,9 @@ Namespace Microsoft.VisualBasic
             rkey.SetValue(Key, Setting)
             'Closes the key and flushes it to disk if the contents have been modified.
             rkey.Close()
+#Else
+            Throw New NotImplementedException
+#End If
         End Sub
         Public Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
             'TODO: OS Specific

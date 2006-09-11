@@ -62,6 +62,7 @@ Application tests TODO
 Grasshopper Java TODO
 ======================
 * J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 1.8) jar.
-* add java validator test to the build.
 * add TARGET_JVM defines to source code.
+* run the 3 test suites using the VB jar.
+* J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 2.0) jar.
 

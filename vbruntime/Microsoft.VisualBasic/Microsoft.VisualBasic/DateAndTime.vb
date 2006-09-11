@@ -58,6 +58,7 @@ Namespace Microsoft.VisualBasic
                 End Try
             End Set
         End Property
+#If TARGET_JVM = False Then
         <DllImport("libc", EntryPoint:="stime", _
            SetLastError:=True, CharSet:=CharSet.Unicode, _
            ExactSpelling:=True, _
@@ -66,6 +67,7 @@ Namespace Microsoft.VisualBasic
             ' Leave function empty - DllImport attribute forwards calls to stime to
             ' stime in libc.dll
         End Function
+#End If
 
         Public Property Today() As System.DateTime
             Get
@@ -78,9 +80,11 @@ Namespace Microsoft.VisualBasic
                 Dim secondsTimeSpan As System.TimeSpan = NewDate.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0))
                 Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
 
+#If TARGET_JVM = False Then
                 If (stime(seconds) = -1) Then
                     Throw New UnauthorizedAccessException("The caller is not the super-user.")
                 End If
+#End If
             End Set
         End Property
 
@@ -115,9 +119,11 @@ Namespace Microsoft.VisualBasic
                 Dim secondsTimeSpan As TimeSpan = NewTime.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0, 0))
                 Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
 
+#If TARGET_JVM = False Then
                 If (stime(seconds) = -1) Then
                     Throw New UnauthorizedAccessException("The caller is not the super-user.")
                 End If
+#End If
             End Set
         End Property
 

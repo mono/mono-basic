@@ -12,6 +12,7 @@ echo ====================================
 
 SET VB_COMPILE_OPTIONS_J2EE=/define:TARGET_JVM=True
 call VB.build.bat 1 debug
+IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 rem ====================================
 rem set environment settings for running J2EE applications
