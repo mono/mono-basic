@@ -37,25 +37,25 @@ Imports System.Windows.Forms
 #End If
 
 Namespace Microsoft.VisualBasic
-    Public Module Interaction
+    Public NotInheritable Class Interaction
 
-        Public Sub AppActivate(ByVal ProcessId As Integer)
+        Public Shared Sub AppActivate(ByVal ProcessId As Integer)
             'TODO: OS Specific
             Throw New NotImplementedException
         End Sub
-        Public Sub AppActivate(ByVal Title As String)
+        Public Shared Sub AppActivate(ByVal Title As String)
             'TODO: OS Specific
             Throw New NotImplementedException
         End Sub
-        Public Sub Beep()
+        Public Shared Sub Beep()
             'TODO: OS Specific
             ' Removed Throw exception, as it does not really harm that the beep does not work.
         End Sub
-        Public Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
+        Public Shared Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
             'TODO: Call LateBinding
             Throw New NotImplementedException
         End Function
-        Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
+        Public Shared Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
             'FIXME: why Index is Double, while an Index of an Array is Integer ?
             Dim IntIndex As Integer
@@ -74,15 +74,15 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentOutOfRangeException
             End If
         End Function
-        Public Function Command() As String
+        Public Shared Function Command() As String
             'TODO: OS Specific
             Return String.Join(" ", Environment.GetCommandLineArgs)
         End Function
-        Public Function CreateObject(ByVal ProgId As String, Optional ByVal ServerName As String = "") As Object
+        Public Shared Function CreateObject(ByVal ProgId As String, Optional ByVal ServerName As String = "") As Object
             'TODO: COM
             Throw New NotImplementedException
         End Function
-        Public Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
+        Public Shared Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
 
 #If TARGET_JVM = False Then
 
@@ -105,13 +105,13 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Sub
-        Public Function Environ(ByVal Expression As Integer) As String
+        Public Shared Function Environ(ByVal Expression As Integer) As String
             Throw New NotImplementedException
         End Function
-        Public Function Environ(ByVal Expression As String) As String
+        Public Shared Function Environ(ByVal Expression As String) As String
             Return Environment.GetEnvironmentVariable(Expression)
         End Function
-        Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
+        Public Shared Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
 
 #If TARGET_JVM = False Then
 
@@ -150,11 +150,11 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Function
-        Public Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
+        Public Shared Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
             'TODO: COM
             Throw New NotImplementedException
         End Function
-        Public Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
+        Public Shared Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
 #If TARGET_JVM = False Then
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
@@ -165,24 +165,22 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Function
-        Public Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
+        Public Shared Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
             If Expression Then
                 Return TruePart
             Else
                 Return FalsePart
             End If
         End Function
-        Public Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
+        Public Shared Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
 #If TARGET_JVM = False Then
-            Dim form As form
+            Throw New NotImplementedException
 
-            form.Text = Title
-            Return ""
 #Else
             Throw New NotImplementedException
 #End If
         End Function
-        Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
+        Public Shared Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
             Dim strEnd, strStart As String
             Dim lEnd, lStart As Long
@@ -239,7 +237,7 @@ Namespace Microsoft.VisualBasic
             Return (strStart.PadLeft(CStr([Stop]).Length) + ":" + strEnd.PadLeft(CStr([Stop]).Length))
 
         End Function
-        Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
+        Public Shared Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
 
 #If TARGET_JVM = False Then
 
@@ -254,11 +252,11 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Sub
-        Public Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
+        Public Shared Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
             'TODO: OS Specific
             Throw New NotImplementedException
         End Function
-        Public Function Switch(ByVal ParamArray VarExpr() As Object) As Object
+        Public Shared Function Switch(ByVal ParamArray VarExpr() As Object) As Object
             Dim i As Integer
             If VarExpr Is Nothing Then
                 Return Nothing
@@ -272,5 +270,65 @@ Namespace Microsoft.VisualBasic
             Next
             Return Nothing
         End Function
-    End Module
+
+        Public Shared Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OKOnly, _
+         Optional ByVal Title As Object = Nothing) As MsgBoxResult
+            Dim wf_buttons As MessageBoxButtons
+            Dim wf_icon As MessageBoxIcon
+            Dim wf_default As MessageBoxDefaultButton
+            Dim wf_options As MessageBoxOptions
+
+            If Title Is Nothing Then
+                Title = ""
+            End If
+            wf_icon = MessageBoxIcon.None
+            wf_options = 0
+
+            Select Case Button And 7
+                Case 0
+                    wf_buttons = MessageBoxButtons.OK
+                Case 1
+                    wf_buttons = MessageBoxButtons.OKCancel
+                Case 2
+                    wf_buttons = MessageBoxButtons.AbortRetryIgnore
+                Case 3
+                    wf_buttons = MessageBoxButtons.YesNoCancel
+                Case 4
+                    wf_buttons = MessageBoxButtons.YesNo
+                Case 5
+                    wf_buttons = MessageBoxButtons.RetryCancel
+            End Select
+
+            If (Button And 16) = 16 Then
+                wf_icon = MessageBoxIcon.Error
+            ElseIf (Button And 32) = 32 Then
+                wf_icon = MessageBoxIcon.Question
+            ElseIf (Button And 64) = 64 Then
+                wf_icon = MessageBoxIcon.Information
+            End If
+
+            If (Button And 256) = 256 Then
+                wf_default = MessageBoxDefaultButton.Button2
+            ElseIf (Button And 512) = 512 Then
+                wf_default = MessageBoxDefaultButton.Button3
+            Else
+                wf_default = MessageBoxDefaultButton.Button1
+            End If
+
+            If (Button And 4096) = 4096 Then
+                ' Ignore, we do not support SystemModal dialog boxes, or I cant find how to do this
+            End If
+
+            If (Button And 524288) = 524288 Then
+                wf_options = MessageBoxOptions.RightAlign
+            End If
+
+            If (Button And 1048576) = 1048576 Then
+                wf_options = wf_options Or MessageBoxOptions.RtlReading
+            End If
+
+            MessageBox.Show(Prompt.ToString, Title.ToString(), wf_buttons, wf_icon, wf_default, wf_options)
+
+        End Function
+    End Class
 End Namespace
