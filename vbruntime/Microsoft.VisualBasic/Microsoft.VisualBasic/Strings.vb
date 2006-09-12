@@ -82,7 +82,9 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function AscW(ByVal c As Char) As Integer
-            Return Convert.ToInt32(c)
+            ' Compiled as if it were "Return CInt(c)" when /novbruntimeref is used;
+            ' No AscW or other method is called.
+            Return AscW(c)
         End Function
 
         Public Function Asc(ByVal s As String) As Integer

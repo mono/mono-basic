@@ -1,0 +1,4 @@
+2006-09-12  Kornél Pál  <kornelpal@gmail.com>
+
+	* Strings.vb: Call AscW(Char) in AscW(Char) recursively that will result
+	  in returning the first parameter without any method being called.
