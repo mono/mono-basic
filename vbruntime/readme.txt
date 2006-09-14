@@ -18,6 +18,16 @@
  * 2005VB_test.csproj		NUnit C# tests
 
 ========================
+ Coding guidelines
+========================
+* Preffer using DirectCast instead of CType, especially inside CompilerServices.
+CType and it's C<type> friends CBool,CByte,CChar,CDate,CDbl,CDec,CInt,CLng,CObj,CShort,CSng,CStr for built-in types,
+is usually implemented as calls to VB runtime rather than using IL code.
+So it should be avoided when that specific behavior is not required. DirectCast is the equivalent of C# casting.
+
+
+
+========================
  build
 ========================
 build Microsoft.VisualBaseic.dll using .NET 1.1 on debug.
