@@ -79,7 +79,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             If TypeOf Value Is String Then
-                Return FromString(CStr(Value))
+                Return FromString(DirectCast(Value, String))
             End If
 
             Throw New ArgumentException("Value")

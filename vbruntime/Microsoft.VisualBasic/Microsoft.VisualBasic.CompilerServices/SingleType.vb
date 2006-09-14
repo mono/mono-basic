@@ -54,7 +54,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             If TypeOf Value Is String Then
-                Return Parse(Convert.ToString(Value), NumberFormat)
+                Return Parse(DirectCast(Value, String), NumberFormat)
             End If
 
             Return Convert.ToSingle(Value)

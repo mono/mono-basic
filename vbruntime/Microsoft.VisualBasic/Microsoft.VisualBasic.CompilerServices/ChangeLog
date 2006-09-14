@@ -1,3 +1,12 @@
+2006-09-14  Kornél Pál  <kornelpal@gmail.com>
+
+	* BooleanType.vb, CharArrayType.vb, CharType.vb, DateType.vb,
+	  DecimalType.vb, DoubleType.vb, IntegerType.vb, ShortType.vb,
+	  SingleType.vb: Use DirectCast when the exact data type is known
+	  that makes code faster and avoids circular dependency on
+	  Conversions that resulted in StackOverflowException for some
+	  conversions.
+
 2006-09-02  Miguel de Icaza  <miguel@novell.com>
 
 	* StaticLocalInitFlag.vb: The "State" is actually a field, not a

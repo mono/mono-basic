@@ -46,23 +46,23 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim type1 As Type = Value.GetType()
             Select Case Type.GetTypeCode(type1)
                 Case TypeCode.Boolean
-                    Return (-1) * Convert.ToInt32(CBool(Value))
+                    Return (-1) * Convert.ToInt32(DirectCast(Value, Boolean))
                 Case TypeCode.Byte
-                    Return CByte(Value)
+                    Return DirectCast(Value, Byte)
                 Case TypeCode.Double
-                    Return Convert.ToInt32(CDbl(Value))
+                    Return Convert.ToInt32(DirectCast(Value, Double))
                 Case TypeCode.Decimal
-                    Return Convert.ToInt32((CDec(Value)))
+                    Return Convert.ToInt32((DirectCast(Value, Decimal)))
                 Case TypeCode.Int32
-                    Return Convert.ToInt32(Value)
+                    Return DirectCast(Value, Integer)
                 Case TypeCode.Int16
-                    Return CShort(Value)
+                    Return DirectCast(Value, Short)
                 Case TypeCode.Int64
-                    Return Convert.ToInt32(CLng(Value))
+                    Return Convert.ToInt32(DirectCast(Value, Long))
                 Case TypeCode.Single
-                    Return Convert.ToInt32(CSng(Value))
+                    Return Convert.ToInt32(DirectCast(Value, Single))
                 Case TypeCode.String
-                    Return IntegerType.FromString(Value.ToString())
+                    Return IntegerType.FromString(DirectCast(Value, String))
                 Case Else
                     Throw New InvalidCastException
             End Select

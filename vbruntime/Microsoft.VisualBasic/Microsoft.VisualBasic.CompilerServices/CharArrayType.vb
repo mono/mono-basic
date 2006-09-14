@@ -38,7 +38,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function FromObject(ByVal Value As Object) As Char()
             Select Case (Type.GetTypeCode(Value.GetType()))
                 Case TypeCode.String
-                    Return CharArrayType.FromString(Value.ToString())
+                    Return CharArrayType.FromString(DirectCast(Value, String))
                 Case Else
                     'TODO: add tests and check this case.
                     Throw New NotImplementedException

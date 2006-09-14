@@ -55,7 +55,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             If TypeOf Value Is String Then
-                Return CharType.FromString(Convert.ToString(Value))
+                Return CharType.FromString(DirectCast(Value, String))
             End If
 
             Return Convert.ToChar(Value)

@@ -50,7 +50,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'End If
 
             If TypeOf Value Is String Then
-                Return FromString(Convert.ToString(Value))
+                Return FromString(DirectCast(Value, String))
             End If
 
             If TypeOf Value Is Date Then
