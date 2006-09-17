@@ -1,0 +1,39 @@
+<VisualStudioProject>
+	<VisualBasic ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{2243923D-5631-496A-B046-61808C5E22FE}">
+		<Build>
+			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="Microsoft.VisualBasic_test_VB" AssemblyOriginatorKeyFile="" AssemblyOriginatorKeyMode="None" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" OptionCompare="Binary" OptionExplicit="On" OptionStrict="Off" RootNamespace="MonoTests.Microsoft_VisualBasic" StartupObject="MonoTests.Microsoft_VisualBasic.(None)">
+				<Config Name="Debug_Java" BaseAddress="285212672" ConfigurationOverrideFile="" DefineConstants="JAVA=True,TARGET_JVM=True" DefineDebug="true" DefineTrace="true" DebugSymbols="true" IncrementalBuild="false" Optimize="false" OutputPath="bin_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="1"/>
+				<Config Name="Release_Java" BaseAddress="285212672" ConfigurationOverrideFile="" DefineConstants="JAVA=True" DefineDebug="false" DefineTrace="true" DebugSymbols="false" IncrementalBuild="false" Optimize="true" OutputPath="bin_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="1"/>
+			</Settings>
+			<References>
+				<Reference Name="System" AssemblyName="System" HintPath="..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
+				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"/>
+				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll"/>
+				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\mcs\nunit20\nunit-console\bin\Debug_Java\nunit.framework.dll"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\jre5\rt.dll" Private="False"/>
+			</References>
+			<Imports>
+				<Import Namespace="Microsoft.VisualBasic"/>
+				<Import Namespace="System"/>
+				<Import Namespace="System.Collections"/>
+				<Import Namespace="System.Data"/>
+				<Import Namespace="System.Diagnostics"/>
+			</Imports>
+		</Build>
+		<Files>
+			<Include>
+				<File RelPath="Test\Microsoft.VisualBasic\ErrObjectTests.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic\FileSystemTests.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic\InformationTests.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic\InteractionTests.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests2.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests3.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests4.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests5.vb" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Test\Microsoft.VisualBasic.CompilerServices\LateBindingTests6.vb" SubType="Code" BuildAction="Compile"/>
+			</Include>
+		</Files>
+		<UserProperties jarserver="ipa" project.JDKType="1.5.0_05" REFS.JarPath.rt="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jre5\lib\rt.jar" REFS.JarPath.system="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.system.data="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.system.xml="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.nunit.framework="..\..\mcs\nunit20\nunit-console\bin\Debug_Java\nunit.framework.jar"/>
+	</VisualBasic>
+	<VisualMainWin><Project Prop3023="1.5.0_05" Prop3024="" Prop3026="" Prop3028="0" Prop3015="" Version="1.8.0" ProjectType="1"/><References/><Configs><Config Prop3000="0" Prop3001="0" Prop3002="0" Prop3003="0" Prop3004="0" Prop3005="0" Prop3006="" Prop3007="" Prop3008="" Prop3009="" Prop3010="" Prop3011="0" Prop3012="0" Prop3013="" Prop3014="0" Prop3016="" Prop3027="" Prop3019="0" Prop3020="285212672" Prop3021="4096" Prop3022="0" Prop3017="0" Prop3018="0" Name="Debug_Java"/><Config Prop3000="0" Prop3001="0" Prop3002="0" Prop3003="0" Prop3004="0" Prop3005="0" Prop3006="" Prop3007="" Prop3008="" Prop3009="" Prop3010="" Prop3011="0" Prop3012="0" Prop3013="" Prop3014="0" Prop3016="" Prop3027="" Prop3019="0" Prop3020="285212672" Prop3021="4096" Prop3022="0" Prop3017="0" Prop3018="0" Name="Release_Java"/></Configs></VisualMainWin></VisualStudioProject>
