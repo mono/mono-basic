@@ -281,6 +281,9 @@ Public Class LateBindingTests6
     <Test()> _
     Public Sub LateBind_WithStatementA()
         Dim a As Object = New C300
+        Dim bRes1 As Boolean = False
+        Dim bRes2 As Boolean = False
+
         With a
             .a2 = "Hello World"
             GoTo labelA
@@ -288,12 +291,17 @@ Public Class LateBindingTests6
             .a1 = 20
             Dim x As New C300
             a = x
-            Assert.AreNotEqual(.a1, a.a1)
-            Assert.AreNotEqual(.a2, a.a2)
+            If (.a1 = a.a1) Then bRes1 = True
+            If (.a2 = a.a2) Then bRes2 = True
+            Assert.AreEqual(False, bRes1, ".a1 and a.a1 Should not be Equal")
+            Assert.AreEqual(False, bRes2, ".a2 and a.a2 Should not be Equal")
             a.f1()
             .f1()
 labelA:
         End With
-        Assert.AreNotEqual(20, a.a1)
+        bRes1 = False
+        If (a.a1 = 20) Then bRes1 = True
+        Assert.AreEqual(False, bRes1)
+
     End Sub
 End Class

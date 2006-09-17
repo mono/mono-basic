@@ -105,7 +105,7 @@ Namespace MonoTests.Microsoft_VisualBasic
         Public Sub CurDir_1()
 
             Dim cur_dir, test_dir, tmpStr As String
-
+            Dim bRes As Boolean = True
             FileSystem.ChDir(DATA_DIR)
             cur_dir = Directory.GetCurrentDirectory()
             test_dir = FileSystem.CurDir()
@@ -114,7 +114,8 @@ Namespace MonoTests.Microsoft_VisualBasic
             FileSystem.ChDir(DATA_DIR + sep_ch + "CurDir_1")
             test_dir = FileSystem.CurDir()
 
-            Assert.AreNotEqual(cur_dir, test_dir)
+            If (cur_dir = test_dir) Then bRes = False
+            Assert.AreEqual(True, bRes)
             FileSystem.ChDir("..")
             Directory.Delete(DATA_DIR + sep_ch + "CurDir_1")
         End Sub
