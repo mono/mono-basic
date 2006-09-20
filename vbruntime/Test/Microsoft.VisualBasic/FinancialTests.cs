@@ -53,6 +53,54 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region DDB Tests
 
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DDBArg1()
+		{
+			Financial.DDB (-1, 1, 1, 1, 1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DDBArg2()
+		{
+			Financial.DDB (1, -1, 1, 1, 1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DDBArg3()
+		{
+			Financial.DDB (1, 1, 0, 1, 1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DDBArg4()
+		{
+			Financial.DDB (1, 1, 1, 1, 0);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void DDBArg5()
+		{
+			// Period has to be > Life
+			Financial.DDB (1, 1, 1, 2, 1);
+		}
+		
+		[Test]
+		public void DDB()
+		{
+			double ddb = Financial.DDB(1000, 50, 10, 5, 3);
+			Assert.AreEqual(72.02, ddb, 0.02);
+			
+			// TODO: How should we test an optional parameter in C#?
+			ddb = Financial.DDB (1000, 50, 10, 5, 2);
+			Assert.AreEqual(81.92000000000016, ddb, 0.00000001);
+		}
+	
 		[Test]
 		public void DDB_1()
 		{
@@ -123,6 +171,26 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region SLN Tests
 
+
+				
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestSLNArgs()
+		{
+			Financial.SLN (0, 0, 0);
+		}		
+		
+		[Test]
+		public void SLN()
+		{
+//			double d = Financial.SLN (0, 0, 1);
+//			Assert.AreEqual( 0, d,"#SLN01");
+		
+			Assert.AreEqual(0.037681159420289857,Financial.SLN (45, 32, 345) ,0.00002);
+			Assert.AreEqual(0.657894736842105, Financial.SLN (-54, -4, -76), 0.00002);
+		}
+        	
+
 		[Test]
 		public void SLN_1()
 		{
@@ -147,6 +215,38 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region SYD Tests
 
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void SYDArgs1()
+		{
+			Financial.SYD (1, 1, 1, -1);
+		}	
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void SYDArgs2()
+		{
+			Financial.SYD (1, -1, 1, 1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void SYDArgs3()
+		{
+			Financial.SYD (1, 1, 1, 2);
+		}
+		
+		[Test]
+		public void SYD()
+		{
+			double d = Financial.SYD (23, 34, 26, 21);
+			Assert.AreEqual( -0.188034188034188, d, 0.0001, "#SYD01");
+
+			d = Financial.SYD (0, 1, 1, 1);
+			Assert.AreEqual( -1, d,0.00001, "#SYD02");
+		}
+		
 		[Test]
 		public void SYD_1()
 		{
@@ -194,6 +294,28 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region FV Tests
 
 		[Test]
+		public void FV()
+		{
+			double d = Financial.FV (10, 5, 3, 7, DueDate.BegOfPeriod);
+			Assert.AreEqual (-1658822, d,"#FV01");
+			
+			d = Financial.FV (10, 5, 3, 7, DueDate.EndOfPeriod);
+			Assert.AreEqual (-1175672, d,"#FV02");
+			
+			d = Financial.FV (0, 5, 3, 7, DueDate.BegOfPeriod);
+			Assert.AreEqual (-22, d,"#FV03");
+			
+			d = Financial.FV(0, 1, 1, 1, DueDate.BegOfPeriod);
+			Assert.AreEqual (-2, d,"#FV04");
+			
+			d = Financial.FV (0, 0, 0, 0, DueDate.BegOfPeriod);
+			Assert.AreEqual (0, d,"#FV05");
+			
+			d = Financial.FV (-3, -5, -6, -4, DueDate.BegOfPeriod);
+			Assert.AreEqual (-4.25, d,"#FV06");
+		}
+
+		[Test]
 		public void FV_1()
 		{
 			Assert.AreEqual(-5042.6861628644065,Financial.FV(0.1/48,48,100,0,DueDate.EndOfPeriod));
@@ -220,6 +342,22 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region Rate Tests
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void RateArgs1()
+		{
+			double d = Financial.Rate (-1, 1, 1, 1, DueDate.BegOfPeriod, 1);
+		}
+		
+		[Test]
+		public void Rate()
+		{
+			
+			Assert.AreEqual(-1.5000000000001, Financial.Rate (1, 1, 1, 1, DueDate.BegOfPeriod, 0.1), 0.1);
+			Assert.AreEqual(-1.5000000000001, Financial.Rate (1, -1, -1, -1, DueDate.BegOfPeriod, 0.1),0.1);
+			Assert.AreEqual(-1.71428571428571, Financial.Rate (1, 2, 12, 10, DueDate.BegOfPeriod, 0.5),0.1);
+		}					
 
 		[Test]
 		public void Rate_1()
@@ -290,6 +428,39 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region IRR Tests
 
 		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void IRRArgs1()
+		{
+			double [] arr = new double [0];
+			Financial.IRR (ref arr, 0.1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void IRRArgs2()
+		{
+			double [] arr = new double [] {134};
+			Financial.IRR (ref arr, 0.1);
+		}
+		
+//		[Test]
+//		[ExpectedException(typeof(ArgumentException))]
+//		public void IRRArgs3()
+//		{
+//			// -0.99 as Guess throws an exception on MS.NET, -0.98 doesn't
+//			//double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+//			//double d = Financial.IRR (ref arr, -0.99);
+//		}
+		
+		[Test]
+		public void IRR()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.IRR (ref arr, 0.1);
+			Assert.AreEqual ( 0.177435884422527, d, 0.00001);
+		}
+		
+		[Test]
 		public void IRR_1()
 		{
 			double[] values = new double[] {-50000, 20000, 20000, 20000, 10000};
@@ -333,6 +504,34 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region MIRR Tests
 
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MIRRArgs1()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.MIRR(ref arr, -1, 1);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MIRRArgs2()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.MIRR(ref arr, 1, -1);
+		}
+		
+		[Test]
+		public void MIRR()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.MIRR (ref arr, 1, 1);
+			Assert.AreEqual(0.509044845533018, d, 0.00001, "#MIRR01");
+			
+			arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			d = Financial.MIRR (ref arr, 5, 5);
+			Assert.AreEqual(2.02366041666348, d, 0.00001, "#MIRR02");
+		}
+		
 		[Test]
 		public void MIRR_1()
 		{
@@ -405,6 +604,31 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region NPer Tests
 
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void NPerArgs1()
+		{
+			double d = Financial.NPer (-1, 2, 2, 2, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void NPerArgs2()
+		{
+			double d = Financial.NPer (0, 0, 2, 2, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		public void NPer()
+		{
+			double d = Financial.NPer (3, 4, 6, 2, DueDate.BegOfPeriod);
+			Assert.AreEqual(-0.882767373181489, d, 0.0000001,  "#NPer01");
+			
+			d = Financial.NPer (1, -4, -6, -2, DueDate.EndOfPeriod);
+			Assert.AreEqual(-2.32192809488736, d, 0.0000001, "#NPer02");
+		}
+		
 		[Test]
 		public void NPer_1()
 		{
@@ -443,6 +667,37 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region IPmt Tests
 
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void IPmtArgs1()
+		{
+			Financial.IPmt (3, 6, 4, 2, 2, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void IPmtArgs2()
+		{
+			Financial.IPmt (3, 0, 4, 2, 2, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		public void IPmt()
+		{
+			double d = Financial.IPmt (10, 2, 3, 7, 9, DueDate.BegOfPeriod);
+			Assert.AreEqual ( -6.25427204374573, d, 0.000001, "#IPmt01");
+			
+			d = Financial.IPmt (10, 4, 4, 7, 4, DueDate.EndOfPeriod);
+			Assert.AreEqual ( -60.0068306011053, d, 0.000001 , "#IPmt02");
+			
+			d = Financial.IPmt (0, 5, 7, 7, 2, DueDate.BegOfPeriod);
+			Assert.AreEqual( 0, d,"#IPmt03");
+			
+			d = Financial.IPmt (-5, 5, 7, -7, -2, DueDate.BegOfPeriod);
+			Assert.AreEqual(8.92508391821792, d, 0.000001, "#IPmt04");
+
+		}
+		
 		[Test]
 		public void IPmt_1()
 		{
@@ -484,6 +739,35 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Pmt Tests
 
 		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void PmtArgs()
+		{
+			Financial.Pmt (1, 0, 1, 1, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		public void Pmt()
+		{
+			double d = Financial.Pmt (2, 5, 2, 3, DueDate.BegOfPeriod);
+			Assert.AreEqual (-1.3471074380165289, d,"#Pmt01");
+			
+			d = Financial.Pmt (2, 5, 2, 3, DueDate.EndOfPeriod);
+			Assert.AreEqual (-4.0413223140495864, d,"#Pmt02");
+			
+			d = Financial.Pmt (-3, -5, -3, -4, DueDate.BegOfPeriod);
+			Assert.AreEqual (-5.6818181818181817, d,"#Pmt03");
+			
+			d = Financial.Pmt (-3, -5, -3, -4, DueDate.EndOfPeriod);
+			Assert.AreEqual (11.363636363636363, d,"#Pmt04");
+			
+			d = Financial.Pmt (0, 1, 0, 0, DueDate.BegOfPeriod);
+			Assert.AreEqual ( 0, d,"#Pmt05");
+			
+			d = Financial.Pmt (0, 1, 0, 0, DueDate.EndOfPeriod);
+			Assert.AreEqual ( 0, d,"#Pmt06");
+		}
+	
+		[Test]
 		public void Pmt_1()
 		{
 			Assert.AreEqual(-1095.7017014703874,Financial.Pmt(0.1/48, 48, 50000, 0, DueDate.EndOfPeriod ));
@@ -507,6 +791,36 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region PPmt Tests
 
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void PPmtArgs1()
+		{
+			double d = Financial.PPmt (2, -1, 1, 1, 1, DueDate.EndOfPeriod);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void PPmtArgs2()
+		{
+			double d = Financial.PPmt (1, 2, 1, 1, 1, DueDate.BegOfPeriod);
+		}
+		
+		[Test]
+		public void PPmt()
+		{
+			double d = Financial.PPmt (10, 2, 3, 7, 9, DueDate.BegOfPeriod);
+			Assert.AreEqual(-0.120300751879702, d, 0.000001, "#PPmt01");
+			
+			d = Financial.PPmt (10, 4, 4, 7, 4, DueDate.EndOfPeriod);
+			Assert.AreEqual(-10.0006830600969, d,0.000001,"#PPmt02");
+			
+			d = Financial.PPmt (0, 5, 7, 7, 2, DueDate.BegOfPeriod);
+			Assert.AreEqual(-1.28571428571429, d,0.000001,"#PPmt03");
+			
+			d = Financial.PPmt (-5, 5, 7, -7, -2, DueDate.BegOfPeriod);
+			Assert.AreEqual( -0.175770521818777, d,0.000001,"#PPmt04");
+		}
+		
 		[Test]
 		public void PPmt_1()
 		{
@@ -546,6 +860,31 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region NPV Tests
+
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void NPVArgs1()
+		{
+			double [] arr = null;
+			double d = Financial.NPV (0.0625, ref arr);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void NPVArgs2()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.NPV (-1, ref arr);
+		}
+			
+		[Test]
+		public void NPV()
+		{
+			double [] arr = new double [] {-70000, 22000, 25000, 28000, 31000};
+			double d = Financial.NPV (0.0625, ref arr);	
+			Assert.AreEqual(19312.5702095352, d, 0.000001);
+		}
 
 		[Test]
 		public void NPV_1()
@@ -589,6 +928,16 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region PV Tests
 
+		[Test]
+		public void TestPV()
+		{
+			double d = Financial.PV (1, 1, 1, 1, DueDate.BegOfPeriod);
+			Assert.AreEqual (-1.5, d,"#PV01");
+			
+			d = Financial.PV (1, 1, 1, 1, DueDate.EndOfPeriod);
+			Assert.AreEqual (-1, d,"#PV02");
+		}
+		
 		[Test]
 		public void PV_1()
 		{

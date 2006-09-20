@@ -1,7 +1,11 @@
 // DateAndTimeTest.cs - NUnit Test Cases for Microsoft.VisualBasic.DateAndTime
 //
 // Boris Kirzner <borisk@mainsoft.com>
-//
+// Chris J. Breisch (cjbreisch@altavista.net)
+// Martin Willemoes Hansen (mwh@sysrq.dk)
+// Guy Cohen (guyc@mainsoft.com)
+
+// 
 // 
 
 // Copyright (c) 2002-2006 Mainsoft Corporation.
@@ -29,6 +33,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Globalization;
 using Microsoft.VisualBasic;
 
 namespace MonoTests.Microsoft_VisualBasic
@@ -72,6 +77,71 @@ namespace MonoTests.Microsoft_VisualBasic
 		}	
 
 		#region DateAdd Tests
+
+		[Test]
+		public void DateAdd() 
+		{
+			DateTime dtNow = DateTime.Now;
+
+			Assert.AreEqual( dtNow.AddYears(1), DateAndTime.DateAdd(DateInterval.Year, 1, dtNow), "#DA01");
+			Assert.AreEqual( dtNow.AddYears(-1), DateAndTime.DateAdd("yyyy", -1, dtNow),"#DA02");
+
+
+			bool caughtException = false;
+			
+			try 
+			{
+				DateAndTime.DateAdd("foo", 1, dtNow);
+			} 
+			catch (Exception e) 
+			{
+				Assert.AreEqual(e.GetType(), typeof(ArgumentException),"#DA03");
+				caughtException = true;
+			}
+
+			Assert.AreEqual(true, caughtException, "#DA04");
+
+			Assert.AreEqual(dtNow.AddMonths(6), DateAndTime.DateAdd(DateInterval.Quarter, 2, dtNow),"#DA05");
+			Assert.AreEqual( dtNow.AddMonths(-6), DateAndTime.DateAdd("q", -2, dtNow),"#DA06");
+
+			Assert.AreEqual(dtNow.AddMonths(3), DateAndTime.DateAdd(DateInterval.Month, 3, dtNow),"#DA07");
+			Assert.AreEqual(dtNow.AddMonths(-3), DateAndTime.DateAdd("m", -3, dtNow),"#DA08");
+
+			Assert.AreEqual(dtNow.AddDays(28), DateAndTime.DateAdd(DateInterval.WeekOfYear, 4, dtNow),"#DA09");
+			Assert.AreEqual(dtNow.AddDays(-28), DateAndTime.DateAdd("ww", -4, dtNow),"#DA10");
+
+			Assert.AreEqual(dtNow.AddDays(5), DateAndTime.DateAdd(DateInterval.Weekday, 5, dtNow),"#DA11");
+			Assert.AreEqual(dtNow.AddDays(-5), DateAndTime.DateAdd("w", -5, dtNow),"#DA12");
+
+			Assert.AreEqual(dtNow.AddDays(6), DateAndTime.DateAdd(DateInterval.DayOfYear, 6, dtNow),"#DA13");
+			Assert.AreEqual(dtNow.AddDays(-6), DateAndTime.DateAdd("y", -6, dtNow),"#DA14");
+
+			Assert.AreEqual(dtNow.AddDays(7), DateAndTime.DateAdd(DateInterval.Day, 7, dtNow),"#DA15");
+			Assert.AreEqual(dtNow.AddDays(-7), DateAndTime.DateAdd("d", -7, dtNow),"#DA16");
+
+			Assert.AreEqual(dtNow.AddHours(8), DateAndTime.DateAdd(DateInterval.Hour, 8, dtNow),"#DA17");
+			Assert.AreEqual(dtNow.AddHours(-8), DateAndTime.DateAdd(DateInterval.Hour, -8, dtNow),"#DA18");
+
+			Assert.AreEqual(dtNow.AddMinutes(9), DateAndTime.DateAdd(DateInterval.Minute, 9, dtNow),"#DA19");
+			Assert.AreEqual(dtNow.AddMinutes(-9), DateAndTime.DateAdd("n", -9, dtNow),"#DA20");
+
+			Assert.AreEqual(dtNow.AddSeconds(10), DateAndTime.DateAdd(DateInterval.Second, 10, dtNow),"#DA21");
+			Assert.AreEqual(dtNow.AddSeconds(-10), DateAndTime.DateAdd("s", -10, dtNow),"#DA22");
+
+			caughtException = false;
+
+			try 
+			{
+				DateAndTime.DateAdd(DateInterval.Year, int.MinValue, dtNow);
+			}
+			catch (Exception e) 
+			{
+				caughtException = true;
+				Assert.AreEqual(e.GetType(), typeof(Exception),"#DA23");
+			}
+
+			// Assert.AreEqual("#DA24", caughtException, true);
+		}
 
 		[Test]
 		public void DateAdd_DateInterval_1()
@@ -195,6 +265,46 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region DateDiff Tests
+
+		[Test]
+		public void DateDiff () 
+		{
+			DateTime dtNow = DateTime.Now;
+			DateTime dtOld = dtNow.AddYears(-1);
+
+			// TODO: Test this better
+			long diff = DateAndTime.DateDiff(DateInterval.Year, dtOld, dtNow, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual(dtNow, dtOld.AddYears((int)diff),"#DD01");
+
+			DateTime dtJan1 = new DateTime(2002, 1, 1);
+			DateTime dtDec31 = new DateTime(2001, 12, 31);
+
+			diff = DateAndTime.DateDiff(DateInterval.Year, dtDec31, dtJan1, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual(1L, diff,"#DD02");
+
+			diff = DateAndTime.DateDiff(DateInterval.Quarter, dtDec31, dtJan1, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual(1L, diff,"#DD03");
+
+			diff = DateAndTime.DateDiff(DateInterval.Month, dtDec31, dtJan1, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual(1L, diff,"#DD04");
+
+			DateTime dtJan4 = new DateTime(2001, 1, 4);	// This is a Thursday
+			DateTime dtJan9 = new DateTime(2001, 1, 9);	// This is the next Tuesday
+			
+			
+			long WD = DateAndTime.DateDiff(DateInterval.Weekday, dtJan4, dtJan9, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual (0L, WD,"#DD05");
+
+			long WY = DateAndTime.DateDiff(DateInterval.WeekOfYear, dtJan4, dtJan9, FirstDayOfWeek.System, FirstWeekOfYear.System);
+
+			Assert.AreEqual (1L, WY, "#DD06");
+		}
+
 
 		[Test]
 		public void DateDiff_DateInterval_1()
@@ -335,10 +445,10 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateDiff_DateInterval_WeekOfYear()
 		{
-			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System,FirstWeekOfYear.System));
-			Assert.AreEqual(104,DateAndTime.DateDiff("ww", DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System,FirstWeekOfYear.System));
-			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Sunday,FirstWeekOfYear.System));
-			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Monday,FirstWeekOfYear.System));
+			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System,FirstWeekOfYear.System),"1");
+			Assert.AreEqual(104,DateAndTime.DateDiff("ww", DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System,FirstWeekOfYear.System),"2");
+			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Sunday,FirstWeekOfYear.System),"3");
+			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Monday,FirstWeekOfYear.System),"4");
 			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Tuesday,FirstWeekOfYear.System));
 			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Wednesday,FirstWeekOfYear.System));
 			Assert.AreEqual(104,DateAndTime.DateDiff(DateInterval.WeekOfYear, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Thursday,FirstWeekOfYear.System));
@@ -368,6 +478,34 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region DatePart Tests
+
+
+		[Test]
+		public void DatePart () 
+		{
+			DateTime dtJan4 = new DateTime(2001, 1, 4);
+
+			// TODO: Test this better
+
+			Assert.AreEqual(2001, DateAndTime.DatePart(DateInterval.Year, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System),"#DP01");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.Quarter, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System),"#DP02");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.Month, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System),"#DP03");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFourDays),"#DP04");
+			Assert.AreEqual(53, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFullWeek),"#DP05");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.Jan1),"#DP06");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System),"#DP07");
+			Assert.AreEqual(7, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Friday, FirstWeekOfYear.FirstFourDays),"#DP08");
+			Assert.AreEqual(6, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Saturday, FirstWeekOfYear.FirstFourDays),"#DP09");
+			Assert.AreEqual(5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Sunday, FirstWeekOfYear.FirstFourDays),"#DP10");
+			Assert.AreEqual(4, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Monday, FirstWeekOfYear.FirstFourDays),"#DP11");
+			Assert.AreEqual(3, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Tuesday, FirstWeekOfYear.FirstFourDays),"#DP12");
+			Assert.AreEqual(2, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Wednesday, FirstWeekOfYear.FirstFourDays),"#DP13");
+			Assert.AreEqual(1, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Thursday, FirstWeekOfYear.FirstFourDays),"#DP14");
+			Assert.AreEqual(5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFourDays),"#DP15");
+
+
+		}
+
 
 		[Test]
 		public void DatePart_DateInterval_1()
@@ -527,6 +665,16 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region DateSerial Tests
 
+		
+		[Test]
+		public void DateSerial () 
+		{
+			DateTime dtJan4 = new DateTime(2001, 1, 4);
+			DateTime dtSerial = DateAndTime.DateSerial(2001, 1, 4);
+
+			Assert.AreEqual( dtJan4, dtSerial);
+		}
+
 		[Test]
 		public void DateSerial_1()
 		{
@@ -568,6 +716,16 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region DateString Tests
 
 		[Test]
+		public void DateString() 
+		{
+			string s = DateAndTime.DateString;
+			DateTime dtNow = DateTime.Today;
+			Assert.AreEqual(dtNow.ToShortDateString(), DateTime.Parse(s).ToShortDateString());
+
+			// TODO: Add a test for setting the date string too
+		}
+
+		[Test]
 		public void DateString_1()
 		{
 			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
@@ -602,6 +760,25 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region DateValue Tests
 
 		[Test]
+		public void DateValue () 
+		{
+			try 
+			{
+				DateAndTime.DateValue("This is not a date.");
+			}
+			catch (InvalidCastException) 
+			{
+				/* do nothing.  this is what we expect */
+			}
+			catch (Exception e) 
+			{
+				Assert.Fail ("Unexpected exception:" + e);
+			}
+			Assert.AreEqual(( new DateTime(1969, 2, 12)), DateAndTime.DateValue("02/12/1969"),"#DV03");
+			Assert.AreEqual((new DateTime(1969, 2, 12)), DateAndTime.DateValue("February 12, 1969"),"#DV04");
+		}
+
+		[Test]
 		public void DateValue_1()
 		{
 			Assert.AreEqual(DateTime.Parse("12/30/1991"),DateAndTime.DateValue("12/30/1991"));
@@ -629,6 +806,14 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Day Tests
 
 		[Test]
+		public void Day () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Day, DateAndTime.Day(jan1),"#D01");
+		}
+
+
+		[Test]
 		public void Day_1()
 		{
 			Assert.AreEqual(3,DateAndTime.Day(DateTime.Parse("2/3/2003")));
@@ -641,6 +826,13 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region Hour Tests
+
+		[Test]
+		public void Hour () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Hour, DateAndTime.Hour(jan1),"#H01");
+		}
 
 		[Test]
 		public void Hour_1()
@@ -656,6 +848,14 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Minute Tests
 
 		[Test]
+		public void Minute () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Minute, DateAndTime.Minute(jan1),"#MI01");
+		}
+
+
+		[Test]
 		public void Minute_1()
 		{
 			Assert.AreEqual(11,DateAndTime.Minute(DateTime.Parse("2/2/03 12:11:23 AM")));
@@ -669,6 +869,14 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Month Tests
 
 		[Test]
+		public void Month () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Month, DateAndTime.Month(jan1),"#MO01");
+		}
+		
+
+		[Test]
 		public void Month_1()
 		{
 			Assert.AreEqual(1,DateAndTime.Month(DateTime.Parse("1/1/03 12:11:23 AM")));
@@ -680,6 +888,44 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region MonthName Tests
+
+		[Test]
+		public void MonthName () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(jan1.Month),
+				DateAndTime.MonthName(jan1.Month, true),"#MN01");
+			Assert.AreEqual(CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(jan1.Month),
+				DateAndTime.MonthName(jan1.Month, false),"#MN02");
+
+			bool caughtException = false;
+
+			try 
+			{
+				DateAndTime.MonthName(0, false);
+			}
+			catch (Exception e) 
+			{
+				Assert.AreEqual(typeof(ArgumentException), e.GetType(),"#MN03");
+				caughtException = true;
+			}
+			Assert.AreEqual(true, caughtException,"#MN04");
+
+			caughtException = false;
+			
+			try 
+			{
+				DateAndTime.MonthName(14, false);
+			}
+			catch (Exception e) 
+			{
+				Assert.AreEqual(typeof(ArgumentException), e.GetType(),"#MN05");
+				caughtException = true;
+			}
+			Assert.AreEqual(true, caughtException,"#MN06");
+
+			//Assert.AreEqual("#MN07", "", DateAndTime.MonthName(13, false));
+		}
 
 		[Test]
 		public void MonthName_1()
@@ -748,6 +994,18 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region Now Tests
 
+		
+		[Test]
+		public void Now() 
+		{
+			DateTime dtNow = DateTime.Now;
+			DateTime dtTest = DateAndTime.Now;
+			DateTime dtNow2 = DateTime.Now;
+
+			Assert.AreEqual(true, dtTest >= dtNow, "#N01");
+			Assert.AreEqual(true, dtNow2 >= dtTest,"#N02");
+		}
+
 		[Test]
 		public void Now_1()
 		{
@@ -763,7 +1021,15 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Second Tests
 
 		[Test]
-		public void Second()
+		public void Second () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Second, DateAndTime.Second(jan1));
+		}
+
+
+		[Test]
+		public void Second_1()
 		{
 			Assert.AreEqual(23,DateAndTime.Second(DateTime.Parse("2/2/03 12:11:23 AM")));
 			Assert.AreEqual(0,DateAndTime.Second(DateTime.Parse("2/2/03 03:11:00 PM")));
@@ -774,6 +1040,23 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region TimeOfDay Tests
+
+		
+		[Test]
+		public void TimeOfDay() 
+		{
+			DateTime dtNow = DateTime.Now;
+			TimeSpan tsNow = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
+			DateTime dtTest = DateAndTime.TimeOfDay;
+			TimeSpan tsTest = new TimeSpan(dtTest.Hour, dtTest.Minute, dtTest.Second);
+			DateTime dtNow2 = DateTime.Now;
+			TimeSpan tsNow2 = new TimeSpan(dtNow2.Hour, dtNow2.Minute, dtNow2.Second);
+			
+			Assert.AreEqual(true, tsTest.Ticks >= tsNow.Ticks,"#TOD01");
+			Assert.AreEqual(true, tsNow2.Ticks >= tsTest.Ticks,"#TOD02");
+
+			// TODO: add a test case for setting time of day
+		}
 
 		[Test]
 		public void TimeOfDay_1()
@@ -786,6 +1069,27 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region TimeSerial Tests
+
+
+		[Test]
+		public void TimeSerial () 
+		{
+			bool caughtException = false;
+
+			try 
+			{
+				DateAndTime.TimeSerial(0, -1440, -1);
+			}
+			catch (Exception e) 
+			{
+				Assert.AreEqual(typeof(ArgumentOutOfRangeException), e.GetType());
+				caughtException = true;
+			}
+			Assert.AreEqual(true, caughtException);
+
+			Assert.AreEqual((new DateTime(1, 1, 1, 1, 1, 1)), DateAndTime.TimeSerial(1, 1, 1));
+				
+		}
 
 		[Test]
 		public void TimeSerial_1()
@@ -815,6 +1119,23 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region TimeString Tests
+
+		[Test]
+		public void TimeString() 
+		{
+			DateTime dtNow = DateTime.Now;
+			TimeSpan tsNow = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
+			string s = DateAndTime.TimeString;
+			DateTime dtTest = DateTime.Parse(s);
+			TimeSpan tsTest = new TimeSpan(dtTest.Hour, dtTest.Minute, dtTest.Second);
+			DateTime dtNow2 = DateTime.Now;
+			TimeSpan tsNow2 = new TimeSpan(dtNow2.Hour, dtNow2.Minute, dtNow2.Second);
+			
+			Assert.AreEqual(true, tsTest.Ticks >= tsNow.Ticks, "#TS01");
+			Assert.AreEqual(true, tsNow2.Ticks >= tsTest.Ticks, "#TS02");
+
+			// TODO: add a test case for setting TimeString
+		}
 
 		[Test]
 		public void TimeString_1()
@@ -861,6 +1182,29 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region TimeValue Tests
 
+
+		[Test]
+		public void TimeValue () 
+		{
+			try 
+			{
+				DateAndTime.TimeValue("This is not a time.");
+			}
+			catch (InvalidCastException) 
+			{
+				/* do nothing.  this is what we expect */
+			}
+			catch (Exception e) 
+			{
+				Assert.Fail ("Unexpected exception:" + e);
+			}
+			Assert.AreEqual((new DateTime(1, 1, 1, 16, 35, 17)), DateAndTime.TimeValue("16:35:17"),"#TV03");
+			Assert.AreEqual((new DateTime(1, 1, 1, 16, 35, 17)), DateAndTime.TimeValue("4:35:17 PM"),"#TV04");
+		//	Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			Assert.AreEqual((new DateTime(1, 1, 1, 16, 35, 17)), DateAndTime.TimeValue("4:35:17 PM"),"#TV05");
+		}
+
+
 		[Test]
 		public void TimeValue_1()
 		{
@@ -884,6 +1228,14 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Today Tests
 
 		[Test]
+		public void Today() 
+		{
+			Assert.AreEqual(DateTime.Today, DateAndTime.Today);
+
+			// TODO: Add a test for setting Today
+		}
+
+		[Test]
 		public void Today_1()
 		{
 			Assert.AreEqual(new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0,0),DateAndTime.Today);
@@ -895,6 +1247,14 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region Weekday Tests
+
+		[Test]
+		public void Weekday () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual((int)jan1.DayOfWeek + 1, DateAndTime.Weekday(jan1, FirstDayOfWeek.System));
+		}
+
 
 		[Test]
 		public void Weekday_1()
@@ -913,6 +1273,43 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region WeekdayName Tests
 
+		[Test]
+		public void WeekdayName () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual("Tue",
+				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, true, FirstDayOfWeek.Monday));
+			Assert.AreEqual("Tuesday",
+				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.Monday));
+
+			bool caughtException = false;
+
+			try 
+			{
+				DateAndTime.WeekdayName(0, false, FirstDayOfWeek.Monday);
+			}
+			catch (Exception e) 
+			{
+				Assert.AreEqual(typeof(ArgumentException), e.GetType(),"#WN03");
+				caughtException = true;
+			}
+			Assert.AreEqual(true, caughtException,"#WN04");
+
+			caughtException = false;
+			
+			try 
+			{
+				DateAndTime.WeekdayName(8, false, FirstDayOfWeek.Monday);
+			}
+			catch (Exception e) 
+			{
+				Assert.AreEqual(typeof(ArgumentException), e.GetType(),"#WN05");
+				caughtException = true;
+			}
+			Assert.AreEqual(true, caughtException,"#WN06");
+
+			Assert.AreEqual("Tuesday", DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.Monday),"#WN07");
+		}
 		[Test]
 		public void WeekdayName_1()
 		{
@@ -1075,6 +1472,13 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Year Tests
 
 		[Test]
+		public void Year () 
+		{
+			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
+			Assert.AreEqual(jan1.Year, DateAndTime.Year(jan1),"#Y01");
+		}
+
+		[Test]
 		public void Year_1()
 		{
 			Assert.AreEqual(2003,DateAndTime.Year(DateTime.Parse("1/1/03 12:11:23 AM")));
@@ -1084,6 +1488,33 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		#endregion
+
+		#region Timer Tests
+
+		[Test]
+		public void Timer() 
+		{
+			double secTimer = DateAndTime.Timer;
+			DateTime dtNow = DateTime.Now;
+			double secNow = dtNow.Hour * 3600 + dtNow.Minute * 60 + dtNow.Second + (dtNow.Millisecond + 1) / 1000D;
+			double secTimer2 = DateAndTime.Timer + .002D; // before was .001; but we need to allow for rounding differences
+			
+			// waste a little time
+			for (int i = 0; i < int.MaxValue; i++);
+
+			// get another timer
+			double secTimer3 = DateAndTime.Timer;
+			
+			// should be same time within a reasonable tolerance
+			Assert.AreEqual(true, secNow >= secTimer,"#TI01");
+			Assert.AreEqual(true, secTimer2 >= secNow,"#TI02: slacked SecTimer2=" + secTimer2 + " secNow=" + secNow);
+
+			// third timer should be greater than the first
+			Assert.AreEqual(true, secTimer3 > secTimer,"#TI03");
+		}
+
+		#endregion
+
 
 
 	}
