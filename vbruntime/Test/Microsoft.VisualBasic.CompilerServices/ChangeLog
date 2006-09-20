@@ -1,3 +1,6 @@
+2006-09-20  Rafael Mizrahi <rafim@mainsoft.com> 
+	* merge old NUnit tests into new NUnit tests 
+
 2004-09-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* UtilsTest.cs: upgraded to use nunit Assert class, also corrected testing for null that 
 	  was giving an exception when run.

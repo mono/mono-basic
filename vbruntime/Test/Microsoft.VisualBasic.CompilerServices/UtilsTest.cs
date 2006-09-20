@@ -30,6 +30,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
@@ -72,5 +73,78 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		{
 			Assert.Fail("Test for ReDim multiple-dimensioned array is not implemented yet");
 		}
+			
+		[Test]
+		public void TestCopyArrayOneDimensionalShrinking() 
+		{
+			string[] source = new string[] { "First", "Second", "Third" };
+			string[] destination = new string[2];
+			string[] result = (string[])Utils.CopyArray(source, destination);
+			Assert.AreSame (destination, result, "ResultIsDestination");
+			Assert.AreEqual (source[0], destination[0], "First");
+			Assert.AreEqual (source[1], destination[1], "Second");
+		}
+
+		[Test]
+		public void TestCopyArrayOneDimensionalExpanding() 
+		{
+			string[] source = new string[] { "First", "Second" };
+			string[] destination = new string[3];
+			string[] result = (string[])Utils.CopyArray(source, destination);
+			Assert.AreSame (destination, result, "ResultIsDestination");
+			Assert.AreEqual (source[0], destination[0], "First");
+			Assert.AreEqual (source[1], destination[1], "Second");
+			Assert.IsNull (destination[2], "EmptyThird");
+		}
+	
+		[Test]
+		public void TestCopyArrayBiDimensionalShrinking() 
+		{
+			string[,] source = new string[2,2];
+			source[0,0] = "First";
+			source[0,1] = "Second";
+			source[1,0] = "Third";
+			source[1,1] = "Fourth";
+			string[,] destination = new string[2,1];
+			string[,] result = (string[,])Utils.CopyArray(source, destination);
+			Assert.AreSame (destination, result, "ResultIsDestination");
+			Assert.AreEqual (source[0,0], destination[0,0], "First");
+			Assert.AreEqual (source[1,0], destination[1,0], "Third");
+		}
+
+		[Test]
+		public void TestCopyArrayBiDimensionalExpanding() 
+		{
+			string[,] source = new string[2,2];
+			source[0,0] = "First";
+			source[0,1] = "Second";
+			source[1,0] = "Third";
+			source[1,1] = "Fourth";
+			string[,] destination = new string[2,3];
+			string[,] result = (string[,])Utils.CopyArray(source, destination);
+			Assert.AreSame (destination, result, "ResultIsDestination");
+			Assert.AreEqual (source[0,0], destination[0,0], "First");
+			Assert.AreEqual (source[0,1], destination[0,1], "Second");
+			Assert.AreEqual (source[1,0], destination[1,0], "Third");
+			Assert.AreEqual (source[1,1], destination[1,1], "Fourth");
+			Assert.IsNull (destination[0,2], "EmptyFifth");
+			Assert.IsNull (destination[1,2], "EmptySixth");
+		}
+	
+		// An nice way to test for exceptions the class under test should 
+		// throw is:
+		/*
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void OnValid() {
+			ConcreteCollection myCollection;
+			myCollection = new ConcreteCollection();
+			....
+			Assert.AreEqual ("#UniqueID", expected, actual);
+			....
+			Fail ("Message");
+		}
+		*/
+
 	}
 }
