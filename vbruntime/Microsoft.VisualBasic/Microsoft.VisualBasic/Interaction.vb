@@ -234,7 +234,7 @@ Namespace Microsoft.VisualBasic
             End If
 
             'FIXME: problem with spaces, (with len of 1 doesn`t behave as MSDN says)
-            Return (strStart.PadLeft(CStr([Stop]).Length) + ":" + strEnd.PadLeft(CStr([Stop]).Length))
+            Return ((strStart.PadLeft(CStr([Stop]).Length + 1)) + ":" + (strEnd.PadLeft(CStr([Stop]).Length + 1)))
 
         End Function
         Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
@@ -273,6 +273,8 @@ Namespace Microsoft.VisualBasic
 
         Public Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OKOnly, _
          Optional ByVal Title As Object = Nothing) As MsgBoxResult
+#If TARGET_JVM = False Then
+
             Dim wf_buttons As MessageBoxButtons
             Dim wf_icon As MessageBoxIcon
             Dim wf_default As MessageBoxDefaultButton
@@ -328,6 +330,9 @@ Namespace Microsoft.VisualBasic
             End If
 
             MessageBox.Show(Prompt.ToString, Title.ToString(), wf_buttons, wf_icon, wf_default, wf_options)
+#Else
+            Throw New NotImplementedException
+#End If
 
         End Function
     End Module
