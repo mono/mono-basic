@@ -562,7 +562,7 @@ Namespace Microsoft.VisualBasic
             Dim i As Integer
             Dim sb As StringBuilder = New StringBuilder
 
-            If SourceArray Is Nothing Then
+            If (SourceArray Is Nothing) Or (SourceArray.Length = 0) Then
                 Return Nothing
             End If
 
