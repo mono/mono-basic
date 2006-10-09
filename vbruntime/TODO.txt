@@ -12,7 +12,6 @@ General SVN TODO
 Unit tests TODO
 ====================
 * vbnc tests status - run the 3 test suites using the VB dll compiled with vbnc.
-* clenaups - merge the NUnit tests from Test\OldTests\Microsoft.VisualBasic into the NUnit files at \Test
 * build - Integrate the tests into the mono build system.
 
 ====================
@@ -61,5 +60,4 @@ Application tests TODO
 ======================
 Grasshopper Java TODO
 ======================
-* J2EE - Convert Microsoft.VisualBasic.dll into J2EE (Grasshopper 2.0) jar.
 * run vbnc test suite using Grasshopper 2.0

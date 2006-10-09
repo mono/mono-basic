@@ -30,71 +30,77 @@
 #if NET_2_0
 Imports System
 Imports System.Threading
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
 Imports System.Windows.Forms
- 
+#End If
+
 Namespace Microsoft.VisualBasic.ApplicationServices
- 
-	Public Class WindowsFormsApplicationBase
-	 Inherits ConsoleApplicationBase
-		Public  Sub New()
-		End Sub
- 
-		Public  Sub New(ByVal mode As AuthenticationMode)
-		End Sub
- 
-		Protected Shared ReadOnly Property UseCompatibleTextRendering() As Boolean
-			Get 
-				Return False
-			End Get
-		End Property
- 
+
+    Public Class WindowsFormsApplicationBase
+        Inherits ConsoleApplicationBase
+        Public Sub New()
+        End Sub
+
+        Public Sub New(ByVal mode As AuthenticationMode)
+        End Sub
+
+        Protected Shared ReadOnly Property UseCompatibleTextRendering() As Boolean
+            Get
+                Return False
+            End Get
+        End Property
+
         '<MonoTODO("We ignore the commandLine argument")> _ 
         Public Sub Run(ByVal commandLine() As String)
+#If TARGET_JVM = False Then 'Not Supported by Grasshopper
             Throw New Exception("Visual Basic 2005 applications are not supported")
             Application.Run()
+#Else
+            Throw New NotImplementedException
+#End If
         End Sub
- 
-		Dim is_single_instance As Boolean =  False 
-		Protected Property IsSingleInstance() As Boolean
-			Get 
-				Return is_single_instance
-			End Get
-			Set (ByVal Value As Boolean) 
-				is_single_instance = value
-			End Set
-		End Property
- 
-		Dim enable_visual_styles As Boolean =  False 
-		Protected Property EnableVisualStyles() As Boolean
-			Get 
-				Return enable_visual_styles
-			End Get
-			Set (ByVal Value As Boolean) 
-				enable_visual_styles = value
-			End Set
-		End Property
- 
-		Dim save_my_settings_on_exit As Boolean =  False 
-		Protected Property SaveMySettingsOnExit() As Boolean
-			Get 
-				Return save_my_settings_on_exit
-			End Get
-			Set (ByVal Value As Boolean) 
-				save_my_settings_on_exit = value
-			End Set
-		End Property
- 
-		Dim shutdown_style As ShutdownMode
-		Protected Property ShutdownStyle() As ShutdownMode
-			Get 
-				Return shutdown_style
-			End Get
-			Set (ByVal Value As ShutdownMode) 
-				shutdown_style = value
-			End Set
-		End Property
-	End Class
+
+        Dim is_single_instance As Boolean = False
+        Protected Property IsSingleInstance() As Boolean
+            Get
+                Return is_single_instance
+            End Get
+            Set(ByVal Value As Boolean)
+                is_single_instance = Value
+            End Set
+        End Property
+
+        Dim enable_visual_styles As Boolean = False
+        Protected Property EnableVisualStyles() As Boolean
+            Get
+                Return enable_visual_styles
+            End Get
+            Set(ByVal Value As Boolean)
+                enable_visual_styles = Value
+            End Set
+        End Property
+
+        Dim save_my_settings_on_exit As Boolean = False
+        Protected Property SaveMySettingsOnExit() As Boolean
+            Get
+                Return save_my_settings_on_exit
+            End Get
+            Set(ByVal Value As Boolean)
+                save_my_settings_on_exit = Value
+            End Set
+        End Property
+
+        Dim shutdown_style As ShutdownMode
+        Protected Property ShutdownStyle() As ShutdownMode
+            Get
+                Return shutdown_style
+            End Get
+            Set(ByVal Value As ShutdownMode)
+                shutdown_style = Value
+            End Set
+        End Property
+    End Class
 End Namespace
- 
+
 #End If
 

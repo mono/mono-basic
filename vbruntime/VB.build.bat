@@ -1,4 +1,4 @@
-echo off
+rem echo off
 echo ====================================
 echo = 	Batch build Microsoft.VisualBasic.dll
 echo =	
@@ -12,6 +12,7 @@ echo =
 echo ====================================
 
 echo Get batch command parameters.
+echo Received parameters %1 %2
 SET VB_BUILD_PARAM_NET_VERSION="%1"
 SET VB_BUILD_PARAM_CONFIGURATION="%2"
 
