@@ -84,10 +84,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function Parse(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Double
             Return Double.Parse(Value, NumberFormat)
         End Function
-        'FIXME: does TryParse is a part of .NET 2 ?
         Shared Function TryParse(ByVal value As String, <OutAttribute()> ByRef result As Double) As Boolean
-#If NET_2_0 Then
-            return Double.TryParse (value, result)
+            'Grasshopper still does not support Double.TryParse
+#If NET_2_0 And TARGET_JVM = False Then
+            Return Double.TryParse(value, result)
 #Else
             Try
                 Dim x As Double
