@@ -1,3 +1,7 @@
+2006-10-10  Kornél Pál  <kornelpal@gmail.com>
+
+	* Interaction.vb: Declare Module as Public. (Fix regression.)
+
 2006-09-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Interaction.cs: Convert from a Module into an non-inheritable

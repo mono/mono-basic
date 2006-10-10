@@ -37,7 +37,7 @@ Imports System.Windows.Forms
 #End If
 
 Namespace Microsoft.VisualBasic
-    Module Interaction
+    Public Module Interaction
 
         Public Sub AppActivate(ByVal ProcessId As Integer)
             'TODO: OS Specific
