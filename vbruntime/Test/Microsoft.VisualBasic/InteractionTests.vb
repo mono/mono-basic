@@ -50,7 +50,7 @@ Namespace MonoTests.Microsoft_VisualBasic
             Dim CityName As String = "Rome"
             Dim res As String
 
-            res = Microsoft.VisualBasic.Switch(CityName = "London", "English", CityName = "Rome", "Italian", CityName = "Paris", "French")
+            res = Interaction.Switch(CityName = "London", "English", CityName = "Rome", "Italian", CityName = "Paris", "French")
             Assert.AreEqual("Italian", res)
 
         End Sub
@@ -62,7 +62,7 @@ Namespace MonoTests.Microsoft_VisualBasic
             Dim CityName As String
 
             Try
-                Microsoft.VisualBasic.Switch(CityName = "London", CityName = "Rome", "Italian", CityName = "Paris", "French")
+                Interaction.Switch(CityName = "London", CityName = "Rome", "Italian", CityName = "Paris", "French")
             Catch e As ArgumentException
                 Assert.AreEqual("Argument 'VarExpr' is not a valid value.", e.Message)
                 caughtException = True
@@ -75,7 +75,7 @@ Namespace MonoTests.Microsoft_VisualBasic
 
             Dim res As String
 
-            res = Microsoft.VisualBasic.Switch(0, "English", 0, "Italian", 342, "French")
+            res = Interaction.Switch(0, "English", 0, "Italian", 342, "French")
             Assert.AreEqual("French", res)
 
         End Sub
