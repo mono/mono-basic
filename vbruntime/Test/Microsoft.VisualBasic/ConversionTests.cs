@@ -1128,7 +1128,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(" 234.234",Conversion.Str(f));
 
 		}
-
+#if ! NET_2_0
 		[Test]
 		[ExpectedException(typeof(NullReferenceException))]
 		public void Str2() 
@@ -1138,6 +1138,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			s = "11";
 			Assert.AreEqual("11",Conversion.Str(s));
 		}
+#endif
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]

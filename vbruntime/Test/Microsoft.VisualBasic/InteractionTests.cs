@@ -96,7 +96,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#endregion
 
-			
+#if !TARGET_JVM			
 		#region GetAllSettings tests
 
 		[Test]
@@ -152,6 +152,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		#endregion
+#endif
 
 	}
 }

@@ -92,11 +92,21 @@ Namespace MonoTests.Microsoft_VisualBasic
         Public Sub ChDir_2()
             FileSystem.ChDir("")
         End Sub
+#If NET_2_0 Then
+        <Test(), ExpectedException(GetType(DirectoryNotFoundException))> _
+        Public Sub ChDir_3()
+            Dim test_dir As String = "chdir_test3"
+            FileSystem.ChDir(test_dir)
+        End Sub
+#Else
         <Test(), ExpectedException(GetType(FileNotFoundException))> _
         Public Sub ChDir_3()
             Dim test_dir As String = "chdir_test3"
             FileSystem.ChDir(test_dir)
         End Sub
+
+#End If
+
 #End Region
 
 #Region "CurDir"
@@ -175,9 +185,12 @@ Namespace MonoTests.Microsoft_VisualBasic
 Public Sub FileCopy_1()
             Dim dest_dir As String = "temp_dir1"
             Dim src_file As String = "FileCopy_1.txt"
+            Dim fs As FileStream
+
 
             If File.Exists(DATA_DIR + sep_ch + src_file) Then File.Delete(DATA_DIR + sep_ch + src_file)
-            File.CreateText(DATA_DIR + sep_ch + src_file)
+            fs = File.Create(DATA_DIR + sep_ch + src_file)
+            fs.Close()
 
             If Directory.Exists(CStr(DATA_DIR + sep_ch + dest_dir)) Then Directory.Delete(CStr(DATA_DIR + sep_ch + dest_dir))
             Directory.CreateDirectory(CStr(DATA_DIR + sep_ch + dest_dir))
@@ -186,7 +199,7 @@ Public Sub FileCopy_1()
             ' wait a while till the copy ends
             Thread.Sleep(100)
             Assert.AreEqual(True, File.Exists(DATA_DIR + sep_ch + dest_dir + sep_ch + src_file))
-            File.Delete(DATA_DIR + sep_ch + src_file)
+
             File.Delete(DATA_DIR + sep_ch + dest_dir + sep_ch + src_file)
             Directory.Delete(DATA_DIR + sep_ch + dest_dir, True)
 
@@ -550,7 +563,7 @@ Public Sub Rename_2()
             File.Delete(DATA_DIR + sep_ch + test_file_new)
         End Sub
 
-        <Test(), ExpectedException(GetType(ArgumentException))> _
+        <Test(), ExpectedException(GetType(IOException))> _
         Public Sub Rename_3()
 
             Dim test_dir As String = "Rename_test3"
@@ -566,11 +579,22 @@ Public Sub Rename_2()
         Public Sub Rename_4()
             FileSystem.Rename("", "Test")
         End Sub
-        <Test(), ExpectedException(GetType(ArgumentException))> _
+#If NET_2_0 Then
+
+        <Test(), ExpectedException(GetType(FileNotFoundException))> _
+         Public Sub Rename_5()
+            Dim test_dir As String = "Rename_test5"
+            FileSystem.Rename("fff", test_dir)
+        End Sub
+
+#Else
+       <Test(), ExpectedException(GetType(ArgumentException))> _
         Public Sub Rename_5()
             Dim test_dir As String = "Rename_test5"
             FileSystem.Rename("fff", test_dir)
         End Sub
+#End If
+ 
 
         <Test(), ExpectedException(GetType(ArgumentException))> _
         Public Sub Rename_6()

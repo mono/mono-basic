@@ -53,13 +53,14 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region DDB Tests
 
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void DDBArg1()
-		{
-			Financial.DDB (-1, 1, 1, 1, 1);
-		}
+        
+        //[Test]
+        //[ExpectedException(typeof(ArgumentException))]
+        //public void DDBArg1()
+        //{
+        //    // docs doesn`t say it should throw an exception on 'cost' <= 0 
+        //    Financial.DDB (-1, 1, 1, 1, 1);
+        //}
 		
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
@@ -632,11 +633,11 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void NPer_1()
 		{
-			Assert.AreEqual(-47.613161535165531,Financial.NPer(0.1/48,200,10000,0,DueDate.EndOfPeriod));
-			Assert.AreEqual(-47.518910769564712,Financial.NPer(0.1/48,200,10000,0,DueDate.BegOfPeriod));
+			Assert.AreEqual(-47.613161535165531,(Financial.NPer(0.1/48,200,10000,0,DueDate.EndOfPeriod)),0.00000001);
+			Assert.AreEqual(-47.518910769564712,Financial.NPer(0.1/48,200,10000,0,DueDate.BegOfPeriod),0.00000001);
 
-			Assert.AreEqual(-401.12014892843246,Financial.NPer(0.1/48,200,10000,50000,DueDate.EndOfPeriod));
-			Assert.AreEqual(-399.9412969471162,Financial.NPer(0.1/48,200,10000,50000,DueDate.BegOfPeriod));
+			Assert.AreEqual(-401.12014892843246,Financial.NPer(0.1/48,200,10000,50000,DueDate.EndOfPeriod),0.0000001);
+			Assert.AreEqual(-399.9412969471162,Financial.NPer(0.1/48,200,10000,50000,DueDate.BegOfPeriod),0.0000001);
 		}
 
 		[Test]

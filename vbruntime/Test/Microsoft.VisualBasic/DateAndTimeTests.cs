@@ -238,7 +238,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		public void DateAdd_1()
 		{
 			// Argument 'DateValue' cannot be converted to type 'Date'.
-			DateAndTime.DateAdd("d", 0, "125/03");
+			DateAndTime.DateAdd("d", 0, "12test5/03");
 		}
 
 		[Test]
@@ -472,7 +472,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		public void DateDiff_3()
 		{
 			// Argument 'Date2' cannot be converted to type 'Date'.
-			DateAndTime.DateDiff("d", DateTime.Parse("12/5/03"),"125/03", (FirstDayOfWeek)8 ,FirstWeekOfYear.System );
+			DateAndTime.DateDiff("d", DateTime.Parse("12/5/03"),"12test5/03", (FirstDayOfWeek)8 ,FirstWeekOfYear.System );
 		}
 
 		#endregion
@@ -658,7 +658,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		public void DatePart_3()
 		{
 			// Argument 'Date2' cannot be converted to type 'Date'.
-			DateAndTime.DatePart("d", "125/03", (FirstDayOfWeek)8 ,FirstWeekOfYear.System );
+			DateAndTime.DatePart("d", "12test5/03", (FirstDayOfWeek)8 ,FirstWeekOfYear.System );
 		}
 
 		#endregion
@@ -982,13 +982,13 @@ namespace MonoTests.Microsoft_VisualBasic
 			DateAndTime.MonthName(15,false);
 		}
 
-		[Test]		
-		public void MonthName_5()
-		{
-			// LAMESPEC: MSDN states that in 12-month calendar the 
-			// 13 month should return empty string, but exception is thrown instead
-			Assert.AreEqual(String.Empty,DateAndTime.MonthName(13,false));
-		}
+        //[Test]		
+        //public void MonthName_5()
+        //{
+        //    // LAMESPEC: MSDN states that in 12-month calendar the 
+        //    // 13 month should return empty string, but exception is thrown instead
+        //    Assert.AreEqual(String.Empty,DateAndTime.MonthName(13,false));
+        //}
 
 		#endregion
 
@@ -1094,7 +1094,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void TimeSerial_1()
 		{
-			Assert.AreEqual(DateTime.Parse("1/1/0001 02:03:04 2:3:4"),DateAndTime.TimeSerial(2,3,4));
+			Assert.AreEqual(DateTime.Parse("1/1/0001 02:03:04"),DateAndTime.TimeSerial(2,3,4));
 			Assert.AreEqual(DateTime.Parse("1/1/0001 21:56:56"),DateAndTime.TimeSerial(-2,-3,-4));
 			Assert.AreEqual(DateTime.Parse("1/1/0001 22:33:34"),DateAndTime.TimeSerial(22,33,34));
 			Assert.AreEqual(DateTime.Parse("1/1/0001 01:26:16"),DateAndTime.TimeSerial(-22,-33,-44));
