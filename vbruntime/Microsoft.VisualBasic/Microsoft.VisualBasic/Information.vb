@@ -94,19 +94,22 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function IsNumeric(ByVal Expression As Object) As Boolean
 
+            If (Expression Is Nothing) Or (TypeOf Expression Is Date) Then return False
+
             If (TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
                 Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
-                Or (TypeOf Expression Is Boolean) Then Return True
+                Or (TypeOf Expression Is Boolean) Or (TypeOf Expression Is Byte) Then Return True
 
             Try
-                Dim tempStr As String
-                tempStr = CStr(Expression)
-                Convert.ToDouble(tempStr)
-                Return True
+                If TypeOf Expression Is String Then
+                    Convert.ToDouble(Expression)
+                    Return True
+                End If
             Catch ex As Exception
                 Return False
             End Try
 
+            Return False
         End Function
         Public Function IsReference(ByVal Expression As Object) As Boolean
             If TypeOf Expression Is ValueType Then
@@ -270,7 +273,8 @@ Namespace Microsoft.VisualBasic
         Public Function VarType(ByVal VarName As Object) As Microsoft.VisualBasic.VariantType
 
             Dim tmpVar As VariantType = VariantType.Empty
-            Dim TmpObjType, TmpStr As String
+            Dim TmpObjType, TmpStr, TmpObjType2 As String
+            Dim ArrCh As String
 
             If VarName Is Nothing Then Return VariantType.Object
             If TypeOf VarName Is System.Exception Then Return VariantType.Error
@@ -282,9 +286,14 @@ Namespace Microsoft.VisualBasic
                 '' remove the "System." from the type we get
                 TmpObjType = TmpStr.ToLower.Substring(7)
             End If
-
-
-            Select Case TmpObjType
+            If VarName.GetType.IsArray Then
+                Dim lastch As Integer = TmpObjType.LastIndexOf("]") - 1
+                Dim firstch As Integer = TmpObjType.IndexOf("[") - 1
+                TmpObjType2 = TmpObjType.Remove(firstch + 1, (lastch - firstch + 1))
+            Else
+                TmpObjType2 = TmpObjType
+            End If
+            Select Case TmpObjType2
                 Case "string"
                     tmpVar = VariantType.String
                 Case "dbnull"
@@ -321,9 +330,9 @@ Namespace Microsoft.VisualBasic
             '' FIXME: on .NET 2 this doesn`t pass compilation
 #If Not NET_2_0 Then
             '' Check If got Array Of Arrays then should return VariantType.Array | VariantType.Object 
-               If (VarName.GetType.IsArray) And (TypeOf VarName.GetType.GetElementType Is System.Array) Then
-                  Return (VariantType.Array Or VariantType.Object)
-               End If
+            If (VarName.GetType.IsArray) And (TypeOf VarName.GetType.GetElementType Is System.Array) Then
+                Return (VariantType.Array Or VariantType.Object)
+            End If
 #End If
             If VarName.GetType.IsArray Then
                 Return (VariantType.Array Or tmpVar)

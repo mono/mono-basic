@@ -662,7 +662,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			object tmpObj = null;
 			DateTime tmpDate = DateTime.Parse("5/31/1993");
 			object tmpDBnullobj = System.DBNull.Value;
-			int[] tmpIntArr = new int [2];
+			int[] tmpIntArr = new int []{1,2,3} ;
 			string[] tmpStrArr = new string [2];
 			MyStruct tmpStruct = new MyStruct();
 			string strstr = "test";
@@ -679,7 +679,9 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(VariantType.UserDefinedType, Information.VarType(tmpStruct));
 			Assert.AreEqual(VariantType.Null, Information.VarType(tmpDBnullobj));
 			Assert.AreEqual(VariantType.Array | VariantType.Integer, Information.VarType(int_arr),"VariantType.Array | VariantType.Integer");
-			Assert.AreEqual(VariantType.Array | VariantType.Integer, Information.VarType(tmpIntArr),"VariantType.Array | VariantType.Integer");
+			// Information.VarType doesn`t return what docs says: int[,] should returns VariantType.Array | VariantType.Object 
+			// but returns VariantType.Array | VariantType.Integer SO this is what we implement too.
+			Assert.AreEqual(VariantType.Array | VariantType.Integer, Information.VarType(tmpIntArr),"VariantType.Array | VariantType.Integer 2D");
 			Assert.AreEqual(VariantType.Array | VariantType.String, Information.VarType(tmpStrArr),"VariantType.Array | VariantType.String");
 			Assert.AreEqual(VariantType.Date, Information.VarType(tmpDate));
 			Assert.AreEqual(VariantType.Boolean, Information.VarType(b1));
