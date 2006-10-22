@@ -127,15 +127,17 @@ Namespace Microsoft.VisualBasic
             regk = Registry.CurrentUser
             Try
                 ''TODO: original dll set/get settings from this path
-                ''regk = regk.OpenSubKey("Software\VB and VBA Program Settings\" + AppName)
-                regk = regk.OpenSubKey(AppName)
+                regk = regk.OpenSubKey("Software\VB and VBA Program Settings\" + AppName)
                 regk = regk.OpenSubKey(Section)
             Catch ex As Exception
                 Return Nothing
             End Try
-
-            elm_count = regk.ValueCount
-            If elm_count = 0 Then Return Nothing
+            if (regk Is Nothing) Then 
+                  Return Nothing
+            Else
+                elm_count = regk.ValueCount
+                If elm_count = 0 Then Return Nothing
+            End If 
 
             ReDim Preserve arr_str(elm_count)
             ReDim Preserve res_setting(elm_count - 1, 1)
@@ -158,7 +160,7 @@ Namespace Microsoft.VisualBasic
 #If TARGET_JVM = False Then
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
-            rkey = rkey.OpenSubKey(AppName)
+            rkey = rkey.OpenSubKey("Software\VB and VBA Program Settings\" + AppName)
             rkey = rkey.OpenSubKey(Section)
             Return rkey.GetValue(Key, CObj([Default])).ToString
 #Else
@@ -182,8 +184,9 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
-            Dim strEnd, strStart As String
+            Dim strEnd, strStart, strStop As String
             Dim lEnd, lStart As Long
+            Dim nSpaces As Integer
 
             If Start < 0 Then Throw New System.ArgumentException("Argument 'Start' is not a valid value.")
             If [Stop] <= Start Then Throw New System.ArgumentException("Argument 'Stop' is not a valid value.")
@@ -232,9 +235,18 @@ Namespace Microsoft.VisualBasic
             Else
                 strStart = CStr(lStart)
             End If
+            
+            strStop = Cstr([stop])
+            
+            If (strEnd.Length > strStop.Length) Then
+                nSpaces = strEnd.Length 
+            Else
+                nSpaces = strStop.Length
+            End If
+	    
+	    If (nSpaces = 1) Then nSpaces = nSpaces + 1
 
-            'FIXME: problem with spaces, (with len of 1 doesn`t behave as MSDN says)
-            Return ((strStart.PadLeft(CStr([Stop]).Length + 1)) + ":" + (strEnd.PadLeft(CStr([Stop]).Length + 1)))
+            Return strStart.PadLeft(nSpaces) + ":" + strEnd.PadLeft(nSpaces)
 
         End Function
         Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
@@ -243,8 +255,8 @@ Namespace Microsoft.VisualBasic
 
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
-            rkey = rkey.OpenSubKey(AppName)
-            rkey = rkey.OpenSubKey(Section)
+            rkey = rkey.CreateSubKey("Software\VB and VBA Program Settings\" + AppName)
+            rkey = rkey.CreateSubKey(Section)
             rkey.SetValue(Key, Setting)
             'Closes the key and flushes it to disk if the contents have been modified.
             rkey.Close()
