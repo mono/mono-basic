@@ -1149,12 +1149,22 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,Strings.Len(new Int16()),"Int16");
 			Assert.AreEqual(4,Strings.Len(new Int32()),"Int32");
 			Assert.AreEqual(8,Strings.Len(new Int64()),"Int64");
+// Passing unsigned types to VB1.1 returns the sizeof of a signed type.
+#if NET_2_0
 			Assert.AreEqual(1,Strings.Len(new SByte()),"SByte");
+#else
+			Assert.AreEqual(2,Strings.Len(new SByte()),"SByte");
+#endif
 			Assert.AreEqual(4,Strings.Len(new Single()),"Single");
 			Assert.AreEqual(8,Strings.Len(new DateTime()),"DateTime");
 			Assert.AreEqual(8,Strings.Len(new Decimal()),"Decimal");
+#if NET_2_0
 			Assert.AreEqual(2,Strings.Len(new UInt16()),"UInt16");
 			Assert.AreEqual(4,Strings.Len(new UInt32()),"UInt32");
+#else
+			Assert.AreEqual(4,Strings.Len(new UInt16()),"UInt16");
+			Assert.AreEqual(8,Strings.Len(new UInt32()),"UInt32");
+#endif
 			decimal d = new UInt64();
 			Assert.AreEqual(8,Strings.Len(d));
 
