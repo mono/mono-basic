@@ -264,11 +264,37 @@ Namespace Microsoft.VisualBasic
                                             Optional ByVal GroupDigits As TriState = TriState.UseDefault) As String
 
             If (NumDigitsAfterDecimal > 99) Then
-                'FIXME : provide a message
-                Throw New ArgumentException("")
+                Throw New ArgumentException(" Argument 'NumDigitsAfterDecimal' must be within the range 0 to 99.")
             End If
 
-            'FIXME : should throw InvalidCastException in Expression is not numeric
+            Try
+                If TypeOf Expression Is String Then
+                    Dim tmpstr1 As String
+                    Dim tmpstr2 As String = CStr(Expression)
+                    If ((tmpstr2.StartsWith("(")) And (tmpstr2.EndsWith(")"))) Then
+                        tmpstr1 = tmpstr2.Substring(1, tmpstr2.Length - 1)
+                        tmpstr2 = tmpstr1.Substring(0, tmpstr1.Length - 2)
+
+                        Dim obj As CultureInfo = System.Globalization.CultureInfo.CurrentCulture()
+                        Dim currSym As String = obj.NumberFormat.CurrencySymbol()
+                        Dim ch1 As Char = CChar(tmpstr2.Substring(0, 1))
+
+                        If Not ch1.IsDigit(ch1) Then
+                            tmpstr2.TrimStart(CChar(currSym))
+                        End If
+                    End If
+                    Convert.ToDouble(tmpstr2)
+                End If
+            Catch ex As Exception
+                Throw New InvalidCastException(" Cast from String to type 'Double' is not valid.")
+            End Try
+
+            If Not ((TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
+                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
+                Or (TypeOf Expression Is Byte)) Then
+                Throw New InvalidCastException(" Cast to type 'Currency' is not valid.")
+            End If
+
 
             If NumDigitsAfterDecimal = -1 And IncludeLeadingDigit = TriState.Usedefault _
                 And UseParensForNegativeNumbers = TriState.UseDefault And GroupDigits = Tristate.UseDefault Then
@@ -346,9 +372,25 @@ Namespace Microsoft.VisualBasic
                                 Optional ByVal GroupDigits As TriState = TriState.UseDefault) As String
 
             If (NumDigitsAfterDecimal > 99) Then
-                'FIXME : provide a message
-                Throw New ArgumentException("")
+                Throw New ArgumentException("Argument 'NumDigitsAfterDecimal' must be within the range 0 to 99")
             End If
+
+            Try
+                If TypeOf Expression Is String Then
+                    Dim tmpstr2 As String = CStr(Expression)
+                    Convert.ToDouble(tmpstr2)
+                End If
+
+            Catch ex As Exception
+                Throw New InvalidCastException(" Cast from String to type 'Double' is not valid.")
+            End Try
+
+            If Not ((TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
+                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
+                Or (TypeOf Expression Is Byte)) Then
+                Throw New InvalidCastException(" Cast to type 'Currency' is not valid.")
+            End If
+
 
             ' FIXME : what affects default values
             If UseParensForNegativeNumbers = TriState.UseDefault Then
@@ -415,7 +457,25 @@ Namespace Microsoft.VisualBasic
 
             'FIXME : should throw IllegalCastException
             'Expression = CDbl(Expression)
+            If (NumDigitsAfterDecimal < -1) Then
+                Throw New ArgumentException("Argument 'NumDigitsAfterDecimal' is Invalid")
+            End If
 
+            Try
+                If TypeOf Expression Is String Then
+                    Dim tmpstr2 As String = CStr(Expression)
+                    Convert.ToDouble(tmpstr2)
+                End If
+
+            Catch ex As Exception
+                Throw New InvalidCastException(" Cast from String to type 'Double' is not valid.")
+            End Try
+
+            If Not ((TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
+                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
+                Or (TypeOf Expression Is Byte)) Then
+                Throw New InvalidCastException(" Cast to type 'Currency' is not valid.")
+            End If
             ' FIXME : what affects default values
             If UseParensForNegativeNumbers = TriState.UseDefault Then
                 UseParensForNegativeNumbers = TriState.False
@@ -562,8 +622,16 @@ Namespace Microsoft.VisualBasic
             Dim i As Integer
             Dim sb As StringBuilder = New StringBuilder
 
-            If (SourceArray Is Nothing) Or (SourceArray.Length = 0) Then
+            If (SourceArray Is Nothing)  Then
                 Return Nothing
+            End If
+            If (SourceArray.Length = 0)  Then
+                Return Nothing
+            End If
+
+
+            If TypeOf SourceArray(0) Is Array Then
+                Throw New ArgumentException("Procedure call or argument is not valid")
             End If
 
             If SourceArray.Rank > 1 Then
