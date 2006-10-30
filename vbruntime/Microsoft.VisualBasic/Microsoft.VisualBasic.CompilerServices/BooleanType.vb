@@ -73,6 +73,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return DirectCast(Value, Long) <> 0
             End If
 
+            If TypeOf Value Is Short Then
+                Return DirectCast(Value, Short) <> 0
+            End If
+
 
             If TypeOf Value Is Decimal Then
                 Return DirectCast(Value, Decimal) <> 0

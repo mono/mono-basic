@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen	   (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -35,6 +35,88 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Private Sub New()
             'Nobody should see constructor
         End Sub
+
+        Private Shared Function BiggestTypeCode(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.TypeCode
+
+            Dim type1 As Type = obj1.GetType()
+            Dim type2 As Type = obj2.GetType()
+            Dim LTypeFound As TypeCode
+            Dim TC1 As TypeCode = Type.GetTypeCode(type1)
+            Dim TC2 As TypeCode = Type.GetTypeCode(type2)
+
+
+            Select Case TC1
+                Case TypeCode.Boolean
+                    If (TC2 = TypeCode.Byte) Then
+                        LTypeFound = TC1
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC2
+                    End If
+                Case TypeCode.Byte
+                    If (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC2
+                    End If
+                Case TypeCode.Int16
+                    If (TC2 = TypeCode.Boolean) Or (TC2 = TypeCode.Byte) Then
+                        LTypeFound = TC1
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC2
+                    End If
+                Case TypeCode.Int32
+                    If (TC2 = TypeCode.Boolean) Or (TC2 = TypeCode.Byte) Or (TC2 = TypeCode.Int16) Then
+                        LTypeFound = TC1
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC2
+                    End If
+                Case TypeCode.Int64
+                    If (TC2 = TypeCode.Single) Or (TC2 = TypeCode.Double) Or (TC2 = TypeCode.Decimal) Then
+                        LTypeFound = TC1
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC2
+                    End If
+                Case TypeCode.Decimal
+                    If (TC2 = TypeCode.Single) Or (TC2 = TypeCode.Double) Then
+                        LTypeFound = TC2
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC1
+                    End If
+                Case TypeCode.Single
+                    If (TC2 = TypeCode.Single) Or (TC2 = TypeCode.Double) Then
+                        LTypeFound = TC2
+                    ElseIf (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC1
+                    End If
+                Case TypeCode.Double
+                    If (TC2 = TypeCode.String) Then
+                        LTypeFound = TypeCode.Double
+                    Else
+                        LTypeFound = TC1
+                    End If
+                Case TypeCode.String
+                    LTypeFound = TypeCode.Double
+            End Select
+
+            Return LTypeFound
+
+
+        End Function
+
+
+
 
         Public Shared Function ObjTst(ByVal o1 As System.Object, ByVal o2 As System.Object, ByVal TextCompare As System.Boolean) As System.Int32
 
@@ -210,15 +292,391 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function BitAndObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
-            Throw New NotImplementedException
+
+            Dim b1 As Byte
+            Dim b2 As Byte
+            Dim bool1 As Boolean
+            Dim bool2 As Boolean
+            Dim dbl1 As Double
+            Dim dbl2 As Double
+            Dim sn1 As Single
+            Dim sn2 As Single
+            Dim dec1 As Decimal
+            Dim dec2 As Decimal
+            Dim l1 As Long
+            Dim l2 As Long
+            Dim i1 As Integer
+            Dim i2 As Integer
+            Dim short1 As Short
+            Dim short2 As Short
+            Dim s1 As String
+            Dim s2 As String
+
+            '' FIXME: return typecode should be the second obj's typecode 
+            ''        and not int32 all the time 
+            If (obj1 Is Nothing) Then
+                Return 0
+            End If
+            If (obj2 Is Nothing) Then
+                Return 0
+            End If
+
+            Dim TC1 As TypeCode = Type.GetTypeCode(obj1.GetType())
+            Dim TC2 As TypeCode = Type.GetTypeCode(obj2.GetType())
+
+            '' select the TypeCode to return
+            Dim LTypeFound As TypeCode = BiggestTypeCode(obj1, obj2)
+            Select Case (LTypeFound)
+                Case TypeCode.Boolean
+                    Return ((BooleanType.FromObject(obj1)) And (Convert.ToBoolean(obj2)))
+                Case TypeCode.Byte
+                    Return ((ByteType.FromObject(obj1)) And (Convert.ToByte(obj2)))
+                Case TypeCode.Double
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) And Convert.ToInt64(dbl2))
+                Case TypeCode.Decimal
+                    If TC1 = TypeCode.Boolean Then
+                        dec1 = -1 * Convert.ToDecimal(obj1)
+                    Else
+                        dec1 = Convert.ToDecimal(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dec2 = -1 * Convert.ToDecimal(obj2)
+                    Else
+                        dec2 = Convert.ToDecimal(obj2)
+                    End If
+
+                    Return (Convert.ToInt64(dec1) And Convert.ToInt64(dec2))
+                Case TypeCode.Int32
+                    If TC1 = TypeCode.Boolean Then
+                        i1 = -1 * Convert.ToInt32(obj1)
+                    Else
+                        i1 = Convert.ToInt32(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        i2 = -1 * Convert.ToInt32(obj2)
+                    Else
+                        i2 = Convert.ToInt32(obj2)
+                    End If
+
+                    Return (Convert.ToInt32(i1) And Convert.ToInt32(i2))
+                Case TypeCode.Int16
+                    If TC1 = TypeCode.Boolean Then
+                        short1 = -1S * Convert.ToInt16(obj1)
+                    Else
+                        short1 = Convert.ToInt16(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        short2 = -1S * Convert.ToInt16(obj2)
+                    Else
+                        short2 = Convert.ToInt16(obj2)
+                    End If
+
+                    Return (Convert.ToInt16(short1) And Convert.ToInt16(short2))
+                Case TypeCode.Int64
+                    If TC1 = TypeCode.Boolean Then
+                        l1 = -1 * Convert.ToInt64(obj1)
+                    Else
+                        l1 = Convert.ToInt64(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        l2 = -1 * Convert.ToInt64(obj2)
+                    Else
+                        l2 = Convert.ToInt64(obj2)
+                    End If
+                    Return (Convert.ToInt64(l1) And Convert.ToInt64(l2))
+                Case TypeCode.Single
+                    sn1 = Convert.ToSingle(obj1)
+                    sn2 = Convert.ToSingle(obj2)
+                    Return (Convert.ToInt64(sn1) And Convert.ToInt64(sn2))
+                Case TypeCode.String
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) And Convert.ToInt64(dbl2))
+                Case Else
+                    Throw New InvalidCastException
+            End Select
+
+
         End Function
 
         Public Shared Function BitOrObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
-            Throw New NotImplementedException
+
+            Dim b1 As Byte
+            Dim b2 As Byte
+            Dim bool1 As Boolean
+            Dim bool2 As Boolean
+            Dim dbl1 As Double
+            Dim dbl2 As Double
+            Dim sn1 As Single
+            Dim sn2 As Single
+            Dim dec1 As Decimal
+            Dim dec2 As Decimal
+            Dim l1 As Long
+            Dim l2 As Long
+            Dim i1 As Integer
+            Dim i2 As Integer
+            Dim short1 As Short
+            Dim short2 As Short
+            Dim s1 As String
+            Dim s2 As String
+
+
+            '' FIXME: return typecode should be the second obj's typecode 
+            ''        and not int64 all the time 
+            If (obj1 Is Nothing) Then
+                Return Convert.ToInt64(obj2)
+            End If
+            If (obj2 Is Nothing) Then
+                Return Convert.ToInt64(obj1)
+            End If
+
+            Dim TC1 As TypeCode = Type.GetTypeCode(obj1.GetType())
+            Dim TC2 As TypeCode = Type.GetTypeCode(obj2.GetType())
+
+            '' select the TypeCode to return
+            Dim LTypeFound As TypeCode = BiggestTypeCode(obj1, obj2)
+
+            Select Case (LTypeFound)
+                Case TypeCode.Boolean
+                    Return ((BooleanType.FromObject(obj1)) Or (Convert.ToBoolean(obj2)))
+                Case TypeCode.Byte
+                    Return ((ByteType.FromObject(obj1)) Or (Convert.ToByte(obj2)))
+                Case TypeCode.Double
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) Or Convert.ToInt64(dbl2))
+                Case TypeCode.Decimal
+                    If TC1 = TypeCode.Boolean Then
+                        dec1 = -1 * Convert.ToDecimal(obj1)
+                    Else
+                        dec1 = Convert.ToDecimal(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dec2 = -1 * Convert.ToDecimal(obj2)
+                    Else
+                        dec2 = Convert.ToDecimal(obj2)
+                    End If
+
+                    Return (Convert.ToInt64(dec1) Or Convert.ToInt64(dec2))
+                Case TypeCode.Int32
+                    If TC1 = TypeCode.Boolean Then
+                        i1 = -1 * Convert.ToInt32(obj1)
+                    Else
+                        i1 = Convert.ToInt32(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        i2 = -1 * Convert.ToInt32(obj2)
+                    Else
+                        i2 = Convert.ToInt32(obj2)
+                    End If
+
+                    Return (Convert.ToInt32(i1) Or Convert.ToInt32(i2))
+                Case TypeCode.Int16
+                    If TC1 = TypeCode.Boolean Then
+                        short1 = -1S * Convert.ToInt16(obj1)
+                    Else
+                        short1 = Convert.ToInt16(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        short2 = -1S * Convert.ToInt16(obj2)
+                    Else
+                        short2 = Convert.ToInt16(obj2)
+                    End If
+
+                    Return (Convert.ToInt16(short1) Or Convert.ToInt16(short2))
+                Case TypeCode.Int64
+                    If TC1 = TypeCode.Boolean Then
+                        l1 = -1 * Convert.ToInt64(obj1)
+                    Else
+                        l1 = Convert.ToInt64(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        l2 = -1 * Convert.ToInt64(obj2)
+                    Else
+                        l2 = Convert.ToInt64(obj2)
+                    End If
+                    Return (Convert.ToInt64(l1) Or Convert.ToInt64(l2))
+                Case TypeCode.Single
+                    sn1 = Convert.ToSingle(obj1)
+                    sn2 = Convert.ToSingle(obj2)
+                    Return (Convert.ToInt64(sn1) Or Convert.ToInt64(sn2))
+                Case TypeCode.String
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) Or Convert.ToInt64(dbl2))
+                Case Else
+                    Throw New InvalidCastException
+            End Select
+
         End Function
 
         Public Shared Function BitXorObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
-            Throw New NotImplementedException
+
+            Dim b1 As Byte
+            Dim b2 As Byte
+            Dim bool1 As Boolean
+            Dim bool2 As Boolean
+            Dim dbl1 As Double
+            Dim dbl2 As Double
+            Dim sn1 As Single
+            Dim sn2 As Single
+            Dim dec1 As Decimal
+            Dim dec2 As Decimal
+            Dim l1 As Long
+            Dim l2 As Long
+            Dim i1 As Integer
+            Dim i2 As Integer
+            Dim short1 As Short
+            Dim short2 As Short
+            Dim s1 As String
+            Dim s2 As String
+
+
+            '' FIXME: return typecode should be the second obj's typecode 
+            ''        and not int64 all the time 
+            If (obj1 Is Nothing) Then
+                Return Convert.ToInt64(obj2)
+            End If
+            If (obj2 Is Nothing) Then
+                Return Convert.ToInt64(obj1)
+            End If
+
+            Dim TC1 As TypeCode = Type.GetTypeCode(obj1.GetType())
+            Dim TC2 As TypeCode = Type.GetTypeCode(obj2.GetType())
+
+            '' select the TypeCode to return
+            Dim LTypeFound As TypeCode = BiggestTypeCode(obj1, obj2)
+
+            Select Case (LTypeFound)
+                Case TypeCode.Boolean
+                    Return ((BooleanType.FromObject(obj1)) Xor (Convert.ToBoolean(obj2)))
+                Case TypeCode.Byte
+                    Return ((ByteType.FromObject(obj1)) Xor (Convert.ToByte(obj2)))
+                Case TypeCode.Double
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) Xor Convert.ToInt64(dbl2))
+                Case TypeCode.Decimal
+                    If TC1 = TypeCode.Boolean Then
+                        dec1 = -1 * Convert.ToDecimal(obj1)
+                    Else
+                        dec1 = Convert.ToDecimal(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dec2 = -1 * Convert.ToDecimal(obj2)
+                    Else
+                        dec2 = Convert.ToDecimal(obj2)
+                    End If
+
+                    Return (Convert.ToInt64(dec1) Xor Convert.ToInt64(dec2))
+                Case TypeCode.Int32
+                    If TC1 = TypeCode.Boolean Then
+                        i1 = -1 * Convert.ToInt32(obj1)
+                    Else
+                        i1 = Convert.ToInt32(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        i2 = -1 * Convert.ToInt32(obj2)
+                    Else
+                        i2 = Convert.ToInt32(obj2)
+                    End If
+
+                    Return (Convert.ToInt32(i1) Xor Convert.ToInt32(i2))
+                Case TypeCode.Int16
+                    If TC1 = TypeCode.Boolean Then
+                        short1 = -1S * Convert.ToInt16(obj1)
+                    Else
+                        short1 = Convert.ToInt16(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        short2 = -1S * Convert.ToInt16(obj2)
+                    Else
+                        short2 = Convert.ToInt16(obj2)
+                    End If
+
+                    Return (Convert.ToInt16(short1) Xor Convert.ToInt16(short2))
+                Case TypeCode.Int64
+                    If TC1 = TypeCode.Boolean Then
+                        l1 = -1 * Convert.ToInt64(obj1)
+                    Else
+                        l1 = Convert.ToInt64(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        l2 = -1 * Convert.ToInt64(obj2)
+                    Else
+                        l2 = Convert.ToInt64(obj2)
+                    End If
+                    Return (Convert.ToInt64(l1) Xor Convert.ToInt64(l2))
+                Case TypeCode.Single
+                    If TC1 = TypeCode.Boolean Then
+                        sn1 = -1 * Convert.ToSingle(obj1)
+                    Else
+                        sn1 = Convert.ToSingle(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        sn2 = -1 * Convert.ToSingle(obj2)
+                    Else
+                        sn2 = Convert.ToSingle(obj2)
+                    End If
+                    Return (Convert.ToInt64(sn1) Xor Convert.ToInt64(sn2))
+                Case TypeCode.String
+                    If TC1 = TypeCode.Boolean Then
+                        dbl1 = -1 * Convert.ToDouble(obj1)
+                    Else
+                        dbl1 = Convert.ToDouble(obj1)
+                    End If
+                    If TC2 = TypeCode.Boolean Then
+                        dbl2 = -1 * Convert.ToDouble(obj2)
+                    Else
+                        dbl2 = Convert.ToDouble(obj2)
+                    End If
+                    Return (Convert.ToInt64(dbl1) Xor Convert.ToInt64(dbl2))
+                Case Else
+                    Throw New InvalidCastException
+            End Select
+
         End Function
 
         Public Shared Function AddObj(ByVal o1 As System.Object, ByVal o2 As System.Object) As System.Object
