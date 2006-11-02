@@ -41,6 +41,7 @@ Namespace Microsoft.VisualBasic
         Public Const vbTab As String = ControlChars.Tab
         Public Const vbVerticalTab As String = ControlChars.VerticalTab
         Public Const vbNullChar As String = ControlChars.NullChar
+        Public Const vbNullString As String = Nothing
         Public Const vbQuote As String = ControlChars.Quote
 
         Public Const vbGeneralDate As DateFormat = DateFormat.GeneralDate
@@ -92,6 +93,7 @@ Namespace Microsoft.VisualBasic
         Public Const vbDate As VariantType = VariantType.Date
         Public Const vbString As VariantType = VariantType.String
         Public Const vbObject As VariantType = VariantType.Object
+        Public Const vbObjectError As Integer = -2147221504
         Public Const vbBoolean As VariantType = VariantType.Boolean
         Public Const vbVariant As VariantType = VariantType.Variant
         Public Const vbDecimal As VariantType = VariantType.Decimal

@@ -33,7 +33,7 @@ Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Field, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class VBFixedArrayAttribute
         Inherits Attribute
         Public Sub New(ByVal UpperBound1 As Integer)

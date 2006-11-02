@@ -33,7 +33,7 @@ Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Field, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class VBFixedStringAttribute
         Inherits Attribute
         Public Sub New(ByVal Length As Integer)
