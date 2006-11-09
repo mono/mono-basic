@@ -122,14 +122,9 @@ Namespace Microsoft.VisualBasic
             ' VB rank start at 1, but System.Array.Rank starts at 0
             Dim RealRank As Integer
             RealRank = Rank - 1
+            If Array Is Nothing Then Throw New System.ArgumentException("Argument 'Array' is not a valid value")
 
-            ' if single dimension
-            If RealRank = 0 Then
-                Return Array.GetLowerBound(RealRank)
-            Else
-                'FIXME: not implemented support for multi-dim arrays
-                Throw New NotImplementedException("Implement me: Rank <> 1")
-            End If
+            Return Array.GetLowerBound(RealRank)
         End Function
         Public Function QBColor(ByVal Color As Integer) As Integer
             If (Color < 0 Or Color > 15) Then Throw New System.ArgumentException("Argument 'Color' is not a valid value")
@@ -207,8 +202,8 @@ Namespace Microsoft.VisualBasic
             TmpObjType1 = VarName.GetType().Name.ToLower
 
             If VarName.GetType.IsArray Then
-                Dim lastch As Integer = TmpObjType1.LastIndexOf("]") -1
-                Dim firstch As Integer = TmpObjType1.IndexOf("[") -1
+                Dim lastch As Integer = TmpObjType1.LastIndexOf("]") - 1
+                Dim firstch As Integer = TmpObjType1.IndexOf("[") - 1
                 TmpObjType2 = TmpObjType1.Remove(firstch + 1, (lastch - firstch + 1))
             Else
                 TmpObjType2 = TmpObjType1
@@ -260,15 +255,9 @@ Namespace Microsoft.VisualBasic
             ' VB rank start at 1, but System.Array.Rank starts at 0
             Dim RealRank As Integer
             RealRank = Rank - 1
+            If Array Is Nothing Then Throw New System.ArgumentException("Argument 'Array' is not a valid value")
 
-            ' if single dimension
-            If RealRank = 0 Then
-                Return Array.GetUpperBound(RealRank)
-            Else
-                'FIXME: not implemented support for multi-dim arrays
-                Throw New NotImplementedException("Implement me: Rank <> 1")
-            End If
-
+            Return Array.GetUpperBound(RealRank)
         End Function
         Public Function VarType(ByVal VarName As Object) As Microsoft.VisualBasic.VariantType
 
@@ -278,9 +267,9 @@ Namespace Microsoft.VisualBasic
 
             If VarName Is Nothing Then Return VariantType.Object
             If TypeOf VarName Is System.Exception Then Return VariantType.Error
-            
+
             TmpObjType = VarName.GetType.Name.ToLower
-                        
+
             If VarName.GetType.IsEnum Then
                 TmpStr = System.Enum.GetUnderlyingType(VarName.GetType).ToString
                 '' remove the "System." from the type we get
@@ -339,7 +328,7 @@ Namespace Microsoft.VisualBasic
             End If
 
             Return tmpVar
-            
+
         End Function
         Public Function VbTypeName(ByVal UrtName As String) As String
 
@@ -373,7 +362,7 @@ Namespace Microsoft.VisualBasic
                     RetObjType = "Single"
                 Case "object"
                     RetObjType = "Object"
-                    case "decimal"
+                Case "decimal"
                     RetObjType = "Decimal"
                 Case Else
                     RetObjType = Nothing

@@ -76,32 +76,32 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim type1 As Type = Value.GetType()
             Select Case Type.GetTypeCode(type1)
                 Case TypeCode.Boolean
-                    Value = CBool(Value)
+                    Return Convert.ToString(DirectCast(Value, Boolean))
                 Case TypeCode.Byte
-                    Value = CByte(Value)
+                    Return Convert.ToString(DirectCast(Value, Byte))
                 Case TypeCode.Char
-                    Value = CChar(Value)
+                    Return Convert.ToString(DirectCast(Value, Char))
                 Case TypeCode.DateTime
-                    Value = CDate(Value)
+                   ' Return StringType.FromDate(DirectCast(Value, Date))
+		     Return StringType.FromDate(DateType.FromObject(Value))
                 Case TypeCode.Double
-                    Value = CDbl(Value)
+                    Return Convert.ToString(DirectCast(Value, Double))
                 Case TypeCode.Decimal
-                    Value = (CDec(Value))
+                    Return Convert.ToString(DirectCast(Value, Decimal))
                 Case TypeCode.Int32
-                    Value = CInt(Value)
+                    Return Convert.ToString(DirectCast(Value, Integer))
                 Case TypeCode.Int16
-                    Value = CShort(Value)
+                    Return Convert.ToString(DirectCast(Value, Short))
                 Case TypeCode.Int64
-                    Value = CLng(Value)
+                    Return Convert.ToString(DirectCast(Value, Long))
                 Case TypeCode.Single
-                    Value = CSng(Value)
+                    Return Convert.ToString(DirectCast(Value, Single))
                 Case TypeCode.String
                     ' do nothing.
+                    Return Value.ToString()
                 Case Else 'TypeCode.Object and other
                     Throw New InvalidCastException
             End Select
-            Return Value.ToString()
-
         End Function
 
         Public Shared Function FromDouble(ByVal value As Double) As String
@@ -171,7 +171,21 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
         Public Shared Sub MidStmtStr(ByRef sDest As String, ByVal StartPosition As Integer, ByVal MaxInsertLength As Integer, ByVal sInsert As String)
-            sDest = sInsert.Substring(StartPosition, MaxInsertLength)
+            Dim tmp_str As String
+            Dim destLen As Integer = sDest.Length
+            Dim LenToInsert As Integer
+
+            If MaxInsertLength > sInsert.Length Then
+                LenToInsert = sInsert.Length
+            ElseIf MaxInsertLength > (destLen - StartPosition) Then
+                LenToInsert = ((destLen - StartPosition) + 1)
+            Else
+                LenToInsert = MaxInsertLength
+            End If
+
+            sDest = sDest.Remove(StartPosition - 1, LenToInsert)
+            sDest = sDest.Insert(StartPosition - 1, sInsert.Substring(0, LenToInsert))
+
         End Sub
         Public Shared Function StrLike(ByVal Source As String, ByVal Pattern As String, ByVal CompareOption As Microsoft.VisualBasic.CompareMethod) As Boolean
 
@@ -201,14 +215,21 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim carr() As Char = expression.ToCharArray()
 
             Dim sb As StringBuilder = New StringBuilder
+            Dim bDigit As Boolean = False '' need it in order to clode the string pattern
+
             For pos As Integer = 0 To carr.Length - 1
                 Select Case carr(pos)
                     Case "?"c
                         sb.Append("."c)
                     Case "*"c
                         sb.Append("."c).Append("*"c)
-                    Case "#"c
-                        sb.Append("\"c).Append("d"c)
+                    Case "#"c  '' only one digit and only once ->  "^\d{1}$"
+                        If bDigit Then
+                            sb.Append("\"c).Append("d"c).Append("{"c).Append("1"c).Append("}"c)
+                        Else
+                            sb.Append("^"c).Append("\"c).Append("d"c).Append("{"c).Append("1"c).Append("}"c)
+                            bDigit = True
+                        End If
                     Case "["c
                         Dim gsb As StringBuilder = ConvertGroupSubexpression(carr, pos)
                         ' skip groups of form [], i.e. empty strings
@@ -219,6 +240,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         sb.Append(carr(pos))
                 End Select
             Next
+            If bDigit Then sb.Append("$"c)
+
             Return sb.ToString()
         End Function
 

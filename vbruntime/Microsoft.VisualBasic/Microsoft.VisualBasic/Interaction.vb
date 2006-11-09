@@ -57,21 +57,19 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
-            'FIXME: why Index is Double, while an Index of an Array is Integer ?
-            Dim IntIndex As Integer
-            IntIndex = Convert.ToInt32(Index)
-
-            'TODO: add the exception message.
             If (Choice.Rank <> 1) Then
                 Throw New ArgumentException
             End If
 
+            'FIXME: why Index is Double, while an Index of an Array is Integer ?
+            Dim IntIndex As Integer
+            IntIndex = Convert.ToInt32(Index)
+            Dim ChoiceIndex As Integer = IntIndex - 1
 
-            If ((IntIndex >= 0) And (IntIndex <= Information.UBound(Choice))) Then
-                Return Choice(IntIndex)
+            If ((IntIndex >= 0) And (ChoiceIndex <= Information.UBound(Choice))) Then
+                Return Choice(ChoiceIndex)
             Else
-                'TODO: add the exception message.
-                Throw New ArgumentOutOfRangeException
+                Return Nothing
             End If
         End Function
         Public Function Command() As String
