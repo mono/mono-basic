@@ -104,7 +104,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Public Shared Sub LateSetComplex(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
             'FIXME
-            LateSet(o, objType, name, args, paramnames)
+            Try
+                LateSet(o, objType, name, args, paramnames)
+            Catch e As Exception
+                'suppress
+            End Try
         End Sub
 
         Public Shared Function LateGet(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal CopyBack() As Boolean) As Object          
