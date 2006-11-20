@@ -46,7 +46,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return FlowControl.ForLoopInitObj(Counter, Start, Limit, StepValue, LoopForResult, CounterResult)
             End Function
             Public Shared Function ForNextCheckDec(ByVal count As Decimal, ByVal limit As Decimal, ByVal StepValue As Decimal) As Boolean
-                Return ForNextCheckDec(count, limit, StepValue)
+                Return FlowControl.ForNextCheckDec(count, limit, StepValue)
             End Function
             Public Shared Function ForNextCheckObj(ByVal Counter As Object, ByVal LoopObj As Object, ByRef CounterResult As Object) As Boolean
                 Return FlowControl.ForNextCheckObj(Counter, LoopObj, CounterResult)
