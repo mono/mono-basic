@@ -1,4 +1,4 @@
-echo off
+echo on
 echo ====================================
 echo = 	Replace Microsoft.VisualBasic.dll at the GAC
 echo =	
@@ -11,7 +11,7 @@ echo Get batch command parameters.
 SET VB_BUILD_PARAM_NET_VERSION="%1"
 
 echo Set command parameters default.
-IF %VB_BUILD_PARAM_NET_VERSION%=="" SET VB_BUILD_PARAM_NET_VERSION=1
+IF %VB_BUILD_PARAM_NET_VERSION%=="" SET VB_BUILD_PARAM_NET_VERSION="1"
 
 echo Set .NET SDK env.
 IF %VB_BUILD_PARAM_NET_VERSION%=="1" (
@@ -22,11 +22,17 @@ IF NOT DEFINED VSINSTALLDIR call "%VS80COMNTOOLS%vsvars32.bat"
 )
 SET NET_FRAMEWORK_PATH=%FRAMEWORKDIR%\%FRAMEWORKVERSION%\
 
+IF %VB_BUILD_PARAM_NET_VERSION%=="1" (
+SET GACUTIL="%NET_FRAMEWORK_PATH%gacutil"
+)
+IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
+SET GACUTIL="%VSINSTALLDIR%\SDK\v2.0\Bin\gacutil"
+)
 pushd bin
 sn -Vr Microsoft.VisualBasic.dll
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
-%NET_FRAMEWORK_PATH%gacutil -i Microsoft.VisualBasic.dll -f
+%GACUTIL% -i Microsoft.VisualBasic.dll -f
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 popd
 

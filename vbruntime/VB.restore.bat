@@ -22,8 +22,15 @@ IF NOT DEFINED VSINSTALLDIR call "%VS80COMNTOOLS%vsvars32.bat"
 )
 SET NET_FRAMEWORK_PATH=%FRAMEWORKDIR%\%FRAMEWORKVERSION%\
 
+
+IF %VB_BUILD_PARAM_NET_VERSION%=="1" (
+SET GACUTIL="%NET_FRAMEWORK_PATH%gacutil"
+)
+IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
+SET GACUTIL="%VSINSTALLDIR%\SDK\v2.0\Bin\gacutil"
+)
 pushd %NET_FRAMEWORK_PATH%
-del Microsoft.VisualBasic.dll
+IF EXIST Microsoft.VisualBasic.orig del Microsoft.VisualBasic.dll
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 ren Microsoft.VisualBasic.orig Microsoft.VisualBasic.dll
