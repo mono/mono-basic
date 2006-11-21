@@ -38,7 +38,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function ChangeType(ByVal Expression As Object, ByVal TargetType As Type) As Object
-            System.Convert.ChangeType(Expression, TargetType)
+            Return System.Convert.ChangeType(Expression, TargetType)
         End Function
         Public Shared Function FromCharAndCount(ByVal Value As Char, ByVal Count As Integer) As String
             Throw New NotImplementedException
