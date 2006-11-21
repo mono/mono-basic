@@ -58,7 +58,11 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Assert.AreEqual(97,Strings.Asc("a"));
 			Assert.AreEqual(97,Strings.Asc("abc"));
+#if NET_2_0
+			Assert.AreEqual (230, Strings.Asc ("æ"));
+#else
 			Assert.AreEqual(63,Strings.Asc("æ"));
+#endif
 			Assert.AreEqual(65,Strings.Asc("A"));
 			Assert.AreEqual(33,Strings.Asc("!"));
 			Assert.AreEqual(51,Strings.Asc("3"));

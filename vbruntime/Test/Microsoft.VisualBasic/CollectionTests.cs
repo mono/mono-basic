@@ -679,7 +679,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(InvalidCastException))]
+#endif
 		public void Index_9()
 		{
 			Collection col = new Collection();
@@ -1047,7 +1049,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(IndexOutOfRangeException))]
+#endif
 		public void GetEnumerator_2()
 		{
 			// Collection index must be in the range 1 to the size of the collection.
@@ -1186,8 +1190,11 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(null,en.Current);
 
 			col.Add(o4,null,null,null);
-
+#if NET_2_0
+			Assert.AreEqual(null,en.Current);
+#else
 			Assert.AreEqual(o4,en.Current);
+#endif
 			Assert.IsFalse(en.MoveNext());
 		}
 
@@ -1223,12 +1230,18 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			col.Add(o4,null,null,null);
 
+#if NET_2_0
+			Assert.AreEqual(null,en.Current);
+#else
 			Assert.AreEqual(o4,en.Current);
+#endif
 			Assert.IsFalse(en.MoveNext());
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(IndexOutOfRangeException))]
+#endif
 		public void GetEnumerator_11()
 		{
 			Collection col = new Collection();
@@ -1280,7 +1293,11 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			col.Add(s4,null,null,null);
 
+#if NET_2_0
+			Assert.AreEqual(null,en.Current);
+#else
 			Assert.AreEqual(s4,en.Current);
+#endif
 			Assert.IsFalse(en.MoveNext());
 		}
 
@@ -1310,15 +1327,22 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			col.Add(s3,null,null,null);
 
+#if NET_2_0
+			Assert.AreEqual(null,en.Current);
+#else
 			Assert.AreEqual(s3,en.Current);
+#endif
 
 			col.Add(s4,null,null,null);
 			col.Add(s5,null,null,null);
 			
+
+#if !NET_2_0
 			Assert.IsTrue(en.MoveNext());
 			Assert.IsTrue(en.MoveNext());
 
 			Assert.AreEqual(s5,en.Current);
+#endif
 			Assert.IsFalse(en.MoveNext());
 		}
 
@@ -1348,7 +1372,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(IndexOutOfRangeException))]
+#endif
 		public void GetEnumerator_7()
 		{
 			Collection col = new Collection();
@@ -1620,6 +1646,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+#endif
 		public void IList_Insert_1()
 		{
 			Collection col = new Collection();
@@ -1657,7 +1686,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+#endif
 		public void IList_Insert_2()
 		{
 			Collection col = new Collection();

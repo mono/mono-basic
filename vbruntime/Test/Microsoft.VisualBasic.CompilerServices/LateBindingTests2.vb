@@ -181,22 +181,37 @@ Public Class LateBindingTests2
         End Function
     End Class
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_Complex_ParamArray1()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_Complex_ParamArray1()
+#End If
         Dim o As Object = New C4
 
         o.F(ccA)
     End Sub
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_Complex_ParamArray2()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_Complex_ParamArray2()
+#End If
         Dim o As Object = New C4
 
         o.F(ccA, ccA)
     End Sub
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_Complex_ParamArray6()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_Complex_ParamArray6()
+#End If
         Dim o As Object = New C4
 
         o.F(ccA, ccA, ccA, ccA, ccA, ccA)
@@ -730,8 +745,13 @@ Public Class LateBindingTests2
         Assert.AreEqual(2, o.F(1, 2))
     End Sub
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_Complex_ParamArray603()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_Complex_ParamArray603()
+#End If
         Dim o As Object = New C602
         o.F(1, 2, 3)
     End Sub
@@ -843,14 +863,24 @@ Public Class LateBindingTests2
         End Function
     End Class
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_TypeMembersM_2()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_TypeMembersM_2()
+#End If
         Dim o As Object = New C402
         o.fun(1, 2, 3)
     End Sub
 
+#If NET_2_0 Then
+    <Test()> _
+    Public Sub LateBind_TypeMembersM_3()
+#Else
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
     Public Sub LateBind_TypeMembersM_3()
+#End If
         Dim o As Object = New C402
         o.fun(1, 2)
     End Sub
