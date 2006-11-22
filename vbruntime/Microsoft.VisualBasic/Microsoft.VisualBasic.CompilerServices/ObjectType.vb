@@ -144,6 +144,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim short1 As Short
             Dim short2 As Short
 
+            Dim dt1 as Date
+            Dim dt2 as Date
+
             Dim s1 As String
             Dim s2 As String
 
@@ -250,6 +253,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 'If short1 = short2
                 Return 0
+
+            ElseIf (TypeOf o1 Is Date) Or (TypeOf o2 Is Date) Then
+                dt1 = DateType.FromObject(o1)
+                dt2 = DateType.FromObject(o2)
+
+                Return dt1.CompareTo(dt2)
+
             ElseIf (TypeOf o1 Is String) Or (TypeOf o2 Is String) Then
                 s1 = Convert.ToString(o1)
                 s2 = Convert.ToString(o2)
@@ -284,19 +294,49 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function NegObj(ByVal obj As System.Object) As System.Object
-            Throw New NotImplementedException
+
+            Dim TC1 As TypeCode = Type.GetTypeCode(obj.GetType())
+
+            Select Case (TC1)
+                Case TypeCode.Boolean
+                    '' VB True is anyway -1
+                    Return ((ShortType.FromObject(obj)))
+                Case TypeCode.Byte
+                    Return (-1 * (ByteType.FromObject(obj)))
+                Case TypeCode.Double
+                    Return (-1 * (DoubleType.FromObject(obj)))
+                Case TypeCode.Decimal
+                    Return (-1 * (DecimalType.FromObject(obj)))
+                Case TypeCode.Int32
+                    Return (-1 * (IntegerType.FromObject(obj)))
+                Case TypeCode.Int16
+                    Return (-1S * (ShortType.FromObject(obj)))
+                Case TypeCode.Int64
+                    Return (-1 * (LongType.FromObject(obj)))
+                Case TypeCode.Single
+                    Return (-1 * (SingleType.FromObject(obj)))
+                Case TypeCode.String
+                    Dim dbl1 As Double = Convert.ToDouble(obj)
+                    Return (Convert.ToString(-1 * DoubleType.FromObject(obj)))
+                Case Else
+                    Throw New InvalidCastException
+            End Select
+
         End Function
 
         Public Shared Function NotObj(ByVal obj As System.Object) As System.Object
-            Throw New NotImplementedException
+            If obj Is Nothing Then
+                Return Nothing
+            End If
+
+            'Dim type1 As Type = obj.GetType()
+            '            Type.GetTypeCode(type1)
+            Return Not BooleanType.FromObject(obj)
+            Throw New InvalidCastException
         End Function
 
         Public Shared Function BitAndObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
 
-            Dim b1 As Byte
-            Dim b2 As Byte
-            Dim bool1 As Boolean
-            Dim bool2 As Boolean
             Dim dbl1 As Double
             Dim dbl2 As Double
             Dim sn1 As Single
@@ -309,8 +349,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim i2 As Integer
             Dim short1 As Short
             Dim short2 As Short
-            Dim s1 As String
-            Dim s2 As String
 
             '' FIXME: return typecode should be the second obj's typecode 
             ''        and not int32 all the time 
@@ -419,10 +457,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Public Shared Function BitOrObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
 
-            Dim b1 As Byte
-            Dim b2 As Byte
-            Dim bool1 As Boolean
-            Dim bool2 As Boolean
             Dim dbl1 As Double
             Dim dbl2 As Double
             Dim sn1 As Single
@@ -435,9 +469,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim i2 As Integer
             Dim short1 As Short
             Dim short2 As Short
-            Dim s1 As String
-            Dim s2 As String
-
 
             '' FIXME: return typecode should be the second obj's typecode 
             ''        and not int64 all the time 
@@ -546,10 +577,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Public Shared Function BitXorObj(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.Object
 
-            Dim b1 As Byte
-            Dim b2 As Byte
-            Dim bool1 As Boolean
-            Dim bool2 As Boolean
             Dim dbl1 As Double
             Dim dbl2 As Double
             Dim sn1 As Single
@@ -562,9 +589,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim i2 As Integer
             Dim short1 As Short
             Dim short2 As Short
-            Dim s1 As String
-            Dim s2 As String
-
 
             '' FIXME: return typecode should be the second obj's typecode 
             ''        and not int64 all the time 
@@ -842,7 +866,18 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             'FIXME: Add defense for checking overflow.
-            If (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
+            If (TypeOf o1 Is Boolean) Then
+                bool1 = Convert.ToBoolean(o1)
+                ' bool2 = Convert.ToBoolean(o2)
+
+                Return ((-1 * (Convert.ToInt32(bool1)) - Convert.ToInt32(o2)))
+
+            ElseIf (TypeOf o2 Is Boolean) Then
+                'bool1 = Convert.ToBoolean(o1)
+                bool2 = Convert.ToBoolean(o2)
+
+                Return ((Convert.ToInt32(o1) - (-1 * Convert.ToInt32(bool2))))
+            ElseIf (TypeOf o1 Is Double) Or (TypeOf o2 Is Double) Then
                 dbl1 = Convert.ToDouble(o1)
                 dbl2 = Convert.ToDouble(o2)
 
@@ -878,11 +913,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 b2 = Convert.ToByte(o2)
 
                 Return b1 - b2
-            ElseIf (TypeOf o1 Is Boolean) Or (TypeOf o2 Is Boolean) Then
-                bool1 = Convert.ToBoolean(o1)
-                bool2 = Convert.ToBoolean(o2)
-
-                Return Convert.ToInt16(bool1) - Convert.ToInt16(bool2)
 
             ElseIf (TypeOf o1 Is String) Or (TypeOf o2 Is String) Then
                 s1 = Convert.ToString(o1)
