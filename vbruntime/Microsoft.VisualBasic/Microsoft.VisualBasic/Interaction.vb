@@ -118,7 +118,6 @@ Namespace Microsoft.VisualBasic
 
             Dim res_setting(,) As String
             Dim index, elm_count As Integer
-            Dim tmp_str As String
             Dim regk As RegistryKey
             Dim arr_str() As String
 
@@ -182,7 +181,11 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
-            Dim strEnd, strStart, strStop As String
+            Dim strEnd As String = ""
+            Dim strStart As String = ""
+            Dim strStop As String = ""
+
+
             Dim lEnd, lStart As Long
             Dim nSpaces As Integer
 

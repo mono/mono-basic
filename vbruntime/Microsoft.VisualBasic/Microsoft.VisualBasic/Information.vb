@@ -263,7 +263,6 @@ Namespace Microsoft.VisualBasic
 
             Dim tmpVar As VariantType = VariantType.Empty
             Dim TmpObjType, TmpStr, TmpObjType2 As String
-            Dim ArrCh As String
 
             If VarName Is Nothing Then Return VariantType.Object
             If TypeOf VarName Is System.Exception Then Return VariantType.Error
