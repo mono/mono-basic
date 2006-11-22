@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -31,6 +31,8 @@
 Imports System
 Imports System.Reflection
 Imports Microsoft.VisualBasic.CompilerServices
+Imports System.Globalization
+
 
 Namespace Microsoft.VisualBasic
     Public Module Conversion
@@ -65,7 +67,7 @@ Namespace Microsoft.VisualBasic
             Return strDescription
         End Function
         Public Function Fix(ByVal Number As Decimal) As Decimal
-            Return Number
+            Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
         End Function
         Public Function Fix(ByVal Number As Double) As Double
             Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
@@ -187,7 +189,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
         Public Function Int(ByVal Number As Decimal) As Decimal
-            Return Number
+            Return Decimal.Floor(Number)
         End Function
         Public Function Int(ByVal Number As Double) As Double
             Return Math.Floor(Number)
@@ -296,45 +298,45 @@ Namespace Microsoft.VisualBasic
 
             If TypeOf Number Is Byte Then
                 If Convert.ToByte(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Short Then
                 If Convert.ToInt16(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Integer Then
                 If Convert.ToInt32(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Long Then
                 If Convert.ToInt64(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Double Then
                 If Convert.ToDouble(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Decimal Then
                 If Convert.ToDecimal(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is Single Then
                 If Convert.ToSingle(Number) > 0 Then
-                    Return " " + Number.ToString
+                    Return " " + Convert.ToString(Number, CultureInfo.InvariantCulture)
                 Else
-                    Return Number.ToString
+                    Return Convert.ToString(Number, CultureInfo.InvariantCulture)
                 End If
             ElseIf TypeOf Number Is String Then
                 Throw New System.NullReferenceException("Object reference not set to an instance of an object.")
@@ -516,7 +518,7 @@ Namespace Microsoft.VisualBasic
             Dim retVal As Double = 0
             If NumericString.Length > 0 Then
                 If IsDecimal Then
-                    retVal = DoubleType.FromString(NumericString)
+                    retVal = Convert.ToDouble(NumericString, CultureInfo.InvariantCulture)
                     If IsNegative Then retVal = (-1) * retVal
                 ElseIf IsHex Then
                     NumericString = NumericString.ToUpper
