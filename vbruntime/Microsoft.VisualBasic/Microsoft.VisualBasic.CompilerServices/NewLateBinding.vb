@@ -35,31 +35,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function LateCall(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal CopyBack As Boolean(), ByVal IgnoreReturn As Boolean) As Object
-            Throw New NotImplementedException
+            Return LateBinding.LateGet(Instance, Type, MemberName, Arguments, ArgumentNames, CopyBack)
         End Function
         Public Shared Function LateCanEvaluate(ByVal instance As Object, ByVal type As Type, ByVal memberName As String, ByVal arguments As Object(), ByVal allowFunctionEvaluation As Boolean, ByVal allowPropertyEvaluation As Boolean) As Boolean
             Throw New NotImplementedException
         End Function
         Public Shared Function LateGet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal CopyBack As Boolean()) As Object
-            Throw New NotImplementedException
+            Return LateBinding.LateGet(Instance, Type, MemberName, Arguments, ArgumentNames, CopyBack)
         End Function
         Public Shared Function LateIndexGet(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String()) As Object
-            Throw New NotImplementedException
+            Return LateBinding.LateIndexGet(Instance, Arguments, ArgumentNames)
         End Function
         Public Shared Sub LateIndexSet(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String())
-            Throw New NotImplementedException
+            LateBinding.LateIndexSet(Instance, Arguments, ArgumentNames)
         End Sub
         Public Shared Sub LateIndexSetComplex(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
-            Throw New NotImplementedException
+            LateBinding.LateIndexSetComplex(Instance, Arguments, ArgumentNames, OptimisticSet, RValueBase)
         End Sub
         Public Shared Sub LateSet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type())
-            Throw New NotImplementedException
+            LateBinding.LateSet(Instance, Type, MemberName, Arguments, ArgumentNames)
         End Sub
         Public Shared Sub LateSet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean, ByVal CallType As CallType)
-            Throw New NotImplementedException
+            LateSetComplex(Instance, Type, MemberName, Arguments, ArgumentNames, TypeArguments, OptimisticSet, RValueBase)
         End Sub
-        Public Shared Sub LateSetComplex(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
-            Throw New NotImplementedException
+        Public Shared Sub LateSetComplex(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)            
+            LateSet(Instance, Type, MemberName, Arguments, ArgumentNames, TypeArguments)
         End Sub
     End Class
 End Namespace
