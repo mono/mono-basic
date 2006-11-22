@@ -115,7 +115,7 @@ Namespace Microsoft.VisualBasic
             Return strRes
         End Function
         Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
-            Dim tmpstr, str_parent_dir, str_pattern As String
+            Dim str_parent_dir, str_pattern As String
             Dim last_ch As Integer
             Dim di As DirectoryInfo
 
@@ -198,8 +198,12 @@ Namespace Microsoft.VisualBasic
 
             Dim fi As New FileInfo(PathName)
             Dim ch As Char
-
+#If NET_2_0 Then
+            For Each ch In Path.GetInvalidPathChars()
+#Else
             For Each ch In Path.InvalidPathChars
+#End If
+
                 If Not (PathName.IndexOf(ch) = -1) Then Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
             Next ch
 
@@ -320,8 +324,12 @@ Namespace Microsoft.VisualBasic
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim ch As Char
+#If NET_2_0 Then
+            For Each ch In Path.GetInvalidPathChars()
+#Else
             For Each ch In Path.InvalidPathChars
-                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.io.IOException("Bad file name or number.")
+#End If
+                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
             Next ch
 
             Dim fi As New FileInfo(PathName)
@@ -377,7 +385,7 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Sub Kill(ByVal PathName As String)
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
-            Dim tmpstr, str_parent_dir, str_file_to_delete As String
+            Dim str_parent_dir, str_file_to_delete As String
             Dim last_ch, i As Integer
             Dim di As DirectoryInfo
             Dim tmpFile As FileInfo()
@@ -498,8 +506,13 @@ Namespace Microsoft.VisualBasic
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim ch As Char
+#If NET_2_0 Then
+            For Each ch In Path.GetInvalidPathChars()
+#Else
             For Each ch In Path.InvalidPathChars
-                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.io.IOException("Bad file name or number.")
+#End If
+
+                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
             Next ch
 
             Dim fi As New FileInfo(PathName)
