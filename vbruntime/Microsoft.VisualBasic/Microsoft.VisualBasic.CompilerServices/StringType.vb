@@ -171,7 +171,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
         Public Shared Sub MidStmtStr(ByRef sDest As String, ByVal StartPosition As Integer, ByVal MaxInsertLength As Integer, ByVal sInsert As String)
-            Dim tmp_str As String
             Dim destLen As Integer = sDest.Length
             Dim LenToInsert As Integer
 

@@ -90,7 +90,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Double.TryParse(value, result)
 #Else
             Try
-                Dim x As Double
                 result = Double.Parse(value)
                 Return True
             Catch ex As Exception
