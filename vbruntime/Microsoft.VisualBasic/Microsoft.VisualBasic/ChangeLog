@@ -1,3 +1,7 @@
+2006-11-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Interaction.vb: Implement InputBox
+
 2006-10-22 Guy Cohen <guyc@mainsoft.com>
 	* Fix Get/Set Settings, to use HKCU\Software\VB and VBA Program Settings
 	* Fix Partition bug to better work with spaces

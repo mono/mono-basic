@@ -34,6 +34,7 @@ Imports Microsoft.VisualBasic.CompilerServices
 #If TARGET_JVM = False Then 'Win32,Windows.Forms Not Supported by Grasshopper
 Imports Microsoft.Win32
 Imports System.Windows.Forms
+Imports System.Drawing
 #End If
 
 Namespace Microsoft.VisualBasic
@@ -171,10 +172,65 @@ Namespace Microsoft.VisualBasic
                 Return FalsePart
             End If
         End Function
+
+        Class InputForm
+            Inherits Form
+            Dim bok As Button
+            Dim bcancel As Button
+            Dim entry As TextBox
+            Dim result As String
+
+            Public Sub New(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1)
+                SuspendLayout()
+
+                Text = Title
+                ClientSize = New Size(400, 120)
+
+                bok = New Button()
+                bok.Text = "Ok"
+
+                bcancel = New Button()
+                bcancel.Text = "Cancel"
+
+                entry = New TextBox()
+                entry.Text = DefaultResponse
+                result = DefaultResponse
+
+                AddHandler bok.Click, AddressOf ok_Click
+                AddHandler bcancel.Click, AddressOf cancel_Click
+
+                bok.Location = New Point(ClientSize.Width - bok.ClientSize.Width - 8, 8)
+                bcancel.Location = New Point(bok.Location.X, 8 + bok.ClientSize.Height + 8)
+                entry.Location = New Point(8, 80)
+                entry.ClientSize = New Size(ClientSize.Width - 28, entry.ClientSize.Height)
+
+                Controls.Add(bok)
+                Controls.Add(bcancel)
+                Controls.Add(entry)
+
+                ResumeLayout(False)
+            End Sub
+
+            Public Function Run() As String
+                Application.Run(Me)
+                Return result
+            End Function
+
+            Private Sub ok_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+                result = entry.Text
+                Close()
+            End Sub
+
+            Private Sub cancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+                Close()
+            End Sub
+        End Class
+
         Public Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
 #If TARGET_JVM = False Then
-            Throw New NotImplementedException
-
+            Dim f As InputForm
+            f = New InputForm(Prompt, Title, DefaultResponse, XPos, YPos)
+            Return f.Run()
 #Else
             Throw New NotImplementedException
 #End If
