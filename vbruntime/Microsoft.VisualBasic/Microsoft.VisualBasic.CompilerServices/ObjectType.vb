@@ -1196,6 +1196,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         Public Shared Function StrCatObj(ByVal vLeft As System.Object, ByVal vRight As System.Object) As System.Object
 
+            If TypeOf vLeft Is DBNull Then vLeft = ""
+            If TypeOf vRight Is DBNull Then vRight = ""
+
             Dim strLeft As String = StringType.FromObject(vLeft)
             Dim strRight As String = StringType.FromObject(vRight)
 

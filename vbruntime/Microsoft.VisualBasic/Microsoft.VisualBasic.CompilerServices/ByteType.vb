@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen      (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -42,6 +42,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function FromObject(ByVal Value As Object) As Byte
             If Value Is Nothing Then
                 Return 0
+            End If
+            If TypeOf Value Is Boolean Then
+                Return ((Convert.ToByte(-1)) * (Convert.ToByte(Value)))
             End If
 
             Return Convert.ToByte(Value)

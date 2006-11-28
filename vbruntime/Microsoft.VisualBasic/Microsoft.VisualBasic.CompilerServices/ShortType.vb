@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen      (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -47,6 +47,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If TypeOf Value Is String Then
                 Return FromString(DirectCast(Value, String))
             End If
+
+            If TypeOf Value Is Boolean Then
+                Return ((-1S)*(Convert.ToInt16(Value)))
+            End If 
 
             Return Convert.ToInt16(Value)
 

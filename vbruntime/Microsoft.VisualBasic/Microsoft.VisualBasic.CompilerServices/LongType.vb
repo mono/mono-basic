@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen      (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -44,6 +44,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If Value Is Nothing Then
                 Return 0
             End If
+            If TypeOf Value Is Boolean Then
+                Return ((-1L) * (Convert.ToInt64(Value)))
+            End If
 
             Return Convert.ToInt64(Value)
         End Function
@@ -54,7 +57,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If value Is Nothing Then
                 Return 0
             End If
-
             Try
                 Return Convert.ToInt64(DecimalType.FromString(value))
             Catch ex As Exception

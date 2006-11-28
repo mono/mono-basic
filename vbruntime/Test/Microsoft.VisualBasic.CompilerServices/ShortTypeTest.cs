@@ -1,7 +1,7 @@
 // ShortTypeTest.cs - NUnit Test Cases for Microsoft.VisualBasic.CompilerServices.ShortType 
 //
 // Mizrahi Rafael (rafim@mainsoft.com)
-//
+// Guy Cohen	  (guyc@mainsoft.com)
 // 
 
 // Copyright (c) 2002-2006 Mainsoft Corporation.
@@ -79,7 +79,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		#region FromObject
 
 		[Test]
-		public void FromObjectTest()
+		public void FromObjectTest_1()
 		{
 			short s;
 			object o1 = null;
@@ -92,6 +92,27 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			// test string = null
 			s = Microsoft.VisualBasic.CompilerServices.ShortType.FromObject(st);
 			Assert.AreEqual (0, s, "FromObject#1");
+		}
+		[Test]
+		public void FromObjectTest_2()
+		{
+			object ObjS;
+			object o1 = true;
+			short st = -1;
+
+			// test object = True
+			ObjS = Microsoft.VisualBasic.CompilerServices.ShortType.FromObject(o1);
+			Assert.AreEqual (st, ObjS, "FromObject#0");
+
+			// test object = False
+			o1 = false;
+			st = 0;
+			ObjS = Microsoft.VisualBasic.CompilerServices.ShortType.FromObject(o1);
+			Assert.AreEqual (st, ObjS, "FromObject#1");
+
+			string ResTypeCode = "";
+			ResTypeCode = Type.GetTypeCode(ObjS.GetType()).ToString();
+			Assert.AreEqual ("Int16",ResTypeCode, "FromObject#2");
 		}
 
 		#endregion

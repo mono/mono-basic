@@ -1,6 +1,6 @@
 //
 // Mizrahi Rafael (rafim@mainsoft.com)
-//
+// Guy Cohen	  (guyc@mainsoft.com)
 // 
 
 // Copyright (c) 2002-2006 Mainsoft Corporation.
@@ -78,7 +78,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		#region FromObject
 
 		[Test]
-		public void FromObjectTest()
+		public void FromObjectTest_1()
 		{
 			long l;
 			object o1 = null;
@@ -93,6 +93,27 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			Assert.AreEqual (0, l, "FromObject#1");
 		}
 
+		[Test]
+		public void FromObjectTest_2()
+		{
+			object ObjL;
+			object o1 = true;
+			long lt = -1;
+
+			// test object = True
+			ObjL = Microsoft.VisualBasic.CompilerServices.LongType.FromObject(o1);
+			Assert.AreEqual (lt, ObjL, "FromObject#0");
+
+			// test object = False
+			o1 = false;
+			lt = 0;
+			ObjL = Microsoft.VisualBasic.CompilerServices.LongType.FromObject(o1);
+			Assert.AreEqual (lt, ObjL, "FromObject#1");
+
+			string ResTypeCode = "";
+			ResTypeCode = Type.GetTypeCode(ObjL.GetType()).ToString();
+			Assert.AreEqual ("Int64",ResTypeCode, "FromObject#2");
+		}
 		#endregion
 
 	}

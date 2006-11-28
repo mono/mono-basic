@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Guy Cohen      (guyc@mainsoft.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
