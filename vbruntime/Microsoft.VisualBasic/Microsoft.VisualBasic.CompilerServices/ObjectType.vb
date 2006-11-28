@@ -116,8 +116,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
 
-
-
         Public Shared Function ObjTst(ByVal o1 As System.Object, ByVal o2 As System.Object, ByVal TextCompare As System.Boolean) As System.Int32
 
             Dim b1 As Byte
@@ -285,10 +283,19 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return bool1.CompareTo(bool2)
 
             Else ' Not implemented case
-                Throw New NotImplementedException("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
+                Throw GetCaseNotImplemented()
             End If
 
         End Function
+
+	Public Shared Function GetCaseNotImplemented() as System.Exception
+	    return new NotImplementedException("This case is not handled")
+	End Function 
+
+	Public Shared Function GetCaseNotImplemented(ByVal msg As System.String) as System.Exception
+	    return new NotImplementedException(msg)
+	End Function 
+ 
         Public Shared Function PlusObj(ByVal obj As System.Object) As System.Object
             Throw New NotImplementedException
         End Function
@@ -319,7 +326,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Dim dbl1 As Double = Convert.ToDouble(obj)
                     Return (Convert.ToString(-1 * DoubleType.FromObject(obj)))
                 Case Else
-                    Throw New InvalidCastException
+                    Throw GetCaseNotImplemented()
             End Select
 
         End Function
@@ -819,7 +826,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Return dbl1 + dbl2
             Else ' Not implemented case
-                Throw New NotImplementedException("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
+                Throw GetCaseNotImplemented("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
             End If
         End Function
 
@@ -926,7 +933,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Return dbl1 - dbl2
             Else ' Not implemented case
-                Throw New NotImplementedException("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
+                Throw GetCaseNotImplemented("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
             End If
         End Function
 
@@ -1036,7 +1043,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return dbl1 * dbl2
 
             Else ' Not implemented case
-                Throw New NotImplementedException("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
+                Throw GetCaseNotImplemented("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
             End If
         End Function
 
@@ -1079,7 +1086,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If (o1 Is Nothing) Then
                 o1 = CreateNullObjectType(o2)
                 ' divide of zero and x is infinite
-                Throw New NotImplementedException("implement me")
+                Throw GetCaseNotImplemented("implement me")
             End If
             If (o2 Is Nothing) Then
                 o2 = CreateNullObjectType(o1)
@@ -1146,7 +1153,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return dbl1 / dbl2
 
             Else ' Not implemented case
-                Throw New NotImplementedException("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
+                Throw GetCaseNotImplemented("Implement me: " + o1.GetType.Name + " " + o2.GetType.Name)
             End If
         End Function
 
@@ -1235,7 +1242,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             ElseIf TypeOf otype Is Date Then
                 Return Nothing
             Else
-                Throw New NotImplementedException("Implement me: " + otype.GetType.Name)
+                Throw GetCaseNotImplemented("Implement me: " + otype.GetType.Name)
             End If
 
         End Function
