@@ -212,17 +212,20 @@ Namespace Microsoft.VisualBasic
             End Sub
 
             Public Function Run() As String
-                Application.Run(Me)
-                Return result
+	        If Me.ShowDialog = Windows.Forms.DialogResult.OK Then
+          	    Return result
+		Else
+		    Return String.Empty
+	        End If
             End Function
 
             Private Sub ok_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
                 result = entry.Text
-                Close()
+                Me.DialogResult = Windows.Forms.DialogResult.OK
             End Sub
 
             Private Sub cancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-                Close()
+                Me.DialogResult = Windows.Forms.DialogResult.Cancel
             End Sub
         End Class
 
