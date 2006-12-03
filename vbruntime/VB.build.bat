@@ -41,7 +41,7 @@ IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
 SET VB_COMPILE_OPTIONS=
 SET VB_COMPILE_OPTIONS=/nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005 /errorreport:prompt /noconfig 
 IF NOT %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /define:DEBUG=False,NET_2_0=True,_MYTYPE=\"Empty\"
-IF %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /debug:full /define:DEBUG=True,TRACE=True,NET_2_0=True,_MYTYPE=\"Empty\" /errorreport:prompt  -verbose
+IF %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /debug:full /define:DEBUG=True,TRACE=False,NET_2_0=True,_MYTYPE=\"Empty\" /errorreport:prompt  -verbose
 )
 echo %VB_COMPILE_OPTIONS%
 
@@ -125,12 +125,27 @@ Microsoft.VisualBasic.ApplicationServices\User.vb ^
 Microsoft.VisualBasic.ApplicationServices\WindowsFormsApplicationBase.vb ^
 Microsoft.VisualBasic.Devices\Computer.vb
 
+echo Set log file options.
+set startDate=%date%
+set startTime=%time%
+set sdy=%startDate:~10%
+set /a sdm=1%startDate:~4,2% - 100
+set /a sdd=1%startDate:~7,2% - 100
+set /a sth=%startTime:~0,2%
+set /a stm=1%startTime:~3,2% - 100
+set /a sts=1%startTime:~6,2% - 100
+set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
+
+set OUTPUT_FILE_PREFIX=Microsoft_VisualBasic
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%
+set BUILD_LOG=%COMMON_PREFIX%.build.log
+
 echo compiling ...
 pushd Microsoft.VisualBasic
 resgen strings.txt
 rem TODO: replace vbc with C:\cygwin\monobuild\vbnc\vbnc\bin\vbnc.exe 
 echo on
-vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% -r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -keyfile:msfinal.pub /res:strings.resources %VB_SOURCES%
+vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% -r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -keyfile:msfinal.pub /res:strings.resources %VB_SOURCES% >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 :FINALLY
@@ -144,5 +159,5 @@ popd
 PAUSE
 
 :END
-echo build exceuted using .NET %FRAMEWORKVERSION%
+echo build executed using .NET %FRAMEWORKVERSION%
 popd

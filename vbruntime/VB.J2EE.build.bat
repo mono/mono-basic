@@ -55,17 +55,32 @@ SET BUILD_NET_FRAMEWORK_DIR="%FRAMEWORKDIR%\%FRAMEWORKVERSION%"
 echo using BUILD_NET_FRAMEWORK_DIR=%BUILD_NET_FRAMEWORK_DIR%
 set path=%path%;%BUILD_NET_FRAMEWORK_DIR%
 
+echo Set log file options.
+set startDate=%date%
+set startTime=%time%
+set sdy=%startDate:~10%
+set /a sdm=1%startDate:~4,2% - 100
+set /a sdd=1%startDate:~7,2% - 100
+set /a sth=%startTime:~0,2%
+set /a stm=1%startTime:~3,2% - 100
+set /a sts=1%startTime:~6,2% - 100
+set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
+
+set OUTPUT_FILE_PREFIX=Microsoft_VisualBasic
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.J2EE
+set BUILD_LOG=%COMMON_PREFIX%.build.log
+
 pushd bin
 echo on
 echo converting dll to jar without validator
-"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre5";"%VMW4J2EE_DIR%\jgac"
+"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre5";"%VMW4J2EE_DIR%\jgac" >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 echo running java validator
-"%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW4J2EE_DIR%\bin\validator.jar";"%VMW4J2EE_DIR%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" 
+"%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW4J2EE_DIR%\bin\validator.jar";"%VMW4J2EE_DIR%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 popd
 
-rem copy /Y %CD%\bin\Microsoft.VisualBasic.jar "C:\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\Microsoft.VisualBasic.jar"
+rem copy /Y %CD%\bin\Microsoft.VisualBasic.jar "%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\Microsoft.VisualBasic.jar"
 
 
 :FINALLY
