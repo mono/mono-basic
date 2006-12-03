@@ -103,12 +103,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Console.WriteLine("TRACE:BooleanType.FromString:input:" + Value.ToString())
 #End If
 
-#If NET_2_0 Then
-            If Value = "" Then
-                Throw New ArgumentException("Value")
-            End If
-#End If
-
             If Value = "0" Then
                 Return False
             End If

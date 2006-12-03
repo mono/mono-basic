@@ -139,7 +139,13 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-        Public ReadOnly Property Count() As Integer Implements System.Collections.IList.Count
+        Public ReadOnly Property Count() As Integer
+            Get
+                Return IList_Count
+            End Get
+        End Property
+
+        Private ReadOnly Property IList_Count() As Integer Implements System.Collections.IList.Count
             Get
                 Return m_HashIndexers.Count
             End Get
@@ -164,6 +170,14 @@ Namespace Microsoft.VisualBasic
                 Return IList_Item(index - 1)
             End Get
         End Property
+
+#If NET_2_0 Then
+        Default Public ReadOnly Property Item(ByVal index As String) As Object
+            Get
+                Return m_Hashtable(index)
+            End Get
+        End Property
+#End If
 
         Private Property IList_Item(ByVal index As Integer) As Object Implements System.Collections.IList.Item
             Get
@@ -395,8 +409,12 @@ Namespace Microsoft.VisualBasic
             Next
         End Sub
 
-        Public Function GetEnumerator() As System.Collections.IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
+        Private Function IEnumerable_GetEnumerator() As System.Collections.IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
             Return New ColEnumerator(Me)
+        End Function
+
+        Public Function GetEnumerator() As System.Collections.IEnumerator
+            Return IEnumerable_GetEnumerator()
         End Function
 
     End Class
