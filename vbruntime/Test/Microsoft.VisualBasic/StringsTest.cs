@@ -1603,7 +1603,11 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
+#if TARGET_JVM
+		[ExpectedException(typeof(Exception))]
+#else
 		[ExpectedException(typeof(IndexOutOfRangeException))]
+#endif
 		public void Split_6()
 		{
 			Strings.Split("aa aa aa aa aa aa", " ",0,CompareMethod.Binary);
