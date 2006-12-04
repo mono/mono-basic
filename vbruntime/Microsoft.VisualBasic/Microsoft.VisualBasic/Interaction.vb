@@ -183,6 +183,7 @@ Namespace Microsoft.VisualBasic
             Public Sub New(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1)
                 SuspendLayout()
 
+#if NET_2_0 = True Then
                 Text = Title
                 ClientSize = New Size(400, 120)
 
@@ -207,7 +208,7 @@ Namespace Microsoft.VisualBasic
                 Controls.Add(bok)
                 Controls.Add(bcancel)
                 Controls.Add(entry)
-
+#end if
                 ResumeLayout(False)
             End Sub
 
