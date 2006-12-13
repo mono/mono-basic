@@ -223,7 +223,7 @@ Namespace Microsoft.VisualBasic
             ElseIf TypeOf Number Is Single Then
                 Return Conversion.Int(Convert.ToSingle(Number))
             ElseIf TypeOf Number Is String Then
-                Return Conversion.Int(Convert.ToString(Number))
+                Return Conversion.Int(Convert.ToDouble(Number))
             ElseIf TypeOf Number Is Char Then
                 Return Conversion.Int(Convert.ToInt16(Number))
             Else 'Date, Object
