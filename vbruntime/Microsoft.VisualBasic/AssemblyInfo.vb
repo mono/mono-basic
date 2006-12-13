@@ -40,9 +40,9 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("vbruntime")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("XImian")> 
+<Assembly: AssemblyCompany("Ximian")> 
 <Assembly: AssemblyProduct("vbruntime")> 
-<Assembly: AssemblyCopyright("Copyright © XImian 2006")> 
+<Assembly: AssemblyCopyright("Copyright © Ximian 2006")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

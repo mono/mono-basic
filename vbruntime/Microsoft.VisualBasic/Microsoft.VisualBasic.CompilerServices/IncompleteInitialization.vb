@@ -27,10 +27,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-
-'
-' TODO: How do we call the base constructors?
-
 Imports System
 
 Namespace Microsoft.VisualBasic.CompilerServices
@@ -42,13 +38,15 @@ Namespace Microsoft.VisualBasic.CompilerServices
     Public NotInheritable Class IncompleteInitialization : Inherits Exception
 #End If
         Public Sub New()
-            Throw New NotImplementedException
+            MyBase.New()
         End Sub
-        'Public Sub New(ByVal message As String)
 
-        'End Sub
-        'Public Sub New(ByVal message As String, ByVal innerException As Exception)
+        Public Sub New(ByVal message As String)
+            MyBase.New(message)
+        End Sub
 
-        'End Sub
+        Public Sub New(ByVal message As String, ByVal innerException As Exception)
+            MyBase.New(message, innerException)
+        End Sub
     End Class
 End Namespace
