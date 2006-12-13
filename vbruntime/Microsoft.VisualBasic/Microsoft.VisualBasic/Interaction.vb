@@ -173,6 +173,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
+#If TARGET_JVM = False Then
         Class InputForm
             Inherits Form
             Dim bok As Button
@@ -227,6 +228,7 @@ Namespace Microsoft.VisualBasic
                 Me.DialogResult = Windows.Forms.DialogResult.Cancel
             End Sub
         End Class
+#End If
 
         Public Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
 #If TARGET_JVM = False Then
