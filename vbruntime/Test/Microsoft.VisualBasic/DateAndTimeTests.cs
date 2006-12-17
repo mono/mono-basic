@@ -53,8 +53,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			date = DateAndTime.DateString;
 			time = DateAndTime.TimeString;
-
-			Console.WriteLine("{0} {1}",date,time);
 		}
 
 		[TestFixtureTearDown]
@@ -62,7 +60,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			DateAndTime.DateString = date;
 			DateAndTime.TimeString = time;
-			Console.WriteLine("{0} {1}",date,time);
 		}
 
 

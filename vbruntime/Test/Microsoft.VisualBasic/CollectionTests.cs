@@ -1795,7 +1795,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			col.Add(s,null,null,null);
 			col.Add(s,null,null,null);
 
-			Console.WriteLine(col["abc"]);
+			object o = col["abc"];
 		}
 
 

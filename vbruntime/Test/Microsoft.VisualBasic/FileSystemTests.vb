@@ -47,7 +47,7 @@ Namespace MonoTests.Microsoft_VisualBasic
             DATA_DIR = Environment.GetEnvironmentVariable("DATA_DIR")
             sep_ch = Path.DirectorySeparatorChar
             If Not (DATA_DIR) Then
-                System.Console.WriteLine("DATA_DIR environment variable not found, set default value")
+                'System.Console.WriteLine("DATA_DIR environment variable not found, set default value")
                 DATA_DIR = (Directory.GetCurrentDirectory() + sep_ch + "data")
             End If
             If Not Directory.Exists(DATA_DIR) Then
@@ -457,7 +457,7 @@ Public Sub FileCopy_1()
             fs.Close()
             fs1.Close()
 
-            FileSystem.Kill(DATA_DIR + sep_ch + "*.dat")
+            FileSystem.Kill(DATA_DIR + sep_ch + "Kill*.dat")
             Thread.Sleep(60)
             Assert.AreEqual(False, File.Exists(DATA_DIR + sep_ch + test_file1), "kill need to remove also Kill_2_test1.dat")
             Assert.AreEqual(False, File.Exists(DATA_DIR + sep_ch + test_file2), "kill need to remove also Kill_2_test2.dat")
