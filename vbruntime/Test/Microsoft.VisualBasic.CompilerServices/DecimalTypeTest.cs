@@ -121,7 +121,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		{
 			object o1;
 			o1 = 'w';
-			Console.WriteLine(Microsoft.VisualBasic.CompilerServices.DecimalType.FromObject(o1));
+			Microsoft.VisualBasic.CompilerServices.DecimalType.FromObject(o1);
 		}
 
 		[Test]

@@ -123,7 +123,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		{
 			object o1;
 			o1 = 'w';
-			Console.WriteLine(Microsoft.VisualBasic.CompilerServices.IntegerType.FromObject(o1));
+			Microsoft.VisualBasic.CompilerServices.IntegerType.FromObject(o1);
 		}
 
 		[Test]
@@ -133,7 +133,6 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			int i1;
 			string st1 = "2w";
 			i1 = Microsoft.VisualBasic.CompilerServices.IntegerType.FromObject(st1);
-			Console.WriteLine(i1);
 		}
 
 		[Test]
