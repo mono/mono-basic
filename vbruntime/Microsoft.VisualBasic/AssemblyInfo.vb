@@ -74,5 +74,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyFileVersion("1.0.0.0")> 
 <Assembly: AssemblyDelaySign(True)> 
+#If TARGET_JVM = False Then
 <Assembly: AssemblyKeyFile("msfinal.pub")> 
+#End If
 
