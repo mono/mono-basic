@@ -53,7 +53,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         '<MonoTODO("We ignore the commandLine argument")> _ 
         Public Sub Run(ByVal commandLine() As String)
 #If TARGET_JVM = False Then 'Not Supported by Grasshopper
-            Throw New Exception("Visual Basic 2005 applications are not supported")
+            Throw New Exception("Visual Basic 2005 applications are not currently supported (try disabling 'Enable Application Framework')")
             Application.Run()
 #Else
             Throw New NotImplementedException
