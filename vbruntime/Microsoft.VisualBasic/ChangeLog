@@ -1,0 +1,4 @@
+2006-12-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* 2005VB.vbproj: Set a default (dummy) root namespace
+	to remove all errors in VS2005. Enable warnings.

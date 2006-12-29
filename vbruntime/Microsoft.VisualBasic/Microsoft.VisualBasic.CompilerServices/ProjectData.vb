@@ -44,7 +44,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
         ' ThreadStatic Indicates that the value of a static field is unique for each thread.
         ' Although there is one ProjectData, every thread which set get VB errors must have its own ErrObject
         <ThreadStatic()> _
-        Friend Shared projectError As ErrObject
+        Friend Shared m_projectError As ErrObject
+
+        Friend ReadOnly Property ProjectError() As ErrObject
+            Get
+                Return m_projectError
+            End Get
+        End Property
         Private Sub New()
             'Nobody should see constructor
             '#If TRACE Then
@@ -57,8 +63,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Inst = New ProjectData
             End If
 
-            If Inst.projectError Is Nothing Then
-                projectError = New ErrObject
+            If m_projectError Is Nothing Then
+                m_projectError = New ErrObject
             End If
 
             Return Inst

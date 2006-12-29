@@ -1,3 +1,10 @@
+2006-12-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* IntegerType.vb: Implemented conversions from
+	SByte, UInt16, UInt32 and UInt64 to Integer.
+	* ProjectData.vb: Removed some warnings.
+	* Strings.vb: Removed a warning.
+
 2006-12-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* IncompleteInitialization.vb: Call base constructors and remove 

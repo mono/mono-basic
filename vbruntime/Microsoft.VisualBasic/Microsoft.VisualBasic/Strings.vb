@@ -279,7 +279,7 @@ Namespace Microsoft.VisualBasic
                         Dim currSym As String = obj.NumberFormat.CurrencySymbol()
                         Dim ch1 As Char = CChar(tmpstr2.Substring(0, 1))
 
-                        If Not ch1.IsDigit(ch1) Then
+                        If Not Char.IsDigit(ch1) Then
                             tmpstr2.TrimStart(CChar(currSym))
                         End If
                     End If
