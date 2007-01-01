@@ -45,6 +45,10 @@ IF %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OP
 )
 echo %VB_COMPILE_OPTIONS%
 
+echo Set VB compile references
+SET VB_COMPILE_REFERENCES=
+SET VB_COMPILE_REFERENCES=-r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll %VB_COMPILE_REFERENCES_J2EE%
+
 SET VB_SOURCES=AssemblyInfo.vb ^
 Microsoft.VisualBasic\AppWinStyle.vb ^
 Microsoft.VisualBasic\AudioPlayMode.vb ^
@@ -145,7 +149,7 @@ pushd Microsoft.VisualBasic
 resgen strings.txt
 rem TODO: replace vbc with C:\cygwin\monobuild\vbnc\vbnc\bin\vbnc.exe 
 echo on
-vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% -r:mscorlib.dll -r:System.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:"C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2SE.Helpers.dll" /res:strings.resources %VB_SOURCES% >>%BUILD_LOG% 2<&1
+vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% %VB_COMPILE_REFERENCES% /res:strings.resources %VB_SOURCES% >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 :FINALLY

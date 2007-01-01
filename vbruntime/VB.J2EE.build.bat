@@ -19,7 +19,11 @@ IF %VB_BUILD_PARAM_CONFIGURATION%=="" SET VB_BUILD_PARAM_CONFIGURATION=debug
 
 echo Build the .NET assembly which will be converted into java.
 SET VB_COMPILE_OPTIONS_J2EE=/define:TARGET_JVM=True
+SET VB_COMPILE_REFERENCES_J2EE=-r:"C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2SE.Helpers.dll"
 call VB.build.bat %VB_BUILD_PARAM_NET_VERSION% %VB_BUILD_PARAM_CONFIGURATION%
+REM clear environment vars
+SET VB_COMPILE_OPTIONS_J2EE=
+SET VB_COMPILE_REFERENCES_J2EE=
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 rem ====================================
