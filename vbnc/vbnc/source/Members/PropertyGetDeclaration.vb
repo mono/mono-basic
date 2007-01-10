@@ -1,0 +1,81 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+''' <summary>
+''' PropertyGetDeclaration  ::=
+'''	[  Attributes  ]  [  AccessModifier  ]  Get  LineTerminator
+'''	[  Block  ]
+'''	End  Get  StatementTerminator
+''' </summary>
+''' <remarks></remarks>
+Public Class PropertyGetDeclaration
+    Inherits PropertyHandlerDeclaration
+
+    Public Sub New(ByVal Parent As PropertyDeclaration)
+        MyBase.New(Parent)
+    End Sub
+
+    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
+
+        Dim mySignature As FunctionSignature
+
+        mySignature = New FunctionSignature(Me)
+
+        Dim typeParams As TypeParameters
+        Dim retTypeAttributes As Attributes
+        Dim name As String
+        Dim params As ParameterList
+        Dim typename As TypeName
+
+        If PropertySignature.TypeParameters IsNot Nothing Then
+            typeParams = PropertySignature.TypeParameters.Clone(mySignature)
+        Else
+            typeParams = Nothing
+        End If
+        If PropertySignature.ReturnTypeAttributes IsNot Nothing Then
+            retTypeAttributes = PropertySignature.ReturnTypeAttributes.Clone(mySignature)
+        Else
+            retTypeAttributes = Nothing
+        End If
+        If PropertySignature.Parameters IsNot Nothing Then
+            params = PropertySignature.Parameters.Clone(mySignature)
+        Else
+            params = Nothing
+        End If
+        If PropertySignature.TypeName IsNot Nothing Then
+            typename = PropertySignature.TypeName.Clone(mySignature)
+        Else
+            typename = Nothing
+        End If
+        name = "get_" & PropertySignature.Name
+
+        mySignature.Init(name, typeParams, params, retTypeAttributes, TypeName, PropertySignature.Location)
+
+        MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
+    End Sub
+
+    Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
+        Dim i As Integer
+        While tm.PeekToken(i).Equals(Enums.AccessModifiers)
+            i += 1
+        End While
+        Return tm.PeekToken(i) = KS.Get
+    End Function
+
+End Class

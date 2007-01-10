@@ -1,0 +1,16 @@
+/debug:full
+/noconfig
+/r:System.dll
+/r:mscorlib.dll 
+/r:System.Windows.Forms.dll,System.Drawing.dll
+/novbruntimeref
+
+/define:DEBUG=False,TRACE=false,NET_2_0=True,_MYTYPE=\"Empty\" 
+/errorreport:prompt
+/verbose
+/t:library
+/nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005 
+/errorreport:prompt 
+/optionstrict+ 
+/imports:System,System.Diagnostics
+/out:Microsoft.VisualBasic.dll

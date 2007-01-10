@@ -1,0 +1,13 @@
+/debug:full
+/r:System.dll
+/r:Microsoft.VisualBasic.dll
+/r:System.Xml.dll
+/r:System.Windows.Forms.dll
+/define:DEBUG=0
+#/define:DEBUG=1
+/imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit
+/rootnamespace:vbnc
+/t:exe
+/res:vbnc.Errors.resources
+/res:vbnc.vbnc.rsp
+/out:SelfCompile.exe

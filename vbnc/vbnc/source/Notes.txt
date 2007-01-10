@@ -1,0 +1,44 @@
+Another (the last?) order of compiling:
+
+Scan()
+- Tokens are scanned and created.
+
+
+
+Parse()
+- Tokens are parsed and te parse tree is created.
+ResolveMembers()
+- All the types and members are resolved, but not any run-time code (initializers, method bodies).
+ResolveCode()
+- All the run-time code is resolved (initializers, method bodies).
+- Past this point there should be no errors.
+
+
+DefineTypes()
+- Types are defined with the reflection.emit namespace. 
+- Only classes, modules, structures, interfaces, enums, delegates and eventnos (not a type by itself, bu an event might declare a new delegate). They are only defined, nothing else.
+- Classes, modules, structures, interfaces, enums,  delegates and events should implement IDefinableType.DefineTypes()
+- The enum type defines the special "value__" field as well.
+
+DefineTypeHierarchy()
+- Base classes for classes, modules, structures, enums, interfaces and delegates are set.
+- Implemented interfaces for classes are set.
+- Type parameters for classes and structures are set.
+- Classes, modules, structures, interfaces, enums,  delegates and events should implement IDefinable.DefineTypeHierarchy()
+
+DefineMembers()
+- All the type's members are defined (methods, constructors, properties, fields, events, operators). They should all implement IDefinableMember.DefineMember()
+
+ResolveMembers()
+ResolveCode()
+
+Emit()
+- All code is emitted for fields with initializers.
+- All the code is emitted for each and every method, constructor, operator and property.
+- Classes, modules, structures, methods, constructors, properties, events, operators should implement IEmittable.Emit(Info as EmitInfo)
+
+CreateTypes()
+- CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
+- Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
+
+

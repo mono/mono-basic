@@ -1,0 +1,1 @@
+TERM=1 mono --debug vbnc.exe @../tests/$1/all.rsp ../tests/$1/$2

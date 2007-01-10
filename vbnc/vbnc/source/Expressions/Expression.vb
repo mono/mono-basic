@@ -1,0 +1,420 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+Imports System.Reflection
+Imports System.Reflection.Emit
+
+#If DEBUG Then
+#Const EXTENDEDDEBUG = 0
+#End If
+''' <summary>
+'''Expression  ::=
+'''	SimpleExpression  |
+'''	TypeExpression  |
+'''	MemberAccessExpression  |
+'''	DictionaryAccessExpression  |
+'''	IndexExpression  |
+'''	NewExpression  |
+'''	CastExpression  |
+'''	OperatorExpression
+''' 
+'''SimpleExpression  ::=
+'''	LiteralExpression  |
+'''	ParenthesizedExpression  |
+'''	InstanceExpression  |
+'''	SimpleNameExpression  |
+'''	AddressOfExpression
+''' 
+'''TypeExpression  ::=
+'''	GetTypeExpression  |
+'''	TypeOfIsExpression  |
+'''	IsExpression
+''' 
+'''NewExpression  ::=
+'''	ObjectCreationExpression  |
+'''	ArrayCreationExpression  |
+'''	DelegateCreationExpression
+''' 
+'''OperatorExpression  ::=
+'''	ArithmeticOperatorExpression  |
+'''	RelationalOperatorExpression  |
+'''	LikeOperatorExpression  |
+'''	ConcatenationOperatorExpression  |
+'''	ShortCircuitLogicalOperatorExpression  |
+'''	LogicalOperatorExpression  |
+'''	ShiftOperatorExpression
+''' 
+'''ArithmeticOperatorExpression  ::=
+'''	UnaryPlusExpression  |
+'''	UnaryMinusExpression  |
+'''	AdditionOperatorExpression  |
+'''	SubtractionOperatorExpression  |
+'''	MultiplicationOperatorExpression  |
+'''	DivisionOperatorExpression  |
+'''	ModuloOperatorExpression  |
+'''	ExponentOperatorExpression
+''' </summary>
+''' <remarks></remarks>
+Public MustInherit Class Expression
+    Inherits ParsedObject
+
+    ''' <summary>
+    ''' The classification of this expression
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_Classification As ExpressionClassification
+
+    ''' <summary>
+    ''' First finds a code block, then finds the specified type in the code block.
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function FindFirstParentOfCodeBlock(Of T)() As T
+        Dim cb As CodeBlock = Me.FindFirstParent(Of CodeBlock)()
+        If cb IsNot Nothing Then
+            Return cb.FindFirstParent(Of T)()
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Get the parent code block. Might be nothing!
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function FindParentCodeBlock() As CodeBlock
+        If TypeOf Parent Is CodeBlock Then
+            Return DirectCast(Parent, CodeBlock)
+        Else
+            If TypeOf Parent Is Expression Then
+                Return DirectCast(Parent, Expression).FindParentCodeBlock
+            ElseIf TypeOf Parent Is BlockStatement Then
+                Return DirectCast(Parent, BlockStatement).CodeBlock
+            ElseIf TypeOf Parent Is Statement Then
+                Return DirectCast(Parent, Statement).FindParentCodeBlock
+            Else
+                Return Nothing
+            End If
+        End If
+    End Function
+
+    ''' <summary>
+    ''' The classification of this expression
+    ''' </summary>
+    ''' <remarks></remarks>
+    Property Classification() As ExpressionClassification
+        Get
+            Return m_Classification
+        End Get
+        Set(ByVal value As ExpressionClassification)
+            m_Classification = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' The type of the expression.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Overridable ReadOnly Property ExpressionType() As Type
+        Get
+            Helper.NotImplemented("Expression.ExpressionType (Type = " & Me.GetType.ToString & ")")
+            Return Nothing
+        End Get
+    End Property
+        
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.New(Parent)
+    End Sub
+
+    ''' <summary>
+    ''' The default implementation returns false.
+    ''' </summary>
+    ''' <value></value>
+    ''' <remarks></remarks>
+    Overridable ReadOnly Property IsConstant() As Boolean
+        Get
+            Return False 'm_Classification.IsConstant
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The default implementation throws an internal exception.
+    ''' </summary>
+    ''' <value></value>
+    ''' <remarks></remarks>
+    Overridable ReadOnly Property ConstantValue() As Object
+        Get
+            Helper.Assert(m_Classification IsNot Nothing)
+            Return m_Classification.ConstantValue
+        End Get
+    End Property
+
+    Friend NotOverridable Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        If Me.IsConstant Then
+            If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Nothing) Then
+                Emitter.EmitLoadValue(Info, Me.ConstantValue)
+            Else
+                Emitter.EmitLoadValue(Info.Clone(Me.ExpressionType), Me.ConstantValue)
+            End If
+        ElseIf TypeOf Me.Classification Is MethodGroupClassification Then
+            result = Me.Classification.AsMethodGroupClassification.GenerateCode(Info) AndAlso result
+        Else
+            result = GenerateCodeInternal(Info) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Protected Overridable Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Helper.NotImplemented() : Return False
+    End Function
+
+#Region "Resolution region"
+    ''' <summary>
+    ''' Has this expression been resolved?
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_Resolved As Boolean
+
+    ''' <summary>
+    ''' Is this expression beeing resolved (in Resolve / DoResolve)
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_Resolving As Boolean
+
+    Function ResolveExpression(ByVal ResolveInfo As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        Helper.Assert(ResolveInfo IsNot Nothing)
+
+        StartResolve()
+
+        result = ResolveExpressionInternal(ResolveInfo) AndAlso result
+
+#If EXTENDEDDEBUG Then
+        Helper.Assert(result = False OrElse m_Classification IsNot Nothing, "Classification is nothing! (type of expression = " & Me.GetType.ToString & ")")
+        Helper.Assert(ResolveInfo.CanFail OrElse result = (Compiler.Report.Errors = 0))
+#End If
+
+        EndResolve(result)
+        Return result
+    End Function
+
+    <Obsolete()> Function ResolveExpression() As Boolean
+        Return ResolveExpression(ResolveInfo.Default(Parent.Compiler))
+    End Function
+
+    ''' <summary>
+    ''' Call StartResolve to enable check for recursive resolving.
+    ''' Call EndResolve when finished resolving.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Protected Sub StartResolve()
+        If m_Resolving Then
+            'Recursive resolution.
+            'TODO: Find a meaningful error message
+            Throw New InternalException(Me)
+        End If
+        m_Resolving = True
+#If EXTENDEDDEBUG Then
+        If Me.TypeReferencesResolved = False Then
+            Compiler.Report.WriteLine("TypeReferences not resolved for expression  " & Me.ToString)
+        End If
+#End If
+#If EXTENDEDDEBUG Then
+        If m_Resolved Then
+            Compiler.Report.WriteLine("Resolving expression " & Me.ToString & " more than once (Location: " & Me.Location.ToString & ")")
+        End If
+#End If
+    End Sub
+
+    ''' <summary>
+    ''' Is this expression beeing resolved (in Resolve)?
+    ''' </summary>
+    ''' <value></value>
+    ''' <remarks></remarks>
+    ReadOnly Property IsResolving() As Boolean
+        Get
+            Return m_Resolving
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Is this constant resolved?
+    ''' </summary>
+    ''' <value></value>
+    ''' <remarks></remarks>
+    Property IsResolved() As Boolean
+        Get
+            Return m_Resolved
+        End Get
+        Set(ByVal value As Boolean)
+            m_Resolved = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' Call StartResolve to enable check for recursive resolving.
+    ''' Call EndResolve when finished resolving.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Protected Sub EndResolve(ByVal result As Boolean)
+        If Not m_Resolving Then Throw New InternalException(Me)
+        m_Resolving = False
+        m_Resolved = result
+    End Sub
+
+    <Obsolete("Call ResolveExpression"), ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> Public NotOverridable Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Return ResolveExpression(Info)
+    End Function
+
+    Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
+        Helper.NotImplemented(Me.GetType.ToString & ".Clone() not implemented.")
+        Return Nothing
+    End Function
+
+    Protected Overridable Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Helper.NotImplemented(Me.GetType.ToString & ".ResolveExpressionInternal(ResolveInfo) not implemented.")
+        Return False
+    End Function
+
+    Function GetObjectReference() As Expression
+        Dim result As Expression
+        If TypeOf Me Is GetRefExpression Then
+            Return Me
+        ElseIf ExpressionType.IsValueType Then
+            If Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.Enum) Then
+                result = New BoxExpression(Me, Me, Me.ExpressionType)
+            Else
+                result = New GetRefExpression(Me, Me)
+            End If
+        Else
+            result = Me
+        End If
+
+        Return result
+    End Function
+
+    Function DereferenceByRef() As Expression
+        Dim result As Expression
+
+        If ExpressionType.IsByRef Then
+            result = New DeRefExpression(Me, Me)
+        Else
+            result = Me
+        End If
+
+        Return result
+    End Function
+
+    Function ReclassifyToPropertyAccessExpression() As Expression
+        Dim result As Expression
+        Select Case m_Classification.Classification
+            Case ExpressionClassification.Classifications.PropertyGroup
+                Dim pgClass As PropertyGroupClassification = Me.Classification.AsPropertyGroup
+                result = New PropertyGroupToPropertyAccessExpression(Me, pgClass)
+            Case ExpressionClassification.Classifications.Value
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Variable
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.EventAccess
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.LateBoundAccess
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.MethodGroup
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.MethodPointer
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.PropertyAccess
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Void
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Type
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Namespace
+                Throw New InternalException(Me)
+            Case Else
+                Throw New InternalException(Me)
+        End Select
+
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Reclassifies an expression.
+    ''' The resulting expression is NOT resolved.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function ReclassifyToValueExpression() As Expression
+        Dim result As Expression = Nothing
+        Select Case m_Classification.Classification
+            Case ExpressionClassification.Classifications.Value
+                Return Me 'This expression is already a value expression.
+            Case ExpressionClassification.Classifications.Variable
+                result = New VariableToValueExpression(Me, Me.Classification.AsVariableClassification)
+            Case ExpressionClassification.Classifications.MethodGroup
+                result = New MethodGroupToValueExpression(Me, Me.Classification.AsMethodGroupClassification)
+            Case ExpressionClassification.Classifications.PropertyAccess
+                result = New PropertyAccessToValueExpression(Me, Me.Classification.AsPropertyAccess)
+            Case ExpressionClassification.Classifications.PropertyGroup
+                result = New PropertyGroupToValueExpression(Me, Me.Classification.AsPropertyGroup)
+            Case ExpressionClassification.Classifications.LateBoundAccess
+                Helper.NotImplemented()
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.MethodPointer
+                result = New MethodPointerToValueExpression(Me, Me.Classification.AsMethodPointerClassification)
+            Case ExpressionClassification.Classifications.EventAccess
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Void
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Type
+                Throw New InternalException(Me)
+            Case ExpressionClassification.Classifications.Namespace
+                Throw New InternalException(Me)
+            Case Else
+                Helper.NotImplemented() : Return Nothing
+        End Select
+
+        Return result
+    End Function
+
+#End Region
+    '#If DEBUG Then
+    '    Protected Overrides Sub Finalize()
+    '        If m_Resolving Then
+    '            If Location IsNot Nothing Then
+    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving: " & Me.Location.ToString)
+    '            Else
+    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving. (Location is lost already).")
+    '            End If
+    '        End If
+    '    End Sub
+    '#End If
+#If DEBUG Then
+    Overridable Sub Dump(ByVal Dumper As IndentedTextWriter)
+        Dumper.Write("<Dump of '" & Me.GetType.Name & "'>")
+    End Sub
+#End If
+End Class

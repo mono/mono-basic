@@ -1,0 +1,1 @@
+for i in  ../tests/$1/*vb; do echo $i; TERM=1 mono vbnc.exe @../tests/$1/all.rsp $i >& /dev/null; echo $?; done

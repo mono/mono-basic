@@ -1,0 +1,6 @@
+/target:library
+/novbruntimeref
+/verbose
+/noconfig
+/nostdlib
+NoVBRuntimeRef1.vb

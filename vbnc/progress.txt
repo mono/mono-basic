@@ -1,0 +1,83 @@
+2006-09-10:
+# of Tests: 1926
+# of Tests (Successful): 1264 = 65,6%
+# of Tests (Failed): 662 = 34,4%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-08-09:
+# of Tests: 10323
+# of Tests (Successful): 7835 = 75,9%
+# of Tests (Failed): 2488 = 24,1%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-07-16:
+# of Tests: 10226
+# of Tests (Successful): 7942 = 77,7%
+# of Tests (Failed): 2284 = 22,3%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-06-30:
+# of Tests: 8693
+# of Tests (Successful): 6419 = 73,8%
+# of Tests (Failed): 2274 = 26,2%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-06-29:
+# of Tests: 8693
+# of Tests (Successful): 6377 = 73,4%
+# of Tests (Failed): 2316 = 26,6%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-06-17:
+# of Tests: 10178
+# of Tests (Successful): 7194 = 70,7%
+# of Tests (Failed): 2984 = 29,3%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-06-07:
+# of Tests: 9648
+# of Tests (Successful): 4027 = 41,7%
+# of Tests (Failed): 5621 = 58,3%
+# of Tests (NotRun): 0 = 0,0%
+
+2006-06-06:
+# of Tests: 9648
+# of Tests (Successful): 3299 = 34,2%
+# of Tests (Failed): 6348 = 65,8%
+# of Tests (NotRun): 1 = 0,0%
+
+2006-06-03:
+# of Tests: 1680
+# of Tests (Successful): 590 = 35,1%
+# of Tests (Failed): 1089 = 64,8%
+# of Tests (NotRun): 1 = 0,1%
+
+2006-06-02:
+# of Tests: 1673
+# of Tests (Successful): 544 = 32,5%
+# of Tests (Failed): 1128 = 67,4%
+# of Tests (NotRun): 1 = 0,1%
+
+2006-06-01:
+# of Tests: 1717
+# of Tests (Successful): 537 = 31,3%
+# of Tests (Failed): 1179 = 68,7%
+# of Tests (NotRun): 1 = 0,1%
+
+2006-05-31:
+# of Tests: 1706
+# of Tests (Successful): 528 = 30,9%
+# of Tests (Failed): 1177 = 69,0%
+# of Tests (NotRun): 1 = 0,1%
+
+2006-05-30:
+# of Tests: 1657
+# of Tests (Successful): 511 = 30,8%
+# of Tests (Failed): 1145 = 69,1%
+# of Tests (NotRun): 1 = 0,1%
+
+2006-05-29:
+# of Tests: 1655
+# of Tests (Successful): 390 = 23,6%
+# of Tests (Failed): 1264 = 76,4%
+# of Tests (NotRun): 1 = 0,1%

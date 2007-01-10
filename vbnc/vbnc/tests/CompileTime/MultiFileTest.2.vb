@@ -1,0 +1,3 @@
+class MultFileTest_Derived
+	inherits MultiFileTest
+end class

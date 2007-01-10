@@ -1,0 +1,4 @@
+/r:system.dll,system.xml.dll /target:library /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"
+/imports:NUNit.Framework
+/r:nunit.framework.dll
+/optionstrict+ /optionexplicit+ /optioncompare:binary

@@ -1,0 +1,163 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+''' <summary>
+''' Homebrew:
+''' UsingDeclarator ::= 
+'''  Identifier  [  As  [  New  ]  NonArrayTypeName  [  (  ArgumentList  )  ]  ]  |
+'''  Identifier  [  As  NonArrayTypeName  ]  [  =  VariableInitializer  ]
+'''
+''' </summary>
+''' <remarks></remarks>
+Public Class UsingDeclarator
+    Inherits ParsedObject
+
+    Private m_Identifier As IdentifierToken
+    Private m_IsNew As Boolean
+    Private m_TypeName As NonArrayTypeName
+    Private m_ArgumentList As ArgumentList
+    Private m_VariableInitializer As VariableInitializer
+    ''' <summary>
+    ''' If using a variable declared here or elsewhere.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_IsVariableDeclaration As Boolean
+    Private m_VariableDeclaration As VariableDeclaration
+
+    Public UsingVariable As LocalBuilder
+    Public UsingVariableType As Type
+
+    Private m_Constructor As ConstructorInfo
+
+    ReadOnly Property VariableInitializer() As VariableInitializer
+        Get
+            Return m_VariableInitializer
+        End Get
+    End Property
+
+    ReadOnly Property Identifier() As IdentifierToken
+        Get
+            Return m_Identifier
+        End Get
+    End Property
+
+    ReadOnly Property ArgumentList() As ArgumentList
+        Get
+            Return m_ArgumentList
+        End Get
+    End Property
+
+    ReadOnly Property IsNew() As Boolean
+        Get
+            Return m_isnew
+        End Get
+    End Property
+
+    ReadOnly Property TypeName() As NonArrayTypeName
+        Get
+            Return m_TypeName
+        End Get
+    End Property
+
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.New(Parent)
+    End Sub
+
+    Sub Init(ByVal Identifier As IdentifierToken, ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList, ByVal VariableInitializer As VariableInitializer, ByVal IsVariableDeclaration As Boolean, ByVal VariableDeclaration As VariableDeclaration)
+        m_Identifier = Identifier
+        m_IsNew = IsNew
+        m_TypeName = TypeName
+        m_ArgumentList = ArgumentList
+        m_VariableInitializer = VariableInitializer
+        m_IsVariableDeclaration = IsVariableDeclaration
+        m_VariableDeclaration = VariableDeclaration
+    End Sub
+
+    ReadOnly Property IsVariableDeclaration() As Boolean
+        Get
+            Return m_IsVariableDeclaration
+        End Get
+    End Property
+
+    ReadOnly Property VariableDeclaration() As VariableDeclaration
+        Get
+            Return m_VariableDeclaration
+        End Get
+    End Property
+
+    Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        If m_IsVariableDeclaration Then
+            result = m_VariableDeclaration.GenerateCode(Info.Clone(True, False, UsingVariableType)) AndAlso result
+            UsingVariable = m_VariableDeclaration.LocalBuilder
+        Else
+            Helper.NotImplemented()
+        End If
+
+        Return result
+    End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = Helper.ResolveTypeReferences(m_TypeName, m_ArgumentList, m_VariableInitializer) AndAlso result
+
+        Return result
+    End Function
+
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        'TODO: Resolve identifier
+        If m_ArgumentList IsNot Nothing Then
+            result = m_ArgumentList.ResolveCode(Info) AndAlso result
+        End If
+
+        If m_TypeName IsNot Nothing Then
+            UsingVariableType = m_TypeName.ResolvedType
+            m_IsVariableDeclaration = True
+            If m_IsNew Then
+                Dim grp As New MethodGroupClassification(Me, Nothing, Nothing, m_TypeName.ResolvedType.GetConstructors(BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance))
+                result = grp.ResolveGroup(m_ArgumentList, Nothing) AndAlso result
+                m_Constructor = grp.ResolvedConstructor
+                If m_Constructor Is Nothing Then
+                    Helper.AddError()
+                End If
+            End If
+        ElseIf m_VariableInitializer IsNot Nothing Then
+            UsingVariableType = Compiler.TypeCache.Object
+            m_IsVariableDeclaration = True
+        Else
+            Helper.Assert(m_ArgumentList Is Nothing)
+            Helper.Assert(m_Identifier IsNot Nothing)
+            m_IsVariableDeclaration = False
+            Helper.NotImplemented()
+        End If
+
+        If m_VariableInitializer IsNot Nothing Then
+            Dim expInfo As ExpressionResolveInfo
+            expInfo = New ExpressionResolveInfo(Compiler, UsingVariableType)
+            result = m_VariableInitializer.ResolveCode(expInfo) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+End Class

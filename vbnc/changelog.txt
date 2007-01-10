@@ -1,0 +1,186 @@
+2007-01-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	* Fixed a typo and changed e-mail the copyright notice.
+	* Rewrote member lookup (adding a member cache, inspired by mcs), looks like it works faster now
+	* Bugfixes and workarounds to finally be able to bootstrap on Mono.
+	* Misc performance changes (bootstrap now runs in 15-20 seconds on both Mono and MS)
+
+﻿2006-12-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	* The compiler doesn't keep a list of all the tokens anymore, the tokens are retreived from the scanner as needed by the parser.
+	* Fixed a few bugs in the conditional compiler preventing it from compiling MS.VB.dll. Changes were also required since no list of tokens are kept anymore.
+
+2006-11-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	* Fixed tests ArrayCreationExpression3, ArrayCreationExpression5, ArrayInitializer2 (thanks to MrUnleaded)
+
+2006-09-13  Kornél Pál  <kornelpal@gmail.com>
+	* Fixed: Types in the root namespace can be added to NamespaceDictionary.
+
+2006-09-12  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* A few bugs made the vb runtime regress, they are now fixed.
+	* Implemented special handling of AscW when compiling with /novbruntime (thanks to Kornél Pál)
+	* Reduced the debugging output of the compiler.
+	* Fixed: crash if /out was specified without a directory (only filename).
+
+2006-09-06  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Changed a few methods to make them work without hacks.
+	* Implemented two helper functions to check if the compiler is running on mono or on MS (Helper.IsOnMS and Helper.IsOnMono).
+
+2006-08-27  Kornél Pál  <kornelpal@gmail.com>
+	* Decode source files using UTF-8 when they can be decoded using UTF-8.
+
+2006-08-21  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Added brackets to some identifiers that were causing problems if you had LINQ installed. (New keywords in LINQ)
+	* Added support for /codepage (thanks to Kornél Pál)
+
+2006-08-19  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: The compiler can now bootstrap itself!!!
+
+2006-08-17  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Continued bugixing the compiler trying to make the compiler bootstraf itself.
+
+2006-08-16  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now the compiler can compile the Microsoft.VisualBasic.dll and it passes PEVerify.
+
+2006-08-13  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now I the selfcompiled compiler passes PEVerify!
+
+2006-08-12  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now I get 48 errors with PEVerify (9 unique errors)
+
+2006-08-11  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now I get 71 errors with PEVerify (9 unique errors)
+
+2006-08-10  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now I get 319 errors with PEVerify (15 unique errors)
+
+2006-08-09  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now it passes assembly verification and I get 494 errors with PEVerify (15 unique errors)
+
+2006-08-08  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Now I get 558 errors with PEVerify (16 unique errors)
+
+2006-08-06  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler finally compiles within the debugger as well.
+	  639 errors with PEVerify (18 unique errors)
+
+2006-08-05  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler finishes compiling itself when not compiled within the debugger.
+	  584 errors with PEVerify (17 unique errors)	
+
+2006-08-04  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: CreateType vbnc.NamedBaseList`1 (109 of 403 types)
+	  There is only one TypeLoadException left to fix before the assembly can be created2006-07-04  
+
+2006-08-04  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: CreateType vbnc.NamedBaseList`1 (109 of 403 types)
+
+2006-08-03  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: CreateType vbnc.NamedBaseList`1 (109 of 403 types)
+
+2006-08-02  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: Emit vbnc.ConditionalExpression (340 of 403 types)
+
+2006-08-01  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: Emit vbnc.VariableClassification (47 of 401 types)
+
+2006-07-30  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: Compiler reaches: DefineMembers vbnc.Helper (340 of 400 types)
+
+2006-07-24  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.ContinueStatement  (198 of 400 types)
+
+2006-07-22  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.TypeDictionary (42,19) (65 of 400 types)
+
+2006-07-21  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.MethodGroupClassification (157,16) (40 of 398 types)
+	* Fixed the rest of the tests in the Mono directory, now 256 of the tests pass (before 74)
+
+2006-07-20  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.FieldDescriptor (119,27) (7 of 397 types)
+	* Fixed some more tests in the Mono directory.
+
+2006-07-19  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.GenericTypeDescriptor (193,27) (12 of 396 types)
+	* Fixed some more tests in the Mono directory.
+	
+2006-07-17  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.ImplicitCodeBlock (33,16) (2 of 395 types) 
+	* Fixed some more tests in the Mono directory.
+
+2006-07-16  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.CodeBlock (200,1) (1 of 390 types) 
+	* Fixed a number of the tests in the Mono directory so that they at least compile with vbc.
+
+2006-07-11  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.CodeBlock (132,43) (1 of 390 types) 
+
+2006-07-10  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes, a few more tests pass, but nothing more.
+
+2006-07-08  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes, a few more tests pass, but nothing more.
+
+2006-07-07  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveCode vbnc.CodeBlock (1 of 390 types)
+
+2006-06-29  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveMembers vbnc.Scanner (336 of 390 types)
+
+2006-06-26  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Bugfixes: compiler reaches: ResolveType vbnc.EnumStringAttribute (21 of 390 types)
+
+2006-06-25  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* The compiler now shows more detailed progress information when parsing and resolving.
+	* Compiler reaches: Parsing file (...)\vbnc\source\Members\MemberDeclarations.vb (156 of 422 files)
+
+2006-06-21  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented user-defined operators.
+
+2006-06-17  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented the rest of the built-in operators.
+
+2006-06-16  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented the unary operators, IntDivision, RealDivision, Exponent and Multiplication operators.
+
+2006-06-15  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented And, Or, Xor, Add, Sub, Concat, Like operators
+	* There is now a directory of generated tests containing all tests that can be generated automatically.
+
+2006-06-07  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented all relational operators.
+
+2006-06-06  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Created tests for all combinations of operators and types (7969 tests!)
+	* Elemental Equals operator is now fully implemented.
+
+2006-06-05  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Finished generic parameter conversions. Most of them should succeed now.
+
+2006-06-04  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* A few more generic parameter conversions succeed now.
+
+2006-06-03  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Started on implementing conversions of generic parameters and types.
+	* Fixed the tests in the mono test suite, they were throwing an exception when they failed, which caused a messagebox to appear, not very friendly when you have 400 failing tests... they should all fail with an error message now and return 1.
+	
+
+2006-06-02  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Finished implementing CType conversions, most of them should work now.
+
+2006-06-01  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Some non-elemental CType conversions work now (Object to whatever, array conversions).
+
+2006-05-31  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* rt now executes correctly tests that are supposed to fail.
+	* Fixed a few tests that didn't compile with vbc with option strict on. (All explicit conversion tests that ended with ...ToObject.vb)
+	* Implemented CType for elemental types.
+
+2006-05-30  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented CChar, CDate, CDbl, CDec, CInt, CLng, CSByte, CShort, CSng, CStr, CUInt and CUShort conversions
+
+2006-05-29  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Implemented CByte, CSByte and CBool conversions.
+	* Changed all the conversions tests in the runtime directory, their names were wrong (FromType->ToType were inversed).
+
+2006-05-20  Rolf Bjarne Kvinge <rbjarnek@sourceforge.net>
+	* Initial import

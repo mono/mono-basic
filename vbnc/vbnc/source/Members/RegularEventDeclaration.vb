@@ -1,0 +1,176 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+''' <summary>
+''' RegularEventMemberDeclaration  ::=
+''' 	[  Attributes  ]  [  EventModifiers+  ]  "Event"  Identifier  ParametersOrType  [  ImplementsClause  ] StatementTerminator
+''' </summary>
+''' <remarks></remarks>
+Public Class RegularEventDeclaration
+    Inherits EventDeclaration
+    Implements IHasImplicitTypes
+
+    Private m_ParametersOrType As ParametersOrType
+
+    ''' <summary>The implicitly defined delegate (if not explicitly specified).</summary>
+    Private m_ImplicitEventDelegate As DelegateDeclaration
+    ''' <summary>The implicitly defined field holding the delegate variable (of not a custom event).</summary>
+    Private m_Variable As VariableDeclaration
+
+    Sub New(ByVal Parent As TypeDeclaration)
+        MyBase.New(Parent)
+    End Sub
+
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ParametersOrType As ParametersOrType, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Attributes, Modifiers, Identifier, ImplementsClause)
+        m_ParametersOrType = ParametersOrType
+    End Sub
+
+    Shared Function DefineEventType(ByVal Obj As EventDeclaration, ByRef Builder As DelegateDeclaration, ByVal Parameters As ParameterList) As Boolean
+        Dim result As Boolean = True
+
+        Builder = New DelegateDeclaration(Obj.FindFirstParent(Of TypeDeclaration), Obj.Name & "EventHandler", Obj.Modifiers, Parameters)
+
+        Return result
+    End Function
+
+    Shared Function IsMe(ByVal tm As tm) As Boolean
+        Dim i As Integer
+        While tm.PeekToken(i).Equals(Enums.EventModifiers)
+            i += 1
+        End While
+        Return tm.PeekToken(i).Equals(KS.Event)
+    End Function
+
+    ReadOnly Property Parameters() As ParameterList
+        Get
+            Return m_ParametersOrType.Parameters
+        End Get
+    End Property
+
+    ReadOnly Property Type() As NonArrayTypeName
+        Get
+            Return m_ParametersOrType.Type
+        End Get
+    End Property
+
+    Public ReadOnly Property EventField() As System.Reflection.Emit.FieldBuilder
+        Get
+            Helper.Assert(m_Variable IsNot Nothing)
+            Helper.Assert(m_Variable.IsFieldVariable)
+            Helper.Assert(m_Variable.FieldBuilder IsNot Nothing)
+            Return m_Variable.FieldBuilder
+        End Get
+    End Property
+
+    Public Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes
+        Dim result As Boolean = True
+        'An event creates the following members.
+        '1 - if the event is not an explicit delegate, a nested delegate in the 
+        '    parent called (name)EventHandler.
+        '    the parameters to the delegate are the same as for the event 
+        '    accessability is the same as for the event.
+        '2 - a private variable in the parent called (name)Event of type (name)EventHandler.
+        '    (unless it is an interface)
+        '3 - an add_(name) method in the parent with 1 parameter of type (name)EventHandler.
+        '    accessability is the same as for the event.
+        '4 - an remove_(name) method in the parent with 1 parameter of type (name)EventHandler.
+        '    accessability is the same as for the event.
+        '5 - possibly a raise_(name) method in the parent as well.
+        '    accessability is the same as for the event.
+        '    this method seems to be created only for custom events.
+        '6 - an event in the parent called (name) with the add, remove and raise methods of 3, 4 & 5
+        '    accessability is the same as for the event.
+
+        Dim m_AddMethod As RegularEventHandlerDeclaration
+        Dim m_RemoveMethod As RegularEventHandlerDeclaration
+        Dim m_Parameters As ParameterList = Me.Parameters
+        Dim m_Type As NonArrayTypeName = Me.Type
+
+        'Create the delegate, if necessary.
+        If m_Parameters IsNot Nothing Then
+            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
+            m_ImplicitEventDelegate.Init(Nothing, New Modifiers(m_ImplicitEventDelegate, Me.Modifiers.ModifiersAsArray), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented()
+
+            EventType = m_ImplicitEventDelegate.TypeDescriptor
+        ElseIf m_Type IsNot Nothing Then
+            m_ImplicitEventDelegate = Nothing
+            'Helper.NotImplemented()
+        Else
+            Throw New InternalException(Me)
+        End If
+
+
+        'Create the variable.
+        If DeclaringType.IsInterface = False Then
+            Dim eventVariableModifiers As Modifiers
+            m_Variable = New VariableDeclaration(declaringtype)
+            eventVariableModifiers = New Modifiers(m_Variable, KS.Private)
+            If Me.IsShared Then eventVariableModifiers.AddModifier(KS.Shared)
+            If m_ImplicitEventDelegate IsNot Nothing Then
+                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.TypeDescriptor)
+            Else
+                Helper.Assert(m_Type IsNot Nothing)
+                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", New TypeName(m_Variable, m_Type))
+            End If
+        Else
+            m_Variable = Nothing
+        End If
+
+        'Create the add method
+        m_AddMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.AddHandler, Me.Identifier)
+
+        'Create the remove method
+        m_RemoveMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.RemoveHandler, Me.Identifier)
+
+        Helper.Assert(m_AddMethod IsNot Nothing)
+        Helper.Assert(m_AddMethod.Name <> "")
+        Helper.Assert(m_RemoveMethod IsNot Nothing)
+        Helper.Assert(m_RemoveMethod.Name <> "")
+
+        'Add everything to the parent's members.
+        If m_ImplicitEventDelegate IsNot Nothing Then DeclaringType.Members.Add(m_ImplicitEventDelegate)
+        If m_Variable IsNot Nothing Then DeclaringType.Members.Add(m_Variable)
+
+        MyBase.AddMethod = m_AddMethod
+        MyBase.RemoveMethod = m_RemoveMethod
+
+        Return result
+    End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = m_ParametersOrType.ResolveTypeReferences AndAlso result
+        If Type IsNot Nothing Then
+            Helper.Assert(EventType Is Nothing)
+            EventType = Type.ResolvedType
+        ElseIf Parameters IsNot Nothing Then
+            Helper.Assert(EventType IsNot Nothing)
+        Else
+            Throw New InternalException(Me)
+        End If
+
+
+        result = MyBase.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+End Class

@@ -1,0 +1,3007 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="warning" xml:space="preserve">
+    <value>'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'    This file has automatically been generated                            
+'    Any change in this file will be lost!!                                
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</value>
+  </data>
+  <data name="2005" xml:space="preserve">
+    <value>file not found: {0}</value>
+  </data>
+  <data name="2007" xml:space="preserve">
+    <value>the response file '{0}' could not be opened</value>
+  </data>
+  <data name="2009" xml:space="preserve">
+    <value>the option {0} was not recognized - ignored</value>
+  </data>
+  <data name="2011" xml:space="preserve">
+    <value>No files to compile! Cannot do anything!</value>
+  </data>
+  <data name="2014" xml:space="preserve">
+    <value>The response file '{0}' has already been included</value>
+  </data>
+  <data name="2019" xml:space="preserve">
+    <value>the option '{0}' cannot have the value '{1}'</value>
+  </data>
+  <data name="20001" xml:space="preserve">
+    <value>	'{0}': not most specific.</value>
+  </data>
+  <data name="30001" xml:space="preserve">
+    <value>There cannot be any statements in a namespace.</value>
+  </data>
+  <data name="30002" xml:space="preserve">
+    <value>Could not find the type '{0}'.</value>
+  </data>
+  <data name="30003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30004" xml:space="preserve">
+    <value>Character constants must contain exactly one character.</value>
+  </data>
+  <data name="30005" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30006" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30008" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30009" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30010" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30011" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30012" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30015" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30016" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30018" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30019" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30020" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30021" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30022" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30023" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30024" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30025" xml:space="preserve">
+    <value>Property must end with 'End Property'.</value>
+  </data>
+  <data name="30026" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30027" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30028" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30029" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30030" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30031" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30032" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30033" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30034" xml:space="preserve">
+    <value>An escaped identifier must end with ']'.</value>
+  </data>
+  <data name="30035" xml:space="preserve">
+    <value>Syntax error.</value>
+  </data>
+  <data name="30036" xml:space="preserve">
+    <value>Overflow.</value>
+  </data>
+  <data name="30037" xml:space="preserve">
+    <value>Symbol is not valid.</value>
+  </data>
+  <data name="30038" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30039" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30040" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30041" xml:space="preserve">
+    <value>Too many errors.</value>
+  </data>
+  <data name="30043" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30044" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30045" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30046" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30049" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30050" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30051" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30052" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30053" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30057" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30058" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30059" xml:space="preserve">
+    <value>The expression is not a constant expression.</value>
+  </data>
+  <data name="30060" xml:space="preserve">
+    <value>Cannot convert from '{0}' to '{1}' in a constant expression.</value>
+  </data>
+  <data name="30062" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30064" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30065" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30066" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30067" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30068" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30069" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30070" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30071" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30072" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30074" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30075" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30081" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30082" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30083" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30084" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30085" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30086" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30087" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30088" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30089" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30090" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30091" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30092" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30093" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30094" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30095" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30096" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30097" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30098" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30099" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30101" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30103" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30105" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30106" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30107" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30108" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30109" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30110" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30111" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30112" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30113" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30121" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30122" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30123" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30124" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30125" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30126" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30127" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30128" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30129" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30130" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30131" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30132" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30133" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30134" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30135" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30136" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30137" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30138" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30139" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30140" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30141" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30142" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30143" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30144" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30145" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30146" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30147" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30148" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30149" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30154" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30157" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30166" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30175" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30176" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30177" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30178" xml:space="preserve">
+    <value>The modifier '{0}' is specified more than once.</value>
+  </data>
+  <data name="30179" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30180" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30181" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30182" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30183" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30184" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30185" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30186" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30188" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30192" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30193" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30195" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30196" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30197" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30198" xml:space="preserve">
+    <value>Expected ')'.</value>
+  </data>
+  <data name="30199" xml:space="preserve">
+    <value>Expected '('.</value>
+  </data>
+  <data name="30200" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30201" xml:space="preserve">
+    <value>Expected expression.</value>
+  </data>
+  <data name="30202" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30203" xml:space="preserve">
+    <value>Not valid as identifier.</value>
+  </data>
+  <data name="30204" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30205" xml:space="preserve">
+    <value>Expected end of statement.</value>
+  </data>
+  <data name="30206" xml:space="preserve">
+    <value>'Option' must be followed by 'Explicit', 'Strict' or 'Compare'.</value>
+  </data>
+  <data name="30207" xml:space="preserve">
+    <value>'Option Compare' must be followed by 'Text' or 'Binary'.</value>
+  </data>
+  <data name="30208" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30209" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30210" xml:space="preserve">
+    <value>This function or property requires a return type because 'Option Strict' is in effect.</value>
+  </data>
+  <data name="30213" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30215" xml:space="preserve">
+    <value>Expected 'Sub' or 'Function'</value>
+  </data>
+  <data name="30217" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30218" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30220" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30224" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30225" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30230" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30231" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30232" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30233" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30234" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30235" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30237" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30238" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30239" xml:space="preserve">
+    <value>Expected relational operator.</value>
+  </data>
+  <data name="30240" xml:space="preserve">
+    <value>Expected something else (like 'Sub', 'Function', 'Property', 'Do', 'For', 'While', 'Select' or 'Try'.</value>
+  </data>
+  <data name="30241" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30242" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30243" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30244" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30246" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30247" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30248" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30249" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30251" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30252" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30253" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30256" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30257" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30258" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30260" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30266" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30267" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30268" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30269" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30270" xml:space="preserve">
+    <value>An interface cannot have '{0}'.</value>
+  </data>
+  <data name="30272" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30273" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30274" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30275" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30277" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30278" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30280" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30281" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30282" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30283" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30284" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30287" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30288" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30289" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30290" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30293" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30294" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30296" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30297" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30298" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30299" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30300" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30301" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30302" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30303" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30305" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30306" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30307" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30308" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30310" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30311" xml:space="preserve">
+    <value>Cannot convert from '{0}' to '{1}'.</value>
+  </data>
+  <data name="30321" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30332" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30333" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30337" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30338" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30345" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30354" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30357" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30359" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30360" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30361" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30362" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30363" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30364" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30366" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30367" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30368" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30369" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30370" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30371" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30375" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30376" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30377" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30379" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30380" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30381" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30382" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30383" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30384" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30385" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30387" xml:space="preserve">
+    <value>The class '{0}' must define a constructor since no default constructor can be created.</value>
+  </data>
+  <data name="30389" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30390" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30392" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30393" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30395" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30396" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30397" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30398" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30399" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30401" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30408" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30412" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30413" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30414" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30415" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30420" xml:space="preserve">
+    <value>Could not find a 'Sub Main' in '{0}'.</value>
+  </data>
+  <data name="30423" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30424" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30429" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30430" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30431" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30433" xml:space="preserve">
+    <value>Module methods cannot be '{0}'.</value>
+  </data>
+  <data name="30434" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30435" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30436" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30437" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30438" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30439" xml:space="preserve">
+    <value>The constant expression cannot be represented in the type '{0}'.</value>
+  </data>
+  <data name="30441" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30442" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30443" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30444" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30445" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30451" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30452" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30454" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30455" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30456" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30458" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30460" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30461" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30464" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30465" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30466" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30467" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30468" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30469" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30470" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30471" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30474" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30476" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30479" xml:space="preserve">
+    <value>A structure can't have a shared constructor with parameters.</value>
+  </data>
+  <data name="30480" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30481" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30487" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30490" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30491" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30493" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30494" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30495" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30497" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30500" xml:space="preserve">
+    <value>Constant {0} is recursive, but it cannot depend on itself.</value>
+  </data>
+  <data name="30501" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30502" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30503" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30504" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30505" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30506" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30507" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30508" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30509" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30512" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30516" xml:space="preserve">
+    <value>Overload resolution failed because no '{0}' is accessible with the specified arguments.</value>
+  </data>
+  <data name="30517" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30518" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30519" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30520" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30521" xml:space="preserve">
+    <value>Overload resolution failed because no most specific '{0}' was found:</value>
+  </data>
+  <data name="30522" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30523" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30524" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30526" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30528" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30529" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30530" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30532" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30533" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30542" xml:space="preserve">
+    <value>Division by zero occured.</value>
+  </data>
+  <data name="30544" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30545" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30547" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30548" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30549" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30550" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30554" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30555" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30560" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30561" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30562" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30563" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30565" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30566" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30567" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30568" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30569" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30572" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30574" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30576" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30577" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30578" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30579" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30580" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30581" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30582" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30583" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30584" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30585" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30587" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30588" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30590" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30591" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30593" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30594" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30597" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30598" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30599" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30600" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30601" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30602" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30603" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30604" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30607" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30610" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30611" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30613" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30614" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30615" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30616" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30617" xml:space="preserve">
+    <value>'Module' can only occur at file or namespace level.</value>
+  </data>
+  <data name="30618" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30619" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30620" xml:space="preserve">
+    <value>'Option Strict' must be followed by 'On' or 'Off'.</value>
+  </data>
+  <data name="30621" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30622" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30623" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30624" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30625" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30626" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30627" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30628" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30629" xml:space="preserve">
+    <value>A structure can't declare a non-shared constructor with no parameters.</value>
+  </data>
+  <data name="30630" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30631" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30632" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30633" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30634" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30635" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30636" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30637" xml:space="preserve">
+    <value>Assembly or Module attributes can only be specified on file level.</value>
+  </data>
+  <data name="30638" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30639" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30640" xml:space="preserve">
+    <value>'Option Explicit' must be followed by 'On' or 'Off'.</value>
+  </data>
+  <data name="30641" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30642" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30643" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30644" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30645" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30647" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30648" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30649" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30650" xml:space="preserve">
+    <value>Invalid enum type.</value>
+  </data>
+  <data name="30651" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30652" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30653" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30654" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30655" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30656" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30657" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30658" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30659" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30660" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30661" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30662" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30663" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30664" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30665" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30666" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30667" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30668" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30670" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30671" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30672" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30674" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30675" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30676" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30677" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30678" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30679" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30680" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30681" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30683" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30685" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30686" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30687" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30688" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30689" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30690" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30691" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30694" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30695" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30696" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30697" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30698" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30699" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30700" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30701" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30702" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30703" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30704" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30705" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30706" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30707" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30708" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30709" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30710" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30711" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30712" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30713" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30714" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30715" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30716" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30717" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30718" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30719" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30720" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30721" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30722" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30723" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30724" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30725" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30726" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30728" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30730" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30731" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30732" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30733" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30734" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30735" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30736" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30737" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30738" xml:space="preserve">
+    <value>More than one 'Sub Main' was found in '{0}'.</value>
+  </data>
+  <data name="30739" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30741" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30742" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30743" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30744" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30747" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30748" xml:space="preserve">
+    <value>Cannot convert '{0}' to '{1}'.</value>
+  </data>
+  <data name="30749" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30750" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30751" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30752" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30753" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30754" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30755" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30756" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30757" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30758" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30759" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30760" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30761" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30762" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30763" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30764" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30765" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30766" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30767" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30768" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30769" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30770" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30771" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30772" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30780" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30781" xml:space="preserve">
+    <value>Expected something else (like 'Do', 'For' or 'While')</value>
+  </data>
+  <data name="30782" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30783" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30784" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30785" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30786" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30787" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30788" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30789" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30790" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30791" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30800" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30801" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30802" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30803" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30804" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30805" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30807" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30808" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30809" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30810" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30811" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30812" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30814" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30815" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30816" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30817" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30818" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30819" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30820" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30821" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30822" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30823" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30826" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30827" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30828" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30829" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30830" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30906" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30907" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30908" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30909" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30910" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30911" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30912" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30914" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30915" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30916" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30917" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30918" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30919" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="30920" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31011" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31019" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31020" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31021" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31023" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31024" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31025" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31026" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31027" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31028" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31029" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31030" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31031" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31033" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31035" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31040" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31041" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31042" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31043" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31044" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31047" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31048" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31049" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31051" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31052" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31053" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31054" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31055" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31058" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31059" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31060" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31061" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31063" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31064" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31065" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31066" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31067" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31068" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31069" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31070" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31071" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31072" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31073" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31074" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31075" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31076" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31077" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31080" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31082" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31083" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31084" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31085" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31086" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31087" xml:space="preserve">
+    <value>A variable can't declare array modifiers both on the variable name and on the type.</value>
+  </data>
+  <data name="31088" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31089" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31090" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31091" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31092" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31093" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31094" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31095" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31096" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31097" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31098" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31099" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31100" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31101" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31102" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31103" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31104" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31105" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31106" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31107" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31108" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31112" xml:space="preserve">
+    <value>Expected 'AddHandler', 'RemoveHandler' or 'RaiseEvent'.</value>
+  </data>
+  <data name="31127" xml:space="preserve">
+    <value>'{0}' can only be declared once.</value>
+  </data>
+  <data name="31130" xml:space="preserve">
+    <value>The custom event '{0}' must specify a '{1}'.</value>
+  </data>
+  <data name="31400" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31401" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31403" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31404" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31405" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31406" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31407" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31408" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31409" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31410" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31411" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31412" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31413" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31415" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31416" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31417" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31418" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31419" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31420" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31421" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31500" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31501" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31502" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31503" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31504" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31505" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31506" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31507" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31508" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31509" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31510" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31511" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31512" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31513" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31514" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31515" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31516" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31517" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31518" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31519" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31520" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31521" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31522" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31523" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31524" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31525" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="31526" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32001" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32002" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32004" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32005" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32006" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32008" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32009" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32010" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32012" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32015" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32016" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32017" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32019" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32020" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32021" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32022" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32023" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32024" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32025" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32026" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32027" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32028" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32029" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32030" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32031" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32032" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32033" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32034" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32035" xml:space="preserve">
+    <value>Attributes can only appear just before a declaration.</value>
+  </data>
+  <data name="32036" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32037" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32038" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32039" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32040" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32041" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32042" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32043" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32044" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32045" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32046" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32047" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32048" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32049" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32050" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32051" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32052" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32053" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32054" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32055" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32056" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32057" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32058" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32059" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32060" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32061" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32062" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32063" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32064" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32065" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32066" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32067" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32068" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32069" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32070" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32071" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32200" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32201" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32203" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32204" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32205" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32300" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32301" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32302" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32400" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32500" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32501" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32504" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32505" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32506" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32507" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32508" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="32509" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33001" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33002" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33004" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33005" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33006" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33008" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33009" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33010" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33011" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33012" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33015" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33016" xml:space="preserve">
+    <value>Operator '{0}' must have one or two parameters.</value>
+  </data>
+  <data name="33017" xml:space="preserve">
+    <value>CType operator must specifiy 'Narrowing' or 'Widening'.</value>
+  </data>
+  <data name="33018" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33019" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33020" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33021" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33022" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33023" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33024" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33025" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33026" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33027" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33028" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33029" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33030" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33031" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33032" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33033" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33034" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33035" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="33036" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36001" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36002" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36004" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36005" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36006" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36008" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36009" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36010" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36011" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36012" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36015" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36016" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="36017" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40004" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40005" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40007" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40008" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40009" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40010" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40011" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40012" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40018" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40019" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40020" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40021" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40022" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40023" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40024" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40025" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40026" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40027" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40028" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40029" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40030" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40031" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40032" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40033" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40034" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40035" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40036" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40037" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40038" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40039" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40040" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="40041" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="41000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="41001" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="41002" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="41003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="41004" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42000" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42001" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42002" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42003" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42013" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42014" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42015" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42101" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42102" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42103" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42104" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42200" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42300" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42301" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42302" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42303" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42304" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42305" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42306" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42307" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42308" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42309" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42310" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42311" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42312" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42313" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42314" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="42315" xml:space="preserve">
+    <value>CHANGEME</value>
+  </data>
+  <data name="90000" xml:space="preserve">
+    <value>Newline character found in date constant.</value>
+  </data>
+  <data name="90001" xml:space="preserve">
+    <value>Unexpected end of file.</value>
+  </data>
+  <data name="90002" xml:space="preserve">
+    <value>'{0}' type character is not valid here.</value>
+  </data>
+  <data name="90003" xml:space="preserve">
+    <value>End of line found in string constant.</value>
+  </data>
+  <data name="90004" xml:space="preserve">
+    <value>End of file found in string constant.</value>
+  </data>
+  <data name="90005" xml:space="preserve">
+    <value>Invalid literal.</value>
+  </data>
+  <data name="90006" xml:space="preserve">
+    <value>Invalid {0} literal.</value>
+  </data>
+  <data name="90007" xml:space="preserve">
+    <value>Unexpected token: {0}.</value>
+  </data>
+  <data name="90008" xml:space="preserve">
+    <value>No more code?</value>
+  </data>
+  <data name="90009" xml:space="preserve">
+    <value>Cannot find '{0}'.</value>
+  </data>
+  <data name="90010" xml:space="preserve">
+    <value>Cannot have both '{0}' and '{1}'.</value>
+  </data>
+  <data name="90011" xml:space="preserve">
+    <value>Expected: '{0}'</value>
+  </data>
+  <data name="90012" xml:space="preserve">
+    <value>Could not load the assembly: '{0}'</value>
+  </data>
+  <data name="90013" xml:space="preserve">
+    <value>Error finding class '{0}' with the Main function, found {1} classes with this name.</value>
+  </data>
+  <data name="90014" xml:space="preserve">
+    <value>Expected 'While' or 'Until'.</value>
+  </data>
+  <data name="90015" xml:space="preserve">
+    <value>Can't use the modifier '{0}' here.</value>
+  </data>
+  <data name="90016" xml:space="preserve">
+    <value>Feature not implemented: {0}</value>
+  </data>
+  <data name="90017" xml:space="preserve">
+    <value>Invalid define: '{0}'</value>
+  </data>
+  <data name="90018" xml:space="preserve">
+    <value>Expected end of line.</value>
+  </data>
+  <data name="90019" xml:space="preserve">
+    <value>Expected '{0}'.</value>
+  </data>
+  <data name="90020" xml:space="preserve">
+    <value>Expected 'Get' or 'Set'.</value>
+  </data>
+  <data name="90021" xml:space="preserve">
+    <value>Invalid data type: '{0}'.</value>
+  </data>
+  <data name="90022" xml:space="preserve">
+    <value>Unexpected end of file in comment.</value>
+  </data>
+  <data name="90023" xml:space="preserve">
+    <value>There is no comparison possible between '{0}' and '{1}'.</value>
+  </data>
+</root>

@@ -1,0 +1,2 @@
+class MultiFileTest
+end class

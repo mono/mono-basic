@@ -1,0 +1,106 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+''' <summary>
+''' "TypeOf" Expression "Is" TypeName
+''' Classification: Value (Type=Boolean)
+''' </summary>
+''' <remarks></remarks>
+Public Class TypeOfExpression
+    Inherits Expression
+
+    Private m_Expression As Expression
+    Private m_Type As TypeName
+    ''' <summary>
+    ''' Is or IsNot?
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_Is As Boolean
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = m_Expression.ResolveTypeReferences AndAlso result
+        result = m_Type.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.new(parent)
+    End Sub
+
+    Sub Init(ByVal Expression As Expression, ByVal [Is] As Boolean, ByVal Type As TypeName)
+        m_Expression = Expression
+        m_Is = [Is]
+        m_Type = Type
+    End Sub
+
+    Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = m_Expression.GenerateCode(Info.Clone(True, False, m_Expression.ExpressionType)) AndAlso result
+        If m_Expression.ExpressionType.IsGenericParameter Then
+            Emitter.EmitBox(Info, m_Expression.ExpressionType)
+        End If
+        Emitter.EmitIsInst(Info, m_Expression.ExpressionType, m_Type.ResolvedType)
+
+        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.Object))
+        Info.Stack.SwitchHead(Compiler.TypeCache.Object, Helper.GetTypeOrTypeBuilder(m_Type.ResolvedType))
+        If m_Is Then
+            Emitter.EmitNotEquals(Info, m_Type.ResolvedType)
+        Else
+            Emitter.EmitEquals(Info, m_Type.ResolvedType)
+        End If
+
+        Return result
+    End Function
+
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = m_Expression.ResolveExpression(Info) AndAlso result
+        result = m_Type.ResolveTypeReferences AndAlso result
+
+        Classification = New ValueClassification(Me)
+
+        Return result
+    End Function
+
+    Public Overrides ReadOnly Property IsConstant() As Boolean
+        Get
+            Return False
+        End Get
+    End Property
+
+    Overrides ReadOnly Property ExpressionType() As Type
+        Get
+            Return Compiler.TypeCache.Boolean '_Descriptor
+        End Get
+    End Property
+
+#If DEBUG Then
+    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
+        Dumper.Write("TypeOf ")
+        m_Expression.Dump(Dumper)
+        Dumper.Write(" Is ")
+        Compiler.Dumper.Dump(m_Type)
+    End Sub
+#End If
+End Class
