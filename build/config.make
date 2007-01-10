@@ -1,7 +1,7 @@
 prefix=/usr/local
 exec_prefix=${prefix}
 mono_libdir=${exec_prefix}/lib
-MCS_FLAGS=-debug+
-MCS=vbnc
+VBNC_FLAGS=-debug+
+VBNC=vbnc
 RUNTIME=mono
 MONO_BASIC_VERSION=0.1

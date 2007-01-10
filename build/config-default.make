@@ -9,6 +9,7 @@
 RUNTIME_FLAGS = 
 TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/nunit-console.exe
 MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
+VBNC_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
 CFLAGS = -g -O2
@@ -22,6 +23,7 @@ TEST_RUNTIME = MONO_PATH="$(prefix)/lib/mono/2.0$(PLATFORM_PATH_SEPARATOR)$(topd
 # keep track of the default value
 
 DEFAULT_MCS_FLAGS := $(MCS_FLAGS)
+DEFAULT_VBNC_FLAGS := $(VBNC_FLAGS)
 
 # You shouldn't need to set these but might on a 
 # weird platform.
