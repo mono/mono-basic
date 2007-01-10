@@ -1,0 +1,18 @@
+2005-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* rules.make : target dll-sources (formerly updated-dll-sources).
+
+2005-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* library.make : updated-dll-sources now supports *_test.dll.sources
+	  generation as well.
+
+2005-09-27  Atsushi Enomoto <atsushi@ximain.com>
+
+	library.make :
+	added "update-dll-sources" target (for easy source list regeneration).
+
+2005-09-27  Atsushi Enomoto <atsushi@ximain.com>
+
+	initial checkin. Mostly copied from mcs/build.
+

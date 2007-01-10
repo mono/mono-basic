@@ -1,0 +1,12 @@
+# -*- makefile -*-
+
+BOOTSTRAP_VBNC = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_VBNC)
+VBNC =           MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_VBNC)
+
+# nuttzing!
+
+profile-check:
+	@:
+
+PROFILE_VBNC_FLAGS = 
+FRAMEWORK_VERSION = 2.0
