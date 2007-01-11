@@ -260,26 +260,60 @@ Public Class TypeManager
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function LoadAssembly(ByVal Filename As String) As Reflection.Assembly
-        Dim refAss As Reflection.Assembly
-        '  Try
-        If IO.File.Exists(Filename) OrElse IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
-            refAss = Reflection.Assembly.LoadFrom(Filename)
-            If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
-            Return refAss
-        End If
-        '  Catch ex As IO.FileNotFoundException
-        For Each strPath As String In Compiler.CommandLine.LibPath
-            Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
-            Try
-                If IO.File.Exists(strFullPath) Then
-                    refAss = Reflection.Assembly.LoadFrom(strFullPath)
-                    If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
-                    Return refAss
+        Try
+            Dim refAss As Reflection.Assembly
+            '  Try
+            If IO.File.Exists(Filename) Then
+                'Compiler.Report.WriteLine("1 - Loading " & Filename)
+                refAss = Reflection.Assembly.LoadFrom(Filename)
+                If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
+                Return refAss
+            End If
+
+            Dim fullName As String
+            fullName = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
+            If IO.File.Exists(fullName) Then
+                Filename = fullName
+                'Compiler.Report.WriteLine("1.5 - Loading " & Filename)
+                refAss = Reflection.Assembly.LoadFrom(Filename)
+                If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
+                Return refAss
+            End If
+
+            If False AndAlso Filename.IndexOfAny(New Char() {System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar}) = -1 Then
+                Dim assemblyName As String
+                If Filename.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) OrElse Filename.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) Then
+                    assemblyName = Filename.Substring(0, Filename.Length - 4)
+                Else
+                    assemblyName = Filename
                 End If
-            Catch ex2 As Exception
-                'Do nothing, just keep on trying
-            End Try
-        Next
+                'Compiler.Report.WriteLine("2 - Loading " & assemblyName)
+                refAss = Reflection.Assembly.Load(assemblyName)
+                If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & refAss.Location & "'")
+                Return refAss
+            End If
+
+            '  Catch ex As IO.FileNotFoundException
+            For Each strPath As String In Compiler.CommandLine.LibPath
+                'Compiler.Report.WriteLine("Checking path '" & strPath & "'")
+                Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
+                Try
+                    If IO.File.Exists(strFullPath) Then
+                        'Compiler.Report.WriteLine("3 - Loading " & Filename & "(" & strFullPath & ")")
+                        refAss = Reflection.Assembly.LoadFrom(strFullPath)
+                        If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
+                        Return refAss
+                    End If
+                Catch ex2 As Exception
+                    'Do nothing, just keep on trying
+                End Try
+            Next
+        Catch ex As System.IO.FileNotFoundException
+            Compiler.Report.WriteLine(ex.Message)
+            Compiler.Report.WriteLine(ex.StackTrace)
+            Compiler.Report.WriteLine(ex.FusionLog)
+            Helper.AddError("Could not load assembly")
+        End Try
         '  End Try
         Return Nothing
     End Function

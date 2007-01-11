@@ -1,3 +1,6 @@
+﻿2007-01-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	* Fixed assembly loading to support loading assemblies placed in the same directory as the compiler.
+
 2007-01-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	* Fixed a typo and changed e-mail the copyright notice.
 	* Rewrote member lookup (adding a member cache, inspired by mcs), looks like it works faster now

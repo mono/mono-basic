@@ -67,7 +67,7 @@ Imports System.Runtime.InteropServices
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
 #If NET_2_0 Then
-<Assembly: AssemblyVersion("8.0.0.0")> 
+<Assembly: AssemblyVersion("8.0.0.1")>
 #Else
 <Assembly: AssemblyVersion("7.0.5000.0")> 
 #End If

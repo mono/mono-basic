@@ -1,8 +1,8 @@
 source/Code/CodeBlock.vb
 source/Code/ImplicitCodeBlock.vb
-source/Conditional Compilation/ConditionalConstant.vb
-source/Conditional Compilation/ConditionalConstants.vb
-source/Conditional Compilation/ConditionalExpression.vb
+source/ConditionalCompilation/ConditionalConstant.vb
+source/ConditionalCompilation/ConditionalConstants.vb
+source/ConditionalCompilation/ConditionalExpression.vb
 source/Descriptors/ArrayTypeDescriptor.vb
 source/Descriptors/ByRefTypeDescriptor.vb
 source/Descriptors/ConstructorDescriptor.vb
@@ -368,7 +368,7 @@ source/General/BaseObject.vb
 source/General/BaseObjects`1.vb
 source/General/CodeFile.vb
 source/General/CommandLine.vb
-source/Conditional Compilation/ConditionalCompilation.vb
+source/ConditionalCompilation/ConditionalCompilation.vb
 source/Enums/Enums.vb
 source/Expressions/Expression.vb
 source/General/Helper.vb
@@ -379,8 +379,6 @@ source/Members/PropertyGetDeclaration.vb
 source/Members/PropertySetDeclaration.vb
 source/General/Report.vb
 source/General/Scanner.vb
-source/My Application/MyApplication.Designer.vb
-source/My Project/Application.Designer.vb
 source/Testing/Testing.vb
 source/Tokens/CharLiteralToken.vb
 source/Tokens/DateLiteralToken.vb
@@ -431,7 +429,7 @@ source/Types/TypeParameter.vb
 source/Types/TypeParameterConstraints.vb
 source/Types/TypeParameterList.vb
 source/Types/TypeParameters.vb
-source/Auto Gen/ZCompilerCodeGenerator.vb
+source/AutoGen/ZCompilerCodeGenerator.vb
 source/General/TypeResolution.vb
 source/Expressions/Classifications/ExpressionClassification.Classifications.vb
 

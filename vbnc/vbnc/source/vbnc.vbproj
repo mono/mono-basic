@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -166,12 +166,13 @@
     <Import Include="VB=Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoGen\ZCompilerCodeGenerator.vb" />
     <Compile Include="Code\CodeBlock.vb" />
     <Compile Include="Code\ImplicitCodeBlock.vb" />
-    <Compile Include="Conditional Compilation\ConditionalConstant.vb">
-    </Compile>
-    <Compile Include="Conditional Compilation\ConditionalConstants.vb" />
-    <Compile Include="Conditional Compilation\ConditionalExpression.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalCompilation.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
     <Compile Include="Descriptors\ArrayTypeDescriptor.vb" />
     <Compile Include="Descriptors\ByRefTypeDescriptor.vb" />
     <Compile Include="Descriptors\ConstructorDescriptor.vb" />
@@ -668,8 +669,6 @@
     <Compile Include="General\CommandLine.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conditional Compilation\ConditionalCompilation.vb">
-    </Compile>
     <Compile Include="Enums\Enums.vb">
       <SubType>Code</SubType>
     </Compile>
@@ -757,9 +756,6 @@
     <Compile Include="Types\TypeParameterConstraints.vb" />
     <Compile Include="Types\TypeParameterList.vb" />
     <Compile Include="Types\TypeParameters.vb" />
-    <Compile Include="Auto Gen\ZCompilerCodeGenerator.vb">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="General\TypeResolution.vb">
       <SubType>Code</SubType>
     </Compile>
