@@ -264,7 +264,7 @@ endif
 
 # The library
 
-$(build_lib): $(response) $(BUILT_SOURCES)
+$(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)

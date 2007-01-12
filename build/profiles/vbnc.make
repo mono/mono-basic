@@ -1,7 +1,7 @@
 # -*- makefile -*-
 
-BOOTSTRAP_VBNC = $(INTERNAL_VBNC)
-VBNC =           $(INTERNAL_VBNC)
+VBNC = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) --debug $(topdir)/class/lib/vbnc/vbnc.exe
+BOOTSTRAP_VBNC = MONO_PATH="$(topdir)/class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/vbnc/vbnc.exe
 
 # nuttzing!
 
