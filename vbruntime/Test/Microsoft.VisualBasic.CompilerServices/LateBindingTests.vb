@@ -45,10 +45,10 @@ Public Class LateBindingTests
     Dim si As Single = 1.0
 
 #If NET_2_0 Then
-        Dim sb As SByte = 1
-        Dim us As UShort = 1
-        Dim ui As UInteger = 1
-        Dim ul As ULong = 1
+    Dim sb As SByte = 1
+    Dim us As UShort = 1
+    Dim ui As UInteger = 1
+    Dim ul As ULong = 1
 #End If
 
     <Test()> _

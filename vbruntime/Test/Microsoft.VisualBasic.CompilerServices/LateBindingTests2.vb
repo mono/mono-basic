@@ -51,10 +51,10 @@ Public Class LateBindingTests2
     Dim iic As IConvertible = New IC
 
 #If NET_2_0 Then
-        Dim sb As SByte = 1
-        Dim us As UShort = 1
-        Dim ui As UInteger = 1
-        Dim ul As ULong = 1
+    Dim sb As SByte = 1
+    Dim us As UShort = 1
+    Dim ui As UInteger = 1
+    Dim ul As ULong = 1
 #End If
 
     Private Class C1
@@ -687,7 +687,7 @@ Public Class LateBindingTests2
 
     Private Class C600
         Public Function F(ByVal ParamArray args() As Integer) As Integer
-            Return args.Length           
+            Return args.Length
         End Function
     End Class
 

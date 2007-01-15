@@ -103,7 +103,7 @@ Public Class LateBindingTests5
 
 
     Private Shared i3 As Integer = 0
-    Class C3        
+    Class C3
         Sub f1()
             i3 += 1
             f2()

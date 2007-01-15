@@ -77,7 +77,7 @@ Public Class LateBindingTests4
         Assert.AreEqual("Integer,Long", o.G(2, 3))
     End Sub
 
-    <Test(),ExpectedException(gettype(System.MissingMemberException))> _
+    <Test(), ExpectedException(GetType(System.MissingMemberException))> _
     Public Sub LateBind_OptionalValue_3()
         Dim o As Object = New C1
 

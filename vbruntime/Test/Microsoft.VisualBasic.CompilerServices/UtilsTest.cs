@@ -69,6 +69,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		}
 
 		[Test]
+		[Ignore ("Test for ReDim multiple-dimensioned array is not implemented yet")]
 		public void ReDimPreserve_MultipleDimensions() 
 		{
 			Assert.Fail("Test for ReDim multiple-dimensioned array is not implemented yet");
