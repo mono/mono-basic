@@ -44,6 +44,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		[SetUp]
 		public void GetReady() 
 		{
+			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
 		}
 
 		[TearDown]

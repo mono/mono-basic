@@ -33,60 +33,58 @@ Imports System.IO
 Imports System.Collections
 Imports Microsoft.VisualBasic
 
-Namespace MonoTests.Microsoft_VisualBasic
-    <TestFixture()> _
-    Public Class InteractionTests
-        <SetUp()> _
-        Public Sub GetReady()
-        End Sub
+<TestFixture()> _
+Public Class InteractionTests
+    <SetUp()> _
+    Public Sub GetReady()
+    End Sub
 
-        <TearDown()> _
-        Public Sub Clean()
-        End Sub
+    <TearDown()> _
+    Public Sub Clean()
+    End Sub
 
 #Region "Switch tests"
-        <Test()> _
-        Public Sub Switch_1()
-            Dim CityName As String = "Rome"
-            Dim res As String
+    <Test()> _
+    Public Sub Switch_1()
+        Dim CityName As String = "Rome"
+        Dim res As String
 
-            res = Interaction.Switch(CityName = "London", "English", CityName = "Rome", "Italian", CityName = "Paris", "French")
-            Assert.AreEqual("Italian", res)
+        res = Interaction.Switch(CityName = "London", "English", CityName = "Rome", "Italian", CityName = "Paris", "French")
+        Assert.AreEqual("Italian", res)
 
-        End Sub
+    End Sub
 
-        <Test()> _
-        Public Sub Switch_2()
+    <Test()> _
+    Public Sub Switch_2()
 
-            Dim caughtException As Boolean = False
-            Dim CityName As String
+        Dim caughtException As Boolean = False
+        Dim CityName As String
 
-            Try
-                Interaction.Switch(CityName = "London", CityName = "Rome", "Italian", CityName = "Paris", "French")
-            Catch e As ArgumentException
-                Assert.AreEqual("Argument 'VarExpr' is not a valid value.", e.Message)
-                caughtException = True
-            End Try
-            Assert.AreEqual(True, caughtException)
-        End Sub
+        Try
+            Interaction.Switch(CityName = "London", CityName = "Rome", "Italian", CityName = "Paris", "French")
+        Catch e As ArgumentException
+            Assert.AreEqual("Argument 'VarExpr' is not a valid value.", e.Message)
+            caughtException = True
+        End Try
+        Assert.AreEqual(True, caughtException)
+    End Sub
 
-        <Test()> _
-        Public Sub Switch_3()
+    <Test()> _
+    Public Sub Switch_3()
 
-            Dim res As String
+        Dim res As String
 
-            res = Interaction.Switch(0, "English", 0, "Italian", 342, "French")
-            Assert.AreEqual("French", res)
+        res = Interaction.Switch(0, "English", 0, "Italian", 342, "French")
+        Assert.AreEqual("French", res)
 
-        End Sub
-        Public Class Test1
+    End Sub
+    Public Class Test1
 
-        End Class
+    End Class
 
 #End Region
 
-    End Class
-End Namespace
+End Class
 
 
 

@@ -34,62 +34,60 @@ Imports System.IO
 Imports System.Collections
 Imports Microsoft.VisualBasic
 
-Namespace MonoTests.Microsoft_VisualBasic
-    <TestFixture()> _
-    Public Class InformationTests
-        <SetUp()> _
-        Public Sub GetReady()
-        End Sub
+<TestFixture()> _
+Public Class InformationTests
+    <SetUp()> _
+    Public Sub GetReady()
+    End Sub
 
-        <TearDown()> _
-        Public Sub Clean()
-        End Sub
+    <TearDown()> _
+    Public Sub Clean()
+    End Sub
 
 #Region "IsNothing tests"
-        <Test()> _
-        Public Sub IsNothing_1()
-            Dim oDT1 As Byte
-            Dim oDT2 As Short
-            Dim oDT3 As Integer
-            Dim oDT4 As Long
-            Dim oDT5 As Single
-            Dim oDT6 As Double
-            Dim oDT7 As Decimal
-            Dim oDT8 As String
-            Dim oDT9 As Object
-            Dim oDT10 As Boolean
-            Dim oDT11 As Char
-            Dim oDT12 As Date
+    <Test()> _
+    Public Sub IsNothing_1()
+        Dim oDT1 As Byte
+        Dim oDT2 As Short
+        Dim oDT3 As Integer
+        Dim oDT4 As Long
+        Dim oDT5 As Single
+        Dim oDT6 As Double
+        Dim oDT7 As Decimal
+        Dim oDT8 As String
+        Dim oDT9 As Object
+        Dim oDT10 As Boolean
+        Dim oDT11 As Char
+        Dim oDT12 As Date
 
-            Assert.AreEqual(False, Information.IsNothing(oDT1))
-            Assert.AreEqual(False, Information.IsNothing(oDT2))
-            Assert.AreEqual(False, Information.IsNothing(oDT3))
-            Assert.AreEqual(False, Information.IsNothing(oDT4))
-            Assert.AreEqual(False, Information.IsNothing(oDT5))
-            Assert.AreEqual(False, Information.IsNothing(oDT6))
-            Assert.AreEqual(False, Information.IsNothing(oDT7))
-            Assert.AreEqual(True, Information.IsNothing(oDT8))
-            Assert.AreEqual(True, Information.IsNothing(oDT9))
-            Assert.AreEqual(False, Information.IsNothing(oDT10))
-            Assert.AreEqual(False, Information.IsNothing(oDT11))
-            Assert.AreEqual(False, Information.IsNothing(oDT12))
+        Assert.AreEqual(False, Information.IsNothing(oDT1))
+        Assert.AreEqual(False, Information.IsNothing(oDT2))
+        Assert.AreEqual(False, Information.IsNothing(oDT3))
+        Assert.AreEqual(False, Information.IsNothing(oDT4))
+        Assert.AreEqual(False, Information.IsNothing(oDT5))
+        Assert.AreEqual(False, Information.IsNothing(oDT6))
+        Assert.AreEqual(False, Information.IsNothing(oDT7))
+        Assert.AreEqual(True, Information.IsNothing(oDT8))
+        Assert.AreEqual(True, Information.IsNothing(oDT9))
+        Assert.AreEqual(False, Information.IsNothing(oDT10))
+        Assert.AreEqual(False, Information.IsNothing(oDT11))
+        Assert.AreEqual(False, Information.IsNothing(oDT12))
 
-        End Sub
+    End Sub
 
-        <Test()> _
-        Public Sub IsNothing_2()
-            Dim oDT1 As Test1
-            Assert.AreEqual(True, Information.IsNothing(oDT1))
-            
-        End Sub
-        Public Class Test1
+    <Test()> _
+    Public Sub IsNothing_2()
+        Dim oDT1 As Test1
+        Assert.AreEqual(True, Information.IsNothing(oDT1))
 
-        End Class
+    End Sub
+    Public Class Test1
+
+    End Class
 
 #End Region
 
-    End Class
-End Namespace
+End Class
 
 
 

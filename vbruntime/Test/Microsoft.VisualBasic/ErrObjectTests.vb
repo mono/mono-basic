@@ -32,114 +32,112 @@ Imports System
 Imports System.IO
 Imports System.Collections
 Imports Microsoft.VisualBasic
+<Category("Broken")> _
+<TestFixture()> _
+Public Class ErrObjectTests
+    <SetUp()> _
+    Public Sub GetReady()
+    End Sub
 
-namespace MonoTests.Microsoft_VisualBasic
-	<TestFixture> _
-	public class ErrObjectTests
-        <SetUp()> _
-        Public Sub GetReady()
-        End Sub
-
-        <TearDown()> _
-        Public Sub Clean()
-        End Sub
+    <TearDown()> _
+    Public Sub Clean()
+    End Sub
 
 #Region "On Error tests"
-        <Test()> _
-        Public Sub OnError1()
-            On Error Resume Next
-            Dim i As Integer
-            Dim j As Integer
+    <Test()> _
+    Public Sub OnError1()
+        On Error Resume Next
+        Dim i As Integer
+        Dim j As Integer
 
-            i = 10
-            j = 0
-            i = i / j
-            Assert.AreEqual(True, True)
-        End Sub
+        i = 10
+        j = 0
+        i = i / j
+        Assert.AreEqual(True, True)
+    End Sub
 
-        
+
 #End Region
 
 
 #Region "Err.Number tests"
 
-        <Test()> _
-        Public Sub ErrNumber1()
-            Dim i As Integer
-            Dim j As Integer
+    <Test()> _
+    Public Sub ErrNumber1()
+        Dim i As Integer
+        Dim j As Integer
 
-            Try
-                i = 10
-                j = 0
-                i = i / j
-            Catch ex As Exception
-                Assert.AreEqual(6, Err.Number)
-            End Try
-        End Sub
-        <Test()> _
-        Public Sub ErrNumber2()
+        Try
+            i = 10
+            j = 0
+            i = i / j
+        Catch ex As Exception
+            Assert.AreEqual(6, Err.Number)
+        End Try
+    End Sub
+    <Test()> _
+    Public Sub ErrNumber2()
 
-            Dim i As Integer
-            Dim caughtException As Boolean
+        Dim i As Integer
+        Dim caughtException As Boolean
 
-            ' Number is greater than 65535
-            '
-            caughtException = False
-            Try
-                Err.Raise(65536)
-            Catch e As ArgumentException
-                Assert.AreEqual(5, Err.Number)
-                caughtException = True
-            End Try
-            Assert.AreEqual(True, caughtException)
+        ' Number is greater than 65535
+        '
+        caughtException = False
+        Try
+            Err.Raise(65536)
+        Catch e As ArgumentException
+            Assert.AreEqual(5, Err.Number)
+            caughtException = True
+        End Try
+        Assert.AreEqual(True, caughtException)
 
-            ' Number is greater than 513
-            '
-            caughtException = False
-            Try
-                Err.Raise(514)
-            Catch e As Exception
-                Assert.AreEqual(514, Err.Number)
-                caughtException = True
-            End Try
-            Assert.AreEqual(True, caughtException)
-        End Sub
+        ' Number is greater than 513
+        '
+        caughtException = False
+        Try
+            Err.Raise(514)
+        Catch e As Exception
+            Assert.AreEqual(514, Err.Number)
+            caughtException = True
+        End Try
+        Assert.AreEqual(True, caughtException)
+    End Sub
 #End Region
 
 #Region "Raise tests"
 
-        <Test(), ExpectedException(GetType(Exception))> _
-        Public Sub Raise1()
-            Dim err As ErrObject
-            err = Information.Err()
-            err.Raise(1, "source", "description", "", 0)
-        End Sub
-        <Test(), ExpectedException(GetType(Exception))> _
-        Public Sub Raise2()
-            Dim err As ErrObject
-            err = Information.Err()
-            err.Raise(2, "source", "description", "", 0)
-        End Sub
-        <Test()> _
-        Public Sub Raise3()
-            Dim i As Integer
-            Dim caughtException As Boolean
-            For i = 1 To 600 ' more then 513 and less than 65535
-                caughtException = False
-                Try
-                    Err.Raise(i)
-                Catch ex As Exception
-                    If Err.Number = i Then
-                        caughtException = True
-                    End If
-                End Try
-                Assert.AreEqual(True, caughtException, "failed at sub test " & i)
-                'If caughtException = False Then Return "failed at sub test " & i
-            Next i
-        End Sub
+    <Test(), ExpectedException(GetType(Exception))> _
+    Public Sub Raise1()
+        Dim err As ErrObject
+        err = Information.Err()
+        err.Raise(1, "source", "description", "", 0)
+    End Sub
+    <Test(), ExpectedException(GetType(Exception))> _
+    Public Sub Raise2()
+        Dim err As ErrObject
+        err = Information.Err()
+        err.Raise(2, "source", "description", "", 0)
+    End Sub
+    <Test()> _
+    Public Sub Raise3()
+        Dim i As Integer
+        Dim caughtException As Boolean
+        For i = 1 To 600 ' more then 513 and less than 65535
+            caughtException = False
+            Try
+                Err.Raise(i)
+            Catch ex As Exception
+                If Err.Number = i Then
+                    caughtException = True
+                End If
+            End Try
+            Assert.AreEqual(True, caughtException, "failed at sub test " & i)
+            'If caughtException = False Then Return "failed at sub test " & i
+        Next i
+    End Sub
 #End Region
 
 
-    End Class
-end namespace
+End Class
 

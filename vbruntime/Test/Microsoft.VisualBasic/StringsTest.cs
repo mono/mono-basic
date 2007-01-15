@@ -42,8 +42,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[SetUp]
-		public void GetReady() 
+		public void GetReady()
 		{
+			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo ("en-US");
 		}
 
 		[TearDown]
@@ -439,7 +440,11 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			Assert.AreEqual("2006-06-19T14:22:35",Strings.Format(d, "s"));
 
-			Assert.AreEqual("Monday, June 19, 2006 11:22:35 AM",Strings.Format(d, "U"));
+			if (d.IsDaylightSavingTime ()) {
+				Assert.AreEqual("Monday, June 19, 2006 12:22:35 PM",Strings.Format(d, "U"));
+			} else {
+				Assert.AreEqual("Monday, June 19, 2006 11:22:35 AM", Strings.Format (d, "U"));	
+			}
 
 			Assert.AreEqual("2006-06-19 14:22:35Z",Strings.Format(d, "u"));
 

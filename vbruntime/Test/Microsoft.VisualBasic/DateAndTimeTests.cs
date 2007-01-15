@@ -53,6 +53,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			date = DateAndTime.DateString;
 			time = DateAndTime.TimeString;
+			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo ("en-US");
 		}
 
 		[TestFixtureTearDown]
@@ -1489,6 +1490,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Timer Tests
 
 		[Test]
+		[Category ("Slow")]
 		public void Timer() 
 		{
 			double secTimer = DateAndTime.Timer;
