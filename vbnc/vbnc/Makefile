@@ -5,6 +5,6 @@ include ../../build/rules.make
 LOCAL_VBNC_FLAGS = @vbnc.exe.rsp
 
 PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
-LIBRARY_COMPILE = $(BOOT_COMPILE)
+PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 include ../../build/executable.make
