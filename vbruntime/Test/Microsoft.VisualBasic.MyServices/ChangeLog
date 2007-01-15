@@ -1,0 +1,4 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added ClipboardProxyTest.cs, FileSystemProxyTest.cs, 
+	RegistryProxyTest.cs, SpecialDirectoriesProxyTest.cs
