@@ -1,0 +1,3 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AspLogTest.cs, FileLogTraceListener.cs, LogTest.cs
