@@ -1,0 +1,6 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added AudioTests.vb, ClockTests.vb, ComputerInfoTests.vb, 
+	ComputerTests.vb, KeyboardTests.vb, MouseTests.vb, 
+	NetworkAvailableEventArgsTests.vb, NetworkTests.vb,
+	PortsTests.vb, ServerComputerTests.vb

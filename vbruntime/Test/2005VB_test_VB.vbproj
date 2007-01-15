@@ -38,10 +38,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
+    <Import Include="NUnit.Framework" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
@@ -55,9 +58,23 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests4.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests5.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests6.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ComputerInfoTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ComputerTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ClockTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\AudioTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\KeyboardTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\MouseTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\NetworkTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventArgsTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\PortsTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ServerComputerTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemTest.vb" />
     <Compile Include="Microsoft.VisualBasic\ErrObjectTests.vb" />
     <Compile Include="Microsoft.VisualBasic\ExceptionFilteringTests.vb" />
     <Compile Include="Microsoft.VisualBasic\FileSystemTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\GlobalsTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\Helper.vb">
+    </Compile>
     <Compile Include="Microsoft.VisualBasic\InformationTests.vb" />
     <Compile Include="Microsoft.VisualBasic\InteractionTests.vb" />
   </ItemGroup>
