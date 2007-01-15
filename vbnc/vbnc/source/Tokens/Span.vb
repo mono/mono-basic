@@ -27,6 +27,7 @@ Public Class Span
     Private m_Line As Integer
     Private m_Column As Integer
     Private m_File As CodeFile
+    Public Shared ReadOnly CommandLineSpan As Span = New Span(Nothing, -1, -1, -1, -1)
 
     ''' <summary>
     ''' The line of the location.
@@ -90,6 +91,10 @@ Public Class Span
     ''' <returns></returns>
     ''' <remarks></remarks>
     Overloads Function ToString(ByVal IncludePath As Boolean) As String
+        If m_Line < 0 Then
+            Return "(in the commandline)"
+        End If
+
         If Not File Is Nothing Then
             If IncludePath Then
                 Return String.Format("{0} ({1},{2})", File.FileName, Line.ToString, Column.ToString)
@@ -145,13 +150,13 @@ Public Class Span
         m_EndLine = Location.m_EndLine
     End Sub
 
-    ''' <summary>
-    ''' Default constructor. Does nothing.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public Sub New()
-        'Default constructor
-    End Sub
+    '''' <summary>
+    '''' Default constructor. Does nothing.
+    '''' </summary>
+    '''' <remarks></remarks>
+    'Public Sub New()
+    '    'Default constructor
+    'End Sub
 
     Public Sub New(ByVal File As CodeFile, ByVal StartLine As Integer, ByVal StartColumn As Integer, Optional ByVal EndLine As Integer = 0, Optional ByVal EndColumn As Integer = 0)
         m_EndLine = EndLine

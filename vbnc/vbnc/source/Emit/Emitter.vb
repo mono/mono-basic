@@ -32,7 +32,7 @@ Partial Public Class Emitter
     End Function
 
     Shared Sub MarkSequencePoint(ByVal Info As EmitInfo, ByVal Location As Span)
-        If Location Is Nothing Then Return
+        'If Location Is Nothing Then Return
         If Location.File Is Nothing Then Return
         If Location.File.SymbolDocument Is Nothing Then Return
         If Location.Line <= 0 Then Return

@@ -24,7 +24,7 @@ Module Enums
     ''' <remarks></remarks>
     Friend strSpecial(KS.NumberOfItems) As String
 
-    Private keywordLookup As New Hashtable(StringComparer.InvariantCultureIgnoreCase)
+    Private keywordLookup As New Hashtable(NameResolution.StringComparer)
 
     ''' <summary>
     ''' The ks enums as friendly strings for dump support (i.e. NewLine as &lt;NewLine&gt;, etc.)

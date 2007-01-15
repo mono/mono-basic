@@ -48,7 +48,7 @@ Public Class NameResolution
     'Private Shared m_AllConstantFunctions As ArrayList
 
     Public Shared StringComparer As System.StringComparer = System.StringComparer.OrdinalIgnoreCase
-    Public Shared StringComparison As StringComparison = StringComparison.InvariantCultureIgnoreCase
+    Public Shared StringComparison As StringComparison = StringComparison.OrdinalIgnoreCase
 
     Sub New(ByVal Compiler As Compiler)
         MyBase.New(Compiler)

@@ -40,6 +40,14 @@ Public Class FunctionSignature
         MyBase.Location = Location
     End Sub
 
+    Shadows Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As Type, ByVal Location As Span)
+        MyBase.Init(Identifier, TypeParameters, ParameterList)
+
+        m_ReturnTypeAttributes = ReturnTypeAttributes
+        m_ReturnType = TypeName
+        MyBase.Location = Location
+    End Sub
+
     Shadows Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Location As Span)
         MyBase.Init(Identifier, TypeParameters, ParameterList)
 

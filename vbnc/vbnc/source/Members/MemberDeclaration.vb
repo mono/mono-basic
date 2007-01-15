@@ -73,6 +73,10 @@ Public MustInherit Class MemberDeclaration
         Helper.Assert(m_Modifiers IsNot Nothing)
     End Sub
 
+    Protected Sub Rename(ByVal Name As String)
+        m_Name = Name
+    End Sub
+
     Public ReadOnly Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
         Get
             Return m_CustomAttributes

@@ -23,4 +23,10 @@ Public Class PropertyHandlerDeclaration
     Sub New(ByVal Parent As PropertyDeclaration)
         MyBase.new(Parent)
     End Sub
+
+    Shadows ReadOnly Property Parent() As PropertyDeclaration
+        Get
+            Return DirectCast(MyBase.Parent, PropertyDeclaration)
+        End Get
+    End Property
 End Class

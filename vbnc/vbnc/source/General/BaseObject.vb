@@ -39,6 +39,13 @@ Public MustInherit Class BaseObject
 
     Private Shared m_Compiler As Compiler
 
+    ReadOnly Property HasLocation() As Boolean
+        Get
+            Return m_Location IsNot Nothing
+            Return True
+        End Get
+    End Property
+
     ''' <summary>
     ''' The location in the source of this object.
     ''' </summary>
@@ -78,7 +85,7 @@ Public MustInherit Class BaseObject
     Friend Function FindMethod() As IBaseObject
         Dim found As IBaseObject
         found = FindFirstParent(Of IMethod)()
-        If found Is Nothing Then found = FindFirstParent(Of IPropertyMember)()
+        If found Is Nothing Then found = FindFirstParent(Of PropertyDeclaration)()
         Return found
     End Function
 

@@ -1026,7 +1026,13 @@ Public Class CommandLine
             Case "keycontainer"
                 m_strKeyContainer = strValue
             Case "keyfile"
-                m_strKeyFile = strValue
+                Dim paths() As String
+                paths = Me.GetFullPaths(strValue, SecondaryPath)
+                If paths.Length = 1 Then
+                    m_strKeyFile = paths(0)
+                Else
+                    Helper.AddError("""")
+                End If
             Case "libpath"
                 m_lstLibPath.AddRange(Split(strValue, ","))
             Case "main"

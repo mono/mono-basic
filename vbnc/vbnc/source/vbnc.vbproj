@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -147,16 +147,19 @@
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RuntimeTests|AnyCPU' ">
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Import Include="System" />
@@ -760,6 +763,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Expressions\Classifications\ExpressionClassification.Classifications.vb" />
+    <None Include="AutoGen\.svn\entries" />
+    <None Include="AutoGen\.svn\format" />
+    <None Include="AutoGen\.svn\prop-base\ZCompilerCodeGenerator.vb.svn-base" />
+    <None Include="AutoGen\.svn\text-base\ZCompilerCodeGenerator.vb.svn-base" />
+    <None Include="ConditionalCompilation\.svn\entries" />
+    <None Include="ConditionalCompilation\.svn\format" />
+    <None Include="ConditionalCompilation\.svn\prop-base\ConditionalCompilation.vb.svn-base" />
+    <None Include="ConditionalCompilation\.svn\text-base\ConditionalCompilation.vb.svn-base" />
+    <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstant.vb.svn-base" />
+    <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstants.vb.svn-base" />
+    <None Include="ConditionalCompilation\.svn\text-base\ConditionalExpression.vb.svn-base" />
     <None Include="My Application\MyApplication.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>MyApplication.Designer.vb</LastGenOutput>
@@ -794,6 +808,16 @@
       <ProductName>.NET Framework 2.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AutoGen\.svn\props\" />
+    <Folder Include="AutoGen\.svn\tmp\prop-base\" />
+    <Folder Include="AutoGen\.svn\tmp\props\" />
+    <Folder Include="AutoGen\.svn\tmp\text-base\" />
+    <Folder Include="ConditionalCompilation\.svn\props\" />
+    <Folder Include="ConditionalCompilation\.svn\tmp\prop-base\" />
+    <Folder Include="ConditionalCompilation\.svn\tmp\props\" />
+    <Folder Include="ConditionalCompilation\.svn\tmp\text-base\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.Targets" />
   <PropertyGroup>

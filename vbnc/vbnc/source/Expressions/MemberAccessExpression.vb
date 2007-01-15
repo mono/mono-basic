@@ -30,7 +30,7 @@ Public Class MemberAccessExpression
     Inherits Expression
 
     Protected m_First As Expression
-    Protected m_Second As IdentifierOrKeywordWithTypeArguments
+    Protected m_Second As IdentifierOrKeyword
     'Private m_TypeArguments As TypeParameters
 
     Private m_WithStatement As WithStatement
@@ -62,7 +62,7 @@ Public Class MemberAccessExpression
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal First As Expression, ByVal Second As IdentifierOrKeywordWithTypeArguments)
+    Sub Init(ByVal First As Expression, ByVal Second As IdentifierOrKeyword)
         m_First = First
         m_Second = Second
     End Sub
@@ -72,7 +72,7 @@ Public Class MemberAccessExpression
         Dim result As New MemberAccessExpression(NewParent)
 
         Dim m_First As Expression = Nothing
-        Dim m_Second As IdentifierOrKeywordWithTypeArguments = Nothing
+        Dim m_Second As IdentifierOrKeyword = Nothing
         '  Dim m_TypeArguments As TypeParameters
 
         If Me.m_First IsNot Nothing Then m_First = Me.m_First.Clone(result)
@@ -318,7 +318,12 @@ Public Class MemberAccessExpression
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
             members = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupMembersFlattened(Name)
-            members = Helper.FilterByTypeArguments(members, m_Second.TypeArguments)
+
+            Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
+            withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
+            If withTypeArgs IsNot Nothing Then
+                members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+            End If
             members = Helper.FilterExternalInaccessible(Me.Compiler, members)
 
             Helper.StopIfDebugging(members.Count = 0)
@@ -395,9 +400,9 @@ Public Class MemberAccessExpression
                 End If
 
                 '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-                Helper.AddError("Could not resolve name '" & Name & "'")
+                Helper.AddError("Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString)
             Else
-                Helper.AddError("Could not resolve name '" & Name & "'")
+                Helper.AddError("Could not resolve name '" & Name & "'" & "," & Me.Location.ToString)
             End If
         End If
 
@@ -433,6 +438,8 @@ Public Class MemberAccessExpression
             ElseIf m_First.Classification.CanBeValueClassification Then
                 m_First = m_First.ReclassifyToValueExpression
                 result = m_First.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+                Helper.Assert(m_First.Classification IsNot Nothing)
+                Helper.Assert(m_First.Classification.AsValueClassification IsNot Nothing)
                 T = m_First.Classification.AsValueClassification.Type
             Else
                 Throw New InternalException(Me)
@@ -460,7 +467,11 @@ Public Class MemberAccessExpression
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, T), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(T).FlattenedCache.GetAllMembers.ToArray, Name)
             members = Compiler.TypeManager.GetCache(T).LookupMembersFlattened(Name)
-            members = Helper.FilterByTypeArguments(members, m_Second.TypeArguments)
+            Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
+            withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
+            If withTypeArgs IsNot Nothing Then
+                members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+            End If
             members = Helper.FilterExternalInaccessible(Me.Compiler, members)
 
             Helper.StopIfDebugging(members.Count = 0)
@@ -643,9 +654,15 @@ Public Class MemberAccessExpression
         End Get
     End Property
 
-    ReadOnly Property SecondExpression() As IdentifierOrKeywordWithTypeArguments
+    ReadOnly Property SecondExpression() As IdentifierOrKeyword
         Get
             Return m_Second
+        End Get
+    End Property
+
+    ReadOnly Property CompleteName() As String
+        Get
+            Return m_First.ToString & "." & m_Second.Name
         End Get
     End Property
 

@@ -24,7 +24,7 @@ Public Class PropertyDescriptor
     Inherits PropertyInfo
     Implements IMemberDescriptor
 
-    Private m_Declaration As IPropertyMember
+    Private m_Declaration As PropertyDeclaration
     Private m_Parent As ParsedObject
 
     <Diagnostics.Conditional("DEBUGPROPERTYACCESS")> _
@@ -74,6 +74,12 @@ Public Class PropertyDescriptor
         End Get
     End Property
 
+    ReadOnly Property PropertyDeclaration() As PropertyDeclaration
+        Get
+            Return DirectCast(m_Declaration, PropertyDeclaration)
+        End Get
+    End Property
+
     Public ReadOnly Property Declaration() As IMember Implements IMemberDescriptor.Declaration
         Get
             Return m_Declaration
@@ -81,7 +87,7 @@ Public Class PropertyDescriptor
     End Property
 
     Sub New(ByVal Parent As ParsedObject)
-        m_Declaration = TryCast(Parent, IPropertyMember)
+        m_Declaration = TryCast(Parent, PropertyDeclaration)
         m_Parent = Parent
     End Sub
 

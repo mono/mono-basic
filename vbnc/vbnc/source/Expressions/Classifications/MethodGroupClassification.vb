@@ -328,7 +328,7 @@ Public Class MethodGroupClassification
                 Dim method As IMethod = TryCast(codedMember, IMethod)
                 methodtypes = method.Signature.Parameters.ToTypeArray
             Case MemberTypes.Property
-                Dim prop As IPropertyMember = TryCast(codedMember, IPropertyMember)
+                Dim prop As PropertyDeclaration = TryCast(codedMember, PropertyDeclaration)
                 methodtypes = prop.Signature.Parameters.ToTypeArray
             Case Else
                 methodtypes = Nothing
@@ -382,7 +382,7 @@ Public Class MethodGroupClassification
                 'Helper.StopIfDebugging(m_InstanceExpression IsNot Nothing AndAlso TypeOf m_InstanceExpression Is MeExpression = False)
                 m_InstanceExpression = Nothing
             End If
-#If DEBUG Then
+#If EXTENDEDDEBUG Then
         Else
             'Don't stop here since method resolution might fail correctly.
             Compiler.Report.WriteLine("")
@@ -410,6 +410,15 @@ Public Class MethodGroupClassification
     Function IsAccessible(ByVal Caller As TypeDeclaration, ByVal Method As MethodBase) As Boolean
         Return Helper.IsAccessible(Compiler, Caller, Method)
     End Function
+
+
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Method As MethodDeclaration)
+        MyBase.New(Classifications.MethodGroup, Parent)
+        m_Group = New Generic.List(Of MemberInfo)
+        m_Group.Add(Method.MethodDescriptor)
+        m_Resolved = True
+        m_InstanceExpression = InstanceExpression
+    End Sub
 
     Private Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression)
         MyBase.new(Classifications.MethodGroup, Parent)

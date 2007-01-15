@@ -545,6 +545,83 @@ Public Class AssemblyDeclaration
 
         Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
     End Sub
+
+    Public Function GetName() As AssemblyName
+        Dim result As New AssemblyName()
+        Dim keyfile As String = Nothing
+        Dim keyname As String = Nothing
+        Dim delaysign As Boolean = False
+
+        result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
+
+        For Each attri As Attribute In Me.Attributes
+            Dim attribType As Type
+            attribType = attri.ResolvedType
+
+            If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
+                SetVersion(result, attri)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
+                keyfile = TryCast(attri.Arguments()(0), String)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
+                keyname = TryCast(attri.Arguments()(0), String)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyDelaySignAttribute) Then
+                delaysign = CBool(attri.Arguments()(0))
+            End If
+        Next
+
+        If keyfile = String.Empty Then
+            keyfile = Compiler.CommandLine.KeyFile
+        End If
+
+        If keyfile <> String.Empty Then
+            Dim filename As String
+
+            filename = keyfile
+
+            filename = IO.Path.GetFullPath(keyfile)
+            If IO.File.Exists(filename) = False Then
+                Helper.AddError("Can't find keyfile: " & filename)
+                Return result
+            End If
+
+            Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+                Dim snkeypair() As Byte
+                ReDim snkeypair(CInt(stream.Length - 1))
+                stream.Read(snkeypair, 0, snkeypair.Length)
+
+                If delaysign Then
+                    result.SetPublicKey(snkeypair)
+                Else
+                    result.KeyPair = New StrongNameKeyPair(snkeypair)
+                End If
+
+            End Using
+        End If
+
+        Return result
+    End Function
+
+    Private Sub SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute)
+        Dim result As Version
+        Dim version As String
+
+        If Attribute.Arguments IsNot Nothing AndAlso Attribute.Arguments.Length = 1 Then
+            version = TryCast(Attribute.Arguments()(0), String)
+        Else
+            Helper.AddError("Invalid version")
+            Return
+        End If
+
+        Try
+            result = New Version(version)
+        Catch ex As Exception
+            Helper.AddError("Invalid version: " & version)
+            Return
+        End Try
+
+        Name.Version = result
+    End Sub
+
     ''' <summary>
     ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
     ''' - Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
@@ -627,6 +704,8 @@ Public Class AssemblyDeclaration
     ''' <remarks></remarks>
     Function IsDefinedHere(ByVal Type As Type) As Boolean
         Helper.Assert(Type IsNot Nothing)
+        If TypeOf Type Is TypeBuilder Then Return True
+        If TypeOf Type Is TypeDescriptor Then Return True
         Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
     End Function
 

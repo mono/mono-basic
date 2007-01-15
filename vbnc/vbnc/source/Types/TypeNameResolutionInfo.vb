@@ -767,7 +767,7 @@ Public Class TypeNameResolutionInfo
             '* the unqualified name refers to that import alias.
             '---------------------------------------------------------------------------------------------------------
             Helper.Assert(FromWhere IsNot Nothing)
-            Helper.Assert(FromWhere.Location IsNot Nothing)
+            Helper.Assert(FromWhere.HasLocation)
             Helper.Assert(FromWhere.Location.File IsNot Nothing)
             Helper.Assert(FromWhere.Location.File.Imports IsNot Nothing)
 

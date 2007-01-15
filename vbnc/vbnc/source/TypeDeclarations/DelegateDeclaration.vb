@@ -132,11 +132,11 @@ Public Class DelegateDeclaration
             endInvokeSignature = New SubSignature(m_EndInvoke, STR_EndInvoke, endInvokeParameters)
         Else
             invokeSignature = New FunctionSignature(m_Invoke)
-            DirectCast(invokeSignature, FunctionSignature).Init(STR_Invoke, Nothing, invokeParameters, Nothing, ReturnType, New Span())
+            DirectCast(invokeSignature, FunctionSignature).Init(STR_Invoke, Nothing, invokeParameters, Nothing, ReturnType, Me.Location)
             endInvokeSignature = New FunctionSignature(m_EndInvoke)
-            DirectCast(endInvokeSignature, FunctionSignature).Init(STR_EndInvoke, Nothing, endInvokeParameters, Nothing, ReturnType, New Span())
+            DirectCast(endInvokeSignature, FunctionSignature).Init(STR_EndInvoke, Nothing, endInvokeParameters, Nothing, ReturnType, Me.Location)
         End If
-        beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.IAsyncResult, New Span())
+        beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.IAsyncResult, Me.Location)
 
         m_Invoke.Init(Nothing, New Modifiers(m_Invoke), invokeSignature, Nothing, Nothing)
         m_BeginInvoke.Init(Nothing, New Modifiers(m_BeginInvoke), beginInvokeSignature, Nothing, Nothing)

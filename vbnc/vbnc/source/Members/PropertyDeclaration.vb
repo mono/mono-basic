@@ -1,4 +1,4 @@
-' 
+' ''
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -20,6 +20,7 @@
 Public Class PropertyDeclaration
     Inherits MemberDeclaration
     Implements IPropertyMember
+    'Implements IDefinableMember, INonTypeMember
 
     Private m_Descriptor As New PropertyDescriptor(Me)
 
@@ -28,11 +29,50 @@ Public Class PropertyDeclaration
     Private m_Set As MethodDeclaration
     Private m_MemberImplementsClause As MemberImplementsClause
 
-
     Private m_Builder As PropertyBuilder
+    Private m_Handlers As Generic.List(Of AddOrRemoveHandlerStatement)
+    Private m_HandlesField As VariableDeclaration
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
+    End Sub
+
+    Property HandlesField() As VariableDeclaration
+        Get
+            Return m_HandlesField
+        End Get
+        Set(ByVal value As VariableDeclaration)
+            m_HandlesField = value
+        End Set
+    End Property
+
+    ReadOnly Property Handlers() As Generic.List(Of AddOrRemoveHandlerStatement)
+        Get
+            If m_Handlers Is Nothing Then
+                m_Handlers = New Generic.List(Of AddOrRemoveHandlerStatement)
+            End If
+            Return m_Handlers
+        End Get
+    End Property
+
+    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
+        MyBase.Init(Attributes, Modifiers, Name)
+
+        m_Signature = New FunctionSignature(Me)
+        m_Signature.Init(Name, Nothing, New ParameterList(m_Signature), Nothing, ReturnType, Nothing)
+
+        Dim getMethod As PropertyGetDeclaration
+        Dim setMethod As PropertySetDeclaration
+
+
+        getMethod = New PropertyGetDeclaration(Me)
+        getMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
+
+        setMethod = New PropertySetDeclaration(Me)
+        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
+
+        m_Get = getMethod
+        m_Set = setMethod
     End Sub
 
     Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, ByVal GetMethod As MethodDeclaration, ByVal SetMethod As MethodDeclaration, ByVal MemberImplementsClause As MemberImplementsClause)
@@ -101,33 +141,33 @@ Public Class PropertyDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property GetMethod() As System.Reflection.MethodInfo Implements IPropertyMember.GetMethod
+    Public ReadOnly Property GetMethod() As System.Reflection.MethodInfo 'Implements IPropertyMember.GetMethod
         Get
             If m_Get IsNot Nothing Then
-                Return m_get.descriptor
+                Return m_Get.Descriptor
             Else
                 Return Nothing
             End If
         End Get
     End Property
 
-    Public ReadOnly Property PropertyBuilder() As System.Reflection.Emit.PropertyBuilder Implements IPropertyMember.PropertyBuilder
+    Public ReadOnly Property PropertyBuilder() As System.Reflection.Emit.PropertyBuilder 'Implements IPropertyMember.PropertyBuilder
         Get
             Return m_Builder
         End Get
     End Property
 
-    Public ReadOnly Property SetMethod() As System.Reflection.MethodInfo Implements IPropertyMember.SetMethod
+    Public ReadOnly Property SetMethod() As System.Reflection.MethodInfo 'Implements IPropertyMember.SetMethod
         Get
             If m_Set IsNot Nothing Then
-                Return m_set.descriptor
+                Return m_Set.Descriptor
             Else
                 Return Nothing
             End If
         End Get
     End Property
 
-    Public ReadOnly Property Signature() As SubSignature Implements IPropertyMember.Signature
+    Public ReadOnly Property Signature() As SubSignature 'Implements IPropertyMember.Signature
         Get
             Return m_Signature
         End Get

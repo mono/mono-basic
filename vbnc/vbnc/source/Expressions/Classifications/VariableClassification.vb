@@ -315,7 +315,7 @@ Public Class VariableClassification
     ''' <remarks></remarks>
     Sub New(ByVal Parent As ParsedObject, ByVal method As IMethod)
         MyBase.New(Classifications.Variable, Parent)
-        Helper.Assert(TypeOf method Is FunctionDeclaration OrElse TypeOf method Is IPropertyMember)
+        Helper.Assert(TypeOf method Is FunctionDeclaration OrElse TypeOf method Is PropertyDeclaration)
         m_Method = method
     End Sub
 

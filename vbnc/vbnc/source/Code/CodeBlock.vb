@@ -414,7 +414,7 @@ Public Class CodeBlock
 
         Dim symbolMethodOpened As Boolean
         If False AndAlso Compiler.SymbolWriter IsNot Nothing Then
-            If Me.Location IsNot Nothing AndAlso Me.Location.File IsNot Nothing Then
+            If Me.HasLocation AndAlso Me.Location.File IsNot Nothing Then
                 Dim newT As New Diagnostics.SymbolStore.SymbolToken(Me.ObjectID)
                 Compiler.SymbolWriter.OpenMethod(newT)
                 symbolMethodOpened = True

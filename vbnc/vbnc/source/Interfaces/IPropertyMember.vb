@@ -19,8 +19,8 @@
 
 Public Interface IPropertyMember
     Inherits INonTypeMember, IDefinableMember
-    ReadOnly Property PropertyBuilder() As PropertyBuilder
-    ReadOnly Property Signature() As SubSignature
-    ReadOnly Property GetMethod() As MethodInfo
-    ReadOnly Property SetMethod() As MethodInfo
+    'ReadOnly Property PropertyBuilder() As PropertyBuilder
+    'ReadOnly Property Signature() As SubSignature
+    'ReadOnly Property GetMethod() As MethodInfo
+    'ReadOnly Property SetMethod() As MethodInfo
 End Interface

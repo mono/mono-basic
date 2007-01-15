@@ -84,7 +84,7 @@ Public Class SubDeclaration
             Dim hclause As HandlesClause = m_HandlesOrImplements.HandlesClause
             Dim iclause As MemberImplementsClause = m_HandlesOrImplements.ImplementsClause
             If hclause IsNot Nothing Then
-                Helper.NotImplemented()
+                'Helper.NotImplemented()
             ElseIf iclause IsNot Nothing Then
                 result = iclause.DefineImplements(Me.DeclaringType.TypeBuilder, Me.MethodBuilder)
             Else

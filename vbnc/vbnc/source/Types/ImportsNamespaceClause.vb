@@ -46,7 +46,7 @@ Public Class ImportsNamespaceClause
 
     Sub New(ByVal Parent As ParsedObject, ByVal Location As Span)
         MyBase.New(Parent, Location)
-        Helper.Assert(Me.Location IsNot Nothing)
+        Helper.Assert(Me.HasLocation)
     End Sub
 
     Sub Init(ByVal Obj As BaseObject)

@@ -37,10 +37,6 @@ Public Class FunctionDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Protected Sub New(ByVal Parent As PropertyDeclaration)
-        MyBase.new(Parent)
-    End Sub
-
     Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As MethodAttributes, ByVal ParameterTypes As Type(), ByVal ReturnType As Type, ByVal Location As Span)
         MyBase.New(Parent)
         MyBase.Init(Nothing, New Modifiers(Me), New FunctionSignature(Me, Name, New ParameterList(Me, ParameterTypes), ReturnType, Location), CType(Nothing, MemberImplementsClause), Nothing)

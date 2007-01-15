@@ -27,8 +27,7 @@
 ''' <remarks></remarks>
 Public Class VariableDeclaration
     Inherits MemberDeclaration
-    Implements IFieldMember
-
+    Implements IFieldMember, IHasImplicitMembers
 
     Private m_Descriptor As New FieldDescriptor(Me)
 
@@ -45,6 +44,9 @@ Public Class VariableDeclaration
     Private m_FieldBuilder As FieldBuilder
     Private m_StaticInitBuilder As FieldBuilder
     Private m_LocalBuilder As LocalBuilder
+
+    Private m_WithEventsRedirect As PropertyDeclaration
+    Private m_HandledEvents As New Generic.List(Of EventInfo)
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
@@ -457,4 +459,33 @@ Public Class VariableDeclaration
             Return m_Descriptor
         End Get
     End Property
+
+    Public Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
+        Dim result As Boolean = True
+
+        If Me.Modifiers.ContainsAny(KS.WithEvents) = False Then Return result
+
+        Dim parentType As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
+        Dim propertyAccessor As New PropertyDeclaration(parentType)
+        Dim modifiers As New Modifiers(propertyAccessor, KS.Private)
+
+        If Me.Modifiers.Is(KS.Shared) Then
+            modifiers.AddModifier(KS.Shared)
+        End If
+        For Each modifier As KS In Me.Modifiers.ModifiersAsArray
+            If Array.IndexOf(Enums.AccessModifiers, modifier) >= 0 Then
+                modifiers.AddModifier(modifier)
+            End If
+        Next
+
+        propertyAccessor.Init(New Attributes(propertyAccessor), modifiers, Name, m_TypeName)
+        result = propertyAccessor.ResolveTypeReferences() AndAlso result
+        propertyAccessor.HandlesField = Me
+
+        Rename("_" & Name)
+
+        parentType.Members.Add(propertyAccessor)
+
+        Return result
+    End Function
 End Class

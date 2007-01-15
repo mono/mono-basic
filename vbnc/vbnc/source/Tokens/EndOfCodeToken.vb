@@ -26,7 +26,7 @@ Public Class EndOfCodeToken
     Inherits EndOfFileToken
 
     Sub New(ByVal Compiler As Compiler)
-        MyBase.New(New Span(), Compiler) 'No location for the end of the code...
+        MyBase.New(New Span(Nothing, 0, 0), Compiler) 'No location for the end of the code...
     End Sub
 
     Public Overrides Function ToString() As String

@@ -33,18 +33,18 @@ Public Class QualifiedIdentifier
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        Helper.Assert(Me.Location Is Nothing OrElse Me.Location.File IsNot Nothing)
+        ' Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Location As Span)
         MyBase.New(Parent, location)
-        Helper.Assert(Me.Location Is Nothing OrElse Me.Location.File IsNot Nothing)
+        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal First As ParsedObject, ByVal Second As Token)
         MyBase.new(Parent)
         Me.Init(First, Second)
-        Helper.Assert(Me.Location Is Nothing OrElse Me.Location.File IsNot Nothing)
+        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub Init(ByVal First As ParsedObject, ByVal Second As Token)
@@ -89,14 +89,14 @@ Public Class QualifiedIdentifier
             ElseIf nri.FoundIs(Of TypeParameter)() Then
                 resolvedType = nri.FoundAsType 'New TypeParameterDescriptor(nri.FoundAs(Of TypeParameter)())
             Else
-                Helper.AddError()
+                Helper.AddError("Could not resolve: '" & Name & "'")
                 resolvedType = Nothing
             End If
         ElseIf nri.FoundObjects.Count > 1 Then
-            Helper.AddError()
+            Helper.AddError("Could not resolve (>1 results): '" & Name & "'")
             resolvedType = Nothing
         Else
-            Helper.AddError()
+            Helper.AddError("Could not resolve (no result): '" & Name & "'")
             resolvedType = Nothing
         End If
 

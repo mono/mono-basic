@@ -578,7 +578,7 @@ Module Z
                     i += 1
                 End If
             End While
-            files.AppendLine("""/keyfile:" & PATH & "msfinal.pub""")
+            files.AppendLine("""/keyfile:" & newPaths & "msfinal.pub""")
             'Diagnostics.Debug.WriteLine("Total: " & i.ToString)
             files.AppendLine("# Total: " & i.ToString & " files.")
         End Using

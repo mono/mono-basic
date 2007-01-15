@@ -122,49 +122,57 @@ Public Class MemberCache
     End Sub
 
     Private Sub LogExtended(ByVal Msg As String)
-        'If False OrElse m_Type.Name = "Form" OrElse m_Type.Name = "Control" Then
-        '    Compiler.Report.WriteLine(Msg)
-        'End If
+        Return
+        Compiler.Report.WriteLine(Msg)
     End Sub
 
-    Function IsHidden(ByVal member As MemberInfo) As Boolean
+    Function IsHidden(ByVal baseMember As MemberInfo) As Boolean
         Dim current As MemberCacheEntry
         Dim memberParameterTypes As Type() = Nothing
 
-        current = Lookup(member.Name)
+        current = Lookup(baseMember.Name)
 
         If current Is Nothing Then
 #If DEBUG Then
-            LogExtended("MemberCache.IsHidden (false, no current match), type=" & m_Type.Name & ", name=" & member.Name)
+            LogExtended("MemberCache.IsHidden (false, no current match), type=" & m_Type.Name & ", name=" & baseMember.Name)
 #End If
             Return False
         End If
 
-        For Each m As MemberInfo In current.Members
-            If m.MemberType <> member.MemberType Then
+        For Each thisMember As MemberInfo In current.Members
+            If thisMember.MemberType <> baseMember.MemberType Then
 #If DEBUG Then
-                LogExtended("MemberCache.IsHidden (true, different member types), type=" & m_Type.Name & ", name=" & m.Name)
+                LogExtended("MemberCache.IsHidden (true, different member types), type=" & m_Type.Name & ", name=" & thisMember.Name)
 #End If
                 Return True
             End If
 
-            Select Case m.MemberType
+            Select Case thisMember.MemberType
                 Case MemberTypes.Constructor, MemberTypes.Event, MemberTypes.Field, MemberTypes.NestedType, MemberTypes.TypeInfo
 #If DEBUG Then
-                    LogExtended("MemberCache.IsHidden (true, non overloadable member type), type=" & m_Type.Name & ", name=" & m.Name)
+                    LogExtended("MemberCache.IsHidden (true, non overloadable member type), type=" & m_Type.Name & ", name=" & thisMember.Name)
 #End If
                     Return True
                 Case MemberTypes.Property, MemberTypes.Method
-                    If CBool(Helper.GetMethodAttributes(m) And MethodAttributes.HideBySig) = False Then
+                    Dim methodAttributes As MethodAttributes
+                    Dim isHideBySig, isVirtual, isNewSlot As Boolean
+                    Dim isOverrides As Boolean
+
+                    methodAttributes = Helper.GetMethodAttributes(thisMember)
+                    isHideBySig = CBool(methodAttributes And Reflection.MethodAttributes.HideBySig)
+                    isVirtual = CBool(methodAttributes And Reflection.MethodAttributes.Virtual)
+                    isNewSlot = CBool(methodAttributes And Reflection.MethodAttributes.NewSlot)
+                    isOverrides = isVirtual AndAlso isNewSlot = False
+                    If isHideBySig = False AndAlso isOverrides = False Then
 #If DEBUG Then
-                        LogExtended("MemberCache.IsHidden (true, shadowed member), type=" & m_Type.Name & ", name=" & m.Name)
+                        LogExtended("MemberCache.IsHidden (true, shadowed member), type=" & m_Type.Name & ", name=" & thisMember.Name)
 #End If
                         Return True
                     End If
-                    If memberParameterTypes Is Nothing Then memberParameterTypes = Helper.GetTypes(Helper.GetParameters(m_Compiler, member))
-                    If Helper.CompareTypes(Helper.GetTypes(Helper.GetParameters(m_Compiler, m)), memberParameterTypes) Then
+                    If memberParameterTypes Is Nothing Then memberParameterTypes = Helper.GetTypes(Helper.GetParameters(m_Compiler, baseMember))
+                    If Helper.CompareTypes(Helper.GetTypes(Helper.GetParameters(m_Compiler, thisMember)), memberParameterTypes) Then
 #If DEBUG Then
-                        LogExtended("MemberCache.IsHidden (true, exact signature), type=" & m_Type.Name & ", name=" & m.Name)
+                        LogExtended("MemberCache.IsHidden (true, exact signature), type=" & m_Type.Name & ", name=" & thisMember.Name)
 #End If
                         Return True
                     End If
@@ -173,7 +181,7 @@ Public Class MemberCache
             End Select
         Next
 #If DEBUG Then
-        LogExtended("MemberCache.IsHidden (false, no match at all), type=" & m_Type.Name & ", name=" & member.Name)
+        LogExtended("MemberCache.IsHidden (false, no match at all), type=" & m_Type.Name & ", name=" & baseMember.Name)
 #End If
         Return False
     End Function
@@ -202,7 +210,7 @@ Public Class MemberCache
     ''' <remarks></remarks>
     Function LookupFlattened(ByVal Name As String) As MemberCacheEntry
         If m_FlattenedCacheInsensitive Is Nothing Then
-            m_FlattenedCacheInsensitive = New MemberCacheEntries(StringComparer.InvariantCultureIgnoreCase)
+            m_FlattenedCacheInsensitive = New MemberCacheEntries(NameResolution.StringComparer)
             For Each item As KeyValuePair(Of String, MemberCacheEntry) In m_FlattenedCache
                 Dim current As MemberCacheEntry
                 If m_FlattenedCacheInsensitive.ContainsKey(item.Key) = False Then
@@ -241,7 +249,7 @@ Public Class MemberCache
     ''' <remarks></remarks>
     Function Lookup(ByVal Name As String) As MemberCacheEntry
         If m_CacheInsensitive Is Nothing Then
-            m_CacheInsensitive = New MemberCacheEntries(StringComparer.InvariantCultureIgnoreCase)
+            m_CacheInsensitive = New MemberCacheEntries(NameResolution.StringComparer)
             For Each item As KeyValuePair(Of String, MemberCacheEntry) In m_Cache
                 Dim current As MemberCacheEntry
                 If m_CacheInsensitive.ContainsKey(item.Key) = False Then

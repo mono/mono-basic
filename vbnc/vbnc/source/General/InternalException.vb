@@ -35,18 +35,18 @@ Public Class InternalException
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal Location As Span)
         MyBase.new()
-        If Location IsNot Nothing Then
-            m_Message = "There has been an internal error in the compiler caused by the line: " & Location.AsString
-        Else
-            m_Message = "There has been an internal error in the compiler."
-        End If
+        'If Location IsNot Nothing Then
+        m_Message = "There has been an internal error in the compiler caused by the line: " & Location.AsString
+        'Else
+        'm_Message = "There has been an internal error in the compiler."
+        'End If
         StopOnInternalException()
     End Sub
 
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal Obj As IBaseObject)
         MyBase.new()
-        If Obj IsNot Nothing AndAlso Obj.Location IsNot Nothing Then
+        If Obj IsNot Nothing AndAlso CType(Obj, BaseObject).HasLocation Then
             m_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
         Else
             m_Message = "There has been an internal error in the compiler."
@@ -75,8 +75,8 @@ StopOnInternalException()
     Sub New(ByVal Obj As BaseObject, ByVal strMsg As String)
         MyBase.new()
         m_Message = "There has been an internal error in the compiler: '" & strMsg & "'"
-        If obj IsNot Nothing AndAlso obj.Location IsNot Nothing Then
-            m_Message &= " caused by the line: " & obj.Location.AsString
+        If Obj IsNot Nothing AndAlso Obj.HasLocation Then
+            m_Message &= " caused by the line: " & Obj.Location.AsString
         End If
 StopOnInternalException()
     End Sub

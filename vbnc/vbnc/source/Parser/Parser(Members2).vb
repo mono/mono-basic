@@ -396,7 +396,7 @@ Partial Class Parser
     Private Function ParseHandlesClause(ByVal Parent As ParsedObject) As HandlesClause
         Dim result As New HandlesClause(Parent)
 
-        Dim m_List As EventHandlesList = Nothing
+        Dim m_List As New EventHandlesList(result)
 
         tm.AcceptIfNotInternalError(KS.Handles)
 
@@ -419,7 +419,7 @@ Partial Class Parser
     Private Function ParseEventMemberSpecifier(ByVal Parent As ParsedObject) As EventMemberSpecifier
         Dim result As New EventMemberSpecifier(Parent)
 
-        Dim m_First As BaseObject
+        Dim m_First As Expression
         Dim m_Second As IdentifierOrKeyword
 
         If tm.CurrentToken = KS.MyBase Then
@@ -427,7 +427,14 @@ Partial Class Parser
         ElseIf tm.CurrentToken = KS.Me Then
             m_First = ParseMeExpression(result)
         Else
-            m_First = ParseQualifiedIdentifier(result)
+            Dim id As Identifier
+            id = ParseIdentifier(result)
+            If id Is Nothing Then
+                Helper.ErrorRecoveryNotImplemented()
+            End If
+            Dim sne As New SimpleNameExpression(result)
+            sne.Init(id.Token, New TypeArgumentList(sne))
+            m_First = sne
         End If
         If m_First Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 

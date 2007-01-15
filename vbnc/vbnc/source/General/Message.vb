@@ -155,13 +155,13 @@ Public Class Message
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
 
         'Get the location string
-        If Location IsNot Nothing Then
-            strLocation = Location.ToString()
-            result = MESSAGEFORMATWITHLOCATION
-        Else
-            strLocation = ""
-            result = MESSAGEFORMAT
-        End If
+        'If Location IsNot Nothing Then
+        strLocation = Location.ToString()
+        result = MESSAGEFORMATWITHLOCATION
+        'Else
+        'strLocation = ""
+        'result = MESSAGEFORMAT
+        'End If
 
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)
@@ -180,7 +180,9 @@ Public Class Message
     Sub Dump(ByVal xml As Xml.XmlWriter)
         xml.WriteStartElement("Message")
         xml.WriteAttributeString("Level", Level.ToString)
-        If Location IsNot Nothing Then Location.Dump(xml)
+        'If Location IsNot Nothing Then 
+        Location.Dump(xml)
+        'End If
         For i As Integer = 0 To m_Message.GetUpperBound(0)
             xml.WriteString(Me.ToString)
         Next

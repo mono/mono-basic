@@ -290,7 +290,7 @@ Partial Public Class Parser
         Dim values() As String = str.Split("="c)
         If values.Length <> 2 Then Return Nothing
 
-        m_Identifier = New IdentifierToken(CommandLineSpan.Location, values(0), TypeCharacters.Characters.None, False, Parent.Compiler)
+        m_Identifier = New IdentifierToken(Span.CommandLineSpan, values(0), TypeCharacters.Characters.None, False, Parent.Compiler)
 
         m_Second = ParseImportsNamespaceClause(result, values(1))
         If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -593,7 +593,7 @@ Partial Public Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseList(Of T)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
-        Helper.Assert(List IsNot Nothing)
+        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentToken.Location.ToString)
         Do
             Dim newObject As T
             newObject = ParseMethod(Parent)
@@ -1166,7 +1166,7 @@ Partial Public Class Parser
         End If
 
         If second IsNot Nothing Then
-            m_Second = New IdentifierToken(CommandLineSpan.Location, second, TypeCharacters.Characters.None, False, Parent.Compiler)
+            m_Second = New IdentifierToken(Span.CommandLineSpan, second, TypeCharacters.Characters.None, False, Parent.Compiler)
         End If
 
         result.Init(m_First, m_Second)

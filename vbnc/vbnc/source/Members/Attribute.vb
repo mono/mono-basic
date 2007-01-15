@@ -41,6 +41,12 @@ Public Class Attribute
 
     Private m_Instance As System.Attribute
 
+    ReadOnly Property Arguments() As Object()
+        Get
+            Return m_Arguments
+        End Get
+    End Property
+
     ReadOnly Property IsAssembly() As Boolean
         Get
             Return m_isassembly
@@ -214,7 +220,7 @@ Public Class Attribute
                 Dim mthd As IMethod = TryCast(memberparent, IMethod)
                 Dim ctro As IConstructorMember = TryCast(memberparent, IConstructorMember)
                 Dim fld As IFieldMember = TryCast(memberparent, IFieldMember)
-                Dim prop As IPropertyMember = TryCast(memberparent, IPropertyMember)
+                Dim prop As PropertyDeclaration = TryCast(memberparent, PropertyDeclaration)
 
                 If ctro IsNot Nothing Then mthd = Nothing
                 Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing)
@@ -254,6 +260,14 @@ Public Class Attribute
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.GetUpperBound(0) = m_FieldValues.GetUpperBound(0))
 
         m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
+
+        For i As Integer = 0 To m_Arguments.Length - 1
+            Dim type As Type
+            type = TryCast(m_Arguments(i), Type)
+            If type IsNot Nothing Then
+                m_Arguments(i) = Helper.GetTypeOrTypeBuilder(type)
+            End If
+        Next
 
         Try
             result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties, m_PropertyValues, m_Fields, m_FieldValues)

@@ -17,21 +17,21 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-''' <summary>
-''' Represent a location in the commandline arguments
-''' </summary>
-''' <remarks></remarks>
-Public Class CommandLineSpan
-    Inherits Span
+'''' <summary>
+'''' Represent a location in the commandline arguments
+'''' </summary>
+'''' <remarks></remarks>
+'Public Class CommandLineSpan
+'    Inherits Span
 
-    Public Shared ReadOnly Location As New CommandLineSpan
+'    Public Shared ReadOnly Location As New CommandLineSpan
 
-    Private Sub New()
-        MyBase.New()
-    End Sub
+'    Private Sub New()
+'        MyBase.New()
+'    End Sub
 
-    Public Overrides Function ToString() As String
-        Return "(in the commandline)"
-    End Function
+'    Public Overrides Function ToString() As String
+'        Return "(in the commandline)"
+'    End Function
 
-End Class
+'End Class

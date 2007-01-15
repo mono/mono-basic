@@ -42,7 +42,13 @@ Public Class LoadFieldExpression
     End Property
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Return True
+        Dim result As Boolean
+
+        If Me.Classification IsNot Nothing Then
+            Me.Classification = New ValueClassification(Me, m_Field.FieldType)
+        End If
+
+        Return result
     End Function
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean

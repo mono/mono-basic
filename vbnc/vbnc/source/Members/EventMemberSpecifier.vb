@@ -27,10 +27,12 @@
 Public Class EventMemberSpecifier
     Inherits ParsedObject
 
-    Private m_First As BaseObject
+    Private m_First As Expression
     Private m_Second As IdentifierOrKeyword
 
-    Private m_ResolvedType As Type
+    Private m_Expression As MemberAccessExpression
+
+    Private m_Event As EventInfo
 
     ReadOnly Property First() As BaseObject
         Get
@@ -48,27 +50,79 @@ Public Class EventMemberSpecifier
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal First As BaseObject, ByVal Second As IdentifierOrKeyword)
+    Sub Init(ByVal First As Expression, ByVal Second As IdentifierOrKeyword)
         m_First = First
         m_Second = Second
+
+        m_Expression = New MemberAccessExpression(Me)
+        m_Expression.Init(m_First, m_Second)
+
     End Sub
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim qi As QualifiedIdentifier = TryCast(m_First, QualifiedIdentifier)
-        If qi IsNot Nothing Then
-            result = qi.ResolveAsTypeName AndAlso result
-            m_ResolvedType = qi.ResolvedType
-        ElseIf TypeOf m_First Is MyBaseExpression Then
-            m_ResolvedType = Me.FindFirstParent(Of TypeDeclaration).BaseType
-        ElseIf TypeOf m_First Is MeExpression Then
-            m_ResolvedType = Me.FindFirstParent(Of TypeDeclaration).TypeDescriptor
+        result = m_Expression.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+
+        If result = False Then Helper.ErrorRecoveryNotImplemented()
+
+        If m_Expression.Classification.IsEventAccessClassification = False Then
+            Helper.AddError("Must handle an event: " & Location.ToString)
+        End If
+
+        Helper.NotImplementedYet("Variable must have WithEvents")
+
+        Dim declaringType As TypeDeclaration
+        Dim handler As MethodDeclaration
+
+        declaringType = Me.FindFirstParent(Of TypeDeclaration)()
+        handler = Me.FindFirstParent(Of MethodDeclaration)()
+
+        Helper.Assert(declaringType IsNot Nothing)
+
+        If TypeOf m_First Is MeExpression OrElse TypeOf m_First Is MyBaseExpression Then
+            'add AddHandler to all constructors
+
+            Dim arhs As New AddOrRemoveHandlerStatement(Me)
+            arhs.Init(m_Expression, handler, True, m_First)
+
+            declaringType.AddHandlers.Add(arhs)
+
         Else
-            Throw New InternalException(Me)
+            'add AddHandler/RemoveHandler to withevents variable's property
+            Dim sne As SimpleNameExpression
+            sne = TryCast(m_First, SimpleNameExpression)
+            Helper.Assert(sne IsNot Nothing)
+
+            Dim propD As PropertyDescriptor
+            Helper.Assert(sne.Classification.IsPropertyGroupClassification)
+            Helper.Assert(sne.Classification.AsPropertyGroup.IsResolved)
+
+            propD = TryCast(sne.Classification.AsPropertyGroup.ResolvedProperty, PropertyDescriptor)
+            Helper.Assert(propD IsNot Nothing)
+
+            Dim arhs As New AddOrRemoveHandlerStatement(Me)
+            Dim instanceExp As MeExpression = Nothing
+            If propD.IsShared = False Then
+                instanceExp = New MeExpression(Me)
+                result = instanceExp.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+            End If
+
+            arhs.Init(m_Expression, handler, True, instanceExp)
+            propD.PropertyDeclaration.Handlers.Add(arhs)
         End If
 
         Return result
     End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = m_Expression.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
+
 
 End Class

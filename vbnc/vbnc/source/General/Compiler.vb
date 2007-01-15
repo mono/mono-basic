@@ -116,6 +116,12 @@ Public Class Compiler
 
     Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
 
+    ReadOnly Property OutFileName() As String
+        Get
+            Return m_OutFilename
+        End Get
+    End Property
+
     ReadOnly Property TypeCache() As TypeCache
         Get
             Return m_TypeCache
@@ -314,8 +320,13 @@ Public Class Compiler
     End Function
 
     Private Function Compile_CreateAssemblyAndModuleBuilders() As Boolean
-        Dim assemblyName As New Reflection.AssemblyName
-        assemblyName.Name = IO.Path.GetFileNameWithoutExtension(m_OutFilename)
+        Dim assemblyName As Reflection.AssemblyName
+
+        'assemblyName = New AssemblyName()
+        'assemblyName.Name = IO.Path.GetFileNameWithoutExtension(m_OutFilename)
+
+        assemblyName = Me.Assembly.GetName
+
         AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
         ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), True)
 
@@ -325,28 +336,6 @@ Public Class Compiler
 
         Return True
     End Function
-
-    '    Private Function Compile_ConditionalCompile() As Boolean
-    '        Dim result As Boolean = True
-    '        result = ConditionalCompiler.Parse() AndAlso result
-    '        Tokens.StartAgain()
-    '        SequenceTime(CompilerSequence.ConditionalCompiled) = DateTime.Now
-
-    '#If DEBUG AndAlso False Then
-    '        'Dump the tokens
-    '        Dim xml As Xml.XmlTextWriter
-    '        Dim tmpFilename As String = CreateTestOutputFilename(m_OutFilename, "tokensAfterConditionalParsing")
-    '        xml = New Xml.XmlTextWriter(tmpFilename, Text.Encoding.UTF8)
-    '        xml.Formatting = System.Xml.Formatting.Indented
-    '        DumperXML.Dump(Tokens, xml)
-    '        xml.Close()
-    '        xml = Nothing
-    '#End If
-
-    '        vbnc.Helper.Assert(result = (Report.Errors = 0))
-
-    '        Return result
-    '    End Function
 
     Private Function Compile_Parse() As Boolean
         Dim result As Boolean = True
@@ -489,16 +478,12 @@ Public Class Compiler
             'Calculate the output filename
             result = Compile_CalculateOutputFilename() AndAlso result
 
-            'Create the assembly and module builders
-            result = Compile_CreateAssemblyAndModuleBuilders() AndAlso result
 
 #If DEBUG Then
             'Errors before we know the out file name cannot be reported.
             Report.XMLFileName = CreateTestOutputFilename(m_OutFilename, "messages")
 #End If
 
-            result = AddResources() AndAlso result
-            If result = False Then GoTo ShowErrors
 
             'Load all the referenced assemblies and load all the types and namespaces into the type manager
             m_TypeCache = New TypeCache(Me)
@@ -521,6 +506,12 @@ Public Class Compiler
 #End If
             result = Compile_Resolve() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
+
+            'Create the assembly and module builders
+            result = Compile_CreateAssemblyAndModuleBuilders() AndAlso result
+
+            result = AddResources() AndAlso result
+            If result = False Then GoTo ShowErrors
 
             AddHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
 

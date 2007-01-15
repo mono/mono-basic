@@ -866,6 +866,29 @@ Public Class TypeDescriptor
             If o.IsByRef AndAlso Me.IsByRef Then Return Me.GetElementType.Equals(o.GetElementType)
             If o.IsArray AndAlso Me.IsArray Then Return Me.GetElementType.Equals(o.GetElementType)
 
+            If o.IsGenericType AndAlso Me.IsGenericType AndAlso o.IsGenericTypeDefinition = False AndAlso Me.IsGenericTypeDefinition = False AndAlso o.IsGenericParameter = False AndAlso Me.IsGenericParameter = False Then
+                Dim oTypes As Type() = o.GetGenericArguments
+                Dim meTypes As Type() = Me.GetGenericArguments()
+
+                If Helper.CompareType(o.GetGenericTypeDefinition, Me.GetGenericTypeDefinition) = False Then
+                    Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                    Return False
+                End If
+
+                If oTypes.Length <> meTypes.Length Then
+                    Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                    Return False
+                End If
+                For i As Integer = 0 To oTypes.Length - 1
+                    If Helper.CompareType(oTypes(i), meTypes(i)) = False Then
+                        Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                        Return False
+                    End If
+                Next
+                Helper.Assert(NameResolution.CompareName(oName, MeName))
+                Return True
+            End If
+
             result = NameResolution.CompareName(oName, MeName)
 #If DEBUG Then
             If result Then

@@ -89,7 +89,7 @@ Public Class DelegateOrObjectCreationExpression
         If m_IsDelegateCreationExpression Then
             result = m_ArgumentList(0).Expression.Classification.AsMethodPointerClassification.GenerateCode(Info) AndAlso result
         ElseIf m_IsValueTypeInitializer Then
-            Dim type As Type = m_ResolvedType
+            Dim type As Type = Helper.GetTypeOrTypeBuilder(m_ResolvedType)
             Dim local As LocalBuilder = Info.ILGen.DeclareLocal(type)
             Emitter.EmitLoadVariableLocation(Info, local)
             Emitter.EmitInitObj(Info, type)

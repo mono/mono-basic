@@ -146,18 +146,21 @@ Public MustInherit Class BinaryExpression
         leftOperandType = Me.LeftOperandTypeCode
 
         If operandType = TypeCode.Empty Then
-            If (Me.Keyword = KS.ShiftLeft OrElse Me.Keyword = KS.ShiftRight) AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Char) = False AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Date) = False Then
-                If Helper.CompareType(Me.RightType, Compiler.TypeCache.Char) Then
-                    Compiler.Report.ShowMessage(Messages.VBNC32006, Me.LeftType.Name)
-                ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.Date) Then
-                    Compiler.Report.ShowMessage(Messages.VBNC30311, Me.LeftType.Name, Me.RightType.Name)
+            'Try operator overloading
+            If DoOperatorOverloading() = False Then
+                If (Me.Keyword = KS.ShiftLeft OrElse Me.Keyword = KS.ShiftRight) AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Char) = False AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Date) = False Then
+                    If Helper.CompareType(Me.RightType, Compiler.TypeCache.Char) Then
+                        Compiler.Report.ShowMessage(Messages.VBNC32006, Me.LeftType.Name)
+                    ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.Date) Then
+                        Compiler.Report.ShowMessage(Messages.VBNC30311, Me.LeftType.Name, Me.RightType.Name)
+                    Else
+                        Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                    End If
                 Else
                     Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
                 End If
-            Else
-                Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                result = False
             End If
-            result = False
         Else
             'If X and Y are both intrinsic types, look up the result type in our operator tables and use that.
             'If X is an intrinsic type, then
@@ -186,23 +189,29 @@ Public MustInherit Class BinaryExpression
                 'ElseIf isLeftIntrinsic Xor isRightIntrinsic Then
                 '    Helper.NotImplemented()
             Else
-                Dim methods As New Generic.List(Of MethodInfo)
-                Dim methodClassification As MethodGroupClassification
-                methods = Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.LeftType)
-                If Helper.CompareType(Me.LeftType, Me.RightType) = False Then
-                    methods.AddRange(Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.RightType))
-                End If
-                If methods.Count = 0 Then
-                    Helper.AddError("No conversion possible.")
-                End If
-                methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
-                result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression), Nothing) AndAlso result
-                result = methodClassification.SuccessfullyResolved AndAlso result
-                m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
-                Classification = methodClassification
+                result = DoOperatorOverloading() AndAlso result
             End If
         End If
 
+        Return result
+    End Function
+
+    Function DoOperatorOverloading() As Boolean
+        Dim result As Boolean = True
+        Dim methods As New Generic.List(Of MethodInfo)
+        Dim methodClassification As MethodGroupClassification
+        methods = Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.LeftType)
+        If Helper.CompareType(Me.LeftType, Me.RightType) = False Then
+            methods.AddRange(Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.RightType))
+        End If
+        If methods.Count = 0 Then
+            Helper.AddError("No conversion possible.")
+        End If
+        methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
+        result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression), Nothing) AndAlso result
+        result = methodClassification.SuccessfullyResolved AndAlso result
+        m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
+        Classification = methodClassification
         Return result
     End Function
 

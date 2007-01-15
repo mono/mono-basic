@@ -59,12 +59,18 @@ Public Class AddressOfExpression
         m_Expression = Expression
     End Sub
 
+    Sub Init(ByVal Method As MethodDeclaration, ByVal InstanceExpression As Expression)
+        Classification = New MethodPointerClassification(Me, New MethodGroupClassification(Me, InstanceExpression, Method))
+    End Sub
+
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken.Equals(KS.AddressOf)
     End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+
+        If Classification IsNot Nothing Then Return True
 
         result = m_Expression.ResolveExpression(New ResolveInfo(Info.Compiler, True)) AndAlso result
 

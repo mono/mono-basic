@@ -65,6 +65,14 @@ Public MustInherit Class TypeDeclaration
 
     Private m_FullName As String
 
+    Private m_AddHandlers As New Generic.List(Of AddOrRemoveHandlerStatement)
+
+    ReadOnly Property AddHandlers() As Generic.List(Of AddOrRemoveHandlerStatement)
+        Get
+            Return m_AddHandlers
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
         MyBase.New(Parent)
         m_TypeDescriptor = New TypeDescriptor(Me)

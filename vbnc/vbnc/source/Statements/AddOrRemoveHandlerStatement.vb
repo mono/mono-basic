@@ -48,6 +48,22 @@ Public Class AddOrRemoveHandlerStatement
         m_IsAddHandler = IsAddHandler
     End Sub
 
+    Sub Init(ByVal [Event] As Expression, ByVal EventHandler As MethodDeclaration, ByVal IsAddHandler As Boolean, ByVal InstanceExpression As Expression)
+        Dim result As Boolean = True
+        m_Event = [Event]
+        m_IsAddHandler = IsAddHandler
+
+        Dim eventInfo As EventInfo = m_Event.Classification.AsEventAccess.EventInfo
+        Dim objCreation As New DelegateOrObjectCreationExpression(Me)
+        Dim methodPointer As New AddressOfExpression(Me)
+        methodPointer.Init(EventHandler, InstanceExpression)
+        objCreation.Init(eventInfo.EventHandlerType, New ArgumentList(objCreation, methodPointer))
+        result = objCreation.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+        m_EventHandler = objCreation
+
+        Helper.Assert(result)
+    End Sub
+
     ReadOnly Property [Event]() As Expression
         Get
             Return m_Event
@@ -61,6 +77,10 @@ Public Class AddOrRemoveHandlerStatement
     End Property
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Return GenerateCode(Info, m_IsAddHandler)
+    End Function
+
+    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal IsAddHandler As Boolean) As Boolean
         Dim result As Boolean = True
 
         Dim handler As MethodInfo
@@ -87,7 +107,7 @@ Public Class AddOrRemoveHandlerStatement
         result = m_Event.Classification.AsEventAccess.GenerateCode(Info) AndAlso result
         result = m_EventHandler.Classification.GenerateCode(Info.Clone(m_EventHandler.ExpressionType)) AndAlso result
 
-        If m_IsAddHandler Then
+        If IsAddHandler Then
             handler = evt.GetAddMethod()
         Else
             handler = evt.GetRemoveMethod()
@@ -98,6 +118,9 @@ Public Class AddOrRemoveHandlerStatement
 
         Return result
     End Function
+
+
+
 
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True

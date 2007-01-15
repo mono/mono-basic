@@ -1,4 +1,9 @@
-﻿2007-01-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+﻿2007-07-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* vbnc can now sign assemblies with keyfiles.
+	* WithEvents is now supported correctly.
+
+2007-01-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	* Fixed assembly loading to support loading assemblies placed in the same directory as the compiler.
 
 2007-01-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>

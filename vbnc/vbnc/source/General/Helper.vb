@@ -404,7 +404,7 @@ Public Class Helper
     End Function
 
     Shared Function IsPropertyDeclaration(ByVal first As Object) As Boolean
-        Return TypeOf first Is RegularPropertyDeclaration OrElse TypeOf first Is PropertyInfo OrElse TypeOf first Is IPropertyMember
+        Return TypeOf first Is RegularPropertyDeclaration OrElse TypeOf first Is PropertyInfo OrElse TypeOf first Is PropertyDeclaration
     End Function
 
     Shared Function IsMethodDeclaration(ByVal first As Object) As Boolean
@@ -3397,7 +3397,7 @@ Public Class Helper
 #If DEBUGMETHODRESOLUTION Then
         Dim msg2 As String
         msg2 = "Resolving: " & methodName
-        If Parent.Location IsNot Nothing Then msg2 &= " (" & Parent.Location.ToString & ")"
+        If Parent.HasLocation Then msg2 &= " (" & Parent.Location.ToString & ")"
         LogResolutionMessage(Compiler, msg2)
 #End If
 

@@ -56,10 +56,17 @@ Public Class GetTypeExpression
         Return result
     End Function
 
+    Public Overrides ReadOnly Property ConstantValue() As Object
+        Get
+            Return m_TypeName.ResolvedType
+        End Get
+    End Property
+
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return False
+            Dim attrib As Attribute = Me.FindFirstParent(Of Attribute)()
+            Return attrib IsNot Nothing
         End Get
     End Property
 

@@ -233,7 +233,9 @@ Public MustInherit Class MethodBaseDeclaration
 
         result = MyBase.GenerateCode(Info) AndAlso result
 
-        If Me.HasMethodBody Then
+        If Me.IsPropertyHandlesHandler Then
+            result = GeneratePropertyHandlers() AndAlso result
+        ElseIf Me.HasMethodBody Then
             Helper.Assert(m_Code IsNot Nothing)
 
             'Create the default return variable
@@ -243,6 +245,78 @@ Public MustInherit Class MethodBaseDeclaration
             End If
 
             result = m_Code.GenerateCode(Me) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Private Function IsPropertyHandlesHandler() As Boolean
+        Dim propD As PropertyDeclaration
+
+        propD = TryCast(Parent, PropertyDeclaration)
+        If propD Is Nothing Then Return False
+        Return propD.HandlesField IsNot Nothing
+    End Function
+
+    Private Function GeneratePropertyHandlers() As Boolean
+        Dim result As Boolean = True
+        Dim propD As PropertyDeclaration
+
+        propD = DirectCast(Parent, PropertyDeclaration)
+
+        Dim isGet As Boolean
+        Dim isSet As Boolean
+        isGet = TypeOf Me Is PropertyGetDeclaration
+        isSet = TypeOf Me Is PropertySetDeclaration
+
+        Helper.Assert(isGet Xor isSet)
+
+        Dim info As New EmitInfo(Me)
+        Dim meType As Type = Helper.GetTypeOrTypeBuilder(Me.FindFirstParent(Of TypeDeclaration).TypeDescriptor)
+        If isGet Then
+            If Me.IsShared = False Then
+                Emitter.EmitLoadMe(info, metype)
+            End If
+            Emitter.EmitLoadVariable(info, propD.HandlesField.FieldBuilder)
+            Emitter.EmitRet(info)
+        Else
+            Dim endRemoveLabel As Label
+            Dim endAddLabel As Label
+
+            endRemoveLabel = Emitter.DefineLabel(info)
+            endAddLabel = Emitter.DefineLabel(info)
+
+            'Remove old handlers
+            If Me.IsShared = False Then
+                Emitter.EmitLoadMe(info, meType)
+            End If
+            Emitter.EmitLoadVariable(info, propD.HandlesField.FieldBuilder)
+            Emitter.EmitBranchIfFalse(info, endRemoveLabel)
+            For Each item As AddOrRemoveHandlerStatement In propD.Handlers
+                result = item.GenerateCode(info, False) AndAlso result
+            Next
+            Emitter.MarkLabel(info, endRemoveLabel)
+
+
+            'Store the variable
+            If Me.IsShared = False Then
+                Emitter.EmitLoadMe(info, meType)
+            End If
+            Emitter.EmitLoadParameter(info, Me.GetParameters()(0))
+            Emitter.EmitStoreField(info, propD.HandlesField.FieldBuilder)
+
+            'Add new handlers
+            If Me.IsShared = False Then
+                Emitter.EmitLoadMe(info, meType)
+            End If
+            Emitter.EmitLoadVariable(info, propD.HandlesField.FieldBuilder)
+            Emitter.EmitBranchIfFalse(info, endAddLabel)
+            For Each item As AddOrRemoveHandlerStatement In propD.Handlers
+                result = item.GenerateCode(info, True) AndAlso result
+            Next
+            Emitter.MarkLabel(info, endAddLabel)
+
+            Emitter.EmitRet(info)
         End If
 
         Return result

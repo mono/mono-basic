@@ -276,6 +276,10 @@ Public Class ConstructorDeclaration
         Dim exCtorCall As ConstructorInfo = ExplicitCtorCall
         If m_BaseCtorCall Is Nothing OrElse (exCtorCall IsNot Nothing AndAlso Helper.CompareType(exCtorCall.DeclaringType, Me.DeclaringType.TypeDescriptor) = False) Then
             result = EmitVariableInitialization(Info) AndAlso result
+
+            For Each arhs As AddOrRemoveHandlerStatement In Me.DeclaringType.AddHandlers
+                result = arhs.GenerateCode(Info) AndAlso result
+            Next
         End If
 
 #If DEBUG Then

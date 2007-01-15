@@ -30,35 +30,6 @@ Public Class MustOverridePropertyDeclaration
         MyBase.New(Parent)
     End Sub
 
-    'Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
-    '    Dim result As Boolean = True
-
-    '    m_PropertyBuilder = Me.FindFirstParent(Of IType).TypeBuilder.DefineProperty(Me.Name, m_Descriptor.Attributes, m_Signature.ReturnType, m_Signature.Parameters.ToTypeArray)
-
-    '    Dim attribs As MethodAttributes
-    '    attribs = MethodAttributes.SpecialName Or MethodAttributes.Abstract Or MethodAttributes.Virtual Or Modifiers.GetMethodAttributeScope Or MethodAttributes.NewSlot
-
-    '    If m_Modifiers.Is(KS.WriteOnly) = False Then
-    '        m_GetBuilder = Me.FindFirstParent(Of IType).TypeBuilder.DefineMethod("get_" & Name, attribs, m_Signature.ReturnType, m_Signature.Parameters.ToTypeArray)
-    '        m_PropertyBuilder.SetGetMethod(m_GetBuilder)
-    '        Compiler.Helper.DumpDefine(m_GetBuilder)
-    '    End If
-
-    '    If m_Modifiers.Is(KS.ReadOnly) = False Then
-    '        Dim types As New Generic.List(Of Type)
-    '        types.AddRange(m_Signature.Parameters.ToTypeArray)
-    '        types.Add(m_Signature.ReturnType)
-
-    '        m_SetBuilder = Me.FindFirstParent(Of IType).TypeBuilder.DefineMethod("set_" & Name, attribs, Nothing, types.ToArray)
-    '        m_PropertyBuilder.SetSetMethod(m_SetBuilder)
-    '        Compiler.Helper.DumpDefine(m_GetBuilder)
-    '    End If
-
-    '    Return result
-    'End Function
-
-
-
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
         While tm.PeekToken(i).Equals(Enums.MustOverridePropertyModifiers)
