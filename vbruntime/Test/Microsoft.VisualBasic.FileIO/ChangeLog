@@ -1,0 +1,4 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added FileSystemTest.vb, MalformedLineExceptionTest.cs, 
+	SpecialDirectoriesTest.vb, TextFieldParserTest.cs
