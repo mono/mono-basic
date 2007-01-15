@@ -67,7 +67,7 @@ Imports System.Runtime.InteropServices
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
 #If NET_2_0 Then
-<Assembly: AssemblyVersion("8.0.0.1")>
+<Assembly: AssemblyVersion("8.0.0.0")> 
 #Else
 <Assembly: AssemblyVersion("7.0.5000.0")> 
 #End If
@@ -75,6 +75,6 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyFileVersion("1.0.0.0")> 
 <Assembly: AssemblyDelaySign(True)> 
 #If TARGET_JVM = False And INDEVENV = False Then
-'<Assembly: AssemblyKeyFile("msfinal.pub")> 
+<Assembly: AssemblyKeyFile("msfinal.pub")> 
 #End If
 
