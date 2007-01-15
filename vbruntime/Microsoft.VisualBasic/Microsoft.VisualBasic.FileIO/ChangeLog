@@ -1,0 +1,7 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added DeleteDirectoryOption.vb, FieldType.vb, FileSystem.vb,
+	FileSystemOperation.vb, FileSystemOperationUI.vb, 
+	FileSystemOperationUIQuestion.vb, MalformedLineException.vb,
+	RecycleOption.vb, SearchOption.vb, SpecialDirectories.vb, 
+	TextFieldParser.vb, UICancelOption.vb, UIOption.vb

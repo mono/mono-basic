@@ -1,0 +1,5 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added AspLog.vb, DispSpaceExhaustedOption.vb, 
+	FileLogTraceListener.vb, Log.vb, 
+	LogFileCreationScheduleOption.vb, LogFileLocation.vb

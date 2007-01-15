@@ -80,7 +80,7 @@ Namespace Microsoft.VisualBasic
                 Dim secondsTimeSpan As System.TimeSpan = NewDate.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0))
                 Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
 
-#If TARGET_JVM = False Then
+#If TARGET_JVM = False And disabled Then
                 If (stime(seconds) = -1) Then
                     Throw New UnauthorizedAccessException("The caller is not the super-user.")
                 End If
@@ -119,7 +119,7 @@ Namespace Microsoft.VisualBasic
                 Dim secondsTimeSpan As TimeSpan = NewTime.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0, 0))
                 Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
 
-#If TARGET_JVM = False Then
+#If TARGET_JVM = False And disabled Then
                 If (stime(seconds) = -1) Then
                     Throw New UnauthorizedAccessException("The caller is not the super-user.")
                 End If

@@ -1,0 +1,4 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added ClipboardProxy.vb, FileSystemProxy.vb, 
+	RegistryProxy.vb, SpecialDirectoriesProxy

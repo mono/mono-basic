@@ -4,8 +4,9 @@
 ' Authors:
 '   Miguel de Icaza (miguel@novell.com)
 '   Mizrahi Rafael (rafim@mainsoft.com)
+'   Rolf Bjarne Kvinge  (RKvinge@novell.com)
 '
-' Copyright (C) 2006 Novell (http://www.novell.com)
+' Copyright (C) 2006-2007 Novell (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
 ' a copy of this software and associated documentation files (the
@@ -26,19 +27,50 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
- 
-#if NET_2_0
+
+#If NET_2_0 Then
 Imports System
 Imports System.Threading
 Imports System.Collections.Generic
- 
+Imports System.Collections.ObjectModel
+Imports System.ComponentModel
+#If mono_not_yet Then
+Imports System.Deployment.Application
+#End If
+
 Namespace Microsoft.VisualBasic.ApplicationServices
- 
-	Public Class ConsoleApplicationBase
-	 Inherits ApplicationBase
-		Public  Sub New()
-		End Sub
-	End Class
+    Public Class ConsoleApplicationBase
+        Inherits ApplicationBase
+
+        Public Sub New()
+            MyBase.New()
+        End Sub
+
+        Public ReadOnly Property CommandLineArgs() As ReadOnlyCollection(Of String)
+            Get
+                Throw New NotImplementedException
+            End Get
+        End Property
+#If mono_not_yet Then
+        Public ReadOnly Property Deployment() As ApplicationDeployment
+            Get
+                Throw New NotImplementedException
+            End Get
+        End Property
+#End If
+        <EditorBrowsable(EditorBrowsableState.Advanced)> _
+        Protected WriteOnly Property InternalCommandLine() As ReadOnlyCollection(Of String)
+            Set(ByVal value As ReadOnlyCollection(Of String))
+                Throw New NotImplementedException
+            End Set
+        End Property
+
+        Public ReadOnly Property IsNetworkDeployed() As Boolean
+            Get
+                Throw New NotImplementedException
+            End Get
+        End Property
+    End Class
 End Namespace
- 
+
 #End If

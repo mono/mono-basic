@@ -128,13 +128,15 @@ Namespace Microsoft.VisualBasic
 
         End Function
         Public Function ChrW(ByVal CharCode As Integer) As Char
-
+#If TRACE Then
+            Console.WriteLine("ChrW (Integer): " & CharCode.ToString)
+#End If
             If ((CharCode < -32768) Or (CharCode > 65535)) Then
                 Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
             End If
 
             ' -32768 through -1 is the same as +32768 through +65535
-            If (CharCode >= -32768 And CharCode <= -1) Then
+            If (CharCode >= -32768) And (CharCode <= -1) Then
                 CharCode = CharCode + 65536
             End If
 

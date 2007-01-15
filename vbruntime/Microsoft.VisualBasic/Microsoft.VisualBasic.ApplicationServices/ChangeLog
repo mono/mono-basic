@@ -1,3 +1,13 @@
+2007-01-15  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Added AssemblyInfo.vb, BuiltInRole.vb, 
+	BuiltInRoleConverter.vb, CantStartSingleInstanceException.vb,
+	NoStartupFormException.vb, ShutdownEventHandler.vb, StartupEventArgs.vb,
+	StartupEventHandler.vb, StartupNextInstanceEventArgs.vb,
+	StartupNextInstanceEventHandler.vb, 
+	UnhandledExceptionEventArgs.vb, UnhandledExceptionEventHandler.vb,
+	WebUser.vb
+
 2006-12-28  Miguel de Icaza  <miguel@novell.com>
 
 	* WindowsFormsApplicationBase.vb: Provide a better error message.

@@ -1,0 +1,67 @@
+'
+' Globals.vb
+'
+' Authors:
+'   Rolf Bjarne Kvinge (RKvinge@novell.com>
+'
+' Copyright (C) 2007 Novell (http://www.novell.com)
+'
+' Permission is hereby granted, free of charge, to any person obtaining
+' a copy of this software and associated documentation files (the
+' "Software"), to deal in the Software without restriction, including
+' without limitation the rights to use, copy, modify, merge, publish,
+' distribute, sublicense, and/or sell copies of the Software, and to
+' permit persons to whom the Software is furnished to do so, subject to
+' the following conditions:
+' 
+' The above copyright notice and this permission notice shall be
+' included in all copies or substantial portions of the Software.
+' 
+' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+' EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+' MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+' NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+' LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'
+Namespace Microsoft.VisualBasic
+    Public Module Globals
+        Public ReadOnly Property ScriptEngine() As String
+            Get
+                Return "VB"
+            End Get
+        End Property
+
+        Public ReadOnly Property ScriptEngineBuildVersion() As Integer
+            Get
+#If NET_2_0 Then
+                Return 50727
+#Else
+                return 0
+#End If
+            End Get
+        End Property
+
+        Public ReadOnly Property ScriptEngineMajorVersion() As Integer
+            Get
+#If NET_2_0 Then
+                Return 8
+#Else
+                return 7
+#End If
+            End Get
+        End Property
+
+        Public ReadOnly Property ScriptEngineMinorVersion() As Integer
+            Get
+#If NET_2_0 Then
+                Return 0
+#Else
+                return 0
+#End If
+            End Get
+        End Property
+    End Module
+End Namespace
+

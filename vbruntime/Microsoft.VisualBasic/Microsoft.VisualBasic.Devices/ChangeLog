@@ -1,0 +1,6 @@
+2007-01-15  Rolf Bjarne Kvinge  <RKVinge@novell.com>
+
+	* Added Audio.vb, Computer.vb, ComputerInfo.vb, Keyboard.vb
+	Mouse.vb, MyProgressDialog.vb, MyWebClient.vb, Network.vb, 
+	NetworkAvailableEventArgs.vb, NetworkAvailableEventHandler.vb,
+	Ports.vb, ServerComputer.vb

@@ -4,8 +4,9 @@
 ' Authors:
 '   Miguel de Icaza (miguel@novell.com)
 '   Mizrahi Rafael (rafim@mainsoft.com)
+'   Rolf Bjarne Kvinge  (RKvinge@novell.com)
 '
-' Copyright (C) 2006 Novell (http://www.novell.com)
+' Copyright (C) 2006-2007 Novell (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
 ' a copy of this software and associated documentation files (the
@@ -26,18 +27,66 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
- 
-#if NET_2_0
+
+#If NET_2_0 Then
 Imports System
 Imports System.Globalization
 Imports System.Threading
- 
+Imports System.Security.Principal
+Imports System.ComponentModel
+
 Namespace Microsoft.VisualBasic.ApplicationServices
- 
-	Public Class User
-		Public  Sub New()
-		End Sub
-	End Class
+    Public Class User
+
+        Public Sub New()
+            MyBase.New()
+        End Sub
+
+        <EditorBrowsable(EditorBrowsableState.Advanced)> _
+        Public Sub InitializeWithWindowsUser()
+            Throw New NotImplementedException
+        End Sub
+
+        Public Function IsInRole(ByVal role As BuiltInRole) As Boolean
+            Throw New NotImplementedException
+        End Function
+
+        Public Function IsInRole(ByVal role As String) As Boolean
+            Throw New NotImplementedException
+        End Function
+
+        <EditorBrowsable(EditorBrowsableState.Advanced)> _
+        Public Property CurrentPrincipal() As IPrincipal
+            Get
+                Throw New NotImplementedException
+            End Get
+            Set(ByVal value As IPrincipal)
+                Throw New NotImplementedException
+            End Set
+        End Property
+
+        Protected Overridable Property InternalPrincipal() As IPrincipal
+            Get
+                Throw New NotImplementedException
+            End Get
+            Set(ByVal value As IPrincipal)
+                Throw New NotImplementedException
+            End Set
+        End Property
+
+        Public ReadOnly Property IsAuthenticated() As Boolean
+            Get
+                Throw New NotImplementedException
+            End Get
+        End Property
+
+        Public ReadOnly Property Name() As String
+            Get
+                Throw New NotImplementedException
+            End Get
+        End Property
+    End Class
+
 End Namespace
- 
+
 #End If

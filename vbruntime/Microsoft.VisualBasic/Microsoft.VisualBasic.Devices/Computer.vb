@@ -4,10 +4,11 @@
 ' Authors:
 '   Miguel de Icaza (miguel@novell.com)
 '   Mizrahi Rafael (rafim@mainsoft.com)
-
+'   Rolf Bjarne Kvinge (RKvinge@novell.com)
+'
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
-' Copyright (C) 2006 Novell (http://www.novell.com)
+' Copyright (C) 2006-2007 Novell (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
 ' a copy of this software and associated documentation files (the
@@ -31,14 +32,53 @@
  
 #If NET_2_0 Then
 Imports System
+Imports Microsoft.VisualBasic.MyServices
+Imports System.Windows.Forms
 
 Namespace Microsoft.VisualBasic.Devices
-'FIXME: it looks like an empty class. Is this OK ?
-	Public Class Computer
+    Public Class Computer
+        Inherits ServerComputer
 
-		Public  Sub New()
-		End Sub
-	End Class
+        Public Sub New()
+            'Empty
+        End Sub
+
+        Public ReadOnly Property Audio() As Audio
+            Get
+                Return New Audio
+            End Get
+        End Property
+
+        Public ReadOnly Property Clipboard() As MyServices.ClipboardProxy
+            Get
+                Return New MyServices.ClipboardProxy
+            End Get
+        End Property
+
+        Public ReadOnly Property Keyboard() As Keyboard
+            Get
+                Return New Keyboard
+            End Get
+        End Property
+
+        Public ReadOnly Property Mouse() As Mouse
+            Get
+                Return New Mouse
+            End Get
+        End Property
+
+        Public ReadOnly Property Ports() As Ports
+            Get
+                Return New Ports
+            End Get
+        End Property
+
+        Public ReadOnly Property Screen() As Screen
+            Get
+                Return System.Windows.Forms.Screen.PrimaryScreen
+            End Get
+        End Property
+    End Class
 End Namespace
 
 #End If
