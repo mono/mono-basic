@@ -1,6 +1,6 @@
 thisdir := .
 
-SUBDIRS := build vbnc vbruntime
+SUBDIRS := build tools vbnc vbruntime
 
 include build/rules.make
 
