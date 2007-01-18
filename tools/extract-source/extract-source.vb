@@ -35,11 +35,13 @@ Module extract_source
         Console.WriteLine(vbTab & "-s[ource]:<vbproj file>")
         Console.WriteLine(vbTab & "-d[estination]:<destination file>")
         Console.WriteLine(vbTab & "-m[ode]:win|windows|linux")
+        Console.WriteLine(vbTab & "-x:r (exclude resources)")
         Console.WriteLine(vbTab & "-b[asepath]:<optional base path to append to all paths in project file>")
     End Sub
 
     Function Main(ByVal args As String()) As Integer
         Dim source As String = Nothing, destination As String = Nothing, mode As String = Nothing, basepath As String = Nothing
+        Dim exclude_resources As Boolean
 
         For Each arg As String In args
             If arg.StartsWith("-") = False AndAlso arg.StartsWith("/") = False Then
@@ -77,6 +79,8 @@ Module extract_source
                 Case "H", "HELP", "?"
                     ShowHelp()
                     Return 0
+                Case "X"
+                    exclude_resources = True
                 Case Else
                     ShowHelp()
                     Return 1
@@ -89,17 +93,17 @@ Module extract_source
         End If
 
         Try
-            Extract(source, destination, mode, basepath)
+            Extract(source, destination, mode, basepath, exclude_resources)
         Catch ex As Exception
             Console.WriteLine(ex.Message)
         End Try
 
     End Function
 
-    Sub Extract(ByVal VBProjFileName As String, ByVal DestinationFile As String, ByVal mode As String, ByVal basepath As String)
+    Sub Extract(ByVal VBProjFileName As String, ByVal DestinationFile As String, ByVal mode As String, ByVal basepath As String, ByVal exclude_resource As Boolean)
         Dim sources As String()
 
-        sources = GetSources(VBProjFileName, basepath)
+        sources = GetSources(VBProjFileName, basepath, exclude_resource)
         Select Case mode.ToUpperInvariant
             Case "W"
                 IO.File.WriteAllText(DestinationFile, Join(sources, vbCrLf))
@@ -111,7 +115,7 @@ Module extract_source
 
     End Sub
 
-    Function GetSources(ByVal File As String, ByVal BasePath As String) As String()
+    Function GetSources(ByVal File As String, ByVal BasePath As String, ByVal ExcludeResources As Boolean) As String()
         Dim files As New Generic.List(Of String)
 
         If BasePath Is Nothing Then BasePath = String.Empty
@@ -126,7 +130,7 @@ Module extract_source
                 If x.Name = "Compile" AndAlso x.NodeType = Xml.XmlNodeType.Element Then
                     x.MoveToAttribute("Include")
                     filename = x.Value
-                ElseIf x.Name = "EmbeddedResource" AndAlso x.NodeType = Xml.XmlNodeType.Element Then
+                ElseIf ExcludeResources = False AndAlso x.Name = "EmbeddedResource" AndAlso x.NodeType = Xml.XmlNodeType.Element Then
                     x.MoveToAttribute("Include")
                     filename = x.Value
                     prefix = "-res:"
