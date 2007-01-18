@@ -1,2 +1,2 @@
-/r:system.dll
+/r:System.dll
 /imports:system
