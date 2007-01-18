@@ -131,12 +131,12 @@ Public Class Message
         Dim strMessages(), strMessage, strLocation As String
         Dim result As String
 
-        Console.WriteLine("Message.ToString()")
+        'Console.WriteLine("Message.ToString()")
 
         'Get the message string and format it with the message parameters.
         ReDim strMessages(m_Message.GetUpperBound(0))
         For i As Integer = 0 To m_Message.GetUpperBound(0)
-            Console.WriteLine("Params: " & VB.Join(Me.m_Parameters(i), ";"))
+            'Console.WriteLine("Params: " & VB.Join(Me.m_Parameters(i), ";"))
             strMessages(i) = Report.LookupErrorCode(m_Message(i))
             Select Case m_Parameters(i).Length
                 Case 0
@@ -155,13 +155,13 @@ Public Class Message
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
 
         'Get the location string
-        'If Location IsNot Nothing Then
-        strLocation = Location.ToString()
-        result = MESSAGEFORMATWITHLOCATION
-        'Else
-        'strLocation = ""
-        'result = MESSAGEFORMAT
-        'End If
+        If Location IsNot Nothing Then
+            strLocation = Location.ToString()
+            result = MESSAGEFORMATWITHLOCATION
+        Else
+            strLocation = ""
+            result = MESSAGEFORMAT
+        End If
 
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)

@@ -696,14 +696,6 @@
     <Compile Include="General\Scanner.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="My Application\MyApplication.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MyApplication.myapp</DependentUpon>
-    </Compile>
-    <Compile Include="My Project\Application.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
     <Compile Include="Testing\Testing.vb">
       <SubType>Code</SubType>
     </Compile>
@@ -774,10 +766,6 @@
     <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstant.vb.svn-base" />
     <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstants.vb.svn-base" />
     <None Include="ConditionalCompilation\.svn\text-base\ConditionalExpression.vb.svn-base" />
-    <None Include="My Application\MyApplication.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>MyApplication.Designer.vb</LastGenOutput>
-    </None>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>

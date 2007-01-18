@@ -576,9 +576,12 @@ Public Class AssemblyDeclaration
         If keyfile <> String.Empty Then
             Dim filename As String
 
-            filename = keyfile
-
             filename = IO.Path.GetFullPath(keyfile)
+
+#If DEBUG Then
+            Compiler.Report.WriteLine("Signing with file: " & filename)
+#End If
+
             If IO.File.Exists(filename) = False Then
                 Helper.AddError("Can't find keyfile: " & filename)
                 Return result
