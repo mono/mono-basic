@@ -1,5 +1,5 @@
 '
-' Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.cs
+' Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.vb
 '
 ' Authors:
 '   Miguel de Icaza (miguel@novell.com)
@@ -39,7 +39,7 @@ Imports System.Collections.ObjectModel
 
 Namespace Microsoft.VisualBasic.ApplicationServices
 
-    Public Class WindowsFormsApplicationBase
+    Partial Public Class WindowsFormsApplicationBase
         Inherits ConsoleApplicationBase
 
         Private m_IsSingleInstance As Boolean = False
@@ -47,7 +47,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         Private m_SaveMySettingsOnExit As Boolean = False
         Private m_ShutdownStyle As ShutdownMode
         Private m_AuthenticationMode As AuthenticationMode
-        Private m_ApplicationContext As ApplicationContext
+        Private m_ApplicationContext As WindowsFormsApplicationContext
         Private m_MinimumSplashScreenTime As Integer
         Private m_SplashScreen As Form
 
@@ -67,6 +67,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         Public Sub New(ByVal mode As AuthenticationMode)
             MyBase.New()
             m_AuthenticationMode = mode
+            m_ApplicationContext = New WindowsFormsApplicationContext(Me)
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
@@ -131,10 +132,10 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         Protected Property MainForm() As Form
             Get
-                Throw New NotImplementedException
+                Return m_ApplicationContext.MainForm
             End Get
             Set(ByVal value As Form)
-                Throw New NotImplementedException
+                m_ApplicationContext.MainForm = value
             End Set
         End Property
 

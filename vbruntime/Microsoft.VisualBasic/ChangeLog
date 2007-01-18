@@ -1,3 +1,8 @@
+2007-01-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Now Microsoft.VisualBasic.dll.sources is generated
+	automatically from 2005VB.vbproj.
+	
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* AssemblyInfo.vb: Reverted accidental version change.
