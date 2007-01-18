@@ -1,4 +1,4 @@
-prefix=/mono
+prefix=/mono/install
 exec_prefix=${prefix}
 mono_libdir=${exec_prefix}/lib
 MCS_FLAGS=-debug+
