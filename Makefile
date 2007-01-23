@@ -71,18 +71,19 @@ dist: dist-tarball
 # the installed System.Xml to build properly
 
 distcheck: dist-tarball
-	rm -rf InstallTest Distcheck-MCS ; \
+	rm -rf InstallTest Distcheck-MONOBASIC ; \
 	mkdir InstallTest ; \
 	destdir=`cd InstallTest && pwd` ; \
-	mv $(package) Distcheck-MCS ; \
-	(cd Distcheck-MCS && \
+	mv $(package) Distcheck-MONOBASIC ; \
+	(cd Distcheck-MONOBASIC && \
+	    ./configure --prefix=$(prefix) && \
 	    $(MAKE) prefix=$(prefix) && $(MAKE) test && $(MAKE) install DESTDIR="$$destdir" && \
 	    $(MAKE) clean && $(MAKE) dist || exit 1) || exit 1 ; \
-	mv Distcheck-MCS $(package) ; \
+	mv Distcheck-MONOBASIC $(package) ; \
 	tar tzf $(package)/$(package).tar.gz |sed -e 's,/$$,,' |sort >distdist.list ; \
 	rm $(package)/$(package).tar.gz ; \
 	tar tzf $(package).tar.gz |sed -e 's,/$$,,' |sort >before.list ; \
-	find $(package) |egrep -v '(makefrag|response)' |sed -e 's,/$$,,' |sort >after.list ; \
+	find $(package) |egrep -v '(makefrag|response|config.make)' |sed -e 's,/$$,,' |sort >after.list ; \
 	cmp before.list after.list || exit 1 ; \
 	cmp before.list distdist.list || exit 1 ; \
 	rm -f before.list after.list distdist.list ; \
