@@ -10,6 +10,8 @@ all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
 all-local $(STD_TARGETS:=-local):
 	@:
 
+DISTFILES = README configure
+
 # fun specialty targets
 
 PROFILES = default net_2_0
@@ -46,7 +48,7 @@ test-installed-compiler:
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=default TEST_RUNTIME=mono MCS=mcs run-test
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=net_2_0 TEST_RUNTIME=mono MCS=gmcs run-test
 
-package := infocard
+package := mono-basic-$(VERSION)
 
 dist-local: dist-default
 

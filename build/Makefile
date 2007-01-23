@@ -10,10 +10,9 @@ clean-local:
 
 PLATFORMS = linux win32
 
+PROFILES = bootstrap vbnc
+
 DISTFILES = \
-	README.makefiles		\
-	README.platforms		\
-	README.configury		\
 	config-default.make		\
 	executable.make			\
 	library.make			\

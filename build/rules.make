@@ -13,7 +13,7 @@
 dots := $(shell echo $(thisdir) |sed -e 's,[^./][^/]*,..,g')
 topdir := $(dots)
 
-VERSION = 0.93
+VERSION = 1.2.3
 
 USE_MCS_FLAGS = $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_VBNC_FLAGS = $(LOCAL_VBNC_FLAGS) $(PLATFORM_VBNC_FLAGS) $(PROFILE_VBNC_FLAGS) $(VBNC_FLAGS)

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.1
+VERSION=1.2.3
 prefix=/usr/local
 while test x$1 != x; do
         case $1 in
@@ -22,5 +22,6 @@ echo "mono_libdir=\${exec_prefix}/lib" >> build/config.make
 echo "MCS_FLAGS=-debug+" >> build/config.make
 echo "RUNTIME=mono" >> build/config.make
 echo "MONO_BASIC_VERSION=$VERSION" >> build/config.make
+echo "VERSION=$VERSION" >> build/config.make
 
 echo "mono-basic $VERSION module configure to use prefix=$prefix"
