@@ -1,0 +1,23 @@
+
+Mono Basic: Visual Basic Compiler and Runtime.
+
+= Building =
+
+	To configure this module, first configure it, like this:
+
+		./configure [--prefix=/path]
+
+	To build it, use:
+
+		make
+
+	To install the compiler and runtime, use:
+
+		make install
+
+= Package =
+
+== Visual Basic Runtime ==
+
+== Visual Basic Compiler ==
+
