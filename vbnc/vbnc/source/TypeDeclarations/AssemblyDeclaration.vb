@@ -623,7 +623,9 @@ Public Class AssemblyDeclaration
         Dim FromCapiPrivateKeyBlob As MethodInfo
         Dim RSA As Type
 
+#If DEBUG Then
         Compiler.Report.WriteLine("Signing on Mono")
+#End If
 
         Try
             RSA = Compiler.TypeCache.mscorlib.GetType("System.Security.Cryptography.RSA")
