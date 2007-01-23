@@ -23,6 +23,7 @@ Public Class TypeCache
     Public [Nothing] As System.Type
     Public [Boolean] As System.Type
     Public [Byte] As System.Type
+    Public Byte_Array As System.Type
     Public [Char] As System.Type
     Public [Date] As System.Type
     Public [Decimal] As System.Type
@@ -253,6 +254,7 @@ Public Class TypeCache
     Private Sub Init_corlib()
         Me.Boolean = mscorlib.GetType("System.Boolean")
         Me.Byte = mscorlib.GetType("System.Byte")
+        Me.Byte_Array = Me.Byte.MakeArrayType()
         Me.Char = mscorlib.GetType("System.Char")
         Me.Date = mscorlib.GetType("System.DateTime")
         Me.Decimal = mscorlib.GetType("System.Decimal")

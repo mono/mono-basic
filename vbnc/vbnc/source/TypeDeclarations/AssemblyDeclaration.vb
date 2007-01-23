@@ -574,34 +574,89 @@ Public Class AssemblyDeclaration
         End If
 
         If keyfile <> String.Empty Then
-            Dim filename As String
-
-            filename = IO.Path.GetFullPath(keyfile)
-
-#If DEBUG Then
-            Compiler.Report.WriteLine("Signing with file: " & filename)
-#End If
-
-            If IO.File.Exists(filename) = False Then
-                Helper.AddError("Can't find keyfile: " & filename)
+            If SignWithKeyFile(result, keyfile, delaysign) = False Then
                 Return result
             End If
+        End If
 
-            Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
-                Dim snkeypair() As Byte
-                ReDim snkeypair(CInt(stream.Length - 1))
-                stream.Read(snkeypair, 0, snkeypair.Length)
+        Return result
+    End Function
 
-                If delaysign Then
+    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
+        Dim filename As String
+
+        filename = IO.Path.GetFullPath(KeyFile)
+
+#If DEBUG Then
+        Compiler.Report.WriteLine("Signing with file: " & filename)
+#End If
+
+        If IO.File.Exists(filename) = False Then
+            Helper.AddError("Can't find keyfile: " & filename)
+            Return False
+        End If
+
+        Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+            Dim snkeypair() As Byte
+            ReDim snkeypair(CInt(stream.Length - 1))
+            stream.Read(snkeypair, 0, snkeypair.Length)
+
+            If Helper.IsOnMono Then
+                SignWithKeyFileMono(result, filename, DelaySign, snkeypair)
+            Else
+                If DelaySign Then
                     result.SetPublicKey(snkeypair)
                 Else
                     result.KeyPair = New StrongNameKeyPair(snkeypair)
                 End If
+            End If
 
-            End Using
-        End If
+        End Using
 
-        Return result
+        Return True
+    End Function
+
+    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
+        Dim CryptoConvert As Type
+        Dim FromCapiKeyBlob As MethodInfo
+        Dim ToCapiPublicKeyBlob As MethodInfo
+        Dim FromCapiPrivateKeyBlob As MethodInfo
+        Dim RSA As Type
+
+        Compiler.Report.WriteLine("Signing on Mono")
+
+        Try
+            RSA = Compiler.TypeCache.mscorlib.GetType("System.Security.Cryptography.RSA")
+            CryptoConvert = Compiler.TypeCache.mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
+            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.Byte_Array}, Nothing)
+            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
+            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.Byte_Array}, Nothing)
+
+            If DelaySign Then
+                If blob.Length = 16 Then
+                    result.SetPublicKey(blob)
+                Else
+                    Dim publickey() As Byte
+                    Dim fromCapiResult As Object
+                    Dim publicKeyHeader As Byte() = New Byte() {&H0, &H24, &H0, &H0, &H4, &H80, &H0, &H0, &H94, &H0, &H0, &H0}
+                    Dim encodedPublicKey() As Byte
+
+                    fromCapiResult = FromCapiKeyBlob.Invoke(Nothing, New Object() {blob})
+                    publickey = CType(ToCapiPublicKeyBlob.Invoke(Nothing, New Object() {fromCapiResult}), Byte())
+
+                    ReDim encodedPublicKey(11 + publickey.Length)
+                    Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
+                    Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
+                    result.SetPublicKey(encodedPublicKey)
+                End If
+            Else
+                FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})
+                result.KeyPair = New StrongNameKeyPair(blob)
+            End If
+        Catch ex As Exception
+            Helper.AddError("Invalid key file: " & KeyFile & ", got error: " & ex.Message)
+        End Try
+
     End Function
 
     Private Sub SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute)

@@ -1,3 +1,7 @@
+﻿2007-07-123  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* vbnc now does some special tricks on Mono to sign correctly with ECMA keys.
+
 ﻿2007-07-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc can now sign assemblies with keyfiles.
