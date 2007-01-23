@@ -1,6 +1,6 @@
 thisdir := .
 
-SUBDIRS := build class tools vbnc vbruntime
+SUBDIRS := build class tools vbnc vbruntime scripts
 
 include build/rules.make
 
@@ -89,3 +89,10 @@ distcheck: dist-tarball
 	rm -f before.list after.list distdist.list ; \
 	rm -rf $(package) InstallTest
 
+vbnc: vbnc.in Makefile
+	sed -e s,@prefix@,$(prefix),g < vbnc.in > $@.tmp
+	mv $@.tmp $@
+
+install-local: all-local
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$)(I
