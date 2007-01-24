@@ -20,5 +20,5 @@ uninstall-local:
 clean-local:
 	rm vbnc
 
-test-local run-test-local run-test-ondotnet-local all-local:
+test-local run-test-local run-test-ondotnet-local all-local dist-local:
 	@:
