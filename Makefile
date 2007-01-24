@@ -95,4 +95,3 @@ vbnc: vbnc.in Makefile
 
 install-local: all-local
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	$)(I

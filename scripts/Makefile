@@ -17,8 +17,12 @@ install-local: all-local
 uninstall-local: 
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc
 
+DISTFILES = vbnc.in Makefile
+
 clean-local:
 	rm vbnc
 
-test-local run-test-local run-test-ondotnet-local all-local dist-local:
+test-local run-test-local run-test-ondotnet-local all-local:
 	@:
+
+dist-local: dist-default
