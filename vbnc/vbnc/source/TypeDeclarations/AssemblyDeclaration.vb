@@ -637,6 +637,9 @@ Public Class AssemblyDeclaration
             If DelaySign Then
                 If blob.Length = 16 Then
                     result.SetPublicKey(blob)
+#If DEBUG Then
+                    Compiler.Report.WriteLine("Delay signed 1")
+#End If
                 Else
                     Dim publickey() As Byte
                     Dim fromCapiResult As Object
@@ -650,6 +653,9 @@ Public Class AssemblyDeclaration
                     Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
                     Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
                     result.SetPublicKey(encodedPublicKey)
+#If DEBUG Then
+                    Compiler.Report.WriteLine("Delay signed 2")
+#End If
                 End If
             Else
                 FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})

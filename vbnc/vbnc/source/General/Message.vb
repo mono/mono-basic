@@ -120,7 +120,11 @@ Public Class Message
     Sub New(ByVal Message As Messages, ByVal Parameters() As String, ByVal Location As Span)
         Me.m_Message = New Messages() {Message}
         Me.m_Location = Location
-        Me.m_Parameters = New String()() {Parameters}
+        If Parameters Is Nothing Then
+            Me.m_Parameters = New String()() {New String() {}}
+        Else
+            Me.m_Parameters = New String()() {Parameters}
+        End If
     End Sub
 
     ''' <summary>
@@ -131,13 +135,14 @@ Public Class Message
         Dim strMessages(), strMessage, strLocation As String
         Dim result As String
 
-        'Console.WriteLine("Message.ToString()")
+        Helper.Assert(m_Message IsNot Nothing, "m_Message Is Nothing")
+        Helper.Assert(m_Parameters IsNot Nothing, "m_Parameters Is Nothing")
 
         'Get the message string and format it with the message parameters.
         ReDim strMessages(m_Message.GetUpperBound(0))
         For i As Integer = 0 To m_Message.GetUpperBound(0)
-            'Console.WriteLine("Params: " & VB.Join(Me.m_Parameters(i), ";"))
             strMessages(i) = Report.LookupErrorCode(m_Message(i))
+            Helper.Assert(m_Parameters(i) IsNot Nothing, "m_Parameters(" & i.ToString & ") Is Nothing")
             Select Case m_Parameters(i).Length
                 Case 0
                     'strMessages(i) = String.Format(strMessages(i), m_Parameters(i))

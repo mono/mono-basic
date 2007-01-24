@@ -207,7 +207,7 @@ Public Class TypeManager
             Else
                 If Assemblies.Contains(refAssembly) = False Then
                     If Compiler.CommandLine.Verbose Then
-                        Compiler.Report.WriteLine("Loaded '" & refAssembly.Location & "'")
+                        Compiler.Report.WriteLine("Loaded '" & refAssembly.Location & "' (" & refAssembly.FullName & ")")
                     End If
                     Assemblies.Add(refAssembly)
                 End If
@@ -264,14 +264,14 @@ Public Class TypeManager
         '  Try
         If IO.File.Exists(Filename) Then
             refAss = Reflection.Assembly.LoadFrom(Filename)
-            If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
+            'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
 
         If IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
             Filename = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
             refAss = Reflection.Assembly.LoadFrom(Filename)
-            If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
+            'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
 
@@ -281,7 +281,7 @@ Public Class TypeManager
             Try
                 If IO.File.Exists(strFullPath) Then
                     refAss = Reflection.Assembly.LoadFrom(strFullPath)
-                    If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
+                    'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
                     Return refAss
                 End If
             Catch ex2 As Exception
