@@ -48,8 +48,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Select Case Type.GetTypeCode(type1)
                 Case TypeCode.Boolean
                     Return (-1) * Convert.ToInt32(DirectCast(Value, Boolean))
-                Case TypeCode.SByte
-                    Return DirectCast(Value, SByte)
                 Case TypeCode.Byte
                     Return DirectCast(Value, Byte)
                 Case TypeCode.Double
@@ -60,18 +58,22 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Return DirectCast(Value, Integer)
                 Case TypeCode.Int16
                     Return DirectCast(Value, Short)
-                Case TypeCode.UInt16
-                    Return DirectCast(Value, UShort)
-                Case TypeCode.UInt32
-                    Return Convert.ToInt32(DirectCast(Value, UInteger))
                 Case TypeCode.Int64
                     Return Convert.ToInt32(DirectCast(Value, Long))
-                Case TypeCode.UInt64
-                    Return Convert.ToInt32(DirectCast(Value, ULong))
                 Case TypeCode.Single
                     Return Convert.ToInt32(DirectCast(Value, Single))
                 Case TypeCode.String
                     Return IntegerType.FromString(DirectCast(Value, String))
+#If NET_2_0 Then
+                Case TypeCode.SByte
+                    Return DirectCast(Value, SByte)
+                Case TypeCode.UInt16
+                    Return DirectCast(Value, UShort)
+                Case TypeCode.UInt32
+                    Return Convert.ToInt32(DirectCast(Value, UInteger))
+                Case TypeCode.UInt64
+                    Return Convert.ToInt32(DirectCast(Value, ULong))
+#End If
                 Case Else
                     Throw New InvalidCastException
             End Select
