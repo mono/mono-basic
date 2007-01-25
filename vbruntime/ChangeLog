@@ -1,3 +1,8 @@
+2007-01-25  Wade Berrier  <RKvinge@novell.com>
+
+	* Makefile: Add VB.build.bat to DISTFILES to be able to build
+	on win32 from a 'make dist' tarball
+
 2007-01-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Updated and fixed the batch build files for new source files.

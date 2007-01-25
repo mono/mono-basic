@@ -16,4 +16,4 @@ dist-local: dist-default
 	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%) $(COMPAT_PROFILE_DIRS:%=$(distdir)/compat/%)
 
 clean-local test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
-        @:
+	@:

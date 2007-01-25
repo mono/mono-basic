@@ -1,3 +1,8 @@
+2007-01-25  Wade Berrier  <RKvinge@novell.com>
+
+	* Makefile: Add Microsoft.VisualBasic.dll.sources.win to 
+	DISTFILES to be able to build from 'make dist' tarball
+
 2007-01-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Now Microsoft.VisualBasic.dll.sources is generated

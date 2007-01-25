@@ -26,6 +26,7 @@ DISTFILES =	\
 	ChangeLog				\
 	Makefile				\
 	Microsoft.VisualBasic.dll.sources	\
+	Microsoft.VisualBasic.dll.sources.win	\
 	vbruntime.rsp				\
 	Helper.vb				\
 	2005VB.sln
