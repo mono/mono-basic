@@ -1,4 +1,4 @@
-2007-01-25  Wade Berrier  <RKvinge@novell.com>
+2007-01-25  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: Add Microsoft.VisualBasic.dll.sources.win to 
 	DISTFILES to be able to build from 'make dist' tarball

@@ -1,4 +1,8 @@
-2007-01-25  Wade Berrier  <RKvinge@novell.com>
+2007-01-25  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: spaces -> tab
+
+2007-01-25  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: Add VB.build.bat to DISTFILES to be able to build
 	on win32 from a 'make dist' tarball
