@@ -17,7 +17,8 @@ DISTFILES = \
 	vbnc.exe.sources  	\
 	vbnc.sln  		\
 	vbnc.vbnc.rsp		\
-	source/vbnc.vbproj
+	source/vbnc.vbproj	\
+	bin/vbnc.rsp
 
 
 vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj
