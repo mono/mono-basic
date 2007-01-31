@@ -3,7 +3,7 @@
 	* Makefile: install vbnc.rsp for times when vbnc.exe can't write to /usr/lib/mono/2.0
 	(ex: installed as root, running as user)
 
-﻿2007-07-123  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+﻿2007-07-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc now does some special tricks on Mono to sign correctly with ECMA keys.
 
