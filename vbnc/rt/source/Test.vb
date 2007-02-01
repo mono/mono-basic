@@ -82,7 +82,7 @@ Public Class Test
     Public Const VerifiedExtension As String = ".verified.xml"
     Public Const OutputPattern As String = ".*" & OutputExtension
     Public Const VerifiedPattern As String = ".*" & VerifiedExtension
-    Public Const DefaultOutputPath As String = "testoutput\"
+    Public DefaultOutputPath As String = "testoutput" & System.IO.Path.DirectorySeparatorChar
 
     Private m_Target As String
     Private m_NoConfig As Boolean
@@ -99,7 +99,27 @@ Public Class Test
     Public Event Executing(ByVal Sender As Test)
     Public Event Changed(ByVal Sender As Test)
 
+    Private m_Compiler As String
+    Private m_AC As String
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d+(-\d*)?(\s+.*)?$", System.Text.RegularExpressions.RegexOptions.Compiled)
+
+    Property AC() As String
+        Get
+            Return m_AC
+        End Get
+        Set(ByVal value As String)
+            m_AC = value
+        End Set
+    End Property
+
+    Property Compiler() As String
+        Get
+            Return m_Compiler
+        End Get
+        Set(ByVal value As String)
+            m_Compiler = value
+        End Set
+    End Property
 
     Function GetOldResults() As Generic.List(Of OldResult)
         Dim result As New Generic.List(Of OldResult)
@@ -145,7 +165,7 @@ Public Class Test
     End Property
 
 #If DEBUG Then
-    Private id As Integer = MainModule.nextID()
+    Private id As Integer = Helper.nextID()
 #End If
 
     Sub WriteToXML(ByVal xml As Xml.XmlWriter)
@@ -383,7 +403,7 @@ Public Class Test
     Function GetOutputFiles() As String()
         Dim result As String()
         If IO.Directory.Exists(OutputPath) Then
-            result = IO.Directory.GetFiles(OutputPath, Name & OutputPattern)
+            result = New String() {} 'IO.Directory.GetFiles(OutputPath, Name & OutputPattern)
         Else
             result = New String() {}
         End If
@@ -393,7 +413,7 @@ Public Class Test
     Function GetVerifiedFiles() As String()
         Dim result As String()
         If IO.Directory.Exists(OutputPath) Then
-            result = IO.Directory.GetFiles(OutputPath, Name & VerifiedPattern)
+            result = new String(){}'IO.Directory.GetFiles(OutputPath, Name & VerifiedPattern)
         Else
             result = New String() {}
         End If
@@ -436,7 +456,7 @@ Public Class Test
         Initialize()
 
         'First option is always the /out: argument.
-        Const OutArgument As String = "/out:{0}"
+        Const OutArgument As String = "-out:{0}"
         If ForVBC Then
             result.Add(String.Format(OutArgument, GetOutputVBCAssembly))
         Else
@@ -449,7 +469,7 @@ Public Class Test
         Else
             'otherwise add the file, the default response file and the extra .response file if any.
             result.AddRange(CType(m_Files, Generic.IEnumerable(Of String)))
-            result.Add("/libpath:" & m_BasePath)
+            result.Add("-libpath:" & m_BasePath)
 
             If m_DefaultRspFile <> "" Then
                 result.Add("@" & m_DefaultRspFile)
@@ -459,7 +479,7 @@ Public Class Test
         End If
 
         If m_NoConfig Then
-            result.Add("/noconfig")
+            result.Add("-noconfig")
         End If
 
         Return result.ToArray()
@@ -594,9 +614,14 @@ Public Class Test
 
     Private ReadOnly Property GetACPath() As String
         Get
-            Return IO.Path.GetFullPath("..\..\ac\bin\ac.exe")
+            If m_AC <> String.Empty Then Return m_AC
+            Return IO.Path.GetFullPath("..\..\ac\bin\ac.exe".Replace("\", IO.Path.DirectorySeparatorChar))
         End Get
     End Property
+
+    Function GetExecutor() As String
+        Return IO.Path.GetFullPath("..\..\rt-execute\rt-execute.exe".Replace("\", IO.Path.DirectorySeparatorChar))
+    End Function
 
     ''' <summary>
     ''' Returns true if new verifications have been created (only if source files has changed
@@ -607,26 +632,42 @@ Public Class Test
     Function CreateVerifications() As Boolean
         Initialize()
 
-        If Me.Parent.SkipCleanTests AndAlso Me.IsDirty = False Then Return False
+        If Me.Parent IsNot Nothing AndAlso (Me.Parent.SkipCleanTests AndAlso Me.IsDirty = False) Then Return False
 
-        Dim vbnccmdline As String() = MainModule.QuoteStrings(Me.GetTestCommandLineArguments(False))
-        Dim vbccmdline As String() = MainModule.QuoteStrings(Me.GetTestCommandLineArguments(True))
+        Dim vbnccmdline As String() = Helper.QuoteStrings(Me.GetTestCommandLineArguments(False))
+        Dim vbccmdline As String() = Helper.QuoteStrings(Me.GetTestCommandLineArguments(True))
 
-        Dim vbc As ExternalProcessVerification
-        vbc = New ExternalProcessVerification(Me, Parent.VBCPath, Join(vbccmdline, " "))
-        vbc.Process.WorkingDirectory = m_BasePath
-        vbc.Name = "VBC Compile (verifies that the test itself is correct)"
-        If m_IsNegativeTest Then vbc.NegativeError = m_NegativeError
+        Dim vbc As ExternalProcessVerification = Nothing
+        Dim compiler As String = Nothing
+        Dim vbccompiler As String = Nothing
 
-        m_Compilation = New ExternalProcessVerification(Me, Parent.VBNCPath, Join(vbnccmdline, " "))
+        If Me.Parent IsNot Nothing Then
+            vbccompiler = Me.Parent.VBCPath
+        End If
+        If vbccompiler <> String.Empty Then
+            vbc = New ExternalProcessVerification(Me, vbccompiler, Join(vbccmdline, " "))
+            vbc.Process.WorkingDirectory = m_BasePath
+            vbc.Name = "VBC Compile (verifies that the test itself is correct)"
+            If m_IsNegativeTest Then vbc.NegativeError = m_NegativeError
+        End If
+
+        compiler = Me.Compiler
+        If compiler Is Nothing AndAlso Me.Parent IsNot Nothing Then
+            compiler = Me.Parent.VBNCPath
+        End If
+        If compiler Is Nothing Then
+            Throw New Exception("No compiler specified.")
+        End If
+
+        m_Compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
         m_Compilation.Process.WorkingDirectory = m_BasePath
         m_Compilation.Name = "VBNC Compile"
-        m_Compilation.Process.UseTemporaryExecutable = True
+        'm_Compilation.Process.UseTemporaryExecutable = True
         If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
 
         m_Verifications.Clear()
 
-        If IsSourceDirty Then m_Verifications.Add(vbc)
+        If vbc IsNot Nothing AndAlso IsSourceDirty Then m_Verifications.Add(vbc)
         m_Verifications.Add(m_Compilation)
 
         If m_IsNegativeTest = False Then
@@ -635,30 +676,46 @@ Public Class Test
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
 
-            m_Verifications.Add(New XMLVerifier(Me))
-            m_Verifications(m_Verifications.Count - 1).Name = "Xml verification"
+            'm_Verifications.Add(New XMLVerifier(Me))
+            'm_Verifications(m_Verifications.Count - 1).Name = "Xml verification"
 
-            m_Verifications.Add(New ExternalProcessVerification(Me, GetACPath, "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"))
-            m_Verifications(m_Verifications.Count - 1).Name = "Assembly Comparison Verification"
+            Dim ac As String
+            ac = GetACPath
+            If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) Then
+                m_Verifications.Add(New ExternalProcessVerification(Me, GetACPath, "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"))
+                m_Verifications(m_Verifications.Count - 1).Name = "Assembly Comparison Verification"
+            End If
 
-            m_Verifications.Add(New ExternalProcessVerification(Me, PEVerifyPath, "%OUTPUTASSEMBLY% /nologo"))
-            m_Verifications(m_Verifications.Count - 1).Name = "Type Safety and Security Verification"
+            Dim peverify As String
+            peverify = PEVerifyPath
+            If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
+                m_Verifications.Add(New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo"))
+                m_Verifications(m_Verifications.Count - 1).Name = "Type Safety and Security Verification"
+            End If
 
             If Me.m_Target = "exe" Then
-                m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputAssembly))
+                Dim executor As String
+                executor = GetExecutor()
+                If executor <> String.Empty AndAlso IO.File.Exists(executor) Then
+                    m_Verifications.Add(New ExternalProcessVerification(Me, executor))
+                Else
+                    m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputAssembly))
+                End If
                 m_Verifications(m_Verifications.Count - 1).Name = "Output executable verification"
             End If
 
-            Dim bootStrappedExe As String
-            bootStrappedExe = IO.Path.Combine(IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(Parent.VBNCPath)), "tests\SelfTest\testoutput\SelfCompile.exe")
+            If vbccompiler <> String.Empty Then
+                Dim bootStrappedExe As String
+                bootStrappedExe = IO.Path.Combine(IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(vbccompiler)), Helper.NormalizePath("tests\SelfTest\testoutput\SelfCompile.exe"))
 
-            If IO.File.Exists(bootStrappedExe) AndAlso False Then
-                Dim epv As New ExternalProcessVerification(Me, bootStrappedExe, Join(vbnccmdline, " "))
-                m_Verifications.Add(epv)
-                m_Verifications(m_Verifications.Count - 1).Name = "Bootstrapped verification"
-                epv.Process.WorkingDirectory = m_BasePath
-                epv.Process.UseTemporaryExecutable = True
-                If m_IsNegativeTest Then epv.NegativeError = m_NegativeError
+                If IO.File.Exists(bootStrappedExe) AndAlso False Then
+                    Dim epv As New ExternalProcessVerification(Me, bootStrappedExe, Join(vbnccmdline, " "))
+                    m_Verifications.Add(epv)
+                    m_Verifications(m_Verifications.Count - 1).Name = "Bootstrapped verification"
+                    epv.Process.WorkingDirectory = m_BasePath
+                    epv.Process.UseTemporaryExecutable = True
+                    If m_IsNegativeTest Then epv.NegativeError = m_NegativeError
+                End If
             End If
         End If
 

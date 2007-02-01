@@ -29,6 +29,7 @@ Public Class Tests
 
     Private m_ContainedTests As New Generic.List(Of Tests)
     Private m_SkipCleanTests As Boolean
+    Private m_Recursive As Boolean
 
     Sub WriteLinuxScript()
         For Each nested As Tests In m_ContainedTests
@@ -153,10 +154,11 @@ Public Class Tests
     ''' <param name="Path">The path to the folders where the tests are.</param>
     ''' <param name="CompilerPath">The path to the compiler.</param>
     ''' <remarks></remarks>
-    Sub New(ByVal Path As String, ByVal CompilerPath As String, ByVal VBCPath As String)
+    Sub New(ByVal Path As String, ByVal CompilerPath As String, ByVal VBCPath As String, Optional ByVal Recursive As Boolean = True)
         MyBase.New(CompilerPath, VBCPath)
 
         m_Path = Path
+        m_Recursive = Recursive
 
         Refresh()
     End Sub
@@ -192,29 +194,31 @@ Public Class Tests
             End If
         Next
 
-        Dim dirs As Generic.List(Of String) = GetContainedTestDirectories()
-        For i As Integer = 0 To m_ContainedTests.Count - 1
-            Dim tests As Tests = m_ContainedTests(i)
-            If dirs.Contains(tests.Path) = False Then
-                m_ContainedTests.RemoveAt(i) : i -= 1
-            End If
-        Next
-        For i As Integer = 0 To dirs.Count - 1
-            Dim dir As String = dirs(i)
-            Dim oldTests As Tests = Nothing
-
-            For Each containedtests As Tests In m_ContainedTests
-                If containedtests.Path = dir Then
-                    oldTests = containedtests
-                    Exit For
+        If m_Recursive Then
+            Dim dirs As Generic.List(Of String) = GetContainedTestDirectories()
+            For i As Integer = 0 To m_ContainedTests.Count - 1
+                Dim tests As Tests = m_ContainedTests(i)
+                If dirs.Contains(tests.Path) = False Then
+                    m_ContainedTests.RemoveAt(i) : i -= 1
                 End If
             Next
-            If oldTests IsNot Nothing Then
-                oldTests.Update()
-            Else
-                m_ContainedTests.Add(New Tests(dir, MyBase.VBNCPath, MyBase.VBCPath))
-            End If
-        Next
+            For i As Integer = 0 To dirs.Count - 1
+                Dim dir As String = dirs(i)
+                Dim oldTests As Tests = Nothing
+
+                For Each containedtests As Tests In m_ContainedTests
+                    If containedtests.Path = dir Then
+                        oldTests = containedtests
+                        Exit For
+                    End If
+                Next
+                If oldTests IsNot Nothing Then
+                    oldTests.Update()
+                Else
+                    m_ContainedTests.Add(New Tests(dir, MyBase.VBNCPath, MyBase.VBCPath))
+                End If
+            Next
+        End If
     End Sub
 
     Sub Refresh()
@@ -240,13 +244,15 @@ Public Class Tests
         Next
     End Sub
 
-    Private Function GetContainedTestDirectories() As Generic.List(Of String)
+    Function GetContainedTestDirectories() As Generic.List(Of String)
         Dim result As New Generic.List(Of String)
         Dim dirs() As String = IO.Directory.GetDirectories(m_Path)
 
         'Add all the subdirectories (only if they are neither hidden nor system directories and they 
         'must not be named "testoutput"
         For Each dir As String In dirs
+            If System.IO.Path.GetFileName(dir).StartsWith(".") Then Continue For
+
             Dim dirAttr As IO.FileAttributes = IO.File.GetAttributes(dir)
             If Not (CBool(dirAttr And (IO.FileAttributes.Hidden Or IO.FileAttributes.System))) Then
                 If dir.EndsWith("testoutput", StringComparison.InvariantCultureIgnoreCase) = False Then

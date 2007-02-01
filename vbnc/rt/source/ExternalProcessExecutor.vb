@@ -166,9 +166,13 @@ Public Class ExternalProcessExecutor
 
     Public Sub RunProcess()
         Using process As New Process
-
-            process.StartInfo.FileName = m_Executable
-            process.StartInfo.Arguments = m_ExpandedCmdLine
+            If Helper.IsOnMono Then
+                process.StartInfo.FileName = "mono"
+                process.StartInfo.Arguments = "--debug " & m_Executable & " " & m_ExpandedCmdLine
+            Else
+                process.StartInfo.FileName = m_Executable
+                process.StartInfo.Arguments = m_ExpandedCmdLine
+            End If
             process.StartInfo.RedirectStandardOutput = True
             process.StartInfo.UseShellExecute = False
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden

@@ -167,8 +167,13 @@ Public Class MethodDescriptor
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
-        DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Dim result As Object()
+
+        result = Helper.FilterCustomAttributes(attributeType, inherit, m_Declaration)
+
+        DumpMethodInfo(result)
+
+        Return result
     End Function
 
     Public Overrides Function GetMethodImplementationFlags() As System.Reflection.MethodImplAttributes
@@ -280,10 +285,16 @@ Public Class MethodDescriptor
         DumpMethodInfo()
         Helper.NotImplemented() : Return MyBase.GetGenericMethodDefinition()
     End Function
+
     Public Overrides Function GetHashCode() As Integer
-        DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetHashCode()
+        Dim result As Integer
+
+        result = MyBase.GetHashCode()
+        DumpMethodInfo(result)
+
+        Return result
     End Function
+
     Public Overrides Function GetMethodBody() As System.Reflection.MethodBody
         DumpMethodInfo()
         Helper.NotImplemented() : Return MyBase.GetMethodBody()

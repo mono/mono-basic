@@ -117,12 +117,12 @@ Public Class TypeManager
 
     Function GetTypesByNamespaceAndName(ByVal [Namespace] As String, ByVal Name As String) As Generic.List(Of MemberInfo)
         Dim result As Generic.List(Of MemberInfo)
-        Dim key As String = [Namespace] & "?" & Name
+        Dim key As String = String.Concat([Namespace], "?", Name)
         If m_TypesByNamespaceAndName.ContainsKey(key) Then
             result = m_TypesByNamespaceAndName(key)
         Else
             result = New Generic.List(Of MemberInfo)
-            Helper.FilterByName(TypesByNamespace([Namespace]).ToTypeList, Name, result)
+            Helper.FilterByName(TypesByNamespace([Namespace]), Name, result)
             m_TypesByNamespaceAndName.Add(key, result)
         End If
         Return result
@@ -387,9 +387,14 @@ Public Class TypeManager
         If TypeOf Type Is TypeDescriptor Then Return Type
         If m_TypeDescriptorsOfTypes2.ContainsKey(Type.GetHashCode) Then Return m_TypeDescriptorsOfTypes2(Type.GetHashCode)
         If m_TypeDescriptorsOfTypes.ContainsKey(Type) Then Return m_TypeDescriptorsOfTypes(Type)
-        For Each item As Generic.KeyValuePair(Of Type, TypeDescriptor) In m_TypeDescriptorsOfTypes
-            If item.Key Is Type Then
-                Return item.Value
+        For Each key As Type In m_TypeDescriptorsOfTypes.Keys
+            If key Is Type Then
+                For Each item As Generic.KeyValuePair(Of Type, TypeDescriptor) In m_TypeDescriptorsOfTypes
+                    If item.Key Is Type Then
+                        Return item.Value
+                    End If
+                Next
+                Helper.Assert(False)
             End If
         Next
         Helper.Assert(Helper.IsReflectionType(Type) = False)

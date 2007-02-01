@@ -39,6 +39,55 @@ Public Class ConditionalCompiler
     ''' <remarks></remarks>
     Private m_ConditionStack As New Generic.List(Of Integer)
 
+    Private m_Methods As New Generic.Dictionary(Of MethodInfo, Object())
+    
+    Function IsConditionallyExcluded(ByVal CalledMethod As MethodInfo, ByVal AtLocation As Span) As Boolean
+        Dim attribs() As Object
+
+        If m_Methods.ContainsKey(CalledMethod) Then
+            attribs = m_Methods(CalledMethod)
+        Else
+            attribs = CalledMethod.GetCustomAttributes(Compiler.TypeCache.System_Diagnostics_ConditionalAttribute, False)
+            m_Methods.Add(CalledMethod, attribs)
+        End If
+
+        If attribs Is Nothing Then Return False
+
+        For Each attrib As Object In attribs
+            Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
+
+            conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
+            If conditionalAttrib Is Nothing Then Continue For
+
+            If Not IsDefinedAtLocation(conditionalAttrib.ConditionString, AtLocation) Then Return True
+        Next
+
+        Return False
+    End Function
+
+    ''' <summary>
+    ''' Checks if the specified symbol is defined at the specified location.
+    ''' </summary>
+    ''' <param name="Symbol"></param>
+    ''' <param name="Location"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsDefinedAtLocation(ByVal Symbol As String, ByVal Location As Span) As Boolean
+        Dim constants As ConditionalConstants
+
+        constants = Location.File.GetConditionalConstants(Location.Line)
+
+        If constants IsNot Nothing AndAlso constants.ContainsKey(Symbol) Then
+            Return constants(Symbol).IsDefined
+        End If
+
+        If m_ProjectConstants.ContainsKey(Symbol) Then
+            Return m_ProjectConstants(Symbol).IsDefined
+        End If
+
+        Return False
+    End Function
+
     ReadOnly Property Reader() As ITokenReader
         Get
             Return m_Reader
@@ -101,7 +150,10 @@ Public Class ConditionalCompiler
 
         m_Evaluator.Parse(value)
 
-        m_CurrentConstants.Add(New ConditionalConstant(name, value))
+        If Not Me.IfdOut Then
+            m_CurrentConstants.Add(New ConditionalConstant(name, value))
+            current.Location.File.AddConditionalConstants(current.Location.Line, m_CurrentConstants)
+        End If
 
         ParseEndOfLine()
     End Sub
@@ -226,17 +278,6 @@ Public Class ConditionalCompiler
             Return MyBase.tm 'Throw New InternalException("Don't use tm.")
         End Get
     End Property
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine("Dump of conditional compiler: ")
-        Dumper.Indent()
-        m_ProjectConstants.Dump(Dumper)
-        m_CurrentConstants.Dump(Dumper)
-        Dumper.Unindent()
-        Dumper.WriteLine("End of dump of conditional compiler.")
-    End Sub
-#End If
 
     Public Function [Next]() As Token Implements ITokenReader.Next
         Dim result As Token

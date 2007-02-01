@@ -278,7 +278,7 @@ Public Class TypeNameResolutionInfo
                         Throw New InternalException(FromWhere)
                     End If
 
-                    Dim strCombinedNs As String = strNS & "." & R
+                    Dim strCombinedNs As String = String.Concat(strNS, ".", R)
                     If FromWhere.Compiler.TypeManager.Namespaces.IsNamespace(strCombinedNs, True) Then
                         m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(strCombinedNs))
                     ElseIf FromWhere.Compiler.TypeManager.TypesByNamespace.ContainsKey(strNS) Then
@@ -550,7 +550,7 @@ Public Class TypeNameResolutionInfo
         '**	If the namespace contains one or more accessible standard modules, and R matches the name of an 
         '** accessible nested type in exactly one standard module, then the unqualified name refers to that nested type
         Dim foundModules As Generic.List(Of Type)
-        foundModules = Helper.FilterToModules(FromWhere.Compiler, Types.ToTypeList)
+        foundModules = Helper.FilterToModules(FromWhere.Compiler, Types)
         If foundModules.Count > 0 Then
             Dim typesInAllModules As New Generic.List(Of Type)
             For Each [module] As Type In foundModules
@@ -584,17 +584,19 @@ Public Class TypeNameResolutionInfo
         If declaringtype IsNot Nothing Then
             ns = declaringtype.Namespace
         Else
-            ns = ""
+            ns = String.Empty
         End If
         Dim current As BaseObject = FromWhere
+        Dim dotR As String = "." & R
+        Dim nsDotR As String = ns & dotR
         Do
             If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(ns), TypeArgumentCount) Then Return True
-            If Helper.NameCompare(ns, R) OrElse ns.EndsWith("." & R, NameResolution.StringComparison) Then
+            If Helper.NameCompare(ns, R) OrElse ns.EndsWith(dotR, NameResolution.StringComparison) Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
                 Return True
             End If
-            If ns <> "" AndAlso TypeArgumentCount = 0 AndAlso FromWhere.Compiler.TypeManager.Namespaces.ContainsKey(ns & "." & R) Then
-                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns & "." & R))
+            If ns <> String.Empty AndAlso TypeArgumentCount = 0 AndAlso FromWhere.Compiler.TypeManager.Namespaces.ContainsKey(nsDotR) Then
+                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(nsDotR))
                 Return True
             End If
             ns = vbnc.Helper.GetNamespaceParent(ns)
@@ -602,7 +604,7 @@ Public Class TypeNameResolutionInfo
 
         'Check the outermost namespace
         'First the current compiling outermost namespace
-        If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(""), TypeArgumentCount) Then Return True
+        If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(String.Empty), TypeArgumentCount) Then Return True
 
         'then all the namespaces in the referenced assemblies
         Return CheckOutermostNamespace(R, TypeArgumentCount)
@@ -659,6 +661,7 @@ Public Class TypeNameResolutionInfo
         Next
 
         Dim tpFound As New Generic.List(Of Object)
+        Dim genericR As String = Helper.CreateGenericTypename(R, TypeArgumentCount)
         '**	If R matches the name of an accessible type in exactly one import, then the unqualified name refers to 
         '** that type. If R matches the name of an accessible type in more than one import, a compile-time error 
         '** occurs.
@@ -666,13 +669,13 @@ Public Class TypeNameResolutionInfo
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsTypeImport Then
                 Dim tp As Type
-                tp = nsimp.TypeImported.GetNestedType(Helper.CreateGenericTypename(R, TypeArgumentCount))
+                tp = nsimp.TypeImported.GetNestedType(genericR)
                 If tp IsNot Nothing Then tpFound.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName
                 If FromWhere.Compiler.TypeManager.TypesByNamespace.ContainsKey(nsName) Then
                     Dim foundType As Type
-                    foundType = FromWhere.Compiler.TypeManager.TypesByNamespace(nsName).Item(Helper.CreateGenericTypename(R, TypeArgumentCount))
+                    foundType = FromWhere.Compiler.TypeManager.TypesByNamespace(nsName).Item(genericR)
                     If foundType IsNot Nothing Then tpFound.Add(foundType)
                 End If
             Else
@@ -693,7 +696,7 @@ Public Class TypeNameResolutionInfo
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName
-                Dim nsCombined As String = nsName & "." & Helper.CreateGenericTypename(R, TypeArgumentCount)
+                Dim nsCombined As String = String.Concat(nsName, ".", Helper.CreateGenericTypename(R, TypeArgumentCount))
                 If FromWhere.Compiler.TypeManager.Namespaces.ContainsKey(nsCombined) Then
                     tpFound.Add(FromWhere.Compiler.TypeManager.Namespaces(nsCombined))
                 End If
@@ -718,7 +721,7 @@ Public Class TypeNameResolutionInfo
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsTypeImport Then
                 Dim tp As Type
-                tp = nsimp.TypeImported.GetNestedType(Helper.CreateGenericTypename(R, TypeArgumentCount))
+                tp = nsimp.TypeImported.GetNestedType(genericr)
                 If tp IsNot Nothing AndAlso Helper.IsModule(FromWhere.Compiler, tp) Then modules.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName

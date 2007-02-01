@@ -1,13 +1,17 @@
-2007-07-25  Wade Berrier  <wberrier@novell.com>
+2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Added: rt-console, used to run the tests from the console.
+	* Added: rt-execute, rt uses it to execute tests (to avoid dialogs on Windows if there are any unhandled exceptions).
+
+2007-01-25  Wade Berrier  <wberrier@novell.com>
 	* Makefile: install vbnc.rsp for times when vbnc.exe can't write to /usr/lib/mono/2.0
 	(ex: installed as root, running as user)
 
-﻿2007-07-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+﻿2007-01-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc now does some special tricks on Mono to sign correctly with ECMA keys.
 
-﻿2007-07-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+﻿2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc can now sign assemblies with keyfiles.
 	* WithEvents is now supported correctly.

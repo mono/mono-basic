@@ -1,24 +1,34 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "vbnc", "source\vbnc.vbproj", "{9D92F531-6418-47AA-BBE5-BE458CD46BE8}"
+﻿Microsoft Visual Studio Solution File, Format Version 9.00
+#MonoDevelop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vbnc", "./source/vbnc.vbproj", "{9D92F531-6418-47AA-BBE5-BE458CD46BE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-		RuntimeTests|Any CPU = RuntimeTests|Any CPU
+		Release = Release
+		Self Compile = Self Compile
+		RuntimeTests = RuntimeTests
 		Self Compile|Any CPU = Self Compile|Any CPU
+		RuntimeTests|Any CPU = RuntimeTests|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Release.ActiveCfg = Release
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Release.Build.0 = Release
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.RuntimeTests.ActiveCfg = RuntimeTests
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.RuntimeTests.Build.0 = RuntimeTests
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.RuntimeTests|Any CPU.ActiveCfg = RuntimeTests|Any CPU
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.RuntimeTests|Any CPU.Build.0 = RuntimeTests|Any CPU
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Self Compile.ActiveCfg = Self Compile
+		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Self Compile.Build.0 = Self Compile
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Self Compile|Any CPU.ActiveCfg = Self Compile|Any CPU
 		{9D92F531-6418-47AA-BBE5-BE458CD46BE8}.Self Compile|Any CPU.Build.0 = Self Compile|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

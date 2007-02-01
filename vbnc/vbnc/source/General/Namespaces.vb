@@ -104,7 +104,7 @@ Public Class Namespaces
     ''' <param name="IsGlobal"></param>
     ''' <remarks></remarks>
     Sub AddAllNamespaces(ByVal Parent As IBaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
-        If ns = "" Then Return
+        If ns = String.Empty Then Return
         Dim splt() As String = ns.Split("."c)
         Dim tmp As String = splt(0)
         Add(Parent, tmp, IsGlobal)

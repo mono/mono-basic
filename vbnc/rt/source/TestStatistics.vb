@@ -85,7 +85,7 @@ Public Class TestStatistics
             Me.PeakPagedMemorySize64 = Process.PeakPagedMemorySize64
             Me.PeakVirtualMemorySize64 = Process.PeakVirtualMemorySize64
             Me.PeakWorkingSet64 = Process.PeakWorkingSet64
-            Me.PrivateMemorySize64 = Process.PrivateMemorySize64
+            'Me.PrivateMemorySize64 = Process.PrivateMemorySize64
             Me.Threads = Process.Threads.Count
             Me.VirtualMemorySize64 = Process.VirtualMemorySize64
             Me.WorkingSet64 = Process.WorkingSet64

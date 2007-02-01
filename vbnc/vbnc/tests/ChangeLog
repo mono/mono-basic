@@ -1,0 +1,4 @@
+2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* all.rsp (all directories): Fixed case of imports.
+	* (all directories): Set better svn ignore properties and add testoutput.

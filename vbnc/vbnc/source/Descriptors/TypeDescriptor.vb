@@ -372,20 +372,13 @@ Public Class TypeDescriptor
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
-        Dim result As New Generic.List(Of Object)
+        Dim result As Object()
 
-        If m_Declaration IsNot Nothing Then
-            Dim attribs() As Attribute = m_Declaration.CustomAttributes.ToArray
-            For Each a As Attribute In attribs
-                If attributeType.IsAssignableFrom(a.AttributeType) Then
-                    result.Add(a.AttributeInstance)
-                End If
-            Next
-        Else
-            Helper.NotImplemented()
-        End If
-        DumpMethodInfo(result.ToArray)
-        Return result.ToArray
+        result = Helper.FilterCustomAttributes(attributeType, inherit, m_Declaration)
+
+        DumpMethodInfo(result)
+
+        Return result
     End Function
 
     Public Overrides Function GetElementType() As System.Type

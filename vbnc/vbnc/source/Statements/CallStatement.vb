@@ -36,10 +36,34 @@ Public Class CallStatement
         End Get
     End Property
 
+    Private Function IsExcluded() As Boolean
+        Dim exp As InvocationOrIndexExpression
+        Dim method As MethodInfo
+        Dim classification As MethodGroupClassification
+   
+        If Not m_Target.Classification.IsVoidClassification Then Return False
+
+        exp = TryCast(m_Target, InvocationOrIndexExpression)
+
+        If exp Is Nothing Then Return False
+        If exp.Expression Is Nothing Then Return False
+
+        classification = TryCast(exp.Expression.Classification, MethodGroupClassification)
+        If classification Is Nothing Then Return False
+
+        method = classification.ResolvedMethodInfo
+
+        If method Is Nothing Then Return False
+
+        Return Compiler.ConditionalCompiler.IsConditionallyExcluded(method, Me.Location)
+    End Function
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(m_Target.Classification.IsValueClassification OrElse m_Target.Classification.IsVoidClassification)
+
+        If IsExcluded() Then Return result
 
         result = m_Target.GenerateCode(Info.Clone(True)) AndAlso result
         If m_Target.Classification.IsValueClassification Then
@@ -54,7 +78,7 @@ Public Class CallStatement
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_Target.ResolveExpression(info) AndAlso result
+        result = m_Target.ResolveExpression(Info) AndAlso result
 
         Return True
     End Function

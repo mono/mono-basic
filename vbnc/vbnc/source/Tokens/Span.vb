@@ -111,6 +111,7 @@ Public Class Span
             Return ToString()
         End Get
     End Property
+
     ''' <summary>
     ''' The end line of the span.
     ''' </summary>
@@ -125,6 +126,7 @@ Public Class Span
             m_EndLine = value
         End Set
     End Property
+
     ''' <summary>
     ''' The end column of the span.
     ''' </summary>

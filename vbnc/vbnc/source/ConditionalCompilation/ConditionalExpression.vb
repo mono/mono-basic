@@ -93,7 +93,7 @@ Public Class ConditionalExpression
             End If
         ElseIf Reader.Peek.IsIdentifier Then
             'Find the identifier in the list of defines.
-            If CurrentConstants.Contains(Reader.Peek.AsIdentifier.Identifier) Then
+            If CurrentConstants.ContainsKey(Reader.Peek.AsIdentifier.Identifier) Then
                 Result = CurrentConstants.Item(Reader.Peek.AsIdentifier.Identifier).Value
                 Reader.Next()
             Else

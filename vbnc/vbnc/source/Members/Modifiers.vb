@@ -26,6 +26,7 @@ Public Class Modifiers
     'Private m_Modifiers As Generic.List(Of KS)
     Private m_Modifiers2(10) As KS
     Private m_Count As Integer
+
     ReadOnly Property Count() As Integer
         Get
             For i As Integer = 0 To 10
@@ -103,8 +104,8 @@ Public Class Modifiers
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function ContainsAny(ByVal ParamArray Modifiers() As KS) As Boolean
-        For Each modifier As KS In Modifiers
-            If Me.Is(modifier) Then Return True
+        For i As Integer = 0 To Modifiers.Length - 1
+            If Me.Is(Modifiers(i)) Then Return True
         Next
         Return False
     End Function

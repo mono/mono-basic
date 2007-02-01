@@ -1,0 +1,11 @@
+2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Scanner.vb: The scanner now scans reads characters in files one by one instead of loading the entire source file into memory at once.
+	* GenericTypeDescriptor.vb: Use StringBuilder instead of concatenation to use less strings.
+	* ArrayTypeDescriptor.vb: Cache FullName to avoid calculating it several times.
+	* Conditional*.vb: Implement support for ConditionalAttribute. A copy of all the constants are now created every time a constant changes (so that we know what the constant was later on when we handle ConditionalAttributes). Fixed bug when conditional constants are in an excluded code-region.
+	* TypeNameResolutionInfo.vb: Create less strings and temporary objects.
+	* CodeFile.vb: Implement support for ConditionalAttribute.
+	* Helper.vb: A few more special cases for IsEnum to avoid getting the FullName of the type. Add the ConditionalAttribute to all the Assert* calls.
+	* TypeCache.vb: Only load methods from a class if the class was successfully loaded (quite a few methods are still missing this check).
+	

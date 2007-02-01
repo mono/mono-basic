@@ -28,6 +28,7 @@ Public Class ArrayTypeDescriptor
     Private m_ElementTypeDescriptor As TypeDescriptor
     Private m_ElementType As Type
     Private m_ArrayType As Type
+    Private m_FullName As String
 
     Private m_AllMembers As Generic.List(Of MemberInfo)
     Private m_AllDeclaredMembers As Generic.List(Of MemberInfo)
@@ -210,10 +211,16 @@ Public Class ArrayTypeDescriptor
     Public Overrides ReadOnly Property FullName() As String
         Get
             Dim result As String
-            If TypeOf m_ElementType Is TypeParameterDescriptor Then
-                result = Nothing ' result = m_ElementType.Name & "[" & New String(","c, m_Ranks - 1) & "]"
+
+            If m_FullName Is Nothing Then
+                If TypeOf m_ElementType Is TypeParameterDescriptor Then
+                    result = Nothing ' result = m_ElementType.Name & "[" & New String(","c, m_Ranks - 1) & "]"
+                Else
+                    result = String.Concat(m_ElementType.FullName, "[", New String(","c, m_Ranks - 1), "]")
+                End If
+                m_FullName = result
             Else
-                result = m_ElementType.FullName & "[" & New String(","c, m_Ranks - 1) & "]"
+                result = m_FullName
             End If
             MyBase.DumpMethodInfo(result)
             Return result

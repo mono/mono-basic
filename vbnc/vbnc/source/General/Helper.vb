@@ -54,6 +54,40 @@ Public Class Helper
     End Sub
 #End If
 
+    Shared Function FilterCustomAttributes(ByVal attributeType As Type, ByVal Inherit As Boolean, ByVal i As IAttributableDeclaration) As Object()
+        Dim result As New Generic.List(Of Object)
+
+        Helper.Assert(i IsNot Nothing)
+
+        Dim attribs() As Attribute = i.CustomAttributes.ToArray
+        For Each a As Attribute In attribs
+            If attributeType Is Nothing OrElse attributeType.IsAssignableFrom(a.AttributeType) Then
+                result.Add(a.AttributeInstance)
+            End If
+        Next
+
+        Dim tD As TypeDescriptor
+        If Inherit Then
+            Dim base As Type
+            Dim baseDecl As TypeDescriptor
+
+            tD = TryCast(i, TypeDescriptor)
+
+            If tD IsNot Nothing Then
+                base = DirectCast(i, TypeDescriptor).BaseType
+                baseDecl = TryCast(base, TypeDescriptor)
+
+                If baseDecl IsNot Nothing Then
+                    result.AddRange(FilterCustomAttributes(attributeType, Inherit, baseDecl.Declaration))
+                ElseIf base IsNot Nothing Then
+                    result.AddRange(base.GetCustomAttributes(attributeType, Inherit))
+                End If
+            End If
+        End If
+
+        Return result.ToArray
+    End Function
+
     Shared Function IsOnMS() As Boolean
         Return Not IsOnMono()
     End Function
@@ -373,7 +407,12 @@ Public Class Helper
     Shared Function IsEnum(ByVal Type As Type) As Boolean
         If TypeOf Type Is TypeBuilder Then
             Return Type.IsEnum
+        ElseIf TypeOf Type Is TypeParameterDescriptor Then
+            Return False
+        ElseIf TypeOf Type Is TypeDescriptor Then
+            Return Type.IsEnum
         End If
+
         Dim FullName As String = Type.GetType.FullName
         If FullName = "System.Type" Then
             Return Type.IsEnum
@@ -652,6 +691,12 @@ Public Class Helper
         Next
     End Sub
 
+    Shared Sub FilterByName(ByVal collection As TypeDictionary, ByVal Name As String, ByVal result As Generic.List(Of MemberInfo))
+        For Each obj As Type In collection.Values
+            If NameResolution.NameCompare(Name, obj.Name) Then result.Add(obj)
+        Next
+    End Sub
+
     Shared Function FilterByName(ByVal Types As TypeList, ByVal Name As String) As TypeList
         Dim result As New TypeList
         For Each obj As Type In Types
@@ -668,15 +713,29 @@ Public Class Helper
         End If
     End Function
 
+    '''' <summary>
+    '''' Returns a list of type descriptors that only are modules.
+    '''' </summary>
+    '''' <param name="Types"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    '<Obsolete()> Shared Function FilterToModules(ByVal Compiler As Compiler, ByVal Types As Generic.List(Of Type)) As Generic.List(Of Type)
+    '    Dim result As New Generic.List(Of Type)
+    '    For Each t As Type In Types
+    '        If IsModule(Compiler, t) Then result.Add(t)
+    '    Next
+    '    Return result
+    'End Function
+
     ''' <summary>
     ''' Returns a list of type descriptors that only are modules.
     ''' </summary>
     ''' <param name="Types"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function FilterToModules(ByVal Compiler As Compiler, ByVal Types As Generic.List(Of Type)) As Generic.List(Of Type)
+    Shared Function FilterToModules(ByVal Compiler As Compiler, ByVal Types As TypeDictionary) As Generic.List(Of Type)
         Dim result As New Generic.List(Of Type)
-        For Each t As Type In Types
+        For Each t As Type In Types.Values
             If IsModule(Compiler, t) Then result.Add(t)
         Next
         Return result
@@ -1682,7 +1741,7 @@ Public Class Helper
         If TypeArgumentCount = 0 Then
             Return Typename
         Else
-            Return Typename & "`" & TypeArgumentCount.ToString
+            Return String.Concat(Typename, "`", TypeArgumentCount.ToString)
         End If
     End Function
 
@@ -1731,6 +1790,7 @@ Public Class Helper
 
         Return result
     End Function
+
     ''' <summary>
     ''' Finds the member with the exact same signature.
     ''' </summary>
@@ -1810,7 +1870,7 @@ Public Class Helper
             strrettype = ""
         End If
         Dim tp As Type = Method.DeclaringType
-        Dim paramstypes As Type() = Helper.GetParameterTypes(compiler, Method)
+        Dim paramstypes As Type() = Helper.GetParameterTypes(Compiler, Method)
         Dim attribs As MethodAttributes = Method.Attributes
         Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
         Dim name As String = tp.FullName & ":" & Method.Name
@@ -1820,17 +1880,6 @@ Public Class Helper
 #End If
 
     End Sub
-
-    'Shared Function TypesToString(ByVal types() As Type) As String
-    '    Dim result As New System.Text.StringBuilder
-
-    '    For i As Integer = 0 To types.GetUpperBound(0)
-    '        If i > 0 Then result.Append(", ")
-    '        result.Append(types(i).FullName)
-    '    Next
-
-    '    Return result.ToString
-    'End Function
 
     Shared Function IsTypeConvertibleToAny(ByVal TypesToSearch As Type(), ByVal TypeToFind As Type) As Boolean
         For Each t As Type In TypesToSearch
@@ -1956,7 +2005,9 @@ Public Class Helper
         End If
     End Sub
 
-    <Diagnostics.DebuggerHidden()> Shared Sub Assert(ByVal Condition As Boolean, ByVal Message As String)
+    <Diagnostics.DebuggerHidden()> _
+    <Diagnostics.Conditional("DEBUG")> _
+    Shared Sub Assert(ByVal Condition As Boolean, ByVal Message As String)
         If Condition = False Then
             Diagnostics.Debug.WriteLine(Message)
             If SharedCompiler IsNot Nothing Then SharedCompiler.Report.WriteLine(Report.ReportLevels.Debug, Message)
@@ -1964,16 +2015,20 @@ Public Class Helper
         Assert(Condition)
     End Sub
 
+    <Diagnostics.Conditional("DEBUG")> _
     <Diagnostics.DebuggerHidden()> Shared Sub Assert(ByVal Condition As Boolean)
         If Condition = False Then Helper.Stop()
     End Sub
 
+    <Diagnostics.Conditional("DEBUG")> _
     <Diagnostics.DebuggerHidden()> Shared Sub AssertNotNothing(ByVal Value As Object)
         If Value Is Nothing Then Helper.Stop()
         If TypeOf Value Is IEnumerable Then AssertNotNothing(DirectCast(Value, IEnumerable))
     End Sub
 
-    <Diagnostics.DebuggerHidden()> Shared Sub AssertNotNothing(ByVal Value As IEnumerable)
+    <Diagnostics.DebuggerHidden()> _
+    <Diagnostics.Conditional("DEBUG")> _
+    Shared Sub AssertNotNothing(ByVal Value As IEnumerable)
         If Value Is Nothing Then
             Helper.Stop()
         Else
@@ -2067,24 +2122,24 @@ Public Class Helper
         Dim strs As New ArrayList
         Dim bInQuote As Boolean
         Dim iStart As Integer
-        Dim strAdd As String = ""
+        Dim builder As New System.Text.StringBuilder
 
         For i As Integer = 0 To strLine.Length - 1
             If strLine.Chars(i) = """" Then
                 If strLine.Length - 1 >= i + 1 AndAlso strLine.Chars(i + 1) = """" Then
-                    strAdd &= """"
+                    builder.Append("""")
                 Else
                     bInQuote = Not bInQuote
                 End If
             ElseIf bInQuote = False AndAlso strLine.Chars(i) = " " Then
-                If strAdd.Trim() <> "" Then strs.Add(strAdd)
-                strAdd = ""
+                If builder.ToString.Trim() <> "" Then strs.Add(builder.ToString)
+                builder.Length = 0
                 iStart = i + 1
             Else
-                strAdd &= strLine.Chars(i)
+                builder.Append(strLine.Chars(i))
             End If
         Next
-        If strAdd <> "" Then strs.Add(strAdd)
+        If builder.Length > 0 Then strs.Add(builder.ToString)
 
         'Add the strings to the return value
         Dim stt(strs.Count - 1) As String
@@ -3249,9 +3304,10 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal method As MethodInfo) As ParameterInfo()
-        If method.GetType.Name = "MethodBuilderInstantiation" Then
+        dim name as String = method.GetType.Name
+        If name = "MethodBuilderInstantiation" Then
             Return method.GetGenericMethodDefinition.GetParameters
-        ElseIf method.GetType.Name = "SymbolMethod" Then
+        ElseIf name = "SymbolMethod" Then
             Return New ParameterInfo() {} 'Helper.NotImplemented()
         Else
             Return method.GetParameters
@@ -3391,8 +3447,13 @@ Public Class Helper
         Dim exactArguments2(ResolvedGroup.Count - 1) As Generic.List(Of Argument)
         'Dim matchedArgumentsTypes(ResolvedGroup.Count - 1)() As Type
         'Dim expandedArgumentTypes(ResolvedGroup.Count - 1) As Generic.List(Of Type)
-        Dim codedArgumentsString As String = "(" & Arguments.AsString & ")"
-        Dim completeMethodName As String = methodName & codedArgumentsString
+        Dim codedArgumentsString As String
+        Dim completeMethodName As String
+
+#If DEBUGMETHODRESOLUTION Then
+        codedArgumentsString = "(" & Arguments.AsString & ")"
+        completeMethodName = methodName & codedArgumentsString
+#End If
 
 #If DEBUGMETHODRESOLUTION Then
         Dim msg2 As String

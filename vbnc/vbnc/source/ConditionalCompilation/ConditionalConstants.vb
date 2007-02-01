@@ -20,15 +20,34 @@
 Option Compare Text
 
 Public Class ConditionalConstants
-    Inherits Hashtable
+    Inherits Generic.Dictionary(Of String, ConditionalConstant)
+
     Public Sub New()
-        MyBase.New()
+        MyBase.New(NameResolution.StringComparer)
     End Sub
+
     Public Sub New(ByVal CopyFrom As ConditionalConstants)
+        Me.New()
         For Each constant As ConditionalConstant In CopyFrom.Values
             Add(constant)
         Next
     End Sub
+
+    Public Function Clone() As ConditionalConstants
+        Return New ConditionalConstants(Me)
+    End Function
+
+    ReadOnly Property AsString() As String
+        Get
+            Dim result As String = ""
+            For Each item As Generic.KeyValuePair(Of String, ConditionalConstant) In Me
+                If result <> "" Then result &= ";"
+                result &= item.Key & "=" & CStr(item.Value.Value)
+            Next
+            Return result
+        End Get
+    End Property
+
     ''' <summary>
     ''' Adds the constant to the collection. 
     ''' If the constant already exists, it is replaced.
@@ -36,7 +55,7 @@ Public Class ConditionalConstants
     ''' <param name="Constant"></param>
     ''' <remarks></remarks>
     Public Shadows Sub Add(ByVal Constant As ConditionalConstant)
-        If MyBase.Contains(Constant.Name) Then
+        If MyBase.ContainsKey(Constant.Name) Then
             MyBase.Remove(Constant.Name)
         End If
         MyBase.Add(Constant.Name, Constant)
@@ -47,14 +66,5 @@ Public Class ConditionalConstants
             Return DirectCast(MyBase.Item(key), ConditionalConstant)
         End Get
     End Property
-    Public Shadows Function Contains(ByVal key As String) As Boolean
-        Return MyBase.Contains(key)
-    End Function
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dim lstConstants As New ArrayList(Me.Values)
-        lstConstants.Sort()
-        For Each constant As ConditionalConstant In lstConstants
-            constant.Dump(Dumper)
-        Next
-    End Sub
+
 End Class

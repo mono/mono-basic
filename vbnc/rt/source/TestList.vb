@@ -157,7 +157,7 @@ Public Class TestList
         For Each test As Test In Me
             If test.Result >= MinResult AndAlso test.Result <= MaxResult Then
                 result += 1
-            ElseIf test.Result = rt.Test.Results.NotRun AndAlso test.OldResult >= MinResult AndAlso test.OldResult <= MaxResult Then
+            ElseIf test.Result = test.Results.NotRun AndAlso test.OldResult >= MinResult AndAlso test.OldResult <= MaxResult Then
                 result += 1
             End If
         Next

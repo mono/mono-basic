@@ -183,16 +183,6 @@ Public Class Compiler
         End Get
     End Property
 
-    '''' <summary>
-    '''' The list that contains all the tokens in the code
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Friend ReadOnly Property Tokens() As Tokens
-    '    Get
-    '        Return m_Tokens
-    '    End Get
-    'End Property
-
     Friend Overrides ReadOnly Property tm() As tm
         Get
             Return m_tm
@@ -457,7 +447,7 @@ Public Class Compiler
 
             'Exit if no source files were specified
             If m_CommandLine.Files.Count = 0 Then
-                Report.ShowMessage(Messages.VBNC2011)
+                    Report.ShowMessage(Messages.VBNC2011)
                 Return 1
             End If
 

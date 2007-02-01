@@ -119,6 +119,8 @@
     <Compile Include="frmTestEditor.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Helper.vb">
+    </Compile>
     <Compile Include="ListViewItemComparer.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="My Project\MyApplication.Designer.vb">

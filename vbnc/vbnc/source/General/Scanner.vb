@@ -51,11 +51,11 @@ Public Class Scanner
     ''' <remarks></remarks>
     Private m_CurrentColumn As Integer
 
-    ''' <summary>
-    ''' The code.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Code As String = ""
+    '''' <summary>
+    '''' The code.
+    '''' </summary>
+    '''' <remarks></remarks>
+    'Private m_Code As String = ""
 
     ''' <summary>
     ''' The current code file.
@@ -63,17 +63,11 @@ Public Class Scanner
     ''' <remarks></remarks>
     Private m_CodeFile As CodeFile
 
-    ''' <summary>
-    ''' The current character position
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_CurrentPosition As Integer
-
-    '''' <summary>
-    '''' The list to which add the tokens found.
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_Tokens As Tokens
+    Private m_PreviousChar As Char
+    Private m_CurrentChar As Char
+    Private m_PeekedChars As New Generic.Queue(Of Char)
+    Private m_Reader As System.IO.StreamReader
+    Private m_Builder As New System.Text.StringBuilder
 
     ''' <summary>
     ''' If any tokens has been found on this line.
@@ -218,11 +212,11 @@ Public Class Scanner
     End Function
 
     Private Function IsLineContinuation() As Boolean
-        If Not (CurrentChar() = " "c AndAlso PeekChar(1) = "_"c) Then Return False
+        If Not (CurrentChar() = " "c AndAlso PeekChar() = "_"c) Then Return False
 
         Dim i As Integer = 2
-        Do Until IsNewLine(PeekChar(i))
-            If IsWhiteSpace(PeekChar(i)) = False Then Return False
+        Do Until IsNewLine(PeekChars(i))
+            If IsWhiteSpace(PeekChars(i)) = False Then Return False
             i += 1
         Loop
 
@@ -358,10 +352,10 @@ Public Class Scanner
 
         EatWhiteSpace()
 
-        Dim firstIndex As Integer = m_CurrentPosition + 1
         Dim Count As Integer
         'Date value
         Dim bCont As Boolean = True
+        m_Builder.Length = 0
         Do
             Count += 1
             Dim ch As Char = NextChar()
@@ -378,9 +372,10 @@ Public Class Scanner
                         bCont = False
                 End Select
             End If
+            If bCont Then m_Builder.Append(ch)
         Loop While bCont
 
-        Return New DateLiteralToken(GetCurrentLocation, CDate(m_Code.Substring(firstIndex, Count - 1)), Compiler)
+        Return New DateLiteralToken(GetCurrentLocation, CDate(m_Builder.ToString), Compiler)
     End Function
 
     Private Function CanStartIdentifier() As Boolean
@@ -406,7 +401,6 @@ Public Class Scanner
     End Function
 
     Private Function GetIdentifier(Optional ByVal Escaped As Boolean = False) As Token
-        Dim firstIndex As Integer = m_CurrentPosition
         Dim bValid As Boolean = False
         Dim ch As Char
 
@@ -430,11 +424,15 @@ Public Class Scanner
         '   NumericCharacter |
         '   CombiningCharacter |
         '   FormattingCharacter
+        m_Builder.Length = 0
+
         ch = CurrentChar()
+        m_Builder.Append(ch)
         If IsAlphaCharacter(ch) Then
             bValid = True
         ElseIf IsUnderscoreCharacter(ch) Then
             ch = NextChar()
+            m_Builder.Append(ch)
             bValid = IsIdentifierCharacter(ch)
         End If
 
@@ -443,10 +441,11 @@ Public Class Scanner
             Return Nothing
         Else
             Do While IsIdentifierCharacter(NextChar)
+                m_Builder.Append(CurrentChar)
             Loop
         End If
 
-        Dim strIdent As String = m_Code.Substring(firstIndex, m_CurrentPosition - firstIndex)
+        Dim strIdent As String = m_Builder.ToString()
 
         'The type character ! presents a special problem in that it can be used both as a type character and 
         'as a separator in the language. To remove ambiguity, a ! character is a type character as long as 
@@ -468,15 +467,14 @@ Public Class Scanner
     End Function
 
     Private Function GetString() As Token
-        Static Result As New System.Text.StringBuilder
         Dim bEndOfString As Boolean = False
-        Result.Length = 0
+        m_Builder.Length = 0
         Do
             Select Case NextChar()
                 Case """"c '
                     'If " followed by a ", output one "
                     If NextChar() = """" Then
-                        Result.Append("""")
+                        m_Builder.Append("""")
                     Else
                         bEndOfString = True
                     End If
@@ -488,23 +486,23 @@ Public Class Scanner
                 Case nl0
                     ' End of file
                     Compiler.Report.ShowMessage(Messages.VBNC90004)
-                    PreviousChar() 'Step back
+                    'PreviousChar() 'Step back
                     bEndOfString = True
                 Case Else
-                    Result.Append(CurrentChar())
+                    m_Builder.Append(CurrentChar())
             End Select
         Loop While bEndOfString = False
         If CurrentChar() = "C"c OrElse CurrentChar() = "c"c Then
             'Is a char type character
             NextChar()
-            If Result.Length <> 1 Then
+            If m_Builder.Length <> 1 Then
                 Compiler.Report.ShowMessage(Messages.VBNC30004)
-                Return New StringLiteralToken(GetCurrentLocation, Result.ToString, Compiler)
+                Return New StringLiteralToken(GetCurrentLocation, m_Builder.ToString, Compiler)
             Else
-                Return New CharLiteralToken(GetCurrentLocation, CChar(Result.ToString), Compiler)
+                Return New CharLiteralToken(GetCurrentLocation, CChar(m_Builder.ToString), Compiler)
             End If
         Else
-            Return New StringLiteralToken(GetCurrentLocation, Result.ToString, Compiler)
+            Return New StringLiteralToken(GetCurrentLocation, m_Builder.ToString, Compiler)
         End If
     End Function
 
@@ -805,48 +803,68 @@ integertype:
         End Select
     End Function
 
-    Private Function CurrentChar(Optional ByVal Jump As Integer = 0) As Char
-        If m_CurrentPosition > m_Code.Length - 1 Then
-            '            Debug.Fail("Reached further than the last character in file")
-            Return nl0
-        Else
-            CurrentChar = m_Code.Chars(m_CurrentPosition)
-            m_CurrentPosition += Jump
-        End If
-    End Function
+    Private ReadOnly Property CurrentChar() As Char
+        Get
+            Return m_CurrentChar
+        End Get
+    End Property
 
     Private Function NextChar() As Char
-        m_CurrentPosition += 1
         m_CurrentColumn += 1
-        Return CurrentChar()
-    End Function
+        m_TotalCharCount += 1
 
-    Private Function PreviousChar(Optional ByVal Retrocede As Boolean = True) As Char
-        m_CurrentPosition -= 1
-        m_CurrentColumn -= 1
-        PreviousChar = CurrentChar()
-        If Not Retrocede Then
-            m_CurrentPosition += 1
-        End If
-    End Function
-
-    Private Function PeekChar(Optional ByVal Chars As Integer = 1) As Char
-        If m_CurrentPosition + Chars < 0 Then
-            Return Scanner.nlA 'If asked for a character before the first one, return a newline character.
+        m_PreviousChar = m_CurrentChar
+        If m_PeekedChars.Count > 0 Then
+            m_CurrentChar = m_PeekedChars.Dequeue
         Else
-            Return m_Code.Chars(m_CurrentPosition + Chars)
+            If m_Reader.EndOfStream Then
+                m_CurrentChar = nl0
+            Else
+                m_CurrentChar = Convert.ToChar(m_Reader.Read())
+            End If
         End If
+
+        Return m_CurrentChar
+    End Function
+
+    Private ReadOnly Property PreviousChar() As Char
+        Get
+            Return m_PreviousChar
+        End Get
+    End Property
+
+    'Private Function PreviousChar(Optional ByVal Retrocede As Boolean = True) As Char
+    '    m_CurrentPosition -= 1
+    '    m_CurrentColumn -= 1
+    '    PreviousChar = CurrentChar()
+    '    If Not Retrocede Then
+    '        m_CurrentPosition += 1
+    '    End If
+    'End Function
+
+    Private Function PeekChar() As Char
+        If m_PeekedChars.Count = 0 Then
+            If m_Reader.EndOfStream Then Return nl0
+            m_PeekedChars.Enqueue(Convert.ToChar(m_Reader.Read))
+        End If
+        Return m_PeekedChars.Peek()
+    End Function
+
+    Private Function PeekChars(ByVal Chars As Integer) As Char
+        Do Until m_PeekedChars.Count >= Chars
+            If m_Reader.EndOfStream Then Return nlA
+            m_PeekedChars.Enqueue(Convert.ToChar(m_Reader.Read))
+        Loop
+        Return m_PeekedChars.ToArray()(Chars - 1)
     End Function
 
     ''' <summary>
     ''' Returns true if the current character is the last character in the scanner.
-    ''' Can optionally specify a number of characters to peek ahead.
     ''' </summary>
-    ''' <param name="CharsAhead"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function IsLastChar(Optional ByVal CharsAhead As Integer = 0) As Boolean
-        Return m_Code.Length <= m_CurrentPosition + CharsAhead + 1
+    Public Function IsLastChar() As Boolean
+        Return m_Reader.EndOfStream
     End Function
 
     ''' <summary>
@@ -1047,7 +1065,7 @@ integertype:
                 Case "#"c
                     'Type characters are already scanned when they appear after a literal. 
                     'If scanning gets here, it is not a type character.
-                    If IsNewLine(PeekChar(-1)) Then
+                    If IsNewLine(PreviousChar) Then
                         Result = NewToken(KS.Numeral)
                         NextChar()
                     Else
@@ -1073,7 +1091,7 @@ integertype:
                 Case " "c 'Space
                     NextChar()
                     If (CurrentChar() = "_"c) Then '
-                        If IsNewLine(PeekChar(1)) Then
+                        If IsNewLine(PeekChar) Then
                             NextChar()
                             EatNewLine()
                         End If
@@ -1189,19 +1207,24 @@ integertype:
 
     Private Sub NextFile()
         m_TotalLineCount += m_CurrentLine
-        m_TotalCharCount += m_Code.Length
+        'm_TotalCharCount += m_Code.Length
 
         m_CurrentLine = 1
         m_CurrentColumn = 1
-        m_CurrentPosition = 0
         m_TokensSeenOnLine = False
+        m_CurrentChar = Nothing
+        m_PreviousChar = Nothing
+        m_PeekedChars.Clear()
 
         If m_Files.Count > 0 Then
             m_CodeFile = m_Files.Dequeue()
-            m_Code = m_CodeFile.Code
+            'm_Code = m_CodeFile.Code
+            m_Reader = m_CodeFile.CodeStream
+            NextChar()
         Else
             m_CodeFile = Nothing
-            m_Code = Nothing
+            'm_Code = Nothing
+            m_Reader = Nothing
         End If
     End Sub
 

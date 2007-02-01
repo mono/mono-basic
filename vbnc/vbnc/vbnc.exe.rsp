@@ -7,3 +7,4 @@
 /t:exe
 /res:vbnc.Errors.resources
 /res:vbnc.vbnc.rsp
+/define:DEBUG=true

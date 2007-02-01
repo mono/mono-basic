@@ -114,6 +114,26 @@ Public Class GenericMethodDescriptor
         End Get
     End Property
 
+    Public Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
+        Return MyBase.GetCustomAttributes(inherit)
+    End Function
+
+    Public Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
+        Dim result As Object()
+
+        If m_OpenMethodDescriptor IsNot Nothing Then
+            result = m_OpenMethodDescriptor.GetCustomAttributes(attributeType, inherit)
+        ElseIf m_ClosedMethodDescriptor IsNot Nothing Then
+            result = Helper.FilterCustomAttributes(attributeType, inherit, m_ClosedMethodDescriptor.Declaration)
+        Else
+            Helper.NotImplemented()
+            result = Nothing
+        End If
+        DumpMethodInfo(result)
+
+        Return result
+    End Function
+
     Public Overrides Function GetGenericArguments() As System.Type()
         Dim result As Type()
 

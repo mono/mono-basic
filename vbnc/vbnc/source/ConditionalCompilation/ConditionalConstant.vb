@@ -33,14 +33,17 @@ Public Class ConditionalConstant
     Public Value As Object
 
     Private m_Compiler As Compiler
+
     ReadOnly Property Compiler() As Compiler
         Get
             Return m_Compiler
         End Get
     End Property
+
     Sub New(ByVal Compiler As Compiler)
         m_Compiler = Compiler
     End Sub
+
     ReadOnly Property ConstantType() As Type
         Get
             If Value Is Nothing Then
@@ -57,34 +60,48 @@ Public Class ConditionalConstant
             End If
         End Get
     End Property
+
+    ReadOnly Property IsDefined() As Boolean
+        Get
+            Return CBool(Value)
+        End Get
+    End Property
+
     Function AsBoolean() As Boolean
         Helper.Assert(ConstantType Is Compiler.TypeCache.Boolean)
         Return CBool(Value)
     End Function
+
     Function AsDouble() As Double
         Helper.Assert(ConstantType Is Compiler.TypeCache.Double)
         Return CDbl(Value)
     End Function
+
     Function AsString() As String
         Helper.Assert(ConstantType Is Compiler.TypeCache.String)
         Return CStr(Value)
     End Function
+
     Function AsObject() As Object
         Helper.Assert(ConstantType Is Compiler.TypeCache.Object)
         Helper.Assert(Value Is Nothing)
         Return Value
     End Function
+
     Function AsDate() As Date
         Helper.Assert(ConstantType Is Compiler.TypeCache.Date)
         Return CDate(Value)
     End Function
+
     Sub New(ByVal Name As String, ByVal Value As Object)
         Me.Name = Name
         Me.Value = Value
     End Sub
+
     Sub Dump(ByVal Dumper As IndentedTextWriter)
         Dumper.WriteLine(Name & " = " & Helper.ValueToCodeConstant(Value))
     End Sub
+
     ''' <summary>
     ''' Returns the name of the constant.
     ''' </summary>
@@ -93,6 +110,7 @@ Public Class ConditionalConstant
     Overrides Function ToString() As String
         Return Name
     End Function
+
     'TODO: Conditional operators.
     ''' <summary>
     ''' Compares the values of the conditional constants
@@ -164,6 +182,7 @@ Public Class ConditionalConstant
         End Select
         'Return Const1.Value = Const2.Value
     End Operator
+
     ''' <summary>
     ''' Compares the values of the conditional constants
     ''' </summary>

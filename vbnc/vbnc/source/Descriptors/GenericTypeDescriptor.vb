@@ -348,18 +348,26 @@ Public Class GenericTypeDescriptor
         Get
             Dim result As String
             If m_Name Is Nothing Then
-                m_Name = m_OpenType.Name
-                If m_Name.IndexOf("[") > -1 Then m_Name = m_Name.Substring(0, m_Name.IndexOf("["))
-                m_Name &= "["
-                For i As Integer = 0 To m_TypeArguments.Length - 1
-                    If m_TypeArguments(i).FullName = "" Then
-                        m_Name = m_Name & m_TypeArguments(i).Name
-                    Else
-                        m_Name &= m_TypeArguments(i).FullName
+                Dim builder As New System.Text.StringBuilder
+                builder.Append(m_OpenType.Name)
+                For i As Integer = 0 To builder.Length - 1
+                    If builder.Chars(i) = "["c Then
+                        builder.Length = i
+                        Exit For
                     End If
-                    If i < m_TypeArguments.Length - 1 Then m_Name &= ","
                 Next
-                m_Name &= "]"
+                '                If builder..IndexOf("[") > -1 Then m_Name = m_Name.Substring(0, m_Name.IndexOf("["))
+                builder.Append("[")
+                For i As Integer = 0 To m_TypeArguments.Length - 1
+                    If m_TypeArguments(i).FullName = String.Empty Then
+                        builder.Append(m_TypeArguments(i).Name)
+                    Else
+                        builder.Append(m_TypeArguments(i).FullName)
+                    End If
+                    If i < m_TypeArguments.Length - 1 Then builder.Append(",")
+                Next
+                builder.Append("]")
+                m_Name = builder.ToString
             End If
             result = m_Name
             DumpMethodInfo(result)

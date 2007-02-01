@@ -42,7 +42,7 @@ Module Z
     Private ASSIGNMENTOPERATORSKS() As KS = {KS.AddAssign, KS.MinusAssign, KS.MultAssign, KS.RealDivAssign, KS.IntDivAssign, KS.PowerAssign, KS.ShiftRightAssign, KS.ShiftLeftAssign, KS.ConcatAssign}
     Private ASSIGNMENTOPERATORSNAME() As String = {"Add", "Minus", "Multiplication", "RealDivision", "IntegerDivision", "Power", "RightShift", "LeftShift", "Concat"}
 
-    Private Const BASEPATH As String = "Z:\mono\head\vbnc\"
+    Private Const BASEPATH As String = "Z:\mono\head\mono-basic\vbnc\"
     Private Const LICENSE As String = BASEPATH & "\License FileHeader.txt"
     Private Const BASEPATHTESTS As String = BASEPATH & "\vbnc\tests\Generated\"
 

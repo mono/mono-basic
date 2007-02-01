@@ -64,6 +64,31 @@ Public Class CodeFile
 
     Private m_SymbolDocument As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
 
+    Private m_ConditionalConstants As New Generic.List(Of ConditionalConstants)
+    Private m_ConditionalConstantsLines As New Generic.List(Of Integer)
+
+    Sub AddConditionalConstants(ByVal Line As Integer, ByVal Constants As ConditionalConstants)
+        m_ConditionalConstants.Add(Constants.Clone)
+        m_ConditionalConstantsLines.Add(Line)
+    End Sub
+
+    Function GetConditionalConstants(ByVal Line As Integer) As ConditionalConstants
+        If m_ConditionalConstantsLines.Count = 0 Then Return Nothing
+
+        'If the first #const is after the line, no constants in this file at the line
+        If m_ConditionalConstantsLines(0) > Line Then Return Nothing
+
+        For i As Integer = 0 To m_ConditionalConstantsLines.Count - 1
+            'If the current #const is after the line, the previous one corresponds to the line
+            If m_ConditionalConstantsLines(i) > Line Then
+                Return m_ConditionalConstants(i - 1)
+            End If
+        Next
+
+        'If no constants are after the line, the last is the one.
+        Return m_ConditionalConstants(m_ConditionalConstants.Count - 1)
+    End Function
+
     Private Shared ReadOnly Property UTF8Throw() As System.Text.Encoding
         Get
             ' Use no preamble to let StreamReader use a non-throwing decoder

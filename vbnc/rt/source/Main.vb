@@ -166,33 +166,12 @@ Module MainModule
 		End Try
 	End Sub
 
-    ''' <summary>
-    ''' Quotes an array of strings.
-    ''' </summary>
-    ''' <param name="Strings"></param>
-    ''' <remarks></remarks>
-    Function QuoteStrings(ByVal Strings() As String) As String()
-        For i As Integer = 0 To Strings.Length - 1
-            If Strings(i).StartsWith("""") = False AndAlso Strings(i).EndsWith("""") = False AndAlso Strings(i).IndexOf(" "c) >= 0 Then
-                Strings(i) = """" & Strings(i) & """"
-            End If
-        Next
-        Return Strings
-    End Function
 
     Sub ViewFiles(ByVal ParamArray Filenames As String())
         For Each file As String In Filenames
             Process.Start(file)
         Next
     End Sub
-
-#If DEBUG Then
-	Function nextID() As Integer
-		Static id As Integer
-		id += 1
-		Return id
-	End Function
-#End If
 
 	<Conditional("DEBUG")> Sub StopIfDebugging()
 		If Diagnostics.Debugger.IsAttached Then
