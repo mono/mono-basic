@@ -33,6 +33,7 @@ Microsoft.VisualBasic.CompilerServices\InternalErrorException.vb
 Microsoft.VisualBasic.CompilerServices\ExceptionUtils.vb
 Microsoft.VisualBasic.CompilerServices\DesignerGeneratedAttribute.vb
 Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.vb
+Microsoft.VisualBasic.CompilerServices\TypeCombinations.vb
 Microsoft.VisualBasic.CompilerServices\Versioned.vb
 Microsoft.VisualBasic.CompilerServices\DateType.vb
 Microsoft.VisualBasic.CompilerServices\DecimalType.vb

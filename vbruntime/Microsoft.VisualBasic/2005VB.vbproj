@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,27 +14,47 @@
     <StartupObject>Sub Main</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>false</DefineTrace>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DocumentationFile>Microsoft.VisualBasic.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <DefineConstants>NET_2_0=True,_MYTYPE="Empty",mono_not_yet=true,INDEVENV=true</DefineConstants>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <RootNamespace>dummy_root</RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>4</WarningLevel>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <Optimize>True</Optimize>
+    <OutputPath>./bin/Release/</OutputPath>
     <DocumentationFile>Microsoft.VisualBasic.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <DebugSymbols>True</DebugSymbols>
+    <RootNamespace>dummy_root</RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -89,6 +109,7 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\ExceptionUtils.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DesignerGeneratedAttribute.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\TypeCombinations.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\Versioned.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DateType.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DecimalType.vb" />
