@@ -126,7 +126,7 @@ Public Class Test
 
         Dim files() As String = {}
         Try
-            files = IO.Directory.GetFiles(Me.OutputPath, Me.Name & ".*.testresult")
+            'files = IO.Directory.GetFiles(Me.OutputPath, Me.Name & ".*.testresult")
         Catch io As IO.IOException
 
         End Try
@@ -662,7 +662,7 @@ Public Class Test
         m_Compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
         m_Compilation.Process.WorkingDirectory = m_BasePath
         m_Compilation.Name = "VBNC Compile"
-        'm_Compilation.Process.UseTemporaryExecutable = True
+        m_Compilation.Process.UseTemporaryExecutable = True
         If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
 
         m_Verifications.Clear()
@@ -671,7 +671,7 @@ Public Class Test
         m_Verifications.Add(m_Compilation)
 
         If m_IsNegativeTest = False Then
-            If Me.m_Target = "exe" Then
+            If Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputVBCAssembly))
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
@@ -868,10 +868,13 @@ Public Class Test
     End Function
 
     Private Function GetTarget(ByVal text As String, ByVal DefaultTarget As String) As String
-        If text.IndexOf("/target:exe", StringComparison.OrdinalIgnoreCase) >= 0 OrElse text.IndexOf("/t:exe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
-        If text.IndexOf("/target:winexe", StringComparison.OrdinalIgnoreCase) >= 0 OrElse text.IndexOf("/t:winexe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
-        If text.IndexOf("/target:library", StringComparison.OrdinalIgnoreCase) >= 0 OrElse text.IndexOf("/t:library", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "dll"
-        If text.IndexOf("/target:module", StringComparison.OrdinalIgnoreCase) >= 0 OrElse text.IndexOf("/t:module", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "netmodule"
+        Dim prefixes As String() = New String() {"/target:", "/t:", "-target:", "-t:"}
+        For Each prefix As String In prefixes
+            If text.IndexOf(prefix & "exe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
+            If text.IndexOf(prefix & "winexe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
+            If text.IndexOf(prefix & "library", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "dll"
+            If text.IndexOf(prefix & "module", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "netmodule"
+        Next
         Return DefaultTarget
     End Function
 

@@ -46,7 +46,12 @@ Public Class ExternalProcessVerification
     Protected Overrides Function RunVerification() As Boolean
         Dim result As Boolean
 
-        m_Process.RunProcess()
+        result = m_Process.RunProcess()
+
+        If result = False Then
+            MyBase.DescriptiveMessage = Name & " failed: " & vbNewLine & m_Process.StdOut
+            Return False
+        End If
 
         If m_Process.TimedOut = False Then
             If Me.NegativeError = 0 Then
@@ -61,7 +66,7 @@ Public Class ExternalProcessVerification
                 If m_Process.ExitCode = 0 Then
                     result = False
                     MyBase.DescriptiveMessage = Name & " succeeded unexpectedly." & vbNewLine
-                ElseIf m_Process.ExitCode = -1 Then
+                ElseIf m_Process.ExitCode = -1 OrElse m_Process.ExitCode = 255 Then
                     result = False
                     MyBase.DescriptiveMessage = Name & " failed spectacularly. " & vbNewLine
                 ElseIf (m_Process.StdOut & "").Contains("BC" & Me.NegativeError.ToString) = False AndAlso (m_Process.StdOut & "").Contains("VBNC" & Me.NegativeError.ToString) = False Then

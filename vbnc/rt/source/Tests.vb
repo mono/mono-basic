@@ -31,27 +31,27 @@ Public Class Tests
     Private m_SkipCleanTests As Boolean
     Private m_Recursive As Boolean
 
-    Sub WriteLinuxScript()
-        For Each nested As Tests In m_ContainedTests
-            nested.WriteLinuxScript()
-        Next
-        If Me.Count > 0 Then
-            Using writer As New IO.StreamWriter(System.IO.Path.Combine(m_Path, "all.sh"))
-                For Each test As Test In Me
-                    test.CreateVerifications()
-                    Dim cmd As String
-                    cmd = test.VBNCVerification.Process.ExpandedCmdLine
-                    cmd = cmd.Replace(m_Path & "\", "")
-                    cmd = cmd.Replace("/", "-")
-                    cmd = cmd.Replace("\", "/")
-                    cmd = cmd.Replace("#", "\#")
-                    cmd = "vbnc " & cmd & " >>all.log 2>&1"
-                    writer.Write(cmd & vbLf)
-                    'System.IO.File.WriteAllText(System.IO.Path.Combine(m_Path, test.Name) & ".sh", cmd)
-                Next
-            End Using
-        End If
-    End Sub
+    'Sub WriteLinuxScript()
+    '    For Each nested As Tests In m_ContainedTests
+    '        nested.WriteLinuxScript()
+    '    Next
+    '    If Me.Count > 0 Then
+    '        Using writer As New IO.StreamWriter(System.IO.Path.Combine(m_Path, "all.sh"))
+    '            For Each test As Test In Me
+    '                test.CreateVerifications()
+    '                Dim cmd As String
+    '                cmd = test.VBNCVerification.Process.ExpandedCmdLine
+    '                cmd = cmd.Replace(m_Path & "\", "")
+    '                cmd = cmd.Replace("/", "-")
+    '                cmd = cmd.Replace("\", "/")
+    '                cmd = cmd.Replace("#", "\#")
+    '                cmd = "vbnc " & cmd & " >>all.log 2>&1"
+    '                writer.Write(cmd & vbLf)
+    '                'System.IO.File.WriteAllText(System.IO.Path.Combine(m_Path, test.Name) & ".sh", cmd)
+    '            Next
+    '        End Using
+    '    End If
+    'End Sub
 
     ''' <summary>
     ''' The total time all tests have been executing.

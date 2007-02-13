@@ -769,17 +769,17 @@ Partial Class frmMain
         '
         Me.colName.Name = "colName"
         Me.colName.Text = "Name"
-        Me.colName.Width = Global.rt.My.MySettings.Default.TestsListView_colName_Width
+        Me.colName.Width = Global.rt.My.Settings.TestsListView_colName_Width
         '
         'colCompiler
         '
         Me.colCompiler.Text = "Compiler Version"
-        Me.colCompiler.Width = Global.rt.My.MySettings.Default.TestsListView_colCompiler_Width
+        Me.colCompiler.Width = Global.rt.My.Settings.TestsListView_colCompiler_Width
         '
         'colResult
         '
         Me.colResult.Text = "Result"
-        Me.colResult.Width = Global.rt.My.MySettings.Default.TestsListView_colResult_Width
+        Me.colResult.Width = Global.rt.My.Settings.TestsListView_colResult_Width
         '
         'colOldResult2
         '
@@ -789,12 +789,12 @@ Partial Class frmMain
         'colFailedVerification
         '
         Me.colFailedVerification.Text = "Failed Verification"
-        Me.colFailedVerification.Width = Global.rt.My.MySettings.Default.TestsListView_colFailedVerification_Width
+        Me.colFailedVerification.Width = Global.rt.My.Settings.TestsListView_colFailedVerification_Width
         '
         'colDate
         '
         Me.colDate.Text = "Date"
-        Me.colDate.Width = Global.rt.My.MySettings.Default.TestsListView_colDate_Width
+        Me.colDate.Width = Global.rt.My.Settings.TestsListView_colDate_Width
         '
         'colPath
         '
@@ -966,9 +966,8 @@ Partial Class frmMain
         '
         Me.chkContinuous.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.chkContinuous.AutoSize = True
-        Me.chkContinuous.Checked = Global.rt.My.MySettings.Default.ContinuousTest
+        Me.chkContinuous.Checked = Global.rt.My.Settings.ContinuousTest
         Me.chkContinuous.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContinuous.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.rt.My.MySettings.Default, "ContinuousTest", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.chkContinuous.Location = New System.Drawing.Point(863, 242)
         Me.chkContinuous.Name = "chkContinuous"
         Me.chkContinuous.Size = New System.Drawing.Size(80, 17)
@@ -979,8 +978,7 @@ Partial Class frmMain
         '
         Me.chkHosted.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.chkHosted.AutoSize = True
-        Me.chkHosted.Checked = Global.rt.My.MySettings.Default.HostedTest
-        Me.chkHosted.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.rt.My.MySettings.Default, "HostedTest", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.chkHosted.Checked = Global.rt.My.Settings.HostedTest
         Me.chkHosted.Location = New System.Drawing.Point(863, 219)
         Me.chkHosted.Name = "chkHosted"
         Me.chkHosted.Size = New System.Drawing.Size(60, 17)
@@ -990,8 +988,7 @@ Partial Class frmMain
         'chkDontTestIfNothingHasChanged
         '
         Me.chkDontTestIfNothingHasChanged.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkDontTestIfNothingHasChanged.Checked = Global.rt.My.MySettings.Default.DontTestIfNothingHasChanged
-        Me.chkDontTestIfNothingHasChanged.DataBindings.Add(New System.Windows.Forms.Binding("Checked", Global.rt.My.MySettings.Default, "DontTestIfNothingHasChanged", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me.chkDontTestIfNothingHasChanged.Checked = Global.rt.My.Settings.DontTestIfNothingHasChanged
         Me.chkDontTestIfNothingHasChanged.Location = New System.Drawing.Point(859, 265)
         Me.chkDontTestIfNothingHasChanged.Name = "chkDontTestIfNothingHasChanged"
         Me.chkDontTestIfNothingHasChanged.Size = New System.Drawing.Size(77, 61)

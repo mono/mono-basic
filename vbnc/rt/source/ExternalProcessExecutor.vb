@@ -164,7 +164,7 @@ Public Class ExternalProcessExecutor
         Next
     End Sub
 
-    Public Sub RunProcess()
+    Public Function RunProcess() As Boolean
         Using process As New Process
             If Helper.IsOnMono Then
                 process.StartInfo.FileName = "mono"
@@ -179,7 +179,10 @@ Public Class ExternalProcessExecutor
             process.StartInfo.CreateNoWindow = True
             process.StartInfo.WorkingDirectory = m_WorkingDirectory
 
-            If IO.File.Exists(m_Executable) = False Then Return
+            If IO.File.Exists(m_Executable) = False Then
+                m_StdOut = "Executable '" & m_Executable & "' does not exist."
+                Return False
+            End If
 
             m_LastWriteDate = IO.File.GetLastWriteTime(m_Executable)
             If m_Version Is Nothing Then
@@ -211,6 +214,7 @@ Public Class ExternalProcessExecutor
             End If
 
             process.Start()
+            process.PriorityClass = ProcessPriorityClass.Idle
 
             m_StdOut = process.StandardOutput.ReadToEnd
             m_TimedOut = Not process.WaitForExit(m_TimeOut)
@@ -233,5 +237,6 @@ Public Class ExternalProcessExecutor
             End If
         End Using
 
-    End Sub
+        Return True
+    End Function
 End Class

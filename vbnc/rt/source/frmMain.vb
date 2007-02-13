@@ -234,7 +234,7 @@ Class frmMain
                 m_Tests.Update()
             Else
                 m_Tests = New Tests(cmbBasepath.Text, cmbCompiler.Text, cmbVBCCompiler.Text)
-                m_Tests.WriteLinuxScript()
+                'm_Tests.WriteLinuxScript()
             End If
 
             Dim selectednodetext As String = Nothing
@@ -692,6 +692,7 @@ Class frmMain
             My.Settings.txtVBCCompiler_Text = cmbCompiler.Text
             My.Settings.txtVBNCCompiler_Text = cmbVBCCompiler.Text
             My.Settings.txtBasePath_Text = cmbBasepath.Text
+            My.Settings.ContinuousTest = chkContinuous.Checked
             My.Settings.Save()
 
         Catch ex As Exception
@@ -1315,5 +1316,13 @@ Class frmMain
         oldResultsItem.Reverse()
         lstOldResults.Items.AddRange(oldResultsItem.ToArray)
         txtOldResult.Text = ""
+    End Sub
+
+    Private Sub frmMain_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Try
+            chkContinuous.Checked = My.Settings.ContinuousTest
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
+        End Try
     End Sub
 End Class

@@ -1,3 +1,15 @@
+2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Test.vb: Don't test the selfcompiled executable (since it is supposed
+	  to fail with no commandline arguments). Also update the logic to
+	  determine the target of the test to support both / and -.
+	* ExternalProcessVerification.vb, ExternalProcessExecutor.vb: An
+	  execution now fails if the executable is not found.
+	* frmMain.vb, frmMain.Designer.vb: Update references to My.Settings.
+	* Settings.vb: Change MySettings to save settings in the registry
+	  instead of using the default settings provider, it causes problems
+	  when used with files on shared drives.
+
 2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Test.vb: 
