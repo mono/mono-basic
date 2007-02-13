@@ -1,3 +1,7 @@
+2007-02-13  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: use make friendly vars, add dist-local stanza to fix 'make dist'
+
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Added, it's now possible to do 'make test' to run all the tests.

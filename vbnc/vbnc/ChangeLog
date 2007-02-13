@@ -1,3 +1,7 @@
+2007-02-13  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: Use make friendly vars
+
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Added the tests directory to be able to run the tests.
