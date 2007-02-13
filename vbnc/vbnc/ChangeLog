@@ -1,0 +1,3 @@
+2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Added the tests directory to be able to run the tests.

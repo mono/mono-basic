@@ -1,5 +1,5 @@
 thisdir = vbnc/vbnc
-SUBDIRS =
+SUBDIRS = tests
 include ../../build/rules.make
 
 LOCAL_VBNC_FLAGS = @vbnc.exe.rsp
