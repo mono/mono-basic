@@ -1,0 +1,8 @@
+/debug:full 
+/r:System.Xml.dll 
+/r:System.Windows.Forms.dll
+/imports:system,microsoft.visualbasic,system.io,system.collections,system.resources
+/optionstrict+
+/optionexplicit+ 
+*.vb
+/out:msggen.exe
