@@ -1,4 +1,10 @@
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Added, it's now possible to do 'make test' to run all the tests.
+	* Bugs: More tests.
+	* CompileTime: More tests.
+
+2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
 	* RunTime: Remove all Implicit* and Explicit* tests, they are now generated automatically.
 	* SelfTest: Add a couple of scripts to run the test from the commandline both on Windows and Linux.

@@ -1,0 +1,3 @@
+-r:System.Windows.Forms.dll,System.dll,System.Drawing.dll 
+-imports:System.Windows.Forms,System.Drawing,Microsoft.VisualBasic
+-target:library
