@@ -1,3 +1,8 @@
+2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Operators.vb: Implemented CompareObjectEqual partially.
+	* TypeCombinations.vb: Added a enum of all combinations of TypeCodes.
+
 2007-01-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* IntegerType.vb: SByte, UInt16, UInt32 and UInt64 to 
