@@ -7,7 +7,7 @@
 #/define:DEBUG=1
 /imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit
 /rootnamespace:vbnc
-/t:exe
 /res:vbnc.Errors.resources
 /res:vbnc.vbnc.rsp
 /out:vbnc.exe
+/t:exe

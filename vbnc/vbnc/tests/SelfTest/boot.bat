@@ -1,0 +1,1 @@
+..\..\bin\vbnc.exe @SelfCompileWindows.response

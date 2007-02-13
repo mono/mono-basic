@@ -1,0 +1,3 @@
+/target:library
+-r:System.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Drawing.Design.dll,System.Xml.dll,System.Design.dll
+-imports:System,System.Drawing,Microsoft.VisualBasic,System.Data

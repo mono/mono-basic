@@ -1,2 +1,4 @@
 @SelfCompile.general.response
 @SelfCompile.files.windows
+/out:vbnc.exe
+/t:exe

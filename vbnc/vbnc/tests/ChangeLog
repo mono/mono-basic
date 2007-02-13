@@ -1,3 +1,13 @@
+2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* RunTime: Remove all Implicit* and Explicit* tests, they are now generated automatically.
+	* SelfTest: Add a couple of scripts to run the test from the commandline both on Windows and Linux.
+	* Generated: Added, all scripts to generate tests are put here. Added Conversions.vb to generate the Explicit and Implicit tests earlier in Runtime.
+	* CompileTime: Renamed the tests starting with # so that they run correctly on Linux as well.
+	* Bugs: Added, every bug report should have a corresponding test here.
+	* Errors: Added, every compiler message should have a corresponding test here.	
+	* VBRunTime: Added a script to update the sources for the test.
+
 2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* all.rsp (all directories): Fixed case of imports.
