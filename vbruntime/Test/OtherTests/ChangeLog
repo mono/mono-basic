@@ -1,0 +1,4 @@
+2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WindowsApplication1: Added, is the default VB Windows Application created by VS2005.
+	* Initial checkin.
