@@ -1149,7 +1149,7 @@ Public Class Helper
     End Function
 
     Shared Function GetInvokeMethod(ByVal Compiler As Compiler, ByVal DelegateType As Type) As MethodInfo
-        Helper.Assert(IsDelegate(Compiler, DelegateType))
+        Helper.Assert(IsDelegate(Compiler, DelegateType), "The type '" & DelegateType.FullName & "' is not a delegate.")
         Return DelegateType.GetMethod(DelegateDeclaration.STR_Invoke, BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.Instance)
     End Function
 

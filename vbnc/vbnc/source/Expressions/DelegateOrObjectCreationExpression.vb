@@ -120,8 +120,12 @@ Public Class DelegateOrObjectCreationExpression
         m_IsDelegateCreationExpression = Helper.CompareType(m_ResolvedType.BaseType, Compiler.TypeCache.MulticastDelegate)
 
         If m_ArgumentList IsNot Nothing Then
-            Dim ri As New DelegateResolveInfo(Compiler, m_ResolvedType)
-            result = m_ArgumentList.ResolveCode(ri) AndAlso result
+            If m_IsDelegateCreationExpression Then
+                Dim ri As New DelegateResolveInfo(Compiler, m_ResolvedType)
+                result = m_ArgumentList.ResolveCode(ri) AndAlso result
+            Else
+                result = m_ArgumentList.ResolveCode(Info) AndAlso result
+            End If
         Else
             m_ArgumentList = New ArgumentList(Me)
         End If

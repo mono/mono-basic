@@ -1,5 +1,27 @@
 2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/AddressOfExpression.vb, Expressions/GetRefExpression.vb,
+	  General/Helper.vb: Make the crashes give more information.
+	* Expressions/SimpleNameExpression.vb: Properties in implicit modules
+	  can now be accessed correctly.
+	* Expressions/Expression.vb: If getting the object reference of a
+	  deref'ed value type, return the original deref'ed value type (which
+	  should be a byref type, so this is ok).
+	* Expressions/DeRefExpression.vb: Make the base expression publicly
+	  available.
+	* Expressions/DelegateOrObjectCreationExpression.vb: Only resolve the
+	  argument list as a delegete argument list if it actually is a
+	  delegate creation.
+	* Members/PropertyDeclaration.vb: Add a call to MyBase.GenerateCode, so
+	  that attributes are emitted correctly.
+	* Members/ArrayElementInitializer.vb: Another check for 0 elements to
+	  emit.
+	* General/CommandLine.vb: Ignore any exceptions when trying to write
+	  vbnc.rsp (might happen if the user doesn't have write permissions
+	  to the directory where vbnc.exe resides).
+
+2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/ArgumentList.vb, Members/MethodDeclaration.vb,
 	  Code/CodeBlock.vb, TypeDeclarations/AssemblyDeclaration.vb:
 	  Commented out a wrong assert.

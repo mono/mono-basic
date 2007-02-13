@@ -131,7 +131,7 @@ Public Class GetRefExpression
                     ElseIf TypeOf varC.Expression Is GetRefExpression AndAlso varC.Expression IsNot Me Then
                         result = varC.Expression.GenerateCode(Info) AndAlso result
                     Else
-                        Helper.NotImplemented()
+                        Helper.NotImplemented(Me.Location.ToString)
                     End If
                 Else
                     Helper.NotImplemented()

@@ -304,7 +304,10 @@ Public MustInherit Class Expression
         If TypeOf Me Is GetRefExpression Then
             Return Me
         ElseIf ExpressionType.IsValueType Then
-            If Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.Enum) Then
+            If TypeOf Me Is DeRefExpression Then
+                Dim derefExp As DeRefExpression = DirectCast(Me, DeRefExpression)
+                result = derefExp.Expression
+            ElseIf Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.Enum) Then
                 result = New BoxExpression(Me, Me, Me.ExpressionType)
             Else
                 result = New GetRefExpression(Me, Me)
@@ -313,7 +316,7 @@ Public MustInherit Class Expression
             result = Me
         End If
 
-        Return result
+            Return result
     End Function
 
     Function DereferenceByRef() As Expression

@@ -126,6 +126,7 @@ Public Class ArrayElementInitializer
         For i As Integer = 0 To m_Elements.Count - 1
             elements *= m_Elements(i)
         Next
+        If m_Elements.Count = 0 AndAlso elements = 1 Then elements = 0
 
         'Create a list of the current indices.
         Dim indices As New Generic.List(Of Integer)

@@ -781,10 +781,8 @@ Public Class CommandLine
                                 End Using
                             End If
                         End Using
-                    Catch ex As IO.IOException
-                        Throw
                     Catch ex As Exception
-                        Throw
+                        'Ignore any exceptions here.
                     End Try
                 End If
                 If IO.File.Exists(defaultrspfile) Then

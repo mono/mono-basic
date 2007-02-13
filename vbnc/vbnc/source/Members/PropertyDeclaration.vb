@@ -252,6 +252,8 @@ Public Class PropertyDeclaration
         If m_Get IsNot Nothing Then result = m_Get.GenerateCode(Info) AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.GenerateCode(Info) AndAlso result
 
+        result = MyBase.GenerateCode(Info) AndAlso result
+
         Return result
     End Function
 End Class

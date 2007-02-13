@@ -105,17 +105,17 @@ Public Class AddressOfExpression
                             Dim deltp As Type = doc.NonArrayTypeName.ResolvedType
                             m_ExpressionType = deltp
                         Else
-                            Helper.AddError()
+                            Helper.AddError(Me.Location.ToString)
                         End If
                     Else
-                        Helper.NotImplemented()
+                        Helper.NotImplemented(Me.Location.ToString)
                     End If
                 End If
             End If
 
             result = mpClassification.Resolve(m_ExpressionType) AndAlso result
         Else
-            Helper.AddError()
+            Helper.AddError(Me.Location.ToString)
         End If
 
         Return result

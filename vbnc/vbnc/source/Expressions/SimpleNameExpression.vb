@@ -256,7 +256,7 @@ Public Class SimpleNameExpression
         'As a result, names with type arguments may bind differently to types and methods:
         '---------------------------------------------------------------------------------------------------------
 
-        If m_TypeArgumentList IsNot Nothing Then If m_TypeArgumentList.ResolveCode(info) = False Then Return False
+        If m_TypeArgumentList IsNot Nothing Then If m_TypeArgumentList.ResolveCode(Info) = False Then Return False
 
         '* Starting with the immediately enclosing block and continuing with each enclosing outer block (if any),
         '  if the identifier matches the name of a local variable, static variable, constant local, method type 
@@ -486,7 +486,7 @@ Public Class SimpleNameExpression
         If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name) Then Return True
 
         '* Otherwise, the name given by the identifier is undefined and a compile-time error occurs.
-        Helper.AddError("Name '" & Name & "' could not be resolved.")
+        Helper.AddError("Name '" & Name & "' could not be resolved, " & Me.Location.ToString)
 
         Return False
     End Function
@@ -693,7 +693,7 @@ Public Class SimpleNameExpression
             Classification = New NamespaceClassification(Me, foundNamespace)
             Return True
         ElseIf foundNamespace Is Nothing AndAlso foundType IsNot Nothing Then
-            Classification = New TypeClassification(Me, foundtype)
+            Classification = New TypeClassification(Me, foundType)
             Return True
         ElseIf foundNamespace IsNot Nothing AndAlso foundType IsNot Nothing Then
             Helper.AddError()
@@ -787,7 +787,7 @@ Public Class SimpleNameExpression
                 Classification = New TypeClassification(Me, impmembers(0))
                 Return True
             End If
-            Helper.NotImplemented()
+            Helper.NotImplemented("Found " & impmembers.Count & " impmembers.")
         End If
 
         Dim nsmembers As Generic.List(Of [Namespace])
@@ -816,7 +816,7 @@ Public Class SimpleNameExpression
                 Return True
             End If
             If found.Count > 1 Then
-                helper.adderror()
+                Helper.AddError()
             End If
             If Helper.IsTypeDeclaration(found(0)) Then
                 Classification = New TypeClassification(Me, found(0))
@@ -830,7 +830,12 @@ Public Class SimpleNameExpression
                 Classification = New VariableClassification(Me, var, Nothing)
                 Return True
             End If
-            Helper.NotImplemented()
+            If Helper.IsPropertyDeclaration(first) Then
+                Dim var As PropertyInfo = DirectCast(first, PropertyInfo)
+                Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
+                Return True
+            End If
+            Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString)
             Return True
         End If
 

@@ -39,6 +39,12 @@ Public Class DeRefExpression
         If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then Helper.ErrorRecoveryNotImplemented()
     End Sub
 
+    ReadOnly Property Expression() As Expression
+        Get
+            Return m_Expression
+        End Get
+    End Property
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
