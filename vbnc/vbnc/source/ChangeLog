@@ -1,3 +1,63 @@
+2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/ArgumentList.vb, Members/MethodDeclaration.vb,
+	  Code/CodeBlock.vb, TypeDeclarations/AssemblyDeclaration.vb:
+	  Commented out a wrong assert.
+	* Expressions/Conversions/CSByteExpression.vb,
+	  Expressions/Conversions/CSngExpression.vb,
+	  Expressions/Conversions/CIntExpression.vb,
+	  Expressions/Conversions/CBoolExpression.vb,
+	  Expressions/Conversions/CShortExpression.vb,
+	  Expressions/Conversions/CDblExpression.vb,
+	  Expressions/Conversions/CByteExpression.vb,
+	  Expressions/Conversions/CULngExpression.vb,
+	  Expressions/Conversions/CStrExpression.vb,
+	  Expressions/Conversions/CObjExpression.vb,
+	  Expressions/Conversions/CCharExpression.vb,
+	  Expressions/Conversions/CDateExpression.vb,
+	  Expressions/Conversions/CUIntExpression.vb,
+	  Expressions/Conversions/CLngExpression.vb,
+	  Expressions/Conversions/CTypeExpression.vb,
+	  Expressions/Conversions/CUShortExpression.vb: Validate conversion
+	  during the resolution phase.
+	* Expressions/Conversions/CDecExpression.vb: Validate conversion during
+	  the resolution phase. Add special handling for loading decimal
+	  constants in a way that looks like a MS bug.
+	* Expressions/SimpleNameExpression.vb: In GetMeClassification check if
+	  the parent is a TypeDeclaration for fields. Fixes #80752.
+	* Expressions/BinaryExpressions/EqualsExpression.vb,
+	  ConditionalCompilation/ConditionalCompilation.vb: Add more debug
+	  info.
+	* Expressions/InvocationOrIndexExpression.vb,
+	  Members/FunctionSignature.vb, Members/Parameter.vb,
+	  Members/VariableDeclaration.vb, Names/QualifiedIdentifier.vb,
+	  Types/TypeName.vb, General/MethodBaseDeclaration.vb: Shortcircuit
+	  resolution if something fails.
+	* Statements/RaiseEventStatement.vb: Override ResolveTypeReferences.
+	* vbnc.vbproj: Updated.
+	* Emit/Emitter.vb: Small fix to the emission stack.
+	* ConditionalCompilation/ConditionalExpression.vb: Simplify code a bit
+	  using the vbruntime for a few cases. Add a couple of special cases
+	  since our vbruntime doesn't have support yet for the necessary
+	  functions required to boot the compiler.
+	* Types/TypeNameResolutionInfo.vb: Shortcircuit resolution if something
+	  fails. Now shows VBNC30451 correctly.
+	* Resources/GenerateCodeAndResX.bat, Resources/GenerateCodeAndResX.sh:
+	  A script to generate Messages.vb and Errors.resx from Source.xml
+	* Resources/Errors.resx: Add an error message for error # 30451.
+	* General/CodeFile.vb: Don't try to parse the file as UTF8 by default
+	  (fixes #80750). This has to be done some other way though.
+	* General/Report.vb: Remove unused method.
+	* General/Helper.vb: Add a function to enable debug output with
+	  environment variables.
+	* General/AssemblyInfo.vb: Update version.
+	* General/TypeResolution.vb: Implement for cases for type conversions.
+	* General/TypeConverter.vb: Add a method to get the error # (if any)
+	  for a specified conversion
+	* General/Compiler.vb: Fix testoutput path.
+	* General/CommandLine.vb: More debug information.
+	* General/Messages.vb: Add message for error #30451.
+
 2007-02-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Scanner.vb: The scanner now scans reads characters in files one by one instead of loading the entire source file into memory at once.

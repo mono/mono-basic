@@ -83,6 +83,7 @@ Public Class QualifiedIdentifier
         nri.IsAttributeTypeName = AsAttributeTypeName
         nri.TypeArgumentCount = TypeArity
         result = nri.Resolve() AndAlso result
+        If result = False Then Return result
         If nri.FoundOnlyOneObject Then
             If nri.FoundIsType Then
                 resolvedType = nri.FoundAsType

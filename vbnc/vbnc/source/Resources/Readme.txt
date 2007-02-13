@@ -1,0 +1,1 @@
+To add any messages edit Source.xml and run GenerateCodeAndResx.bat (for Windows) or GenerateCodeAndResx.sh (for Linux)

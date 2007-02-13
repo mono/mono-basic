@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<xs:schema id="Messages" targetNamespace="http://tempuri.org/Source.xsd" xmlns:mstns="http://tempuri.org/Source.xsd"
+	xmlns="http://tempuri.org/Source.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+	attributeFormDefault="qualified" elementFormDefault="qualified">
+	<xs:element name="Messages" msdata:IsDataSet="true" msdata:Locale="es-ES" msdata:EnforceConstraints="False">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="Message">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Comment" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+							<xs:element name="VBNCValue" type="xs:string" minOccurs="0" msdata:Ordinal="1" />
+							<xs:element name="VBValue" type="xs:string" minOccurs="0" msdata:Ordinal="2" />
+						</xs:sequence>
+						<xs:attribute name="id" form="unqualified" type="xs:string" />
+						<xs:attribute name="level" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

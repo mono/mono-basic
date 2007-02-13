@@ -32,6 +32,34 @@ Public Class CByteExpression
         Return GenerateCode(Me.Expression, Info)
     End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        Dim expType As Type = SourceType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.Byte
+        Select Case expTypeCode
+            Case TypeCode.Char
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
+                result = False
+            Case TypeCode.DateTime
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, ExpressionType.Name)
+                result = False
+        End Select
+
+        Return result
+    End Function
+
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -99,6 +127,8 @@ Public Class CByteExpression
                         Compiler.Report.ShowMessage(Messages.VBNC30439, ExpressionType.ToString)
                         Return CByte(0)
                     End If
+                Case TypeCode.DBNull
+                    Return CByte(0)
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
                     Return CByte(0)

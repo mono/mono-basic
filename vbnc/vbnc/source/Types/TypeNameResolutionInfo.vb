@@ -183,6 +183,8 @@ Public Class TypeNameResolutionInfo
             End If
 
             result = tmp.Resolve AndAlso result
+            If result = False Then Return result
+
             If qi.Second Is Nothing Then
                 Me.m_FoundObjects = tmp.m_FoundObjects
             Else
@@ -600,6 +602,7 @@ Public Class TypeNameResolutionInfo
                 Return True
             End If
             ns = vbnc.Helper.GetNamespaceParent(ns)
+            nsDotR = ns & dotR
         Loop Until ns Is Nothing
 
         'Check the outermost namespace
@@ -812,7 +815,7 @@ Public Class TypeNameResolutionInfo
         '---------------------------------------------------------------------------------------------------------
         '* Otherwise, a compile-time error occurs.
         '---------------------------------------------------------------------------------------------------------
-        Helper.AddError(String.Format("Could not resolve the unqualified name '{0}', Location: {1}", Rs(0), FromWhere.Location.ToString))
+        FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30451, FromWhere.Location, Rs(0))
 
         '---------------------------------------------------------------------------------------------------------
         '* Note   

@@ -524,12 +524,12 @@ Public Class CodeBlock
 
         For i As Integer = 0 To m_Variables.Count - 1
             result = m_Variables(i).ResolveTypeReferences AndAlso result
-            vbnc.Helper.Assert(result = (Report.Errors = 0))
+            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         For Each obj As Statement In m_Statements
             result = obj.ResolveTypeReferences AndAlso result
-            vbnc.Helper.Assert(result = (Report.Errors = 0))
+            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         Return result
@@ -541,12 +541,12 @@ Public Class CodeBlock
         For i As Integer = 0 To m_Variables.Count - 1
             result = m_Variables(i).ResolveMember(Info) AndAlso result
             result = m_Variables(i).ResolveCode(Info) AndAlso result
-            Helper.Assert(result = (Compiler.Report.Errors = 0))
+            'Helper.Assert(result = (Compiler.Report.Errors = 0))
         Next
 
         For Each obj As Statement In m_Statements
             result = obj.ResolveStatement(Info) AndAlso result
-            Helper.Assert(result = (Compiler.Report.Errors = 0))
+            'Helper.Assert(result = (Compiler.Report.Errors = 0))
         Next
 
         Return result

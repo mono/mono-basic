@@ -275,7 +275,7 @@ Public Class AssemblyDeclaration
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveTypeReferences " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
 #End If
             result = ResolveTypeReferences(type) AndAlso result
-            vbnc.Helper.Assert(result = (Report.Errors = 0))
+            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         result = m_Attributes.ResolveTypeReferences AndAlso result
@@ -288,7 +288,9 @@ Public Class AssemblyDeclaration
         Dim result As Boolean = True
 
         result = Type.ResolveTypeReferences AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        'vbnc.Helper.Assert(result = (Report.Errors = 0))
+
+        If result = False Then Return result
 
         For Each Member As ParsedObject In Type.Members
             Dim NestedType As TypeDeclaration = TryCast(Member, TypeDeclaration)
@@ -297,7 +299,8 @@ Public Class AssemblyDeclaration
             Else
                 result = Member.ResolveTypeReferences() AndAlso result
             End If
-            vbnc.Helper.Assert(result = (Report.Errors = 0))
+            If result = False Then Return result
+            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         Return result

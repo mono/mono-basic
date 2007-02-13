@@ -32,6 +32,35 @@ Public Class CSByteExpression
         Return GenerateCode(Me.Expression, Info)
     End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        Dim expType As Type = SourceType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.SByte
+        Select Case expTypeCode
+            Case TypeCode.Char
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
+                result = False
+            Case TypeCode.DateTime
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                result = False
+        End Select
+
+        Return result
+    End Function
+
+
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -91,7 +120,7 @@ Public Class CSByteExpression
             Select Case tpCode
                 Case TypeCode.SByte
                     Return CSByte(originalValue) 'No range checking needed.
-                Case TypeCode.Boolean, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal
+                Case TypeCode.Boolean, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.DBNull
                     Dim resultvalue As Object = 0
                     If Compiler.TypeResolution.CheckNumericRange(originalValue, resultvalue, ExpressionType) Then
                         Return resultvalue
@@ -101,7 +130,7 @@ Public Class CSByteExpression
                     End If
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
-                    Return New SByte
+                    Return CSByte(0)
             End Select
         End Get
     End Property

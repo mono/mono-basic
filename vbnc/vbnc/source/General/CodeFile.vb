@@ -284,15 +284,15 @@ Public Class CodeFile
                 IsUTF8 = Encoding.CodePage = 65001
 
                 ' No UTF-8 detection required when default is UTF-8.
-                If Not IsUTF8 Then
-                    ' Decode using UTF-8 when can be decoded using UTF-8.
-                    StreamReader = New System.IO.StreamReader(FileStream, UTF8Throw, True)
-                    Try
-                        Return StreamReader
-                    Catch e As ArgumentException
-                        FileStream.Position = 0
-                    End Try
-                End If
+                'If Not IsUTF8 Then
+                '    ' Decode using UTF-8 when can be decoded using UTF-8.
+                '    StreamReader = New System.IO.StreamReader(FileStream, UTF8Throw, True)
+                '    Try
+                '        Return StreamReader
+                '    Catch e As ArgumentException
+                '        FileStream.Position = 0
+                '    End Try
+                'End If
 
                 ' Byte order mark was already detected when default is not UTF-8.
                 StreamReader = New System.IO.StreamReader(FileStream, Encoding, IsUTF8)

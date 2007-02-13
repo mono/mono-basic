@@ -32,6 +32,15 @@ Public Class RaiseEventStatement
     Private m_Event As SimpleNameExpression
     Private m_Arguments As ArgumentList
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        If m_Event IsNot Nothing Then result = m_Event.ResolveTypeReferences AndAlso result
+        If m_Arguments IsNot Nothing Then result = m_Arguments.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
     ReadOnly Property [Event]() As SimpleNameExpression
         Get
             Return m_Event

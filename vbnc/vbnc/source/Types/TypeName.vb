@@ -155,6 +155,8 @@ Public Class TypeName
             Throw New InternalException(Me)
         End If
 
+        If result = False Then Return result
+
         Helper.Assert(m_ResolvedType IsNot Nothing)
 
         Return result

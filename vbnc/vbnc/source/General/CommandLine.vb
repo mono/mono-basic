@@ -724,6 +724,14 @@ Public Class CommandLine
 #End If
 #End Region
 
+    ReadOnly Property AllArgumentsAsArray() As String()
+        Get
+            Dim result(m_lstAllArgs.Count - 1) As String
+            m_lstAllArgs.CopyTo(result, 0)
+            Return result
+        End Get
+    End Property
+
     ''' <summary>
     ''' This property returns the files the commandline parser found on the commandline,
     ''' this includes expanded wildcards.

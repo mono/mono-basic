@@ -248,30 +248,6 @@ Public Class Report
         m_SavedMessages.Clear()
     End Function
 
-    ' <Obsolete()> _
-    ''' <summary>
-    ''' Shows the message with the specified level
-    ''' </summary>
-    ''' <param name="Level"></param>
-    ''' <param name="Msg"></param>
-    ''' <remarks></remarks>
-    Private Sub ShowMessage(ByVal Level As MessageLevel, ByVal Msg As String)
-        Select Case Level
-            Case MessageLevel.Error
-                Compiler.Report.WriteLine(Msg.Replace("%MSGTYPE%", "error"))
-                If Errors > MAXERRORS Then
-                    Throw New TooManyErrorsException() ' ApplicationException("To many errors. Quitting.")
-                End If
-            Case MessageLevel.Warning ' MessageLevel.PickyWarning, MessageLevel.SlightWarning, MessageLevel.NormalWarning, MessageLevel.SevereWarning
-                Compiler.Report.WriteLine(Msg.Replace("%MSGTYPE%", "warning"))
-            Case Else
-                Throw New InternalException("Invalid WarningLevel: " & Level.ToString & " (" & Msg & ")")
-        End Select
-#If StopOnMsg Then
-		If Debugger.IsAttached Then Helper.Stop()
-#End If
-    End Sub
-
     ''' <summary>
     ''' Helper to construct a message for a multiline message when every line after the first one
     ''' is the same message. Message() must be an array with two elements, FirstParameters() is applied
@@ -298,7 +274,8 @@ Public Class Report
     ''' <summary>
     ''' Shows the message with the specified location and parameters
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub ShowMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String)
+    <Diagnostics.DebuggerHidden()> _
+    Sub ShowMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String)
         ShowMessage(False, New Message(Message, Parameters, Location))
     End Sub
 
@@ -306,7 +283,8 @@ Public Class Report
     ''' Shows the message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String)
+    <Diagnostics.DebuggerHidden()> _
+    Sub ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String)
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
             ShowMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
         Else
@@ -319,7 +297,8 @@ Public Class Report
     ''' Shows the multiline message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String)
+    <Diagnostics.DebuggerHidden()> _
+    Public Sub ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String)
         If Compiler.tm.IsCurrentTokenValid Then
             ShowMessage(False, New Message(Message, Parameters, Compiler.tm.CurrentToken.Location))
         Else

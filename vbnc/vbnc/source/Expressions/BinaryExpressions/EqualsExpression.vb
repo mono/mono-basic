@@ -44,9 +44,11 @@ Public Class EqualsExpression
             Case TypeCode.Object
                 Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
+                'Compiler.Report.WriteLine("MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool: " & Me.Location.ToString)
                 Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool)
             Case TypeCode.String
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
+                'Compiler.Report.WriteLine("MS_VB_CS_Operators_CompareString__String_String_Bool: " & Me.Location.ToString)
                 Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_CompareString__String_String_Bool)
                 Emitter.EmitLoadI4Value(Info, 0)
                 Emitter.EmitEquals(Info, Compiler.TypeCache.Integer)

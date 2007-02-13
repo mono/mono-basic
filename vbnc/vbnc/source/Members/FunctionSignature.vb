@@ -115,6 +115,7 @@ Public Class FunctionSignature
         If m_ReturnType Is Nothing Then
             If m_TypeName IsNot Nothing Then
                 result = m_TypeName.ResolveTypeReferences AndAlso result
+                If result = False Then Return result
                 m_ReturnType = m_TypeName.ResolvedType
             Else
                 If Me.Location.File.IsOptionExplicitOn Then
@@ -134,7 +135,7 @@ Public Class FunctionSignature
 
         result = MyBase.ResolveCode(info) AndAlso result
 
-        Helper.Assert(m_ReturnType IsNot Nothing)
+        Helper.Assert(m_ReturnType IsNot Nothing OrElse Compiler.Report.Errors > 0)
 
         Return result
     End Function

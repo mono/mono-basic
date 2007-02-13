@@ -1022,7 +1022,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30451" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Could not resolve the name '{0}'</value>
   </data>
   <data name="30452" xml:space="preserve">
     <value>CHANGEME</value>

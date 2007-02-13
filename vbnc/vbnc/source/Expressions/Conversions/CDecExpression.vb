@@ -32,6 +32,32 @@ Public Class CDecExpression
         Return GenerateCode(Me.Expression, Info)
     End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        Dim expType As Type = SourceType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.Decimal
+        Select Case expTypeCode
+            Case TypeCode.DateTime, TypeCode.Char
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                result = False
+        End Select
+
+
+        Return result
+    End Function
+
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -61,7 +87,13 @@ Public Class CDecExpression
             Case TypeCode.Double
                 Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Double)
             Case TypeCode.Single
-                Emitter.EmitNew(Info, info.Compiler.TypeCache.DecimalConstructor_Single)
+                If Expression.IsConstant Then
+                    'VBC BUG? This seems to be a bug in vbc.exe.
+                    Emitter.EmitLoadDecimalValue(Info, New Decimal(CDbl(Expression.ConstantValue)))
+                Else
+                    'CORRECT CODE.
+                    Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Single)
+                End If
             Case TypeCode.Object
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDecimal__Object)
@@ -86,7 +118,7 @@ Public Class CDecExpression
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Decimal
                     Return CDec(originalValue) 'No range checking needed.
-                Case TypeCode.Single, TypeCode.Double
+                Case TypeCode.Single, TypeCode.Double, TypeCode.DBNull
                     Dim resultvalue As Object = 0
                     If Compiler.TypeResolution.CheckNumericRange(originalValue, resultvalue, ExpressionType) Then
                         Return resultvalue

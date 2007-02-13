@@ -32,6 +32,25 @@ Public Class CStrExpression
         Return GenerateCode(Me.Expression, Info)
     End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        'Dim expType As Type = SourceType
+        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        'Dim ExpressionType As Type = Info.Compiler.TypeCache.String
+
+        Return result
+    End Function
+
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -86,7 +105,7 @@ Public Class CStrExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant AndAlso Helper.CompareType(ExpressionType, Compiler.TypeCache.String) OrElse Helper.CompareType(ExpressionType, Compiler.TypeCache.Char)
+            Return Expression.IsConstant AndAlso (Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.String) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.Char))
         End Get
     End Property
 

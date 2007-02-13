@@ -617,7 +617,17 @@ Public Class SimpleNameExpression
             Dim var As FieldInfo = DirectCast(first, FieldInfo)
             Helper.Assert(Parent.FindFirstParent(Of EnumDeclaration)() Is Nothing)
 
-            If var.IsInitOnly AndAlso Parent.FindFirstParent(Of ConstructorDeclaration)() Is Nothing OrElse (Parent.FindFirstParent(Of IMethod).Modifiers.Is(KS.Shared) <> var.IsStatic) Then
+            Dim ctorParent As ConstructorDeclaration
+            Dim methodParent As IMethod
+            Dim typeParent As TypeDeclaration
+            Dim isNotInCtorAndReadOnly As Boolean
+            ctorParent = FindFirstParent(Of ConstructorDeclaration)()
+            methodParent = FindFirstParent(Of IMethod)()
+            typeParent = FindFirstParent(Of TypeDeclaration)()
+
+            isNotInCtorAndReadOnly = var.IsInitOnly AndAlso (ctorParent Is Nothing OrElse ctorParent.Modifiers.Is(KS.Shared) <> var.IsStatic) AndAlso (typeParent Is Nothing OrElse typeParent.IsShared <> var.IsStatic)
+
+            If isNotInCtorAndReadOnly Then ' >?? (Parent.FindFirstParent(Of IMethod).Modifiers.Is(KS.Shared) <> var.IsStatic) Then
                 Return New ValueClassification(Me, var, CreateMeExpression)
             ElseIf TypeOf type Is ClassDeclaration Then
                 Return New VariableClassification(Me, var, CreateMeExpression)

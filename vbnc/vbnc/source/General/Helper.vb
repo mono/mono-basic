@@ -38,6 +38,21 @@ Public Class Helper
     Public Const ALLNOBASEMEMBERS As BindingFlags = BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
 
 #If DEBUG Then
+    Shared Function ShowDebugFor(ByVal name As String) As Boolean
+        Static args As Hashtable
+        If args Is Nothing Then
+            args = New Hashtable(StringComparer.OrdinalIgnoreCase)
+            Dim env As String = Environment.GetEnvironmentVariable("VBNC_LOG")
+            If env Is Nothing Then Return False
+            For Each arg As String In env.Split(","c, ":"c, ";"c)
+                args.Add(arg, arg)
+            Next
+        End If
+        Return args.ContainsKey(name)
+    End Function
+#End If
+
+#If DEBUG Then
     Shared Sub RunRT()
         Dim path As String = "rt\bin\rt.exe"
         Dim parent As String = VB.CurDir
@@ -1919,7 +1934,7 @@ Public Class Helper
         If Info Is Nothing Then Info = ResolveInfo.Default(Info.Compiler)
         For Each obj As BaseObject In Collection
             result = obj.ResolveCode(Info) AndAlso result
-            Helper.Assert(result = (obj.Compiler.Report.Errors = 0))
+            'Helper.Assert(result = (obj.Compiler.Report.Errors = 0))
         Next
         Return result
     End Function
@@ -1928,7 +1943,7 @@ Public Class Helper
         Dim result As Boolean = True
         For Each obj As ParsedObject In Collection
             result = obj.ResolveTypeReferences AndAlso result
-            vbnc.Helper.Assert(result = (obj.Compiler.Report.Errors = 0))
+            'vbnc.Helper.Assert(result = (obj.Compiler.Report.Errors = 0))
         Next
         Return result
     End Function
@@ -3447,8 +3462,8 @@ Public Class Helper
         Dim exactArguments2(ResolvedGroup.Count - 1) As Generic.List(Of Argument)
         'Dim matchedArgumentsTypes(ResolvedGroup.Count - 1)() As Type
         'Dim expandedArgumentTypes(ResolvedGroup.Count - 1) As Generic.List(Of Type)
-        Dim codedArgumentsString As String
-        Dim completeMethodName As String
+        Dim codedArgumentsString As String = Nothing
+        Dim completeMethodName As String = Nothing
 
 #If DEBUGMETHODRESOLUTION Then
         codedArgumentsString = "(" & Arguments.AsString & ")"

@@ -2116,7 +2116,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30445 = 30445
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Could not resolve the name '{0}'"
     ''' VB   = "Name '|1' is not declared."
     ''' </summary>
     ''' <remarks></remarks>

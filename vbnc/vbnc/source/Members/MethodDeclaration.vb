@@ -67,7 +67,7 @@ Public MustInherit Class MethodDeclaration
         Dim result As Boolean = True
 
         result = MyBase.ResolveTypeReferences AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        'vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         Return result
     End Function

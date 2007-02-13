@@ -1,4 +1,3 @@
-' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -308,6 +307,69 @@ Public Class TypeConverter
  "XBXFXFGHIJKLMLLLX-L"
 
 
+    ''' <summary>
+    ''' X=?
+    ''' I=Implicit ok
+    ''' 0=Explicit ok
+    ''' 1=30311
+    ''' 2=32007
+    ''' 3=30533
+    ''' 4=32006
+    ''' 5=30532
+    ''' 6=30533
+    ''' A=30311, only explicit
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Shared ConversionResultType As String = _
+            "XXXXXXXXXXXXXXXXX-X" & _
+            "X0X00000000000000-0" & _
+            "XXXXXXXXXXXXXXXXX-X" & _
+            "XIXI1000000000001-0" & _
+            "XIX1I222222221111-0" & _
+            "XIX04I00000000001-0" & _
+            "XIX040I0000000001-0" & _
+            "XIX0400I000000001-0" & _
+            "XIX04000I00000001-0" & _
+            "XIX040000I0000001-0" & _
+            "XIX0400000I000001-0" & _
+            "XIX04000000I00001-0" & _
+            "XIX040000000I0001-0" & _
+            "XIX0100000000I001-0" & _
+            "XIX01000000000I05-0" & _
+            "XIX010000000000I1-0" & _
+            "XIX1111111111161I-0" & _
+            "-------------------" & _
+            "XIX00000000000000-I"
+
+    Shared Function GetErrorNumberForConversion(ByVal tp1 As TypeCode, ByVal tp2 As TypeCode, ByVal Implicit As Boolean) As Integer
+        Select Case GetConversionResultType(tp1, tp2)
+            Case "X"c
+                Throw New NotImplementedException
+            Case "I"c
+                Return 0
+            Case "0"c
+                Return 0
+            Case "1"c
+                Return 30311
+            Case "2"c
+                Return 32007
+            Case "3"c
+                Return 30533
+            Case "4"c
+                Return 32006
+            Case "5"c
+                Return 30532
+            Case "6"c
+                Return 30533
+            Case Else
+                Throw New NotImplementedException
+        End Select
+    End Function
+
+    Shared Function GetConversionResultType(ByVal tp1 As TypeCode, ByVal tp2 As TypeCode) As Char
+        Return GetArrayChar(tp1, tp2, ConversionResultType)
+    End Function
+
     Shared Function GetExpOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
         Return GetExpResultType(op1, op2)
     End Function
@@ -463,7 +525,7 @@ Public Class TypeConverter
             Case KS.Not
                 Return GetUnaryNotResultType(op1)
             Case Else
-                Helper.NotImplemented()
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -514,7 +576,7 @@ Public Class TypeConverter
             Case KS.Is, KS.IsNot
                 Return GetIsIsNotResultType(op1, op2)
             Case Else
-                Helper.NotImplemented()
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -527,7 +589,7 @@ Public Class TypeConverter
             Case KS.Not
                 Return GetUnaryNotResultType(operand)
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException
         End Select
     End Function
 
@@ -578,8 +640,12 @@ Public Class TypeConverter
             Case KS.Is, KS.IsNot
                 Return GetIsIsNotOperandType(op1, op2)
             Case Else
-                Helper.NotImplemented()
+                Throw New NotImplementedException()
         End Select
+    End Function
+
+    Private Shared Function GetArrayChar(ByVal op1 As TypeCode, ByVal op2 As TypeCode, ByVal array As String) As Char
+        Return array.Chars(op1 + op2 * 19)
     End Function
 
     Private Shared Function GetResultType(ByVal op1 As TypeCode, ByVal array As String) As TypeCode
@@ -602,6 +668,7 @@ Public Class TypeConverter
         End If
     End Function
 
+#If DEVGENERATOR OrElse GENERATOR = False Then
     ''' <summary>
     ''' Converts the source to the destination type. Compiletime conversions are the only ones that succeeds.
     ''' Returns nothing if no conversion possible.
@@ -661,11 +728,12 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 result = ConvertToUInt64(Source, stc)
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
 
         Return result
     End Function
+#End If
 
     Public Shared Function ConvertToBoolean(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Boolean
         Select Case SourceTypeCode
@@ -706,7 +774,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -749,7 +817,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -792,7 +860,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -835,7 +903,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -878,7 +946,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -910,7 +978,7 @@ Public Class TypeConverter
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 result = CULng(Source)
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
         Return result
     End Function
@@ -954,7 +1022,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -997,7 +1065,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1040,7 +1108,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1083,7 +1151,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1126,7 +1194,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1169,7 +1237,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1212,7 +1280,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1255,7 +1323,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1298,7 +1366,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1341,7 +1409,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1360,7 +1428,7 @@ Public Class TypeConverter
             Case TypeCode.Decimal
                 Throw New NotImplementedException
             Case TypeCode.Double
-                Throw New NotImplementedException
+                Throw New NotImplementedException()
             Case TypeCode.Empty
                 Throw New NotImplementedException
             Case TypeCode.Int16
@@ -1384,7 +1452,7 @@ Public Class TypeConverter
             Case TypeCode.UInt64
                 Throw New NotImplementedException
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
     End Function
 
@@ -1423,9 +1491,53 @@ Public Class TypeConverter
             Case TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Return CULng(Source)
             Case Else
-                Throw New InternalException("")
+                Throw New NotImplementedException()
         End Select
         Return result
     End Function
 
 End Class
+
+
+
+#If GENERATOR And DEVGENERATOR = False Then
+''' <summary>
+''' All the keywords.
+''' </summary>
+''' <remarks></remarks>
+Public Enum KS
+    [AndAlso]
+    [And]
+    [Is]
+    [IsNot]
+    [Like]
+    [Mod]
+    [Not]
+    [Or]
+    [OrElse]
+    [Xor]
+    LT
+    GT
+    Equals
+    NotEqual
+    LE
+    GE
+    Concat
+    Mult
+    Add
+    Minus
+    Power
+    RealDivision
+    IntDivision
+    ShiftRight
+    ConcatAssign '		L"&="
+    AddAssign 'L"+="
+    MinusAssign 'L"-="
+    RealDivAssign 'L"/="
+    IntDivAssign 'L"\="
+    PowerAssign 'L"^="
+    MultAssign 'L"*="
+    ShiftLeftAssign '<<=
+    ShiftRightAssign '>>=
+End Enum
+#End If

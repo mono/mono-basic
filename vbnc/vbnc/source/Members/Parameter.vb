@@ -243,6 +243,8 @@ Public Class Parameter
         result = Helper.ResolveTypeReferences(m_ConstantExpression, m_TypeName, m_ParameterIdentifier) AndAlso result
         If m_Attributes IsNot Nothing Then result = m_Attributes.ResolveTypeReferences AndAlso result
 
+        If result = False Then Return result
+
         If m_ParameterType Is Nothing Then
             If m_TypeName IsNot Nothing Then
                 m_ParameterType = m_TypeName.ResolvedType

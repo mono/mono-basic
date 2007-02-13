@@ -175,6 +175,7 @@ Public MustInherit Class MethodBaseDeclaration
         result = MyBase.ResolveTypeReferences AndAlso result
 
         result = m_Signature.ResolveTypeReferences AndAlso result
+        If result = False Then Return result
         m_ParameterTypes = m_Signature.Parameters.ToTypeArray
         m_ReturnType = m_Signature.ReturnType
 

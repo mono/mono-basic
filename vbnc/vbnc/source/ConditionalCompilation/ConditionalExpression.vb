@@ -396,126 +396,45 @@ Public Class ConditionalExpression
             Reader.Next()
             RuleExpression(RSide)
 
-            Dim tp1, tp2 As Type
-            Dim tpCompare As Type = Nothing 'The type of comparison to do
-
-            If LSide Is Nothing AndAlso RSide Is Nothing Then
+            'Compiler.Report.WriteLine(String.Format("RuleRelational: " & DoWhat.ToString() & ", Left={0}, Right={1}", LSide, RSide) & Reader.Current.Location.ToString())
+            Try
                 Select Case DoWhat
-                    Case KS.Equals, KS.GE, KS.LE
-                        Return True
-                    Case KS.Not, KS.LT, KS.GT
-                        Return False
+                    Case KS.Equals
+                        If TypeOf LSide Is Boolean AndAlso TypeOf RSide Is Boolean Then
+                            Result = CBool(LSide) = CBool(RSide)
+                            'Compiler.Report.WriteLine(CStr(LSide))
+                            Return True
+                        ElseIf TypeOf LSide Is String AndAlso TypeOf RSide Is String Then
+                            Result = String.Compare(CStr(LSide), CStr(RSide), True)
+                            'Compiler.Report.WriteLine(CStr(LSide))
+                            Return True
+                        ElseIf LSide Is Nothing AndAlso TypeOf RSide Is Boolean Then
+                            Result = False = CBool(RSide)
+                            'Compiler.Report.WriteLine(CStr(LSide))
+                            Return True
+                        ElseIf TypeOf LSide Is Boolean AndAlso RSide Is Nothing Then
+                            Result = False = CBool(LSide)
+                            'Compiler.Report.WriteLine(CStr(LSide))
+                            Return True
+                        End If
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectEqual(LSide, RSide, True)
+                    Case KS.NotEqual
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectNotEqual(LSide, RSide, True)
+                    Case KS.GT
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectGreater(LSide, RSide, True)
+                    Case KS.LT
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectLess(LSide, RSide, True)
+                    Case KS.GE
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectGreaterEqual(LSide, RSide, True)
+                    Case KS.LE
+                        LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectLessEqual(LSide, RSide, True)
                     Case Else
                         Throw New InternalException(Me)
                 End Select
-            ElseIf LSide Is Nothing Then
-                tp1 = Nothing
-                tp2 = RSide.GetType
-            ElseIf RSide Is Nothing Then
-                tp1 = LSide.GetType
-                tp2 = Nothing
-            Else
-                Helper.Assert(LSide IsNot Nothing)
-                Helper.Assert(RSide IsNot Nothing)
-                tp1 = LSide.GetType
-                tp2 = RSide.GetType
-            End If
-
-            If tp1 Is Nothing Then
-                tpCompare = tp2
-            ElseIf tp2 Is Nothing Then
-                tpCompare = tp1
-            ElseIf Helper.CompareType(tp1, tp2) Then
-                tpCompare = tp1
-            ElseIf Helper.CompareType(Compiler.TypeCache.String, tp1) = True AndAlso Helper.CompareType(Compiler.TypeCache.String, tp2) = False Then
-                'No comparison String - Other
-                Compiler.Report.ShowMessage(Messages.VBNC30748, tp1.ToString, KS.String.ToString)
-                LSide = False
-            ElseIf Helper.CompareType(Compiler.TypeCache.String, tp1) = False AndAlso Helper.CompareType(Compiler.TypeCache.String, tp2) = True Then
-                'No comparison Other - String
-                Compiler.Report.ShowMessage(Messages.VBNC30748, tp2.ToString, KS.String.ToString)
-                LSide = False
-            ElseIf Compiler.TypeResolution.IsNumericType(tp1) AndAlso Compiler.TypeResolution.IsNumericType(tp2) Then
-                tpCompare = Compiler.TypeCache.Decimal
-            Else
-                Compiler.Report.ShowMessage(Messages.VBNC90023, tp1.ToString, tp2.ToString)
-                LSide = False
-            End If
-
-            If tpCompare IsNot Nothing Then
-                Select Case Compiler.TypeResolution.TypeToKeyword(tpCompare)
-                    Case KS.Boolean
-                        Select Case DoWhat
-                            Case KS.Equals
-                                LSide = CBool(LSide) = CBool(RSide)
-                            Case KS.NotEqual
-                                LSide = CBool(LSide) <> CBool(RSide)
-                            Case KS.GT
-                                LSide = CBool(LSide) > CBool(RSide)
-                            Case KS.LT
-                                LSide = CBool(LSide) < CBool(RSide)
-                            Case KS.GE
-                                LSide = CBool(LSide) >= CBool(RSide)
-                            Case KS.LE
-                                LSide = CBool(LSide) <= CBool(RSide)
-                            Case Else
-                                Throw New InternalException(Me)
-                        End Select
-                    Case KS.Date
-                        Select Case DoWhat
-                            Case KS.Equals
-                                LSide = CDate(LSide) = CDate(RSide)
-                            Case KS.NotEqual
-                                LSide = CDate(LSide) <> CDate(RSide)
-                            Case KS.GT
-                                LSide = CDate(LSide) > CDate(RSide)
-                            Case KS.LT
-                                LSide = CDate(LSide) < CDate(RSide)
-                            Case KS.GE
-                                LSide = CDate(LSide) >= CDate(RSide)
-                            Case KS.LE
-                                LSide = CDate(LSide) <= CDate(RSide)
-                            Case Else
-                                Throw New InternalException(Me)
-                        End Select
-                    Case KS.Double
-                        Select Case DoWhat
-                            Case KS.Equals
-                                LSide = CDbl(LSide) = CDbl(RSide)
-                            Case KS.NotEqual
-                                LSide = CDbl(LSide) <> CDbl(RSide)
-                            Case KS.GT
-                                LSide = CDbl(LSide) > CDbl(RSide)
-                            Case KS.LT
-                                LSide = CDbl(LSide) < CDbl(RSide)
-                            Case KS.GE
-                                LSide = CDbl(LSide) >= CDbl(RSide)
-                            Case KS.LE
-                                LSide = CDbl(LSide) <= CDbl(RSide)
-                            Case Else
-                                Throw New InternalException(Me)
-                        End Select
-                    Case KS.String
-                        Select Case DoWhat
-                            Case KS.Equals
-                                LSide = CStr(LSide) = CStr(RSide)
-                            Case KS.NotEqual
-                                LSide = CStr(LSide) <> CStr(RSide)
-                            Case KS.GT
-                                LSide = CStr(LSide) > CStr(RSide)
-                            Case KS.LT
-                                LSide = CStr(LSide) < CStr(RSide)
-                            Case KS.GE
-                                LSide = CStr(LSide) >= CStr(RSide)
-                            Case KS.LE
-                                LSide = CStr(LSide) <= CStr(RSide)
-                            Case Else
-                                Throw New InternalException(Me)
-                        End Select
-                    Case Else
-                        Throw New InternalException(Me)
-                End Select
-            End If
+            Catch ex As Exception
+                Helper.AddError(ex.Message & VB.vbNewLine & ex.StackTrace)
+                Return False
+            End Try
         End While
 
         Result = LSide

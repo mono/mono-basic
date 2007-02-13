@@ -1725,7 +1725,7 @@ Partial Public Class Emitter
             EmitLoadVariableLocation(Info, local)
             EmitInitObj(Info, Info.DesiredType)
             EmitLoadVariable(Info, local)
-            Info.Stack.Push(Info.DesiredType)
+            'Info.Stack.Push(Info.DesiredType)
             FreeLocal(local)
         ElseIf Info.DesiredType.IsByRef Then
             Dim local As LocalBuilder = DeclareLocal(Info, Info.DesiredType.GetElementType)

@@ -208,9 +208,13 @@ Public Class VariableDeclaration
 
         result = MyBase.ResolveTypeReferences AndAlso result
 
+        If result = False Then Return result
+
         If m_VariableInitializer IsNot Nothing Then result = m_VariableInitializer.ResolveTypeReferences() AndAlso result
 
         If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveTypeReferences AndAlso result
+
+        If result = False Then Return result
 
         If m_FieldType Is Nothing Then 'the declaration might have been created with the type already.
             If m_TypeName IsNot Nothing Then

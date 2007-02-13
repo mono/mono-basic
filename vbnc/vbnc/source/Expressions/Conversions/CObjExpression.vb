@@ -28,6 +28,25 @@ Public Class CObjExpression
         MyBase.New(Parent)
     End Sub
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        'Dim expType As Type = SourceType
+        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        'Dim ExpressionType As Type = Info.Compiler.TypeCache.ULong
+
+        Return result
+    End Function
+
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

@@ -208,8 +208,10 @@ Public Class InvocationOrIndexExpression
         Dim result As Boolean = True
 
         result = m_Expression.ResolveExpression(New ResolveInfo(Info.Compiler, True)) AndAlso result
+        If result = False Then Return False
         If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
 
+        If result = False Then Return False
         'Check the classification of the arguments, can be value, variable, propertyaccess
         For i As Integer = 0 To m_ArgumentList.Count - 1
             If m_ArgumentList(i).Expression IsNot Nothing Then

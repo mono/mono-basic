@@ -575,6 +575,8 @@ Public Class TypeResolution
             Return True
         End If
 
+        If IsNumericType(desiredType) = False Then Return False
+
         If IsIntegralType(builtInType) AndAlso IsIntegralType(Helper.GetTypeCode(value.GetType)) Then
             Return CheckIntegralRange(value, result, builtInType)
         Else
@@ -585,6 +587,47 @@ Public Class TypeResolution
                 result = value
                 Return True
             End If
+
+            If tpValue = TypeCode.DBNull Then
+                Select Case desiredCode
+                    Case TypeCode.Boolean
+                        result = CBool(Nothing)
+                    Case TypeCode.Byte
+                        result = CByte(Nothing)
+                    Case TypeCode.Char
+                        result = CChar(Nothing)
+                    Case TypeCode.DateTime
+                        result = CDate(Nothing)
+                    Case TypeCode.Decimal
+                        result = CDec(Nothing)
+                    Case TypeCode.Double
+                        result = CDbl(Nothing)
+                    Case TypeCode.Int16
+                        result = CShort(Nothing)
+                    Case TypeCode.Int32
+                        result = CInt(Nothing)
+                    Case TypeCode.Int64
+                        result = CLng(Nothing)
+                    Case TypeCode.SByte
+                        result = CSByte(Nothing)
+                    Case TypeCode.Single
+                        result = CSng(Nothing)
+                    Case TypeCode.String
+                        result = Nothing
+                    Case TypeCode.UInt16
+                        result = CUShort(Nothing)
+                    Case TypeCode.UInt32
+                        result = CUInt(Nothing)
+                    Case TypeCode.UInt64
+                        result = CULng(Nothing)
+                    Case Else
+                        Helper.Stop()
+                        Throw New InternalException("")
+                End Select
+                Return True
+            End If
+
+            If IsNumericType(value.GetType) = False Then Return False
 
             Select Case desiredCode
                 Case TypeCode.Double
@@ -598,6 +641,14 @@ Public Class TypeResolution
                         Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Decimal
                             result = CDec(value)
                             Return True
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= Decimal.MaxValue AndAlso tmp >= Decimal.MinValue Then
+                                result = CDec(tmp) 'This should be CDec(value), but vbc.exe seems to do it like this.
+                                Return True
+                            Else
+                                Return False
+                            End If
                     End Select
                 Case TypeCode.Single
                     Select Case tpValue
@@ -612,14 +663,166 @@ Public Class TypeResolution
                                 Return False
                             End If
                     End Select
+                Case TypeCode.Byte
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= Byte.MaxValue AndAlso tmp >= Byte.MinValue Then
+                                result = CByte(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= Byte.MaxValue AndAlso tmp >= Byte.MinValue Then
+                                result = CByte(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.SByte
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= SByte.MaxValue AndAlso tmp >= SByte.MinValue Then
+                                result = CSByte(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= SByte.MaxValue AndAlso tmp >= SByte.MinValue Then
+                                result = CSByte(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.Int16
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= Int16.MaxValue AndAlso tmp >= Int16.MinValue Then
+                                result = CShort(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= Int16.MaxValue AndAlso tmp >= Int16.MinValue Then
+                                result = CShort(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.UInt16
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= UInt16.MaxValue AndAlso tmp >= UInt16.MinValue Then
+                                result = CUShort(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= UInt16.MaxValue AndAlso tmp >= UInt16.MinValue Then
+                                result = CUShort(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
                 Case TypeCode.Int32
                     Select Case tpValue
                         Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.Boolean
                             result = CInt(value)
                             Return True
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= Int32.MaxValue AndAlso tmp >= Int32.MinValue Then
+                                result = CInt(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= Int32.MaxValue AndAlso tmp >= Int32.MinValue Then
+                                result = CInt(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.UInt32
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= UInt32.MaxValue AndAlso tmp >= UInt32.MinValue Then
+                                result = CUInt(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= UInt32.MaxValue AndAlso tmp >= UInt32.MinValue Then
+                                result = CUInt(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.Int64
+                    Select Case tpValue
+                        Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.Boolean
+                            result = CInt(value)
+                            Return True
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= Int64.MaxValue AndAlso tmp >= Int64.MinValue Then
+                                result = CLng(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= Int64.MaxValue AndAlso tmp >= Int64.MinValue Then
+                                result = CLng(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                    End Select
+                Case TypeCode.UInt64
+                    Select Case tpValue
+                        Case TypeCode.Single, TypeCode.Double
+                            Dim tmp As Double = CDbl(value)
+                            If tmp <= UInt64.MaxValue AndAlso tmp >= UInt64.MinValue Then
+                                result = CULng(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        Case TypeCode.Decimal
+                            Dim tmp As Decimal = CDec(value)
+                            If tmp <= UInt64.MaxValue AndAlso tmp >= UInt64.MinValue Then
+                                result = CULng(value)
+                                Return True
+                            Else
+                                Return False
+                            End If
                     End Select
             End Select
-            Helper.Stop()
+
             Select Case tpValue
                 Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                     Dim tmpValue As ULong = CULng(value)

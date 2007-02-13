@@ -40,7 +40,7 @@ Public Class ConditionalCompiler
     Private m_ConditionStack As New Generic.List(Of Integer)
 
     Private m_Methods As New Generic.Dictionary(Of MethodInfo, Object())
-    
+
     Function IsConditionallyExcluded(ByVal CalledMethod As MethodInfo, ByVal AtLocation As Span) As Boolean
         Dim attribs() As Object
 
@@ -300,6 +300,12 @@ Public Class ConditionalCompiler
                 m_Current = result
                 Return result
             End If
+
+#If DEBUG Then
+            If result IsNot Nothing AndAlso result.Location.Column <= 40 AndAlso IfdOut AndAlso Helper.ShowDebugFor("CONDITIONALCOMPILER") Then
+                Compiler.Report.WriteLine("EXCLUDED: " & result.Location.ToString())
+            End If
+#End If
 
             If result.IsKeyword Then
                 Select Case result.AsKeyword.Keyword

@@ -227,7 +227,7 @@ Public Class Compiler
         Dim dir As String
         dir = IO.Path.GetDirectoryName(Filename)
         If dir = "" Then dir = Environment.CurrentDirectory
-        'dir = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "test output")
+        'dir = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "testoutput")
 
         If IO.Directory.Exists(dir) = False Then IO.Directory.CreateDirectory(dir)
         Return IO.Path.Combine(dir, IO.Path.GetFileName(Filename) & "." & TestType & ".output.xml")
@@ -378,6 +378,7 @@ Public Class Compiler
         vbnc.Helper.Assert(result = (Report.Errors = 0))
         result = theAss.CreateImplicitMembers AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
         result = theAss.ResolveMembers AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
         result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result

@@ -262,6 +262,50 @@ Public Class CTypeExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
+        Select Case Helper.GetTypeCode(Me.ExpressionType)
+            Case TypeCode.Boolean
+                result = CBoolExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Byte
+                result = CByteExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Char
+                result = CCharExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.DateTime
+                result = CDateExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Decimal
+                result = CDecExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Double
+                result = CDblExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Int16
+                result = CShortExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Int32
+                result = CIntExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Int64
+                result = CLngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.SByte
+                result = CSByteExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Single
+                result = CSngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.String
+                result = CStrExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.UInt16
+                result = CUShortExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.UInt32
+                result = CUIntExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.UInt64
+                result = CULngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+            Case TypeCode.Object
+                If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Object) Then
+                    result = CObjExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                Else
+                    'Helper.NotImplementedYet("") Anything to do here?
+                End If
+            Case Else
+                Throw New InternalException(Me)
+        End Select
+
+        Return result
+
+
         Return result
     End Function
 

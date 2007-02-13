@@ -251,7 +251,7 @@ Public Class ArgumentList
 
         result = Helper.ResolveCodeCollection(m_Arguments, Info) AndAlso result
 
-        Helper.Assert(result = (Compiler.Report.Errors = 0))
+        'Helper.Assert(result = (Compiler.Report.Errors = 0))
 
         Return result
     End Function

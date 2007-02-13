@@ -84,9 +84,34 @@ Public Class CBoolExpression
         Return result
     End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        Dim expType As Type = SourceType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Select Case expTypeCode
+            Case TypeCode.Char, TypeCode.DateTime
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, Info.Compiler.TypeCache.Boolean.Name)
+                result = False
+        End Select
+
+        Return result
+    End Function
+
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant 'CHECK: Is this true?
+            'CHECK: Is this true?
+            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.String) = False
         End Get
     End Property
 
@@ -100,6 +125,8 @@ Public Class CBoolExpression
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, _
                   TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal
                     Return CBool(originalValue) 'No range checking needed.
+                Case TypeCode.DBNull
+                    Return CBool(Nothing)
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
                     Return False

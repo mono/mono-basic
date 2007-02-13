@@ -27,6 +27,7 @@ Public Class CCharExpression
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Return GenerateCode(Me.Expression, Info)
     End Function
@@ -60,6 +61,34 @@ Public Class CCharExpression
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToChar__String)
             Case Else
                 Helper.NotImplemented()
+        End Select
+
+        Return result
+    End Function
+
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        result = Validate(Info, Expression.ExpressionType) AndAlso result
+
+        Return result
+    End Function
+
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+        Dim result As Boolean = True
+
+        Dim expType As Type = SourceType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.Char
+        Select Case expTypeCode
+            Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32007, expType.Name)
+                result = False
+            Case TypeCode.Boolean, TypeCode.Double, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Single
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, ExpressionType.Name)
+                result = False
         End Select
 
         Return result
