@@ -26,6 +26,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 #If NET_2_0 Then
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
 Imports SWF = System.Windows.Forms
 
 Namespace Microsoft.VisualBasic.Devices
@@ -79,4 +80,5 @@ Namespace Microsoft.VisualBasic.Devices
         End Property
     End Class
 End Namespace
+#End If
 #End If

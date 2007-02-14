@@ -266,12 +266,13 @@ Namespace Microsoft.VisualBasic.MyServices
                 Return FileIO.FileSystem.Drives
             End Get
         End Property
-
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
         Public ReadOnly Property SpecialDirectories() As SpecialDirectoriesProxy
             Get
                 Return New SpecialDirectoriesProxy()
             End Get
         End Property
+#End If
     End Class
 End Namespace
 #End If

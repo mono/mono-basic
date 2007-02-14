@@ -89,6 +89,7 @@ Namespace Microsoft.VisualBasic.Devices
             End If
 
             If showUI Then
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
                 Dim progress As MyProgressDialog
                 progress = New MyProgressDialog(client, String.Format("Downloading '{0}'...", address.ToString))
 
@@ -97,6 +98,7 @@ Namespace Microsoft.VisualBasic.Devices
                 If progress.ShowDialog() = Windows.Forms.DialogResult.Cancel AndAlso onUserCancel = UICancelOption.ThrowException Then
                     Throw New OperationCanceledException("The operation was canceled.")
                 End If
+#End If
             Else
                 client.DownloadFile(address, destinationFileName)
             End If
@@ -186,6 +188,7 @@ Namespace Microsoft.VisualBasic.Devices
             End If
 
             If showUI Then
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
                 Dim progress As MyProgressDialog
                 progress = New MyProgressDialog(client, String.Format("Uploading '{0}'...", address.ToString))
 
@@ -194,6 +197,7 @@ Namespace Microsoft.VisualBasic.Devices
                 If progress.ShowDialog() = Windows.Forms.DialogResult.Cancel AndAlso onUserCancel = UICancelOption.ThrowException Then
                     Throw New OperationCanceledException("The operation was canceled.")
                 End If
+#End If
             Else
                 client.UploadFile(address, sourceFileName)
             End If

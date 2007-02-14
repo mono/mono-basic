@@ -59,8 +59,10 @@ Namespace Microsoft.VisualBasic.Logging
 
             m_Append = True
             m_AutoFlush = False
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
             m_BaseFileName = System.IO.Path.GetFileNameWithoutExtension(System.Windows.Forms.Application.ExecutablePath)
             m_CustomLocation = Microsoft.VisualBasic.FileIO.SpecialDirectories.CurrentUserApplicationData
+#End If
             m_Delimiter = Constants.vbTab
             m_DiskSpaceExhaustedBehaviour = DiskSpaceExhaustedOption.DiscardMessages
             m_Encoding = System.Text.Encoding.UTF8
@@ -285,6 +287,7 @@ Namespace Microsoft.VisualBasic.Logging
             Get
                 Dim path As String
                 Dim file As String
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
                 Select Case m_Location
                     Case LogFileLocation.CommonApplicationDirectory
                         path = System.Windows.Forms.Application.CommonAppDataPath
@@ -299,6 +302,9 @@ Namespace Microsoft.VisualBasic.Logging
                     Case Else
                         path = Microsoft.VisualBasic.FileIO.SpecialDirectories.CurrentUserApplicationData
                 End Select
+#Else
+                path = String.Empty
+#End If
 
                 file = m_BaseFileName
                 Select Case m_LogFileCreationSchedule

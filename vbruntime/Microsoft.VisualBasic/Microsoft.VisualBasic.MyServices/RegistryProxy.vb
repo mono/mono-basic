@@ -27,6 +27,7 @@
 '
 
 #If NET_2_0 Then
+#If TARGET_JVM = False Then 'Win32 Not Supported by Grasshopper
 Imports System.ComponentModel
 Imports Microsoft.Win32
 
@@ -92,4 +93,5 @@ Namespace Microsoft.VisualBasic.MyServices
         End Property
     End Class
 End Namespace
+#End If
 #End If

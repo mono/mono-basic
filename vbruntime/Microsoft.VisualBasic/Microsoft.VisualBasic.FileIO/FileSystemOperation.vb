@@ -41,8 +41,9 @@ Namespace Microsoft.VisualBasic.FileIO
         Private m_ShowUIOption As UIOption
         Private m_UICancelOption As UICancelOption
         Private m_Recycle As RecycleOption
-
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
         Private m_UI As FileSystemOperationUI
+#End If
         Private m_Sources As New Generic.List(Of Info)
         Private m_TotalSize As Long
         Private m_Cancelled As Boolean
@@ -286,8 +287,13 @@ Namespace Microsoft.VisualBasic.FileIO
             End If
 
             Try
+#If TARGET_JVM = False Then 'FileStream ctor with FileOptions Not Supported by Grasshopper
                 Using reader As New IO.FileStream(Source, FileMode.Open, FileAccess.Read, FileShare.Read, 1024, FileOptions.SequentialScan)
                     Using writer As New IO.FileStream(Destination, newFileMode, FileAccess.Write, FileShare.Read, 1024, FileOptions.SequentialScan)
+#Else
+                Using reader As New IO.FileStream(Source, FileMode.Open, FileAccess.Read, FileShare.Read, 1024)
+                    Using writer As New IO.FileStream(Destination, newFileMode, FileAccess.Write, FileShare.Read)
+#End If
                         Dim read As Integer
                         Dim buffer(1023) As Byte
 
@@ -393,7 +399,7 @@ Namespace Microsoft.VisualBasic.FileIO
             End If
 
             If m_ShowUI = False Then Return
-
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
             m_UI = New FileSystemOperationUI(Me)
             m_UI.Text = Title
             m_UI.lblDirs.Text = "Calculating time..."
@@ -401,6 +407,7 @@ Namespace Microsoft.VisualBasic.FileIO
             m_UI.lblTimeLeft.Text = "..."
             m_UI.barProgress.Value = 0
             m_UI.Show()
+#End If
         End Sub
 
         Private Sub UpdateUI(ByVal SizeDone As Long)
@@ -412,7 +419,9 @@ Namespace Microsoft.VisualBasic.FileIO
             Else
                 PercentDone = 0
             End If
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
             m_UI.UpdateInfo(PercentDone)
+#End If
         End Sub
 
         Private Sub UpdateUI(ByVal SourceDirectory As String, ByVal DestinationDirectory As String, ByVal File As String, ByVal ItemsDone As Integer, ByVal SizeDone As Long)
@@ -426,13 +435,17 @@ Namespace Microsoft.VisualBasic.FileIO
             Else
                 PercentDone = 0
             End If
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
             m_UI.UpdateInfo(SourceDirectory, DestinationDirectory, File, PercentDone)
+#End If
         End Sub
 
         Private Sub CleanUp()
             If m_ShowUI Then
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
                 If m_UI IsNot Nothing Then m_UI.Dispose()
                 m_UI = Nothing
+#End If
 
                 If m_Cancelled AndAlso m_UICancelOption = UICancelOption.ThrowException Then
                     Throw New OperationCanceledException("The operation was canceled.")
@@ -479,7 +492,7 @@ Namespace Microsoft.VisualBasic.FileIO
                 If overWriteNone Then Return False
 
                 If m_ShowUIOption = UIOption.OnlyErrorDialogs Then Return True
-
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
                 Using frm As New FileSystemOperationUIQuestion
                     Dim result As FileSystemOperationUIQuestion.Answer
                     Dim infoA As FileInfo = New FileInfo(Source)
@@ -516,6 +529,7 @@ Namespace Microsoft.VisualBasic.FileIO
                             Return False
                     End Select
                 End Using
+#End If
             Else
                 If m_Overwrite = False Then
                     m_Errors.Add(Source, String.Format("The file '{0}' already exists.", Destination))
@@ -536,5 +550,4 @@ Namespace Microsoft.VisualBasic.FileIO
     End Class
 
 End Namespace
-
 #End If

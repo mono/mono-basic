@@ -26,6 +26,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 #If NET_2_0 Then
+#If TARGET_JVM = False Then 'System.Media Not Supported by Grasshopper
 Imports System
 Imports System.IO
 Imports System.Media
@@ -82,4 +83,5 @@ Namespace Microsoft.VisualBasic.Devices
         End Sub
     End Class
 End Namespace
+#End If
 #End If

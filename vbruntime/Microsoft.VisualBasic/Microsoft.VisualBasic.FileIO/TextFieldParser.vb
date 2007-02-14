@@ -90,7 +90,11 @@ Namespace Microsoft.VisualBasic.FileIO
                 Throw New InvalidOperationException("Unable to read delimited fields because Delimiters is Nothing or empty.")
             End If
 
+#If TARGET_JVM = False 
             Dim result As New Generic.List(Of String)
+#Else
+            Dim result as New ArrayList()
+#End If
             Dim line As String
             Dim currentIndex As Integer
             Dim nextIndex As Integer
@@ -104,7 +108,11 @@ Namespace Microsoft.VisualBasic.FileIO
                 currentIndex = nextIndex
             Loop
 
+#If TARGET_JVM = False 
             Return result.ToArray()
+#Else
+            Return CType(result.ToArray(GetType(String)),String())
+#End If
         End Function
 
         Private Function GetNextField(ByVal line As String, ByVal startIndex As Integer, ByRef nextIndex As Integer) As String

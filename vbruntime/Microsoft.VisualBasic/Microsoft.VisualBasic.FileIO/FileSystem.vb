@@ -181,7 +181,11 @@ Namespace Microsoft.VisualBasic.FileIO
             peekedChar = New Generic.Queue(Of Char)
             If ignoreCase Then text = text.ToUpperInvariant()
 
+#If TARGET_JVM = False Then 'FileStream ctor with FileOptions Not Supported by Grasshopper
             Using reader As New IO.StreamReader(New IO.FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024, FileOptions.SequentialScan))
+#Else
+                            Using reader As New IO.StreamReader(New IO.FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024))
+#End If
                 currentChar = Microsoft.VisualBasic.ChrW(reader.Read)
                 Do Until currentChar = Char.MinValue
 

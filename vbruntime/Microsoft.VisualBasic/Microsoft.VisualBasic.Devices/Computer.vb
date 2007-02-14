@@ -31,6 +31,7 @@
 '
  
 #If NET_2_0 Then
+#If TARGET_JVM = False Then 'System.IO.Ports, Windows.Forms Not Supported by Grasshopper
 Imports System
 Imports Microsoft.VisualBasic.MyServices
 Imports System.Windows.Forms
@@ -80,5 +81,5 @@ Namespace Microsoft.VisualBasic.Devices
         End Property
     End Class
 End Namespace
-
+#End If
 #End If
