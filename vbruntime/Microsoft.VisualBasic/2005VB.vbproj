@@ -131,11 +131,16 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\StaticLocalInitFlag.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\StringType.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\Utils.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\Audio.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Audio.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Clock.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\Computer.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Computer.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ComputerInfo.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ComputerInfo.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\Keyboard.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Keyboard.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\Mouse.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\MyWebClient.vb">
       <SubType>Component</SubType>
@@ -146,7 +151,9 @@
     <Compile Include="Microsoft.VisualBasic.Devices\MyProgressDialog.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Microsoft.VisualBasic.Devices\Ports.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Ports.vb" />
+    <Compile Include="Microsoft.VisualBasic.Devices\ServerComputer.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ServerComputer.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\DeleteDirectoryOption.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\FieldType.vb" />
@@ -174,6 +181,7 @@
     <Compile Include="Microsoft.VisualBasic.MyServices.Internal\ContextValue.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\ClipboardProxy.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\FileSystemProxy.vb" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxy.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxy.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\SpecialDirectoriesProxy.vb" />
     <Compile Include="Microsoft.VisualBasic\AppWinStyle.vb" />
