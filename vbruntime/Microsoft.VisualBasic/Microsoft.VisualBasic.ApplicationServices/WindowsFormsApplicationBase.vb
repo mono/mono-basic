@@ -33,7 +33,6 @@ Imports System
 Imports System.Threading
 #If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
 Imports System.Windows.Forms
-#End If
 Imports System.ComponentModel
 Imports System.Collections.ObjectModel
 
@@ -229,3 +228,4 @@ End Namespace
 
 #End If
 
+#End If

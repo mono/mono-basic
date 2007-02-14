@@ -27,6 +27,7 @@
 '
 
 #If NET_2_0 Then
+#If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
 Imports System
 Imports System.Threading
 Imports System.Windows.Forms
@@ -60,4 +61,5 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         End Class
     End Class
 End Namespace
+#End If
 #End If
