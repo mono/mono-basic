@@ -64,8 +64,9 @@ Module MainModule
                     Return 0
             End Select
 
+            Dim found As Boolean = False
             For Each prop As PropertyInfo In Properties
-                If prop.Name.ToLowerInvariant = name.ToLowerInvariant Then
+                If prop.Name.ToLowerInvariant = name.ToLowerInvariant OrElse Char.ToLowerInvariant(prop.Name(0)) = name Then
                     Dim objValue As Object
 
                     If prop.PropertyType Is GetType(Boolean) Then
@@ -84,11 +85,14 @@ Module MainModule
                         objValue = value
                     End If
 
-                    prop.SetValue(rt, value, Nothing, Nothing, Nothing, Nothing)
-
+                    prop.SetValue(rt, objValue, Nothing, Nothing, Nothing, Nothing)
+                    found = True
                     Exit For
                 End If
             Next
+            If Not found Then
+                Console.WriteLine("The option '" & name & "' is unknown.")
+            End If
         Loop
 
         If rt.Run Then
@@ -263,6 +267,11 @@ Class rt_console
     Sub ValidateArguments()
         If m_Compiler = String.Empty Then
             m_Compiler = "vbnc"
+        Else
+            m_Compiler = IO.Path.GetFullPath(m_Compiler)
+            If IO.File.Exists(m_Compiler) = False Then
+                Throw New IO.FileNotFoundException("Compiler '" & m_Compiler & "' does not exist.")
+            End If
         End If
     End Sub
 
@@ -281,7 +290,7 @@ Class rt_console
         ValidateArguments()
 
         If IO.File.Exists(m_BasePath) = False AndAlso IO.Directory.Exists(m_BasePath) = False Then
-            Throw New IO.FileNotFoundException("File or directory does not exist.", m_BasePath)
+            Throw New IO.FileNotFoundException("File or directory '" & m_BasePath & "' does not exist (Basepath)")
         End If
 
         ReDim m_Counters([Enum].GetValues(GetType(Test.Results)).Length - 1)
