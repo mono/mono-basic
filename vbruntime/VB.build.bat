@@ -92,7 +92,6 @@ echo ========================
 echo ERROR --- Batch Terminated 
 echo ========================
 popd
-PAUSE
 
 :END
 echo build executed using .NET %FRAMEWORKVERSION%
