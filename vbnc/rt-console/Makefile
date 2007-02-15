@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 
 PROGRAM = rt-console.exe
-PROGRAM_COMPILE = $(VBNC) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics
+PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics
 
 include ../../build/executable.make
 
