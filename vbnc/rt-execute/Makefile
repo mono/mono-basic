@@ -1,0 +1,12 @@
+thisdir = vbnc/rt-execute
+SUBDIRS =
+include ../../build/rules.make
+
+
+PROGRAM = rt-execute.exe
+PROGRAM_COMPILE = $(VBNC) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics
+
+include ../../build/executable.make
+
+rt-execute.exe.sources: rt-execute.vbproj
+	MONO_PATH="../../class/lib/bootstrap:$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:rt-execute.vbproj -d:rt-execute.exe.sources -m:l -x:r

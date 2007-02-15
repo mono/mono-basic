@@ -1,5 +1,5 @@
 thisdir := vbnc
-SUBDIRS := vbnc
+SUBDIRS := rt-console rt-execute vbnc
 
 ac_files =	\
 	"ac/My Project/Resources.Designer.vb"	\
