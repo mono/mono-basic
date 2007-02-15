@@ -123,7 +123,7 @@ Friend Class TestExecutor
     Private Sub StartThread()
         SyncLock m_Queue
             If m_Thread Is Nothing Then
-                m_Thread = New Threading.Thread(AddressOf Runner)
+                m_Thread = New Threading.Thread(New Threading.ThreadStart(AddressOf Runner))
                 m_Thread.Start()
             End If
         End SyncLock

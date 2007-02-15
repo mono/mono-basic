@@ -111,7 +111,7 @@ Public Class AssemblyCompare
         members1 = New Generic.List(Of MemberInfo)(t1.GetMembers(flags))
         members2 = New Generic.List(Of MemberInfo)(t2.GetMembers(flags))
 
-        CheckList(Of MemberInfo)(members1, members2, AddressOf CompareMember, AddressOf IsSameMember)
+        CheckList(Of MemberInfo)(members1, members2, New MemberComparer(Of MemberInfo)(AddressOf CompareMember), New IsSameMemberComparer(Of MemberInfo)(AddressOf IsSameMember))
 
     End Sub
 
@@ -151,7 +151,7 @@ Public Class AssemblyCompare
         types1 = New Generic.List(Of Type)(a1.GetTypes())
         types2 = New Generic.List(Of Type)(a2.GetTypes())
 
-        CheckList(Of Type)(types1, types2, AddressOf CompareType, AddressOf IsSameType)
+        CheckList(Of Type)(types1, types2, New MemberComparer(Of Type)(AddressOf CompareType), New IsSameMemberComparer(Of Type)(AddressOf IsSameType))
 
     End Sub
 

@@ -196,7 +196,7 @@ Public Class ExternalProcessExecutor
                 Dim sourcefile As String
                 Dim sourcepdbfile As String
 
-                tmpdir = My.Computer.FileSystem.GetTempFileName
+                tmpdir = System.IO.Path.GetTempFileName()
                 IO.File.Delete(tmpdir)
                 IO.Directory.CreateDirectory(tmpdir)
 
@@ -206,7 +206,7 @@ Public Class ExternalProcessExecutor
                 tmpsourcefile = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcefile))
                 tmppdbfile = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcepdbfile))
 
-                My.Computer.FileSystem.CopyFile(sourcefile, tmpsourcefile, True)
+                System.IO.File.Copy(sourcefile, tmpsourcefile, True)
                 If IO.File.Exists(sourcepdbfile) Then
                     IO.File.Copy(sourcepdbfile, tmppdbfile)
                 End If
@@ -228,7 +228,7 @@ Public Class ExternalProcessExecutor
 
             If m_UseTemporaryExecutable Then
                 Try
-                    My.Computer.FileSystem.DeleteDirectory(IO.Path.GetDirectoryName(process.StartInfo.FileName), FileIO.DeleteDirectoryOption.DeleteAllContents)
+                    System.IO.Directory.Delete(IO.Path.GetDirectoryName(process.StartInfo.FileName), True)
                 Catch ex As UnauthorizedAccessException
                     'Ignore this exception.
                 Catch ex As IO.IOException

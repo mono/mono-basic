@@ -136,7 +136,7 @@ Friend Class CompilerHelper
             m_CompilerHelper = Nothing
         End If
         SetupDomain()
-        m_CompilerHelper = CType(Activator.CreateInstance(m_CompilerDomain, "rt", GetType(CompilerHelper).FullName, True, BindingFlags.Default, Nothing, New Object() {m_Parent, m_CompilerOriginalPath}, Nothing, Nothing, Nothing).Unwrap, CompilerHelper)
+        'm_CompilerHelper = CType(Activator.CreateInstance(m_CompilerDomain, "rt", GetType(CompilerHelper).FullName, True, BindingFlags.Default, Nothing, New Object() {m_Parent, m_CompilerOriginalPath}, Nothing, Nothing, Nothing).Unwrap, CompilerHelper)
     End Sub
 
     Sub New(ByVal Tests As TestList, ByVal CompilerPath As String)

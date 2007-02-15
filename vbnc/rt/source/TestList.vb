@@ -154,10 +154,10 @@ Public Class TestList
 
     Function GetTestsCount(ByVal MinResult As Test.Results, ByVal MaxResult As Test.Results) As Integer
         Dim result As Integer
-        For Each test As Test In Me
-            If test.Result >= MinResult AndAlso test.Result <= MaxResult Then
+        For Each t As Test In Me
+            If t.Result >= MinResult AndAlso t.Result <= MaxResult Then
                 result += 1
-            ElseIf test.Result = test.Results.NotRun AndAlso test.OldResult >= MinResult AndAlso test.OldResult <= MaxResult Then
+            ElseIf t.Result = Test.Results.NotRun AndAlso t.OldResult >= MinResult AndAlso t.OldResult <= MaxResult Then
                 result += 1
             End If
         Next

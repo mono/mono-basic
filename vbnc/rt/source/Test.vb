@@ -662,7 +662,7 @@ Public Class Test
         m_Compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
         m_Compilation.Process.WorkingDirectory = m_BasePath
         m_Compilation.Name = "VBNC Compile"
-        m_Compilation.Process.UseTemporaryExecutable = True
+        'm_Compilation.Process.UseTemporaryExecutable = True
         If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
 
         m_Verifications.Clear()
