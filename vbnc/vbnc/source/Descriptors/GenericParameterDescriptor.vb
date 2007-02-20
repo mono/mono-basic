@@ -31,4 +31,10 @@ Public Class GenericParameterDescriptor
             Return Helper.IsParamArrayParameter(Compiler, m_Info)
         End Get
     End Property
+
+    Public Overrides ReadOnly Property DefaultValue() As Object
+        Get
+            Return m_Info.DefaultValue
+        End Get
+    End Property
 End Class

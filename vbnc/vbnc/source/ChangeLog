@@ -1,5 +1,14 @@
 2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/SimpleNameExpression.vb: Implement resolution of members
+	  imported automatically from modules.
+	* Statements/UsingStatement.vb: Implement emission of code for using
+	  statements with expressions.
+	* Descriptors/GenericParameterDescriptor.vb: Implement DefaultValue.
+	* General/Helper.vb: Add more info.
+
+2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/AssemblyInfo.vb: Version bump.
 
 2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 

@@ -18,8 +18,8 @@
 ' 
 
 #If DEBUG Then
-#Const DEBUGMETHODRESOLUTION = 1
-#Const DEBUGMETHODADD = 1
+#Const DEBUGMETHODRESOLUTION = 0
+#Const DEBUGMETHODADD = 0
 #Const EXTENDEDDEBUG = 0
 #End If
 ''' <summary>
@@ -2791,11 +2791,14 @@ Public Class Helper
 
     Shared Function IsParamArrayParameter(ByVal Compiler As Compiler, ByVal Parameter As ParameterInfo) As Boolean
         Dim pD As ParameterDescriptor = TryCast(Parameter, ParameterDescriptor)
+        Dim result As Boolean
         If pD IsNot Nothing Then
-            Return pD.IsParamArray
+            result = pD.IsParamArray
         Else
-            Return Parameter.IsDefined(Compiler.TypeCache.ParamArrayAttribute, False)
+            result = Parameter.IsDefined(Compiler.TypeCache.ParamArrayAttribute, False)
+            LogResolutionMessage(Compiler, "IsParamArrayParameter: result=" & result & ", ParamArrayAttribute=" & Compiler.TypeCache.ParamArrayAttribute.FullName)
         End If
+        Return result
     End Function
 
     Overloads Shared Function ToString(ByVal Types As Type()) As String
@@ -2919,11 +2922,20 @@ Public Class Helper
             End If
         End If
 
+        LogResolutionMessage(Parent.Compiler, "IsApplicable: isLastParamArray=" & isLastParamArray.ToString)
+        LogResolutionMessage(Parent.Compiler, "IsApplicable: inputParametersCount=" & inputParametersCount.ToString)
+
         '(if there are more arguments than parameters and the last parameter is not a 
         'paramarray parameter the method should not be applicable)
         If Arguments.Count > InputParameters.Length Then
-            If InputParameters.Length < 1 Then Return False
-            If isLastParamArray = False Then Return False
+            If InputParameters.Length < 1 Then
+                LogResolutionMessage(Parent.Compiler, "N/A: 1")
+                Return False
+            End If
+            If isLastParamArray = False Then
+                LogResolutionMessage(Parent.Compiler, "N/A: 2")
+                Return False
+            End If
         End If
 
         'Dim numberOfParamArrayElementParameters As Integer
@@ -2941,13 +2953,19 @@ Public Class Helper
 
             If inputParametersCount - 1 < i Then
                 '(more positional arguments than parameters)
-                If isLastParamArray = False Then Return False '(last parameter is not a paramarray)
+                If isLastParamArray = False Then '(last parameter is not a paramarray)
+                    LogResolutionMessage(Parent.Compiler, "N/A: 3")
+                    Return False
+                End If
 
                 'Add the additional expressions to the param array creation expression.
                 Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1)
                 For j As Integer = i To Arguments.Count - 1
                     'A paramarray element has to be specified.
-                    If Arguments(j).Expression Is Nothing Then Return False
+                    If Arguments(j).Expression Is Nothing Then
+                        LogResolutionMessage(Parent.Compiler, "N/A: 4")
+                        Return False
+                    End If
                     paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(j).Expression)
                 Next
                 Exit For
@@ -2999,10 +3017,12 @@ Public Class Helper
                     If matchedParameters.Contains(InputParameters(i)) Then
                         'If one of the named arguments (...) matches an argument already matched with 
                         'another positional or named argument, the method is not applicable
+                        LogResolutionMessage(Parent.Compiler, "N/A: 5")
                         Return False
                     ElseIf Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(i)) Then
                         'If one of the named arguments (...) matches a paramarray parameter, 
                         '(...) the method is not applicable.
+                        LogResolutionMessage(Parent.Compiler, "N/A: 6")
                         Return False
                     Else
                         matchedParameters.Add(InputParameters(i))
@@ -3014,7 +3034,10 @@ Public Class Helper
                 End If
             Next
             'If one of the named arguments fails to match (...) the method is not applicable
-            If matched = False Then Return False
+            If matched = False Then
+                LogResolutionMessage(Parent.Compiler, "N/A: 7")
+                Return False
+            End If
         Next
 
         'Next, if parameters that have not been matched are not optional, 
@@ -3027,8 +3050,11 @@ Public Class Helper
 
         For i As Integer = 0 To inputParametersCount - 1
             If matchedParameters.Contains(InputParameters(i)) = False Then
-                'if parameters that have not been matched are not optional,the method is not applicable
-                If InputParameters(i).IsOptional = False Then Return False
+                'if parameters that have not been matched are not optional, the method is not applicable
+                If InputParameters(i).IsOptional = False AndAlso InputParameters(i) Is paramArrayParameter = False Then
+                    LogResolutionMessage(Parent.Compiler, "N/A: 8")
+                    Return False
+                End If
 
                 Dim exp As Expression
                 Dim arg As New PositionalArgument(Parent)
@@ -3064,7 +3090,10 @@ Public Class Helper
             Helper.NotImplementedYet("Type argument inference")
         ElseIf TypeArguments IsNot Nothing AndAlso TypeArguments.List.Count > 0 Then
             'If the two lists do not have the same number of elements, the method is not applicable
-            If TypeArguments.List.Count <> genericTypeArgumentCount Then Return False
+            If TypeArguments.List.Count <> genericTypeArgumentCount Then
+                LogResolutionMessage(Parent.Compiler, "N/A: 9")
+                Return False
+            End If
 
             Helper.NotImplemented("Type argument matching")
         End If
@@ -3401,7 +3430,7 @@ Public Class Helper
             'the null literal Nothing, then the method is only applicable in its unexpanded form. For example:
             If TypeOf Argument.Expression Is NothingConstantExpression Then
                 Return 0
-            ElseIf Argument.Expression.IsConstant AndAlso Argument.Expression.ConstantValue Is Nothing Then
+            ElseIf Argument.Expression.IsConstant AndAlso (Argument.Expression.ConstantValue Is Nothing OrElse Argument.Expression.ConstantValue Is DBNull.Value) Then
                 Return 0
             ElseIf Helper.CompareType(argType, paramArgType) Then
                 Return 0

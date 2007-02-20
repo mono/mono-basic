@@ -77,7 +77,12 @@ Public Class UsingStatement
                 exceptionEnds2.Push(Info.ILGen.DefineLabel)
             Next
         ElseIf usingExp IsNot Nothing Then
-            Helper.NotImplemented()
+            Dim local As LocalBuilder = Emitter.DeclareLocal(Info, usingExp.ExpressionType)
+            result = usingExp.GenerateCode(Info.Clone(True, False, usingExp.ExpressionType)) AndAlso result
+            Emitter.EmitStoreVariable(Info, local)
+            usingVars.Push(local)
+            exceptionEnds.Push(Info.ILGen.BeginExceptionBlock())
+            exceptionEnds2.Push(Info.ILGen.DefineLabel)
         Else
             Throw New InternalException(Me)
         End If

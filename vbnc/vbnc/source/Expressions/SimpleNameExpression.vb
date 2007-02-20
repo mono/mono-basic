@@ -441,8 +441,7 @@ Public Class SimpleNameExpression
             Dim modulemembers As Generic.List(Of MemberInfo)
             modulemembers = Helper.GetMembersOfTypes(Compiler, Compiler.TypeManager.GetModulesByNamespace(currentNS), Name)
             If modulemembers.Count = 1 Then
-                Helper.NotImplemented()
-                Return True
+                Return SetClassificationOfModuleMembers(modulemembers)
             ElseIf modulemembers.Count > 1 Then
                 Helper.AddError()
             End If
@@ -812,38 +811,45 @@ Public Class SimpleNameExpression
         Dim modules As TypeList = imps.GetModules(Me)
         Dim found As Generic.List(Of MemberInfo)
         found = Helper.GetMembersOfTypes(Compiler, modules, Name)
-        If found.Count >= 1 Then
-            If Helper.IsMethodDeclaration(found(0)) Then
-                Classification = New MethodGroupClassification(Me, Nothing, Nothing, found)
-                Return True
-            End If
-            If found.Count > 1 Then
-                Helper.AddError()
-            End If
-            If Helper.IsTypeDeclaration(found(0)) Then
-                Classification = New TypeClassification(Me, found(0))
-                Return True
-            End If
-            Dim first As MemberInfo = found(0)
-            If Helper.IsFieldDeclaration(first) Then
-                Dim var As FieldInfo = DirectCast(first, FieldInfo)
-                Helper.Assert(Parent.FindFirstParent(Of EnumDeclaration)() Is Nothing)
-
-                Classification = New VariableClassification(Me, var, Nothing)
-                Return True
-            End If
-            If Helper.IsPropertyDeclaration(first) Then
-                Dim var As PropertyInfo = DirectCast(first, PropertyInfo)
-                Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
-                Return True
-            End If
-            Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString)
+        If SetClassificationOfModuleMembers(found) Then
             Return True
         End If
 
         Return False
     End Function
 
+    Private Function SetClassificationOfModuleMembers(ByVal found As Generic.List(Of MemberInfo)) As Boolean
+        If found.Count <= 0 Then
+            Return False
+        End If
+
+        If Helper.IsMethodDeclaration(found(0)) Then
+            Classification = New MethodGroupClassification(Me, Nothing, Nothing, found)
+            Return True
+        End If
+        If found.Count > 1 Then
+            Helper.AddError()
+        End If
+        If Helper.IsTypeDeclaration(found(0)) Then
+            Classification = New TypeClassification(Me, found(0))
+            Return True
+        End If
+        Dim first As MemberInfo = found(0)
+        If Helper.IsFieldDeclaration(first) Then
+            Dim var As FieldInfo = DirectCast(first, FieldInfo)
+            Helper.Assert(Parent.FindFirstParent(Of EnumDeclaration)() Is Nothing)
+
+            Classification = New VariableClassification(Me, var, Nothing)
+            Return True
+        End If
+        If Helper.IsPropertyDeclaration(first) Then
+            Dim var As PropertyInfo = DirectCast(first, PropertyInfo)
+            Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
+            Return True
+        End If
+        Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString)
+        Return True
+    End Function
 
 #If DEBUG Then
     Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
