@@ -17,14 +17,6 @@ echo Set command parameters default.
 IF %VB_BUILD_PARAM_NET_VERSION%=="" SET VB_BUILD_PARAM_NET_VERSION=2
 IF %VB_BUILD_PARAM_CONFIGURATION%=="" SET VB_BUILD_PARAM_CONFIGURATION=debug
 
-echo Build the .NET assembly which will be converted into java.
-SET VB_COMPILE_OPTIONS_J2EE=/define:TARGET_JVM=True
-SET VB_COMPILE_REFERENCES_J2EE=-r:"C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2SE.Helpers.dll"
-call VB.build.bat %VB_BUILD_PARAM_NET_VERSION% %VB_BUILD_PARAM_CONFIGURATION%
-REM clear environment vars
-SET VB_COMPILE_OPTIONS_J2EE=
-SET VB_COMPILE_REFERENCES_J2EE=
-IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 rem ====================================
 rem set environment settings for running J2EE applications
@@ -38,6 +30,14 @@ SET VMW4J2EE_JGAC_DIR=%VMW_HOME%\jgac\vmw4j2ee_110
 :JGAC_DEFINED
 echo using VMW4J2EE_JGAC_DIR=%VMW4J2EE_JGAC_DIR%
 
+echo Build the .NET assembly which will be converted into java.
+SET VB_COMPILE_OPTIONS_J2EE=/define:TARGET_JVM=True
+SET VB_COMPILE_REFERENCES_J2EE=-r:"%VMW4J2EE_JGAC_DIR%\J2SE.Helpers.dll"
+call VB.build.bat %VB_BUILD_PARAM_NET_VERSION% %VB_BUILD_PARAM_CONFIGURATION%
+REM clear environment vars
+SET VB_COMPILE_OPTIONS_J2EE=
+SET VB_COMPILE_REFERENCES_J2EE=
+IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 rem ===========================
 rem = SET CLASSPATH and Java options
@@ -77,14 +77,14 @@ set BUILD_LOG=%COMMON_PREFIX%.build.log
 pushd bin
 echo on
 echo converting dll to jar without validator
-"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre5";"%VMW4J2EE_DIR%\jgac\vmw4j2ee_110" >>%BUILD_LOG% 2<&1
+"%VMW_HOME%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_JGAC_DIR%" >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 echo running java validator
-"%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW4J2EE_DIR%\bin\validator.jar";"%VMW4J2EE_DIR%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
+"%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW_HOME%\bin\validator.jar";"%VMW_HOME%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 popd
 
-rem copy /Y %CD%\bin\Microsoft.VisualBasic.jar "%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\Microsoft.VisualBasic.jar"
+rem copy /Y %CD%\bin\Microsoft.VisualBasic.jar "%VMW4J2EE_JGAC_JARS%\Microsoft.VisualBasic.jar"
 
 
 :FINALLY
