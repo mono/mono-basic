@@ -858,19 +858,20 @@ Public Class CommandLine
     ''' Add all the files corresponding to the specified pattern in the specified
     ''' directory to the list of code files, recursively.
     ''' </summary>
-    Private Function AddFilesInDir(ByVal dir As String, ByVal pattern As String) As Boolean
+    Private Function AddFilesInDir(ByVal dir As String, ByVal relativepath As String, ByVal pattern As String) As Boolean
         Dim strFiles() As String
         Dim result As Boolean = True
 
         strFiles = IO.Directory.GetFiles(dir, pattern)
         For Each strFile As String In strFiles
-            m_lstFileNames.Add(New CodeFile(strFile, Me.Compiler))
+            m_lstFileNames.Add(New CodeFile(strFile, relativepath, Me.Compiler))
         Next
         result = True
         strFiles = IO.Directory.GetDirectories(dir)
         For Each strDir As String In strFiles
-            result = AddFilesInDir(strDir, pattern) AndAlso result
+            result = AddFilesInDir(strDir, IO.Path.Combine(relativepath, System.IO.Path.GetFileName(strDir)), pattern) AndAlso result
         Next
+        'whoami()
         Return result
     End Function
 
@@ -900,6 +901,7 @@ Public Class CommandLine
             Case "recurse"
                 'Add the files
                 Dim strPath As String = System.IO.Path.GetDirectoryName(strValue)
+                Dim strRelativePath As String = strPath
                 Dim strFileName As String
                 If strPath <> "" Then
                     strFileName = strValue.Substring(strPath.Length + 1)
@@ -907,7 +909,7 @@ Public Class CommandLine
                     strPath = IO.Directory.GetCurrentDirectory()
                     strFileName = strValue
                 End If
-                result = AddFilesInDir(strPath, strFileName) AndAlso result
+                result = AddFilesInDir(strPath, strRelativePath, strFileName) AndAlso result
             Case "reference", "r"
                 m_lstReferences.AddRange(Split(strValue, ","))
                 ' - RESOURCES -
@@ -1068,6 +1070,7 @@ Public Class CommandLine
         End Select
         Return result
     End Function
+
     Private Function AddFile(ByVal File As String, ByVal SecondaryPath As String) As Boolean
         Dim result As Boolean = True
 
@@ -1075,7 +1078,7 @@ Public Class CommandLine
         Dim strFiles As String()
         strFiles = GetFullPaths(File, SecondaryPath)
         For Each strFile In strFiles
-            m_lstFileNames.Add(New CodeFile(strFile, Me.Compiler))
+            m_lstFileNames.Add(New CodeFile(strFile, System.IO.Path.GetDirectoryName(File), Me.Compiler))
         Next
 
         Return result

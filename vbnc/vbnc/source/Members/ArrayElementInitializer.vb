@@ -137,8 +137,7 @@ Public Class ArrayElementInitializer
         'Get the set method, if it is a multidimensional array.
         Dim method As MethodInfo = Nothing
         If m_Elements.Count > 1 Then
-            Helper.NotImplemented()
-            'method = GetSetMethod(arraytype)
+            method = GetSetMethod(Compiler, arraytype)
         End If
 
         'Store every element into its index in the array.
@@ -177,19 +176,24 @@ Public Class ArrayElementInitializer
         Return result
     End Function
 
-    <Obsolete("This method cannot be used when the element type is beeing compiled...")> Shared Function GetGetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
+    Shared Function GetGetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
         Dim result As MethodInfo
+        Dim elementType As Type = ArrayType.GetElementType
         Dim ranks As Integer = ArrayType.GetArrayRank
         Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.Integer, ranks)
 
-        'This method cannot be used when the element type is beeing compiled...
-
-        result = ArrayType.GetMethod("Get", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+        If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
+            ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
+            elementType = Helper.GetTypeOrTypeBuilder(elementType)
+            result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Get", CallingConventions.HasThis Or CallingConventions.Standard, elementType, methodtypes)
+        Else
+            result = ArrayType.GetMethod("Get", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+        End If
 
         Return result
     End Function
 
-    <Obsolete("This method cannot be used when the element type is beeing compiled...")> Shared Function GetSetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
+    Shared Function GetSetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
         Dim result As MethodInfo
         Dim elementType As Type = ArrayType.GetElementType
         Dim ranks As Integer = ArrayType.GetArrayRank
@@ -197,7 +201,13 @@ Public Class ArrayElementInitializer
 
         methodtypes(ranks) = elementType
 
-        result = ArrayType.GetMethod("Set", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+        If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
+            ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
+            elementType = Helper.GetTypeOrTypeBuilder(elementType)
+            result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Set", CallingConventions.HasThis Or CallingConventions.Standard, Nothing, methodtypes)
+        Else
+            result = ArrayType.GetMethod("Set", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+        End If
 
         Return result
     End Function

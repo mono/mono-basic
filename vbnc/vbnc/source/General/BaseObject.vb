@@ -261,6 +261,23 @@ Public MustInherit Class BaseObject
         End Get
     End Property
 #End If
+    ReadOnly Property ParentLocationTree() As String
+        Get
+            Dim result As String = ""
+
+            Dim tmp As BaseObject = Me
+            Do Until tmp Is Nothing
+                If tmp.Location Is Nothing Then
+                    result &= "(" & tmp.GetType.Name & "): (no location)" & vb.vbNewLine
+                Else
+                    result &= "(" & tmp.GetType.Name & "): " & tmp.Location.ToString & VB.vbNewLine
+                End If
+                tmp = tmp.Parent
+            Loop
+
+            Return result
+        End Get
+    End Property
 
     ''' <summary>
     ''' Get the token manager used for quick token management.

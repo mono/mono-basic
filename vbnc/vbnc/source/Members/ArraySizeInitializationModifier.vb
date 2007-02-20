@@ -29,6 +29,15 @@ Public Class ArraySizeInitializationModifier
     Private m_BoundList As BoundList
     Private m_ArrayTypeModifiers As ArrayTypeModifiers
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        If m_BoundList IsNot Nothing Then result = m_BoundList.ResolveTypeReferences AndAlso result
+        If m_ArrayTypeModifiers IsNot Nothing Then result = m_ArrayTypeModifiers.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub

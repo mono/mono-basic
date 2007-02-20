@@ -48,7 +48,7 @@ Public Class MethodGroupToValueExpression
         End If
 
         If result = False Then
-            Helper.AddError()
+            Helper.AddError(ParentLocationTree)
             Return False
         End If
 

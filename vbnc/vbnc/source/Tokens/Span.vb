@@ -99,7 +99,7 @@ Public Class Span
             If IncludePath Then
                 Return String.Format("{0} ({1},{2})", File.FileName, Line.ToString, Column.ToString)
             Else
-                Return String.Format("{0} ({1},{2})", IO.Path.GetFileName(File.FileName), Line.ToString, Column.ToString)
+                Return String.Format("{0} ({1},{2})", File.FileNameToReport, Line.ToString, Column.ToString)
             End If
         Else
             Return String.Format("({0},{1})", Line.ToString, Column.ToString)

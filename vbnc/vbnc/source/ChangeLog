@@ -1,3 +1,23 @@
+2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/MethodGroupToValueExpression.vb: Better crash message.
+	* Statements/RedimClause.vb: Do some verification.
+	* Members/ArraySizeInitializationModifier.vb: Resolve some type
+	  references.
+	* Members/ArrayElementInitializer.vb: Implement support for
+	  initializing multi-dimensional arrays.
+	* Tokens/Span.vb: Report relative filename in ToString().
+	* General/CodeFile.vb: Add RelativePath, it's the path of the source
+	  file that was given to the compiler. Used to show error messages
+	  with the same filename as the compiler was given.
+	* General/Helper.vb: EmitLoadArrayElement now uses the Get method on
+	  the array type instead of the slower Get method on Array.
+	* General/CommandLine.vb: Update signature of AddFilesInDir to support
+	  CodeFile.RelativePath.
+	* General/BaseObject.vb: Create ParentLocationTree, will show the
+	  location of all the parents recursively.
+	* Emit/Emitter.vb: Ifed out some consistency checking.
+
 2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/AddressOfExpression.vb, Expressions/GetRefExpression.vb,

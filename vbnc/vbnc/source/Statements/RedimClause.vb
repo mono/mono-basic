@@ -185,8 +185,19 @@ Public Class RedimClause
             m_AssignStatement = assign
         End If
 
-        Compiler.Helper.AddCheck("RedimClause: Each clause in the statement must be classified as a variable or a property access whose type is an array type or Object, and be followed by a list of array bounds.")
-        Compiler.Helper.AddCheck("RedimClause: If the Preserve keyword is specified, then the expressions must also be classifiable as a value,")
+        If m_Expression.Classification.IsPropertyGroupClassification Then
+            m_Expression = m_Expression.ReclassifyToPropertyAccessExpression()
+            result = m_Expression.ResolveExpression(Info) AndAlso result
+        ElseIf m_Expression.Classification.IsVariableClassification Then
+        ElseIf m_Expression.Classification.IsPropertyAccessClassification Then
+        Else
+            Helper.AddError("Redim clause must be classifiable as a property access or variable.")
+        End If
+        If IsPreserve Then
+            If m_Expression.Classification.CanBeValueClassification = False Then
+                Helper.AddError("Redim Preserve clause must be classifiable as a value.")
+            End If
+        End If
 
         Return result
     End Function

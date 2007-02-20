@@ -22,7 +22,6 @@
 #Const DEBUGMETHODADD = 1
 #Const EXTENDEDDEBUG = 0
 #End If
-
 ''' <summary>
 ''' A module of useful global functions.
 ''' </summary>
@@ -1057,13 +1056,18 @@ Public Class Helper
         result = ArrayVariable.GenerateCode(Info) AndAlso result
 
         If isArrayGetValue Then
-            result = EmitIntegerArray(Info, Arguments) AndAlso result
-            Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.Array_GetValue)
-            If ElementType.IsValueType Then
-                Emitter.EmitUnbox(Info, ElementType)
-            Else
-                Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.Object, ElementType)
-            End If
+            result = Arguments.GenerateCode(Info, Helper.CreateArray(Of Type)(Info.Compiler.TypeCache.Integer, Arguments.Length)) AndAlso result
+            'result = EmitIntegerArray(Info, Arguments) AndAlso result
+            Dim getMethod As MethodInfo
+            getMethod = ArrayElementInitializer.GetGetMethod(Info.Compiler, ArrayType)
+            Helper.Assert(getMethod IsNot Nothing)
+            Emitter.EmitCallVirt(Info, getMethod)
+            'Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.Array_GetValue)
+            'If ElementType.IsValueType Then
+            '    Emitter.EmitUnbox(Info, ElementType)
+            'Else
+            '    Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.Object, ElementType)
+            'End If
         Else
             Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.Integer)
             Dim methodtypes(Arguments.Count - 1) As Type
@@ -3319,11 +3323,11 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal method As MethodInfo) As ParameterInfo()
-        dim name as String = method.GetType.Name
+        Dim name As String = method.GetType.Name
         If name = "MethodBuilderInstantiation" Then
             Return method.GetGenericMethodDefinition.GetParameters
         ElseIf name = "SymbolMethod" Then
-            Return New ParameterInfo() {} 'Helper.NotImplemented()
+            Return CreateArray(Of ParameterInfo)(New ParameterDescriptor(Compiler.TypeCache.Integer, 1, Nothing), method.DeclaringType.GetArrayRank())
         Else
             Return method.GetParameters
         End If

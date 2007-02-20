@@ -147,6 +147,8 @@ Public Class SimpleNameExpression
         ElseIf Info.IsLHS Then
             If Me.Classification.IsVariableClassification Then
                 result = Me.Classification.AsVariableClassification.GenerateCode(Info) AndAlso result
+            ElseIf Me.Classification.IsPropertyGroupClassification Then
+                Helper.NotImplemented()
             ElseIf Me.Classification.IsValueClassification Then
                 Throw New InternalException(Me)
             Else

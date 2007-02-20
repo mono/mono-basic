@@ -1119,17 +1119,21 @@ Partial Public Class Emitter
 
         Method = Helper.GetMethodOrMethodBuilder(OriginalMethod)
 
-        If Method.IsStatic Then
-            Throw New InternalException("")
-        ElseIf Method.DeclaringType.IsValueType Then
-            Throw New InternalException("")
-        Else
+#If DEBUG Then
+        If Method.GetType.Name <> "SymbolMethod" Then
+            If Method.IsStatic Then
+                Throw New InternalException("")
+            ElseIf Method.DeclaringType.IsValueType Then
+                Throw New InternalException("")
+            End If
+        End If
+#End If
             Info.Stack.Pop(Method.DeclaringType)
             Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
-        End If
-        If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.Void) = False Then
-            Info.Stack.Push(OriginalMethod.ReturnType)
-        End If
+
+            If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.Void) = False Then
+                Info.Stack.Push(OriginalMethod.ReturnType)
+            End If
     End Sub
 
     ''' <summary>

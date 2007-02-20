@@ -43,6 +43,13 @@ Public Class CodeFile
     Private m_FileName As String
 
     ''' <summary>
+    ''' The path of the filename as given to the compiler.
+    ''' Only includes the path, not the filename.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_RelativePath As String
+
+    ''' <summary>
     ''' The imports clauses this file has.
     ''' </summary>
     Private m_Imports As ImportsClauses
@@ -96,6 +103,15 @@ Public Class CodeFile
             If m_UTF8Throw Is Nothing Then m_UTF8Throw = New System.Text.UTF8Encoding(False, True)
             Return m_UTF8Throw
         End Get
+    End Property
+
+    Property RelativePath() As String
+        Get
+            Return m_RelativePath
+        End Get
+        Set(ByVal value As String)
+            m_RelativePath = value
+        End Set
     End Property
 
     ReadOnly Property SymbolDocument() As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
@@ -222,10 +238,11 @@ Public Class CodeFile
     ''' </summary>
     ''' <param name="FileName"></param>
     ''' <remarks></remarks>
-    Sub New(ByVal FileName As String, ByVal Parent As IBaseObject)
+    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As IBaseObject)
         MyBase.New(Parent)
         'Try to get the absolute path for all files.
         m_FileName = IO.Path.GetFullPath(FileName)
+        m_RelativePath = RelativePath
     End Sub
 
     ''' <summary>
@@ -312,6 +329,18 @@ Public Class CodeFile
     ReadOnly Property FileName() As String
         Get
             Return m_FileName
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The filename to report to the user in errors.
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    ReadOnly Property FileNameToReport() As String
+        Get
+            Return System.IO.Path.Combine(m_RelativePath, System.IO.Path.GetFileName(m_FileName))
         End Get
     End Property
 
