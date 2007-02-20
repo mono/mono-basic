@@ -426,7 +426,7 @@ Class frmMain
     Private Sub UpdateUI(ByVal test As Test, Optional ByVal UpdateSummary As Boolean = True)
         If test Is Nothing Then UpdateUI()
         If Me.InvokeRequired Then
-            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUI), test, UpdateSummary)
+            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUI), New Object () {test, UpdateSummary})
         Else
             If Me.Disposing OrElse Me.IsDisposed Then StopIfDebugging() : Return
 
