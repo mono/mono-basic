@@ -97,7 +97,9 @@ Friend Class TestExecutor
             Dim test As Test
             SyncLock m_Queue
                 If m_Queue.Count > 0 Then
-                    test = m_Queue.First.Value
+                    Dim theFirst As Generic.LinkedListNode(Of Test)
+                    theFirst = m_Queue.First
+                    test = theFirst.Value
                     m_Queue.RemoveFirst()
                 Else
                     test = Nothing

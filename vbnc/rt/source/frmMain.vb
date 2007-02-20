@@ -935,12 +935,12 @@ Class frmMain
 
     Private Function GetReflectorPath() As String
         Dim path As String
-        path = GetSetting(My.Application.Info.Title, Me.Name, "Reflector", Environment.ExpandEnvironmentVariables("%PROGRAMFILES%\Reflector\Reflector.exe"))
+        path = GetSetting(Application.ProductName, Me.Name, "Reflector", Environment.ExpandEnvironmentVariables("%PROGRAMFILES%\Reflector\Reflector.exe"))
         If IO.File.Exists(path) = False Then
             path = InputBox("Path of reflector: ")
         End If
         If path <> "" Then
-            SaveSetting(My.Application.Info.Title, Me.Name, "Reflector", path)
+            SaveSetting(Application.ProductName, Me.Name, "Reflector", path)
         End If
         Return path
     End Function
@@ -1212,7 +1212,7 @@ Class frmMain
 
         SyncLock sync
             If thread Is Nothing Then
-                thread = New Threading.Thread(AddressOf LoadOldResults)
+                thread = New Threading.Thread(New Threading.ThreadStart(AddressOf LoadOldResults))
                 thread.Start()
                 Exit Sub
             End If

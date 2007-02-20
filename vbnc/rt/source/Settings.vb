@@ -144,10 +144,10 @@ Namespace My
 
         End Sub
         Shared Function GetSetting(ByVal Name As String, ByVal DefaultValue As Object) As String
-            Return Microsoft.VisualBasic.GetSetting(Application.Info.ProductName, "Settings", Name, CStr(DefaultValue))
+            Return Microsoft.VisualBasic.GetSetting(System.Windows.Forms.Application.ProductName, "Settings", Name, CStr(DefaultValue))
         End Function
         Shared Sub SaveSetting(ByVal Name As String, ByVal Value As Object)
-            Microsoft.VisualBasic.SaveSetting(Application.Info.ProductName, "Settings", Name, CStr(Value))
+            Microsoft.VisualBasic.SaveSetting(System.Windows.Forms.Application.ProductName, "Settings", Name, CStr(Value))
         End Sub
     End Class
 

@@ -129,7 +129,7 @@ Public Class EnhancedProgressBar
 
     Protected Overrides Sub OnResize(ByVal e As System.EventArgs)
         MyBase.OnResize(e)
-        Dim r As New RectangleF(New Point(0, 0), Me.Size)
+        Dim r As New RectangleF(New PointF(0, 0), New SizeF(Me.Size.Width, Me.Size.Height))
         r.Height -= 1
         r.Width -= 1
         m_DrawingRegion = GetRoundedRect(r, RECTRADIUS)
@@ -252,12 +252,12 @@ Public Class EnhancedProgressBar
                     Else
                         Dim lrect As RectangleF
 
-                        lrect.Size = Me.Size 'lrect = e.ClipRectangle
+                        lrect.Size = New SizeF(Me.Size.Width, Me.Size.Height) 'lrect = e.ClipRectangle
                         If Double.IsInfinity(accumulated(i)) OrElse Double.IsNaN(accumulated(i)) Then accumulated(i) = 0
                         lrect.Width = CInt(Me.Width * accumulated(i)) 'lrect.Width = CInt(e.ClipRectangle.Width * accumulated(i) + e.ClipRectangle.Left)
                         lrect.Height -= 1
 
-                        Using lReg As Drawing2D.GraphicsPath = Me.GetRoundedRect(New RectangleF(New Point(0, 0), lrect.Size), RECTRADIUS, True)
+                        Using lReg As Drawing2D.GraphicsPath = Me.GetRoundedRect(New RectangleF(New PointF(0, 0), New SizeF(lrect.Size.Width, lrect.Size.Height)), RECTRADIUS, True)
                             e.Graphics.FillPath(m_Values(i).ColorBrush, lReg)
                         End Using
                     End If
