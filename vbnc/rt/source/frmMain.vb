@@ -476,7 +476,7 @@ Class frmMain
     ''' <remarks></remarks>
     Private Sub UpdateUITestRunning(ByVal test As Test, Optional ByVal UpdateSummary As Boolean = True)
         If Me.InvokeRequired Then
-            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUITestRunning), test, UpdateSummary)
+            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUITestRunning), new Object() {test, UpdateSummary})
         Else
             If Me.IsDisposed Then StopIfDebugging() : Return
             Dim item As ListViewItem = TryCast(test.Tag, ListViewItem)
