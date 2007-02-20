@@ -410,7 +410,7 @@ Class frmMain
                 Node.ImageIndex = Me.BlueIconIndex
             End If
             Node.SelectedImageIndex = Node.ImageIndex
-            Node.StateImageIndex = Node.ImageIndex
+            '(not implemnted in winforms yet)'Node.StateImageIndex = Node.ImageIndex
         End If
 
         For Each subnode As TreeNode In Node.Nodes
@@ -450,7 +450,7 @@ Class frmMain
                 newStateImageIndex = m_RedIndex
             End If
             If item.StateImageIndex <> newStateImageIndex Then
-                item.StateImageIndex = newStateImageIndex
+                '(not implemnted in winforms yet)'item.StateImageIndex = newStateImageIndex
             End If
 
             If UpdateSummary Then Me.UpdateSummary()
@@ -495,7 +495,7 @@ Class frmMain
             item.SubItems(3).Text = ""
             item.SubItems(4).Text = ""
             item.SubItems(5).Text = ""
-            item.StateImageIndex = m_BlueIndex
+            '(not implemnted in winforms yet)'item.StateImageIndex = m_BlueIndex
         End If
     End Sub
 

@@ -1,6 +1,11 @@
+2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* frmMain.vb: Remove references to ListView.StateImageIndex, doesn't
+	  seem to be implemented in winforms yet.
+
 2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
-	* Test.vb: Don't test the selfcompiled executable (since it is supposed
+ 	* Test.vb: Don't test the selfcompiled executable (since it is supposed
 	  to fail with no commandline arguments). Also update the logic to
 	  determine the target of the test to support both / and -.
 	* ExternalProcessVerification.vb, ExternalProcessExecutor.vb: An
