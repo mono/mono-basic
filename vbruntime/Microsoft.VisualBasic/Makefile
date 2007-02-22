@@ -32,4 +32,4 @@ DISTFILES =	\
 	2005VB.sln
 
 Microsoft.VisualBasic.dll.sources: 2005VB.vbproj
-	MONO_PATH="../../class/lib/bootstrap:$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l
+	MONO_PATH="../../class/lib/bootstrap:$(MONO_PATH)" mono ../../tools/extract-source/extract-source.exe -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l
