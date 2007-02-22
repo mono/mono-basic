@@ -30,7 +30,7 @@ Public Class Helper
     Private m_Compiler As Compiler
     Private Shared m_SharedCompilers As New Generic.List(Of Compiler)
 
-    Public Shared LOGMETHODRESOLUTION As Boolean = False
+    Public Shared LOGMETHODRESOLUTION As Boolean = True
 
     Public Const ALLMEMBERS As BindingFlags = BindingFlags.FlattenHierarchy Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
 
@@ -1870,7 +1870,7 @@ Public Class Helper
 
         End Try
 
-        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined method '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
+        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined method '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
 
         Try
             System.Console.ResetColor()
@@ -1895,7 +1895,7 @@ Public Class Helper
         Dim name As String = tp.FullName & ":" & Method.Name
 
 #If EXTENDEDDEBUG Then
-        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined ctor '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
+        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined ctor '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
 #End If
 
     End Sub
@@ -3355,7 +3355,7 @@ Public Class Helper
         Dim name As String = method.GetType.Name
         If name = "MethodBuilderInstantiation" Then
             Return method.GetGenericMethodDefinition.GetParameters
-        ElseIf name = "SymbolMethod" Then
+        ElseIf name = "SymbolMethod" OrElse name = "MonoArrayMethod" Then
             Return CreateArray(Of ParameterInfo)(New ParameterDescriptor(Compiler.TypeCache.Integer, 1, Nothing), method.DeclaringType.GetArrayRank())
         Else
             Return method.GetParameters

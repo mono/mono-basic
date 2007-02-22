@@ -1,3 +1,16 @@
+2007-02-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/MethodGroupToValueExpression.vb: Add more extended debug
+	  information.
+	* Expressions/Classifications/MethodGroupClassification.vb: Remove
+	  debug information.
+	* Emit/Emitter.vb: Correct indenting.
+	* General/CodeFile.vb: Now encoding defaults to the one specified on
+	  the command line (if none, default is based on current locale), but
+	  BOMs are detected anyways.
+	* General/Helper.vb: Debugging info.
+	* General/AssemblyInfo.vb: Version bump.
+
 2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/SimpleNameExpression.vb: Implement resolution of members

@@ -48,7 +48,11 @@ Public Class MethodGroupToValueExpression
         End If
 
         If result = False Then
-            Helper.AddError(ParentLocationTree)
+            Report.WriteLine("Method group resolution failed, showing log.")
+            Helper.LOGMETHODRESOLUTION = True
+            result = m_MethodGroup.ResolveGroup(New ArgumentList(Me.Parent), Nothing) AndAlso result
+            Helper.LOGMETHODRESOLUTION = False
+            Helper.AddError("Could not resolve MethodGroup, Location=" & Me.Parent.Location.ToString)
             Return False
         End If
 

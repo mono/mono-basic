@@ -1128,12 +1128,12 @@ Partial Public Class Emitter
             End If
         End If
 #End If
-            Info.Stack.Pop(Method.DeclaringType)
-            Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
+        Info.Stack.Pop(Method.DeclaringType)
+        Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
 
-            If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.Void) = False Then
-                Info.Stack.Push(OriginalMethod.ReturnType)
-            End If
+        If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.Void) = False Then
+            Info.Stack.Push(OriginalMethod.ReturnType)
+        End If
     End Sub
 
     ''' <summary>

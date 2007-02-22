@@ -17,7 +17,8 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 #If DEBUG Then
-#Const DEBUGMETHODRESOLUTION = 1
+#Const DEBUGMETHODRESOLUTION = 0
+#Const EXTENDEDDEBUG = 0
 #End If
 
 Imports System.Reflection

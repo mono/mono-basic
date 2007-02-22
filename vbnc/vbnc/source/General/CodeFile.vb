@@ -291,28 +291,10 @@ Public Class CodeFile
         Get
             Dim FileStream As System.IO.FileStream
             Dim StreamReader As System.IO.StreamReader
-            Dim Encoding As System.Text.Encoding
-            Dim IsUTF8 As Boolean
 
             Try
                 FileStream = New System.IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-
-                Encoding = Compiler.CommandLine.Encoding
-                IsUTF8 = Encoding.CodePage = 65001
-
-                ' No UTF-8 detection required when default is UTF-8.
-                'If Not IsUTF8 Then
-                '    ' Decode using UTF-8 when can be decoded using UTF-8.
-                '    StreamReader = New System.IO.StreamReader(FileStream, UTF8Throw, True)
-                '    Try
-                '        Return StreamReader
-                '    Catch e As ArgumentException
-                '        FileStream.Position = 0
-                '    End Try
-                'End If
-
-                ' Byte order mark was already detected when default is not UTF-8.
-                StreamReader = New System.IO.StreamReader(FileStream, Encoding, IsUTF8)
+                StreamReader = New System.IO.StreamReader(FileStream, Compiler.CommandLine.Encoding, True)
                 Return StreamReader
             Catch e As Exception
                 Compiler.Report.ShowMessage(Messages.VBNC31007, FileName)
