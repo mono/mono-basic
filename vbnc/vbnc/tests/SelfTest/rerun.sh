@@ -1,1 +1,1 @@
-mono --debug vbnc.exe @SelfCompileLinux.response
+mono --debug vbnc.exe @SelfCompileLinux.response $@
