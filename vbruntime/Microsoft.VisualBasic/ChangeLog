@@ -1,3 +1,8 @@
+2007-02-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbruntime.rsp: Add -codepage:65001, makes compilation
+	independent of the current locale of the user.
+
 2007-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win: Updated.
