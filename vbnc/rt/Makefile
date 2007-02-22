@@ -8,5 +8,9 @@ PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll,System.Windows.Fo
 
 include ../../build/executable.make
 
+DISTFILES = \
+	Makefile                \
+	source/rt.vbproj
+
 rt.exe.sources: source/rt.vbproj
 	MONO_PATH="../../class/lib/bootstrap:$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/rt.vbproj -b:source/ -d:rt.exe.sources -m:l -x:r
