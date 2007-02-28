@@ -2,7 +2,7 @@ thisdir = vbnc/vbnc/tests
 SUBDIRS =
 include ../../../build/rules.make
 
-DISTFILES = readme.txt
+DISTFILES = Readme.txt
 DISTFILES += $(wildcard */*.vb) $(wildcard */*.rsp) $(wildcard */*.response)  \
              $(wildcard */*/*.vb) $(wildcard */*/*.rsp) $(wildcard */*/*.response)  \
              $(wildcard */*/*/*.vb) $(wildcard */*/*/*.rsp) $(wildcard */*/*/*.response) 
