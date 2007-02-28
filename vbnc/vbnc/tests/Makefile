@@ -1,8 +1,14 @@
 thisdir = vbnc/vbnc/tests
-SUBDIRS = 
+SUBDIRS =
 include ../../../build/rules.make
 
+DISTFILES = readme.txt
+DISTFILES += $(wildcard */*.vb) $(wildcard */*.rsp) $(wildcard */*.response)  \
+             $(wildcard */*/*.vb) $(wildcard */*/*.rsp) $(wildcard */*/*.response)  \
+             $(wildcard */*/*/*.vb) $(wildcard */*/*/*.rsp) $(wildcard */*/*/*.response) 
+
 test-local:
+	cd ../../rt-console && $(MAKE) && cd ../../$(thisdir)
 	MONO_PATH="../../../class/lib/vbnc:$(MONO_PATH)" mono --debug ../../rt-console/rt-console.exe -f=on -c=../../../class/lib/vbnc/vbnc.exe -b=./ -r=on
 
 

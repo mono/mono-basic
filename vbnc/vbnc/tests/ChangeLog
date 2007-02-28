@@ -1,3 +1,8 @@
+2007-02-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Update DISTFILES to include all test files.
+	* Readme.txt: Updated.
+
 2007-02-23  Wade Berrier  <wberrier@novell.com>
 	
 	* Makefile: Adjust MONO_PATH to use newly built runtime assembly (otherwise, Microsoft.VisualBasic
