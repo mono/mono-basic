@@ -28,15 +28,14 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_2_0 Then
+
 Imports System
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
-'MONOTODO:("What should it do?")
+
 Namespace Microsoft.VisualBasic.CompilerServices
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Parameter, Inherited:=False, AllowMultiple:=False), EditorBrowsable(EditorBrowsableState.Never)> _
     Public NotInheritable Class OptionCompareAttribute
         Inherits Attribute
     End Class
 End Namespace
-#End If
