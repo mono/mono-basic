@@ -1,3 +1,9 @@
+2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb: CorCompare work.
+	* Helper.vb: Changed encoding to 65001 without signature.
+	* 2005VB.vbproj: Updated.
+
 2007-02-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbruntime.rsp: Add -codepage:65001, makes compilation

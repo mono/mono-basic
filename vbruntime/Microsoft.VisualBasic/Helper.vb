@@ -1678,11 +1678,12 @@ Public Class FileSystemTest
         Dim dir As String = Path.Combine(BASEDIR, testname)
         Dim a As String = Path.Combine(dir, "a.txt")
 
+
         FS.CreateDirectory(dir)
 
         Dim contents As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         Using writer As StreamWriter = FS.OpenTextFileWriter(a, False)
             writer.Write(contents)
         End Using
@@ -1717,7 +1718,7 @@ Public Class FileSystemTest
         Dim contents As String
         Dim wrongContents As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
         Using writer As StreamWriter = FS.OpenTextFileWriter(a, False, System.Text.Encoding.ASCII)
             writer.Write(contents)
@@ -1751,7 +1752,7 @@ Public Class FileSystemTest
         Dim contents As String
         Dim wrongContents As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
         Using writer As StreamWriter = FS.OpenTextFileWriter(a, False, System.Text.Encoding.ASCII)
             writer.Write(contents)
@@ -1774,7 +1775,7 @@ Public Class FileSystemTest
         Dim contents As String
         Dim wrongContents As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
         Using writer As StreamWriter = FS.OpenTextFileWriter(a, False, System.Text.Encoding.ASCII)
             writer.Write(contents)
@@ -1827,7 +1828,7 @@ Public Sub RenameFileTest1()
         Dim contents As String
         Dim wrongContents As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
         Using writer As StreamWriter = FS.OpenTextFileWriter(a, False, System.Text.Encoding.ASCII)
             writer.Write(contents)
@@ -1854,7 +1855,7 @@ Public Sub RenameFileTest1()
 
 
         Dim contents As String
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
 
         Dim bytes(), bytesb() As Byte
 
@@ -1881,7 +1882,7 @@ Public Sub RenameFileTest1()
         Dim wrongContents As String
         Dim result As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
 
         FS.WriteAllText(a, contents, False)
@@ -1905,7 +1906,7 @@ Public Sub RenameFileTest1()
         Dim wrongContents As String
         Dim result As String
 
-        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "ñ÷`-¨192" & vbNewLine
+        contents = "Line1" & vbNewLine & "Line2" & vbNewLine & "Ã±Ã·`-Â¨192" & vbNewLine
         wrongContents = "Line1" & vbNewLine & "Line2" & vbNewLine & "??`-?192" & vbNewLine
 
         FS.WriteAllText(a, contents, False, System.Text.Encoding.BigEndianUnicode)

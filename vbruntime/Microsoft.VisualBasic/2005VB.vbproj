@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -22,7 +22,7 @@
     <DocumentationFile>Microsoft.VisualBasic.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
-    <DefineConstants>NET_2_0=True,_MYTYPE="Empty",mono_not_yet=true,INDEVENV=true</DefineConstants>
+    <DefineConstants>NET_2_0=True,_MYTYPE="Empty",mono_not_yet=true,INDEVENV=true,NET_VER=2.0</DefineConstants>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
@@ -68,7 +68,6 @@
   <ItemGroup>
     <Import Include="System" />
     <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
     <Import Include="System.Data" />
     <Import Include="System.Diagnostics" />
   </ItemGroup>

@@ -31,6 +31,9 @@
 Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
+Imports System.Runtime.CompilerServices
+Imports System.Resources
+Imports System.Security
 
 ' General Information about an assembly is controlled through the following 
 ' set of attributes. Change these attribute values to modify the information
@@ -39,40 +42,38 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("vbruntime")> 
-<Assembly: AssemblyDescription("")> 
+<Assembly: AssemblyDescription("Microsoft.VisualBasic.dll")> 
 <Assembly: AssemblyCompany("Ximian")> 
 <Assembly: AssemblyProduct("vbruntime")> 
 <Assembly: AssemblyCopyright("Copyright © Ximian 2006")> 
-<Assembly: AssemblyTrademark("")> 
 
-<Assembly: ComVisible(False)>
+<Assembly: NeutralResourcesLanguage("en-US")> 
+<Assembly: AllowPartiallyTrustedCallers()> 
 
-#If NET_2_0 Then
-'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
-#Else
-<Assembly: Guid("d5e192e2-301b-49b5-9b05-da883f937c84")> 
-<Assembly: CLSCompliant(True)> 
-#End If
 
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-' <Assembly: AssemblyVersion("1.0.*")> 
-
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 <Assembly: AssemblyVersion("8.0.0.0")> 
+<Assembly: ComVisible(True)> 
+'<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
+<Assembly: CLSCompliant(True)> 
+<Assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default Or DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)> 
+<Assembly: CompilationRelaxations(CompilationRelaxations.NoStringInterning)> 
+<Assembly: RuntimeCompatibility(WrapNonExceptionThrows:=True)> 
+<Assembly: SatelliteContractVersion("8.0.0.0")> 
+<Assembly: AssemblyInformationalVersion("8.0.50727.42")> 
+<Assembly: AssemblyFileVersion("8.0.50727.42")> 
+<Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
 #Else
 <Assembly: AssemblyVersion("7.0.5000.0")> 
+<Assembly: ComVisible(False)>
+'<Assembly: Guid("d5e192e2-301b-49b5-9b05-da883f937c84")> 
+<Assembly: ComCompatibleVersion (7, 0, 3300, 0)>
+<Assembly: SatelliteContractVersion ("7.0.5000.0")>
+<Assembly: TypeLibVersion (7, 1)>
 #End If
 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+
+
 <Assembly: AssemblyDelaySign(True)> 
 #If TARGET_JVM = False And INDEVENV = False Then
 <Assembly: AssemblyKeyFile("msfinal.pub")> 

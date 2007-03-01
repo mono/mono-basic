@@ -1,0 +1,90 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D1E99600-0061-4184-9778-85422E238DB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MonoTests.Microsoft_VisualBasic</RootNamespace>
+    <AssemblyName>Microsoft.2005_VisualBasic_test</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>NET_2_0=true</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\mcs\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\BooleanTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DecimalTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DoubleTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\IntegerTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\LongTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\ShortTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\SingleTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\StringTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\UtilsTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineException.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\SpecialDirectoriesTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\TextFieldParserTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\FileLogTraceListener.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\LogTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\AspLogTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices.Internal\ContextValueTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\ClipboardProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\FileSystemProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\SpecialDirectoriesProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic\CollectionTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\ConversionTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\DateAndTimeTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\ErrObjectTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\FinancialTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\InformationTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\InteractionTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\StringsTest.cs" />
+    <Compile Include="Microsoft.VisualBasic\VBMathTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\Helper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
