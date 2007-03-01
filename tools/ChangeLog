@@ -1,0 +1,11 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added win-make.
+
+2007-01-25  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: spaces -> tab
+
+2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Added extract-source.
