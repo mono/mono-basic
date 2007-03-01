@@ -1,3 +1,38 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	*  FirstWeekOfYear.vb:
+	*  DueDate.vb:
+	*  Constants.vb:
+	*  CallType.vb:
+	*  AppWinStyle.vb:
+	*  DateAndTime.vb:
+	*  ErrObject.vb:
+	*  TabInfo.vb:
+	*  OpenAccess.vb:
+	*  FileSystem.vb:
+	*  FirstDayOfWeek.vb:
+	*  CompareMethod.vb:
+	*  TriState.vb:
+	*  SpcInfo.vb:
+	*  HideModuleNameAttribute.vb:
+	*  VariantType.vb:
+	*  OpenMode.vb:
+	*  MsgBoxStyle.vb:
+	*  DateInterval.vb:
+	*  OpenShare.vb:
+	*  Conversion.vb:
+	*  Information.vb:
+	*  DateFormat.vb:
+	*  ComClassAttribute.vb:
+	*  Strings.vb:
+	*  Collection.vb:
+	*  AudioPlayMode.vb:
+	*  MsgBoxResult.vb:
+	*  MyGroupCollectionAttribute.vb:
+	*  FileAttribute.vb: CorCompare work.
+
+
+
 2006-12-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Strings.vb: Removed a warning.

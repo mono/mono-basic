@@ -30,12 +30,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
     Public Enum DateInterval As Integer
-#Else
-    Public Enum DateInterval As Integer
-#End If
         Year = 0
         Quarter = 1
         Month = 2

@@ -30,12 +30,11 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-    <System.Serializable()> _
     Public Enum MsgBoxResult As Integer
         OK = 1
         Cancel = 2
         Abort = 3
-        ReTry = 4
+        Retry = 4
         Ignore = 5
         Yes = 6
         No = 7

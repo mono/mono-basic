@@ -34,11 +34,27 @@ Imports System
 Imports System.Runtime.InteropServices
 Imports System.Collections
 Imports System.ComponentModel
+Imports System.Runtime.Serialization
+Imports System.Reflection
 
 Namespace Microsoft.VisualBasic
+#If NET_VER >= 2.0 Then
+    '<DebuggerTypeProxy ("??")>
+    <DefaultMember("Item")> _
+    <Serializable()> _
+    <DebuggerDisplay("Count = {Count}")> _
     Public NotInheritable Class Collection
+#Else
+    <DefaultMember("Item")> _
+    Public NotInheritable Class Collection
+#End If
+
         Implements ICollection
         Implements IList
+#If NET_VER >= 2.0 Then
+        Implements ISerializable
+        Implements IDeserializationCallback
+#End If
 
         ' Declarations
         Private m_Hashtable As Hashtable = New Hashtable
@@ -202,7 +218,7 @@ Namespace Microsoft.VisualBasic
             End Set
         End Property
 
-        Public Function IndexOf(ByVal value As Object) As Integer Implements System.Collections.IList.IndexOf
+        Friend Function IndexOf(ByVal value As Object) As Integer Implements System.Collections.IList.IndexOf
 
             Dim index As Integer = -1
 
@@ -231,10 +247,18 @@ Namespace Microsoft.VisualBasic
             Return (CType(Me, IList)).IndexOf(value) <> -1
         End Function
 
-        Private Sub Clear() Implements System.Collections.IList.Clear
+#If NET_VER >= 2.0 Then
+        Public Sub Clear()
+#Else
+        Private Sub Clear()
+#End If
             m_Hashtable.Clear()
             m_HashIndexers.Clear()
             m_KeysCount = Integer.MinValue
+        End Sub
+
+        Private Sub IList_Clear() Implements System.Collections.IList.Clear
+            Clear()
         End Sub
 
         Public Sub Remove(ByVal Key As String)
@@ -417,5 +441,14 @@ Namespace Microsoft.VisualBasic
             Return IEnumerable_GetEnumerator()
         End Function
 
+#If NET_VER >= 2.0 Then
+        Public Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
+            Throw New NotImplementedException
+        End Sub
+
+        Public Sub OnDeserialization(ByVal sender As Object) Implements System.Runtime.Serialization.IDeserializationCallback.OnDeserialization
+            Throw New NotImplementedException
+        End Sub
+#End If
     End Class
 End Namespace

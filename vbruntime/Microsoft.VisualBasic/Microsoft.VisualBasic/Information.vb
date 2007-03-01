@@ -30,9 +30,11 @@
 '
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
+Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic
     Public Module Information
+        <EditorBrowsable(EditorBrowsableState.Never)> _
         Public Function Erl() As Integer
             Return Err.Erl
         End Function
@@ -42,7 +44,7 @@ Namespace Microsoft.VisualBasic
             Dim pd As CompilerServices.ProjectData
             pd = CompilerServices.ProjectData.Instance
 
-            Return pd.projectError
+            Return pd.ProjectError
         End Function
         Public Function IsArray(ByVal VarName As Object) As Boolean
             If VarName Is Nothing Then
@@ -94,7 +96,7 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function IsNumeric(ByVal Expression As Object) As Boolean
 
-            If (Expression Is Nothing) Or (TypeOf Expression Is Date) Then return False
+            If (Expression Is Nothing) Or (TypeOf Expression Is Date) Then Return False
 
             If (TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
                 Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _

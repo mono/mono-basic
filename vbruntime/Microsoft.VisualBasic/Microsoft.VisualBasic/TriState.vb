@@ -34,12 +34,7 @@ Namespace Microsoft.VisualBasic
     '/ When you call number-formatting functions, you can use the following enumeration 
     '/ members in your code in place of the actual values.
     '/ </summary>
-#If NET_2_0 Then
-   	<System.Serializable> _ 
     Public Enum TriState As Integer
-#Else
-    Public Enum TriState As Integer
-#End If
         [False] = 0
         UseDefault = -2
         [True] = -1

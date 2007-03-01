@@ -33,8 +33,8 @@ Imports System
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
-Namespace Microsoft.VisualBasic
-    <AttributeUsage(AttributeTargets.Class)> _
+Namespace Microsoft.VisualBasicç
+    <AttributeUsage(AttributeTargets.Class, AllowMultiple:=False, Inherited:=False)> _
     Public NotInheritable Class HideModuleNameAttribute
         Inherits Attribute
     End Class

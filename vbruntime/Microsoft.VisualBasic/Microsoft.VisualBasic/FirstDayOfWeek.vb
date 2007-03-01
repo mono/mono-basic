@@ -30,12 +30,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
-	Public Enum FirstDayOfWeek As Integer
-#Else
     Public Enum FirstDayOfWeek As Integer
-#End If
         System = 0
         Sunday = 1
         Monday = 2

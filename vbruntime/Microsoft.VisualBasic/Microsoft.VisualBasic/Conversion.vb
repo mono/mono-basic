@@ -547,27 +547,35 @@ Namespace Microsoft.VisualBasic
 
         End Function
 #If NET_2_0 Then
+        <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As SByte) As String
             Return NumberToHex(CByte(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As UShort) As String
             Return NumberToHex(CShort(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As UInteger) As String
             Return NumberToHex(CInt(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As ULong) As String
             Return NumberToHex(CLng(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As SByte) As String
             Return NumberToOct(CByte(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As UShort) As String
             Return NumberToOct(CShort(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As UInteger) As String
             Return NumberToOct(CInt(Number))
         End Function
+        <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As ULong) As String
             Return NumberToOct(CLng(Number))
         End Function

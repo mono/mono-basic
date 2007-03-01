@@ -144,7 +144,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
-                        Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
+                        <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
             Dim Temp(Source.Length) As String
 
             If Compare = CompareMethod.Text Then
@@ -178,7 +178,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function Filter(ByVal Source() As String, ByVal Match As String, Optional ByVal Include As Boolean = True, _
-                            Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
+                            <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
             Dim oarr() As Object = Source
             Return Filter(oarr, Match, Include, Compare)
         End Function
@@ -540,7 +540,7 @@ Namespace Microsoft.VisualBasic
 
 
         Public Function InStr(ByVal Start As Integer, ByVal String1 As String, ByVal String2 As String, _
-                                Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
+                                <OptionCompare()> Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
 
             If Start < 1 Then
                 Throw New ArgumentException("Argument 'Start' must be greater or equal to zero.")
@@ -576,13 +576,13 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function InStr(ByVal String1 As String, ByVal String2 As String, _
-                                Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
+                               <OptionCompare()> Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
             Return InStr(1, String1, String2, Compare)
         End Function
 
         Public Function InStrRev(ByVal StringCheck As String, ByVal StringMatch As String, _
                                         Optional ByVal Start As Integer = -1, _
-                                        Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
+                                        <OptionCompare()> Optional ByVal Compare As Microsoft.VisualBasic.CompareMethod = 0) As Integer
             If Start = 0 Or Start < -1 Then
                 Throw New ArgumentException("Argument 'Start' must be greater than 0 or equal to -1.")
             End If
@@ -843,7 +843,7 @@ Namespace Microsoft.VisualBasic
 
         Public Function Replace(ByVal Expression As String, ByVal Find As String, ByVal Replacement As String, _
                                 Optional ByVal Start As Integer = 1, Optional ByVal Count As Integer = -1, _
-                                Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String
+                                <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String
             If Count < -1 Then
                 Throw New ArgumentException("Argument 'Count' must be greater than or equal to -1.")
             End If
@@ -979,7 +979,7 @@ Namespace Microsoft.VisualBasic
 
         Public Function Split(ByVal Expression As String, Optional ByVal Delimiter As String = " ", _
                 Optional ByVal Limit As Integer = -1, _
-                Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
+                <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
 
             If Expression Is Nothing Or Expression = String.Empty Then
                 Dim r(0) As String
@@ -1038,7 +1038,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function StrComp(ByVal String1 As String, ByVal String2 As String, _
-                        Optional ByVal Compare As CompareMethod = 0) As Integer
+                        <OptionCompare()> Optional ByVal Compare As CompareMethod = 0) As Integer
 
             If String1 Is Nothing Then
                 String1 = String.Empty
@@ -1179,15 +1179,22 @@ Namespace Microsoft.VisualBasic
             Return Value.ToUpper()
         End Function
 #If NET_2_0 Then
+        <CLSCompliant(False)> _
         Public Function Len(ByVal Expression As SByte) As Integer
             Return GetSize(Expression)
         End Function
+
+        <CLSCompliant(False)> _
         Public Function Len(ByVal Expression As UInteger) As Integer
             Return GetSize(Expression)
         End Function
+
+        <CLSCompliant(False)> _
         Public Function Len(ByVal Expression As ULong) As Integer
             Return GetSize(Expression)
         End Function
+
+        <CLSCompliant(False)> _
         Public Function Len(ByVal Expression As UShort) As Integer
             Return GetSize(Expression)
         End Function

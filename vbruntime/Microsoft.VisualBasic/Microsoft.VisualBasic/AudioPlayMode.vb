@@ -30,7 +30,6 @@
 '
 #If NET_2_0 Then
 Namespace Microsoft.VisualBasic
-    <System.Serializable()> _
     Public Enum AudioPlayMode As Short
         Background = 1
         BackgroundLoop = 2

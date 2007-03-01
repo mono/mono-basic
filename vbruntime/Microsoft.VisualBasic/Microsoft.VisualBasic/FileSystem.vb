@@ -312,7 +312,12 @@ Namespace Microsoft.VisualBasic
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
             Throw New NotImplementedException
         End Sub
+#If NET_VER >= 2.0 Then
+        <Obsolete("This member has been deprectated. Try FilePutObject.")> _
         Public Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
+#Else
+        Public Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
+#End If
             Throw New NotImplementedException
         End Sub
         Public Sub FilePutObject(ByVal FileNumber As Integer, ByVal Value As Object, Optional ByVal RecordNumber As Long = -1)
@@ -330,7 +335,7 @@ Namespace Microsoft.VisualBasic
 #If TARGET_JVM = False Then
             Dim ch As Char
 #If NET_2_0 Then
-            For Each ch In Path.GetInvalidPathChars()                
+            For Each ch In Path.GetInvalidPathChars()
 #Else
             For Each ch In Path.InvalidPathChars
 #End If
@@ -402,7 +407,7 @@ Namespace Microsoft.VisualBasic
             If (last_ch = -1) Then
                 str_parent_dir = Directory.GetCurrentDirectory()
             Else
-            	str_parent_dir = PathName.Substring(0, last_ch)
+                str_parent_dir = PathName.Substring(0, last_ch)
             End If
 
             str_file_to_delete = PathName.Substring(last_ch + 1, PathName.Length - last_ch - 1)
@@ -444,7 +449,7 @@ Namespace Microsoft.VisualBasic
             Else
                 Directory.CreateDirectory(Path)
             End If
-            
+
         End Sub
         Public Sub Print(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             Throw New NotImplementedException
@@ -492,11 +497,11 @@ Namespace Microsoft.VisualBasic
         End Sub
         Public Sub RmDir(ByVal Path As String)
             Dim fi As FileInfo()
-            
+
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
             Dim di As New DirectoryInfo(Path)
             fi = di.GetFiles
-            If  Not (fi.Length = 0) Then
+            If Not (fi.Length = 0) Then
                 Throw New System.IO.IOException("The directory is not empty.")
             Else
                 Directory.Delete(Path)
@@ -538,7 +543,7 @@ Namespace Microsoft.VisualBasic
                 Throw New System.IO.FileNotFoundException("File " + "'" + PathName + "'" + " not found.")
             End If
 
-         End Sub
+        End Sub
         Public Function SPC(ByVal Count As Short) As Microsoft.VisualBasic.SpcInfo
             Throw New NotImplementedException
         End Function

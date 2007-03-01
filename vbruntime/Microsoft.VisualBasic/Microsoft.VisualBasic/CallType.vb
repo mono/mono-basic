@@ -29,12 +29,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _
     Public Enum CallType As Integer
-#Else
-    Public Enum CallType As Integer
-#End If
         Method = 1
         [Get] = 2
         [Let] = 4

@@ -29,12 +29,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
     Public Enum OpenMode As Integer
-#Else
-    Public Enum OpenMode As Integer
-#End If
         Input = 1
         Output = 2
         Random = 4

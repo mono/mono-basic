@@ -42,7 +42,6 @@ Namespace Microsoft.VisualBasic
         Public Const vbVerticalTab As String = ControlChars.VerticalTab
         Public Const vbNullChar As String = ControlChars.NullChar
         Public Const vbNullString As String = Nothing
-        Public Const vbQuote As String = ControlChars.Quote
 
         Public Const vbGeneralDate As DateFormat = DateFormat.GeneralDate
         Public Const vbLongDate As DateFormat = DateFormat.LongDate
@@ -72,8 +71,8 @@ Namespace Microsoft.VisualBasic
         Public Const vbFirstFourDays As FirstWeekOfYear = FirstWeekOfYear.FirstFourDays
         Public Const vbFirstFullWeek As FirstWeekOfYear = FirstWeekOfYear.FirstFullWeek
 
-        Public Const vbUpperCase As VbStrConv = VbStrConv.UpperCase
-        Public Const vbLowerCase As VbStrConv = VbStrConv.LowerCase
+        Public Const vbUpperCase As VbStrConv = VbStrConv.Uppercase
+        Public Const vbLowerCase As VbStrConv = VbStrConv.Lowercase
         Public Const vbProperCase As VbStrConv = VbStrConv.ProperCase
         Public Const vbWide As VbStrConv = VbStrConv.Wide
         Public Const vbNarrow As VbStrConv = VbStrConv.Narrow
@@ -113,16 +112,16 @@ Namespace Microsoft.VisualBasic
         Public Const vbIgnore As MsgBoxResult = MsgBoxResult.Ignore
         Public Const vbOK As MsgBoxResult = MsgBoxResult.OK
         Public Const vbCancel As MsgBoxResult = MsgBoxResult.Cancel
-        Public Const vbReTry As MsgBoxResult = MsgBoxResult.ReTry
+        Public Const vbRetry As MsgBoxResult = MsgBoxResult.Retry
         Public Const vbYes As MsgBoxResult = MsgBoxResult.Yes
         Public Const vbNo As MsgBoxResult = MsgBoxResult.No
 
-        Public Const vbAbortReTryIgnore As MsgBoxStyle = MsgBoxStyle.AbortReTryIgnore
+        Public Const vbAbortRetryIgnore As MsgBoxStyle = MsgBoxStyle.AbortRetryIgnore
         Public Const vbOKOnly As MsgBoxStyle = MsgBoxStyle.OKOnly
         Public Const vbOKCancel As MsgBoxStyle = MsgBoxStyle.OKCancel
         Public Const vbYesNoCancel As MsgBoxStyle = MsgBoxStyle.YesNoCancel
         Public Const vbYesNo As MsgBoxStyle = MsgBoxStyle.YesNo
-        Public Const vbReTryCancel As MsgBoxStyle = MsgBoxStyle.ReTryCancel
+        Public Const vbRetryCancel As MsgBoxStyle = MsgBoxStyle.RetryCancel
         Public Const vbCritical As MsgBoxStyle = MsgBoxStyle.Critical
         Public Const vbQuestion As MsgBoxStyle = MsgBoxStyle.Question
         Public Const vbExclamation As MsgBoxStyle = MsgBoxStyle.Exclamation

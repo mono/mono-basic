@@ -34,7 +34,8 @@ Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Class, AllowMultiple:=False, Inherited:=False)> _
+    <EditorBrowsable(EditorBrowsableState.Advanced)> _
     Public NotInheritable Class MyGroupCollectionAttribute
         Inherits Attribute
         Public Sub New(ByVal typeToCollect As String, ByVal createInstanceMethodName As String, ByVal disposeInstanceMethodName As String, ByVal defaultInstanceAlias As String)

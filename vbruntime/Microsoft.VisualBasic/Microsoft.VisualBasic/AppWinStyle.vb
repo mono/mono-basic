@@ -30,12 +30,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
-	Public Enum AppWinStyle As Short
-#Else
     Public Enum AppWinStyle As Short
-#End If
         Hide = 0
         NormalFocus = 1
         MinimizedFocus = 2

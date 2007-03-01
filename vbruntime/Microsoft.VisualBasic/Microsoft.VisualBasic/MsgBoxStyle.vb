@@ -30,22 +30,16 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Flags> _  
-    <System.Serializable()> _
-    Public Enum MsgBoxStyle As Integer
-#Else
     <System.Flags()> _
     Public Enum MsgBoxStyle As Integer
-#End If
         ApplicationModal = 0
         DefaultButton1 = 0
         OKOnly = 0
         OKCancel = 1
-        AbortReTryIgnore = 2
+        AbortRetryIgnore = 2
         YesNoCancel = 3
         YesNo = 4
-        ReTryCancel = 5
+        RetryCancel = 5
         Critical = 16
         Question = 32
         Exclamation = 48

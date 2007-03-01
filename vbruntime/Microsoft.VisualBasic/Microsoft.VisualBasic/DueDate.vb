@@ -30,12 +30,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
     Public Enum DueDate As Integer
-#Else
-    Public Enum DueDate As Integer
-#End If
         EndOfPeriod = 0
         BegOfPeriod = 1
     End Enum

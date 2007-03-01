@@ -28,7 +28,12 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
+
+Imports System.ComponentModel
+Imports System.Runtime.InteropServices
+
 Namespace Microsoft.VisualBasic
+    <StructLayout(LayoutKind.Sequential), EditorBrowsable(EditorBrowsableState.Never)> _
     Public Structure SpcInfo
         Public Count As Short
     End Structure

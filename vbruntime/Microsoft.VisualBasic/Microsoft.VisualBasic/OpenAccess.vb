@@ -30,12 +30,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-    <System.Serializable> _ 
     Public Enum OpenAccess As Integer
-#Else
-    Public Enum OpenAccess As Integer
-#End If
         Read = 1
         Write = 2
         ReadWrite = 3

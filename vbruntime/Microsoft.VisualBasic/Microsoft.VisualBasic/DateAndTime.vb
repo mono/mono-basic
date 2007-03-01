@@ -63,7 +63,7 @@ Namespace Microsoft.VisualBasic
            SetLastError:=True, CharSet:=CharSet.Unicode, _
            ExactSpelling:=True, _
            CallingConvention:=CallingConvention.StdCall)> _
-        Public Function stime(ByVal t As Integer) As Integer
+        Friend Function stime(ByVal t As Integer) As Integer
             ' Leave function empty - DllImport attribute forwards calls to stime to
             ' stime in libc.dll
         End Function
@@ -172,7 +172,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Function GetDayRule(ByVal StartOfWeek As FirstDayOfWeek, ByVal DayRule As DayOfWeek) As DayOfWeek
+        Friend Function GetDayRule(ByVal StartOfWeek As FirstDayOfWeek, ByVal DayRule As DayOfWeek) As DayOfWeek
             Select Case StartOfWeek
                 Case FirstDayOfWeek.System
                     Return DayRule
@@ -195,7 +195,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Function GetWeekRule(ByVal StartOfYear As FirstWeekOfYear, ByVal WeekRule As CalendarWeekRule) As CalendarWeekRule
+        Friend Function GetWeekRule(ByVal StartOfYear As FirstWeekOfYear, ByVal WeekRule As CalendarWeekRule) As CalendarWeekRule
 
             Select Case StartOfYear
                 Case FirstWeekOfYear.System
@@ -258,7 +258,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Function ConvertWeekDay(ByVal Day As DayOfWeek, ByVal Offset As Integer) As Integer
+        Friend Function ConvertWeekDay(ByVal Day As DayOfWeek, ByVal Offset As Integer) As Integer
             If (Offset = 0) Then
                 Return CType(Day + 1, Integer)
             End If
@@ -341,7 +341,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Function DateIntervalFromString( _
+        Friend Function DateIntervalFromString( _
                         ByVal Interval As String) As DateInterval
             Select Case Interval
                 Case "yyyy"

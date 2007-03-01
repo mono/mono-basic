@@ -32,14 +32,8 @@
 Imports System
 
 Namespace Microsoft.VisualBasic
-#If NET_2_0 Then
-   	<Flags> _  
-    <System.Serializable()> _
-    Public Enum FileAttribute As Integer
-#Else
     <Flags()> _
     Public Enum FileAttribute As Integer
-#End If
         Normal = 0
         [ReadOnly] = 1
         Hidden = 2

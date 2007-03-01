@@ -36,12 +36,7 @@ Namespace Microsoft.VisualBasic
     '/ way strings are compared when using functions such as InStr and StrComp. 
     '/ These constants can be used anywhere in your code.
     '/ </summary>
-#If NET_2_0 Then
-    <System.Serializable> _ 
     Public Enum CompareMethod As Integer
-#Else
-    Public Enum CompareMethod As Integer
-#End If
         '/ <summary>
         '/ Performs a binary comparison
         '/ </summary>

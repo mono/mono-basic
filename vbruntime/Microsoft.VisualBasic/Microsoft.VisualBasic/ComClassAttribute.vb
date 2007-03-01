@@ -34,7 +34,7 @@
 Imports System
 
 Namespace Microsoft.VisualBasic
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Class, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class ComClassAttribute
         Inherits Attribute
         ' Declarations
