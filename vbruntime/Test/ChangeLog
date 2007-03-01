@@ -1,0 +1,13 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* 2005VB_test_CS.dll.rsp: Added
+	* 2005VB_test_VB.dll.rsp: Added
+	* 2005VB_test_CS.dll.sources.win: Added
+	* 2005VB_test_VB.dll.sources.win: Added
+	* 2005VB_test_CS.dll.sources: Added
+	* 2005VB_test_VB.dll.sources: Added
+	* 2005VB_test_CS.csproj: Moved from base directory.
+	* 2003VB_test.csproj: Moved from base directory
+	* 2003VB_test.vbproj: Moved from base directory
+	* 2005VB_test.sln: Moved to base directory
+	* Makefile: Added

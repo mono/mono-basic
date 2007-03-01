@@ -1,0 +1,6 @@
+-r:nunit.framework.dll,Microsoft.VisualBasic.dll
+-nowarn
+-imports:System,System.Collections,Microsoft.VisualBasic,NUnit.Framework
+-target:library
+-debug:full
+-novbruntimeref

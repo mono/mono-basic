@@ -30,9 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\mcs\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>bin\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -49,8 +49,7 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\SingleTypeTest.cs" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\StringTypeTest.cs" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\UtilsTest.cs" />
-    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemTest.cs" />
-    <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineException.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineExceptionTest.cs" />
     <Compile Include="Microsoft.VisualBasic.FileIO\SpecialDirectoriesTest.cs" />
     <Compile Include="Microsoft.VisualBasic.FileIO\TextFieldParserTest.cs" />
     <Compile Include="Microsoft.VisualBasic.Logging\FileLogTraceListener.cs" />
