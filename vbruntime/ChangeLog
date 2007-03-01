@@ -1,3 +1,9 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Make.cmd: Added
+	* 2005VB_test.sln: Added
+	* 2005VB.sln: Updated (added test projects).
+
 2007-01-25  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: spaces -> tab
