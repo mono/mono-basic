@@ -1,3 +1,9 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileSystemOperationUI.vb:
+	* FileSystemOperationUIQuestion.vb: 
+	* TextFieldParser.vb: CorCompare work.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Added DeleteDirectoryOption.vb, FieldType.vb, FileSystem.vb,

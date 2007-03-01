@@ -25,7 +25,7 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
@@ -90,7 +90,7 @@ Namespace Microsoft.VisualBasic.FileIO
                 Throw New InvalidOperationException("Unable to read delimited fields because Delimiters is Nothing or empty.")
             End If
 
-#If TARGET_JVM = False 
+#If TARGET_JVM = False Then
             Dim result As New Generic.List(Of String)
 #Else
             Dim result as New ArrayList()
@@ -108,7 +108,7 @@ Namespace Microsoft.VisualBasic.FileIO
                 currentIndex = nextIndex
             Loop
 
-#If TARGET_JVM = False 
+#If TARGET_JVM = False Then
             Return result.ToArray()
 #Else
             Return CType(result.ToArray(GetType(String)),String())

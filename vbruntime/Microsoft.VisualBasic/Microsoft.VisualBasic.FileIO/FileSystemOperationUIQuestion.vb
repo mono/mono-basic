@@ -33,7 +33,7 @@ Imports System.Text
 Imports System.Collections.ObjectModel
 
 Namespace Microsoft.VisualBasic.FileIO
-    Public Class FileSystemOperationUIQuestion
+    Friend Class FileSystemOperationUIQuestion
         Inherits System.Windows.Forms.Form
 
         Private m_Answer As Answer

@@ -30,6 +30,7 @@
 Imports System.IO
 Imports System.Text
 Imports System.Collections.ObjectModel
+Imports System.Collections.Generic
 
 Namespace Microsoft.VisualBasic.FileIO
     Friend Class FileSystemOperation
