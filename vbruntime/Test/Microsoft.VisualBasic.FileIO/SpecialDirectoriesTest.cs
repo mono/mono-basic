@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using NUnit.Framework;
 using Microsoft.VisualBasic.FileIO;
 
@@ -39,24 +40,21 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 		[Test]
 		public void PathTest()
 		{
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.AllUsersApplicationData, RemoveBS (System.Windows.Forms.Application.CommonAppDataPath), "AllUserApplicationData");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.CurrentUserApplicationData, RemoveBS (System.Windows.Forms.Application.UserAppDataPath), "CurrentUserApplicationData");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.Desktop, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.Desktop)), "Desktop");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.MyDocuments, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)), "MyDocuments");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.MyMusic, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.MyMusic)), "MyMusic");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.MyPictures, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.MyPictures)), "MyPictures");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.ProgramFiles, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.ProgramFiles)), "ProgramFiles");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.Programs, RemoveBS (Environment.GetFolderPath (Environment.SpecialFolder.Programs)), "Programs");
-			Assert.AreEqual (Microsoft.VisualBasic.FileIO.SpecialDirectories.Temp, RemoveBS (System.IO.Path.GetTempPath ()), "Temp");
+			Assert.AreEqual (FixPath (System.Windows.Forms.Application.CommonAppDataPath), SpecialDirectories.AllUsersApplicationData, "AllUserApplicationData");
+			Assert.AreEqual (FixPath (System.Windows.Forms.Application.UserAppDataPath), SpecialDirectories.CurrentUserApplicationData, "CurrentUserApplicationData");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Desktop)), SpecialDirectories.Desktop, "Desktop");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)), SpecialDirectories.MyDocuments, "MyDocuments");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyMusic)), SpecialDirectories.MyMusic, "MyMusic");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyPictures)), SpecialDirectories.MyPictures, "MyPictures");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.ProgramFiles)), SpecialDirectories.ProgramFiles, "ProgramFiles");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Programs)), SpecialDirectories.Programs, "Programs");
+			Assert.AreEqual (FixPath (System.IO.Path.GetTempPath ()), SpecialDirectories.Temp, "Temp");
 		}
 		
-		string RemoveBS (string path) 
-		{
-			if (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) 
-				return path.Substring (0, path.Length -1);
-			else {
-				return path;
-			}
+		string FixPath (string path) 
+		{	// For some reason VB may return paths with \\ in them instead of just \.
+			// So fix them so that the tests run correctly on MS runtime.
+			return path.Replace (@"\\", @"\").TrimEnd (Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 	}
 }

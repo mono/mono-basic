@@ -382,20 +382,20 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 			using (MemoryStream reader = new System.IO.MemoryStream (Encoding.ASCII.GetBytes ("abc")))
 			using (TextFieldParser t = new TextFieldParser (reader, Encoding.Unicode)) 
 			{
-				Assert.AreNotEqual ("abc", t.ReadToEnd (), "#A4");
+				Assert.IsTrue ("abc" != t.ReadToEnd (), "#A4");
 			}
 
 
 			using (MemoryStream reader = new System.IO.MemoryStream (Encoding.ASCII.GetBytes ("abc")))
 			using (TextFieldParser t = new TextFieldParser (reader, Encoding.Unicode, true)) 
 			{
-				Assert.AreNotEqual ("abc", t.ReadToEnd (), "#A5");
+				Assert.IsTrue ("abc" != t.ReadToEnd (), "#A5");
 			}
 
 			using (MemoryStream reader = new System.IO.MemoryStream (Encoding.Unicode.GetBytes ("abc")))
 			using (TextFieldParser t = new TextFieldParser (reader, Encoding.ASCII, true)) 
 			{
-				Assert.AreNotEqual ("abc", t.ReadToEnd (), "#A6");
+				Assert.IsTrue ("abc" != t.ReadToEnd (), "#A6");
 			}
 
 			// Unicode string with bom

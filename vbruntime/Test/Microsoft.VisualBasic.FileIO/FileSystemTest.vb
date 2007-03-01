@@ -389,23 +389,16 @@ Public Class FileSystemTest
             Assert.AreEqual(False, FS.DirectoryExists(dir), testname & "-2")
         End Sub
 
+        <ExpectedException(GetType(IOException))> _
         <Test()> _
         Public Sub DeleteDirectoryTest2()
             Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             CreateComplicatedFileHierarchy(dir, False)
-            'This does not throw even though the directory is not empty
-            FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.ThrowIfDirectoryNonEmpty)
-            'Try
-            '    MsgBox("a")
-            '    Assert.Fail(testname & "-1 Expected 'IOException'")
-            'Catch ex As IOException
-            '    Assert.AreEqual(String.Format("The directory '{0}' is not empty.", dir), ex.Message, testname & "-2")
-            'End Try
 
-            FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
-            Assert.AreEqual(False, FS.DirectoryExists(dir), testname & "-3")
+            FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.ThrowIfDirectoryNonEmpty)
+
         End Sub
 
         <Test()> _
@@ -1568,7 +1561,7 @@ Public Class FileSystemTest
 
             Using reader As StreamReader = FS.OpenTextFileReader(a, System.Text.Encoding.ASCII)
                 Assert.AreEqual(System.Text.Encoding.ASCII.EncodingName, reader.CurrentEncoding.EncodingName, testname & "-1")
-                Assert.AreEqual(wrongContents, reader.ReadToEnd, testname & "-2")
+                Assert.AreEqual(contents, reader.ReadToEnd, testname & "-2")
                 Assert.AreEqual(System.Text.Encoding.ASCII.EncodingName, reader.CurrentEncoding.EncodingName, testname & "-3")
             End Using
 
@@ -1578,7 +1571,7 @@ Public Class FileSystemTest
             wrongContents &= wrongContents
             Using reader As StreamReader = FS.OpenTextFileReader(a, System.Text.Encoding.ASCII)
                 Assert.AreEqual(System.Text.Encoding.ASCII.EncodingName, reader.CurrentEncoding.EncodingName, testname & "-4")
-                Assert.AreEqual(wrongContents, reader.ReadToEnd, testname & "-5")
+                Assert.AreEqual(contents & contents, reader.ReadToEnd, testname & "-5")
                 Assert.AreEqual(System.Text.Encoding.ASCII.EncodingName, reader.CurrentEncoding.EncodingName, testname & "-6")
             End Using
         End Sub
@@ -1603,7 +1596,7 @@ Public Class FileSystemTest
             Dim bytes() As Byte
             bytes = FS.ReadAllBytes(a)
 
-            Assert.AreEqual(wrongContents, System.Text.Encoding.ASCII.GetString(bytes), testname & "-1")
+            Assert.AreEqual(contents, System.Text.Encoding.ASCII.GetString(bytes), testname & "-1")
         End Sub
 
         <Test()> _

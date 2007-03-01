@@ -1,3 +1,9 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileSystemtest.vb
+	* MalformedLineExceptionTest.cs
+	* SpecialDirectoriesTest.cs: Small fixes in the tests.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Added FileSystemTest.vb, MalformedLineExceptionTest.cs, 
