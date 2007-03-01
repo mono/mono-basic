@@ -1,3 +1,7 @@
+2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Test.vb: Create the output directory if it doesn't exist.
+
 2007-02-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* EnhancedProgressBar.vb, frmMain.vb, Settings.vb, TestExecutor.vb:

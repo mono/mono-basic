@@ -457,11 +457,17 @@ Public Class Test
 
         'First option is always the /out: argument.
         Const OutArgument As String = "-out:{0}"
+        Dim outputFilename, outputPath As String
         If ForVBC Then
-            result.Add(String.Format(OutArgument, GetOutputVBCAssembly))
+            outputFilename = GetOutputVBCAssembly()
         Else
-            result.Add(String.Format(OutArgument, GetOutputAssembly))
+            outputFilename = GetOutputAssembly()
         End If
+        outputPath = IO.Path.GetDirectoryName(outputFilename)
+        If IO.Directory.Exists(outputPath) = False Then
+            IO.Directory.CreateDirectory(outputPath)
+        End If
+        result.Add(String.Format(OutArgument, outputFilename))
 
         'If there is one unique .rsp file, use it
         If m_RspFile <> "" Then
