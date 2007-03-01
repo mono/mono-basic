@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using NUnit.Framework;
 using Microsoft.VisualBasic.MyServices;
 
@@ -41,24 +42,20 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 		{
 			Microsoft.VisualBasic.Devices.Computer pc = new Microsoft.VisualBasic.Devices.Computer();
 			Microsoft.VisualBasic.MyServices.SpecialDirectoriesProxy sd = pc.FileSystem.SpecialDirectories;
-			Assert.AreEqual (sd.AllUsersApplicationData, RemoveBS(System.Windows.Forms.Application.CommonAppDataPath), "AllUserApplicationData");
-			Assert.AreEqual (sd.CurrentUserApplicationData, RemoveBS(System.Windows.Forms.Application.UserAppDataPath), "CurrentUserApplicationData");
-			Assert.AreEqual (sd.Desktop, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)), "Desktop");
-			Assert.AreEqual (sd.MyDocuments, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)), "MyDocuments");
-			Assert.AreEqual (sd.MyMusic, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)), "MyMusic");
-			Assert.AreEqual (sd.MyPictures, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)), "MyPictures");
-			Assert.AreEqual (sd.ProgramFiles, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)), "ProgramFiles");
-			Assert.AreEqual (sd.Programs, RemoveBS(Environment.GetFolderPath(Environment.SpecialFolder.Programs)), "Programs");
-			Assert.AreEqual (sd.Temp, RemoveBS(System.IO.Path.GetTempPath()), "Temp");
+			Assert.AreEqual (FixPath(System.Windows.Forms.Application.CommonAppDataPath), sd.AllUsersApplicationData, "AllUserApplicationData");
+			Assert.AreEqual (FixPath (System.Windows.Forms.Application.UserAppDataPath), sd.CurrentUserApplicationData, "CurrentUserApplicationData");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Desktop)), sd.Desktop, "Desktop");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)), sd.MyDocuments, "MyDocuments");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyMusic)), sd.MyMusic, "MyMusic");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.MyPictures)), sd.MyPictures, "MyPictures");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.ProgramFiles)), sd.ProgramFiles, "ProgramFiles");
+			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Programs)), sd.Programs, "Programs");
+			Assert.AreEqual (FixPath (System.IO.Path.GetTempPath ()), sd.Temp, "Temp");
 		}
 		
-		string RemoveBS (string path) 
+		string FixPath (string path) 
 		{
-			if (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) 
-				return path.Substring (0, path.Length -1);
-			else {
-				return path;
-			}
+			return path.Replace (@"\\", @"\").TrimEnd (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 		}
 	}
 }
