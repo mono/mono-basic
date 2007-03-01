@@ -677,7 +677,7 @@ Public Class Test
         m_Verifications.Add(m_Compilation)
 
         If m_IsNegativeTest = False Then
-            If Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False Then
+            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputVBCAssembly))
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
