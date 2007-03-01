@@ -792,7 +792,7 @@ Public Class LateBindingTests2
     End Class
 
     'THIS TEST SHOULD FAIL IN MS
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
+    <Test(), ExpectedException(GetType(AmbiguousMatchException)), Category("NotDotNet")> _
    Public Sub LateBind_MS_Bug_NoFail()
         Dim o As Object = New C23
 

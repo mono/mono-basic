@@ -1,3 +1,7 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LateBindingsTests2.vb: Mark LateBind_MS_Bug_NoFail as NotDotNet so that tests pass with MS.
+
 2006-09-20  Rafael Mizrahi <rafim@mainsoft.com> 
 	* merge old NUnit tests into new NUnit tests 
 
