@@ -1,3 +1,7 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* NetworkTests.vb: Fixed URI string that was throwing exceptions, change imaginary host to something that doesn't resolve to an ip and mark test as InternetRequired.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Added AudioTests.vb, ClockTests.vb, ComputerInfoTests.vb, 

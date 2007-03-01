@@ -72,6 +72,7 @@ Namespace Devices
 
         End Sub
 
+        <Category("InternetRequired")> _
         <Category("Slow")> _
         <Test()> _
         Public Sub PingTest()
@@ -84,17 +85,17 @@ Namespace Devices
             End If
 
             Dim realHost As String = "www.google.com"
-            Dim imaginaryHost As String = "www.changemeifiexist.nowhere"
+            Dim imaginaryHost As String = "www.changemeifiexist.com"
 
             Assert.AreEqual(True, nw.Ping(realHost), testname & "-12")
             Assert.AreEqual(True, nw.Ping(realHost, 10000), testname & "-13")
-            Assert.AreEqual(True, nw.Ping(New Uri(realHost)), testname & "-14")
-            Assert.AreEqual(True, nw.Ping(New Uri(realHost), 10000), testname & "-15")
+            Assert.AreEqual(True, nw.Ping(New Uri("http://" & realHost)), testname & "-14")
+            Assert.AreEqual(True, nw.Ping(New Uri("http://" & realHost), 10000), testname & "-15")
 
             Assert.AreEqual(False, nw.Ping(imaginaryHost), testname & "-22")
             Assert.AreEqual(False, nw.Ping(imaginaryHost, 10000), testname & "-23")
-            Assert.AreEqual(False, nw.Ping(New Uri(imaginaryHost)), testname & "-24")
-            Assert.AreEqual(False, nw.Ping(New Uri(imaginaryHost), 10000), testname & "-25")
+            Assert.AreEqual(False, nw.Ping(New Uri("http://" & imaginaryHost)), testname & "-24")
+            Assert.AreEqual(False, nw.Ping(New Uri("http://" & imaginaryHost), 10000), testname & "-25")
 
         End Sub
 
