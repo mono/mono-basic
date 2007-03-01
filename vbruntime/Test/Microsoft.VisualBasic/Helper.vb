@@ -31,6 +31,7 @@ Imports System.IO
 
 <TestFixture()> _
 Public Class Helper
+
     <Test()> _
     Public Sub PrintRuntimePath()
         For Each a As Reflection.Assembly In AppDomain.CurrentDomain.GetAssemblies
@@ -41,6 +42,7 @@ Public Class Helper
         Next
     End Sub
 
+#If NET_VER >= 2.0 Then
     Public Shared Sub CompareBytes(ByVal aa() As Byte, ByVal bb() As Byte, ByVal testname As String)
         If aa.Length <> bb.Length Then
             Assert.Fail(String.Format("{0}_CF1 - '{1} <{3}>' and '{2} <{4}>' does not have same size", testname, "a", "b", aa.Length, bb.Length))
@@ -154,4 +156,5 @@ Public Class Helper
         Next
     End Sub
 
+#End If
 End Class

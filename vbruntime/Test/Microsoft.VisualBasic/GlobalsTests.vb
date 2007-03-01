@@ -76,9 +76,9 @@ Public Class GlobalsTests
 #If NET_2_0 Then
         Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
 #ElseIf NET_1_1 Then
-            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
+            Assert.AreEqual(10, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
 #ElseIf NET_1_0 Then
-            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
+            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
 #Else
             Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
 #End If

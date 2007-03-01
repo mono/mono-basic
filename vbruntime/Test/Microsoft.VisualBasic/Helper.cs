@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 
@@ -13,11 +12,12 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Console.WriteLine ("\r\nUsing runtime in: " + typeof (Microsoft.VisualBasic.Strings).Assembly.Location);
 		}
-	
-	
+
+#if NET_2_0
+
 		public static T [] getObjects <T> (System.Collections.IEnumerable en)
 		{
-			System.Collections.Generic.List<T> list = new List<T> ();
+			System.Collections.Generic.List<T> list = new System.Collections.Generic.List<T> ();
 			foreach (T obj in en) {
 				list.Add (obj);
 			}
@@ -36,5 +36,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Array.Copy (array, obj, array.Length);
 			return Microsoft.VisualBasic.Strings.Join (obj, delimiter);
 		}
+#endif
 	}
 }

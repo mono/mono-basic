@@ -27,6 +27,7 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
+
 Imports NUnit.Framework
 Imports System
 Imports System.IO
@@ -35,9 +36,7 @@ Imports System.Collections
 Imports System.Threading
 Imports Microsoft.VisualBasic
 
-<Category("Broken")> _
-<TestFixture()> _
-<Category("MayFailOnSharedDrived")> _
+<Category("Broken"), TestFixture(), Category("MayFailOnSharedDrived")> _
 Public Class FilesSystemTest
     Public DATA_DIR As String
     Public sep_ch As Char
@@ -183,7 +182,7 @@ Public Class FilesSystemTest
 #Region "FileCopy"
 
     <Test()> _
-Public Sub FileCopy_1()
+    Public Sub FileCopy_1()
         Dim dest_dir As String = "temp_dir1"
         Dim src_file As String = "FileCopy_1.txt"
         Dim fs As FileStream
@@ -486,7 +485,7 @@ Public Sub FileCopy_1()
     End Sub
 
     <Test(), ExpectedException(GetType(ArgumentException))> _
-Public Sub Kill_6()
+    Public Sub Kill_6()
         '' * in the path
         Dim test_dir As String = "Kill_test4.dat"
         FileSystem.Kill(DATA_DIR + "*" + sep_ch + test_dir)
@@ -548,7 +547,7 @@ Public Sub Kill_6()
     End Sub
 
     <Test()> _
-Public Sub Rename_2()
+    Public Sub Rename_2()
         '' rename file
         Dim test_file As String = "Rename_test2.txt"
         Dim test_file_new As String = "Rename_test2_new.dat"
@@ -564,9 +563,13 @@ Public Sub Rename_2()
         File.Delete(DATA_DIR + sep_ch + test_file_new)
     End Sub
 
+#If NET_VER >= 2.0 Then
     <Test(), ExpectedException(GetType(IOException))> _
     Public Sub Rename_3()
-
+#Else
+    <Test(), ExpectedException(GetType(FileNotFoundException))> _
+    Public Sub Rename_3()
+#End If
         Dim test_dir As String = "Rename_test3"
         Dim tmp_dir As String = "Try_Dir"
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
@@ -612,7 +615,7 @@ Public Sub Rename_2()
     End Sub
 
     <Test(), ExpectedException(GetType(ArgumentException))> _
-Public Sub Rename_7()
+    Public Sub Rename_7()
         Dim test_file As String = "Rename_test7.dat"
         Dim fs As FileStream = File.Create(DATA_DIR + sep_ch + test_file, 1024)
 
@@ -726,7 +729,7 @@ Public Sub Rename_7()
         FileSystem.RmDir(DATA_DIR + sep_ch + test_dir)
     End Sub
     <Test(), ExpectedException(GetType(DirectoryNotFoundException))> _
-Public Sub RMDir_5()
+    Public Sub RMDir_5()
         Dim test_dir As String = "RMDir_test5"
         FileSystem.RmDir(DATA_DIR + sep_ch + test_dir)
     End Sub
@@ -735,12 +738,12 @@ Public Sub RMDir_5()
 
 #Region "DirTests"
     <Test(), ExpectedException(GetType(ArgumentException))> _
-Public Sub Dir_1()
+    Public Sub Dir_1()
         Dim test_dir As String = "Dir_test1"
         FileSystem.Dir()
     End Sub
     <Test()> _
-Public Sub Dir_2()
+    Public Sub Dir_2()
 
         Dim test_dir As String = "Dir_test2"
         Dim res_dir As String
@@ -752,7 +755,7 @@ Public Sub Dir_2()
     End Sub
 
     <Test()> _
-Public Sub Dir_3()
+    Public Sub Dir_3()
 
         Dim test_dir As String = "Dir_test3"
         Dim res_dir As String
@@ -768,7 +771,7 @@ Public Sub Dir_3()
 
 
     <Test()> _
-Public Sub Dir_4()
+    Public Sub Dir_4()
 
         Dim test_dir1 As String = "Dir_test4_1"
         Dim test_dir2 As String = "Dir_test4_2"
@@ -791,7 +794,7 @@ Public Sub Dir_4()
     End Sub
 
     <Test()> _
-Public Sub Dir_5()
+    Public Sub Dir_5()
 
         Dim test_dir1 As String = "Dir_test5_1"
         Dim test_dir2 As String = "Dir_test5_2"
@@ -811,7 +814,7 @@ Public Sub Dir_5()
 
 
     <Test(), ExpectedException(GetType(ArgumentException))> _
-Public Sub Dir_6()
+    Public Sub Dir_6()
 
         Dim test_dir1 As String = "Dir_test5_1"
         Dim test_dir2 As String = "Dir_test5_2"
@@ -831,7 +834,7 @@ Public Sub Dir_6()
     End Sub
 
     <Test()> _
-Public Sub Dir_7()
+    Public Sub Dir_7()
 
         Dim test_file1 As String = "Dir_test_file7_1.check"
         Dim test_file2 As String = "Dir_test_file7_2.check"
@@ -855,7 +858,7 @@ Public Sub Dir_7()
 
 
     <Test()> _
-Public Sub Dir_8()
+    Public Sub Dir_8()
 
         Dim test_file1 As String = "Dir_test_file8_1.check"
         Dim test_file2 As String = "Dir_test_file8_2.check"
@@ -876,7 +879,7 @@ Public Sub Dir_8()
 
 
     <Test()> _
-Public Sub Dir_9()
+    Public Sub Dir_9()
 
         Dim test_file1 As String = "Dir_test_file9_1.check"
         Dim res_file As String
@@ -887,7 +890,7 @@ Public Sub Dir_9()
 
 
     <Test()> _
-Public Sub Dir_10()
+    Public Sub Dir_10()
         Dim res_file As String
         Dim test_dir1 As String = "Dir_test_10"
 
@@ -913,7 +916,7 @@ Public Sub Dir_10()
 
 
     <Test()> _
-Public Sub Dir_11()
+    Public Sub Dir_11()
 
         Dim test_dir1 As String = "Dir_test_11_1"
         Dim test_dir2 As String = "Dir_test_11_2"
@@ -947,6 +950,3 @@ Public Sub Dir_11()
 #End Region
 
 End Class
-
-
-

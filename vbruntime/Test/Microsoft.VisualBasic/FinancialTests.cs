@@ -461,25 +461,48 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual ( 0.177435884422527, d, 0.00001);
 		}
 		
+#if NET_2_0
+		[Test]
+		public void IRR_1 ()
+		{
+			double [] values = new double [] { -50000, 20000, 20000, 20000, 10000 };
+
+			Assert.AreEqual (0.16479098450887533, Financial.IRR (ref values, 0.1));
+
+			Assert.AreEqual (0.16479098450893837, Financial.IRR (ref values, 0.3));
+
+			Assert.AreEqual (0.16479098450893415, Financial.IRR (ref values, 0.5));
+
+			values = new double [] { -100000, 40000, 35000, 30000, 25000 };
+
+			Assert.AreEqual (0.12441449540624081, Financial.IRR (ref values, 0.1));
+
+			Assert.AreEqual (0.12441449541502105, Financial.IRR (ref values, 0.3));
+
+			Assert.AreEqual (0.12441449541025705, Financial.IRR (ref values, 0.5));
+		}
+		
+#else
 		[Test]
 		public void IRR_1()
 		{
 			double[] values = new double[] {-50000, 20000, 20000, 20000, 10000};
 
-			Assert.AreEqual(0.16479098450887533,Financial.IRR(ref values,0.1));
+			Assert.AreEqual(0.164790984508933,Financial.IRR(ref values,0.1));
 
-			Assert.AreEqual(0.16479098450893837,Financial.IRR(ref values,0.3));
+			Assert.AreEqual(0.164790984508933,Financial.IRR(ref values,0.3));
 
 			Assert.AreEqual(0.16479098450893415,Financial.IRR(ref values,0.5));
 
 			values = new double[] {-100000, 40000, 35000, 30000, 25000};
 
-			Assert.AreEqual(0.12441449540624081,Financial.IRR(ref values,0.1));
+			Assert.AreEqual(0.124414495410257,Financial.IRR(ref values,0.1));
 
-			Assert.AreEqual(0.12441449541502105,Financial.IRR(ref values,0.3));
+			Assert.AreEqual(0.124414495410257, Financial.IRR (ref values, 0.3));
 
-			Assert.AreEqual(0.12441449541025705,Financial.IRR(ref values,0.5));
+			Assert.AreEqual(0.124414495410252,Financial.IRR(ref values,0.5));
 		}
+#endif
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]

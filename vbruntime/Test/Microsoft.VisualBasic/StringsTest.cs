@@ -1,4 +1,4 @@
-﻿// StringsTest.cs - NUnit Test Cases for Microsoft.VisualBasic.Strings 
+// StringsTest.cs - NUnit Test Cases for Microsoft.VisualBasic.Strings 
 //
 // Mizrahi Rafael (rafim@mainsoft.com)
 // Boris Kirzner <borisk@mainsoft.com>
@@ -44,7 +44,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		[SetUp]
 		public void GetReady()
 		{
-			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo ("en-US");
+			System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo ("en-US");
 		}
 
 		[TearDown]
@@ -59,11 +59,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Assert.AreEqual(97,Strings.Asc("a"));
 			Assert.AreEqual(97,Strings.Asc("abc"));
-#if NET_2_0
-			Assert.AreEqual (230, Strings.Asc ("æ"));
-#else
-			Assert.AreEqual(63,Strings.Asc("æ"));
-#endif
+			Assert.AreEqual(230, Strings.Asc ("æ"));
 			Assert.AreEqual(65,Strings.Asc("A"));
 			Assert.AreEqual(33,Strings.Asc("!"));
 			Assert.AreEqual(51,Strings.Asc("3"));
@@ -440,11 +436,13 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			Assert.AreEqual("2006-06-19T14:22:35",Strings.Format(d, "s"));
 
+#if NET_2_0
 			if (d.IsDaylightSavingTime ()) {
 				Assert.AreEqual("Monday, June 19, 2006 12:22:35 PM",Strings.Format(d, "U"));
 			} else {
 				Assert.AreEqual("Monday, June 19, 2006 11:22:35 AM", Strings.Format (d, "U"));	
 			}
+#endif
 
 			Assert.AreEqual("2006-06-19 14:22:35Z",Strings.Format(d, "u"));
 
@@ -1726,8 +1724,12 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void StrConv_ProperCase()
 		{
-			Assert.AreEqual("Abcd8abcd",Strings.StrConv("abcd8abcd", VbStrConv.ProperCase,0));
-			
+#if NET_2_0
+			Assert.AreEqual ("Abcd8abcd", Strings.StrConv ("abcd8abcd", VbStrConv.ProperCase, 0));
+#else
+			Assert.AreEqual("Abcd8Abcd",Strings.StrConv("abcd8abcd", VbStrConv.ProperCase,0));
+#endif
+
 			Assert.AreEqual("Abcd,Efgh;Ffff.Kkk!Qqqq@Eeee#Wwww$Llll",Strings.StrConv("abcd,efgh;ffff.kkk!qqqq@eeee#wwww$llll", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Aa%Bb^Cc&Dd*Ee(Ff)Gg-Hh_Ee",Strings.StrConv("aa%bb^cc&dd*ee(ff)gg-hh_ee", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Ee=Ff+Gg'ii\"Jj:Kk\\Ll|Mm<Nn",Strings.StrConv("ee=ff+gg'ii\"jj:kk\\ll|mm<nn", VbStrConv.ProperCase,0));

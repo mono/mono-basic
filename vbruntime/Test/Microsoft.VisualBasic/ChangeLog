@@ -1,3 +1,16 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	*  CollectionTests.cs: Fix for 1.1 compilation.
+	*  Helper.cs: Fixes for 1.1 compilation.
+	*  Helper.vb: Fixes for 1.1 compilation.
+	*  StringsTest.cs: Fixes for 1.1 compilation, removed version difference check in Asc1, since it is culture-dependant and we are already specifying the culture 
+explicitly.
+	*  DateAndTimeTests.cs: Fixes for 1.1 compilation.
+	*  ErrObjectTests.vb: Fixes for 1.1 compilation.
+	*  FinancialTests.cs: Fixes for 1.1 compilation.
+	*  GlobalsTests.vb: Fix buggy test.
+	*  FileSystemTests.vb: Fixes for 1.1 compilation.
+
 2006-09-20  Rafael Mizrahi <rafim@mainsoft.com>
 
 	* merge the old NUnit tests directory into new NUnit tests directory.
