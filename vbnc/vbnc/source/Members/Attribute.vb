@@ -41,6 +41,20 @@ Public Class Attribute
 
     Private m_Instance As System.Attribute
 
+    ''' <summary>
+    ''' Returns the specified argument, or nothing if index is out of range
+    ''' </summary>
+    ''' <param name="Index"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function GetArgument(ByVal Index As Integer) As Object
+        If m_Arguments IsNot Nothing AndAlso Index < m_Arguments.Length Then
+            Return m_Arguments(Index)
+        Else
+            Return Nothing
+        End If
+    End Function
+
     ReadOnly Property Arguments() As Object()
         Get
             Return m_Arguments

@@ -368,17 +368,28 @@ Public Class Compiler
 #End If
         result = CommandLine.Imports.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
+
         result = CommandLine.Files.Resolve(ResolveInfo.Default(Me)) AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
+
         result = theAss.CreateImplicitTypes AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
+
         result = theAss.ResolveTypes AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
+
         result = theAss.ResolveTypeReferences AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
+        If result = False Then Return result
+
         result = theAss.CreateImplicitMembers AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
         If result = False Then Return result
+
         result = theAss.ResolveMembers AndAlso result
         vbnc.Helper.Assert(result = (Report.Errors = 0))
         result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
@@ -651,7 +662,7 @@ EndOfCompilation:
             'Just do nothing.
         End Try
 #Else
-            Compiler.Report.WriteLine("Unexpected error: " & ex.Message)
+            Compiler.Report.WriteLine("Unexpected error: " & ex.Message & vb.vbNewLine & ex.StackTrace)
 #End If
     End Sub
 

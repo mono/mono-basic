@@ -191,11 +191,6 @@ Public Class PropertyDeclaration
 
         result = m_Signature.ResolveCode(Info) AndAlso result
 
-        If Modifiers.Is(KS.Default) Then
-            Dim tp As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
-            tp.SetDefaultAttribute(Me.Name)
-        End If
-
         If m_Get IsNot Nothing Then result = m_Get.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
 
@@ -209,6 +204,11 @@ Public Class PropertyDeclaration
         result = MyBase.ResolveCode(INFO) AndAlso result
         If m_Get IsNot Nothing Then result = m_Get.ResolveCode(Info) AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.ResolveCode(INFO) AndAlso result
+
+        If Modifiers.Is(KS.Default) Then
+            Dim tp As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
+            result = tp.SetDefaultAttribute(Me.Name) AndAlso result
+        End If
 
         Return result
     End Function

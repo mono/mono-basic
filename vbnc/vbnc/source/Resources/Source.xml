@@ -4032,6 +4032,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Project has been closed.</VBValue>
 	</Message>
+  <Message id="32304" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>The 'DefaultMemberAttribute' defined on '{0}' specifies '{1}' as the default member, while the property marked as the default property is '{2}'.</VBNCValue>
+    <VBValue>Conflict between the default property and the 'DefaultMemberAttribute' defined on '|1'.</VBValue>
+  </Message>
 	<Message id="32302" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

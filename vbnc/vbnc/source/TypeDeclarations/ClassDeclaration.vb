@@ -87,6 +87,7 @@ Public Class ClassDeclaration
 
         If m_Inherits IsNot Nothing Then
             result = m_Inherits.ResolveTypeReferences AndAlso result
+            If result = False Then Return result
             BaseType = m_Inherits.ResolvedType
         Else
             BaseType = Compiler.TypeCache.Object

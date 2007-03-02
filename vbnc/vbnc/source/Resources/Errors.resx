@@ -838,6 +838,7 @@
   <data name="32300"><value>CHANGEME</value></data>
   <data name="32301"><value>CHANGEME</value></data>
   <data name="32302"><value>CHANGEME</value></data>
+  <data name="32304"><value>The 'DefaultMemberAttribute' defined on '{0}' specifies '{1}' as the default member, while the property marked as the default property is '{2}'.</value></data>
   <data name="32400"><value>CHANGEME</value></data>
   <data name="32500"><value>CHANGEME</value></data>
   <data name="32501"><value>CHANGEME</value></data>

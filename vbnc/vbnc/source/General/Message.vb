@@ -151,7 +151,7 @@ Public Class Message
                 Case 2
                     strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1))
                 Case 3
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1)(2))
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2))
                 Case Else
                     Helper.NotImplemented("")
             End Select

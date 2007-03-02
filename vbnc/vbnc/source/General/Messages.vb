@@ -5665,6 +5665,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32302 = 32302
 
     ''' <summary>
+    ''' VBNC = "The 'DefaultMemberAttribute' defined on '{0}' specifies '{1}' as the default member, while the property marked as the default property is '{2}'."
+    ''' VB   = "Conflict between the default property and the 'DefaultMemberAttribute' defined on '|1'."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32304 = 32304
+
+    ''' <summary>
     ''' VBNC = "CHANGEME"
     ''' VB   = "Class '|1' could not be created: |0"
     ''' </summary>

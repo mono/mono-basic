@@ -49,8 +49,6 @@ Public MustInherit Class TypeDeclaration
     Private m_BaseType As Type
     Private m_ImplementedTypes As Type()
 
-    Private m_DefaultAttribute As Attribute
-
     Private m_DefaultInstanceConstructor As ConstructorDeclaration
     Private m_DefaultSharedConstructor As ConstructorDeclaration
     Private m_StaticVariables As Generic.List(Of VariableDeclaration)
@@ -380,17 +378,27 @@ Public MustInherit Class TypeDeclaration
         Return result
     End Function
 
-    Public Sub SetDefaultAttribute(ByVal Name As String)
-        If m_DefaultAttribute IsNot Nothing Then
-            Helper.NotImplementedYet("Check that this is the only default property")
-        Else
-            Helper.NotImplementedYet("Check that the property is indexed.")
-            Dim attrib As Attribute
-            attrib = New Attribute(Me, Compiler.TypeCache.DefaultMemberAttribute, Name)
-            CustomAttributes.Add(attrib)
-            m_DefaultAttribute = attrib
-        End If
-    End Sub
+    Public Function SetDefaultAttribute(ByVal Name As String) As Boolean
+        Dim result As Boolean = True
+        For Each att As Attribute In CustomAttributes
+            If Helper.CompareType(att.AttributeType, Compiler.TypeCache.DefaultMemberAttribute) Then
+                Dim tmpName As String
+                tmpName = TryCast(att.GetArgument(0), String)
+                If tmpName IsNot Nothing AndAlso NameResolution.CompareNameOrdinal(Name, tmpName) = False Then
+                    Compiler.Report.ShowMessage(Messages.VBNC32304, Location, Me.FullName, tmpName, Name)
+                    Return False
+                End If
+                Return True
+            End If
+        Next
+
+        Helper.NotImplementedYet("Check that the property is indexed.")
+        Dim attrib As Attribute
+        attrib = New Attribute(Me, Compiler.TypeCache.DefaultMemberAttribute, Name)
+        result = attrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
+        CustomAttributes.Add(attrib)
+        Return result
+    End Function
 
     ''' <summary>
     ''' Sets the entry point / Main function of the assembly

@@ -1,5 +1,21 @@
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Members/PropertyDeclaration.vb: SetDefaultAttribute is now called
+	  after the members are resolved (so that we can check for other
+	  members and give correct error messages).
+	* Members/Attribute.vb: Added function to get the argument of an
+	  attribute.
+	* Resources/Source.xml, General/Messages.vb: Added more messages.
+	* Resources/Errors.resx: Updated.
+	* TypeDeclarations/ClassDeclaration.vb: Break out if any errors.
+	* TypeDeclarations/TypeDeclaration.vb: SetDefaultAttribute now checks
+	  if the attribute is specified manually and gives the correct error
+	  messages.
+	* General/Compiler.vb: Break out of compilation if there are any
+	  errors.
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/SimpleNameExpression.vb,
 	  Types/ImportsClauses.vb: Skip bad imports (not a fatal
 	  error).
