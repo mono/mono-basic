@@ -1,5 +1,23 @@
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/SimpleNameExpression.vb,
+	  Types/ImportsClauses.vb: Skip bad imports (not a fatal
+	  error).
+	* Statements/ExitStatement.vb: Implemented error checking and
+	  the exit statement is now producing correct error messages.
+	* Members/EnumMemberDeclaration.vb: Implement a workaround for a
+	  mixed Mono/MS bug (the code required to work around an MS bug
+	  requires a workaround to work on Mono :)
+	* vbnc.rsp, vbnc.vbnc.rsp: Updated to import
+	  Microsoft.VisualBasic and reference SWF.dll as well.
+	* Resources/Source.xml, Resources/Errors.resx,
+	  General/Messages.vb: Added more messages.
+	* TypeDeclarations/EnumDeclaration.vb: Only use EnumBuilder on
+	  MS.
+	* General/TypeResolution.vb: More debug checking.
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/Source.xml:
 	* Resources/Errors.resx:
 	* General/Messages.vb: Added message for #30456.
