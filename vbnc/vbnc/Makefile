@@ -20,6 +20,10 @@ DISTFILES = \
 	source/vbnc.vbproj	\
 	bin/vbnc.rsp
 
+#all-local: vbnc.Errors.resources vbnc.exe.sources
 
-vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj
+vbnc.Errors.resources: source/Resources/Errors.resx
+	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
+
+vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
 	MONO_PATH="../../class/lib/bootstrap:$(MONO_PATH)" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r

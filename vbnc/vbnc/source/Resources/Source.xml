@@ -1524,7 +1524,7 @@
 	</Message>
 	<Message id="30456" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' is not a member of '{1}'.</VBNCValue>
 		<VBValue>'|1' is not a member of '|2'.</VBValue>
 	</Message>
 	<Message id="30458" level="Error">

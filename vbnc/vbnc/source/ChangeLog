@@ -1,5 +1,11 @@
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Resources/Source.xml:
+	* Resources/Errors.resx:
+	* General/Messages.vb: Added message for #30456.
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/SimpleNameExpression.vb: Small NRE check.
 	* Expressions/BinaryExpressions/EqualsExpression.vb: More debug info.
 	* vbnc.vbproj, Resources/Errors.resx: Updated.

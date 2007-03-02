@@ -1,3 +1,9 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Updated resources when they changes.
+	* vbnc.Errors.resources: Updated.
+
+
 2007-02-13  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: Use make friendly vars

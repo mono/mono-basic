@@ -2144,7 +2144,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30455 = 30455
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' is not a member of '{1}'."
     ''' VB   = "'|1' is not a member of '|2'."
     ''' </summary>
     ''' <remarks></remarks>

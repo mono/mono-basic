@@ -335,7 +335,7 @@
   <data name="30452"><value>CHANGEME</value></data>
   <data name="30454"><value>CHANGEME</value></data>
   <data name="30455"><value>CHANGEME</value></data>
-  <data name="30456"><value>CHANGEME</value></data>
+  <data name="30456"><value>'{0}' is not a member of '{1}'.</value></data>
   <data name="30458"><value>CHANGEME</value></data>
   <data name="30460"><value>CHANGEME</value></data>
   <data name="30461"><value>CHANGEME</value></data>
