@@ -6358,6 +6358,13 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC40041 = 40041
 
     ''' <summary>
+    ''' VBNC = "The import '{0}' could not be found."
+    ''' VB   = "Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC40056 = 40056
+
+    ''' <summary>
     ''' VBNC = "CHANGEME"
     ''' VB   = "Attribute '|1' cannot be specified more than once in this project, even with identical parameter values."
     ''' </summary>

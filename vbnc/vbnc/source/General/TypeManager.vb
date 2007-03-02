@@ -184,7 +184,9 @@ Public Class TypeManager
 #End If
                 result.Add(tp)
             Else
-                'Compiler.Report.WriteLine("Discarded type: " & tp.Name)
+#If EXTENDEDDEBUG Then
+                Compiler.Report.WriteLine("Discarded type: " & tp.Name)
+#End If
             End If
             result.AddRange(Me.GetType(Name, tp.GetNestedTypes(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic), OnlyCreatedTypes))
         Next

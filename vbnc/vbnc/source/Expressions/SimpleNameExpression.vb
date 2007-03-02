@@ -416,7 +416,8 @@ Public Class SimpleNameExpression
         '   result is exactly the same as a member access of the form M.E, where M is the standard module 
         '   containing the matching member and E is the identifier. If the identifier matches accessible type 
         '   members in more than one standard module, a compile-time error occurs.
-        Dim currentNS As String = firstcontainer.Namespace
+        Dim currentNS As String = Nothing
+        If firstcontainer IsNot Nothing Then currentNS = firstcontainer.Namespace
         While currentNS IsNot Nothing
             Dim foundType As Type
             foundType = Compiler.TypeManager.GetTypesByNamespace(currentNS).Item(Name)

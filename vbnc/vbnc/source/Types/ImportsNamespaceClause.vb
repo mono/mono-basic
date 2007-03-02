@@ -36,7 +36,7 @@ Public Class ImportsNamespaceClause
 
     ReadOnly Property [Object]() As BaseObject
         Get
-            Return m_object
+            Return m_Object
         End Get
     End Property
 
@@ -92,8 +92,8 @@ Public Class ImportsNamespaceClause
         result = nri.Resolve AndAlso result
 
         If nri.FoundOnlyOneObject = False Then
-            Helper.AddError("Found '" & nri.FoundObjects.Count & "' objects for " & Name)
-            Return False
+            Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
+            Return True
         End If
 
         If nri.FoundIs(Of [Namespace])() Then

@@ -1276,7 +1276,7 @@ integertype:
         End If
 
         If result.IsEndOfFile() Then
-            If Not m_Current.IsEndOfLine(True) Then
+            If m_Current IsNot Nothing AndAlso Not m_Current.IsEndOfLine(True) Then
                 m_Peeked = result
                 result = New EndOfLineToken(m_Peeked.Location, Compiler)
             End If

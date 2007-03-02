@@ -4532,6 +4532,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Type '|1' is not CLS compliant.</VBValue>
 	</Message>
+  <Message id="40056" level="Warning">
+    <Comment>NC</Comment>
+    <VBNCValue>The import '{0}' could not be found.</VBNCValue>
+    <VBValue>Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</VBValue>
+  </Message>
 	<Message id="41000" level="Warning">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

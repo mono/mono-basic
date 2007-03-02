@@ -182,6 +182,7 @@ Public Class TypeNameResolutionInfo
                 Throw New InternalException(FromWhere)
             End If
 
+            tmp.IsImportsResolution = Me.IsImportsResolution
             result = tmp.Resolve AndAlso result
             If result = False Then Return result
 
@@ -199,7 +200,6 @@ Public Class TypeNameResolutionInfo
             result = True
         ElseIf id IsNot Nothing Then
             If Me.IsImportsResolution Then
-                Helper.NotImplemented()
                 result = Me.CheckOutermostNamespace(id.Name, Me.TypeArgumentCount) AndAlso result
             Else
                 Dim names() As String

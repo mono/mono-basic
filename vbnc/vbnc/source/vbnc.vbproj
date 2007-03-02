@@ -9,7 +9,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>vbnc</AssemblyName>
+    <AssemblyName>vbnc_ms</AssemblyName>
     <AssemblyOriginatorKeyFile>vbnc.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -20,7 +20,7 @@
     <OptionCompare>Binary</OptionCompare>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
-    <RootNamespace>vbnc</RootNamespace>
+    <RootNamespace>vbnc_ms</RootNamespace>
     <StartupObject>vbnc.Main</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -57,7 +57,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
     <TreatSpecificWarningsAsErrors>42016,42017,42018,42019,42020,42021,42022,42028,42104,42030,42024</TreatSpecificWarningsAsErrors>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <NoWarn>
@@ -174,7 +174,7 @@
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <OutputPath>./</OutputPath>
@@ -193,7 +193,7 @@
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <OutputPath>./</OutputPath>
@@ -212,7 +212,7 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DebugSymbols>True</DebugSymbols>
     <DebugType>Full</DebugType>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <OutputPath>../bin/</OutputPath>

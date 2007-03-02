@@ -1,3 +1,25 @@
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/SimpleNameExpression.vb: Small NRE check.
+	* Expressions/BinaryExpressions/EqualsExpression.vb: More debug info.
+	* vbnc.vbproj, Resources/Errors.resx: Updated.
+	* ConditionalCompilation/ConditionalExpression.vb: Removed special
+	  casing for previously unimplemented features in the vbruntime.
+	* Types/TypeNameResolutionInfo.vb: Propagate IsImportsResolution
+	  properly.
+	* Types/ImportsNamespaceClause.vb: Show correct warning message if the
+	  import isn't found, and return true (since it's a warning, not an
+	  error).
+	* Resources/Source.xml, General/Messages.vb: Added warning #40056.
+	* Resources/GenerateCodeAndResX.sh: Fixed to actually work on Linux.
+	* TypeDeclarations/AssemblyDeclaration.vb: If a keyfile is specified on
+	  the commandline, it overrides any keyfile in the source. Implement
+	  AssemblyVersion for generic versions of the type 1.0.* and 1.0.0.*.
+	* General/Scanner.vb: NRE check, fixes #80989.
+	* General/AssemblyInfo.vb: Version bump.
+	* General/Compiler.vb: Creating the assembly builder can now fail.
+	* General/TypeManager.vb: Ifdef out debug information.
+
 2007-02-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/MethodGroupToValueExpression.vb: Add more extended debug

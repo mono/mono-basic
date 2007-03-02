@@ -557,24 +557,25 @@ Public Class AssemblyDeclaration
 
         result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
 
+
+        If Compiler.CommandLine.KeyFile <> String.Empty Then
+            keyfile = Compiler.CommandLine.KeyFile
+        End If
+
         For Each attri As Attribute In Me.Attributes
             Dim attribType As Type
             attribType = attri.ResolvedType
 
             If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
-                SetVersion(result, attri)
+                SetVersion(result, attri, attri.Location)
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
-                keyfile = TryCast(attri.Arguments()(0), String)
+                If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
                 keyname = TryCast(attri.Arguments()(0), String)
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyDelaySignAttribute) Then
                 delaysign = CBool(attri.Arguments()(0))
             End If
         Next
-
-        If keyfile = String.Empty Then
-            keyfile = Compiler.CommandLine.KeyFile
-        End If
 
         If keyfile <> String.Empty Then
             If SignWithKeyFile(result, keyfile, delaysign) = False Then
@@ -670,26 +671,61 @@ Public Class AssemblyDeclaration
 
     End Function
 
-    Private Sub SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute)
+    Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
         Dim result As Version
-        Dim version As String
+        Dim version As String = ""
 
         If Attribute.Arguments IsNot Nothing AndAlso Attribute.Arguments.Length = 1 Then
             version = TryCast(Attribute.Arguments()(0), String)
         Else
-            Helper.AddError("Invalid version")
-            Return
+            Return ShowInvalidVersionMessage(version, Location)
         End If
 
         Try
-            result = New Version(version)
+            Dim parts() As String
+            Dim major, minor, build, revision As UShort
+            parts = version.Split("."c)
+
+            If parts.Length < 3 OrElse parts.Length > 4 Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If Not UShort.TryParse(parts(0), major) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If Not UShort.TryParse(parts(1), minor) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If parts(2) = "*" Then
+                build = CUShort((Date.Now - New Date(2000, 1, 1)).TotalDays)
+                revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+            ElseIf Not UShort.TryParse(parts(2), build) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If parts.Length > 3 Then
+                If parts(3) = "*" Then
+                    revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+                ElseIf Not UShort.TryParse(parts(3), revision) Then
+                    Return ShowInvalidVersionMessage(version, Location)
+                End If
+            End If
+
+            result = New Version(major, minor, build, revision)
         Catch ex As Exception
-            Helper.AddError("Invalid version: " & version)
-            Return
+            Return ShowInvalidVersionMessage(version, Location)
         End Try
 
         Name.Version = result
-    End Sub
+        Return True
+    End Function
+
+    Private Function ShowInvalidVersionMessage(ByVal Version As String, ByVal Location As Span) As Boolean
+        Compiler.Report.ShowMessage(Messages.VBNC30129, Location, "System.Reflection.AssemblyVersionAttribute", Version)
+        Return False
+    End Function
 
     ''' <summary>
     ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.

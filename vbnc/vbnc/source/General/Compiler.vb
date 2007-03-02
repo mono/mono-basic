@@ -324,7 +324,7 @@ Public Class Compiler
             m_SymbolWriter = ModuleBuilder.GetSymWriter()
         End If
 
-        Return True
+        Return Compiler.Report.Errors = 0
     End Function
 
     Private Function Compile_Parse() As Boolean
@@ -429,6 +429,10 @@ Public Class Compiler
             'Dump the commandline
             If CommandLine.Dumping Then
                 CommandLine.Dump()
+            End If
+
+            If CommandLine.Verbose Then
+                Console.WriteLine("Runtime loaded from: " & GetType(Microsoft.VisualBasic.Financial).Assembly.Location)
             End If
 #End If
 

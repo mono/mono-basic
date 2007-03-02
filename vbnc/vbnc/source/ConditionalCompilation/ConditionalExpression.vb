@@ -400,23 +400,6 @@ Public Class ConditionalExpression
             Try
                 Select Case DoWhat
                     Case KS.Equals
-                        If TypeOf LSide Is Boolean AndAlso TypeOf RSide Is Boolean Then
-                            Result = CBool(LSide) = CBool(RSide)
-                            'Compiler.Report.WriteLine(CStr(LSide))
-                            Return True
-                        ElseIf TypeOf LSide Is String AndAlso TypeOf RSide Is String Then
-                            Result = String.Compare(CStr(LSide), CStr(RSide), True)
-                            'Compiler.Report.WriteLine(CStr(LSide))
-                            Return True
-                        ElseIf LSide Is Nothing AndAlso TypeOf RSide Is Boolean Then
-                            Result = False = CBool(RSide)
-                            'Compiler.Report.WriteLine(CStr(LSide))
-                            Return True
-                        ElseIf TypeOf LSide Is Boolean AndAlso RSide Is Nothing Then
-                            Result = False = CBool(LSide)
-                            'Compiler.Report.WriteLine(CStr(LSide))
-                            Return True
-                        End If
                         LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectEqual(LSide, RSide, True)
                     Case KS.NotEqual
                         LSide = Microsoft.VisualBasic.CompilerServices.Operators.ConditionalCompareObjectNotEqual(LSide, RSide, True)

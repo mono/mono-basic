@@ -34,19 +34,23 @@ Public Class EqualsExpression
             Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Boolean, TypeCode.Char
                 Emitter.EmitEquals(Info, OperandType)
             Case TypeCode.DateTime
+                Helper.Assert(Compiler.TypeCache.Date_Compare__Date_Date IsNot Nothing, "Date_Compare__Date_Date Is Nothing")
                 Emitter.EmitCall(Info, Compiler.TypeCache.Date_Compare__Date_Date)
                 Emitter.EmitLoadI4Value(Info, 0)
                 Emitter.EmitEquals(Info, Compiler.TypeCache.Integer)
             Case TypeCode.Decimal
+                Helper.Assert(Compiler.TypeCache.Decimal_Compare__Decimal_Decimal IsNot Nothing, "Decimal_Compare__Decimal_Decimal Is Nothing")
                 Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Compare__Decimal_Decimal)
                 Emitter.EmitLoadI4Value(Info, 0)
                 Emitter.EmitEquals(Info, Compiler.TypeCache.Integer)
             Case TypeCode.Object
+                Helper.Assert(Compiler.TypeCache.MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool IsNot Nothing, "MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool Is Nothing")
                 Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
                 'Compiler.Report.WriteLine("MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool: " & Me.Location.ToString)
                 Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool)
             Case TypeCode.String
+                Helper.Assert(Compiler.TypeCache.MS_VB_CS_Operators_CompareString__String_String_Bool IsNot Nothing, "MS_VB_CS_Operators_CompareString__String_String_Bool Is Nothing")
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
                 'Compiler.Report.WriteLine("MS_VB_CS_Operators_CompareString__String_String_Bool: " & Me.Location.ToString)
                 Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_CompareString__String_String_Bool)
