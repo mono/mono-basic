@@ -1,1 +1,1 @@
-..\..\..\..\tools\extract-source\extract-source.exe -m:w -s:..\..\..\..\vbruntime\Microsoft.VisualBasic\2005VB.vbproj -d:Microsoft.VisualBasic.files.windows -b:..\..\..\..\mono-basic\vbruntime\Microsoft.VisualBasic\
+..\..\..\..\tools\extract-source\extract-source.exe -m:w -s:..\..\..\..\vbruntime\Microsoft.VisualBasic\2005VB.vbproj -d:Microsoft.VisualBasic.files.windows -b:..\..\..\..\vbruntime\Microsoft.VisualBasic\

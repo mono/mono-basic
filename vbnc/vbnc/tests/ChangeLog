@@ -1,3 +1,8 @@
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Bugs: More tests.
+	* VBRunTime/Microsoft.VisualBasic.*: Updated.
+
 2007-02-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Update DISTFILES to include all test files.

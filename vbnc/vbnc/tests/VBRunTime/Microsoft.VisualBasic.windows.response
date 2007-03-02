@@ -1,2 +1,3 @@
 @Microsoft.VisualBasic.response
 @Microsoft.VisualBasic.files.windows
+-keyfile:..\..\..\..\vbruntime\Microsoft.VisualBasic\msfinal.pub
