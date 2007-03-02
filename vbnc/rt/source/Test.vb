@@ -101,7 +101,7 @@ Public Class Test
 
     Private m_Compiler As String
     Private m_AC As String
-    Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d+(-\d*)?(\s+.*)?$", System.Text.RegularExpressions.RegexOptions.Compiled)
+    Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
 
     Property AC() As String
         Get
@@ -861,10 +861,14 @@ Public Class Test
         '0001-2.vb
         '0001-3 sometest.vb
         If m_NegativeRegExpTest.IsMatch(m_Name) Then
-            Dim tmp As String = m_Name
-            If tmp.Contains(" "c) Then tmp = tmp.Substring(0, tmp.IndexOf(" "c))
-            If tmp.Contains("-"c) Then tmp = tmp.Substring(0, tmp.IndexOf("-"c))
-            m_IsNegativeTest = Integer.TryParse(tmp, m_NegativeError)
+            Dim firstNonNumber As Integer
+            For i As Integer = 0 To m_Name.Length - 1
+                If Char.IsNumber(m_Name(i)) = False Then
+                    firstNonNumber = i
+                    Exit For
+                End If
+            Next
+            m_IsNegativeTest = Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_NegativeError)
         End If
         m_OutputPath = IO.Path.Combine(m_BasePath, DefaultOutputPath)
     End Sub

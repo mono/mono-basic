@@ -1,3 +1,7 @@
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Test.vb: Change the logic that determines if the test is negative or not: Now all tests that starts with at least 4 numbers are negative.
+
 2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: Don't do test executable verification if we don't have the vbc compiler.
