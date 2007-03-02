@@ -18,7 +18,8 @@ DISTFILES = \
 	vbnc.sln  		\
 	vbnc.vbnc.rsp		\
 	source/vbnc.vbproj	\
-	bin/vbnc.rsp
+	bin/vbnc.rsp            \
+	source/Resources/Errors.resx
 
 #all-local: vbnc.Errors.resources vbnc.exe.sources
 
