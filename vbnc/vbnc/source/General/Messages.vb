@@ -471,21 +471,21 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30064 = 30064
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "It is not valid to use 'Exit Sub' in a Function or Property."
     ''' VB   = "'Exit Sub' is not valid in a Function or Property."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30065 = 30065
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "It is not valid to use 'Exit Property' in a Function or Sub."
     ''' VB   = "'Exit Property' is not valid in a Function or Sub."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30066 = 30066
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "It is not valid to use 'Exit Function' in a Sub or Property."
     ''' VB   = "'Exit Function' is not valid in a Sub or Property."
     ''' </summary>
     ''' <remarks></remarks>
@@ -597,7 +597,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30088 = 30088
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "This 'Exit Do' statement is not contained within a 'Do' statement."
     ''' VB   = "'Exit Do' can only appear inside a 'Do' statement."
     ''' </summary>
     ''' <remarks></remarks>
@@ -646,14 +646,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30095 = 30095
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "This 'Exit For' statement is not contained within a 'For' statement."
     ''' VB   = "'Exit For' can only appear inside a 'For' statement."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30096 = 30096
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "This 'Exit While' statement is not contained within a 'While' statement."
     ''' VB   = "'Exit While' can only appear inside a 'While' statement."
     ''' </summary>
     ''' <remarks></remarks>
@@ -667,7 +667,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30098 = 30098
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "This 'Exit Select' statement is not contained within a 'Select' statement."
     ''' VB   = "'Exit Select' can only appear inside a 'Select' statement."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1906,7 +1906,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30392 = 30392
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "This 'Exit Try' statement is not contained within a 'Try' statement."
     ''' VB   = "'Exit Try' can only appear inside a 'Try' statement."
     ''' </summary>
     ''' <remarks></remarks>

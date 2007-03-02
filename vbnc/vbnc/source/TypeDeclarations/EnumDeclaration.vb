@@ -88,9 +88,10 @@ Public Class EnumDeclaration
         'Create the type builder.
         Dim Attr As TypeAttributes
         Attr = Me.TypeAttributes
-        If IsNestedType Then
+        If Helper.IsOnMono OrElse IsNestedType Then
             result = MyBase.DefineType() AndAlso result
         Else
+            'This is necessary on MS, since they won't allow the use of the enum fields in attribute constructors otherwise.
             enumBuilder = Compiler.ModuleBuilder.DefineEnum(FullName, Attr And Reflection.TypeAttributes.VisibilityMask, EnumConstantType)
             Compiler.TypeManager.RegisterReflectionType(enumBuilder, Me.TypeDescriptor)
             MyBase.EnumBuilder = enumBuilder

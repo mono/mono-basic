@@ -329,17 +329,17 @@
 	</Message>
 	<Message id="30065" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>It is not valid to use 'Exit Sub' in a Function or Property.</VBNCValue>
 		<VBValue>'Exit Sub' is not valid in a Function or Property.</VBValue>
 	</Message>
 	<Message id="30066" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>It is not valid to use 'Exit Property' in a Function or Sub.</VBNCValue>
 		<VBValue>'Exit Property' is not valid in a Function or Sub.</VBValue>
 	</Message>
 	<Message id="30067" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>It is not valid to use 'Exit Function' in a Sub or Property.</VBNCValue>
 		<VBValue>'Exit Function' is not valid in a Sub or Property.</VBValue>
 	</Message>
 	<Message id="30068" level="Error">
@@ -419,7 +419,7 @@
 	</Message>
 	<Message id="30089" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>This 'Exit Do' statement is not contained within a 'Do' statement.</VBNCValue>
 		<VBValue>'Exit Do' can only appear inside a 'Do' statement.</VBValue>
 	</Message>
 	<Message id="30090" level="Error">
@@ -454,12 +454,12 @@
 	</Message>
 	<Message id="30096" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>This 'Exit For' statement is not contained within a 'For' statement.</VBNCValue>
 		<VBValue>'Exit For' can only appear inside a 'For' statement.</VBValue>
 	</Message>
 	<Message id="30097" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>This 'Exit While' statement is not contained within a 'While' statement.</VBNCValue>
 		<VBValue>'Exit While' can only appear inside a 'While' statement.</VBValue>
 	</Message>
 	<Message id="30098" level="Error">
@@ -469,7 +469,7 @@
 	</Message>
 	<Message id="30099" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>This 'Exit Select' statement is not contained within a 'Select' statement.</VBNCValue>
 		<VBValue>'Exit Select' can only appear inside a 'Select' statement.</VBValue>
 	</Message>
 	<Message id="30101" level="Error">
@@ -1354,7 +1354,7 @@
 	</Message>
 	<Message id="30393" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>This 'Exit Try' statement is not contained within a 'Try' statement.</VBNCValue>
 		<VBValue>'Exit Try' can only appear inside a 'Try' statement.</VBValue>
 	</Message>
 	<Message id="30395" level="Error">

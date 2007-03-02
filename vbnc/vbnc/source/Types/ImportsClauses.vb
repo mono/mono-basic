@@ -44,7 +44,7 @@ Public Class ImportsClauses
     ''' <param name="FromWhere"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetModules(ByVal FromWhere As BaseObject) As typelist
+    Function GetModules(ByVal FromWhere As BaseObject) As TypeList
         Dim result As New TypeList
         For Each imp As ImportsClause In Me
             If imp.IsNamespaceClause Then
@@ -54,7 +54,7 @@ Public Class ImportsClauses
                 ElseIf ns.IsNamespaceImport Then
                     result.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(ns.NamespaceImported).TypesAsArray)
                 Else
-                    Throw New InternalException(Me)
+                    Continue For 'This import was not resolved correctly, don't use it.
                 End If
             End If
         Next

@@ -180,6 +180,23 @@ Public Class EnumMemberDeclaration
 
         Dim parent As EnumDeclaration = Me.FindFirstParent(Of EnumDeclaration)()
 
+        If Helper.IsOnMono Then
+            Dim newValue As Object = m_ConstantValue
+            If parent.TypeBuilder IsNot Nothing Then
+                'This is a work around for a Mono bug (otherwise the enum constant will be defined of its base integral type in metadata).
+                'MS doesn't allow this (parameter to Enum.ToObject can't be a TypeBuilder), so only execute on Mono.
+                newValue = [Enum].ToObject(parent.TypeBuilder, m_ConstantValue)
+            ElseIf parent.EnumBuilder IsNot Nothing Then
+                'This will crash the compiler on Mono, so only do this when we have a typebuilder.
+                'the EnumBuilder is anyways only used on MS to work around an MS bug, otherwise we only use TypeBuilder.
+                'newValue = [Enum].ToObject(parent.EnumBuilder, m_ConstantValue)
+            End If
+#If EXTENDEDDEBUG Then
+            Console.WriteLine("Changed Enum field type from '" & m_ConstantValue.GetType.Name & "' to '" & newValue.GetType.Name & "'")
+#End If
+            m_ConstantValue = newValue
+        End If
+
         If parent.TypeBuilder IsNot Nothing Then
             m_FieldBuilder = parent.TypeBuilder.DefineField(Name, parent.TypeBuilder, Reflection.FieldAttributes.Public Or Reflection.FieldAttributes.Static Or Reflection.FieldAttributes.Literal)
             m_FieldBuilder.SetConstant(m_ConstantValue)
@@ -188,6 +205,7 @@ Public Class EnumMemberDeclaration
         Else
             Throw New InternalException(Me)
         End If
+
         Compiler.TypeManager.RegisterReflectionMember(m_FieldBuilder, Me.MemberDescriptor)
 
         Return result

@@ -508,8 +508,12 @@ Public Class TypeResolution
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function GetIntegralType(ByVal tp As Type) As Type
+        Helper.Assert(tp IsNot Nothing, "tp Is Nothing")
         If tp.IsEnum Then
-            Return tp.GetField(EnumDeclaration.EnumTypeMemberName).FieldType
+            Dim field As FieldInfo
+            field = tp.GetField(EnumDeclaration.EnumTypeMemberName)
+            Helper.Assert(field IsNot Nothing, "field '" & EnumDeclaration.EnumTypeMemberName & "' Is Nothing of Type '" & tp.FullName & "'")
+            Return field.FieldType
         Else
             Helper.Assert(IsIntegralType(tp))
             Return tp
@@ -526,6 +530,9 @@ Public Class TypeResolution
     ''' <remarks></remarks>
     Function GetSmallestIntegralType(ByVal tp1 As Type, ByVal tp2 As Type) As Type
         Dim cont1(), cont2() As Type
+
+        Helper.Assert(tp1 IsNot Nothing, "tp1 Is Nothing")
+        Helper.Assert(tp2 IsNot Nothing, "tp2 Is Nothing")
 
         Dim itp1, itp2 As Type
         itp1 = GetIntegralType(tp1)

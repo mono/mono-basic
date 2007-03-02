@@ -85,29 +85,35 @@ Public Class ExitStatement
         Dim result As Boolean = True
 
         Select Case m_ExitWhat
-            Case KS.Do
-                m_Container = Me.FindFirstParent(Of DoStatement)()
-            Case KS.For
-                m_Container = Me.FindFirstParent(Of ForStatement, ForEachStatement)()
-            Case KS.While
-                m_Container = Me.FindFirstParent(Of WhileStatement)()
-            Case KS.Select
-                m_Container = Me.FindFirstParent(Of SelectStatement)()
             Case KS.Sub
                 m_Container = Me.FindFirstParent(Of IMethod)()
-            Case KS.Function
-                m_Container = Me.FindFirstParent(Of IMethod)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30065, Location)
             Case KS.Property
                 m_Container = Me.FindFirstParent(Of IMethod)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30066, Location)
+            Case KS.Function
+                m_Container = Me.FindFirstParent(Of IMethod)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30067, Location)
+            Case KS.Do
+                m_Container = Me.FindFirstParent(Of DoStatement)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30089, Location)
             Case KS.Try
                 m_Container = Me.FindFirstParent(Of TryStatement)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30393, Location)
+            Case KS.For
+                m_Container = Me.FindFirstParent(Of ForStatement, ForEachStatement)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30096, Location)
+            Case KS.While
+                m_Container = Me.FindFirstParent(Of WhileStatement)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30097, Location)
+            Case KS.Select
+                m_Container = Me.FindFirstParent(Of SelectStatement)()
+                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30099, Location)
             Case Else
                 Throw New InternalException(Me)
         End Select
 
         result = m_Container IsNot Nothing AndAlso result
-
-        Compiler.Helper.AddCheck("If the Exit statement is not contained within the kind of block specified in the statement, a compile-time error occurs.")
 
         Return result
     End Function

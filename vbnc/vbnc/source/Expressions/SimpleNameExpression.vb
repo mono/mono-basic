@@ -765,7 +765,7 @@ Public Class SimpleNameExpression
                     'result.AddRange(Compiler.TypeManager.GetCache(imp.AsNamespaceClause.TypeImported).LookupMembersFlattened(Name))
                     result = Compiler.TypeManager.GetCache(imp.AsNamespaceClause.TypeImported).LookupMembersFlattened(Name)
                 Else
-                    Throw New InternalException(Me)
+                    Continue For 'This import was not resolved correctly, so don't use it.
                 End If
             End If
             If result IsNot Nothing AndAlso result.Count > 0 Then
