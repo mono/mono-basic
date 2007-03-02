@@ -3,7 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
-'
+'   Rolf Bjarne Kvinge (RKvinge@novell.com)
 
 '
 ' Copyright (C) 2002-2006 Mainsoft Corporation.
@@ -32,6 +32,22 @@
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
     Public Class Operators
+        Class CompareResult
+            Public Value As Integer
+            Public Type As CompareResultType
+
+            Sub New(ByVal Type As CompareResultType, ByVal Value As Integer)
+                Me.Value = Value
+                Me.Type = Type
+            End Sub
+        End Class
+
+        Enum CompareResultType
+            Success
+            UserDefined
+            Fail
+        End Enum
+
         Private Shared Function CompareBoolean(ByVal Left As Boolean, ByVal Right As Boolean) As Integer
             If Left = Right Then Return 0
             If Left < Right Then
@@ -161,13 +177,16 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function AddObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function AndObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function CompareObject(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Integer
             Throw New NotImplementedException
         End Function
-        Public Shared Function CompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
+
+        Private Shared Function CompareObjectInternal(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As CompareResult
             Dim codeLeft, codeRight As TypeCode
             Const codeNothing As TypeCode = TypeCode.Empty
 
@@ -182,40 +201,42 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 codeRight = Type.GetTypeCode(Right.GetType)
             End If
 
-            If codeRight = codeNothing AndAlso codeLeft = codeNothing Then Return 0
+            If codeRight = codeNothing AndAlso codeLeft = codeNothing Then Return New CompareResult(CompareResultType.Success, 0)
 
-            If codeRight = codeLeft Then
-                Select Case codeLeft
+            If codeRight = codeLeft OrElse codeRight = codeNothing OrElse codeLeft = codeNothing Then
+                Dim codeToCompare As TypeCode = codeLeft
+                If codeLeft = codeNothing Then codeToCompare = codeRight
+                Select Case codeToCompare
                     Case TypeCode.Boolean
-                        Return CompareBoolean(CBool(Left), CBool(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareBoolean(CBool(Left), CBool(Right)))
                     Case TypeCode.Byte
-                        Return CompareByte(CByte(Left), CByte(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareByte(CByte(Left), CByte(Right)))
                     Case TypeCode.Char
-                        Return CompareChar(CChar(Left), CChar(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareChar(CChar(Left), CChar(Right)))
                     Case TypeCode.DateTime
-                        Return CompareDate(CDate(Left), CDate(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareDate(CDate(Left), CDate(Right)))
                     Case TypeCode.Decimal
-                        Return CompareDecimal(CDec(Left), CDec(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareDecimal(CDec(Left), CDec(Right)))
                     Case TypeCode.Double
-                        Return CompareDouble(CDbl(Left), CDbl(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareDouble(CDbl(Left), CDbl(Right)))
                     Case TypeCode.Int16
-                        Return CompareInt16(CShort(Left), CShort(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareInt16(CShort(Left), CShort(Right)))
                     Case TypeCode.Int32
-                        Return CompareInt32(CInt(Left), CInt(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareInt32(CInt(Left), CInt(Right)))
                     Case TypeCode.Int64
-                        Return CompareInt64(CLng(Left), CLng(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareInt64(CLng(Left), CLng(Right)))
                     Case TypeCode.SByte
-                        Return CompareSByte(CSByte(Left), CSByte(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareSByte(CSByte(Left), CSByte(Right)))
                     Case TypeCode.Single
-                        Return CompareSingle(CSng(Left), CSng(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareSingle(CSng(Left), CSng(Right)))
                     Case TypeCode.String
-                        Return CompareString(CStr(Left), CStr(Right), TextCompare)
+                        Return New CompareResult(CompareResultType.Success, CompareString(CStr(Left), CStr(Right), TextCompare))
                     Case TypeCode.UInt16
-                        Return CompareUInt16(CUShort(Left), CUShort(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareUInt16(CUShort(Left), CUShort(Right)))
                     Case TypeCode.UInt32
-                        Return CompareUInt32(CUInt(Left), CUInt(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareUInt32(CUInt(Left), CUInt(Right)))
                     Case TypeCode.UInt64
-                        Return CompareUInt64(CULng(Left), CULng(Right))
+                        Return New CompareResult(CompareResultType.Success, CompareUInt64(CULng(Left), CULng(Right)))
                     Case TypeCode.Object
                         Throw New NotImplementedException
                     Case TypeCode.DBNull
@@ -224,27 +245,106 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Select Case CType(codeLeft << TypeCombinations.SHIFT Or codeRight, TypeCombinations)
-                Case TypeCombinations.Boolean_String
-                    Return CompareBoolean(CBool(Left), Conversions.ToBoolean(Right))
+                Case TypeCombinations.String_Double, TypeCombinations.Double_String
+                    Return New CompareResult(CompareResultType.Success, CompareDouble(Conversions.ToDouble(Left), Conversions.ToDouble(Right)))
+                Case TypeCombinations.Boolean_String, TypeCombinations.String_Boolean
+                    Return New CompareResult(CompareResultType.Success, CompareBoolean(Conversions.ToBoolean(Left), Conversions.ToBoolean(Right)))
+                Case Else
+                    Throw New NotImplementedException("Not implemented comparison between '" & codeLeft.ToString() & "' and '" & codeRight.ToString() & "'")
             End Select
 
-            Throw New NotImplementedException
         End Function
+
+        Public Shared Function CompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value = 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
+        End Function
+
         Public Shared Function CompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
-            Throw New NotImplementedException
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value > 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
         End Function
+
         Public Shared Function CompareObjectGreaterEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
-            Throw New NotImplementedException
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value >= 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
         End Function
+
         Public Shared Function CompareObjectLess(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
-            Throw New NotImplementedException
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value < 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
         End Function
+
         Public Shared Function CompareObjectLessEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
-            Throw New NotImplementedException
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value <= 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
         End Function
+
         Public Shared Function CompareObjectNotEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
-            Throw New NotImplementedException
+            Dim result As CompareResult
+            result = CompareObjectInternal(Left, Right, TextCompare)
+            Select Case result.Type
+                Case CompareResultType.Fail
+                    Throw New NotImplementedException
+                Case CompareResultType.Success
+                    Return result.Value <> 0
+                Case CompareResultType.UserDefined
+                    Throw New NotImplementedException
+                Case Else
+                    Throw New NotImplementedException
+            End Select
         End Function
+
         Public Shared Function CompareString(ByVal Left As String, ByVal Right As String, ByVal TextCompare As Boolean) As Integer
             If DirectCast(Left, Object) Is Nothing Then
                 Left = ""
@@ -258,27 +358,35 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return String.CompareOrdinal(Left, Right)
             End If
         End Function
+
         Public Shared Function ConcatenateObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function ConditionalCompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectEqual(Left, Right, TextCompare))
         End Function
+
         Public Shared Function ConditionalCompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectGreater(Left, Right, TextCompare))
         End Function
+
         Public Shared Function ConditionalCompareObjectGreaterEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectGreaterEqual(Left, Right, TextCompare))
         End Function
+
         Public Shared Function ConditionalCompareObjectLess(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectLess(Left, Right, TextCompare))
         End Function
+
         Public Shared Function ConditionalCompareObjectLessEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectLessEqual(Left, Right, TextCompare))
         End Function
+
         Public Shared Function ConditionalCompareObjectNotEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Throw New NotImplementedException
+            Return CBool(CompareObjectNotEqual(Left, Right, TextCompare))
         End Function
+
         Public Shared Function DivideObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function

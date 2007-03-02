@@ -1,4 +1,8 @@
 2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Operators.vb: Implemented basic support for (Conditional)CompareObject*.
+
+2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 	
 	* OptionCompareAttribute.vb: CorCompare work.
 
