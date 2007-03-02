@@ -96,8 +96,9 @@ Class Messages
 
 			If splitter = -1 Then Throw New ArgumentOutOfRangeException(String.Format("Malformed line (line #{0}): {1}", i.ToString, line))
 
-			strid = Mid(line, 1, splitter)
-			id = CInt(strid)
+            strid = Mid(line, 1, splitter)
+            id = CInt(strid)
+            Console.WriteLine("Read ID=" & strid & ", converted into: " & id.ToString())
 			value = Trim(Mid(line, splitter + 1))
 			If value.StartsWith("""") AndAlso value.EndsWith("""") Then
 				value = Mid(value, 2, value.Length - 2)
@@ -143,10 +144,11 @@ nextline:
 					'do nothing
 				ElseIf xml.Name = "Message" Then
 					Dim id As Integer, level As String
-					id = CInt(xml.GetAttribute("id"))
+                    id = CInt(xml.GetAttribute("id"))
+                    Console.WriteLine("Read ID=" & xml.GetAttribute("id") & ", converted into: " & id.ToString())
 					level = xml.GetAttribute("level")
 					xml.Read()
-					Dim msg As New Message(id)
+                    Dim msg As New Message(id)
 					While xml.Name <> "Message"
 						If xml.Name = "ChangedValue" OrElse xml.Name = "VBNCValue" Then
 							xml.Read()
@@ -261,15 +263,16 @@ nextline:
 		c.Append(FILEWARNING)
 		c.Append(vbNewLine)
         c.Append("Public Enum Messages" & vbNewLine)
-		For Each msg As Message In ToArray()
+        For Each msg As Message In Me.ToArray()
             c.Append("    ''' <summary>" & vbNewLine)
             c.Append("    ''' VBNC = """ & XMLEncode(msg.VBNCMsg) & """" & vbNewLine)
             c.Append("    ''' VB   = """ & XMLEncode(msg.VBMsg) & """" & vbNewLine)
             c.Append("    ''' </summary>" & vbNewLine)
             c.Append("    ''' <remarks></remarks>" & vbNewLine)
             c.Append("    <Message(MessageLevel." & msg.Level & ")> VBNC" & msg.ID.ToString & " = " & msg.ID.ToString & vbNewLine)
-			c.Append("" & vbNewLine)
-		Next
+            c.Append("" & vbNewLine)
+            Console.WriteLine("Written ID=" & msg.ID.ToString)
+        Next
 		c.Append("End Enum" & vbNewLine)
 
 		Return c.ToString
