@@ -63,7 +63,11 @@ Public Class ExitStatement
                 Else
                     Throw New InternalException(Me)
                 End If
-            Case KS.While, KS.Do, KS.For, KS.Select, KS.Try
+            Case KS.Select
+                Dim destinationStmt As SelectStatement
+                destinationStmt = DirectCast(m_Container, SelectStatement)
+                Emitter.EmitBranchOrLeave(Info, destinationStmt.EndLabel, Me, destinationStmt)
+            Case KS.While, KS.Do, KS.For, KS.Try
                 Dim destinationStmt As BlockStatement
                 destinationStmt = TryCast(m_Container, BlockStatement)
                 If destinationStmt IsNot Nothing Then

@@ -682,7 +682,7 @@ Public Class TypeNameResolutionInfo
                     If foundType IsNot Nothing Then tpFound.Add(foundType)
                 End If
             Else
-                Throw New InternalException("")
+                Continue For
             End If
         Next
         If tpFound.Count = 1 Then
@@ -706,7 +706,7 @@ Public Class TypeNameResolutionInfo
             ElseIf nsimp.IsTypeImport Then
                 'Skip this
             Else
-                Throw New InternalException(FromWhere)
+                Continue For
             End If
         Next
         If tpFound.Count = 1 Then
@@ -730,7 +730,7 @@ Public Class TypeNameResolutionInfo
                 Dim nsName As String = nsimp.NamespaceImported.FullName
                 modules.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(nsName).ToTypeList)
             Else
-                Throw New InternalException(fromwhere)
+                Continue For
             End If
         Next
         If CheckModules(modules, R, TypeArgumentCount) Then Return True

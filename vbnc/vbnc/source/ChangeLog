@@ -1,3 +1,9 @@
+2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Statements/ExitStatement.vb: Handle the select case correctly. Fixes
+	  81009#.
+	* Types/TypeNameResolutionInfo.vb: Allow for invalid imports.
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Members/PropertyDeclaration.vb: SetDefaultAttribute is now called
