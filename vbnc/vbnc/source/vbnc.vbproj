@@ -795,7 +795,6 @@
     <Compile Include="Members\BaseMember.vb" />
     <Compile Include="TypeDeclarations\ClassDeclaration.vb" />
     <Compile Include="Members\ConstructorDeclaration.vb" />
-    <Compile Include="Types\ContainerType.vb" />
     <Compile Include="TypeDeclarations\DelegateDeclaration.vb" />
     <Compile Include="TypeDeclarations\EnumDeclaration.vb" />
     <Compile Include="Types\IConstructable.vb" />

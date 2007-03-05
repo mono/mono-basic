@@ -135,6 +135,9 @@ Public Class TypeCache
     Public [System_Math_Round__Double] As System.Reflection.MethodInfo
     Public [System_Math_Pow__Double_Double] As System.Reflection.MethodInfo
     Public [System_Runtime_InteropServices_DllImportAttribute] As System.Type
+    Public System_Windows_Forms_Form As System.Type
+    Public System_Windows_Forms_Application As System.Type
+    Public System_Windows_Forms_Application__Run As MethodInfo
     Public [StandardModuleAttribute] As System.Type
     Public [MS_VB_CompareMethod] As System.Type
     Public [MS_VB_CS_Conversions] As System.Type
@@ -241,6 +244,7 @@ Public Class TypeCache
     Public [Delegate_Remove] As System.Reflection.MethodInfo
     Public [MS_VB_Assembly] As System.Reflection.Assembly
     Public [mscorlib] As System.Reflection.Assembly
+    Public winforms As System.Reflection.Assembly
 
     Sub New(ByVal Compiler As Compiler)
         m_Compiler = Compiler
@@ -368,6 +372,11 @@ Public Class TypeCache
         Me.System_Math_Pow__Double_Double = System_Math.GetMethod("Pow", New Type() {Me.Double, Me.Double})
         Me.System_Runtime_InteropServices_DllImportAttribute = GetType(System.Runtime.InteropServices.DllImportAttribute)
 
+        If winforms IsNot Nothing Then
+            Me.System_Windows_Forms_Form = winforms.GetType("System.Windows.Forms.Form")
+            Me.System_Windows_Forms_Application = winforms.GetType("System.Windows.Forms.Application")
+            Me.System_Windows_Forms_Application__Run = Me.System_Windows_Forms_Application.GetMethod("Run", New Type() {Me.System_Windows_Forms_Form}, Nothing)
+        End If
     End Sub
 
     Private Sub Init()
@@ -521,6 +530,8 @@ Public Class TypeCache
                 MS_VB_Assembly = a : Continue For
             ElseIf a.GetName.Name = "mscorlib" Then
                 mscorlib = a : Continue For
+            ElseIf a.GetName.Name = "System.Windows.Forms" Then
+                winforms = a : Continue For
             End If
         Next
 

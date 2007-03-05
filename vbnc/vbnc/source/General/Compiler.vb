@@ -463,7 +463,7 @@ Public Class Compiler
 
             'Exit if no source files were specified
             If m_CommandLine.Files.Count = 0 Then
-                    Report.ShowMessage(Messages.VBNC2011)
+                Report.ShowMessage(Messages.VBNC2011)
                 Return 1
             End If
 
@@ -545,6 +545,10 @@ Public Class Compiler
             result = theAss.Emit AndAlso result
             vbnc.Helper.Assert(result, "Emit failed somehow")
 
+            'Set the main function / entry point
+            result = SetMain() AndAlso result
+            If result = False Then GoTo ShowErrors
+
             'Create the assembly types
             result = theAss.CreateTypes AndAlso result
             vbnc.Helper.Assert(result)
@@ -555,10 +559,6 @@ Public Class Compiler
                 Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Error creating the assembly!")
                 GoTo ShowErrors
             End If
-
-            'Set the main function / entry point
-            result = SetMain() AndAlso result
-            If result = False Then GoTo ShowErrors
 
             'Save the assembly
             AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
@@ -850,58 +850,55 @@ EndOfCompilation:
         End If
 
         Try
+            If CommandLine.Target = vbnc.CommandLine.Targets.Library Then Return True
+            If CommandLine.Target = vbnc.CommandLine.Targets.Module Then Return True
+
             'Find the main function
-            Dim lstMethods As New ArrayList
-            Dim methods As Reflection.MethodInfo()
-            If CommandLine.Target = vbnc.CommandLine.Targets.Console Then
-                If CommandLine.Main <> "" Then
-                    Dim mainClasses As ArrayList
-                    mainClasses = TypeResolver.LookupType(CommandLine.Main)
-                    If mainClasses.Count <> 1 Then
-                        Report.ShowMessage(Messages.VBNC90013, CommandLine.Main, mainClasses.Count.ToString)
-                        Return False
-                    End If
+            Dim lstMethods As New Generic.List(Of MethodInfo)
+            Dim mainClass As TypeDeclaration = Nothing
 
-                    Dim mainClass As Type = CType(mainClasses(0), Type)
-                    methods = mainClass.GetMethods
+            result = FindMainClass(mainClass) AndAlso result
+            result = FindMainMethod(mainClass, lstMethods) AndAlso result
 
-                    For Each m As Reflection.MethodInfo In methods
-                        If IsMainMethod(m) Then lstMethods.Add(m)
-                    Next
-                Else
-                    Dim tps() As Type = AssemblyBuilder.GetTypes
-                    For Each t As Type In tps
-                        methods = t.GetMethods
-                        For Each m As Reflection.MethodInfo In methods
-                            If IsMainMethod(m) Then lstMethods.Add(m)
-                        Next
-                    Next
+            If result = False Then Return result
+
+            If lstMethods.Count = 0 AndAlso CommandLine.Target = vbnc.CommandLine.Targets.Winexe AndAlso mainClass IsNot Nothing Then
+                'In this case we need to create our own main method
+                Dim mainBuilder As MethodBuilder
+                Dim formConstructor As ConstructorDeclaration
+                Dim ilGen As ILGenerator
+
+                formConstructor = mainClass.DefaultInstanceConstructor
+
+                If formConstructor IsNot Nothing Then
+                    mainBuilder = mainClass.TypeBuilder.DefineMethod("Main", MethodAttributes.Public Or MethodAttributes.Static Or MethodAttributes.HideBySig, Nothing, Type.EmptyTypes)
+                    ilGen = mainBuilder.GetILGenerator()
+                    ilGen.Emit(OpCodes.Newobj, formConstructor.ConstructorBuilder)
+                    ilGen.Emit(OpCodes.Call, TypeCache.System_Windows_Forms_Application__Run)
+                    ilGen.Emit(OpCodes.Ret)
+                    lstMethods.Add(mainBuilder)
                 End If
-                'Set the entry point of the assembly
-                Dim entryMethod As Reflection.MethodInfo
-                If lstMethods.Count > 1 Then
-                    Report.ShowMessage(Messages.VBNC30738, theAss.Name)
+            End If
 
-                    If (CommandLine.Target = vbnc.CommandLine.Targets.Console OrElse CommandLine.Target = vbnc.CommandLine.Targets.Winexe) Then
-                        Report.ShowMessage(Messages.VBNC30420, theAss.Name)
-                        Return False
-                    Else
-                        'CHECK: is this something to report? Report.Warning("No shared 'Main' method was found!")
-                    End If
-                ElseIf lstMethods.Count = 0 Then
-                    If (CommandLine.Target = vbnc.CommandLine.Targets.Console OrElse CommandLine.Target = vbnc.CommandLine.Targets.Winexe) Then
-                        Report.ShowMessage(Messages.VBNC30420, theAss.Name)
-                        Return False
-                    Else
-                        ' Report.Warning("No shared 'Main' method was found!")
-                    End If
+            'Set the entry point of the assembly
+            If lstMethods.Count > 1 Then
+                Report.ShowMessage(Messages.VBNC30738, theAss.Name)
+                Return False
+            ElseIf lstMethods.Count = 0 Then
+                Report.ShowMessage(Messages.VBNC30420, theAss.Name)
+                Return False
+            Else
+                Dim entryMethod As MethodBuilder
+                Dim entryMethodDescriptor As MethodDescriptor
+
+                entryMethodDescriptor = TryCast(lstMethods(0), MethodDescriptor)
+                If entryMethodDescriptor IsNot Nothing Then
+                    entryMethod = entryMethodDescriptor.Declaration.MethodBuilder
                 Else
-                    entryMethod = CType(lstMethods(0), Reflection.MethodInfo)
-                    AssemblyBuilder.SetEntryPoint(entryMethod)
+                    entryMethod = DirectCast(lstMethods(0), MethodBuilder)
                 End If
-            ElseIf CommandLine.Target = vbnc.CommandLine.Targets.Winexe Then
-                'Find a class inheriting from System.Forms.Form.
-                Throw New NotImplementedException
+                entryMethod.SetCustomAttribute(TypeCache.STAThreadAttribute_Ctor, New Byte() {})
+                AssemblyBuilder.SetEntryPoint(entryMethod)
             End If
 
         Catch ex As Exception
@@ -910,6 +907,50 @@ EndOfCompilation:
         End Try
 
         Return result
+    End Function
+
+    Function FindMainClass(ByRef Result As TypeDeclaration) As Boolean
+        'Dim mainClasses As ArrayList
+        Dim mainClass As TypeDeclaration
+
+        If CommandLine.Main = "" Then
+            Result = Nothing
+            Return True
+        End If
+
+        mainClass = theAss.FindType(CommandLine.Main)
+
+        If mainClass Is Nothing Then
+            Report.ShowMessage(Messages.VBNC90013, CommandLine.Main, "0")
+            Result = Nothing
+            Return False
+        End If
+
+        'Result = DirectCast(mainClasses(0), TypeDescriptor)
+        Result = mainClass
+
+        Return True
+    End Function
+
+    Function FindMainMethod(ByVal MainClass As TypeDeclaration, ByVal Result As Generic.List(Of MethodInfo)) As Boolean
+        Dim tps() As TypeDeclaration
+        Dim methods As Reflection.MethodInfo()
+
+        If MainClass Is Nothing Then
+            tps = theAss.Types
+        Else
+            tps = New TypeDeclaration() {MainClass}
+        End If
+
+        Result.Clear()
+        For Each t As TypeDeclaration In tps
+            methods = t.TypeDescriptor.GetMethods()
+            For Each m As Reflection.MethodInfo In methods
+                If IsMainMethod(m) Then Result.Add(m)
+            Next
+        Next
+
+        Return True
     End Function
 
     ''' <summary>

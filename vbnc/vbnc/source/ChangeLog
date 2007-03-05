@@ -1,5 +1,27 @@
 2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* vbnc.vbproj: Updated.
+	* TypeDeclarations/AssemblyDeclaration.vb: Added FindType, looks for
+	  the type with the specified FullName in the assembly.
+	* TypeDeclarations/TypeDeclaration.vb: Changed
+	  DefaultInstanceConstructor so that the Compiler can access it (when
+	  emitting a default Main method). Removed SetMainAttribute, no
+	  longer necessary.
+	* General/TypeResolution.vb: Removed a couple of unused functions.
+	* General/TypeCache.vb: Added SWF.Form, SWF.Application and
+	  SWF.Application.Run.
+	* General/Compiler.vb: The main function is now set before creating
+	  types, this enables us to emit a default Main method for winexe
+	  applications. Refactored SetMain () and to create the STAThread
+	  attribute here, we now have FindMainClass that looks for the main
+	  class set by -main command line argument (if any) and
+	  FindMainMethod. Implemented generation of a default Main method for
+	  winexe applications. Fixes #81016. Removed error messages in
+	  inaccessible code-paths.
+	* Types/ContainerType.vb: Deleted, obsolete.
+
+2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Statements/ExitStatement.vb: Handle the select case correctly. Fixes
 	  81009#.
 	* Types/TypeNameResolutionInfo.vb: Allow for invalid imports.

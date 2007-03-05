@@ -814,6 +814,13 @@ Public Class AssemblyDeclaration
         Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
     End Function
 
+    Function FindType(ByVal FullName As String) As TypeDeclaration
+        For Each type As TypeDeclaration In Me.Types
+            If NameResolution.CompareName(type.FullName, FullName) Then Return type
+        Next
+        Return Nothing
+    End Function
+
     Property Name() As String
         Get
             Return m_Name

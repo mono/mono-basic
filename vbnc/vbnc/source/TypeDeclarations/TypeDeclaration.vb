@@ -101,7 +101,7 @@ Public MustInherit Class TypeDeclaration
         End Set
     End Property
 
-    Protected Property DefaultInstanceConstructor() As ConstructorDeclaration
+    Protected Friend Property DefaultInstanceConstructor() As ConstructorDeclaration
         Get
             Return m_DefaultInstanceConstructor
         End Get
@@ -400,44 +400,10 @@ Public MustInherit Class TypeDeclaration
         Return result
     End Function
 
-    ''' <summary>
-    ''' Sets the entry point / Main function of the assembly
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub SetMainAttribute()
-
-        'Find the main function
-        Dim lstMethods As New Generic.List(Of SubDeclaration)
-        If Compiler.CommandLine.Target = vbnc.CommandLine.Targets.Console Then
-            If Compiler.CommandLine.Main <> "" Then
-                If NameResolution.CompareName(Me.FullName, Compiler.CommandLine.Main) = False Then
-                    Return
-                End If
-            End If
-
-            For Each m As SubDeclaration In Members.GetSpecificMembers(Of SubDeclaration)()
-                If Compiler.IsMainMethod(m.Descriptor) Then lstMethods.Add(m)
-            Next
-            'Set the entry point of the assembly
-            If lstMethods.Count > 1 Then
-                Return
-            ElseIf lstMethods.Count = 0 Then
-                Return
-            Else
-                lstMethods(0).CustomAttributes.Add(New Attribute(lstMethods(0), Compiler.TypeCache.STAThreadAttribute, New Object() {}))
-            End If
-        ElseIf Compiler.CommandLine.Target = vbnc.CommandLine.Targets.Winexe Then
-            'Find a class inheriting from System.Forms.Form.
-            Throw New NotImplementedException
-        End If
-    End Sub
-
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
         Me.CheckCodeNotResolved()
-
-        SetMainAttribute()
 
         result = MyBase.ResolveCode(Info) AndAlso result
         result = m_Members.ResolveCode(Info) AndAlso result
