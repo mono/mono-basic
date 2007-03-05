@@ -47,9 +47,11 @@ Namespace Microsoft.VisualBasic.ApplicationServices
             Throw New NotImplementedException
         End Function
 
+#If TARGET_JVM = False Then 'Not Supported by Grasshopper
         Private Function GetWindowsBuiltInRole(ByVal role As Object) As WindowsBuiltInRole
             Throw New NotImplementedException
         End Function
+#End If
 
     End Class
 End Namespace
