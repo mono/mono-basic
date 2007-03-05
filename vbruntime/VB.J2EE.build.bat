@@ -80,8 +80,8 @@ echo converting dll to jar without validator
 "%VMW_HOME%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_JGAC_DIR%" >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 echo running java validator
-"%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW_HOME%\bin\validator.jar";"%VMW_HOME%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
-IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
+rem "%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW_HOME%\bin\validator.jar";"%VMW_HOME%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
+rem IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 popd
 
 rem copy /Y %CD%\bin\Microsoft.VisualBasic.jar "%VMW4J2EE_JGAC_JARS%\Microsoft.VisualBasic.jar"
