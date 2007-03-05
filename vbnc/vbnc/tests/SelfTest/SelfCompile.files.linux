@@ -403,7 +403,6 @@
 "../../source/Members/BaseMember.vb"
 "../../source/TypeDeclarations/ClassDeclaration.vb"
 "../../source/Members/ConstructorDeclaration.vb"
-"../../source/Types/ContainerType.vb"
 "../../source/TypeDeclarations/DelegateDeclaration.vb"
 "../../source/TypeDeclarations/EnumDeclaration.vb"
 "../../source/Types/IConstructable.vb"
