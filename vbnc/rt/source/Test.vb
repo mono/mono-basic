@@ -85,6 +85,7 @@ Public Class Test
     Public DefaultOutputPath As String = "testoutput" & System.IO.Path.DirectorySeparatorChar
 
     Private m_Target As String
+    Private m_TargetExtension As String
     Private m_NoConfig As Boolean
 
     Private m_LastRun As Date
@@ -388,11 +389,11 @@ Public Class Test
     End Property
 
     Function GetOutputAssembly() As String
-        Return IO.Path.Combine(Me.OutputPath, Name & "." & m_Target)
+        Return IO.Path.Combine(Me.OutputPath, Name & "." & m_TargetExtension)
     End Function
 
     Function GetOutputVBCAssembly() As String
-        Return IO.Path.Combine(Me.OutputPath, Name & "_vbc." & m_Target)
+        Return IO.Path.Combine(Me.OutputPath, Name & "_vbc." & m_TargetExtension)
     End Function
 
     ''' <summary>
@@ -538,6 +539,7 @@ Public Class Test
                 m_NoConfig = IsNoConfig(contents) OrElse m_NoConfig
             End If
         End If
+        m_TargetExtension = GetTargetExtension(m_Target)
     End Sub
 
     ReadOnly Property IsDirty() As Boolean
@@ -881,11 +883,24 @@ Public Class Test
         Dim prefixes As String() = New String() {"/target:", "/t:", "-target:", "-t:"}
         For Each prefix As String In prefixes
             If text.IndexOf(prefix & "exe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
-            If text.IndexOf(prefix & "winexe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "exe"
+            If text.IndexOf(prefix & "winexe", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "winexe"
             If text.IndexOf(prefix & "library", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "dll"
             If text.IndexOf(prefix & "module", StringComparison.OrdinalIgnoreCase) >= 0 Then Return "netmodule"
         Next
         Return DefaultTarget
+    End Function
+
+    Private Function GetTargetExtension(ByVal Target As String) As String
+        Select Case Target
+            Case "winexe", "exe"
+                Return "exe"
+            Case "library", "dll"
+                Return "dll"
+            Case "netmodule", "module"
+                Return "netmodule"
+            Case Else
+                Return "exe"
+        End Select
     End Function
 
     Protected Overrides Sub Finalize()
