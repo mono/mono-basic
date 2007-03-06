@@ -1,3 +1,12 @@
+2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/Resources.vb: Remove SecondaryPath, it's just wrong.
+	* General/CommandLine.vb: Remove SecondaryPath, it's just wrong. Add a
+	  small hack for what it was supposed to support in the beginning -
+	  the fact that when doing testing within VS, the current directory
+	  is set to where the compiler is, not where the test is. Fixes
+	  #80967.
+
 2007-03-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.vbproj: Updated.

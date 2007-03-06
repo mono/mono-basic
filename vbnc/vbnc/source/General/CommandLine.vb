@@ -766,7 +766,7 @@ Public Class CommandLine
         Dim result As Boolean = True
 
         Try
-            result = pParse(CommandLine) AndAlso result
+            result = ParseInternal(CommandLine) AndAlso result
 
             If m_bNoConfig = False Then
                 Dim defaultrspfile As String
@@ -801,7 +801,7 @@ Public Class CommandLine
     ''' <summary>
     ''' Reads the specified response file and sends the arguments to pParse.
     ''' </summary>
-    Private Function ParseResponseFile(ByVal Filename As String, Optional ByVal SecondaryPath As String = "") As Boolean
+    Private Function ParseResponseFile(ByVal Filename As String) As Boolean
         If m_lstResponseFiles.Contains(Filename) Then
             Compiler.Report.ShowMessage(Messages.VBNC2014, Filename)
             Return False
@@ -817,12 +817,9 @@ Public Class CommandLine
             Filename = IO.Path.GetFullPath(Filename)
         ElseIf IO.File.Exists(IO.Path.GetFullPath(Filename)) Then
             Filename = IO.Path.GetFullPath(Filename)
-        ElseIf IO.File.Exists(IO.Path.Combine(SecondaryPath, Filename)) Then
-            Filename = IO.Path.Combine(SecondaryPath, Filename)
         Else
 #If DEBUG Then
             Compiler.Report.WriteLine("IO.File.Exists(" & Filename & ") => " & IO.File.Exists(Filename).ToString)
-            Compiler.Report.WriteLine("IO.File.Exists(" & IO.Path.Combine(SecondaryPath, Filename) & ") >= " & IO.File.Exists(IO.Path.Combine(SecondaryPath, Filename).ToString))
             Compiler.Report.WriteLine("IO.File.Exists(" & IO.Path.GetFullPath(Filename) & ") >= " & IO.File.Exists(IO.Path.GetFullPath(Filename)).ToString)
 #End If
             Compiler.Report.ShowMessage(Messages.VBNC2005, Filename)
@@ -830,8 +827,6 @@ Public Class CommandLine
         End If
 
         Helper.Assert(IO.File.Exists(Filename))
-
-        SecondaryPath = IO.Path.GetDirectoryName(Filename)
 
         Try
             strLines = IO.File.ReadAllLines(Filename)
@@ -851,7 +846,7 @@ Public Class CommandLine
         Dim strArgs(lstArgs.Count - 1) As String
         lstArgs.CopyTo(strArgs, 0)
         'Parse the arguments
-        Return pParse(strArgs, SecondaryPath)
+        Return ParseInternal(strArgs)
     End Function
 
     ''' <summary>
@@ -875,7 +870,7 @@ Public Class CommandLine
         Return result
     End Function
 
-    Private Function SetOption(ByVal strName As String, ByVal strValue As String, ByVal SecondaryPath As String) As Boolean
+    Private Function SetOption(ByVal strName As String, ByVal strValue As String) As Boolean
         Dim result As Boolean = True
         Select Case LCase(strName)
             ' - OUTPUT FILE -
@@ -916,7 +911,7 @@ Public Class CommandLine
             Case "linkresource", "linkres"
                 result = m_lstLinkResources.Add(strValue) AndAlso result
             Case "resource", "res"
-                result = m_lstResources.Add(strValue, SecondaryPath) AndAlso result
+                result = m_lstResources.Add(strValue) AndAlso result
             Case "win32icon"
                 m_strWin32Icon = strValue
             Case "win32resource"
@@ -1035,7 +1030,7 @@ Public Class CommandLine
                 m_strKeyContainer = strValue
             Case "keyfile"
                 Dim paths() As String
-                paths = Me.GetFullPaths(strValue, SecondaryPath)
+                paths = Me.GetFullPaths(strValue)
                 If paths.Length = 1 Then
                     m_strKeyFile = paths(0)
                 Else
@@ -1071,18 +1066,19 @@ Public Class CommandLine
         Return result
     End Function
 
-    Private Function AddFile(ByVal File As String, ByVal SecondaryPath As String) As Boolean
+    Private Function AddFile(ByVal File As String) As Boolean
         Dim result As Boolean = True
 
         Dim strFile As String
         Dim strFiles As String()
-        strFiles = GetFullPaths(File, SecondaryPath)
+        strFiles = GetFullPaths(File)
         For Each strFile In strFiles
             m_lstFileNames.Add(New CodeFile(strFile, System.IO.Path.GetDirectoryName(File), Me.Compiler))
         Next
 
         Return result
     End Function
+
     ''' <summary>
     ''' Parses the commandline
     ''' Returns false if no commandline found, or if there was an error parsing the commandline.
@@ -1090,13 +1086,31 @@ Public Class CommandLine
     ''' showing of the logo can be cancelled on the commandline, so the entire commandline
     ''' has to the parsed before any messages are shown.
     ''' </summary>
-    Private Function pParse(ByVal Args() As String, Optional ByVal SecondaryPath As String = "") As Boolean
+    Private Function ParseInternal(ByVal Args() As String) As Boolean
         Dim result As Boolean = True
         m_lstAllArgs.AddRange(Args)
         For Each s As String In Args
             If s.StartsWith("@") Then
                 Dim strResponseFile As String = s.Substring(1)
-                result = ParseResponseFile(strResponseFile, SecondaryPath) AndAlso result
+#If DEBUG Then
+                'Hack for the testing to work in VS since the current directory is set to where the compiler
+                'is, not where the test is.
+                If strResponseFile = "debug.rsp" AndAlso System.Diagnostics.Debugger.IsAttached Then
+                    strResponseFile = IO.Path.GetFullPath(strResponseFile)
+                    For Each str As String In IO.File.ReadAllLines(strResponseFile)
+                        For Each arg As String In Helper.ParseLine(str)
+                            If arg.StartsWith("@") Then
+                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg.Substring(1))
+                                Exit For
+                            ElseIf arg.IndexOfAny(IO.Path.GetInvalidFileNameChars) = -1 AndAlso IO.File.Exists(arg) Then
+                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg)
+                                Exit For
+                            End If
+                        Next
+                    Next
+                End If
+#End If
+                result = ParseResponseFile(strResponseFile) AndAlso result
                 Continue For
             End If
 
@@ -1123,11 +1137,11 @@ Public Class CommandLine
                     strName = s.Substring(1)
                 End If
                 'find the option
-                result = SetOption(strName, strValue, SecondaryPath) AndAlso result
+                result = SetOption(strName, strValue) AndAlso result
                 Continue For
             End If
 
-            AddFile(s, SecondaryPath)
+            AddFile(s)
         Next
 
         Return result
@@ -1139,18 +1153,17 @@ Public Class CommandLine
     ''' (the error message has already been shown).
     ''' </summary>
     ''' <param name="FileName">Can be a complete filename or a pattern.</param>
-    ''' <param name="SecondaryPath"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetFullPaths(ByVal FileName As String, ByVal SecondaryPath As String) As String()
+    Function GetFullPaths(ByVal FileName As String) As String()
         'Console.WriteLine("GetFullPath: " & FileName & ", SecondaryPath=" & SecondaryPath)
         Dim result As String()
         Dim strPath As String = System.IO.Path.GetDirectoryName(FileName)
         Dim strFileName As String
+
         If strPath <> "" Then
             strFileName = FileName.Substring(strPath.Length + 1)
         Else
-            strPath = SecondaryPath 'IO.Directory.GetCurrentDirectory()
             strFileName = FileName
         End If
 
@@ -1159,9 +1172,6 @@ Public Class CommandLine
             strPath = IO.Path.GetDirectoryName(IO.Path.GetFullPath(FileName))
         End If
         tmpPath = IO.Path.GetFullPath(strPath)
-        If IO.Directory.Exists(tmpPath) = False Then
-            tmpPath = IO.Path.GetFullPath(IO.Path.Combine(SecondaryPath, strPath))
-        End If
 
         If IO.Directory.Exists(tmpPath) = False Then
             'Compiler.Report.SaveMessage(Messages.VBNC2005, IO.Path.Combine(tmpPath, strFileName))

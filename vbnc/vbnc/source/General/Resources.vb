@@ -65,7 +65,7 @@ Public Class Resources
     ''' Add a new resource. Parses the string and verifies it.
     ''' If there are any messages, they are saved, not shown.
     ''' </summary>
-    Shadows Function Add(ByVal str As String, Optional ByVal SecondaryPath As String = "") As Boolean
+    Shadows Function Add(ByVal str As String) As Boolean
         Dim strItems() As String = Split(str, ",")
         Dim files As String()
         Dim isPublic As Boolean = True
@@ -73,12 +73,12 @@ Public Class Resources
 
         Select Case strItems.Length
             Case 1
-                files = Compiler.CommandLine.GetFullPaths(strItems(0), SecondaryPath)
+                files = Compiler.CommandLine.GetFullPaths(strItems(0))
             Case 2
-                files = Compiler.CommandLine.GetFullPaths(strItems(0), SecondaryPath)
+                files = Compiler.CommandLine.GetFullPaths(strItems(0))
                 identifier = strItems(1)
             Case 3
-                files = Compiler.CommandLine.GetFullPaths(strItems(0), SecondaryPath)
+                files = Compiler.CommandLine.GetFullPaths(strItems(0))
                 identifier = strItems(1)
                 Select Case strItems(2).ToLower()
                     Case "public"
