@@ -15,6 +15,7 @@ Module Main
     ''' <remarks></remarks>
     Function Main(ByVal args() As String) As Integer
         Try
+            Dim result As Object
             Dim assembly As Assembly = System.Reflection.Assembly.LoadFrom(args(0))
             Dim entrypoint As MethodInfo = assembly.EntryPoint
 
@@ -27,9 +28,12 @@ Module Main
             argList.AddRange(args)
             argList.RemoveAt(0)
             If entrypoint.GetParameters.Length = 0 Then
-                Return DirectCast(entrypoint.Invoke(Nothing, New Object() {}), Integer)
+                result = entrypoint.Invoke(Nothing, New Object() {})
             Else
-                Return DirectCast(entrypoint.Invoke(Nothing, New Object() {argList.ToArray()}), Integer)
+                result = entrypoint.Invoke(Nothing, New Object() {argList.ToArray()})
+            End If
+            If result IsNot Nothing Then
+                Return CInt(result)
             End If
         Catch ex As Exception
             Console.WriteLine(ex.Message)
