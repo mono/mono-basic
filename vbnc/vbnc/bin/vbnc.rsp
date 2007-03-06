@@ -1,2 +1,4 @@
-/r:System.dll
-/imports:system
+-r:System.dll
+-r:System.Windows.Forms.dll
+-imports:System
+-imports:Microsoft.VisualBasic
