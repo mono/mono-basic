@@ -30,28 +30,22 @@ Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.Logging
     Public Class Log
-#If mono_not_yet Then
+
         Private m_Source As TraceSource
-#End If
+
         Private Shared m_IDs() As Integer = New Integer() {3, 2, 1, 0, 8, -1, -1, -1, 4, 5, 6, 7, 9}
 
         Public Sub New()
             'Empty constructor
-#If mono_not_yet Then
+
             m_Source = New TraceSource("DefaultSource")
             InitializeWithDefaultsSinceNoConfigExists()
-#Else
-            throw new NotImplementedException
-#End If
+
         End Sub
 
         Public Sub New(ByVal name As String)
-#If mono_not_yet Then
             m_Source = New TraceSource(name)
             InitializeWithDefaultsSinceNoConfigExists()
-#Else
-            throw new NotImplementedException
-#End If
         End Sub
 
         Protected Friend Overridable Sub InitializeWithDefaultsSinceNoConfigExists()

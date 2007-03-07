@@ -73,7 +73,6 @@ Namespace Microsoft.VisualBasic.Logging
             m_ReserveDiskSpace = 10000000
         End Sub
 
-#If mono_not_yet Then
         Public Overrides Sub Close()
             MyBase.Close()
             m_Stream.Close()
@@ -114,6 +113,8 @@ Namespace Microsoft.VisualBasic.Logging
                 TraceEvent(eventCache, source, eventType, id, Microsoft.VisualBasic.Join(data, m_Delimiter))
             End If
         End Sub
+
+#If mono_not_yet Then
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal message As String)
             If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
 
@@ -159,6 +160,7 @@ Namespace Microsoft.VisualBasic.Logging
             End If
             WriteLine(builder.ToString)
         End Sub
+#End If
 
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal format As String, ByVal ParamArray args As Object())
             If args Is Nothing Then
@@ -168,7 +170,6 @@ Namespace Microsoft.VisualBasic.Logging
             End If
         End Sub
 
-#End If
 
         Public Overrides Sub Write(ByVal message As String)
             Dim stream As System.IO.StreamWriter
