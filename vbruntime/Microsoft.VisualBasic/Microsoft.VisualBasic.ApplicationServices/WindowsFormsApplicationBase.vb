@@ -50,15 +50,12 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         Private m_MinimumSplashScreenTime As Integer
         Private m_SplashScreen As Form
 
-#If mono_not_yet Then
         Public Event NetworkAvailabilityChanged As Devices.NetworkAvailableEventHandler
-#End If
-#If mono_not_yet Then
         Public Event Shutdown As ShutdownEventHandler
         Public Event Startup As StartupEventHandler
         Public Event StartupNextInstance As StartupNextInstanceEventHandler
         Public Event UnhandledException As UnhandledExceptionEventHandler
-#End If
+
         Public Sub New()
             Me.New(AuthenticationMode.Windows)
         End Sub
@@ -86,6 +83,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 #End If
         End Sub
 
+        <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Property IsSingleInstance() As Boolean
             Get
                 Return m_IsSingleInstance
@@ -104,7 +102,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
             End Set
         End Property
 
-        Protected Property SaveMySettingsOnExit() As Boolean
+        Public Property SaveMySettingsOnExit() As Boolean
             Get
                 Return m_SaveMySettingsOnExit
             End Get
