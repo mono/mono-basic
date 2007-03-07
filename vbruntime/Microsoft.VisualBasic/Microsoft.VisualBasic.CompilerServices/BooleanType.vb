@@ -31,10 +31,12 @@
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class BooleanType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class BooleanType
         Private Sub New()
             'Nobody should see constructor
         End Sub
+
         Public Shared Function FromObject(ByVal Value As Object) As Boolean
             If Value Is Nothing Then
                 Return False
@@ -58,15 +60,15 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
 #If NET_2_0 Then
             If TypeOf Value Is SByte Then
-                Return DirectCast(Value,SBYte) <> 0
+                Return DirectCast(Value, SByte) <> 0
             End If
 
             If TypeOf Value Is UInteger Then
-                Return DirectCast(Value,UInteger) <> 0
+                Return DirectCast(Value, UInteger) <> 0
             End If
 
             If TypeOf Value Is ULong Then
-                Return DirectCast(Value,ULong) <> 0
+                Return DirectCast(Value, ULong) <> 0
             End If
 #End If
             If TypeOf Value Is Long Then

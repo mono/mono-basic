@@ -35,11 +35,12 @@ Imports System
 ' Information.TypeName and Information.VbTypeName.
 ' It compiles them into coaresponding Versioned.foo functions.
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class Versioned
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class Versioned
         Private Sub New()
             'Nobody should see constructor
         End Sub
-        Public Shared Function CallByName(ByVal Instance As Object, ByVal MethodName As String, ByVal UseCallType As CallType, ByVal Arguments As Object()) As Object
+        Public Shared Function CallByName(ByVal Instance As Object, ByVal MethodName As String, ByVal UseCallType As CallType, ByVal ParamArray Arguments As Object()) As Object
             Throw New NotImplementedException
         End Function
         Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean

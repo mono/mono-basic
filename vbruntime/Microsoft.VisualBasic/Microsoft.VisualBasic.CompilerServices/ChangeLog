@@ -1,3 +1,17 @@
+2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DoubleType.vb, StaticLocalInitFlag.vb, LateBinding.vb,
+	  NewLateBinding.vb, Versioned.vb, ObjectFlowControl.vb,
+	  ProjectData.vb, LikeOperator.vb, DecimalType.vb,
+	  OptionTextAttribute.vb, InternalErrorException.vb, ObjectType.vb,
+	  StringType.vb, CharArrayType.vb, IVbHost.vb, Operators.vb,
+	  CharType.vb, DateType.vb, ExceptionUtils.vb, BooleanType.vb,
+	  HostServices.vb, SingleType.vb, StandardModuleAttribute.vb,
+	  IntegerType.vb, Utils.vb, ShortType.vb, LongType.vb,
+	  DesignerGeneratedAttribute.vb, ByteType.vb,
+	  IncompleteInitialization.vb, Conversions.vb, FlowControl.vb:
+	  Corcompare work.
+
 2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Operators.vb: Implemented basic support for (Conditional)CompareObject*.

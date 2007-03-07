@@ -32,6 +32,7 @@ Imports System
 Imports System.Runtime.InteropServices
 'MONOTODO: implement this public class. if needed.
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class ExceptionUtils
         Private Sub New()
             'Nobody should see constructor

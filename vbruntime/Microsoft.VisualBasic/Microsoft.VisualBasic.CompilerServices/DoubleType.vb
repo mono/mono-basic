@@ -33,6 +33,7 @@ Imports System
 Imports System.Runtime.InteropServices
 
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class DoubleType
 
         Private Sub New()
@@ -88,7 +89,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function Parse(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Double
             Return Double.Parse(Value, NumberFormat)
         End Function
-        Shared Function TryParse(ByVal value As String, <OutAttribute()> ByRef result As Double) As Boolean
+        Friend Shared Function TryParse(ByVal value As String, <OutAttribute()> ByRef result As Double) As Boolean
             'Grasshopper still does not support Double.TryParse
 #If NET_2_0 And TARGET_JVM = False Then
             Return Double.TryParse(value, result)

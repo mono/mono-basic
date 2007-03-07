@@ -33,7 +33,7 @@ Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic.CompilerServices
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Class, AllowMultiple:=False, Inherited:=False), EditorBrowsable(EditorBrowsableState.Never)> _
     Public NotInheritable Class DesignerGeneratedAttribute
         Inherits Attribute
         Public Sub New()

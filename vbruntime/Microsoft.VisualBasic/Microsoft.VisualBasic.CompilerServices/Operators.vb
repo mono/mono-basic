@@ -31,7 +31,8 @@
 #If NET_2_0 Then
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class Operators
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class Operators
         Class CompareResult
             Public Value As Integer
             Public Type As CompareResultType
@@ -432,6 +433,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function XorObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
+        Private Sub New()
+
+        End Sub
     End Class
 End Namespace
 #End If

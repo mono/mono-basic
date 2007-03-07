@@ -41,8 +41,8 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class StringType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class StringType
 
         Private Sub New()
             'Nobody should see constructor
@@ -68,6 +68,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Value.ToString()
         End Function
 
+        Public Shared Function FromDecimal(ByVal Value As Decimal, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As String
+            Return Value.ToString(NumberFormat)
+        End Function
+
         Public Shared Function FromObject(ByVal Value As Object) As String
             If Value Is Nothing Then
                 Return Nothing
@@ -82,8 +86,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Case TypeCode.Char
                     Return Convert.ToString(DirectCast(Value, Char))
                 Case TypeCode.DateTime
-                   ' Return StringType.FromDate(DirectCast(Value, Date))
-		     Return StringType.FromDate(DateType.FromObject(Value))
+                    ' Return StringType.FromDate(DirectCast(Value, Date))
+                    Return StringType.FromDate(DateType.FromObject(Value))
                 Case TypeCode.Double
                     Return Convert.ToString(DirectCast(Value, Double))
                 Case TypeCode.Decimal
@@ -108,12 +112,20 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return value.ToString()
         End Function
 
+        Public Shared Function FromDouble(ByVal Value As Double, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As String
+            Return Value.ToString(NumberFormat)
+        End Function
+
         Public Shared Function FromByte(ByVal value As Byte) As String
             Return value.ToString()
         End Function
 
         Public Shared Function FromSingle(ByVal value As Single) As String
             Return value.ToString()
+        End Function
+
+        Public Shared Function FromSingle(ByVal Value As Single, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As String
+            Return Value.ToString(NumberFormat)
         End Function
 
         Public Shared Function FromLong(ByVal value As Long) As String

@@ -31,8 +31,8 @@
 Imports System
 
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class FlowControl
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class FlowControl
 
         ' LoopFor reference object
         Private Class LoopForObject

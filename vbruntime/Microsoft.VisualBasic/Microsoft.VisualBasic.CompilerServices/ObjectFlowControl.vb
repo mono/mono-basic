@@ -31,6 +31,7 @@
 Imports System
 'MONOTODO: implement this public class. if needed.
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class ObjectFlowControl
         Private Sub New()
             'Nobody should see constructor
@@ -38,7 +39,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Sub CheckForSyncLockOnValueType(ByVal Expression As Object)
             FlowControl.CheckForSyncLockOnValueType(Expression)
         End Sub
-        Public Class ForLoopControl
+
+        <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+        Public NotInheritable Class ForLoopControl
             Private Sub New()
                 'Nobody should see constructor
             End Sub

@@ -32,8 +32,8 @@ Imports System
 Imports Microsoft.VisualBasic
 
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class CharType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class CharType
 
         Private Sub New()
             'Nobody should see constructor

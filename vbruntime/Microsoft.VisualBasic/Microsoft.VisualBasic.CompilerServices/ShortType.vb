@@ -30,8 +30,8 @@
 
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class ShortType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class ShortType
 
         Private Sub New()
             'Nobody should see constructor
@@ -49,8 +49,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             If TypeOf Value Is Boolean Then
-                Return ((-1S)*(Convert.ToInt16(Value)))
-            End If 
+                Return ((-1S) * (Convert.ToInt16(Value)))
+            End If
 
             Return Convert.ToInt16(Value)
 

@@ -32,7 +32,8 @@ Imports System
 Imports System.Runtime.InteropServices
 
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class Utils
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class Utils
 
         Private Sub New()
             'Nobody should see constructor

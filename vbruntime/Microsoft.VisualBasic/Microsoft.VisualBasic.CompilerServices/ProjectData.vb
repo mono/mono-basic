@@ -36,6 +36,7 @@ Imports System.Runtime.InteropServices
 Namespace Microsoft.VisualBasic.CompilerServices
     ' ProjectData class is used in VB exception handling.
     ' it holds an ErrObject which stores the current error status of the whole running program.
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class ProjectData
 
         ' ProjectData singelton
@@ -70,11 +71,16 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Inst
         End Function
         'ClearProjectError is called by the statement "On Error Resume Next"
+#If NET_VER >= 2.0 Then
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
         Public Shared Sub ClearProjectError()
+#Else
+        Public Shared Sub ClearProjectError()
+#End If
             'FIXME: "On Error Resume Next" cause to stop throwing exceptions. 
             'might be some friend variable of ErrObject which store that flag .
             Dim pd As ProjectData = Instance()
-            pd.projectError.Clear()
+            pd.ProjectError.Clear()
         End Sub
         Public Shared Function CreateProjectError(ByVal hr As Integer) As Exception
             'FIXME: hr might be a Windows HResult number, and not a VB error number.
@@ -87,21 +93,34 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim description As String
             description = Conversion.ErrorToString(hr)
 
-            pd.projectError.SetExceptionFromNumber(hr, description)
+            pd.ProjectError.SetExceptionFromNumber(hr, description)
 
-            Return pd.projectError.GetException
+            Return pd.ProjectError.GetException
 
         End Function
+
+#If NET_VER >= 2.0 Then
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
         Public Shared Sub SetProjectError(ByVal ex As Exception)
+#Else
+        Public Shared Sub SetProjectError(ByVal ex As Exception)
+#End If
             Dim pd As ProjectData = Instance()
-            pd.projectError.SetException(ex)
+            pd.ProjectError.SetException(ex)
         End Sub
+
+#If NET_VER >= 2.0 Then
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
         Public Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
+#Else
+        Public Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
+#End If
             Throw New NotImplementedException("implement me: Erl")
             'FIXME: projectError.SetException(ex)
             'FIXME: projectError.Erl = lErl
             'FIXME: projectError.Erl  is readonly. suggested solution, add an overload of SetException(Exception,Integer)
         End Sub
+
         Public Shared Sub EndApp()
             Environment.Exit(Environment.ExitCode)
         End Sub

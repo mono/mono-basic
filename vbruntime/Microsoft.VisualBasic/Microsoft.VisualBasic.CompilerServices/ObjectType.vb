@@ -30,10 +30,11 @@
 
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class ObjectType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class ObjectType
 
-        Private Sub New()
-            'Nobody should see constructor
+        Public Sub New()
+
         End Sub
 
         Private Shared Function BiggestTypeCode(ByVal obj1 As System.Object, ByVal obj2 As System.Object) As System.TypeCode
@@ -142,8 +143,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim short1 As Short
             Dim short2 As Short
 
-            Dim dt1 as Date
-            Dim dt2 as Date
+            Dim dt1 As Date
+            Dim dt2 As Date
 
             Dim s1 As String
             Dim s2 As String
@@ -288,14 +289,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
 
-	Public Shared Function GetCaseNotImplemented() as System.Exception
-	    return new NotImplementedException("This case is not handled")
-	End Function 
+        Friend Shared Function GetCaseNotImplemented() As System.Exception
+            Return New NotImplementedException("This case is not handled")
+        End Function
 
-	Public Shared Function GetCaseNotImplemented(ByVal msg As System.String) as System.Exception
-	    return new NotImplementedException(msg)
-	End Function 
- 
+        Friend Shared Function GetCaseNotImplemented(ByVal msg As System.String) As System.Exception
+            Return New NotImplementedException(msg)
+        End Function
+
         Public Shared Function PlusObj(ByVal obj As System.Object) As System.Object
             Throw New NotImplementedException
         End Function

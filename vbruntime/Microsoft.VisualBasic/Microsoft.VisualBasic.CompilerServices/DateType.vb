@@ -31,7 +31,8 @@
 Imports System
 
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class DateType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class DateType
 
         Private Sub New()
             'Nobody should see constructor

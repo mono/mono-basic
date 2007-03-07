@@ -33,6 +33,7 @@ Imports System
 Imports System.Globalization
 
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Conversions
         Private Sub New()
             'Nobody should see constructor

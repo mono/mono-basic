@@ -31,7 +31,8 @@
 Imports System
 Imports Microsoft.VisualBasic
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class CharArrayType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class CharArrayType
         Private Sub New()
             'Nobody should see constructor
         End Sub

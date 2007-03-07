@@ -31,8 +31,8 @@
 Imports System
 
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class LongType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class LongType
 
         Private Sub New()
             'Nobody should see constructor

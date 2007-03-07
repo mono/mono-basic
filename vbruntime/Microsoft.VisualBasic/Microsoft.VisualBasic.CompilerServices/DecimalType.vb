@@ -30,7 +30,8 @@
 
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class DecimalType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class DecimalType
         '
         ' core logic is at Parse
         '

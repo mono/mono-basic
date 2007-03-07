@@ -29,6 +29,7 @@
 '
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class HostServices
         Private Shared host As IVbHost = Nothing
         ' Properties

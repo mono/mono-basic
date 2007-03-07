@@ -29,12 +29,13 @@
 '
 
 Imports System
+Imports System.ComponentModel
+
 Namespace Microsoft.VisualBasic.CompilerServices
+    <EditorBrowsable(EditorBrowsableState.Never)> _
     Public Interface IVbHost
-        ' Methods
         Function GetWindowTitle() As String
-        'TODO:How to support System.Windows.Forms.IWin32Window ?
-        'Function GetParentWindow() As System.Windows.Forms.IWin32Window
+        Function GetParentWindow() As System.Windows.Forms.IWin32Window
     End Interface
 End Namespace
 

@@ -30,35 +30,45 @@
 #If NET_2_0 Then
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class NewLateBinding
         Private Sub New()
             'Nobody should see constructor
         End Sub
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateCall(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal CopyBack As Boolean(), ByVal IgnoreReturn As Boolean) As Object
             Return LateBinding.LateGet(Instance, Type, MemberName, Arguments, ArgumentNames, CopyBack)
         End Function
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateCanEvaluate(ByVal instance As Object, ByVal type As Type, ByVal memberName As String, ByVal arguments As Object(), ByVal allowFunctionEvaluation As Boolean, ByVal allowPropertyEvaluation As Boolean) As Boolean
             Throw New NotImplementedException
         End Function
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateGet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal CopyBack As Boolean()) As Object
             Return LateBinding.LateGet(Instance, Type, MemberName, Arguments, ArgumentNames, CopyBack)
         End Function
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateIndexGet(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String()) As Object
             Return LateBinding.LateIndexGet(Instance, Arguments, ArgumentNames)
         End Function
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateIndexSet(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String())
             LateBinding.LateIndexSet(Instance, Arguments, ArgumentNames)
         End Sub
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateIndexSetComplex(ByVal Instance As Object, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
             LateBinding.LateIndexSetComplex(Instance, Arguments, ArgumentNames, OptimisticSet, RValueBase)
         End Sub
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateSet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type())
             LateBinding.LateSet(Instance, Type, MemberName, Arguments, ArgumentNames)
         End Sub
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateSet(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean, ByVal CallType As CallType)
             LateSetComplex(Instance, Type, MemberName, Arguments, ArgumentNames, TypeArguments, OptimisticSet, RValueBase)
         End Sub
-        Public Shared Sub LateSetComplex(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)            
+        <DebuggerStepThrough(), DebuggerHidden()> _
+        Public Shared Sub LateSetComplex(ByVal Instance As Object, ByVal Type As Type, ByVal MemberName As String, ByVal Arguments As Object(), ByVal ArgumentNames As String(), ByVal TypeArguments As Type(), ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
             LateSet(Instance, Type, MemberName, Arguments, ArgumentNames, TypeArguments)
         End Sub
     End Class

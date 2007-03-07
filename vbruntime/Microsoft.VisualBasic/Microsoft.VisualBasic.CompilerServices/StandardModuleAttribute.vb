@@ -34,7 +34,7 @@ Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic.CompilerServices
-    <AttributeUsage(AttributeTargets.Class)> _
+    <AttributeUsage(AttributeTargets.Class, Inherited:=False, AllowMultiple:=False), System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class StandardModuleAttribute
         Inherits Attribute
     End Class

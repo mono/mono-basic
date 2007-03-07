@@ -31,7 +31,8 @@
 Imports System
 
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class ByteType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class ByteType
         Private Sub New()
             'Nobody should see constructor
         End Sub

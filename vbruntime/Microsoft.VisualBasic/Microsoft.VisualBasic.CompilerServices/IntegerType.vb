@@ -31,7 +31,8 @@
 Imports System
 Imports System.Runtime.InteropServices
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class IntegerType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class IntegerType
         Private Sub New()
             'Nobody should see constructor
         End Sub

@@ -30,7 +30,8 @@
 
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-    Public Class SingleType
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class SingleType
 
         Private Sub New()
             'Nobody should see constructor

@@ -28,13 +28,30 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+#If NET_VER >= 2.0 Then
 Imports System
 Imports System.Runtime.InteropServices
-'MONOTODO: implement this public class. if needed.
+
 Namespace Microsoft.VisualBasic.CompilerServices
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class InternalErrorException
-        Private Sub New()
-            'Nobody should see constructor
+        Inherits Exception
+
+        Public Sub New()
+            MyBase.New()
         End Sub
+
+        <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Advanced)> _
+        Public Sub New(ByVal message As String)
+            MyBase.New(message)
+        End Sub
+
+        <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Advanced)> _
+        Public Sub New(ByVal message As String, ByVal innerException As Exception)
+            MyBase.New(message, innerException)
+        End Sub
+
     End Class
 End Namespace
+#End If

@@ -33,8 +33,8 @@ Imports System.Reflection
 Imports System.Globalization
 
 Namespace Microsoft.VisualBasic.CompilerServices
-
-    Public Class LateBinding
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    Public NotInheritable Class LateBinding
 
         Private Shared ReadOnly Property LBinder() As Microsoft.VisualBasic.CompilerServices.LateBinder
             Get
@@ -42,10 +42,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Get
         End Property
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateCall(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal CopyBack() As Boolean)
             LateGet(o, objType, name, args, paramnames, CopyBack)
         End Sub
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateIndexSet(ByVal o As Object, ByVal args() As Object, ByVal paramnames() As String)
             Dim realType As System.Type = o.GetType()
             Dim flags As BindingFlags
@@ -59,11 +61,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Sub
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateIndexSetComplex(ByVal o As Object, ByVal args() As Object, ByVal paramnames() As String, ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
             'FIXME
             LateIndexSet(o, args, paramnames)
         End Sub
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateSet(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String)
             Dim realType As System.Type = objType
             If realType Is Nothing Then
@@ -102,6 +106,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             realType.InvokeMember(name, flags, LBinder, o, args, Nothing, Nothing, paramnames)
         End Sub
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Sub LateSetComplex(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal OptimisticSet As Boolean, ByVal RValueBase As Boolean)
             'FIXME
             Try
@@ -111,12 +116,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Try
         End Sub
 
-        Public Shared Function LateGet(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal CopyBack() As Boolean) As Object          
+        <DebuggerStepThrough(), DebuggerHidden()> _
+        Public Shared Function LateGet(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal CopyBack() As Boolean) As Object
             Dim realType As System.Type = objType
             If realType Is Nothing Then
                 realType = o.GetType()
             End If
-         
+
             Dim flags As BindingFlags = BindingFlags.FlattenHierarchy Or _
                                         BindingFlags.GetField Or _
                                         BindingFlags.GetProperty Or _
@@ -138,6 +144,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Try
         End Function
 
+        <DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateIndexGet(ByVal o As Object, ByVal args() As Object, ByVal paramnames() As String) As Object
             Dim realType As System.Type = o.GetType()
             Dim flags As BindingFlags
@@ -151,5 +158,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Function
 
+        Private Sub New()
+
+        End Sub
     End Class
 End Namespace
