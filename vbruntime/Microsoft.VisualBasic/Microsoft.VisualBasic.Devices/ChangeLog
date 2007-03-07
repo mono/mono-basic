@@ -1,3 +1,8 @@
+2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Network.vb, NetworkAvailableEventHandler.vb: Removed mono_not_yet,
+	  since vbnc can now handle events on Mono.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKVinge@novell.com>
 
 	* Added Audio.vb, Computer.vb, ComputerInfo.vb, Keyboard.vb

@@ -29,9 +29,7 @@
 Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.Devices
-#If mono_not_yet Then
     <EditorBrowsable(EditorBrowsableState.Advanced)> _
     Public Delegate Sub NetworkAvailableEventHandler(ByVal sender As Object, ByVal e As NetworkAvailableEventArgs)
-#End If
 End Namespace
 #End If

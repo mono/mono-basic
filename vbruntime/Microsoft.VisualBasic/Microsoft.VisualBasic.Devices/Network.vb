@@ -33,9 +33,9 @@ Imports System.Net.NetworkInformation
 
 Namespace Microsoft.VisualBasic.Devices
     Public Class Network
-#If mono_not_yet Then
+
+        'MonoTODO
         Public Event NetworkAvailabilityChanged As NetworkAvailableEventHandler
-#End If
 
         Private Const DEFAULTTIMEOUT As Integer = 100000
 
