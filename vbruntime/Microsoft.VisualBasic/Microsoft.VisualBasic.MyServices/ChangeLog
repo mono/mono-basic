@@ -1,3 +1,8 @@
+2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ClipboardProxy.vb: Removed mono_not_yet from a couple of methods,
+	  since more missing bits have been implemented on Mono.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Added ClipboardProxy.vb, FileSystemProxy.vb, 

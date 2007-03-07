@@ -41,7 +41,6 @@ Namespace Microsoft.VisualBasic.MyServices
             'Empty constructor
         End Sub
 
-#If mono_not_yet Then
         Public Sub Clear()
             Clipboard.Clear()
         End Sub
@@ -131,7 +130,6 @@ Namespace Microsoft.VisualBasic.MyServices
         Public Sub SetText(ByVal text As String, ByVal format As TextDataFormat)
             Clipboard.SetText(text, format)
         End Sub
-#End If
     End Class
 End Namespace
 #End If
