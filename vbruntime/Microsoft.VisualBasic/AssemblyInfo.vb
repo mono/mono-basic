@@ -41,7 +41,7 @@ Imports System.Security
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("vbruntime")> 
+<Assembly: AssemblyTitle("Microsoft.VisualBasic.dll")> 
 <Assembly: AssemblyDescription("Microsoft.VisualBasic.dll")> 
 <Assembly: AssemblyCompany("Ximian")> 
 <Assembly: AssemblyProduct("vbruntime")> 

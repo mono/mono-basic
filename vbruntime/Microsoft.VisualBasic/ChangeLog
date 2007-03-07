@@ -1,3 +1,8 @@
+2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb: Corcompare work.
+	* strings.resources: Updated.
+
 2007-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbruntime.rsp: Undo changes unwanted changes.
