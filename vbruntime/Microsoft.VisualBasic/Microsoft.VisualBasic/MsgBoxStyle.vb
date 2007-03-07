@@ -34,8 +34,13 @@ Namespace Microsoft.VisualBasic
     Public Enum MsgBoxStyle As Integer
         ApplicationModal = 0
         DefaultButton1 = 0
+#If NET_VER >= 2.0 Then
         OKOnly = 0
         OKCancel = 1
+#Else
+        OkOnly = 0
+        OkCancel = 1
+#End If
         AbortRetryIgnore = 2
         YesNoCancel = 3
         YesNo = 4

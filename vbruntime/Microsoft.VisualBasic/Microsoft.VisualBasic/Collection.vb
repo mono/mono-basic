@@ -40,12 +40,10 @@ Imports System.Reflection
 Namespace Microsoft.VisualBasic
 #If NET_VER >= 2.0 Then
     '<DebuggerTypeProxy ("??")>
-    <DefaultMember("Item")> _
     <Serializable()> _
     <DebuggerDisplay("Count = {Count}")> _
     Public NotInheritable Class Collection
 #Else
-    <DefaultMember("Item")> _
     Public NotInheritable Class Collection
 #End If
 
@@ -167,7 +165,12 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
+#If NET_VER >= 2.0 Then
+        <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Default Public ReadOnly Property Item(ByVal index As Object) As Object
+#Else
+        Default Public ReadOnly Property Item(ByVal index As Object) As Object
+#End If
             Get
                 If TypeOf index Is Integer Then
                     Return Item(CInt(index))
@@ -243,7 +246,13 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Private Function Contains(ByVal value As Object) As Boolean Implements System.Collections.IList.Contains
+#If NET_VER >= 2.0 Then
+        Public Function Contains(ByVal key As String) As Boolean
+            Return m_Hashtable.ContainsKey(key)
+        End Function
+#End If
+
+        Private Function IListContains(ByVal value As Object) As Boolean Implements System.Collections.IList.Contains
             Return (CType(Me, IList)).IndexOf(value) <> -1
         End Function
 
@@ -442,11 +451,11 @@ Namespace Microsoft.VisualBasic
         End Function
 
 #If NET_VER >= 2.0 Then
-        Public Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
+        Private Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
             Throw New NotImplementedException
         End Sub
 
-        Public Sub OnDeserialization(ByVal sender As Object) Implements System.Runtime.Serialization.IDeserializationCallback.OnDeserialization
+        Private Sub OnDeserialization(ByVal sender As Object) Implements System.Runtime.Serialization.IDeserializationCallback.OnDeserialization
             Throw New NotImplementedException
         End Sub
 #End If

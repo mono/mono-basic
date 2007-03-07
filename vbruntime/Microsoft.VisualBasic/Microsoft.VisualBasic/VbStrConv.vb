@@ -38,14 +38,8 @@ Namespace Microsoft.VisualBasic
     '/ When you call the StrConv function, you can use the following enumeration 
     '/ members in your code in place of the actual values.
     '/ </summary>
-#If NET_2_0 Then
-   	<System.Flags> _  
-	<System.Serializable> _ 
-	Public Enum VbStrConv As Integer
-#Else
     <System.Flags()> _
     Public Enum VbStrConv As Integer
-#End If
         '
         '/ <summary>
         '/ Performs no conversion 
