@@ -27,6 +27,13 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class TypeManager
+#If ENABLECECIL Then
+    Private m_CecilAssemblies As New Generic.List(Of Mono.Cecil.AssemblyDefinition)
+    Private m_CecilTypes As New CecilTypeList
+    Private m_CecilModuleTypes As New CecilTypeList
+    Private m_CecilTypesByNamespace As New CecilNamespaceDictionary
+    Private m_CecilModulesByNamespace As New CecilNamespaceDictionary
+#End If
     ''' <summary>
     ''' All the referenced assemblies
     ''' </summary>
@@ -69,13 +76,13 @@ Public Class TypeManager
 
 
     Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.NameResolution.StringComparer)
-    Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)
+    Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
     Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
 
     Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
-    Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)
+    Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
 
-    Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)
+    Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)(New TypeComparer)
 
     Function GetCache(ByVal Type As Type) As MemberCache
         If MemberCache.ContainsKey(Type) Then
@@ -94,6 +101,20 @@ Public Class TypeManager
             Return m_Assemblies
         End Get
     End Property
+
+#If ENABLECECIL Then
+    ReadOnly Property CecilAssemblies() As Generic.List(Of Mono.Cecil.AssemblyDefinition)
+        Get
+            Return m_CecilAssemblies
+        End Get
+    End Property
+
+    ReadOnly Property CecilTypes() As CecilTypeList
+        Get
+            Return m_CecilTypes
+        End Get
+    End Property
+#End If
 
     ''' <summary>
     ''' All the non-nested types available.
@@ -212,8 +233,11 @@ Public Class TypeManager
                         Compiler.Report.WriteLine("Loaded '" & refAssembly.Location & "' (" & refAssembly.FullName & ")")
                     End If
                     Assemblies.Add(refAssembly)
+#If ENABLECECIL Then
+                    m_CecilAssemblies.Add(Mono.Cecil.AssemblyFactory.GetAssembly(refAssembly.Location))
+#End If
                 End If
-                End If
+            End If
         Next
 
         Compiler.TypeCache.Init(Assemblies)
@@ -317,6 +341,30 @@ Public Class TypeManager
 
     End Sub
 
+#If ENABLECECIL Then
+    ''' <summary>
+    ''' Load the type into the various lists.
+    ''' </summary>
+    ''' <param name="Type"></param>
+    ''' <remarks></remarks>
+    Private Sub LoadType(ByVal Type As Mono.Cecil.TypeDefinition)
+        'Add the type to the list of all types.
+        Me.CecilTypes.Add(Type)
+
+        'Add the namespace to the list of all namespaces.
+        Me.Namespaces.AddAllNamespaces(Compiler, Type.Namespace, True)
+
+        'Add the type to the list of types by namespace.
+        m_CecilTypesByNamespace.AddType(Type)
+
+        'If it is a module add it to the list of all modules and to the list of modules by namespace.
+        If Helper.IsModule(Compiler, Type) Then
+            m_CecilModuleTypes.Add(Type)
+            m_cecilModulesByNamespace.AddType(Type)
+        End If
+
+    End Sub
+#End If
     ''' <summary>
     ''' Finds all the public non-nested types in the referenced assemblies and loads them into the lists.
     ''' </summary>
@@ -331,6 +379,16 @@ Public Class TypeManager
                 End If
             Next
         Next
+#If ENABLECECIL Then
+        For Each ass As Mono.Cecil.AssemblyDefinition In CecilAssemblies
+            Dim types As Mono.Cecil.TypeDefinitionCollection = ass.MainModule.Types
+            For Each type As Mono.Cecil.TypeDefinition In types
+                If type.ispublic Then
+                    LoadType(type)
+                End If
+            Next
+        Next
+#End If
         Return True
     End Function
 
@@ -570,4 +628,34 @@ Public Class TypeManager
             Return m_GenericTypeCache
         End Get
     End Property
+
+    Class TypeComparer
+        Implements Collections.Generic.IEqualityComparer(Of Type)
+
+        Public Function Equals1(ByVal x As System.Type, ByVal y As System.Type) As Boolean Implements System.Collections.Generic.IEqualityComparer(Of System.Type).Equals
+            Return Helper.CompareType(x, y)
+        End Function
+
+        Public Function GetHashCode1(ByVal obj As System.Type) As Integer Implements System.Collections.Generic.IEqualityComparer(Of System.Type).GetHashCode
+            Return obj.GetHashCode
+        End Function
+    End Class
+
+    Class MemberComparer
+        Implements Collections.Generic.IEqualityComparer(Of MemberInfo)
+
+        Public Function Equals1(ByVal x As System.Reflection.MemberInfo, ByVal y As System.Reflection.MemberInfo) As Boolean Implements System.Collections.Generic.IEqualityComparer(Of System.Reflection.MemberInfo).Equals
+            If x Is Nothing Xor y Is Nothing Then
+                Return False
+            ElseIf x Is Nothing AndAlso y Is Nothing Then
+                Return True
+            Else
+                Return x.Equals(y)
+            End If
+        End Function
+
+        Public Function GetHashCode1(ByVal obj As System.Reflection.MemberInfo) As Integer Implements System.Collections.Generic.IEqualityComparer(Of System.Reflection.MemberInfo).GetHashCode
+            Return obj.GetHashCode()
+        End Function
+    End Class
 End Class

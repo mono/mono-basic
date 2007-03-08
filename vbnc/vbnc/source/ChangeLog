@@ -1,3 +1,11 @@
+2007-03-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/TypeManager.vb: Use our own comparer in the membercache, this
+	  avoids the runtime calling into Type.Equals ->
+	  Type.UnderlyingSystemType, which causes *Descriptors to be created
+	  in some cases (crashes if done before started to emit). Fixes
+	  build. Also started slowly working on using Cecil.
+
 2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Resources.vb: Remove SecondaryPath, it's just wrong.
