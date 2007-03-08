@@ -31,6 +31,7 @@
 Imports System
 Imports System.Reflection
 Imports System.Globalization
+Imports System.Diagnostics
 
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
