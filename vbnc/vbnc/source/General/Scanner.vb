@@ -1091,8 +1091,13 @@ integertype:
                 Case " "c 'Space
                     NextChar()
                     If (CurrentChar() = "_"c) Then '
-                        If IsNewLine(PeekChar) Then
+                        Dim i As Integer = 1
+                        Do While IsWhiteSpace(PeekChars(i))
+                            i += 1
+                        Loop
+                        If IsNewLine(PeekChars(i)) Then
                             NextChar()
+                            EatWhiteSpace()
                             EatNewLine()
                         End If
                     End If

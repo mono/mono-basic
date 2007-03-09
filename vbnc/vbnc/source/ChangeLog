@@ -1,3 +1,8 @@
+2007-03-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/Scanner.vb: Allow for whitespace between the line
+	  continuation character and the end of the line. Fixes #81055.
+
 2007-03-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/TypeManager.vb: Use our own comparer in the membercache, this
