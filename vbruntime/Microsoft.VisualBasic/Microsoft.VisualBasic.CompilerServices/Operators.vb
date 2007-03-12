@@ -30,6 +30,7 @@
 
 #If NET_2_0 Then
 Imports System
+Imports System.Reflection
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Operators
@@ -270,8 +271,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Private Shared Function AddObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
             Dim ret As Object
-            If Not (InvokeBinaryOperator(o1, o2, "op_add", ret)) Then
-                Throw New InvalidOperationException(o1.GetType().ToString() + " does not have a defenition for operator '+'.")
+            If Not (InvokeBinaryOperator(o1, o2, "op_Addition", ret)) Then
+                Throw New InvalidOperationException()
             End If
             Return ret
         End Function
@@ -345,8 +346,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return AddInt32s(Convert.ToInt32(o1), Convert.ToInt32(o2))
                     Case TypeCode.Int64
                         Return AddInt64s(Convert.ToInt64(o1), Convert.ToInt64(o2))
-                    Case TypeCode.Object
-                        Return AddObjects(o1, o2)
                     Case TypeCode.SByte
                         Return AddSBytes(Convert.ToSByte(o1), Convert.ToSByte(o2))
                     Case TypeCode.Single
@@ -361,6 +360,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return AddUInt64s(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
 
                 End Select
+                Return AddObjects(o1, o2)
             Catch ex As Exception
                 If (TypeOf ex Is NotImplementedException) Then
                     Throw ex
@@ -601,18 +601,41 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Dim ret As Object
-            If (InvokeBinaryOperator(o1, o2, "op_concat", ret)) Then
-                Return ret
-            End If
-
+            Try
+                If (InvokeBinaryOperator(o1, o2, "op_Concatenate", ret)) Then
+                    Return ret
+                End If
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+                Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            End Try
+            
             Return String.Concat(Convert.ToString(o1), Convert.ToString(o2))
 
         End Function
 
-        'MONOTODO :
-        'We use reflection to check if left object has the argument operator defined. If the the argument operator is not defined then
-        'false is returned otherwise we invoke it, stroe the return value in the out argument ret and return true.
-        Private Shared Function InvokeBinaryOperator(ByVal Left As Object, ByVal right As Object, ByVal operation As String, ByRef ret As Object) As Boolean
+        Private Shared Function InvokeBinaryOperator(ByVal left As Object, ByVal right As Object, ByVal operation As String, ByRef ret As Object) As Boolean
+            Dim tleft As Type = left.GetType()
+            Dim tright As Type = right.GetType()
+            Dim types() As Type = {tleft, tright}
+            Dim parameters() As Object = {left, right}
+
+            Dim methodL As MethodInfo = tleft.GetMethod(operation, BindingFlags.Static Or BindingFlags.Public, Nothing, types, Nothing)
+            If (methodL IsNot Nothing) Then
+                ret = methodL.Invoke(Nothing, parameters)
+                Return True
+            End If
+
+            Dim methodR As MethodInfo = tright.GetMethod(operation, BindingFlags.Static Or BindingFlags.Public)
+            'Dim methodR As MethodInfo = tright.GetMethod(operation, BindingFlags.Static Or BindingFlags.Public, Nothing, types, Nothing)
+            If (methodR IsNot Nothing) Then
+                ret = methodR.Invoke(Nothing, parameters)
+                Return True
+            End If
+
+            ret = Nothing
             Return False
         End Function
 
