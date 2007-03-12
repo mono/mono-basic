@@ -27,6 +27,7 @@
 '
 
 #If NET_2_0 Then
+#If TARGET_JVM = False Then
 Imports System.ComponentModel
 Imports System.Collections.Specialized
 Imports System.IO
@@ -132,4 +133,5 @@ Namespace Microsoft.VisualBasic.MyServices
         End Sub
     End Class
 End Namespace
+#End If
 #End If

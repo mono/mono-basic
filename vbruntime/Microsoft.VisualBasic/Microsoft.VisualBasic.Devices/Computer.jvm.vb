@@ -47,12 +47,6 @@ Namespace Microsoft.VisualBasic.Devices
             End Get
         End Property
 
-        Public ReadOnly Property Clipboard() As MyServices.ClipboardProxy
-            Get
-                Throw New NotImplementedException
-            End Get
-        End Property
-
         Public ReadOnly Property Keyboard() As Keyboard
             Get
                 Throw New NotImplementedException

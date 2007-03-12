@@ -35,7 +35,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
     <EditorBrowsable(EditorBrowsableState.Never)> _
     Public Interface IVbHost
         Function GetWindowTitle() As String
+#If TARGET_JVM = False Then
         Function GetParentWindow() As System.Windows.Forms.IWin32Window
+#End If
     End Interface
 End Namespace
 
