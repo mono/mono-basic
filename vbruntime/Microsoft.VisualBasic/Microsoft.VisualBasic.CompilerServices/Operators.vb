@@ -175,8 +175,229 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Function
 
-        Public Shared Function AddObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+        Private Shared Function GetTypeCode(ByVal obj As Object) As TypeCode
+            If (TypeOf obj Is IConvertible) Then
+                Return CType(obj, IConvertible).GetTypeCode()
+            End If
+            Return Type.GetTypeCode(obj.GetType())
+        End Function
+
+        Shared DEST_TYPECODE As TypeCode(,) = { _
+{TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.String, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.String, TypeCode.Int32, TypeCode.String}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.String}, _
+{TypeCode.Int16, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Int16, TypeCode.Double}, _
+{TypeCode.String, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.String, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.String, TypeCode.String}, _
+{TypeCode.SByte, TypeCode.Empty, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.SByte, TypeCode.Double}, _
+{TypeCode.Byte, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Byte, TypeCode.Double}, _
+{TypeCode.Int16, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Int16, TypeCode.Double}, _
+{TypeCode.UInt16, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.UInt16, TypeCode.Double}, _
+{TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Int32, TypeCode.Double}, _
+{TypeCode.UInt32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.UInt32, TypeCode.Double}, _
+{TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Int64, TypeCode.Double}, _
+{TypeCode.UInt64, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.UInt64, TypeCode.Double}, _
+{TypeCode.Single, TypeCode.Empty, TypeCode.Empty, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Double, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Double}, _
+{TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double}, _
+{TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Double}, _
+{TypeCode.String, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.String, TypeCode.String, TypeCode.String}, _
+{TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.String, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.String, TypeCode.Int32, TypeCode.String}, _
+{TypeCode.String, TypeCode.Empty, TypeCode.String, TypeCode.Double, TypeCode.String, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.String, TypeCode.String, TypeCode.String} _
+}
+       
+
+        'Returns the expected return TypeCode of operation between these two objects or TypeCode.Empty if operation is not possible.
+        'Notice: The expected TypeCode may not be the actual TypeCode of the return type. The actual type return is "black box"ed 
+        'by the operation implementation. For example in the case of Integer and Short the expected return TypeCode is of Integer 
+        'but the actual return type may be Long (in the case of overflow)
+        Private Shared Function DestTypeCode(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function AddBooleans(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
+            Dim ret As Short = 0
+            If (o1) Then
+                ret = ret - 1S
+            End If
+            If (o2) Then
+                ret = ret - 1S
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function AddBytes(ByVal o1 As Byte, ByVal o2 As Byte) As Object
+            Dim s As Short = CType(o1, Short) + o2
+            If (s > Byte.MaxValue) Then
+                Return s
+            End If
+            Return CType(s, Byte)
+        End Function
+
+        Private Shared Function AddChars(ByVal o1 As Char, ByVal o2 As Char) As Object
+            Return AddStrings(o1.ToString(), o2.ToString())
+        End Function
+
+        Private Shared Function AddDateTimes(ByVal o1 As DateTime, ByVal o2 As DateTime) As Object
+            Return AddStrings(o1.ToString(), o2.ToString())
+        End Function
+
+        Private Shared Function AddDecimals(ByVal o1 As Decimal, ByVal o2 As Decimal) As Object
+            Return o1 + o2
+        End Function
+
+        Private Shared Function AddDoubles(ByVal o1 As Double, ByVal o2 As Double) As Object
+            Return o1 + o2
+        End Function
+
+        Private Shared Function AddInt16s(ByVal o1 As Short, ByVal o2 As Short) As Object
+            Dim int As Integer = CType(o1, Integer) + o2
+            If (int > Short.MaxValue) Or (int < Short.MinValue) Then
+                Return int
+            End If
+            Return CType(int, Short)
+        End Function
+
+        Private Shared Function AddInt32s(ByVal o1 As Integer, ByVal o2 As Integer) As Object
+            Dim l As Long = CType(o1, Long) + o2
+            If (l > Integer.MaxValue) Or (l < Integer.MinValue) Then
+                Return l
+            End If
+            Return CType(l, Integer)
+        End Function
+
+        Private Shared Function AddInt64s(ByVal o1 As Long, ByVal o2 As Long) As Object
+            Return o1 + o2
+        End Function
+
+        Private Shared Function AddObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_add", ret)) Then
+                Throw New InvalidOperationException(o1.GetType().ToString() + " does not have a defenition for operator '+'.")
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function AddSBytes(ByVal o1 As SByte, ByVal o2 As SByte) As Object
+            Dim s As Short = CType(o1, Short) + o2
+            If (s > SByte.MaxValue) Or (s < SByte.MinValue) Then
+                Return s
+            End If
+            Return CType(s, SByte)
+        End Function
+
+        Private Shared Function AddSingles(ByVal o1 As Single, ByVal o2 As Single) As Object
+            Return o1 + o2
+        End Function
+
+        Private Shared Function AddStrings(ByVal o1 As String, ByVal o2 As String) As Object
+            Return o1 + o2
+        End Function
+
+        Private Shared Function AddUInt16s(ByVal o1 As UShort, ByVal o2 As UShort) As Object
+            Dim int As Integer = CType(o1, Integer) + o2
+            If (int > UShort.MaxValue) Then
+                Return int
+            End If
+            Return CType(int, UShort)
+        End Function
+
+        Private Shared Function AddUInt32s(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object
+            Dim l As Long = CType(o1, Long) + o2
+            If (l > UInteger.MaxValue) Then
+                Return l
+            End If
+            Return CType(l, UInteger)
+        End Function
+
+        Private Shared Function AddUInt64s(ByVal o1 As ULong, ByVal o2 As ULong) As Object
+            Return o1 + o2
+        End Function
+
+        Public Shared Function AddObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return 0
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
+            End If
+
+            Dim destTc As TypeCode = DestTypeCode(o1, o2)
+            Try
+                Select Case destTc
+                    'Case TypeCode.Empty -> break
+                    Case TypeCode.Boolean
+                        Return AddBooleans(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                    Case TypeCode.Byte
+                        Return AddBytes(Convert.ToByte(o1), Convert.ToByte(o2))
+                    Case TypeCode.Char
+                        Return AddChars(Convert.ToChar(o1), Convert.ToChar(o2))
+                    Case TypeCode.DateTime
+                        Return AddDateTimes(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+                    Case TypeCode.Decimal
+                        Return AddDecimals(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                    Case TypeCode.Double
+                        Return AddDoubles(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                    Case TypeCode.Int16
+                        Return AddInt16s(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                    Case TypeCode.Int32
+                        Return AddInt32s(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                    Case TypeCode.Int64
+                        Return AddInt64s(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                    Case TypeCode.Object
+                        Return AddObjects(o1, o2)
+                    Case TypeCode.SByte
+                        Return AddSBytes(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                    Case TypeCode.Single
+                        Return AddSingles(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                    Case TypeCode.String
+                        Return AddStrings(Convert.ToString(o1), Convert.ToString(o2))
+                    Case TypeCode.UInt16
+                        Return AddUInt16s(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                    Case TypeCode.UInt32
+                        Return AddUInt32s(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                    Case TypeCode.UInt64
+                        Return AddUInt64s(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+
+                End Select
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+        End Function
+
+        'creates a real type of a Nothing object 
+        Private Shared Function CreateNullObjectType(ByVal otype As Object) As Object
+
+            If TypeOf otype Is Byte Then
+                Return Convert.ToByte(0)
+            ElseIf TypeOf otype Is Boolean Then
+                Return Convert.ToBoolean(False)
+            ElseIf TypeOf otype Is Long Then
+                Return Convert.ToInt64(0)
+            ElseIf TypeOf otype Is Decimal Then
+                Return Convert.ToDecimal(0)
+            ElseIf TypeOf otype Is Short Then
+                Return Convert.ToInt16(0)
+            ElseIf TypeOf otype Is Integer Then
+                Return Convert.ToInt32(0)
+            ElseIf TypeOf otype Is Double Then
+                Return Convert.ToDouble(0)
+            ElseIf TypeOf otype Is Single Then
+                Return Convert.ToSingle(0)
+            ElseIf TypeOf otype Is String Then
+                Return Convert.ToString("")
+            ElseIf TypeOf otype Is Char Then
+                Return Convert.ToChar(0)
+            ElseIf TypeOf otype Is Date Then
+                Return Nothing
+            Else
+                Throw New NotImplementedException("Implement me: " + otype.GetType.Name)
+            End If
+
         End Function
 
         Public Shared Function AndObject(ByVal Left As Object, ByVal Right As Object) As Object
@@ -360,12 +581,43 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Function
 
-        Public Shared Function ConcatenateObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+        Public Shared Function ConcatenateObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) Then
+                o1 = ""
+            Else
+                Dim tc1 As TypeCode = GetTypeCode(o1)
+                If (tc1.Equals(TypeCode.DBNull) Or tc1.Equals(TypeCode.Empty)) Then
+                    o1 = ""
+                End If
+            End If
+
+            If (o2 Is Nothing) Or (TypeOf o1 Is DBNull) Then
+                o2 = ""
+            Else
+                Dim tc2 As TypeCode = GetTypeCode(o2)
+                If (tc2.Equals(TypeCode.DBNull) Or tc2.Equals(TypeCode.Empty)) Then
+                    o2 = ""
+                End If
+            End If
+
+            Dim ret As Object
+            If (InvokeBinaryOperator(o1, o2, "op_concat", ret)) Then
+                Return ret
+            End If
+
+            Return String.Concat(Convert.ToString(o1), Convert.ToString(o2))
+
+        End Function
+
+        'MONOTODO :
+        'We use reflection to check if left object has the argument operator defined. If the the argument operator is not defined then
+        'false is returned otherwise we invoke it, stroe the return value in the out argument ret and return true.
+        Private Shared Function InvokeBinaryOperator(ByVal Left As Object, ByVal right As Object, ByVal operation As String, ByRef ret As Object) As Boolean
+            Return False
         End Function
 
         Public Shared Function ConditionalCompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectEqual(Left, Right, TextCompare))
+            Return CBool(CompareObjectEqual(Left, right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
