@@ -43,7 +43,7 @@ GOTO ENDSETOPTIONS
 :SETOPTIONS2
 SET VB_COMPILE_OPTIONS=/nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005 /errorreport:prompt /noconfig /imports:System.Collections,System.Diagnostics,System.Collections.Generic,System
 IF NOT %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /define:DEBUG=False,NET_2_0=True,_MYTYPE=\"Empty\",NET_VER=2.0
-IF %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /debug:full /define:DEBUG=True,TRACE=False,NET_2_0=True,_MYTYPE=\"Empty\" /errorreport:prompt  -verbose
+IF %VB_BUILD_PARAM_CONFIGURATION%=="debug" SET VB_COMPILE_OPTIONS=%VB_COMPILE_OPTIONS% /debug:full /define:DEBUG=True,TRACE=False,NET_2_0=True,NET_VER=2.0,_MYTYPE=\"Empty\" /errorreport:prompt  -verbose
 GOTO ENDSETOPTIONS
 
 :SETOPTIONS1
