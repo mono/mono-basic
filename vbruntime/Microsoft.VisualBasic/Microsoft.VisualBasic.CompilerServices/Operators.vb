@@ -639,6 +639,21 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return False
         End Function
 
+        Private Shared Function InvokeUnaryOperator(ByVal operand As Object, ByVal operation As String, ByRef ret As Object) As Boolean
+            Dim operandType As Type = operand.GetType()
+            Dim types() As Type = {operandType}
+            Dim parameters() As Object = {operand}
+
+            Dim method As MethodInfo = operandType.GetMethod(operation, BindingFlags.Static Or BindingFlags.Public, Nothing, types, Nothing)
+            If (method IsNot Nothing) Then
+                ret = method.Invoke(Nothing, parameters)
+                Return True
+            End If
+
+            ret = Nothing
+            Return False
+        End Function
+
         Public Shared Function ConditionalCompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
             Return CBool(CompareObjectEqual(Left, right, TextCompare))
         End Function
@@ -687,24 +702,257 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function MultiplyObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
+        Public Shared Function PlusBoolean(ByVal Operand As Boolean) As Object
+            If (Operand) Then
+                Return -1S
+            End If
+            Return 0S
+        End Function
+
+        Public Shared Function PlusString(ByVal Operand As String) As Object
+            Return Double.Parse(Operand)
+        End Function
+
+        Public Shared Function NegateBoolean(ByVal Operand As Boolean) As Object
+            If (Operand) Then
+                Return 1S
+            End If
+            Return 0S
+        End Function
+
+        Public Shared Function NegateByte(ByVal Operand As Byte) As Object
+            Return -1S * Operand
+        End Function
+
+        Public Shared Function NegateUInt16(ByVal Operand As UShort) As Object
+            Return -1 * Operand
+        End Function
+
+        Public Shared Function NegateUInt32(ByVal Operand As UInteger) As Object
+            Return -1L * Operand
+        End Function
+
+        Public Shared Function NegateUInt64(ByVal Operand As ULong) As Object
+            Return -1 * CType(Operand, Decimal)
+        End Function
+
+        Public Shared Function NegateSByte(ByVal Operand As SByte) As Object
+            If (Operand = SByte.MinValue) Then
+                Return 1S + SByte.MaxValue
+            End If
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateDecimal(ByVal Operand As Decimal) As Object
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateDouble(ByVal Operand As Double) As Object
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateSingle(ByVal Operand As Single) As Object
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateInt16(ByVal Operand As Int16) As Object
+            If (Operand = Int16.MinValue) Then
+                Return 1 + Int16.MaxValue
+            End If
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateInt32(ByVal Operand As Int32) As Object
+            If (Operand = Int32.MinValue) Then
+                Return 1L + Int32.MaxValue
+            End If
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateInt64(ByVal Operand As Int64) As Object
+            If (Operand = Int64.MinValue) Then
+                Return 1 + CType(Int64.MaxValue, ULong)
+            End If
+            Return -Operand
+        End Function
+
+        Public Shared Function NegateString(ByVal Operand As String) As Object
+            Dim d As Double = Double.Parse(Operand)
+            Return NegateDouble(d)
+        End Function
+
+        Public Shared Function NegateObject_(ByVal Operand As Object) As Object
+            Dim ret As Object
+            If Not (InvokeUnaryOperator(Operand, "op_UnaryNegation", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Public Shared Function PlusObject_(ByVal Operand As Object) As Object
+            Dim ret As Object
+            If Not (InvokeUnaryOperator(Operand, "op_UnaryPlus", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
         Public Shared Function NegateObject(ByVal Operand As Object) As Object
-            Throw New NotImplementedException
+
+            If (Operand Is Nothing) Then
+                Return 0
+            End If
+
+            Dim tc As TypeCode = GetTypeCode(Operand)
+            Try
+                Select Case tc
+                    Case TypeCode.Boolean
+                        Return NegateBoolean(Convert.ToBoolean(Operand))
+                    Case TypeCode.Byte
+                        Return NegateByte(Convert.ToByte(Operand))
+                    Case TypeCode.Decimal
+                        Return NegateDecimal(Convert.ToDecimal(Operand))
+                    Case TypeCode.Double
+                        Return NegateDouble(Convert.ToDouble(Operand))
+                    Case TypeCode.Int16
+                        Return NegateInt16(Convert.ToInt16(Operand))
+                    Case TypeCode.Int32
+                        Return NegateInt32(Convert.ToInt32(Operand))
+                    Case TypeCode.Int64
+                        Return NegateInt64(Convert.ToInt64(Operand))
+                    Case TypeCode.SByte
+                        Return NegateSByte(Convert.ToSByte(Operand))
+                    Case TypeCode.Single
+                        Return NegateSingle(Convert.ToSingle(Operand))
+                    Case TypeCode.String
+                        Return NegateString(Convert.ToString(Operand))
+                    Case TypeCode.UInt16
+                        Return NegateUInt16(Convert.ToUInt16(Operand))
+                    Case TypeCode.UInt32
+                        Return NegateUInt32(Convert.ToUInt32(Operand))
+                    Case TypeCode.UInt64
+                        Return NegateUInt64(Convert.ToUInt64(Operand))
+                    Case TypeCode.Object
+                        Return NegateObject_(Operand)
+
+                End Select
+            Catch ex As Exception
+            End Try
+            Throw New InvalidCastException("Operator '-' is not defined for type '" + tc.ToString() + "'.")
         End Function
+
+        Public Shared Function NotObject_(ByVal Operand As Object) As Object
+            Dim ret As Object
+            If Not (InvokeUnaryOperator(Operand, "op_OnesComplement", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Public Shared Function NotString(ByVal Operand As String) As Object
+            Return Not (CType((Convert.ToDouble(Operand)), Long))
+        End Function
+
+
         Public Shared Function NotObject(ByVal Operand As Object) As Object
-            Throw New NotImplementedException
+            If (Operand Is Nothing) Then
+                Return -1
+            End If
+
+            Dim tc As TypeCode = GetTypeCode(Operand)
+            Try
+                Select Case tc
+                    Case TypeCode.Boolean
+                        Return Not Convert.ToBoolean(Operand)
+                    Case TypeCode.Byte
+                        Return Not Convert.ToByte(Operand)
+                    Case TypeCode.Decimal
+                        Return Not (CType((Convert.ToDecimal(Operand)), Long))
+                    Case TypeCode.Double
+                        Return Not (CType((Convert.ToDouble(Operand)), Long))
+                    Case TypeCode.Int16
+                        Return Not Convert.ToInt16(Operand)
+                    Case TypeCode.Int32
+                        Return Not Convert.ToInt32(Operand)
+                    Case TypeCode.Int64
+                        Return Not Convert.ToInt64(Operand)
+                    Case TypeCode.SByte
+                        Return Not Convert.ToSByte(Operand)
+                    Case TypeCode.Single
+                        Return Not (CType((Convert.ToSingle(Operand)), Long))
+                    Case TypeCode.String
+                        Return NotString(Convert.ToString(Operand))
+                    Case TypeCode.UInt16
+                        Return Not Convert.ToUInt16(Operand)
+                    Case TypeCode.UInt32
+                        Return Not Convert.ToUInt32(Operand)
+                    Case TypeCode.UInt64
+                        Return Not Convert.ToUInt64(Operand)
+                    Case TypeCode.Object
+                        Return NotObject_(Operand)
+
+                End Select
+            Catch ex As Exception
+            End Try
+            Throw New InvalidCastException("Operator 'Not' is not defined for type '" + tc.ToString() + "'.")
         End Function
+
         Public Shared Function OrObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function PlusObject(ByVal Operand As Object) As Object
-            Throw New NotImplementedException
+            If (Operand Is Nothing) Then
+                Return 0
+            End If
+
+            Dim tc As TypeCode = GetTypeCode(Operand)
+            Try
+                Select Case tc
+                    Case TypeCode.Boolean
+                        Return PlusBoolean(Convert.ToBoolean(Operand))
+                    Case TypeCode.Byte
+                        Return Convert.ToByte(Operand)
+                    Case TypeCode.Decimal
+                        Return Convert.ToDecimal(Operand)
+                    Case TypeCode.Double
+                        Return Convert.ToDouble(Operand)
+                    Case TypeCode.Int16
+                        Return Convert.ToInt16(Operand)
+                    Case TypeCode.Int32
+                        Return Convert.ToInt32(Operand)
+                    Case TypeCode.Int64
+                        Return Convert.ToInt64(Operand)
+                    Case TypeCode.SByte
+                        Return Convert.ToSByte(Operand)
+                    Case TypeCode.Single
+                        Return Convert.ToSingle(Operand)
+                    Case TypeCode.String
+                        Return PlusString(Convert.ToString(Operand))
+                    Case TypeCode.UInt16
+                        Return Convert.ToUInt16(Operand)
+                    Case TypeCode.UInt32
+                        Return Convert.ToUInt32(Operand)
+                    Case TypeCode.UInt64
+                        Return Convert.ToUInt64(Operand)
+                    Case TypeCode.Object
+                        Return PlusObject_(Operand)
+
+                End Select
+            Catch ex As Exception
+            End Try
+            Throw New InvalidCastException("Operator '+' is not defined for type '" + tc.ToString() + "'.")
         End Function
+
         Public Shared Function RightShiftObject(ByVal Operand As Object, ByVal Amount As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function SubtractObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+            Return AddObject(Left, NegateObject(Right))
         End Function
+
         Public Shared Function XorObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
