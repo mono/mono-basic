@@ -20,7 +20,7 @@ uninstall-local:
 DISTFILES = vbnc.in Makefile
 
 clean-local:
-	rm vbnc
+	rm -f vbnc
 
 test-local run-test-local run-test-ondotnet-local all-local:
 	@:
