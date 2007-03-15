@@ -42,7 +42,7 @@ Module extract_source
     Function Main(ByVal args As String()) As Integer
         Dim source As String = Nothing, destination As String = Nothing, mode As String = Nothing, basepath As String = Nothing
         Dim exclude_resources As Boolean
-
+        Console.WriteLine("Arguments: '" & String.Join("' '", args) & "'")
         For Each arg As String In args
             If arg.StartsWith("-") = False AndAlso arg.StartsWith("/") = False Then
                 Console.WriteLine("Didn't understand argument: '" & arg & "'")
