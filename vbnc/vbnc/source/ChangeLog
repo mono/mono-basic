@@ -1,3 +1,7 @@
+2007-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Emit/Emitter.vb: Remove an unnecessary workaround, fixes an endianness issue.
+
 2007-03-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Scanner.vb: Allow for whitespace between the line

@@ -1416,7 +1416,8 @@ Partial Public Class Emitter
             Case 8
                 Info.ILGen.Emit(OpCodes.Ldc_I4_8)
             Case SByte.MinValue To SByte.MaxValue
-                Info.ILGen.Emit(OpCodes.Ldc_I4_S, BitConverter.GetBytes(CSByte(I))(0))
+                Dim sbit As SByte = CSByte(I)
+                Info.ILGen.Emit(OpCodes.Ldc_I4_S, sbit)
             Case Else
                 Info.ILGen.Emit(OpCodes.Ldc_I4, I)
         End Select
