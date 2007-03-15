@@ -202,7 +202,11 @@ Public MustInherit Class BinaryExpression
         Dim methodClassification As MethodGroupClassification
         methods = Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.LeftType)
         If Helper.CompareType(Me.LeftType, Me.RightType) = False Then
-            methods.AddRange(Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.RightType))
+            Dim methods2 As New Generic.List(Of MethodInfo)
+            methods2 = Helper.GetBinaryOperators(Compiler, CType(Me.Keyword, BinaryOperators), Me.RightType)
+            For Each method As MethodInfo In methods2
+                If methods.Contains(method) = False Then methods.Add(method)
+            Next
         End If
         If methods.Count = 0 Then
             Helper.AddError("No conversion possible.")
@@ -210,6 +214,7 @@ Public MustInherit Class BinaryExpression
         methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
         result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression), Nothing) AndAlso result
         result = methodClassification.SuccessfullyResolved AndAlso result
+        If result = False Then Return result
         m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
         Classification = methodClassification
         Return result

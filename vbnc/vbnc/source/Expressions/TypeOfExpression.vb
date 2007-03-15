@@ -80,6 +80,14 @@ Public Class TypeOfExpression
 
         Classification = New ValueClassification(Me)
 
+        If m_Expression.Classification.IsValueClassification Then
+        ElseIf m_Expression.Classification.CanBeValueClassification Then
+            m_Expression = m_Expression.ReclassifyToValueExpression()
+            result = m_Expression.ResolveExpression(Info) AndAlso result
+        Else
+            Helper.AddError()
+        End If
+
         Return result
     End Function
 
