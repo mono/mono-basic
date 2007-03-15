@@ -45,6 +45,7 @@ Module extract_source
 
         For Each arg As String In args
             If arg.StartsWith("-") = False AndAlso arg.StartsWith("/") = False Then
+                Console.WriteLine("Didn't understand argument: '" & arg & "'")
                 ShowHelp()
                 Return 1
             End If
@@ -53,6 +54,7 @@ Module extract_source
             arg = arg.Substring(1)
             idx = arg.IndexOfAny(New Char() {":"c, "="c})
             If idx = -1 Then
+                Console.WriteLine("Didn't understand argument: '" & arg & "'")
                 ShowHelp()
                 Return 1
             End If
@@ -72,6 +74,7 @@ Module extract_source
                         Case "L", "LINUX", "LIN"
                             mode = "l"
                         Case Else
+                            Console.WriteLine("Invalid mode: " & value)
                             ShowHelp()
                             Return 1
                     End Select
@@ -82,14 +85,28 @@ Module extract_source
                 Case "X"
                     exclude_resources = True
                 Case Else
+                    Console.WriteLine("Unknown option: '" & name & "' with value: '" & value & "'")
                     ShowHelp()
                     Return 1
             End Select
         Next
 
-        If mode = "" OrElse source = "" OrElse destination = "" Then
+        Dim result As Integer
+        If mode = "" Then
+            Console.WriteLine("The mode is necessary.")
+            result = 1
+        End If
+        If source = "" Then
+            Console.WriteLine("The source is necessary.")
+            result = 1
+        End If
+        If destination = "" Then
+            Console.WriteLine("The destination is necessary.")
+            result = 1
+        End If
+        If result = 1 Then
             ShowHelp()
-            Return 1
+            Return result
         End If
 
         Try
