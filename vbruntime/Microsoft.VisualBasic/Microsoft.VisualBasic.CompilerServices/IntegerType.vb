@@ -38,47 +38,52 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
 
         Public Shared Function FromObject(ByVal Value As Object) As Integer
+            Try
+                'implicit casting of Nothing returns 0
+                If Value Is Nothing Then
+                    Return 0
+                End If
 
-            'implicit casting of Nothing returns 0
-            If Value Is Nothing Then
-                Return 0
-            End If
+                Dim type1 As Type = Value.GetType()
 
-            Dim type1 As Type = Value.GetType()
-
-            Select Case Type.GetTypeCode(type1)
-                Case TypeCode.Boolean
-                    Return (-1) * Convert.ToInt32(DirectCast(Value, Boolean))
-                Case TypeCode.Byte
-                    Return DirectCast(Value, Byte)
-                Case TypeCode.Double
-                    Return Convert.ToInt32(DirectCast(Value, Double))
-                Case TypeCode.Decimal
-                    Return Convert.ToInt32((DirectCast(Value, Decimal)))
-                Case TypeCode.Int32
-                    Return DirectCast(Value, Integer)
-                Case TypeCode.Int16
-                    Return DirectCast(Value, Short)
-                Case TypeCode.Int64
-                    Return Convert.ToInt32(DirectCast(Value, Long))
-                Case TypeCode.Single
-                    Return Convert.ToInt32(DirectCast(Value, Single))
-                Case TypeCode.String
-                    Return IntegerType.FromString(DirectCast(Value, String))
+                Select Case Type.GetTypeCode(type1)
+                    Case TypeCode.Boolean
+                        Return (-1) * Convert.ToInt32(DirectCast(Value, Boolean))
+                    Case TypeCode.Byte
+                        Return DirectCast(Value, Byte)
+                    Case TypeCode.Double
+                        Return Convert.ToInt32(DirectCast(Value, Double))
+                    Case TypeCode.Decimal
+                        Return Convert.ToInt32((DirectCast(Value, Decimal)))
+                    Case TypeCode.Int32
+                        Return DirectCast(Value, Integer)
+                    Case TypeCode.Int16
+                        Return DirectCast(Value, Short)
+                    Case TypeCode.Int64
+                        Return Convert.ToInt32(DirectCast(Value, Long))
+                    Case TypeCode.Single
+                        Return Convert.ToInt32(DirectCast(Value, Single))
+                    Case TypeCode.String
+                        Return IntegerType.FromString(DirectCast(Value, String))
 #If NET_2_0 Then
-                Case TypeCode.SByte
-                    Return DirectCast(Value, SByte)
-                Case TypeCode.UInt16
-                    Return DirectCast(Value, UShort)
-                Case TypeCode.UInt32
-                    Return Convert.ToInt32(DirectCast(Value, UInteger))
-                Case TypeCode.UInt64
-                    Return Convert.ToInt32(DirectCast(Value, ULong))
+                    Case TypeCode.SByte
+                        Return DirectCast(Value, SByte)
+                    Case TypeCode.UInt16
+                        Return DirectCast(Value, UShort)
+                    Case TypeCode.UInt32
+                        Return Convert.ToInt32(DirectCast(Value, UInteger))
+                    Case TypeCode.UInt64
+                        Return Convert.ToInt32(DirectCast(Value, ULong))
 #End If
-                Case Else
-                    Throw New InvalidCastException
-            End Select
-
+                    Case Else
+                        Throw New InvalidCastException
+                End Select
+            Catch ex As Exception
+                Console.WriteLine("Could not convert from '" & Value.ToString() + "' to Integer (source type = " & Value.GetType.FullName)
+                Console.WriteLine(ex.Message)
+                Console.WriteLine(ex.StackTrace)
+                Throw
+            End Try
         End Function
         Public Shared Function FromString(ByVal Value As String) As Integer
 
