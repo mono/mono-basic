@@ -1,3 +1,8 @@
+2007-03-15  Wade Berrier  <wberrier@novell.com>
+
+	* rules.make: revert to using automake's install-sh (ie: sunos
+	doesn't have an install that accepts these args)
+
 2005-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* rules.make : target dll-sources (formerly updated-dll-sources).
