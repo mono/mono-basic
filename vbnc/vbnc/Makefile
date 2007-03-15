@@ -5,7 +5,6 @@ include ../../build/rules.make
 LOCAL_VBNC_FLAGS = @vbnc.exe.rsp
 
 PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
-PROGRAM_config = bin/vbnc.rsp
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 include ../../build/executable.make
@@ -32,3 +31,13 @@ vbnc.vbnc.rsp: source/vbnc.rsp
 
 vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
 	MONO_PATH="../../class/lib/bootstrap:$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r
+
+install-local: install-extras
+install-extras: 
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_DATA) bin/vbnc.rsp $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+
+uninstall-local: uninstall-extras
+uninstall-extras:
+	rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc.rsp
+

@@ -2,6 +2,7 @@ thisdir = vbnc/rt-console
 SUBDIRS =
 include ../../build/rules.make
 
+NO_INSTALL = yes
 
 PROGRAM = rt-console.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics

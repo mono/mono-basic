@@ -2,6 +2,7 @@ thisdir = vbnc/rt
 SUBDIRS =
 include ../../build/rules.make
 
+NO_INSTALL = yes
 
 PROGRAM = rt.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll,System.Windows.Forms.dll,System.Drawing.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing -rootnamespace:rt

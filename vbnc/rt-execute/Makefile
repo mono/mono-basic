@@ -2,6 +2,8 @@ thisdir = vbnc/rt-execute
 SUBDIRS =
 include ../../build/rules.make
 
+NO_INSTALL = yes
+
 PROGRAM = rt-execute.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics
 

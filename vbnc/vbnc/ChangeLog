@@ -1,3 +1,9 @@
+2007-03-15  Wade Berrier  <RKvinge@novell.com> 
+
+	* Makefile: Don't treat vbnc.rsp as a .config file,
+	un/install it as an extra file instead (otherwise, it
+	gets removed on make clean)
+
 2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Added source/vbnc.rsp to DISTFILES.

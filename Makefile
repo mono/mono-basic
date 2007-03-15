@@ -93,5 +93,3 @@ vbnc: vbnc.in Makefile
 	sed -e s,@prefix@,$(prefix),g < vbnc.in > $@.tmp
 	mv $@.tmp $@
 
-install-local: all-local
-	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
