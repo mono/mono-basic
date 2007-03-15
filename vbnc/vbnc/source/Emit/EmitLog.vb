@@ -111,6 +111,10 @@ Public Class EmitLog
         Log("Emit({0},{1})", opcode.ToString, ToString(arg))
         m_ILGen.Emit(opcode, arg)
     End Sub
+    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As SByte)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        m_ILGen.Emit(opcode, arg)
+    End Sub
     Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Short)
         Log("Emit({0},{1})", opcode.ToString, ToString(arg))
         m_ILGen.Emit(opcode, arg)

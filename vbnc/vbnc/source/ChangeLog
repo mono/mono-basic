@@ -1,5 +1,9 @@
 2007-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/EmitLog.vb: Add an overload so that no conversions occur.
+
+2007-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/BinaryExpressions/BinaryExpression.vb: When doing operator overloading remove duplicate methods.
 	* Expressions/TypeOfExpression.vb: Check classification for this expression.
 
