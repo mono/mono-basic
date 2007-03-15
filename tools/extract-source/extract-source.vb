@@ -39,6 +39,12 @@ Module extract_source
         Console.WriteLine(vbTab & "-b[asepath]:<optional base path to append to all paths in project file>")
     End Sub
 
+    Function IsNullOrEmpty(ByVal str As String) As Boolean
+        If str Is Nothing Then Return True
+        If String.Compare(str, String.Empty) = 0 Then Return True
+        Return False
+    End Function
+
     Function Main(ByVal args As String()) As Integer
         Dim source As String = Nothing, destination As String = Nothing, mode As String = Nothing, basepath As String = Nothing
         Dim exclude_resources As Boolean
@@ -54,7 +60,7 @@ Module extract_source
             arg = arg.Substring(1)
             idx = arg.IndexOfAny(New Char() {":"c, "="c})
             If idx = -1 Then
-                Console.WriteLine("Didn't understand argument: '" & arg & "'")
+                Console.WriteLine("Didn't understand argument (no ':' nor '='): '" & arg & "'")
                 ShowHelp()
                 Return 1
             End If
@@ -92,15 +98,15 @@ Module extract_source
         Next
 
         Dim result As Integer
-        If mode = "" Then
+        If IsNullOrEmpty(mode) Then
             Console.WriteLine("The mode is necessary.")
             result = 1
         End If
-        If source = "" Then
+        If IsNullOrEmpty(source) Then
             Console.WriteLine("The source is necessary.")
             result = 1
         End If
-        If destination = "" Then
+        If IsNullOrEmpty(destination) Then
             Console.WriteLine("The destination is necessary.")
             result = 1
         End If
