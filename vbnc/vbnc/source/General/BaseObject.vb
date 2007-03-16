@@ -53,6 +53,9 @@ Public MustInherit Class BaseObject
     ''' <remarks></remarks>
     Friend Property Location() As Span Implements IBaseObject.Location
         Get
+            If m_Location IsNot Nothing AndAlso m_Location.File Is Nothing AndAlso m_Location.Column = 0 AndAlso m_Location.Line = 0 AndAlso m_Parent IsNot Nothing AndAlso m_Parent.Location IsNot Nothing Then
+                Return m_Parent.Location
+            End If
             Return m_Location
         End Get
         Set(ByVal value As Span)

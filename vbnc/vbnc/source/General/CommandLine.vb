@@ -1095,7 +1095,7 @@ Public Class CommandLine
 #If DEBUG Then
                 'Hack for the testing to work in VS since the current directory is set to where the compiler
                 'is, not where the test is.
-                If strResponseFile = "debug.rsp" AndAlso System.Diagnostics.Debugger.IsAttached Then
+                If strResponseFile.EndsWith("debug.rsp") AndAlso System.Diagnostics.Debugger.IsAttached Then
                     strResponseFile = IO.Path.GetFullPath(strResponseFile)
                     For Each str As String In IO.File.ReadAllLines(strResponseFile)
                         For Each arg As String In Helper.ParseLine(str)

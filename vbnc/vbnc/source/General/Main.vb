@@ -67,12 +67,12 @@ Public Class Main
             Console.WriteLine("Compilation took " & (Date.Now.Subtract(start)).ToString())
             System.Diagnostics.Debug.WriteLine("Compilation took " & (Date.Now.Subtract(start)).ToString())
 #If DEBUG Then
-            Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
-            System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
-            System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
-            System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
+            'System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
+            'System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
+            'System.Diagnostics.Debug.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
             '#End If
 #End If
             Return result
@@ -80,17 +80,17 @@ Public Class Main
             Console.WriteLine(ex.Message & VB.vbNewLine & ex.StackTrace)
             Console.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
             System.Diagnostics.Debug.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
-            Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
             Return -2 'The exception has already been shown to the user.
         Catch ex As Exception
             Console.WriteLine(ex.Message & VB.vbNewLine & ex.StackTrace)
             Console.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
             System.Diagnostics.Debug.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
-            Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
-            Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
+            'Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
             Return -3
         End Try
         Helper.Assert(False, "End of program reached!")

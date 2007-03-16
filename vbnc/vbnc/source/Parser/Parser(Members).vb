@@ -184,7 +184,7 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
 
-        result.Init(Info.Attributes, m_Modifiers, ParentSignature, ParentImplements, m_Block)
+        result.Init(Info.Attributes, m_Modifiers, ParentSignature, ParentImplements, m_Block, m_ParameterList)
 
         Return result
     End Function

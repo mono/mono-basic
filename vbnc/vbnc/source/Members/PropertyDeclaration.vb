@@ -69,7 +69,7 @@ Public Class PropertyDeclaration
         getMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
 
         setMethod = New PropertySetDeclaration(Me)
-        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
+        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing, Nothing)
 
         m_Get = getMethod
         m_Set = setMethod
@@ -92,7 +92,7 @@ Public Class PropertyDeclaration
         Dim SetMethod As PropertySetDeclaration
         If Modifiers.Is(KS.ReadOnly) = False Then
             SetMethod = New PropertySetDeclaration(Me)
-            SetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing)
+            SetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing, Nothing)
         Else
             SetMethod = Nothing
         End If

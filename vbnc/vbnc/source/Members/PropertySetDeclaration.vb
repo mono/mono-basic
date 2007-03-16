@@ -34,7 +34,7 @@ Public Class PropertySetDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
+    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock, ByVal SetParameters As ParameterList)
         Dim mySignature As SubSignature
         Dim name As String
         Dim typeParams As TypeParameters
@@ -56,7 +56,14 @@ Public Class PropertySetDeclaration
 
         mySignature.Init(name, typeParams, params)
 
-        mySignature.Parameters.Add(New Parameter(mySignature.Parameters, "value", PropertySignature.TypeName))
+        Dim valueName As String = "value"
+        If SetParameters IsNot Nothing AndAlso SetParameters.Count > 0 Then
+            If SetParameters.Count > 1 Then
+                Helper.AddError()
+            End If
+            valueName = SetParameters(0).Name
+        End If
+        mySignature.Parameters.Add(New Parameter(mySignature.Parameters, valueName, PropertySignature.TypeName))
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub
