@@ -186,8 +186,8 @@ Public Class ParameterDescriptor
         Dim result As Boolean
 
         If m_Parameter IsNot Nothing Then
-            If m_Parameter.Attributes IsNot Nothing Then
-                result = m_Parameter.Attributes.IsDefined(attributeType)
+            If m_Parameter.CustomAttributes IsNot Nothing Then
+                result = m_Parameter.CustomAttributes.IsDefined(attributeType)
             End If
             If result = False AndAlso inherit = True Then
                 Helper.NotImplemented()

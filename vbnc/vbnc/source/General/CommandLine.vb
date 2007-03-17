@@ -195,14 +195,11 @@ Public Class CommandLine
 
     ''' <summary>
     ''' /debug[+|-]             Emit debugging information.
-    ''' </summary>
-    Private m_bDebugOn As Boolean
-
-    ''' <summary>
     '''/debug:full             Emit full debugging information (default).
     '''/debug:pdbonly          Emit PDB file only.
+    ''' According to #81054 vbc doesn't emit debug info unless /debug is specified.
     ''' </summary>
-    Private m_eDebugInfo As DebugTypes = DebugTypes.Full
+    Private m_eDebugInfo As DebugTypes = DebugTypes.None
 
     ' - ERRORS AND WARNINGS -
 
@@ -446,15 +443,6 @@ Public Class CommandLine
     ReadOnly Property RemoveIntChecks() As Boolean
         Get
             Return m_bRemoveIntChecks
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' /debug[+|-]             Emit debugging information.
-    ''' </summary>
-    ReadOnly Property DebugOn() As Boolean
-        Get
-            Return m_bDebugOn
         End Get
     End Property
 
@@ -926,9 +914,9 @@ Public Class CommandLine
             Case "removeintchecks-"
                 m_bRemoveIntChecks = False
             Case "debug+"
-                m_bDebugOn = True
+                m_eDebugInfo = DebugTypes.Full
             Case "debug-"
-                m_bDebugOn = False
+                m_eDebugInfo = DebugTypes.None
             Case "debug"
                 Select Case LCase(strValue)
                     Case "full"
@@ -936,8 +924,7 @@ Public Class CommandLine
                     Case "pdbonly"
                         m_eDebugInfo = DebugTypes.PDB
                     Case ""
-                        m_eDebugInfo = DebugTypes.None
-                        m_bDebugOn = True 'only /debug enables debugging information
+                        m_eDebugInfo = DebugTypes.Full
                     Case Else
                         'TODO: AddError 2014 (saved).
                         Compiler.Report.SaveMessage(Messages.VBNC2019, strName, strValue)

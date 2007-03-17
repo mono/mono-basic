@@ -1,3 +1,19 @@
+2007-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.vbproj: Update.
+	* Members/Attribute.vb: Implement emission of field and property values
+	  for attributes.
+	* Members/Parameter.vb: Small refactoring (variable renamed), and call
+	  GenerateCode on the attributes, if any.
+	* Members/MethodDeclaration.vb: Parameters has code that has to be
+	  emitted (attributes), so call GenerateCode on the them.
+	* Descriptors/ParameterDescriptor.vb: Small refactoring (variable
+	  renamed).
+	* Code/CodeBlock.vb: Remove unused code.
+	* General/Compiler.vb: Don't emit debug info if requested not to.
+	* General/CommandLine.vb: Remove m_bDebugOn and only use m_eDebugInfo.
+	  Default debug is none (fixes #81054).
+
 2007-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 	
 	* Statements/CallStatement.vb: If a call statement's target is a method group, resolve it like an invocation expression.

@@ -25,9 +25,9 @@
 ''' <remarks></remarks>
 Public Class Parameter
     Inherits ParsedObject
-    Implements INameable, IModifiable
+    Implements INameable, IModifiable, IAttributableDeclaration
 
-    Private m_Attributes As Attributes
+    Private m_CustomAttributes As Attributes
     Private m_Modifiers As Modifiers
     Private m_ParameterIdentifier As ParameterIdentifier
     Private m_TypeName As TypeName
@@ -63,7 +63,7 @@ Public Class Parameter
     End Sub
 
     Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal ParameterIdentifier As ParameterIdentifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
-        m_Attributes = Attributes
+        m_CustomAttributes = Attributes
         m_Modifiers = Modifiers
         m_ParameterIdentifier = ParameterIdentifier
         m_TypeName = TypeName
@@ -77,7 +77,7 @@ Public Class Parameter
     Function Clone(Optional ByVal NewParent As ParameterList = Nothing) As Parameter
         If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParameterList)
         Dim result As New Parameter(NewParent)
-        result.m_Attributes = m_Attributes
+        result.m_CustomAttributes = m_CustomAttributes
         result.m_Modifiers = m_Modifiers
         result.m_ParameterIdentifier = m_ParameterIdentifier.Clone(result)
         If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName.Clone(result)
@@ -91,9 +91,9 @@ Public Class Parameter
         End Get
     End Property
 
-    ReadOnly Property Attributes() As Attributes
+    ReadOnly Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
         Get
-            Return m_Attributes
+            Return m_CustomAttributes
         End Get
     End Property
 
@@ -157,16 +157,9 @@ Public Class Parameter
         Throw New InternalException(Me)
     End Function
 
-    Overloads Function Define(ByVal Builder As ConstructorBuilder) As Boolean
-        m_ParameterBuilder = Builder.DefineParameter(Position, m_ParameterAttributes, Name)
-        If m_ParameterBuilder.IsOptional Then
-            m_ParameterBuilder.SetConstant(m_ConstantValue)
-        End If
-        Return True
-    End Function
+    Private Function DefineInternal() As Boolean
+        Dim result As Boolean = True
 
-    Overloads Function Define(ByVal Builder As MethodBuilder) As Boolean
-        m_ParameterBuilder = Builder.DefineParameter(Position, m_ParameterAttributes, Name)
         If m_ParameterBuilder.IsOptional Then
             If Helper.IsOnMS AndAlso ((Me.ParameterType.IsByRef AndAlso m_ConstantValue IsNot Nothing) OrElse (m_ParameterType.Equals(Compiler.TypeCache.Object) AndAlso m_ConstantValue IsNot Nothing AndAlso m_ConstantValue.GetType.Equals(Compiler.TypeCache.Object) = False)) Then
                 'HACK (a really big one...)
@@ -196,7 +189,19 @@ Public Class Parameter
             m_ParameterBuilder.SetCustomAttribute(cab)
         End If
 
-        Return True
+
+        Return result
+    End Function
+
+
+    Overloads Function Define(ByVal Builder As ConstructorBuilder) As Boolean
+        m_ParameterBuilder = Builder.DefineParameter(Position, m_ParameterAttributes, Name)
+        Return DefineInternal()
+    End Function
+
+    Overloads Function Define(ByVal Builder As MethodBuilder) As Boolean
+        m_ParameterBuilder = Builder.DefineParameter(Position, m_ParameterAttributes, Name)
+        Return DefineInternal()
     End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
@@ -204,7 +209,7 @@ Public Class Parameter
 
         Me.CheckCodeNotResolved()
 
-        If m_Attributes IsNot Nothing Then result = m_Attributes.ResolveCode(info) AndAlso result
+        If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveCode(info) AndAlso result
 
         If m_ConstantExpression IsNot Nothing Then
             result = m_ConstantExpression.ResolveExpression(info) AndAlso result
@@ -241,7 +246,7 @@ Public Class Parameter
         Me.CheckTypeReferencesNotResolved()
 
         result = Helper.ResolveTypeReferences(m_ConstantExpression, m_TypeName, m_ParameterIdentifier) AndAlso result
-        If m_Attributes IsNot Nothing Then result = m_Attributes.ResolveTypeReferences AndAlso result
+        If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveTypeReferences AndAlso result
 
         If result = False Then Return result
 
@@ -271,6 +276,15 @@ Public Class Parameter
 
         Return result
     End Function
-  
+
+    Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        If Me.CustomAttributes IsNot Nothing Then
+            result = Me.CustomAttributes.GenerateCode(Info) AndAlso result
+        End If
+
+        Return result
+    End Function
 
 End Class

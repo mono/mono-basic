@@ -107,6 +107,9 @@ Public Class Compiler
     Private m_ConditionalCompiler As ConditionalCompiler
 
     Private m_TypeCache As TypeCache
+#If ENABLECECIL Then
+    Private m_CecilTypeCache As CecilTypeCache
+#End If
 
     'Private SequenceCompleted(CompilerSequence.Finished) As Boolean
     Private SequenceTime(CompilerSequence.End) As DateTime
@@ -121,6 +124,14 @@ Public Class Compiler
             Return m_OutFilename
         End Get
     End Property
+
+#If ENABLECECIL Then
+    ReadOnly Property CecilTypeCache() As CecilTypeCache
+        Get
+            Return m_CecilTypeCache
+        End Get
+    End Property
+#End If
 
     ReadOnly Property TypeCache() As TypeCache
         Get
@@ -318,10 +329,10 @@ Public Class Compiler
         assemblyName = Me.Assembly.GetName
 
         AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
-        ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), True)
+        ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None)
 
         If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
-            m_SymbolWriter = ModuleBuilder.GetSymWriter()
+            m_SymbolWriter = ModuleBuilder.GetSymWriter
         End If
 
         Return Compiler.Report.Errors = 0
@@ -396,6 +407,9 @@ Public Class Compiler
 
         If CommandLine.NoVBRuntimeRef Then
             m_TypeCache.Init_vbruntime(True)
+#If ENABLECECIL Then
+            m_CecilTypeCache.Init_vbruntime(True)
+#End If
         End If
 
         SequenceTime(CompilerSequence.Resolved) = DateTime.Now
@@ -493,6 +507,10 @@ Public Class Compiler
 
             'Load all the referenced assemblies and load all the types and namespaces into the type manager
             m_TypeCache = New TypeCache(Me)
+#If ENABLECECIL Then
+            m_CecilTypeCache = New CecilTypeCache(Me)
+#End If
+
             result = m_TypeManager.LoadReferenced AndAlso result
             m_NameResolver = New NameResolution(Me) 'Must be created after referenced assemblies have been loaded
             m_TypeResolver = New TypeResolution(Me)

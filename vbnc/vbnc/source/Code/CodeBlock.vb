@@ -412,15 +412,6 @@ Public Class CodeBlock
         End If
 #End If
 
-        Dim symbolMethodOpened As Boolean
-        If False AndAlso Compiler.SymbolWriter IsNot Nothing Then
-            If Me.HasLocation AndAlso Me.Location.File IsNot Nothing Then
-                Dim newT As New Diagnostics.SymbolStore.SymbolToken(Me.ObjectID)
-                Compiler.SymbolWriter.OpenMethod(newT)
-                symbolMethodOpened = True
-            End If
-        End If
-
         result = GenerateCode(info) AndAlso result
 
         If Me.HasUnstructuredExceptionHandling = False Then
@@ -438,10 +429,6 @@ Public Class CodeBlock
             result = GenerateUnstructuredEnd(Method, info) AndAlso result
         Else
             Emitter.EmitRet(info)
-        End If
-
-        If symbolMethodOpened Then
-            Compiler.SymbolWriter.CloseMethod()
         End If
 
 #If EXTENDEDDEBUG Then

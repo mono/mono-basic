@@ -34,10 +34,10 @@ Public Class Attribute
     Private m_ResolvedTypeConstructor As ConstructorInfo
 
     Private m_Arguments As Object()
-    Private m_Fields() As FieldInfo
-    Private m_FieldValues() As Object
-    Private m_Properties() As PropertyInfo
-    Private m_PropertyValues() As Object
+    Private m_Fields As Generic.List(Of FieldInfo)
+    Private m_FieldValues As Generic.List(Of Object)
+    Private m_Properties As Generic.List(Of PropertyInfo)
+    Private m_PropertyValues As Generic.List(Of Object)
 
     Private m_Instance As System.Attribute
 
@@ -172,8 +172,42 @@ Public Class Attribute
             End If
 
             If m_AttributeArguments.VariablePropertyInitializerList IsNot Nothing Then
+                Dim cache As MemberCache
+
+                cache = Info.Compiler.TypeManager.GetCache(m_ResolvedType)
+
                 For Each item As VariablePropertyInitializer In m_AttributeArguments.VariablePropertyInitializerList
-                    Helper.NotImplementedYet("Resolution of attribute named arguments")
+                    Dim name As String
+                    Dim member As MemberInfo
+                    Dim members As Generic.List(Of MemberInfo)
+
+                    name = item.IdentifierOrKeyword.Identifier
+                    members = cache.LookupMembersFlattened(name)
+                    If members.Count <> 1 Then
+                        Helper.NotImplemented("Property resolution for attribute arguments.")
+                    End If
+                    member = members(0)
+                    Select Case member.MemberType
+                        Case MemberTypes.Field
+                            Dim field As FieldInfo
+                            field = DirectCast(member, FieldInfo)
+
+                            If m_Fields Is Nothing Then m_Fields = New Generic.List(Of FieldInfo)
+                            If m_FieldValues Is Nothing Then m_FieldValues = New Generic.List(Of Object)
+                            m_Fields.Add(field)
+                            m_FieldValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
+                        Case MemberTypes.Property
+                            Dim prop As PropertyInfo
+                            prop = DirectCast(member, PropertyInfo)
+                            If m_Properties Is Nothing Then m_Properties = New Generic.List(Of PropertyInfo)
+                            If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
+                            m_Properties.Add(prop)
+                            m_PropertyValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
+                            'm_PropertyValues.add(item.
+                        Case Else
+                            Helper.AddError("Invalid member type for attribute value: " & member.MemberType.ToString)
+                    End Select
+
                 Next
             End If
 
@@ -187,10 +221,10 @@ Public Class Attribute
         End If
 
         If m_Arguments Is Nothing Then m_Arguments = New Object() {}
-        If m_Fields Is Nothing Then m_Fields = New FieldInfo() {}
-        If m_FieldValues Is Nothing Then m_FieldValues = New Object() {}
-        If m_Properties Is Nothing Then m_Properties = New PropertyInfo() {}
-        If m_PropertyValues Is Nothing Then m_PropertyValues = New Object() {}
+        If m_Fields Is Nothing Then m_Fields = New Generic.List(Of FieldInfo)
+        If m_FieldValues Is Nothing Then m_FieldValues = New Generic.List(Of Object)
+        If m_Properties Is Nothing Then m_Properties = New Generic.List(Of PropertyInfo)
+        If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
 
         Dim ctors As ConstructorInfo()
         ctors = Compiler.Helper.GetConstructors(m_ResolvedType)
@@ -210,10 +244,10 @@ Public Class Attribute
         Next
 
         'If m_Arguments Is Nothing Then m_Arguments = New Object() {}
-        If m_Fields Is Nothing Then m_Fields = New FieldInfo() {}
-        If m_FieldValues Is Nothing Then m_FieldValues = New Object() {}
-        If m_Properties Is Nothing Then m_Properties = New PropertyInfo() {}
-        If m_PropertyValues Is Nothing Then m_PropertyValues = New Object() {}
+        'If m_Fields Is Nothing Then m_Fields = New FieldInfo() {}
+        'If m_FieldValues Is Nothing Then m_FieldValues = New Object() {}
+        'If m_Properties Is Nothing Then m_Properties = New PropertyInfo() {}
+        'If m_PropertyValues Is Nothing Then m_PropertyValues = New Object() {}
 
         Return result
     End Function
@@ -228,16 +262,17 @@ Public Class Attribute
         ElseIf m_IsModule Then
             Helper.NotImplemented()
         Else
-            Dim memberparent As IMember = Me.FindFirstParent(Of IMember)()
+            Dim memberparent As IAttributableDeclaration = Me.FindFirstParent(Of IAttributableDeclaration)()
             If memberparent IsNot Nothing Then
                 Dim tp As TypeDeclaration = TryCast(memberparent, TypeDeclaration)
                 Dim mthd As IMethod = TryCast(memberparent, IMethod)
                 Dim ctro As IConstructorMember = TryCast(memberparent, IConstructorMember)
                 Dim fld As IFieldMember = TryCast(memberparent, IFieldMember)
                 Dim prop As PropertyDeclaration = TryCast(memberparent, PropertyDeclaration)
+                Dim param As Parameter = TryCast(memberparent, Parameter)
 
                 If ctro IsNot Nothing Then mthd = Nothing
-                Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing)
+                Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
 
                 If tp IsNot Nothing Then
                     If tp.TypeBuilder Is Nothing Then
@@ -253,6 +288,8 @@ Public Class Attribute
                     fld.FieldBuilder.SetCustomAttribute(GetAttributeBuilder)
                 ElseIf prop IsNot Nothing Then
                     prop.PropertyBuilder.SetCustomAttribute(GetAttributeBuilder)
+                ElseIf param IsNot Nothing Then
+                    param.ParameterBuilder.SetCustomAttribute(GetAttributeBuilder)
                 Else
                     Throw New InternalException(Me)
                 End If
@@ -270,8 +307,8 @@ Public Class Attribute
         Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
         Helper.Assert(m_Arguments IsNot Nothing)
         Helper.Assert(Helper.GetParameters(Compiler, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
-        Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.GetUpperBound(0) = m_PropertyValues.GetUpperBound(0))
-        Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.GetUpperBound(0) = m_FieldValues.GetUpperBound(0))
+        Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
+        Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
         m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
 
@@ -284,7 +321,7 @@ Public Class Attribute
         Next
 
         Try
-            result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties, m_PropertyValues, m_Fields, m_FieldValues)
+            result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties.ToArray, m_PropertyValues.ToArray, m_Fields.ToArray, m_FieldValues.ToArray)
         Catch ex As Exception
             Throw
         End Try

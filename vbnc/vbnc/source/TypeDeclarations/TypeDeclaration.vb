@@ -55,6 +55,9 @@ Public MustInherit Class TypeDeclaration
     Private m_BeforeFieldInit As Boolean
 
     'Information collected during define phase.
+#If ENABLECECIL Then
+    Private m_CecilType As Mono.Cecil.TypeDefinition
+#End If
     Private m_TypeBuilder As TypeBuilder
     'Another hack for another bug in the ms runtime: you cannot create an attribute when the attribute's constructor has a enum parameter and the enum parameter is defined with a typebuilder, it only works if the enum parameter's type is defined with an enumbuilder.
     Private m_EnumBuilder As EnumBuilder
@@ -250,6 +253,14 @@ Public MustInherit Class TypeDeclaration
             m_EnumBuilder = value
         End Set
     End Property
+
+#If ENABLECECIL Then
+    Public ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition
+        Get
+            Return m_ceciltype
+        End Get
+    End Property
+#End If
 
     Public Overridable Property TypeBuilder() As System.Reflection.Emit.TypeBuilder
         Get

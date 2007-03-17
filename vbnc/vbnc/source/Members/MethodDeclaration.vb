@@ -154,6 +154,11 @@ Public MustInherit Class MethodDeclaration
 
         result = MyBase.GenerateCode(Info) AndAlso result
 
+        If Signature.Parameters IsNot Nothing Then
+            For i As Integer = 0 To Signature.Parameters.Count - 1
+                result = Signature.Parameters(i).GenerateCode(Info) AndAlso result
+            Next
+        End If
         Return result
     End Function
 
