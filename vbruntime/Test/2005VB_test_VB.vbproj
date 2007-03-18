@@ -58,6 +58,7 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests4.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests5.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests6.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\OperatorsTests.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ComputerInfoTests.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ComputerTests.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ClockTests.vb" />
