@@ -205,7 +205,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.String, TypeCode.Empty, TypeCode.String, TypeCode.Double, TypeCode.String, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.String, TypeCode.String, TypeCode.String} _
 }
 
-        Shared DEST_TYPECODE_OR As TypeCode(,) = { _
+        Shared DEST_TYPECODE_BITWISE_OP As TypeCode(,) = { _
  {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
  {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
  {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
@@ -237,8 +237,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         'Notice: unlike DestTypeCodeOpAdd this is the actual return type
-        Private Shared Function DestTypeCodeOpOr(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
-            Return DEST_TYPECODE_OR(GetTypeCode(obj1), GetTypeCode(obj2))
+        Private Shared Function DestTypeCodeBitwiseOp(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_BITWISE_OP(GetTypeCode(obj1), GetTypeCode(obj2))
         End Function
 
         Private Shared Function AddBooleans(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
@@ -430,8 +430,61 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function AndObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+            Return BitWiseOpObject(Left, Right, New AndHandler())
         End Function
+
+
+        Class AndHandler
+            Implements BitWiseOpHandler
+
+            Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Byte, ByVal o2 As Byte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Integer, ByVal o2 As Integer) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Long, ByVal o2 As Long) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As SByte, ByVal o2 As SByte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Short, ByVal o2 As Short) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As ULong, ByVal o2 As ULong) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UShort, ByVal o2 As UShort) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 And o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Object, ByVal o2 As Object) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return AndObjects(o1, o2)
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+            End Function
+
+            Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
+                Return "And"
+            End Function
+        End Class
 
         Public Shared Function CompareObject(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Integer
             Throw New NotImplementedException
@@ -720,9 +773,64 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function IntDivideObject(ByVal Left As Object, ByVal Right As Object) As Object
             Throw New NotImplementedException
         End Function
+
         Public Shared Function LeftShiftObject(ByVal Operand As Object, ByVal Amount As Object) As Object
-            Throw New NotImplementedException
+            If (Operand Is Nothing) Then
+                Return 0
+            End If
+
+            Dim tcOperand As TypeCode = GetTypeCode(Operand)
+
+            Try
+                If (tcOperand = TypeCode.Object) Then
+                    Return LeftShiftObject_(Operand, Amount)
+                End If
+
+                Dim intAmount As Integer = 0
+
+                If (Amount IsNot Nothing) Then
+                    intAmount = GetAmountAsInteger(Amount)
+                End If
+
+
+                Select Case tcOperand
+                    Case TypeCode.Boolean
+                        If (Convert.ToBoolean(Operand)) Then
+                            Return -1S << intAmount
+                        End If
+                        Return 0
+                    Case TypeCode.Byte
+                        Return Convert.ToByte(Operand) << intAmount
+                    Case TypeCode.Decimal
+                        Return Convert.ToInt64(Convert.ToDecimal(Operand)) << intAmount
+                    Case TypeCode.Double
+                        Return Convert.ToInt64(Convert.ToDouble(Operand)) << intAmount
+                    Case TypeCode.Int16
+                        Return Convert.ToInt16(Operand) << intAmount
+                    Case TypeCode.Int32
+                        Return Convert.ToInt32(Operand) << intAmount
+                    Case TypeCode.Int64
+                        Return Convert.ToInt64(Operand) << intAmount
+                    Case TypeCode.SByte
+                        Return Convert.ToSByte(Operand) << intAmount
+                    Case TypeCode.String
+                        Return Convert.ToInt64(Convert.ToString(Operand)) << intAmount
+                    Case TypeCode.Single
+                        Return Convert.ToInt64(Convert.ToSingle(Operand)) << intAmount
+                    Case TypeCode.UInt16
+                        Return Convert.ToUInt16(Operand) << intAmount
+                    Case TypeCode.UInt32
+                        Return Convert.ToUInt32(Operand) << intAmount
+                    Case TypeCode.UInt64
+                        Return Convert.ToUInt64(Operand) << intAmount
+
+                End Select
+
+            Catch ex As Exception
+            End Try
+            Throw New InvalidCastException("Operator '<<' is not defined for type '" + tcOperand.ToString() + "'.")
         End Function
+
         Public Shared Function LikeObject(ByVal Source As Object, ByVal Pattern As Object, ByVal CompareOption As CompareMethod) As Object
             Throw New NotImplementedException
         End Function
@@ -839,7 +947,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return ret
         End Function
 
-
+        Public Shared Function LeftShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(Operand, Amount, "op_LeftShift", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
 
         Public Shared Function NegateObject(ByVal Operand As Object) As Object
 
@@ -949,18 +1063,25 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return ret
         End Function
 
-        Private Shared Function OrStrings(ByVal o1 As String, ByVal o2 As String) As Object
-            Return OrLongs(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+        Private Shared Function XorObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_ExclusiveOr", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
         End Function
 
-        Private Shared Function OrLongs(ByVal o1 As Long, ByVal o2 As Long) As Object
-            Return o1 Or o2
+        Private Shared Function AndObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_BitwiseAnd", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
         End Function
 
         Private Shared Function GetAsLong(ByVal obj As Object) As Long
             Dim tc As TypeCode = GetTypeCode(obj)
             Select Case tc
-                'CType(Math.Round(Convert.ToDouble(o1)), Long)
                 Case TypeCode.Boolean
                     If (Convert.ToBoolean(obj)) Then
                         Return -1L
@@ -995,6 +1116,77 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function OrObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Return BitWiseOpObject(o1, o2, New OrHandler())
+        End Function
+
+        Class OrHandler
+            Implements BitWiseOpHandler
+
+            Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Byte, ByVal o2 As Byte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Integer, ByVal o2 As Integer) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Long, ByVal o2 As Long) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As SByte, ByVal o2 As SByte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Short, ByVal o2 As Short) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As ULong, ByVal o2 As ULong) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UShort, ByVal o2 As UShort) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Or o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Object, ByVal o2 As Object) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return OrObjects(o1, o2)
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+            End Function
+
+            Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
+                Return "Or"
+            End Function
+        End Class
+
+        Interface BitWiseOpHandler
+            Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
+            Function DoBitWiseOp(ByVal o1 As Byte, ByVal o2 As Byte) As Object
+            Function DoBitWiseOp(ByVal o1 As Short, ByVal o2 As Short) As Object
+            Function DoBitWiseOp(ByVal o1 As Integer, ByVal o2 As Integer) As Object
+            Function DoBitWiseOp(ByVal o1 As Long, ByVal o2 As Long) As Object
+            Function DoBitWiseOp(ByVal o1 As SByte, ByVal o2 As SByte) As Object
+            Function DoBitWiseOp(ByVal o1 As UShort, ByVal o2 As UShort) As Object
+            Function DoBitWiseOp(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object
+            Function DoBitWiseOp(ByVal o1 As ULong, ByVal o2 As ULong) As Object
+            Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object
+            Function DoBitWiseOp(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Function GetOpName() As String
+        End Interface
+
+        Public Shared Function BitWiseOpObject(ByVal o1 As Object, ByVal o2 As Object, ByVal opHandler As BitWiseOpHandler) As Object
             If (o1 Is Nothing) And (o2 Is Nothing) Then
                 Return 0
             End If
@@ -1005,38 +1197,38 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 o2 = CreateNullObjectType(o1)
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpOr(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeBitwiseOp(o1, o2)
             Try
                 Select Case destTc
                     Case TypeCode.Boolean
-                        Return Convert.ToBoolean(o1) Or Convert.ToBoolean(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
                     Case TypeCode.Byte
-                        Return Convert.ToByte(o1) Or Convert.ToByte(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToByte(o1), Convert.ToByte(o2))
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(o1) Or Convert.ToInt16(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToInt16(o1), Convert.ToInt16(o2))
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(o1) Or Convert.ToInt32(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToInt32(o1), Convert.ToInt32(o2))
                     Case TypeCode.Int64
-                        Return OrLongs(GetAsLong(o1), GetAsLong(o2))
+                        Return opHandler.DoBitWiseOp(GetAsLong(o1), GetAsLong(o2))
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(o1) Or Convert.ToSByte(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToSByte(o1), Convert.ToSByte(o2))
                     Case TypeCode.String
-                        Return OrStrings(Convert.ToString(o1), Convert.ToString(o2))
+                        Return opHandler.DoBitWiseOp(Convert.ToString(o1), Convert.ToString(o2))
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(o1) Or Convert.ToUInt16(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(o1) Or Convert.ToUInt32(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(o1) Or Convert.ToUInt64(o2)
+                        Return opHandler.DoBitWiseOp(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
 
                 End Select
-                Return OrObjects(o1, o2)
+                Return opHandler.DoBitWiseOp(o1, o2)
             Catch ex As Exception
                 If (TypeOf ex Is NotImplementedException) Then
                     Throw ex
                 End If
             End Try
-            Throw New InvalidCastException("Operator 'Or' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '" + opHandler.GetOpName() + "' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 
         End Function
 
@@ -1177,8 +1369,60 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function XorObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+            Return BitWiseOpObject(Left, Right, New XorHandler())
         End Function
+
+        Class XorHandler
+            Implements BitWiseOpHandler
+
+            Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Byte, ByVal o2 As Byte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Integer, ByVal o2 As Integer) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Long, ByVal o2 As Long) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As SByte, ByVal o2 As SByte) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Short, ByVal o2 As Short) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As ULong, ByVal o2 As ULong) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As UShort, ByVal o2 As UShort) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return o1 Xor o2
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As Object, ByVal o2 As Object) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return XorObjects(o1, o2)
+            End Function
+
+            Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
+                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+            End Function
+
+            Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
+                Return "Xor"
+            End Function
+        End Class
 
         Private Sub New()
 
