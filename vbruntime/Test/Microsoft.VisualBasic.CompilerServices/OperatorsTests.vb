@@ -1179,7 +1179,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract6()
         Dim o1, o2, o3 As Object
         o1 = DateTime.Now
@@ -1282,7 +1282,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract14()
         Dim o3 As Object
         Dim o1, o2 As UShort
@@ -1325,7 +1325,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract17()
         Dim o1, o2 As Boolean
         Dim o3 As Object
@@ -1364,7 +1364,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract20()
         Dim o1, o2 As Byte
         Dim o3 As Object
@@ -1378,7 +1378,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract21()
         Dim o1, o2, o3 As Object
         o1 = New OperatorsImplementer()
@@ -1387,7 +1387,7 @@ Public Class OperatorsTests
         Assert.AreEqual(o3, "ok-")
     End Sub
 
-    <Test()> _
+    <Test(), Category("Broken")> _
     Sub TestOperatorsSubtract22()
         Dim o1, o2, o3 As Object
         o1 = "abc"
