@@ -204,29 +204,134 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.String, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.String, TypeCode.Int32, TypeCode.String}, _
 {TypeCode.String, TypeCode.Empty, TypeCode.String, TypeCode.Double, TypeCode.String, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.String, TypeCode.String, TypeCode.String} _
 }
+        Shared DEST_TYPECODE_SUBTRACT As TypeCode(,) = { _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Double, TypeCode.Single, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.DateTime, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
+}
+        Shared DEST_TYPECODE_DIVIDE As TypeCode(,) = { _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Double, TypeCode.Single, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
+ }
+        Shared DEST_TYPECODE_INTDIVIDE As TypeCode(,) = { _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64} _
+}
+
+        Shared DEST_TYPECODE_MULTIPLY As TypeCode(,) = { _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Double, TypeCode.Single, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+{TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
+}
 
         Shared DEST_TYPECODE_BITWISE_OP As TypeCode(,) = { _
- {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
- {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
- {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
- {TypeCode.Boolean, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Boolean, TypeCode.Boolean}, _
- {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
- {TypeCode.SByte, TypeCode.Empty, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.SByte, TypeCode.Int64}, _
- {TypeCode.Byte, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Byte, TypeCode.Int64}, _
- {TypeCode.Int16, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int16, TypeCode.Int64}, _
- {TypeCode.UInt16, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt16, TypeCode.Int64}, _
- {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
- {TypeCode.UInt32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt32, TypeCode.Int64}, _
- {TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
- {TypeCode.UInt64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt64, TypeCode.Int64}, _
- {TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
- {TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
- {TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
- {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
- {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
- {TypeCode.Int64, TypeCode.Empty, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64} _
+ {TypeCode.Int32, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
+  {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Boolean, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Boolean, TypeCode.Boolean}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.SByte, TypeCode.Object, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.SByte, TypeCode.Int64}, _
+ {TypeCode.Byte, TypeCode.Object, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Byte, TypeCode.Int64}, _
+ {TypeCode.Int16, TypeCode.Object, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int16, TypeCode.Int64}, _
+ {TypeCode.UInt16, TypeCode.Object, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt16, TypeCode.Int64}, _
+ {TypeCode.Int32, TypeCode.Object, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
+ {TypeCode.UInt32, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt32, TypeCode.Int64}, _
+ {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
+ {TypeCode.UInt64, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.UInt64, TypeCode.Int64}, _
+ {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
+ {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
+ {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64}, _
+ {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+ {TypeCode.Int32, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
+ {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64} _
  }
-       
+        Shared DEST_TYPECODE_MOD As TypeCode(,) = { _
+  {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+  {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.SByte, TypeCode.Empty, TypeCode.SByte, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int16, TypeCode.Empty, TypeCode.Int16, TypeCode.Int16, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int32, TypeCode.Empty, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Single, TypeCode.Empty, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Single, TypeCode.Double, TypeCode.Single, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Decimal, TypeCode.Empty, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.Empty, TypeCode.Empty, TypeCode.Double}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
+  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
+  }
 
         'Returns the expected return TypeCode of operation between these two objects or TypeCode.Empty if operation is not possible.
         'Notice: The expected TypeCode may not be the actual TypeCode of the return type. The actual type return is "black box"ed 
@@ -236,7 +341,26 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return DEST_TYPECODE_ADD(GetTypeCode(obj1), GetTypeCode(obj2))
         End Function
 
-        'Notice: unlike DestTypeCodeOpAdd this is the actual return type
+        Private Shared Function DestTypeCodeOpSubtract(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_SUBTRACT(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function DestTypeCodeOpDivide(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_DIVIDE(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function DestTypeCodeOpIntDivide(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_INTDIVIDE(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function DestTypeCodeOpMultiply(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_MULTIPLY(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function DestTypeCodeOpMod(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_MOD(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
         Private Shared Function DestTypeCodeBitwiseOp(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
             Return DEST_TYPECODE_BITWISE_OP(GetTypeCode(obj1), GetTypeCode(obj2))
         End Function
@@ -759,8 +883,66 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return CBool(CompareObjectNotEqual(Left, Right, TextCompare))
         End Function
 
-        Public Shared Function DivideObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+        Private Shared Function DivideObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_Division", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function IntDivideObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_IntegerDivision", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function MultiplyObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_Multiply", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function ModObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_Modulus", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Public Shared Function DivideObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return Double.NaN
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
+            End If
+
+            Dim destTc As TypeCode = DestTypeCodeOpDivide(o1, o2)
+            Try
+                Select Case destTc
+                    Case TypeCode.Decimal
+                        Return Convert.ToDecimal(o1) / Convert.ToDecimal(o2)
+                    Case TypeCode.Double
+                        Return Convert.ToDouble(o1) / Convert.ToDouble(o2)
+                    Case TypeCode.Single
+                        Return Convert.ToSingle(o1) / Convert.ToSingle(o2)
+                End Select
+                Return DivideObjects(o1, o2)
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator '/' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
 
         Public Shared Function ExponentObject(ByVal Left As Object, ByVal Right As Object) As Object
@@ -770,8 +952,72 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Math.Pow(base, exp)
         End Function
 
-        Public Shared Function IntDivideObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+        Private Shared Function IsUnsignNum(ByVal obj As Object) As Boolean
+            Dim tc As TypeCode = GetTypeCode(obj)
+            Select Case tc
+                Case TypeCode.Byte
+                    Return True
+                Case TypeCode.UInt16
+                    Return True
+                Case TypeCode.UInt32
+                    Return True
+                Case TypeCode.UInt64
+                    Return True
+            End Select
+            Return False
+        End Function
+
+
+        Public Shared Function IntDivideObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return Double.NaN
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
+            End If
+
+            Dim resUnsign As Boolean = IsUnsignNum(o1) Or IsUnsignNum(o2)
+            Dim tc As TypeCode = GetTypeCode(o1)
+            If (tc = TypeCode.Boolean) Then
+                If (Convert.ToBoolean(o1)) Then
+                    o1 = -1
+                Else
+                    o1 = 0
+                End If
+            End If
+
+            Dim destTc As TypeCode = DestTypeCodeOpIntDivide(o1, o2)
+
+            Try
+                Select Case destTc
+                    Case TypeCode.Byte
+                        Return Convert.ToByte(o1) \ Convert.ToByte(o2)
+                    Case TypeCode.Int16
+                        Return Convert.ToInt16(o1) \ Convert.ToInt16(o2)
+                    Case TypeCode.Int32
+                        Return Convert.ToInt32(o1) \ Convert.ToInt32(o2)
+                    Case TypeCode.Int64
+                        Return Convert.ToInt64(o1) \ Convert.ToInt64(o2)
+                    Case TypeCode.SByte
+                        Return Convert.ToSByte(o1) \ Convert.ToSByte(o2)
+                    Case TypeCode.UInt16
+                        Return Convert.ToUInt16(o1) \ Convert.ToUInt16(o2)
+                    Case TypeCode.UInt32
+                        Return Convert.ToUInt32(o1) \ Convert.ToUInt32(o2)
+                    Case TypeCode.UInt64
+                        Return Convert.ToUInt64(o1) \ Convert.ToUInt64(o2)
+                End Select
+                Return IntDivideObjects(o1, o2)
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Or (TypeOf ex Is DivideByZeroException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator '\' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+
         End Function
 
         Public Shared Function LeftShiftObject(ByVal Operand As Object, ByVal Amount As Object) As Object
@@ -832,16 +1078,106 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function LikeObject(ByVal Source As Object, ByVal Pattern As Object, ByVal CompareOption As CompareMethod) As Object
-            Throw New NotImplementedException
+            Dim strLeft As String = StringType.FromObject(Source)
+            Dim strRight As String = StringType.FromObject(Pattern)
+            Return LikeString(strLeft, strRight, CompareOption)
         End Function
+
         Public Shared Function LikeString(ByVal Source As String, ByVal Pattern As String, ByVal CompareOption As CompareMethod) As Boolean
-            Throw New NotImplementedException
+            Return StringType.StrLike(Source, Pattern, CompareOption)
         End Function
-        Public Shared Function ModObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+
+        Public Shared Function ModObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Throw New DivideByZeroException()
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                Throw New DivideByZeroException()
+            End If
+
+            Dim destTc As TypeCode = DestTypeCodeOpDivide(o1, o2)
+            Try
+                Select Case destTc
+                    Case TypeCode.Byte
+                        Return Convert.ToByte(o1) Mod Convert.ToByte(o2)
+                    Case TypeCode.Int16
+                        Return Convert.ToInt16(o1) Mod Convert.ToInt16(o2)
+                    Case TypeCode.Int32
+                        Return Convert.ToInt32(o1) Mod Convert.ToInt32(o2)
+                    Case TypeCode.Int64
+                        Return Convert.ToInt64(o1) Mod Convert.ToInt64(o2)
+                    Case TypeCode.SByte
+                        Return Convert.ToSByte(o1) Mod Convert.ToSByte(o2)
+                    Case TypeCode.UInt16
+                        Return Convert.ToUInt16(o1) Mod Convert.ToUInt16(o2)
+                    Case TypeCode.UInt32
+                        Return Convert.ToUInt32(o1) Mod Convert.ToUInt32(o2)
+                    Case TypeCode.UInt64
+                        Return Convert.ToUInt64(o1) Mod Convert.ToUInt64(o2)
+                    Case TypeCode.Decimal
+                        Return Convert.ToDecimal(o1) Mod Convert.ToDecimal(o2)
+                    Case TypeCode.Double
+                        Return Convert.ToDouble(o1) Mod Convert.ToDouble(o2)
+                    Case TypeCode.Single
+                        Return Convert.ToSingle(o1) Mod Convert.ToSingle(o2)
+                End Select
+                Return ModObjects(o1, o2)
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Or (TypeOf ex Is DivideByZeroException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator 'Mod' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
-        Public Shared Function MultiplyObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Throw New NotImplementedException
+
+        Public Shared Function MultiplyObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return 0
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
+            End If
+
+            Dim destTc As TypeCode = DestTypeCodeOpMultiply(o1, o2)
+            Try
+                Select Case destTc
+                    Case TypeCode.Byte
+                        Return Convert.ToByte(o1) * Convert.ToByte(o2)
+                    Case TypeCode.Int16
+                        Return Convert.ToInt16(o1) * Convert.ToInt16(o2)
+                    Case TypeCode.Int32
+                        Return Convert.ToInt32(o1) * Convert.ToInt32(o2)
+                    Case TypeCode.Int64
+                        Return Convert.ToInt64(o1) * Convert.ToInt64(o2)
+                    Case TypeCode.SByte
+                        Return Convert.ToSByte(o1) * Convert.ToSByte(o2)
+                    Case TypeCode.UInt16
+                        Return Convert.ToUInt16(o1) * Convert.ToUInt16(o2)
+                    Case TypeCode.UInt32
+                        Return Convert.ToUInt32(o1) * Convert.ToUInt32(o2)
+                    Case TypeCode.UInt64
+                        Return Convert.ToUInt64(o1) * Convert.ToUInt64(o2)
+                    Case TypeCode.Decimal
+                        Return Convert.ToDecimal(o1) * Convert.ToDecimal(o2)
+                    Case TypeCode.Double
+                        Return Convert.ToDouble(o1) * Convert.ToDouble(o2)
+                    Case TypeCode.Single
+                        Return Convert.ToSingle(o1) * Convert.ToSingle(o2)
+                End Select
+                Return MultiplyObjects(o1, o2)
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator '*' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+
         End Function
 
         Public Shared Function PlusBoolean(ByVal Operand As Boolean) As Object
@@ -1325,7 +1661,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     intAmount = GetAmountAsInteger(Amount)
                 End If
 
-
                 Select Case tcOperand
                     Case TypeCode.Boolean
                         If (Convert.ToBoolean(Operand)) Then
@@ -1364,8 +1699,147 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New InvalidCastException("Operator '>>' is not defined for type '" + tcOperand.ToString() + "'.")
         End Function
 
-        Public Shared Function SubtractObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Return AddObject(Left, NegateObject(Right))
+        Private Shared Function SubtractBooleans(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
+            Dim ret As Short = 0
+            If (o1) Then
+                ret = -1S
+            End If
+            If (o2) Then
+                ret = ret + 1S
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function SubtractBytes(ByVal o1 As Byte, ByVal o2 As Byte) As Object
+            Dim s As Short = CType(o1, Short) - o2
+            If (s < 0) Then
+                Return s
+            End If
+            Return CType(s, Byte)
+        End Function
+
+        Private Shared Function SubtractDecimals(ByVal o1 As Decimal, ByVal o2 As Decimal) As Object
+            Return o1 - o2
+        End Function
+
+        Private Shared Function SubtractDoubles(ByVal o1 As Double, ByVal o2 As Double) As Object
+            Return o1 - o2
+        End Function
+
+        Private Shared Function SubtractInt16s(ByVal o1 As Short, ByVal o2 As Short) As Object
+            Dim int As Integer = CType(o1, Integer) - o2
+            If (int > Short.MaxValue) Or (int < Short.MinValue) Then
+                Return int
+            End If
+            Return CType(int, Short)
+        End Function
+
+        Private Shared Function SubtractInt32s(ByVal o1 As Integer, ByVal o2 As Integer) As Object
+            Dim l As Long = CType(o1, Long) - o2
+            If (l > Integer.MaxValue) Or (l < Integer.MinValue) Then
+                Return l
+            End If
+            Return CType(l, Integer)
+        End Function
+
+        Private Shared Function SubtractInt64s(ByVal o1 As Long, ByVal o2 As Long) As Object
+            Return o1 - o2
+        End Function
+
+        Private Shared Function SubtractObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+            Dim ret As Object
+            If Not (InvokeBinaryOperator(o1, o2, "op_Subtraction", ret)) Then
+                Throw New InvalidOperationException()
+            End If
+            Return ret
+        End Function
+
+        Private Shared Function SubtractSBytes(ByVal o1 As SByte, ByVal o2 As SByte) As Object
+            Dim s As Short = CType(o1, Short) - o2
+            If (s > SByte.MaxValue) Or (s < SByte.MinValue) Then
+                Return s
+            End If
+            Return CType(s, SByte)
+        End Function
+
+        Private Shared Function SubtractSingles(ByVal o1 As Single, ByVal o2 As Single) As Object
+            Return o1 - o2
+        End Function
+
+        Private Shared Function SubtractUInt16s(ByVal o1 As UShort, ByVal o2 As UShort) As Object
+            Dim int As Integer = CType(o1, Integer) - o2
+            If (int < 0) Then
+                Return int
+            End If
+            Return CType(int, UShort)
+        End Function
+
+        Private Shared Function SubtractUInt32s(ByVal o1 As UInteger, ByVal o2 As UInteger) As Object
+            Dim l As Long = CType(o1, Long) - o2
+            If (l < 0) Then
+                Return l
+            End If
+            Return CType(l, UInteger)
+        End Function
+
+        Private Shared Function SubtractUInt64s(ByVal o1 As ULong, ByVal o2 As ULong) As Object
+            Return o1 - o2
+        End Function
+
+        Private Shared Function SubtractDateTime(ByVal o1 As DateTime, ByVal o2 As DateTime) As Object
+            Return New TimeSpan(CType(o1, DateTime).Ticks - CType(o2, DateTime).Ticks)
+        End Function
+
+        Public Shared Function SubtractObject(ByVal o1 As Object, ByVal o2 As Object) As Object
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return 0
+            End If
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
+            End If
+
+            Dim destTc As TypeCode = DestTypeCodeOpSubtract(o1, o2)
+            Try
+                Select Case destTc
+                    Case TypeCode.Boolean
+                        Return SubtractBooleans(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                    Case TypeCode.Byte
+                        Return SubtractBytes(Convert.ToByte(o1), Convert.ToByte(o2))
+                    Case TypeCode.Decimal
+                        Return SubtractDecimals(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                    Case TypeCode.Double
+                        Return SubtractDoubles(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                    Case TypeCode.Int16
+                        Return SubtractInt16s(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                    Case TypeCode.Int32
+                        Return SubtractInt32s(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                    Case TypeCode.Int64
+                        Return SubtractInt64s(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                    Case TypeCode.SByte
+                        Return SubtractSBytes(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                    Case TypeCode.Single
+                        Return SubtractSingles(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                    Case TypeCode.UInt16
+                        Return SubtractUInt16s(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                    Case TypeCode.UInt32
+                        Return SubtractUInt32s(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                    Case TypeCode.UInt64
+                        Return SubtractUInt64s(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                    Case TypeCode.DateTime
+                        Return SubtractDateTime(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+
+                End Select
+                Return SubtractObjects(o1, o2)
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+            End Try
+            Throw New InvalidCastException("Operator '-' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+
         End Function
 
         Public Shared Function XorObject(ByVal Left As Object, ByVal Right As Object) As Object

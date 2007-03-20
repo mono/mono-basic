@@ -1173,13 +1173,13 @@ Public Class OperatorsTests
         o2 = 1.1
         o3 = Operators.SubtractObject(o1, o2)
         If (TypeOf o3 Is Double) Then
-            Assert.AreEqual(o3, 0D)
+            Assert.AreEqual(CType(o3, Double), 0D)
         Else
             Assert.Fail()
         End If
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract6()
         Dim o1, o2, o3 As Object
         o1 = DateTime.Now
@@ -1282,7 +1282,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract14()
         Dim o3 As Object
         Dim o1, o2 As UShort
@@ -1325,7 +1325,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract17()
         Dim o1, o2 As Boolean
         Dim o3 As Object
@@ -1364,7 +1364,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract20()
         Dim o1, o2 As Byte
         Dim o3 As Object
@@ -1378,7 +1378,7 @@ Public Class OperatorsTests
         End If
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract21()
         Dim o1, o2, o3 As Object
         o1 = New OperatorsImplementer()
@@ -1387,7 +1387,7 @@ Public Class OperatorsTests
         Assert.AreEqual(o3, "ok-")
     End Sub
 
-    <Test(), Category("Broken")> _
+    <Test()> _
     Sub TestOperatorsSubtract22()
         Dim o1, o2, o3 As Object
         o1 = "abc"
@@ -2121,7 +2121,7 @@ Public Class OperatorsTests
         o1 = New OperatorsImplementer()
         o2 = 1
         o3 = Operators.XorObject(o1, o2)
-        Console.WriteLine(o3.Equals("okXor"))
+        Assert.AreEqual(o3, "okXor")
     End Sub
 
     <Test()> _
@@ -2286,11 +2286,685 @@ Public Class OperatorsTests
         Assert.AreEqual(o3, "okAnd")
     End Sub
 
+    <Test()> _
+    Sub TestOperatorsDivide1()
+        Dim o1, o2, o3 As Object
+        o1 = "a"
+        o2 = "b"
+        Try
+            o3 = Operators.DivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide2()
+        Dim o1, o2, o3 As Object
+        o1 = "d"
+        o2 = 1
+        Try
+            o3 = Operators.DivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide3()
+        Dim o1, o2, o3 As Object
+        o1 = "1"
+        o2 = 1
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1D)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide6()
+        Dim o1, o2, o3 As Object
+        o1 = DateTime.Now
+        o2 = DateTime.Now
+        Try
+            o3 = Operators.DivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide7()
+        Dim o1, o2, o3 As Object
+        o1 = "1"c
+        o2 = 1
+        Try
+            o3 = Operators.DivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide8()
+        Dim o1, o2, o3 As Object
+        o1 = 1
+        o2 = Nothing
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), Double.PositiveInfinity)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide11()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1.0
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide12()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Decimal) Then
+            Assert.AreEqual(CType(o3, Decimal), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide13()
+        Dim o1, o2, o3 As Object
+        o1 = 1.1F
+        o2 = 1.1F
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide14()
+        Dim o1, o2, o3 As Object
+        o1 = False
+        o2 = 1.0F
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide15()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = "1"
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide16()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = 1
+        o3 = Operators.DivideObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide18()
+        Dim o3 As Object
+        Try
+            o3 = Operators.DivideObject(DBNull.Value, 1.1D)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsDivide19()
+        Dim o1, o2, o3 As Object
+        o1 = New OperatorsImplementer()
+        o2 = "abc"
+        o3 = Operators.DivideObject(o1, o2)
+        Assert.AreEqual(o3, "ok/")
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod1()
+        Dim o1, o2, o3 As Object
+        o1 = "a"
+        o2 = "b"
+        Try
+            o3 = Operators.ModObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod2()
+        Dim o1, o2, o3 As Object
+        o1 = "d"
+        o2 = 1
+        Try
+            o3 = Operators.ModObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod3()
+        Dim o1, o2, o3 As Object
+        o1 = "1"
+        o2 = 1
+        o3 = Operators.ModObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 0D)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod6()
+        Dim o1, o2, o3 As Object
+        o1 = DateTime.Now
+        o2 = 2
+        Try
+            o3 = Operators.ModObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod7()
+        Dim o1, o2, o3 As Object
+        o1 = "1"c
+        o2 = 2
+        Try
+            o3 = Operators.ModObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod8()
+        Dim o1, o2, o3 As Object
+        o1 = 1
+        o2 = Nothing
+        Try
+            o3 = Operators.ModObject(o1, o2)
+        Catch ex As DivideByZeroException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod11()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(3)
+        o2 = 2.0F
+        o3 = Operators.ModObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod12()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(3)
+        o2 = -2.5F
+        o3 = Operators.ModObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0.5F)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod13()
+        Dim o1, o2, o3 As Object
+        o1 = -1.1F
+        o2 = 1.1D
+        o3 = Operators.ModObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod14()
+        Dim o1, o2, o3 As Object
+        o1 = False
+        o2 = 1.0F
+        o3 = Operators.ModObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMod16()
+        Dim o1, o2, o3 As Object
+        o1 = New OperatorsImplementer()
+        o2 = "2"
+        o3 = Operators.ModObject(o1, o2)
+        Assert.AreEqual(o3, "okMod")
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply1()
+        Dim o1, o2, o3 As Object
+        o1 = "a"
+        o2 = "b"
+        Try
+            o3 = Operators.MultiplyObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply2()
+        Dim o1, o2, o3 As Object
+        o1 = "d"
+        o2 = 1
+        Try
+            o3 = Operators.MultiplyObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply3()
+        Dim o1, o2, o3 As Object
+        o1 = "1"
+        o2 = 1
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1D)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply6()
+        Dim o1, o2, o3 As Object
+        o1 = DateTime.Now
+        o2 = DateTime.Now
+        Try
+            o3 = Operators.MultiplyObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply7()
+        Dim o1, o2, o3 As Object
+        o1 = "1"c
+        o2 = 1
+        Try
+            o3 = Operators.MultiplyObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply8()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = Nothing
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0.0F)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply11()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1.0
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply12()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Decimal) Then
+            Assert.AreEqual(CType(o3, Decimal), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply13()
+        Dim o1, o2, o3 As Object
+        o1 = 1US
+        o2 = 1.1F
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 1.1F)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply14()
+        Dim o1, o2, o3 As Object
+        o1 = False
+        o2 = 1.0F
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 0)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply15()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = "1"
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Double) Then
+            Assert.AreEqual(CType(o3, Double), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsMultiply16()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = 1
+        o3 = Operators.MultiplyObject(o1, o2)
+        If (TypeOf o3 Is Single) Then
+            Assert.AreEqual(CType(o3, Single), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide1()
+        Dim o1, o2, o3 As Object
+        o1 = "a"
+        o2 = "b"
+        Try
+            o3 = Operators.IntDivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide2()
+        Dim o1, o2, o3 As Object
+        o1 = "d"
+        o2 = 1
+        Try
+            o3 = Operators.IntDivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide3()
+        Dim o1, o2, o3 As Object
+        o1 = "1"
+        o2 = 1
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide6()
+        Dim o1, o2, o3 As Object
+        o1 = DateTime.Now
+        o2 = DateTime.Now
+        Try
+            o3 = Operators.IntDivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide7()
+        Dim o1, o2, o3 As Object
+        o1 = "1"c
+        o2 = 1
+        Try
+            o3 = Operators.IntDivideObject(o1, o2)
+        Catch ex As InvalidCastException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide8()
+        Dim o1, o2, o3 As Object
+        o1 = 1
+        o2 = Nothing
+        Try
+            o3 = Operators.IntDivideObject(o1, o2)
+        Catch ex As DivideByZeroException
+            Return
+        End Try
+        Assert.Fail()
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide11()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1.0
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide12()
+        Dim o1, o2, o3 As Object
+        o1 = New Decimal(1)
+        o2 = 1
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide13()
+        Dim o1, o2, o3 As Object
+        o1 = 1.1F
+        o2 = 1.1F
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide14()
+        Dim o1, o2, o3 As Object
+        o1 = False
+        o2 = 1.0F
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 0)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide15()
+        Dim o1, o2, o3 As Object
+        o1 = 1.0F
+        o2 = "1"
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Long) Then
+            Assert.AreEqual(CType(o3, Long), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide16()
+        Dim o1, o2, o3 As Object
+        o1 = CType(1, Byte)
+        o2 = CType(1, Byte)
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Byte) Then
+            Assert.AreEqual(CType(o3, Byte), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide17()
+        Dim o1, o2, o3 As Object
+        o1 = 1
+        o2 = CType(1, Byte)
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Integer) Then
+            Assert.AreEqual(CType(o3, Integer), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide18()
+        Dim o1, o2, o3 As Object
+        o1 = CType(1, SByte)
+        o2 = CType(1, Byte)
+        o3 = Operators.IntDivideObject(o1, o2)
+        If (TypeOf o3 Is Short) Then
+            Assert.AreEqual(CType(o3, Short), 1)
+        Else
+            Assert.Fail()
+        End If
+    End Sub
+
+    <Test()> _
+    Sub TestOperatorsIntDivide19()
+        Dim o1, o2, o3 As Object
+        o1 = New OperatorsImplementer()
+        o2 = "abc"
+        o3 = Operators.IntDivideObject(o1, o2)
+        Assert.AreEqual(o3, "ok\")
+    End Sub
+
 End Class
 
 Class OperatorsImplementer
     Public Shared Operator +(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
         Return "ok+"
+    End Operator
+
+    Public Shared Operator *(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "ok*"
+    End Operator
+
+    Public Shared Operator /(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "ok/"
+    End Operator
+
+    Public Shared Operator \(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "ok\"
     End Operator
 
     Public Shared Operator &(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
@@ -2307,6 +2981,10 @@ Class OperatorsImplementer
 
     Public Shared Operator Xor(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
         Return "okXor"
+    End Operator
+
+    Public Shared Operator Mod(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "okMod"
     End Operator
 
     Public Shared Operator And(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
