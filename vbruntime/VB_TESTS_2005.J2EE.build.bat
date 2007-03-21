@@ -30,7 +30,7 @@ rem = Grasshopper variables and jars
 rem ===========================
 
 SET VMW4J2EE_DIR=C:\Program Files\Mainsoft\Visual MainWin for J2EE V2
-SET VMW4J2EE_JGAC_DIR=jgac\vmw4j2ee_110
+SET VMW4J2EE_JGAC_DIR=java_refs\vmw4j2ee_110
 
 SET VMW4J2EE_JGAC_JARS="%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\mscorlib.jar"
 SET VMW4J2EE_JGAC_JARS=%VMW4J2EE_JGAC_JARS%;"%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\System.jar"
@@ -77,7 +77,7 @@ set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
 
 echo converting dll to jar without validator
-"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre6";"%VMW4J2EE_DIR%\jgac";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
+"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\java_refs\jre";"%VMW4J2EE_DIR%\java_refs";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 rem echo running java validator
 rem "%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW4J2EE_DIR%\bin\validator.jar";"%VMW4J2EE_DIR%\bin\bcel.jar";%CLASSPATH%;"%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar" >>%BUILD_LOG% 2<&1
@@ -95,7 +95,7 @@ set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
 
 echo converting dll to jar without validator
-"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\jgac\jre6";"%VMW4J2EE_DIR%\jgac";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
+"%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\java_refs\jre";"%VMW4J2EE_DIR%\java_refs";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 rem echo running java validator
 rem "%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW4J2EE_DIR%\bin\validator.jar";"%VMW4J2EE_DIR%\bin\bcel.jar";%CLASSPATH%;"%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar" >>%BUILD_LOG% 2<&1
