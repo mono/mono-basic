@@ -103,8 +103,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Case TypeCode.String
                     ' do nothing.
                     Return Value.ToString()
-                Case TypeCode.DBNull
-                    Return Convert.ToString(DirectCast(Value, DBNull))
+                'Case TypeCode.DBNull
+                '    Return Convert.ToString(DirectCast(Value, DBNull))
                 Case Else 'TypeCode.Object and other
                     Throw New InvalidCastException
             End Select
