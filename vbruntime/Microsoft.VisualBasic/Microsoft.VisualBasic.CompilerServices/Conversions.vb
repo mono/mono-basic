@@ -68,11 +68,28 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function ToChar(ByVal Value As String) As Char
             Return CharType.FromString(Value)
         End Function
+
         Public Shared Function ToCharArrayRankOne(ByVal Value As Object) As Char()
-            Throw New NotImplementedException
+            If (Value Is Nothing) Then
+                Return ToCharArrayRankOne("")
+            End If
+
+            If (GetType(Char()).Equals(Value.GetType())) Then
+                Return CType(Value, Char())
+            End If
+
+            If (GetType(String).Equals(Value.GetType())) Then
+                Return ToCharArrayRankOne(CType(Value, String))
+            End If
+
+            Throw New InvalidCastException("Conversion from type '" + Value.GetType().Name + "' to type 'Char()' is not valid.")
         End Function
+
         Public Shared Function ToCharArrayRankOne(ByVal Value As String) As Char()
-            Throw New NotImplementedException
+            If (Value Is Nothing) Then
+                Value = ""
+            End If
+            Return Value.ToCharArray()
         End Function
         Public Shared Function ToDate(ByVal Value As Object) As DateTime
             Return DateType.FromObject(Value)

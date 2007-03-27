@@ -413,12 +413,12 @@ Public Class LateBindingTests4
         End Function
     End Class
 
-#If NET_2_0 Then
-    <Test(), ExpectedException(GetType(InvalidCastException))> _
-    Public Sub LateBind_NamedParam_12()
+#If TARGET_JVM Then
+    <Test(), ExpectedException(GetType(InvalidCastException),Category("NotWorking"))> Public Sub LateBind_NamedParam_12()
+#ElseIf NET_2_0 Then
+    <Test(), ExpectedException(GetType(InvalidCastException))> Public Sub LateBind_NamedParam_12()
 #Else
-    <Test()> _
-    Public Sub LateBind_NamedParam_12()
+    <Test()> Public Sub LateBind_NamedParam_12()
 #End If
         Dim o As Object = New C15
         Assert.AreEqual("Integer,Integer,ParamArray Integer()", o.F(i:=5, j:=6))

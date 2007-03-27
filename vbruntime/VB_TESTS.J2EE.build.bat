@@ -47,15 +47,16 @@ echo using NET_FRAMEWORK_DIR=%NET_FRAMEWORK_DIR%
 set path=%path%;%NET_FRAMEWORK_DIR%
 
 set NUNIT_PATH=..\..\mcs\nunit20\
+set NUNIT_OPTIONS=/exclude=NotWorking
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar
 
  "%VS71COMNTOOLS%..\IDE\devenv.com" %CD%\2003VB.J2EE.sln /rebuild Debug_Java
  IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 set CLASSPATH=%NUNIT_CLASSPATH%;%VMW4J2EE_JGAC_JARS%
 rem run  Microsoft.VisualBasic_test.jar
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi /xml=Microsoft.VisualBasic_test.xml %CD%\bin_Java\Microsoft.VisualBasic_test.jar 
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS% /xml=Microsoft.VisualBasic_test.xml %CD%\bin_Java\Microsoft.VisualBasic_test.jar 
 rem  run Microsoft.VisualBasic_test_VB.jar 
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi /xml=Microsoft.VisualBasic_test_VB.xml %CD%\bin_Java\Microsoft.VisualBasic_test_VB.jar 
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS% /xml=Microsoft.VisualBasic_test_VB.xml %CD%\bin_Java\Microsoft.VisualBasic_test_VB.jar 
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
 :FINALLY

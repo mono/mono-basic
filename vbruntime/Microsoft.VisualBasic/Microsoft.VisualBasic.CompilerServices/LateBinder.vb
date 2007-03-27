@@ -359,6 +359,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Private Sub PrepareParameters(ByRef args() As Object, ByVal f As MethodBase, ByVal names() As String, ByVal bstate As BState)
 
             Dim parameters() As ParameterInfo = f.GetParameters()
+
             Dim vals() As Object
             Dim i As Integer
 
@@ -428,6 +429,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return CBool(value)
                     Case TypeCode.Byte
                         Return CByte(value)
+                    Case TypeCode.SByte
+                        Return CSByte(value)
                     Case TypeCode.Char
                         Return CChar(value)
                     Case TypeCode.DateTime
@@ -442,6 +445,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return CShort(value)
                     Case TypeCode.Int64
                         Return CLng(value)
+                    Case TypeCode.UInt32
+                        Return CUInt(value)
+                    Case TypeCode.UInt16
+                        Return CUShort(value)
+                    Case TypeCode.UInt64
+                        Return CULng(value)
                     Case TypeCode.Single
                         Return CSng(value)
                 End Select
@@ -457,6 +466,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return CBool(value)
                         Case TypeCode.Byte
                             Return CByte(value)
+                        Case TypeCode.SByte
+                            Return CSByte(value)
                         Case TypeCode.Char
                             Return CChar(value)
                         Case TypeCode.DateTime
@@ -471,6 +482,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return CShort(value)
                         Case TypeCode.Int64
                             Return CLng(value)
+                        Case TypeCode.UInt32
+                            Return CUInt(value)
+                        Case TypeCode.UInt16
+                            Return CUShort(value)
+                        Case TypeCode.UInt64
+                            Return CULng(value)
                         Case TypeCode.Single
                             Return CSng(value)
                     End Select

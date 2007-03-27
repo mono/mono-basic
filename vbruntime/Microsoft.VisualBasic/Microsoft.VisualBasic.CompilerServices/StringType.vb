@@ -103,8 +103,18 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Case TypeCode.String
                     ' do nothing.
                     Return Value.ToString()
-                'Case TypeCode.DBNull
-                '    Return Convert.ToString(DirectCast(Value, DBNull))
+#If TARGET_JVM Then 'These cases are always relevant, however because of a bug in the vbc it is only compiled for jvm
+                Case TypeCode.SByte
+                    Return Convert.ToString(DirectCast(Value, SByte))
+                Case TypeCode.UInt32
+                    Return Convert.ToString(DirectCast(Value, UInteger))
+                Case TypeCode.UInt16
+                    Return Convert.ToString(DirectCast(Value, UShort))
+                Case TypeCode.UInt64
+                    Return Convert.ToString(DirectCast(Value, ULong))
+                Case TypeCode.DBNull
+                    Return Convert.ToString(DirectCast(Value, DBNull))
+#End If
                 Case Else 'TypeCode.Object and other
                     Throw New InvalidCastException
             End Select

@@ -27,6 +27,7 @@ echo using VMW_HOME=%VMW_HOME%
 
 IF DEFINED VMW4J2EE_JGAC_DIR GOTO JGAC_DEFINED
 SET VMW4J2EE_JGAC_DIR=%VMW_HOME%\java_refs\framework
+SET VMW4J2EE_JGAC_JRE_DIR=%VMW_HOME%\java_refs\jre
 :JGAC_DEFINED
 echo using VMW4J2EE_JGAC_DIR=%VMW4J2EE_JGAC_DIR%
 
@@ -77,7 +78,7 @@ set BUILD_LOG=%COMMON_PREFIX%.build.log
 pushd bin
 echo on
 echo converting dll to jar without validator
-"%VMW_HOME%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_JGAC_DIR%" >>%BUILD_LOG% 2<&1
+"%VMW_HOME%\bin\jcsc.exe" %CD%\Microsoft.VisualBasic.dll /debug:3 /novalidator /out:%CD%\Microsoft.VisualBasic.jar /classpath:%VMW4J2EE_JGAC_JARS%;%CD%\Microsoft.VisualBasic.jar /lib:%CD%;"%VMW4J2EE_JGAC_JRE_DIR%";"%VMW4J2EE_JGAC_DIR%"; >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 echo running java validator
 rem "%JAVA_HOME%\bin\java.exe" -cp .;..;"%VMW_HOME%\bin\validator.jar";"%VMW_HOME%\bin\bcel.jar";%VMW4J2EE_JGAC_JARS%;"%CD%\Microsoft.VisualBasic.jar" -Xms256m -Xmx512m validator.Validator -jar:"%CD%\Microsoft.VisualBasic.jar" >>%BUILD_LOG% 2<&1
