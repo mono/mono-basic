@@ -770,7 +770,7 @@ Namespace Microsoft.VisualBasic
                 Case TypeCode.Object
                     Throw New InvalidCastException
                 Case TypeCode.SByte
-                    Return 2
+                    Return 1
                 Case TypeCode.Single
                     Return 4
                 Case TypeCode.String

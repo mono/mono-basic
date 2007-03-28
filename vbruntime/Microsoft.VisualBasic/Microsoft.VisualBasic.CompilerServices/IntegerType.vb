@@ -75,15 +75,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Case TypeCode.UInt64
                         Return Convert.ToInt32(DirectCast(Value, ULong))
 #End If
-                    Case Else
-                        Throw New InvalidCastException
                 End Select
             Catch ex As Exception
-                Console.WriteLine("Could not convert from '" & Value.ToString() + "' to Integer (source type = " & Value.GetType.FullName)
-                Console.WriteLine(ex.Message)
-                Console.WriteLine(ex.StackTrace)
-                Throw
             End Try
+            Throw New InvalidCastException("Cast from '" + Value.GetType().Name + "' to type 'Integer' is not valid.")
         End Function
         Public Shared Function FromString(ByVal Value As String) As Integer
 
