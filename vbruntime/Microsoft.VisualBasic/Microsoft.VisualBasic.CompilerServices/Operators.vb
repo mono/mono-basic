@@ -1133,6 +1133,66 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New InvalidCastException("Operator 'Mod' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
 
+        Public Shared Function SizeDown(ByVal num As Long, ByVal minTC As TypeCode) As Object
+            While (True)
+                Select Case minTC
+
+                    Case TypeCode.Byte
+                        If (num > Byte.MaxValue Or num < 0) Then
+                            minTC = TypeCode.Int16
+                        Else
+                            Return CType(num, Byte)
+                        End If
+
+                    Case TypeCode.Int16
+                        If (num > Int16.MaxValue Or num < Int16.MinValue) Then
+                            minTC = TypeCode.Int32
+                        Else
+                            Return CType(num, Int16)
+                        End If
+
+                    Case TypeCode.Int32
+                        If (num > Int32.MaxValue Or num < Int32.MinValue) Then
+                            minTC = TypeCode.Int64
+                        Else
+                            Return CType(num, Int32)
+                        End If
+
+                    Case TypeCode.Int64
+                        Return num
+
+                    Case TypeCode.SByte
+                        If (num > SByte.MaxValue Or num < SByte.MinValue) Then
+                            minTC = TypeCode.Int16
+                        Else
+                            Return CType(num, SByte)
+                        End If
+
+                    Case TypeCode.UInt16
+                        If (num > UInt16.MaxValue Or num < 0) Then
+                            minTC = TypeCode.Int32
+                        Else
+                            Return CType(num, UInt16)
+                        End If
+
+                    Case TypeCode.UInt32
+                        If (num > UInt32.MaxValue Or num < 0) Then
+                            minTC = TypeCode.Int64
+                        Else
+                            Return CType(num, UInt32)
+                        End If
+
+                    Case Else
+                        Throw New ArgumentException("minTC")
+
+                End Select
+            End While
+            Return num 'will never get here
+        End Function
+
+        Public Shared Function MultiplyAndSize(ByVal o1 As Long, ByVal o2 As Long, ByVal tc As TypeCode) As Object
+            Return SizeDown(o1 * o2, tc)
+        End Function
         Public Shared Function MultiplyObject(ByVal o1 As Object, ByVal o2 As Object) As Object
             If (o1 Is Nothing) And (o2 Is Nothing) Then
                 Return 0
@@ -1145,22 +1205,23 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Dim destTc As TypeCode = DestTypeCodeOpMultiply(o1, o2)
+            Dim tmpLong As Long
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return Convert.ToByte(o1) * Convert.ToByte(o2)
+                        Return MultiplyAndSize(Convert.ToByte(o1), Convert.ToByte(o2), destTc)
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(o1) * Convert.ToInt16(o2)
+                        Return MultiplyAndSize(Convert.ToInt16(o1), Convert.ToInt16(o2), destTc)
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(o1) * Convert.ToInt32(o2)
+                        Return MultiplyAndSize(Convert.ToInt32(o1), Convert.ToInt32(o2), destTc)
                     Case TypeCode.Int64
                         Return Convert.ToInt64(o1) * Convert.ToInt64(o2)
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(o1) * Convert.ToSByte(o2)
+                        Return MultiplyAndSize(Convert.ToSByte(o1), Convert.ToSByte(o2), destTc)
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(o1) * Convert.ToUInt16(o2)
+                        Return MultiplyAndSize(Convert.ToUInt16(o1), Convert.ToUInt16(o2), destTc)
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(o1) * Convert.ToUInt32(o2)
+                        Return MultiplyAndSize(Convert.ToUInt32(o1), Convert.ToUInt32(o2), destTc)
                     Case TypeCode.UInt64
                         Return Convert.ToUInt64(o1) * Convert.ToUInt64(o2)
                     Case TypeCode.Decimal
