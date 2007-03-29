@@ -1205,7 +1205,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Dim destTc As TypeCode = DestTypeCodeOpMultiply(o1, o2)
-            Dim tmpLong As Long
             Try
                 Select Case destTc
                     Case TypeCode.Byte

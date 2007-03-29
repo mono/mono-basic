@@ -49,7 +49,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
 
         Public Shared Sub CheckForSyncLockOnValueType(ByVal obj As Object)
-            Throw New NotImplementedException
+            'obj can not be null (checked by monitor.enter)
+            Dim t As Type = obj.GetType()
+            If (t.IsValueType) Then
+                Throw New ArgumentException("'SyncLock' operand cannot be of type '" + t.Name + "' because '" + t.Name + "' is not a reference type.")
+            End If
         End Sub
         Public Shared Function ForEachInArr(ByVal ary As System.Array) As System.Collections.IEnumerator
             Throw New NotImplementedException
