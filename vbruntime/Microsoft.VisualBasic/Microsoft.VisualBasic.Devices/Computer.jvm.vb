@@ -37,7 +37,9 @@ Namespace Microsoft.VisualBasic.Devices
     Public Class Computer
         Inherits ServerComputer
 
+        '<MonoLimitationAttribute("Microsoft.VisualBasic.Devices.Computer is not supported.") _
         Public Sub New()
+            'Throw New NotImplementedException
         End Sub
 
         Public ReadOnly Property Audio() As Audio

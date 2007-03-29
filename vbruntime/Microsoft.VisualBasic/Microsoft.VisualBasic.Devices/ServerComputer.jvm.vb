@@ -32,8 +32,9 @@ Imports Microsoft.VisualBasic.MyServices
 Namespace Microsoft.VisualBasic.Devices
     Public Class ServerComputer
 
+        '<MonoLimitationAttribute("Microsoft.VisualBasic.Devices.Computer is not supported.") _
         Public Sub New()
-            Throw New NotImplementedException
+           ' Throw New NotImplementedException
         End Sub
 
         Public ReadOnly Property Clock() As Clock

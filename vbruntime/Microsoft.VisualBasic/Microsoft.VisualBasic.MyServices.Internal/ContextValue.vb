@@ -30,16 +30,20 @@ Imports System.ComponentModel
 Namespace Microsoft.VisualBasic.MyServices.Internal
     <EditorBrowsable(EditorBrowsableState.Never)> _
     Public Class ContextValue(Of T)
+
+        '<MonoLimitationAttribute("Microsoft.VisualBasic.MyServices.Internal.ContextValue(Of T) is not supported.") _
         Public Sub New()
-            Throw New NotImplementedException
+            ' Throw New NotImplementedException
         End Sub
 
+        '<MonoLimitationAttribute("Microsoft.VisualBasic.MyServices.Internal.ContextValue(Of T) is not supported.") _
         Public Property Value() As T
             Get
-                Throw New NotImplementedException
+                'Throw New NotImplementedException
+                Return Nothing
             End Get
             Set(ByVal value As T)
-                Throw New NotImplementedException
+                'Throw New NotImplementedException
             End Set
         End Property
     End Class
