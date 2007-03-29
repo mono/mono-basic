@@ -38,7 +38,6 @@ Namespace Microsoft.VisualBasic.Devices
         Inherits ServerComputer
 
         Public Sub New()
-            Throw New NotImplementedException
         End Sub
 
         Public ReadOnly Property Audio() As Audio

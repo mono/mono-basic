@@ -38,27 +38,37 @@ Namespace Microsoft.VisualBasic
     <EditorBrowsable(EditorBrowsableState.Advanced)> _
     Public NotInheritable Class MyGroupCollectionAttribute
         Inherits Attribute
+
+        Dim _typeToCollect As String
+        Dim _createInstanceMethodName As String
+        Dim _disposeInstanceMethodName As String
+        Dim _defaultInstanceAlias As String
+
         Public Sub New(ByVal typeToCollect As String, ByVal createInstanceMethodName As String, ByVal disposeInstanceMethodName As String, ByVal defaultInstanceAlias As String)
-            Throw New NotImplementedException
+            _typeToCollect = typeToCollect
+            _createInstanceMethodName = createInstanceMethodName
+            _disposeInstanceMethodName = disposeInstanceMethodName
+            _defaultInstanceAlias = defaultInstanceAlias
         End Sub
+
         Public ReadOnly Property CreateMethod() As String
             Get
-                Throw New NotImplementedException
+                Return _createInstanceMethodName
             End Get
         End Property
         Public ReadOnly Property DefaultInstanceAlias() As String
             Get
-                Throw New NotImplementedException
+                Return _defaultInstanceAlias
             End Get
         End Property
         Public ReadOnly Property DisposeMethod() As String
             Get
-                Throw New NotImplementedException
+                Return _disposeInstanceMethodName
             End Get
         End Property
         Public ReadOnly Property MyGroupName() As String
             Get
-                Throw New NotImplementedException
+                Return _typeToCollect
             End Get
         End Property
     End Class
