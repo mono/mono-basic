@@ -37,6 +37,26 @@ Namespace Microsoft.VisualBasic.CompilerServices
     Friend Class LateBinder
         Inherits Binder
 
+        Private _wasIncompleteInvocation As Boolean
+        Private _invokeNext As MethodInfo
+        Private _invokeNextArgs() As Object
+
+        Public ReadOnly Property WasIncompleteInvocation() As Boolean
+            Get
+                Return _wasIncompleteInvocation
+            End Get
+        End Property
+        Public ReadOnly Property InvokeNext() As MethodInfo
+            Get
+                Return _invokeNext
+            End Get
+        End Property
+        Public ReadOnly Property InvokeNextArgs() As Object()
+            Get
+                Return _invokeNextArgs
+            End Get
+        End Property
+        
         Private Enum TypeConversion
             NotConvertible
             Equal
@@ -92,7 +112,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If nameMatches Is Nothing Then
                 Throw New MissingMemberException
             End If
-
             Dim potentialMatches() As MethodBase = FilterMethods(nameMatches, args, names)
 
             If potentialMatches Is Nothing Then
@@ -161,7 +180,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Overrides Sub ReorderArgumentArray(ByRef args() As Object, ByVal state As Object)
-            Dim bstate As bstate = CType(state, bstate)
+            Dim bstate As BState = CType(state, BState)
             Dim mapping() As Integer = bstate.mapping
             Dim parameters() As ParameterInfo = bstate.parameters
             Dim clone() As Object = CType(args.Clone(), Object())
@@ -796,6 +815,30 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return match
         End Function
 
+        Private Function IsGetterThatReturnObjectWithIndexer(ByVal method As MethodBase, ByRef args() As Object) As Boolean
+            If (method.Name.StartsWith("get_")) Then
+                Dim minfo As MethodInfo = CType(method, MethodInfo)
+                Dim retType As Type = minfo.ReturnType
+                If (retType.IsArray) Then
+                    _invokeNext = retType.GetMethod("get_Item")
+                    _invokeNextArgs = args
+                    _wasIncompleteInvocation = True
+                    args = Nothing
+                    Return True
+                End If
+
+                Dim newMethod As MethodInfo = retType.GetMethod("get_Blubber")
+                If (newMethod IsNot Nothing) Then
+                    _invokeNext = newMethod
+                    _invokeNextArgs = args
+                    _wasIncompleteInvocation = True
+                    args = Nothing
+                    Return True
+                End If
+            End If
+            Return False
+        End Function
+
 
         Private Function FilterMethods(ByVal methods() As MethodBase, ByRef args() As Object, ByVal names() As String) As MethodBase()
             Dim filteredMethods(methods.Length) As MethodBase
@@ -816,7 +859,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         If previous = TypeConversion.Equal Then
                             Exit For
                         End If
+                    ElseIf (IsGetterThatReturnObjectWithIndexer(methods(i), args)) Then
+                        previous = TypeConversion.Equal
+                        filteredMethods(methodsCount) = methods(i)
+                        methodsCount += 1
+                        Exit For
                     End If
+
                 Else
                     current = CompareSignature(args, parameters, names)
 

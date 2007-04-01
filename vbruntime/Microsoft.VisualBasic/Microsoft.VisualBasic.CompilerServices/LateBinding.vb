@@ -136,8 +136,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                                         BindingFlags.Static
 
             Try
-                Dim result As Object = realType.InvokeMember(name, flags, LBinder, o, args, Nothing, CultureInfo.CurrentCulture, paramnames)
+                Dim lb As LateBinder = New LateBinder
+                Dim result As Object = realType.InvokeMember(name, flags, lb, o, args, Nothing, CultureInfo.CurrentCulture, paramnames)
 
+                If (lb.WasIncompleteInvocation) Then
+                    result = lb.InvokeNext.Invoke(result, lb.InvokeNextArgs)
+                End If
                 Return result
             Catch e As MissingMethodException
                 'FIXME: should the InvokeMember always call a binder instead of throwing an exceptions

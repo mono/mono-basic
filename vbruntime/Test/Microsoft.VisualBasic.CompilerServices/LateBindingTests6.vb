@@ -278,6 +278,49 @@ Public Class LateBindingTests6
         End Sub
     End Class
 
+
+    <Test()> _
+    Public Sub LateBind_IndexOfReturnObjectFromProperty1()
+        Dim o As Object
+        Dim res As Object
+        o = New A
+        res = o.dodo(0)
+        Assert.AreEqual("1", res)
+    End Sub
+
+    <Test()> _
+    Public Sub LateBind_IndexOfReturnObjectFromProperty2()
+        Dim o As Object
+        Dim res As Object
+        o = New B
+        res = o.dodo(0)
+        Assert.AreEqual("3", res)
+    End Sub
+
+    Public Class A
+        Public ReadOnly Property dodo() As Object()
+            Get
+                Return New Object() {"1", "2"}
+            End Get
+        End Property
+    End Class
+
+    Public Class B
+        Public ReadOnly Property dodo() As C
+            Get
+                Return New C
+            End Get
+        End Property
+    End Class
+
+    Public Class C
+        Default Public ReadOnly Property Blubber(ByVal i As Integer) As Object
+            Get
+                Return "3"
+            End Get
+        End Property
+    End Class
+
     <Test()> _
     Public Sub LateBind_WithStatementA()
         Dim a As Object = New C300
