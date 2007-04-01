@@ -677,6 +677,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Return New CompareResult(CompareResultType.Success, CompareDouble(Conversions.ToDouble(Left), Conversions.ToDouble(Right)))
                 Case TypeCombinations.Boolean_String, TypeCombinations.String_Boolean
                     Return New CompareResult(CompareResultType.Success, CompareBoolean(Conversions.ToBoolean(Left), Conversions.ToBoolean(Right)))
+                Case TypeCombinations.Int16_Int32, TypeCombinations.Int32_Int16
+                    Return New CompareResult(CompareResultType.Success, CompareInt32(Conversions.ToInteger(Left), Conversions.ToInteger(Right)))
                 Case Else
                     Throw New NotImplementedException("Not implemented comparison between '" & codeLeft.ToString() & "' and '" & codeRight.ToString() & "'")
             End Select
