@@ -58,7 +58,7 @@ dist-pre:
 
 dist-tarball: dist-pre
 	$(MAKE) distdir='$(package)' dist-recursive
-	tar cvzf $(package).tar.gz $(package)
+	tar cvjf $(package).tar.bz2 $(package)
 
 dist: dist-tarball
 	rm -rf $(package)
@@ -80,9 +80,9 @@ distcheck: dist-tarball
 	    $(MAKE) prefix=$(prefix) && $(MAKE) test && $(MAKE) install DESTDIR="$$destdir" && \
 	    $(MAKE) clean && $(MAKE) dist || exit 1) || exit 1 ; \
 	mv Distcheck-MONOBASIC $(package) ; \
-	tar tzf $(package)/$(package).tar.gz |sed -e 's,/$$,,' |sort >distdist.list ; \
-	rm $(package)/$(package).tar.gz ; \
-	tar tzf $(package).tar.gz |sed -e 's,/$$,,' |sort >before.list ; \
+	tar tjf $(package)/$(package).tar.bz2 |sed -e 's,/$$,,' |sort >distdist.list ; \
+	rm $(package)/$(package).tar.bz2 ; \
+	tar tjf $(package).tar.bz2 |sed -e 's,/$$,,' |sort >before.list ; \
 	find $(package) |egrep -v '(makefrag|response|config.make)' |sed -e 's,/$$,,' |sort >after.list ; \
 	cmp before.list after.list || exit 1 ; \
 	cmp before.list distdist.list || exit 1 ; \
