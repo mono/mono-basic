@@ -32,9 +32,10 @@ Imports System.Windows.Forms
 Namespace Devices
     <TestFixture()> _
     Public Class MouseTests
+        <Category("TargetJvmNotSupported")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim mouse As New Mouse()
 
             Assert.AreEqual(SystemInformation.MouseButtonsSwapped, mouse.ButtonsSwapped, testname & "-1")

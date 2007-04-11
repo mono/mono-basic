@@ -31,9 +31,10 @@ Imports Microsoft.VisualBasic.Devices
 Namespace Devices
     <TestFixture()> _
     Public Class ServerComputerTests
+        <Category("TargetJvmNotSupported")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim sc As New ServerComputer
             Assert.IsNotNull(sc.Clock, testname & "-1")
             Assert.IsNotNull(sc.FileSystem, testname & "-2")

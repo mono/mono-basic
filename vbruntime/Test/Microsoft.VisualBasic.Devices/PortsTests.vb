@@ -32,9 +32,10 @@ Imports System.IO.Ports
 Namespace Devices
     <TestFixture()> _
     Public Class PortsTests
+        <Category("TargetJvmNotSupported")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim ports As New Ports
             Dim names() As String
             Dim vbNames As ObjectModel.ReadOnlyCollection(Of String)

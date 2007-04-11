@@ -28,14 +28,16 @@
 
 Imports Microsoft.VisualBasic.Devices
 Imports System.Windows.Forms
+Imports NUnit.Framework
 
 Namespace Devices
     <TestFixture()> _
     Public Class KeyboardTests
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim k As New Keyboard()
 
             MsgBox("Press the NumLock key (unless it's already on)")

@@ -50,7 +50,13 @@ Public Class FileSystemTest
 
         <TearDown()> _
         Public Sub CleanUp()
-            FS.DeleteDirectory(BASEDIR, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
+            Try
+                FS.DeleteDirectory(BASEDIR, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
+            Catch ex As Exception
+#If Not TARGET_JVM Then
+                Throw ex
+#End If
+            End Try
         End Sub
 
         <Test()> _
@@ -157,6 +163,8 @@ Public Class FileSystemTest
 
         End Sub
 
+        'TargetJvm - Cancle UI NotSupported
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub CopyDirectoryTest4()
@@ -295,7 +303,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub CopyFileTest5()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "CopyFileTest5"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -315,7 +323,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub CopyFileTest6()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "CopyFileTest6"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -331,11 +339,12 @@ Public Class FileSystemTest
             FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
         End Sub
 
-
+        'TargetJvm - Cancle UI NotSupported
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub CopyFileTest7()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "CopyFileTest7"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -358,7 +367,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub CopyFileTest8()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "CopyFileTest8"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -377,7 +386,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub DeleteDirectoryTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DeleteDirectoryTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             FS.CreateDirectory(dir)
@@ -392,7 +401,7 @@ Public Class FileSystemTest
         <ExpectedException(GetType(IOException))> _
         <Test()> _
         Public Sub DeleteDirectoryTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DeleteDirectoryTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             CreateComplicatedFileHierarchy(dir, False)
@@ -403,7 +412,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub DirectoryExistsTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DirectoryExistsTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
 
@@ -416,7 +425,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub DrivesTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DrivesTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             Dim drives As ObjectModel.ReadOnlyCollection(Of DriveInfo)
@@ -429,7 +438,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub FileExistsTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FileExistsTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
 
@@ -444,7 +453,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub FindInFilesTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -530,7 +539,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub FindInFilesTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -617,7 +626,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub FindInFilesTest3()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest3"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -705,7 +714,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub FindInFilesTest4()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest4"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -793,7 +802,7 @@ Public Class FileSystemTest
 
         <Test()> _
       Public Sub FindInFilesTest5()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest5"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -880,7 +889,7 @@ Public Class FileSystemTest
 
         <Test()> _
       Public Sub FindInFilesTest6()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "FindInFilesTest6"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -968,7 +977,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetDirectories1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetDirectories1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -1014,7 +1023,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetDirectoryInfoTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetDirectoryInfoTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             FS.CreateDirectory(dir)
@@ -1025,18 +1034,20 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetDriveInfoTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetDriveInfoTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
 
             FS.CreateDirectory(dir)
-
-            Assert.AreEqual(FS.GetDriveInfo(dir).ToString, New DriveInfo(dir).ToString, testname & "-1")
+            Dim dir1 As DriveInfo = FS.GetDriveInfo(dir)
+            Dim dir2 As DriveInfo = New DriveInfo(dir)
+            Assert.IsTrue(dir1.RootDirectory().Exists)
+            Assert.AreEqual(dir1.ToString, dir2.ToString, testname & "-1")
 
         End Sub
 
         <Test()> _
         Public Sub GetFileInfoTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetFileInfoTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
 
@@ -1049,7 +1060,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetFiles1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetFiles1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
             Dim found As ObjectModel.ReadOnlyCollection(Of String)
@@ -1096,7 +1107,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetNameTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetNameTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
 
@@ -1107,7 +1118,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetParentPathTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetParentPathTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim file As String = Path.Combine(dir, "file")
 
@@ -1118,7 +1129,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub GetTempFileNameTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "GetTempFileNameTest1"
 
             Dim file, file2 As String
 
@@ -1292,7 +1303,9 @@ Public Class FileSystemTest
                 FS.MoveFile(a, b)
                 Assert.Fail(testname & "-1" & " Expected 'IOException'")
             Catch ex As IOException
+#If Not TARGET_JVM Then
                 Assert.AreEqual(String.Format("Could not find file '{0}'.", a), ex.Message, testname & "-2")
+#End If
             End Try
 
             FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
@@ -1337,10 +1350,12 @@ Public Class FileSystemTest
             FS.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.DeleteDirectoryOption.DeleteAllContents)
         End Sub
 
+        'TargetJvm - Option Dialogs NotSupported
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub MoveFileTest5()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "MoveFileTest5"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -1361,7 +1376,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub MoveFileTest6()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "MoveFileTest6"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -1382,7 +1397,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub MoveFileTest7()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "MoveFileTest7"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -1408,7 +1423,7 @@ Public Class FileSystemTest
         <Category("UI")> _
         <Test()> _
         Public Sub MoveFileTest8()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "MoveFileTest8"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
             Dim b As String = Path.Combine(dir, "b.txt")
@@ -1428,7 +1443,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFieldParserTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFieldParserTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1443,7 +1458,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFieldParserTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFieldParserTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1459,7 +1474,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFieldParserTest3()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFieldParserTest3"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1476,7 +1491,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFileReaderTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFileReaderTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1492,7 +1507,7 @@ Public Class FileSystemTest
 
         <Test()> _
                Public Sub OpenTextFileReaderTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFileReaderTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1510,7 +1525,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFileWriterTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFileWriterTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1544,7 +1559,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub OpenTextFileWriterTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "OpenTextFileWriterTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1578,7 +1593,7 @@ Public Class FileSystemTest
 
         <Test()> _
              Public Sub ReadAllBytesTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "ReadAllBytesTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1601,7 +1616,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub ReadAllTextTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "ReadAllTextTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1624,7 +1639,7 @@ Public Class FileSystemTest
 
         <Test()> _
         Public Sub RenameDirectoryTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "RenameDirectoryTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim dirb As String = Path.Combine(BASEDIR, testname & "-new")
             Dim a As String = Path.Combine(dir, "a.txt")
@@ -1638,7 +1653,7 @@ Public Class FileSystemTest
 
         <Test()> _
 Public Sub RenameFileTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "RenameFileTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim b As String = Path.Combine(dir, "b.txt")
             Dim a As String = Path.Combine(dir, "a.txt")
@@ -1654,7 +1669,7 @@ Public Sub RenameFileTest1()
 
         <Test()> _
         Public Sub ReadAllTextTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "ReadAllTextTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1682,7 +1697,7 @@ Public Sub RenameFileTest1()
 
         <Test()> _
              Public Sub WriteAllBytesTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "WriteAllBytesTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1707,7 +1722,7 @@ Public Sub RenameFileTest1()
 
         <Test()> _
         Public Sub WriteAllTextTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "WriteAllTextTest1"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1731,7 +1746,7 @@ Public Sub RenameFileTest1()
 
         <Test()> _
         Public Sub WriteAllTextTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "WriteAllTextTest2"
             Dim dir As String = Path.Combine(BASEDIR, testname)
             Dim a As String = Path.Combine(dir, "a.txt")
 
@@ -1755,7 +1770,9 @@ Public Sub RenameFileTest1()
 
 #Region "Helper functions"
         Private Sub MsgBox(ByVal Message As String, Optional ByVal Style As Microsoft.VisualBasic.MsgBoxStyle = Microsoft.VisualBasic.MsgBoxStyle.OkOnly Or Microsoft.VisualBasic.MsgBoxStyle.Information)
+#If Not TARGET_JVM Then
             Microsoft.VisualBasic.Interaction.MsgBox(Message, Style Or Microsoft.VisualBasic.MsgBoxStyle.SystemModal)
+#End If
         End Sub
 
         Private Sub CreateFile(ByVal Name As String, ByVal Size As Integer)

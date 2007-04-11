@@ -32,7 +32,8 @@ Imports System.IO
 <TestFixture()> _
 Public Class Helper
 
-    <Test()> _
+    'TargetJvmNotSupported - AppDomain.GetAssemblies
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub PrintRuntimePath()
         For Each a As Reflection.Assembly In AppDomain.CurrentDomain.GetAssemblies
             If a.FullName.Contains("VisualBasic") Then

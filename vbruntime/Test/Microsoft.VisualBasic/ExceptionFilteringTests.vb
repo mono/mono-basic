@@ -49,7 +49,7 @@ Public Class ExceptionFilteringTests
         End Try
     End Sub
 
-    <Test()> _
+    <Test(), Category("TargetJvmNotWorking")> _
     Public Sub ExceptionFilter_FilterThrow()
         Try
             Throw New ArgumentException

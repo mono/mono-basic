@@ -182,6 +182,8 @@ Public Class LateBindingTests2
     End Class
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray1()
 #Else
@@ -194,6 +196,8 @@ Public Class LateBindingTests2
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray2()
 #Else
@@ -206,6 +210,8 @@ Public Class LateBindingTests2
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray6()
 #Else
@@ -746,6 +752,8 @@ Public Class LateBindingTests2
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray603()
 #Else
@@ -864,6 +872,8 @@ Public Class LateBindingTests2
     End Class
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_TypeMembersM_2()
 #Else
@@ -875,6 +885,8 @@ Public Class LateBindingTests2
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - Ambiguous matching in method resolution
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_TypeMembersM_3()
 #Else

@@ -32,10 +32,11 @@ Imports System.Windows.Forms
 Namespace Devices
     <TestFixture()> _
     Public Class ComputerInfoTests
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim ci As New ComputerInfo()
 
             Assert.AreEqual(System.Globalization.CultureInfo.InstalledUICulture.Name, ci.InstalledUICulture.Name, testname & "-1")

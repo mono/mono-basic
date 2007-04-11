@@ -10,16 +10,16 @@ Public Class ConversionsTests
         Dim chars() As Char
 
         chars = Conversions.ToCharArrayRankOne(CType("dog", Object))
-        Assert.AreEqual("dog", chars)
+        Assert.AreEqual("dog".ToCharArray, chars)
 
         chars = Conversions.ToCharArrayRankOne("dog")
-        Assert.AreEqual("dog", chars)
+        Assert.AreEqual("dog".ToCharArray, chars)
 
         chars = Conversions.ToCharArrayRankOne(Nothing)
-        Assert.AreEqual("", chars)
+        Assert.AreEqual("".ToCharArray, chars)
 
         chars = Conversions.ToCharArrayRankOne(CType(Nothing, String))
-        Assert.AreEqual("", chars)
+        Assert.AreEqual("".ToCharArray, chars)
 
         Conversions.ToCharArrayRankOne(5) 'ExpectedException: InvalidCastException
 

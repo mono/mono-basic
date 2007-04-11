@@ -292,7 +292,8 @@ Public Class FilesSystemTest
 
 #Region "FileDateTime"
 
-    <Test()> _
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub FileDateTime_1()
 
         Dim test_file As String = "FileDateTime_test1.dat"
@@ -308,8 +309,10 @@ Public Class FilesSystemTest
         Thread.Sleep(600)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
-    <Test()> _
-     Public Sub FileDateTime_2()
+
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
+    Public Sub FileDateTime_2()
 
         Dim test_file As String = "FileDateTime_test1.dat"
         Dim modify_time, test_time As Date
@@ -381,7 +384,8 @@ Public Class FilesSystemTest
 
 #Region "GetAttr"
 
-    <Test()> _
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub GetAttr_1()
 
         '' check attr to file
@@ -399,7 +403,9 @@ Public Class FilesSystemTest
         Thread.Sleep(60)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
-    <Test()> _
+
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub GetAttr_2()
         '' check attr to directory
         Dim test_dir As String = "GetAttr_Dirtest2"
@@ -642,7 +648,8 @@ Public Class FilesSystemTest
 
 #Region "SetAttr"
 
-    <Test()> _
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub SetAttr_1()
 
         '' check attr on file
@@ -661,7 +668,9 @@ Public Class FilesSystemTest
         Thread.Sleep(60)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
-    <Test()> _
+
+    'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+    <Test(), Category("TargetJvmNotSupported")> _
     Public Sub SetAttr_2()
         '' check attr on directory
         Dim test_dir As String = "SetAttr_Dirtest2"

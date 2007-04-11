@@ -31,10 +31,11 @@ Imports Microsoft.VisualBasic.Devices
 Namespace Devices
     <TestFixture()> _
     Public Class AudioTests
+        <Category("TargetJvmNotSupported")> _
         <Category("UI")> _
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim sc As New Audio
             Dim result As MsgBoxResult
 

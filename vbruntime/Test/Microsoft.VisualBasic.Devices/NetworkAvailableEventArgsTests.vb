@@ -33,7 +33,7 @@ Namespace Devices
     Public Class NetworkAvailableEventArgsTests
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
 
             Dim arg As NetworkAvailableEventArgs
 

@@ -65,7 +65,7 @@ Namespace Devices
 
         <Test()> _
         Public Sub IsAvailableTest()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "IsAvailableTest"
             Dim nw As New Network()
 
             Assert.AreEqual(NetworkInterface.GetIsNetworkAvailable(), nw.IsAvailable, testname & "-1")
@@ -76,7 +76,7 @@ Namespace Devices
         <Category("Slow")> _
         <Test()> _
         Public Sub PingTest()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "PingTest"
             Dim nw As New Network()
 
             If Not ConnectedToInternet() Then
@@ -103,7 +103,7 @@ Namespace Devices
         <Test()> _
         <Category("UI")> _
         Public Sub DownloadFileTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DownloadFileTest1"
             Dim nw As New Network()
 
             If Not ConnectedToInternet() Then
@@ -342,7 +342,7 @@ Namespace Devices
         <Test()> _
         <Category("UI")> _
             Public Sub DownloadFileTest2()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "DownloadFileTest2"
             Dim nw As New Network()
 
             If Not ConnectedToInternet() Then
@@ -667,7 +667,7 @@ Namespace Devices
         <Test()> _
         <Category("UI")> _
         Public Sub UploadFileTest1()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "UploadFileTest1"
             Dim nw As New Network()
 
             If Not ConnectedToInternet() Then

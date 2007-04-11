@@ -151,6 +151,7 @@ Public Class LateBindingTests5
         End Function
     End Class
 
+    <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_MethodDeclarationA()
         Dim o As Object = New C4

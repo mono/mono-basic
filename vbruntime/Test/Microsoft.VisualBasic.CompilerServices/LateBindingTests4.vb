@@ -303,6 +303,8 @@ Public Class LateBindingTests4
     End Class
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - ArgumentException was thrown when InvalidCastExceptions should be thrown
+    <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
        Public Sub LateBind_NamedParam_6()
 #Else
@@ -384,6 +386,8 @@ Public Class LateBindingTests4
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - MissingMemberException was thrown when InvalidCastExceptions should be thrown
+    <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
        Public Sub LateBind_NamedParam_11()
 #Else
@@ -414,7 +418,7 @@ Public Class LateBindingTests4
     End Class
 
 #If TARGET_JVM Then
-    <Test(), ExpectedException(GetType(InvalidCastException),Category("NotWorking"))> Public Sub LateBind_NamedParam_12()
+    <Test(), ExpectedException(GetType(InvalidCastException)),Category("TargetJvmNotWorking")> Public Sub LateBind_NamedParam_12()
 #ElseIf NET_2_0 Then
     <Test(), ExpectedException(GetType(InvalidCastException))> Public Sub LateBind_NamedParam_12()
 #Else
@@ -425,6 +429,8 @@ Public Class LateBindingTests4
     End Sub
 
 #If NET_2_0 Then
+    'TargetJvmNotWorking - InvalidCastExceptions should be thrown
+    <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
     Public Sub LateBind_NamedParam_15()
 #Else

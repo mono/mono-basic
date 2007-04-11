@@ -33,7 +33,7 @@ Namespace Devices
     Public Class ClockTests
         <Test()> _
         Public Sub Test()
-            Dim testname As String = System.Reflection.MethodInfo.GetCurrentMethod.Name
+            Dim testname As String = "Test"
             Dim sc As New Clock
 
             If TimeSpan.FromTicks(Math.Abs(sc.GmtTime.Ticks - Date.UtcNow.Ticks)).TotalSeconds > 0.5 Then
