@@ -672,16 +672,30 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
             End If
 
-            Select Case CType(codeLeft << TypeCombinations.SHIFT Or codeRight, TypeCombinations)
-                Case TypeCombinations.String_Double, TypeCombinations.Double_String
-                    Return New CompareResult(CompareResultType.Success, CompareDouble(Conversions.ToDouble(Left), Conversions.ToDouble(Right)))
-                Case TypeCombinations.Boolean_String, TypeCombinations.String_Boolean
-                    Return New CompareResult(CompareResultType.Success, CompareBoolean(Conversions.ToBoolean(Left), Conversions.ToBoolean(Right)))
-                Case TypeCombinations.Int16_Int32, TypeCombinations.Int32_Int16
-                    Return New CompareResult(CompareResultType.Success, CompareInt32(Conversions.ToInteger(Left), Conversions.ToInteger(Right)))
-                Case Else
-                    Throw New NotImplementedException("Not implemented comparison between '" & codeLeft.ToString() & "' and '" & codeRight.ToString() & "'")
-            End Select
+            Try
+
+            
+                Select Case CType(codeLeft << TypeCombinations.SHIFT Or codeRight, TypeCombinations)
+
+
+
+                    Case TypeCombinations.String_Double, TypeCombinations.Double_String
+                        Return New CompareResult(CompareResultType.Success, CompareDouble(Conversions.ToDouble(Left), Conversions.ToDouble(Right)))
+                    Case TypeCombinations.Boolean_String, TypeCombinations.String_Boolean
+                        Return New CompareResult(CompareResultType.Success, CompareBoolean(Conversions.ToBoolean(Left), Conversions.ToBoolean(Right)))
+                    Case TypeCombinations.Int16_Int32, TypeCombinations.Int32_Int16
+                        Return New CompareResult(CompareResultType.Success, CompareInt32(Conversions.ToInteger(Left), Conversions.ToInteger(Right)))
+                    Case TypeCombinations.DateTime_String, TypeCombinations.String_DateTime
+                        Return New CompareResult(CompareResultType.Success, CompareDate(Convert.ToDateTime(Left), Convert.ToDateTime(Right)))
+                    Case Else
+                        Throw New NotImplementedException("Not implemented comparison between '" & codeLeft.ToString() & "' and '" & codeRight.ToString() & "'")
+                End Select
+            Catch ex As Exception
+                If (TypeOf ex Is NotImplementedException) Then
+                    Throw ex
+                End If
+                Throw New InvalidCastException("Conversion is not valid.")
+            End Try
 
         End Function
 
