@@ -2948,9 +2948,108 @@ Public Class OperatorsTests
         Assert.AreEqual(o3, "ok\")
     End Sub
 
+    <Test()> _
+    Sub TestOperatorsCompare()
+        Dim _false As Object = False
+        Dim _true As Object = True
+        Dim _int1 As Object = -4
+        Dim _double1 As Object = -4
+        Dim _byte1 As Object = 0
+        Dim _date As Object = DateTime.Now
+        Dim _str As Object = "word"
+        Dim _str2 As Object = "aaaa"
+        Dim _strNum As Object = "1"
+        Dim _nothing As Object = Nothing
+        Dim _nothing2 As Object = Nothing
+        Dim _dbnull As Object = DBNull.Value
+        Dim _dbnull2 As Object = DBNull.Value
+        Dim _a As Object = New A
+        Dim _operatorsImplementer As Object = New OperatorsImplementer
+
+        Assert.IsTrue(1 > _nothing)
+
+        Assert.IsTrue(_nothing2 = _nothing)
+
+        Assert.IsTrue(_nothing < 1)
+
+        Assert.IsTrue(_nothing > -1)
+
+        Assert.IsTrue(_false > _true)
+
+        Assert.IsTrue(_operatorsImplementer > _date)
+
+        Assert.IsTrue(_str > _str2)
+
+        Assert.IsTrue("a"c < _str)
+
+        Assert.IsTrue(2 > _strNum)
+
+        Assert.IsTrue(_int1 <= _byte1)
+
+        Assert.IsTrue(_double1 = _int1)
+
+        Try
+            Dim tmp = _a > _nothing
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+
+        Try
+            Dim tmp = 1 = _a
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+
+        Try
+            Dim tmp = _str > _date
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+
+        Try
+            Dim tmp = 1 > _date
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+
+        Try
+            Dim tmp = _dbnull >= _dbnull2
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+        
+    End Sub
+
+End Class
+
+Class A
 End Class
 
 Class OperatorsImplementer
+    Public Shared Operator =(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
+    Public Shared Operator <>(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
+    Public Shared Operator >(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
+    Public Shared Operator <(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
+    Public Shared Operator >=(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
+    Public Shared Operator <=(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
+        Return "True"
+    End Operator
+
     Public Shared Operator +(ByVal a As OperatorsImplementer, ByVal b As Object) As Object
         Return "ok+"
     End Operator

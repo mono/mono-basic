@@ -34,150 +34,154 @@ Imports System.Reflection
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Operators
-        Class CompareResult
-            Public Value As Integer
-            Public Type As CompareResultType
 
-            Sub New(ByVal Type As CompareResultType, ByVal Value As Integer)
-                Me.Value = Value
-                Me.Type = Type
-            End Sub
-        End Class
-
-        Enum CompareResultType
-            Success
-            UserDefined
-            Fail
+        Enum CompareResult
+            Less
+            Equal
+            Greater
+            NotResolved
         End Enum
 
-        Private Shared Function CompareBoolean(ByVal Left As Boolean, ByVal Right As Boolean) As Integer
-            If Left = Right Then Return 0
-            If Left < Right Then
-                Return 1
+        Private Shared Function CompareBoolean(ByVal Left As Boolean, ByVal Right As Boolean) As CompareResult
+            If Left = Right Then Return CompareResult.Equal
+            If Left > Right Then
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareByte(ByVal Left As Byte, ByVal Right As Byte) As Integer
+        Private Shared Function CompareByte(ByVal Left As Byte, ByVal Right As Byte) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareChar(ByVal Left As Char, ByVal Right As Char) As Integer
-            If Left = Right Then Return 0
-            If Left < Right Then
-                Return 1
+        Private Shared Function CompareChar(ByVal Left As Char, ByVal Right As Char) As CompareResult
+            If Left = Right Then Return CompareResult.Equal
+            If Left > Right Then
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareDate(ByVal Left As Date, ByVal Right As Date) As Integer
-            Return DateTime.Compare(Left, Right)
+        Private Shared Function CompareDate(ByVal Left As Date, ByVal Right As Date) As CompareResult
+            Return IntToCompareResult(DateTime.Compare(Left, Right))
         End Function
 
-        Private Shared Function CompareDecimal(ByVal Left As Decimal, ByVal Right As Decimal) As Integer
-            Return Decimal.Compare(Left, Right)
+        Private Shared Function IntToCompareResult(ByVal val As Integer) As CompareResult
+            If (val = 0) Then
+                Return CompareResult.Equal
+            ElseIf (val > 0) Then
+                Return CompareResult.Greater
+            Else
+                Return CompareResult.Less
+            End If
         End Function
 
-        Private Shared Function CompareDouble(ByVal Left As Double, ByVal Right As Double) As Integer
+        Private Shared Function CompareDecimal(ByVal Left As Decimal, ByVal Right As Decimal) As CompareResult
+            Return IntToCompareResult(Decimal.Compare(Left, Right))
+        End Function
+
+        Private Shared Function CompareDouble(ByVal Left As Double, ByVal Right As Double) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareInt16(ByVal Left As Int16, ByVal Right As Int16) As Integer
+        Private Shared Function CompareInt16(ByVal Left As Int16, ByVal Right As Int16) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareInt32(ByVal Left As Int32, ByVal Right As Int32) As Integer
+        Private Shared Function CompareInt32(ByVal Left As Int32, ByVal Right As Int32) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareInt64(ByVal Left As Int64, ByVal Right As Int64) As Integer
+        Private Shared Function CompareInt64(ByVal Left As Int64, ByVal Right As Int64) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareSByte(ByVal Left As SByte, ByVal Right As SByte) As Integer
+        Private Shared Function CompareSByte(ByVal Left As SByte, ByVal Right As SByte) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareSingle(ByVal Left As Single, ByVal Right As Single) As Integer
+        Private Shared Function CompareSingle(ByVal Left As Single, ByVal Right As Single) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareUInt16(ByVal Left As UInt16, ByVal Right As UInt16) As Integer
+        Private Shared Function CompareUInt16(ByVal Left As UInt16, ByVal Right As UInt16) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareUInt32(ByVal Left As UInt32, ByVal Right As UInt32) As Integer
+        Private Shared Function CompareUInt32(ByVal Left As UInt32, ByVal Right As UInt32) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
-        Private Shared Function CompareUInt64(ByVal Left As UInt64, ByVal Right As UInt64) As Integer
+        Private Shared Function CompareUInt64(ByVal Left As UInt64, ByVal Right As UInt64) As CompareResult
             If Left = Right Then
-                Return 0
+                Return CompareResult.Equal
             ElseIf Left > Right Then
-                Return 1
+                Return CompareResult.Greater
             Else
-                Return -1
+                Return CompareResult.Less
             End If
         End Function
 
         Private Shared Function GetTypeCode(ByVal obj As Object) As TypeCode
-            If (TypeOf obj Is IConvertible) Then
+            If (obj Is Nothing) Then
+                Return TypeCode.Empty
+            ElseIf (TypeOf obj Is IConvertible) Then
                 Return CType(obj, IConvertible).GetTypeCode()
             End If
             Return Type.GetTypeCode(obj.GetType())
@@ -204,6 +208,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.Int32, TypeCode.Empty, TypeCode.Empty, TypeCode.Int16, TypeCode.String, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.String, TypeCode.Int32, TypeCode.String}, _
 {TypeCode.String, TypeCode.Empty, TypeCode.String, TypeCode.Double, TypeCode.String, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.String, TypeCode.String, TypeCode.String} _
 }
+
         Shared DEST_TYPECODE_SUBTRACT As TypeCode(,) = { _
 {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
 {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
@@ -225,6 +230,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
 {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
 }
+
         Shared DEST_TYPECODE_DIVIDE As TypeCode(,) = { _
  {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
  {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
@@ -311,6 +317,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
  {TypeCode.Int32, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int32, TypeCode.Int64}, _
  {TypeCode.Int64, TypeCode.Object, TypeCode.Empty, TypeCode.Boolean, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Empty, TypeCode.Int64, TypeCode.Int64} _
  }
+
         Shared DEST_TYPECODE_MOD As TypeCode(,) = { _
   {TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
   {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
@@ -332,6 +339,28 @@ Namespace Microsoft.VisualBasic.CompilerServices
   {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty, TypeCode.Empty}, _
   {TypeCode.Empty, TypeCode.Object, TypeCode.Empty, TypeCode.Double, TypeCode.Empty, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Empty, TypeCode.Empty, TypeCode.Double} _
   }
+
+        Shared DEST_TYPECODE_COMPARE As TypeCode(,) = { _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.DBNull, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Boolean, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Char, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.String}, _
+{TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.SByte, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
+{TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Byte, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
+{TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int16, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
+{TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.UInt16, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
+{TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
+{TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int64, TypeCode.Int64, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int64, TypeCode.Int64}, _
+{TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Int64, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int64, TypeCode.Int64}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.UInt64, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Double, TypeCode.Double}, _
+{TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Double, TypeCode.Double}, _
+{TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Decimal}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.Object, TypeCode.DateTime}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.String, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.String} _
+}
 
         'Returns the expected return TypeCode of operation between these two objects or TypeCode.Empty if operation is not possible.
         'Notice: The expected TypeCode may not be the actual TypeCode of the return type. The actual type return is "black box"ed 
@@ -363,6 +392,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Private Shared Function DestTypeCodeBitwiseOp(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
             Return DEST_TYPECODE_BITWISE_OP(GetTypeCode(obj1), GetTypeCode(obj2))
+        End Function
+
+        Private Shared Function DestTypeCodeOpCompare(ByVal obj1 As Object, ByVal obj2 As Object) As TypeCode
+            Return DEST_TYPECODE_COMPARE(GetTypeCode(obj1), GetTypeCode(obj2))
         End Function
 
         Private Shared Function AddBooleans(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
@@ -611,182 +644,176 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Class
 
         Public Shared Function CompareObject(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Integer
-            Throw New NotImplementedException
+            Dim res As Integer = CompareObjectInternal(Left, Right, TextCompare)
+            If (res = CompareResult.Equal) Then
+                Return 0
+            ElseIf (res = CompareResult.Greater) Then
+                Return 1
+            ElseIf (res = CompareResult.Less) Then
+                Return -1
+            End If
+            Throw New InvalidOperationException
         End Function
 
-        Private Shared Function CompareObjectInternal(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As CompareResult
-            Dim codeLeft, codeRight As TypeCode
-            Const codeNothing As TypeCode = TypeCode.Empty
-
-            If Left Is Nothing Then
-                codeLeft = codeNothing
-            Else
-                codeLeft = Type.GetTypeCode(Left.GetType)
+        Private Shared Function CompareObjectInternal(ByVal o1 As Object, ByVal o2 As Object, ByVal TextCompare As Boolean) As CompareResult
+            If (o1 Is Nothing) And (o2 Is Nothing) Then
+                Return CompareResult.Equal
             End If
-            If Right Is Nothing Then
-                codeRight = codeNothing
-            Else
-                codeRight = Type.GetTypeCode(Right.GetType)
+            If (o1 Is Nothing) Then
+                o1 = CreateNullObjectType(o2)
+            End If
+            If (o2 Is Nothing) Then
+                o2 = CreateNullObjectType(o1)
             End If
 
-            If codeRight = codeNothing AndAlso codeLeft = codeNothing Then Return New CompareResult(CompareResultType.Success, 0)
+            Dim destTc As TypeCode = DestTypeCodeOpCompare(o1, o2)
 
-            If codeRight = codeLeft OrElse codeRight = codeNothing OrElse codeLeft = codeNothing Then
-                Dim codeToCompare As TypeCode = codeLeft
-                If codeLeft = codeNothing Then codeToCompare = codeRight
-                Select Case codeToCompare
-                    Case TypeCode.Boolean
-                        Return New CompareResult(CompareResultType.Success, CompareBoolean(CBool(Left), CBool(Right)))
-                    Case TypeCode.Byte
-                        Return New CompareResult(CompareResultType.Success, CompareByte(CByte(Left), CByte(Right)))
-                    Case TypeCode.Char
-                        Return New CompareResult(CompareResultType.Success, CompareChar(CChar(Left), CChar(Right)))
-                    Case TypeCode.DateTime
-                        Return New CompareResult(CompareResultType.Success, CompareDate(CDate(Left), CDate(Right)))
-                    Case TypeCode.Decimal
-                        Return New CompareResult(CompareResultType.Success, CompareDecimal(CDec(Left), CDec(Right)))
-                    Case TypeCode.Double
-                        Return New CompareResult(CompareResultType.Success, CompareDouble(CDbl(Left), CDbl(Right)))
-                    Case TypeCode.Int16
-                        Return New CompareResult(CompareResultType.Success, CompareInt16(CShort(Left), CShort(Right)))
-                    Case TypeCode.Int32
-                        Return New CompareResult(CompareResultType.Success, CompareInt32(CInt(Left), CInt(Right)))
-                    Case TypeCode.Int64
-                        Return New CompareResult(CompareResultType.Success, CompareInt64(CLng(Left), CLng(Right)))
-                    Case TypeCode.SByte
-                        Return New CompareResult(CompareResultType.Success, CompareSByte(CSByte(Left), CSByte(Right)))
-                    Case TypeCode.Single
-                        Return New CompareResult(CompareResultType.Success, CompareSingle(CSng(Left), CSng(Right)))
-                    Case TypeCode.String
-                        Return New CompareResult(CompareResultType.Success, CompareString(CStr(Left), CStr(Right), TextCompare))
-                    Case TypeCode.UInt16
-                        Return New CompareResult(CompareResultType.Success, CompareUInt16(CUShort(Left), CUShort(Right)))
-                    Case TypeCode.UInt32
-                        Return New CompareResult(CompareResultType.Success, CompareUInt32(CUInt(Left), CUInt(Right)))
-                    Case TypeCode.UInt64
-                        Return New CompareResult(CompareResultType.Success, CompareUInt64(CULng(Left), CULng(Right)))
-                    Case TypeCode.Object
-                        Throw New NotImplementedException
-                    Case TypeCode.DBNull
-                        Throw New NotImplementedException
-                End Select
-            End If
-
-            Try
-
-            
-                Select Case CType(codeLeft << TypeCombinations.SHIFT Or codeRight, TypeCombinations)
-
-
-
-                    Case TypeCombinations.String_Double, TypeCombinations.Double_String
-                        Return New CompareResult(CompareResultType.Success, CompareDouble(Conversions.ToDouble(Left), Conversions.ToDouble(Right)))
-                    Case TypeCombinations.Boolean_String, TypeCombinations.String_Boolean
-                        Return New CompareResult(CompareResultType.Success, CompareBoolean(Conversions.ToBoolean(Left), Conversions.ToBoolean(Right)))
-                    Case TypeCombinations.Int16_Int32, TypeCombinations.Int32_Int16
-                        Return New CompareResult(CompareResultType.Success, CompareInt32(Conversions.ToInteger(Left), Conversions.ToInteger(Right)))
-                    Case TypeCombinations.DateTime_String, TypeCombinations.String_DateTime
-                        Return New CompareResult(CompareResultType.Success, CompareDate(Convert.ToDateTime(Left), Convert.ToDateTime(Right)))
-                    Case Else
-                        Throw New NotImplementedException("Not implemented comparison between '" & codeLeft.ToString() & "' and '" & codeRight.ToString() & "'")
-                End Select
-            Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
-                Throw New InvalidCastException("Conversion is not valid.")
-            End Try
-
+            Select Case destTc
+                Case TypeCode.Boolean
+                    Return CompareBoolean(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                Case TypeCode.Byte
+                    Return CompareByte(Convert.ToByte(o1), Convert.ToByte(o2))
+                Case TypeCode.Char
+                    Return CompareChar(Convert.ToChar(o1), Convert.ToChar(o2))
+                Case TypeCode.DateTime
+                    Return CompareDate(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+                Case TypeCode.Decimal
+                    Return CompareDecimal(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                Case TypeCode.Double
+                    Return CompareDouble(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                Case TypeCode.Int16
+                    Return CompareInt16(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                Case TypeCode.Int32
+                    Return CompareInt32(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                Case TypeCode.Int64
+                    Return CompareInt64(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                Case TypeCode.SByte
+                    Return CompareSByte(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                Case TypeCode.Single
+                    Return CompareSingle(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                Case TypeCode.String
+                    Return IntToCompareResult(CompareString(Convert.ToString(o1), Convert.ToString(o2), TextCompare))
+                Case TypeCode.UInt16
+                    Return CompareUInt16(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                Case TypeCode.UInt32
+                    Return CompareUInt32(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                Case TypeCode.UInt64
+                    Return CompareUInt64(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                Case TypeCode.DBNull
+                    Throw New InvalidOperationException
+                Case TypeCode.Empty
+                    Throw New InvalidOperationException
+                Case TypeCode.Object
+                    Return CompareResult.NotResolved
+            End Select
         End Function
 
         Public Shared Function CompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value = 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_Equality", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return result = CompareResult.Equal
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value > 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_GreaterThan", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return result = CompareResult.Greater
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '>' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareObjectGreaterEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value >= 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_GreaterThanOrEqual", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return result = CompareResult.Greater Or result = CompareResult.Equal
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '>=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareObjectLess(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value < 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_LessThan", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return result = CompareResult.Less
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '<' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareObjectLessEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value <= 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_LessThanOrEqual", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return result = CompareResult.Less Or result = CompareResult.Equal
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '<=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareObjectNotEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Object
             Dim result As CompareResult
-            result = CompareObjectInternal(Left, Right, TextCompare)
-            Select Case result.Type
-                Case CompareResultType.Fail
-                    Throw New NotImplementedException
-                Case CompareResultType.Success
-                    Return result.Value <> 0
-                Case CompareResultType.UserDefined
-                    Throw New NotImplementedException
-                Case Else
-                    Throw New NotImplementedException
-            End Select
+            Try
+                result = CompareObjectInternal(Left, Right, TextCompare)
+                If (result = CompareResult.NotResolved) Then
+                    Dim obj As Object
+                    If (InvokeBinaryOperator(Left, Right, "op_Inequality", obj)) Then
+                        Return obj
+                    Else
+                        Throw New InvalidOperationException
+                    End If
+                End If
+                Return Not result = CompareResult.Equal
+            Catch ex As Exception
+                Throw New InvalidCastException("Operator '<>' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+            End Try
         End Function
 
         Public Shared Function CompareString(ByVal Left As String, ByVal Right As String, ByVal TextCompare As Boolean) As Integer
@@ -833,7 +860,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End If
                 Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
             End Try
-            
+
             Return String.Concat(Convert.ToString(o1), Convert.ToString(o2))
 
         End Function
@@ -876,7 +903,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function ConditionalCompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectEqual(Left, right, TextCompare))
+            Return CBool(CompareObjectEqual(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
