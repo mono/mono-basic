@@ -33,7 +33,7 @@ Imports System
 'StackOverflow WARNING: 
 ' When vbc2.0 compiles Interaction.CallByName, Information.IsNumeric, Information.SystemTypeName, 
 ' Information.TypeName and Information.VbTypeName.
-' It compiles them into coaresponding Versioned.foo functions.
+' It compiles them into corresponding Versioned.foo functions.
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Versioned
@@ -45,22 +45,24 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean
 
-            If (TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
-                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
-                Or (TypeOf Expression Is Boolean) Then Return True
+            If Expression Is Nothing Then Return False
 
-            Try
-                Dim tempStr As String
-                tempStr = CStr(Expression)
-                Convert.ToDouble(tempStr)
-            Catch ex As Exception
-                Return False
-            End Try
-
+            Select Case Type.GetTypeCode(Expression.GetType)
+                Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Double, TypeCode.Single, TypeCode.Decimal, TypeCode.Boolean
+                    Return True
+                Case TypeCode.DateTime
+                    Return False
+                Case TypeCode.String
+                    Return Double.TryParse(DirectCast(Expression, String), 0)
+                Case TypeCode.Char
+                    Return Double.TryParse(DirectCast(Expression, Char), 0)
+                Case Else
+                    Return False
+            End Select
         End Function
         Public Shared Function SystemTypeName(ByVal VbName As String) As String
 
-            'FIXME: do we need to support the new Data types? (for example unsigned data types)
+            'TODO: support the new Data types (for example unsigned data types)
 
             Select Case VbName.ToLower()
                 Case "boolean"
@@ -108,7 +110,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
             TmpObjType = Expression.GetType().Name.ToLower
 
-            'FIXME: do we need to support the new Data types? (for example unsigned data types)
+            'TODO: support the new Data types (for example unsigned data types)
 
             Select Case TmpObjType
                 Case "string"
@@ -147,7 +149,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             tmpStr = SystemName.ToLower
             If SystemName.ToLower.StartsWith("system.") Then tmpStr = SystemName.ToLower.Substring(7)
 
-            'FIXME: do we need to support the new Data types? (for example unsigned data types)
+            'TODO: support the new Data types (for example unsigned data types)
 
             Select Case tmpStr
                 Case "string"

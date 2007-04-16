@@ -421,7 +421,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function AddObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_Addition", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -822,7 +822,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End If
             End If
 
-            Dim ret As Object
+            Dim ret As Object = Nothing
             Try
                 If (InvokeBinaryOperator(o1, o2, "op_Concatenate", ret)) Then
                     Return ret
@@ -1256,103 +1256,103 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
 
-        Public Shared Function PlusBoolean(ByVal Operand As Boolean) As Object
+        Friend Shared Function PlusBoolean(ByVal Operand As Boolean) As Object
             If (Operand) Then
                 Return -1S
             End If
             Return 0S
         End Function
 
-        Public Shared Function PlusString(ByVal Operand As String) As Object
+        Friend Shared Function PlusString(ByVal Operand As String) As Object
             Return Double.Parse(Operand)
         End Function
 
-        Public Shared Function NegateBoolean(ByVal Operand As Boolean) As Object
+        Friend Shared Function NegateBoolean(ByVal Operand As Boolean) As Object
             If (Operand) Then
                 Return 1S
             End If
             Return 0S
         End Function
 
-        Public Shared Function NegateByte(ByVal Operand As Byte) As Object
+        Friend Shared Function NegateByte(ByVal Operand As Byte) As Object
             Return -1S * Operand
         End Function
 
-        Public Shared Function NegateUInt16(ByVal Operand As UShort) As Object
+        Friend Shared Function NegateUInt16(ByVal Operand As UShort) As Object
             Return -1 * Operand
         End Function
 
-        Public Shared Function NegateUInt32(ByVal Operand As UInteger) As Object
+        Friend Shared Function NegateUInt32(ByVal Operand As UInteger) As Object
             Return -1L * Operand
         End Function
 
-        Public Shared Function NegateUInt64(ByVal Operand As ULong) As Object
+        Friend Shared Function NegateUInt64(ByVal Operand As ULong) As Object
             Return -1 * CType(Operand, Decimal)
         End Function
 
-        Public Shared Function NegateSByte(ByVal Operand As SByte) As Object
+        Friend Shared Function NegateSByte(ByVal Operand As SByte) As Object
             If (Operand = SByte.MinValue) Then
                 Return 1S + SByte.MaxValue
             End If
             Return -Operand
         End Function
 
-        Public Shared Function NegateDecimal(ByVal Operand As Decimal) As Object
+        Friend Shared Function NegateDecimal(ByVal Operand As Decimal) As Object
             Return -Operand
         End Function
 
-        Public Shared Function NegateDouble(ByVal Operand As Double) As Object
+        Friend Shared Function NegateDouble(ByVal Operand As Double) As Object
             Return -Operand
         End Function
 
-        Public Shared Function NegateSingle(ByVal Operand As Single) As Object
+        Friend Shared Function NegateSingle(ByVal Operand As Single) As Object
             Return -Operand
         End Function
 
-        Public Shared Function NegateInt16(ByVal Operand As Int16) As Object
+        Friend Shared Function NegateInt16(ByVal Operand As Int16) As Object
             If (Operand = Int16.MinValue) Then
                 Return 1 + Int16.MaxValue
             End If
             Return -Operand
         End Function
 
-        Public Shared Function NegateInt32(ByVal Operand As Int32) As Object
+        Friend Shared Function NegateInt32(ByVal Operand As Int32) As Object
             If (Operand = Int32.MinValue) Then
                 Return 1L + Int32.MaxValue
             End If
             Return -Operand
         End Function
 
-        Public Shared Function NegateInt64(ByVal Operand As Int64) As Object
+        Friend Shared Function NegateInt64(ByVal Operand As Int64) As Object
             If (Operand = Int64.MinValue) Then
                 Return 1 + CType(Int64.MaxValue, ULong)
             End If
             Return -Operand
         End Function
 
-        Public Shared Function NegateString(ByVal Operand As String) As Object
+        Friend Shared Function NegateString(ByVal Operand As String) As Object
             Dim d As Double = Double.Parse(Operand)
             Return NegateDouble(d)
         End Function
 
-        Public Shared Function NegateObject_(ByVal Operand As Object) As Object
-            Dim ret As Object
+        Friend Shared Function NegateObject_(ByVal Operand As Object) As Object
+            Dim ret As Object = Nothing
             If Not (InvokeUnaryOperator(Operand, "op_UnaryNegation", ret)) Then
                 Throw New InvalidOperationException()
             End If
             Return ret
         End Function
 
-        Public Shared Function PlusObject_(ByVal Operand As Object) As Object
-            Dim ret As Object
+        Friend Shared Function PlusObject_(ByVal Operand As Object) As Object
+            Dim ret As Object = Nothing
             If Not (InvokeUnaryOperator(Operand, "op_UnaryPlus", ret)) Then
                 Throw New InvalidOperationException()
             End If
             Return ret
         End Function
 
-        Public Shared Function RightShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
-            Dim ret As Object
+        Friend Shared Function RightShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(Operand, Amount, "op_RightShift", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1411,15 +1411,15 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New InvalidCastException("Operator '-' is not defined for type '" + tc.ToString() + "'.")
         End Function
 
-        Public Shared Function NotObject_(ByVal Operand As Object) As Object
-            Dim ret As Object
+        Friend Shared Function NotObject_(ByVal Operand As Object) As Object
+            Dim ret As Object = Nothing
             If Not (InvokeUnaryOperator(Operand, "op_OnesComplement", ret)) Then
                 Throw New InvalidOperationException()
             End If
             Return ret
         End Function
 
-        Public Shared Function NotString(ByVal Operand As String) As Object
+        Friend Shared Function NotString(ByVal Operand As String) As Object
             Return Not (CType((Convert.ToDouble(Operand)), Long))
         End Function
 
@@ -1468,7 +1468,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function OrObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_BitwiseOr", ret)) Then
                 Throw New InvalidOperationException()
             End If

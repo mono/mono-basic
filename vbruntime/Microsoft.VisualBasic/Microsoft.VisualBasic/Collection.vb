@@ -167,9 +167,9 @@ Namespace Microsoft.VisualBasic
 
 #If NET_VER >= 2.0 Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
-        Default Public ReadOnly Property Item(ByVal index As Object) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal index As Object) As Object
 #Else
-        Default Public ReadOnly Property Item(ByVal index As Object) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal index As Object) As Object
 #End If
             Get
                 If TypeOf index Is Integer Then
@@ -184,14 +184,14 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal index As Integer) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal index As Integer) As Object
             Get
                 Return IList_Item(index - 1)
             End Get
         End Property
 
 #If NET_2_0 Then
-        Default Public ReadOnly Property Item(ByVal index As String) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal index As String) As Object
             Get
                 Return m_Hashtable(index)
             End Get
@@ -270,7 +270,7 @@ Namespace Microsoft.VisualBasic
             Clear()
         End Sub
 
-        Public Sub Remove(ByVal Key As String)
+        Public Overloads Sub Remove(ByVal Key As String)
 
             If m_Hashtable.ContainsKey(Key) Then
                 m_Hashtable.Remove(Key)
@@ -282,7 +282,7 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Sub Remove(ByVal Index As Integer)
+        Public Overloads Sub Remove(ByVal Index As Integer)
 
             Try
                 ' Collections are 1-based
@@ -294,7 +294,7 @@ Namespace Microsoft.VisualBasic
             End Try
         End Sub
 
-        Private Sub Remove(ByVal value As Object) Implements System.Collections.IList.Remove
+        Private Overloads Sub Remove(ByVal value As Object) Implements System.Collections.IList.Remove
             'FIXME: .Net behaviour is unstable
             Dim index As Integer = (CType(Me, IList)).IndexOf(value)
             If index <> -1 Then

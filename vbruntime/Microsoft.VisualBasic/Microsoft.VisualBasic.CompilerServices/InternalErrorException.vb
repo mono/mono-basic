@@ -35,6 +35,7 @@ Imports System.Runtime.InteropServices
 
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
+    <Serializable()> _
     Public NotInheritable Class InternalErrorException
         Inherits Exception
 
