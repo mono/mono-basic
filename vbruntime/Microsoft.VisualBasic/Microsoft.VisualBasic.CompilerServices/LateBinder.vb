@@ -448,8 +448,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return CBool(value)
                     Case TypeCode.Byte
                         Return CByte(value)
+#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return CSByte(value)
+#End If
                     Case TypeCode.Char
                         Return CChar(value)
                     Case TypeCode.DateTime
@@ -464,12 +466,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return CShort(value)
                     Case TypeCode.Int64
                         Return CLng(value)
+#If NET_VER >= 2.0 Then
                     Case TypeCode.UInt32
                         Return CUInt(value)
                     Case TypeCode.UInt16
                         Return CUShort(value)
                     Case TypeCode.UInt64
                         Return CULng(value)
+#End If
                     Case TypeCode.Single
                         Return CSng(value)
                 End Select
@@ -485,8 +489,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return CBool(value)
                         Case TypeCode.Byte
                             Return CByte(value)
+#If NET_VER >= 2.0 Then
                         Case TypeCode.SByte
                             Return CSByte(value)
+#End If
                         Case TypeCode.Char
                             Return CChar(value)
                         Case TypeCode.DateTime
@@ -501,12 +507,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return CShort(value)
                         Case TypeCode.Int64
                             Return CLng(value)
+#If NET_VER >= 2.0 Then
                         Case TypeCode.UInt32
                             Return CUInt(value)
                         Case TypeCode.UInt16
                             Return CUShort(value)
                         Case TypeCode.UInt64
                             Return CULng(value)
+#End If
                         Case TypeCode.Single
                             Return CSng(value)
                     End Select
@@ -828,7 +836,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End If
 
                 Dim newMethod As MethodInfo = retType.GetMethod("get_Blubber")
-                If (newMethod IsNot Nothing) Then
+                If (Not newMethod Is Nothing) Then
                     _invokeNext = newMethod
                     _invokeNextArgs = args
                     _wasIncompleteInvocation = True
