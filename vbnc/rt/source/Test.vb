@@ -695,7 +695,7 @@ Public Class Test
             End If
 
             Dim peverify As String
-            peverify = PEVerifyPath
+            peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
             If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo"))
                 m_Verifications(m_Verifications.Count - 1).Name = "Type Safety and Security Verification"
