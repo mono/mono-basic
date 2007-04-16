@@ -14,4 +14,4 @@ DISTFILES = \
 	source/rt.vbproj
 
 rt.exe.sources: source/rt.vbproj
-	MONO_PATH="../../class/lib/bootstrap$$PLATFORM_PATH_SEPARATOR$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/rt.vbproj -b:source/ -d:rt.exe.sources -m:l -x:r
+	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/rt.vbproj -b:source/ -d:rt.exe.sources -m:l -x:r
