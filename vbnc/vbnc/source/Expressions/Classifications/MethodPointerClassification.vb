@@ -85,6 +85,11 @@ Public Class MethodPointerClassification
 
         Helper.Assert(DelegateType IsNot Nothing)
 
+        If Helper.CompareType(DelegateType, Compiler.TypeCache.DelegateUnresolvedType) Then
+            m_DelegateType = DelegateType
+            Return True
+        End If
+
         Dim params() As ParameterInfo = Helper.GetDelegateArguments(Compiler, DelegateType)
         Dim paramtypes() As Type = Helper.GetParameterTypes(params)
 

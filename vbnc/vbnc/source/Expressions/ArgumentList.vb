@@ -73,6 +73,23 @@ Public Class ArgumentList
             Dim exp As Expression
             Dim arg As Argument = m_Arguments(i)
             Dim par As ParameterInfo = parameters(i)
+
+            If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.DelegateUnresolvedType) Then
+                Dim aoe As AddressOfExpression = TryCast(arg.Expression, AddressOfExpression)
+                Dim delegateType As Type = par.ParameterType
+
+                Helper.Assert(aoe IsNot Nothing)
+                Helper.Assert(delegateType IsNot Nothing)
+
+                result = aoe.Resolve(delegateType) AndAlso result
+
+                Dim del As DelegateOrObjectCreationExpression
+                del = New DelegateOrObjectCreationExpression(Me)
+                del.Init(delegateType, New ArgumentList(del, aoe))
+                result = del.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+                m_Arguments(i).Expression = del
+            End If
+
             If par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef = False Then
                 If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
                     exp = New GetRefExpression(Me, arg.Expression)

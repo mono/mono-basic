@@ -109,16 +109,19 @@ Public MustInherit Class MethodDeclaration
             Compiler.Report.WriteLine("$Defining method " & Name & " with attributes=" & Attributes.ToString & ", = " & CInt(Attributes))
         End If
 #End If
-            m_MethodBuilder = DeclaringType.TypeBuilder.DefineMethod(Name, Attributes)
-            Compiler.TypeManager.RegisterReflectionMember(m_MethodBuilder, Me.MemberDescriptor)
+        m_MethodBuilder = DeclaringType.TypeBuilder.DefineMethod(Name, Attributes)
+#If DEBUGREFLECTION Then
+        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineMethod(""{2}"", CType({3}, System.Reflection.MethodAttributes))", Helper.GetObjectName(m_MethodBuilder), Helper.GetObjectName(DeclaringType.TypeBuilder), Name, CInt(Attributes)))
+#End If
+        Compiler.TypeManager.RegisterReflectionMember(m_MethodBuilder, Me.MemberDescriptor)
 
-            If Signature.TypeParameters IsNot Nothing Then
-                result = Signature.TypeParameters.Parameters.DefineGenericParameters(m_MethodBuilder) AndAlso result
-            End If
+        If Signature.TypeParameters IsNot Nothing Then
+            result = Signature.TypeParameters.Parameters.DefineGenericParameters(m_MethodBuilder) AndAlso result
+        End If
 
-            If ReturnType IsNot Nothing Then
-                ReturnType = Helper.GetTypeOrTypeBuilder(ReturnType)
-            End If
+        If ReturnType IsNot Nothing Then
+            ReturnType = Helper.GetTypeOrTypeBuilder(ReturnType)
+        End If
 #If EXTENDEDDEBUG Then
             If ReturnType Is Nothing Then
                 Compiler.Report.WriteLine("$>Setting return type to nothing")
@@ -126,27 +129,27 @@ Public MustInherit Class MethodDeclaration
                 Compiler.Report.WriteLine("$>Setting return type to:" & ReturnType.FullName)
             End If
 #End If
-            m_MethodBuilder.SetReturnType(ReturnType)
+        m_MethodBuilder.SetReturnType(ReturnType)
 
-            Helper.SetTypeOrTypeBuilder(ParameterTypes)
-            m_MethodBuilder.SetParameters(ParameterTypes)
-            If Signature.Parameters IsNot Nothing Then
-                For i As Integer = 0 To Signature.Parameters.Count - 1
-                    result = Signature.Parameters(i).Define(m_MethodBuilder) AndAlso result
-                Next
-            End If
+        Helper.SetTypeOrTypeBuilder(ParameterTypes)
+        m_MethodBuilder.SetParameters(ParameterTypes)
+        If Signature.Parameters IsNot Nothing Then
+            For i As Integer = 0 To Signature.Parameters.Count - 1
+                result = Signature.Parameters(i).Define(m_MethodBuilder) AndAlso result
+            Next
+        End If
 
 
-            If MethodImplAttributes.HasValue Then
+        If MethodImplAttributes.HasValue Then
 #If EXTENDEDDEBUG Then
                 Compiler.Report.WriteLine("$>Setting impl attributes= " & MethodImplAttributes.ToString)
 #End If
-                m_MethodBuilder.SetImplementationFlags(MethodImplAttributes.Value)
-            End If
+            m_MethodBuilder.SetImplementationFlags(MethodImplAttributes.Value)
+        End If
 
-            Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
+        Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
 
-            Return result
+        Return result
     End Function
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean

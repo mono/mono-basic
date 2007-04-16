@@ -336,7 +336,19 @@ Public Class CommandLine
     ''' </summary>
     Private m_bUTF8Output As Boolean
 
+    ''' <summary>
+    ''' /vbversion:[7|7.1|8]    Which version of the VB language to target. 7 and 7.1 will emit v1.0 assemblies (not supported yet), and 8 will emit v2.0 assemblies. Default is latest (8).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_VBVersion As VBVersions = VBVersions.V8
     ' - OUTPUT FILE -
+
+
+    ReadOnly Property VBVersion() As VBVersions
+        Get
+            Return m_VBVersion
+        End Get
+    End Property
 
     ''' <summary>
     ''' /out:&lt;file&gt;             Specifies the output file name.
@@ -965,6 +977,7 @@ Public Class CommandLine
             Case "optionstrict+", "optionstrict"
                 m_eOptionStrict = OptionStrictTypes.On
             Case "optionstrict-"
+                Console.WriteLine("Warning: Option Strict Off will probably fail.")
                 m_eOptionStrict = OptionStrictTypes.Off
             Case "rootnamespace"
                 m_strRootNamespace = strValue
@@ -1046,6 +1059,17 @@ Public Class CommandLine
                 m_NoVBRuntimeRef = True
             Case "errorreport"
                 Helper.NotImplementedYet(strName)
+            Case "vbversion"
+                Select Case strValue
+                    Case "7"
+                        m_VBVersion = VBVersions.V7
+                    Case "7.1"
+                        m_VBVersion = VBVersions.V7_1
+                    Case "8"
+                        m_VBVersion = VBVersions.V8
+                    Case Else
+                        Helper.AddWarning("Unknown vb version: " & strValue & ", will use default vbversion (8)")
+                End Select
             Case Else
                 'result = False 'OK since this is only a warning.
                 Compiler.Report.SaveMessage(Messages.VBNC2009, strName)
@@ -1199,4 +1223,13 @@ Public Class CommandLine
         Compiler.Report.WriteLine("End of commandline dump.")
     End Sub
 #End If
+End Class
+
+
+Partial Public Class CommandLine
+    Public Enum VBVersions
+        V7
+        V7_1
+        V8
+    End Enum
 End Class

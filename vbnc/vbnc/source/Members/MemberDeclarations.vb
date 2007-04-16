@@ -78,10 +78,13 @@ Public Class MemberDeclarations
                 Return
             End If
 
-            mainDeclaration.AddPartialDeclaration(ptd)
-        Else
-            MyBase.Add(Item)
+            If NameResolution.CompareName(mainDeclaration.Namespace, ptd.Namespace) Then
+                mainDeclaration.AddPartialDeclaration(ptd)
+                Return
+            End If
         End If
+
+        MyBase.Add(Item)
     End Sub
 
     ReadOnly Property Declarations() As Nameables(Of IMember)

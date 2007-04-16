@@ -140,7 +140,9 @@ Public Class TypeParameter
         End If
 
         m_Builder.SetGenericParameterAttributes(attributes)
-
+#If DEBUGREFLECTION Then
+        Compiler.DebugReflection.AppendLine(String.Format("{0}.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes.{1})", Helper.GetObjectName(m_Builder), attributes.ToString))
+#End If
         Return result
     End Function
 

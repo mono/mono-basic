@@ -110,10 +110,13 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    ReadOnly Property Code() As CodeBlock
+    Property Code() As CodeBlock
         Get
             Return m_Code
         End Get
+        Set(ByVal value As CodeBlock)
+            m_Code = value
+        End Set
     End Property
 
     Public ReadOnly Property DefaultReturnVariable() As System.Reflection.Emit.LocalBuilder Implements IMethod.DefaultReturnVariable

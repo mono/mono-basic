@@ -222,6 +222,8 @@ Public Class InvocationOrIndexExpression
                         'ok
                     Case ExpressionClassification.Classifications.PropertyAccess
                         'ok
+                    Case ExpressionClassification.Classifications.MethodPointer
+                        'ok?
                     Case ExpressionClassification.Classifications.PropertyGroup
                         m_ArgumentList(i).Expression = m_ArgumentList(i).Expression.ReclassifyToPropertyAccessExpression
                         result = m_ArgumentList(i).Expression.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result

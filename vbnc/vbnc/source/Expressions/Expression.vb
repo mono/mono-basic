@@ -420,4 +420,10 @@ Public MustInherit Class Expression
         Dumper.Write("<Dump of '" & Me.GetType.Name & "'>")
     End Sub
 #End If
+
+    Overridable ReadOnly Property AsString() As String
+        Get
+            Return "<String representation of " & Me.GetType.FullName & " not implemented>"
+        End Get
+    End Property
 End Class

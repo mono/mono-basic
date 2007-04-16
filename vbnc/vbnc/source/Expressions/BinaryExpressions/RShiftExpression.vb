@@ -30,8 +30,22 @@ Public Class RShiftExpression
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
         result = m_RightExpression.GenerateCode(expInfo) AndAlso result
 
+
         Select Case OperandTypeCode
             Case TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Byte, TypeCode.SByte
+                Dim shift As Integer
+                Select Case OperandTypeCode
+                    Case TypeCode.Byte, TypeCode.SByte
+                        shift = 7
+                    Case TypeCode.Int16, TypeCode.UInt16
+                        shift = 15
+                    Case TypeCode.Int32, TypeCode.UInt32
+                        shift = 31
+                    Case TypeCode.Int64, TypeCode.UInt64
+                        shift = 63
+                End Select
+                Emitter.EmitLoadI4Value(Info, shift)
+                Emitter.EmitAnd(Info, Info.Compiler.TypeCache.Integer)
                 Emitter.EmitRShift(Info, OperandType)
             Case TypeCode.Object
                 Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))

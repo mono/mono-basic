@@ -228,6 +228,10 @@ Public Class ConstructorDeclaration
         m_ConstructorBuilder.SetImplementationFlags(Me.GetMethodImplementationFlags)
         Compiler.TypeManager.RegisterReflectionMember(m_ConstructorBuilder, Me.MemberDescriptor)
 
+#If DEBUGREFLECTION Then
+        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineConstructor(CType({2}, System.Reflection.MethodAttributes), System.Reflection.CallingConventions.Standard, Nothing)", Helper.GetObjectName(m_ConstructorBuilder), Helper.GetObjectName(declaringType.TypeBuilder), CInt(Me.Attributes)))
+        Compiler.DebugReflection.AppendLine(String.Format("{0}.SetImplementationFlags(CType({1}, System.Reflection.MethodImplAttributes))", Helper.GetObjectName(m_ConstructorBuilder), CInt(Me.GetMethodImplementationFlags)))
+#End If
 
         For i As Integer = 0 To Signature.Parameters.Count - 1
             result = Signature.Parameters(i).Define(Me.ConstructorBuilder) AndAlso result

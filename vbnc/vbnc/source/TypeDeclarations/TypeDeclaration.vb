@@ -348,6 +348,9 @@ Public MustInherit Class TypeDeclaration
             Compiler.Report.WriteLine("Defining type: " & Name & " with attributes: " & Attr.ToString & " = " & CInt(Attr))
 #End If
             m_TypeBuilder = Compiler.ModuleBuilder.DefineType(FullName, Attr)
+#If DEBUGREFLECTION Then
+            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineType(""{2}"", {3})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(Compiler.ModuleBuilder), FullName, CInt(Attr).ToString))
+#End If
         End If
 
         Compiler.TypeManager.RegisterReflectionType(m_TypeBuilder, Me.TypeDescriptor)
@@ -370,7 +373,11 @@ Public MustInherit Class TypeDeclaration
                 Compiler.Report.WriteLine("Setting parent of " & FullName & " to " & Me.BaseType.FullName)
             End If
 #End If
-            m_TypeBuilder.SetParent(Me.BaseType)
+            m_TypeBuilder.SetParent(m_BaseType)
+
+#If DEBUGREFLECTION Then
+            Compiler.DebugReflection.AppendLine(String.Format("{0}.SetParent({1})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(m_BaseType)))
+#End If
 
             If m_ImplementedTypes IsNot Nothing Then
                 For Each Type As Type In m_ImplementedTypes
@@ -418,7 +425,7 @@ Public MustInherit Class TypeDeclaration
 
         result = MyBase.ResolveCode(Info) AndAlso result
         result = m_Members.ResolveCode(Info) AndAlso result
-        vbnc.Helper.Assert(result = (Compiler.Report.Errors = 0))
+        'vbnc.Helper.Assert(result = (Compiler.Report.Errors = 0))
 
         Return result
     End Function
@@ -457,6 +464,9 @@ Public MustInherit Class TypeDeclaration
         Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Creating: " & Me.FullName)
 #End If
         If m_TypeBuilder IsNot Nothing Then
+#If DEBUGREFLECTION Then
+            Compiler.DebugReflection.AppendLine(String.Format("{0}.CreateType ()", Helper.GetObjectName(m_TypeBuilder)))
+#End If
             m_FinalType = m_TypeBuilder.CreateType()
         ElseIf m_EnumBuilder IsNot Nothing Then
             m_FinalType = m_EnumBuilder.CreateType()

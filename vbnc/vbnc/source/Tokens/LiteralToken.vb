@@ -24,9 +24,8 @@ Public MustInherit Class LiteralTokenBase(Of T)
     End Sub
 End Class
 
-Public MustInherit Class LiteralToken '(Of Type)
+Public MustInherit Class LiteralToken
     Inherits Token
-    'Implements ILiteralToken
 
     Private m_Value As Object
     Private m_Type As BuiltInDataTypes

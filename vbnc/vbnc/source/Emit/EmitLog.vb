@@ -26,6 +26,12 @@ Imports System.Reflection.Emit
 Public Class EmitLog
     Private m_ILGen As ILGenerator
     Private m_Compiler As Compiler
+    ReadOnly Property TheRealILGenerator() As ILGenerator
+        Get
+            Return m_ILGen
+        End Get
+    End Property
+
     Sub New(ByVal ILGen As ILGenerator, ByVal Compiler As Compiler)
         m_ILGen = ILGen
         m_Compiler = Compiler

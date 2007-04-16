@@ -293,7 +293,7 @@ Public Class CTypeExpression
                 result = CUIntExpression.Validate(Info, Expression.ExpressionType) AndAlso result
             Case TypeCode.UInt64
                 result = CULngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
-            Case TypeCode.Object
+            Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Object) Then
                     result = CObjExpression.Validate(Info, Expression.ExpressionType) AndAlso result
                 Else

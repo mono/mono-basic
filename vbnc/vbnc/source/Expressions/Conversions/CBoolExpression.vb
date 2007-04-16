@@ -66,6 +66,7 @@ Public Class CBoolExpression
                 Emitter.EmitLoadI4Value(Info, 0I, info.Compiler.TypeCache.Boolean)
                 Emitter.EmitEquals(Info, Info.Compiler.TypeCache.Boolean)
             Case TypeCode.Object
+                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__Object Is Nothing")
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
@@ -74,8 +75,10 @@ Public Class CBoolExpression
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
+                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__String IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__String Is Nothing")
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__String)
             Case TypeCode.Decimal
+                Helper.Assert(Info.Compiler.TypeCache.System_Convert_ToBoolean__Decimal IsNot Nothing, "System_Convert_ToBoolean__Decimal Is Nothing")
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToBoolean__Decimal)
             Case Else
                 Helper.NotImplemented()

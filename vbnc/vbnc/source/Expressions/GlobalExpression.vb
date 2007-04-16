@@ -46,4 +46,9 @@ Public Class GlobalExpression
         Dumper.Write("Global")
     End Sub
 #End If
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return "Global"
+        End Get
+    End Property
 End Class

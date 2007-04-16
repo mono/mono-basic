@@ -18,7 +18,6 @@
 ' 
 
 Public Interface IIntegralLiteralToken
-    'Inherits ILiteralToken
     ReadOnly Property Base() As IntegerBase
     ReadOnly Property IntegralLiteral() As ULong
 End Interface

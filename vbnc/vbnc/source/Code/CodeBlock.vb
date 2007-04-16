@@ -429,6 +429,16 @@ Public Class CodeBlock
             result = GenerateUnstructuredEnd(Method, info) AndAlso result
         Else
             Emitter.EmitRet(info)
+#If DEBUGREFLECTION Then
+            Dim obj As Object
+            If TypeOf info.Method Is ConstructorDeclaration Then
+                obj = CType(info.Method, ConstructorDeclaration).ConstructorBuilder
+            Else
+                obj = info.Method.MethodBuilder
+            End If
+            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.GetILGenerator", Helper.GetObjectName(info.ILGen), Helper.GetObjectName(obj)))
+            Compiler.DebugReflection.AppendLine(String.Format("{0}.Emit (System.Reflection.Emit.Opcodes.Ret)", Helper.GetObjectName(info.ILGen)))
+#End If
         End If
 
 #If EXTENDEDDEBUG Then

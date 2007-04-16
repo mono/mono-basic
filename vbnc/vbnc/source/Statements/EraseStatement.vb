@@ -61,4 +61,12 @@ Public Class EraseStatement
         result = m_Targets.ResolveCode(info) AndAlso result
         Return result
     End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = m_Targets.ResolveTypeReferences() AndAlso result
+
+        Return result
+    End Function
 End Class

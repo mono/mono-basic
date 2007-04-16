@@ -46,13 +46,13 @@ Public Class Report
     ''' <remarks></remarks>
     Private Shared m_Resources As ResourceManager
 
-#If DEBUG Then
-    ''' <summary>
-    ''' The filename for an xml-report.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_xmlFileName As String
-#End If
+    '#If DEBUG Then
+    '    ''' <summary>
+    '    ''' The filename for an xml-report.
+    '    ''' </summary>
+    '    ''' <remarks></remarks>
+    '    Private m_xmlFileName As String
+    '#End If
 
     ''' <summary>
     ''' A list of all the errors / warnings shown.
@@ -150,21 +150,21 @@ Public Class Report
         End Get
     End Property
 
-#If DEBUG Then
-    ''' <summary>
-    ''' The xml writer for this report.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    Public Property XMLFileName() As String
-        Get
-            Return m_xmlFileName
-        End Get
-        Set(ByVal value As String)
-            m_xmlFileName = value
-        End Set
-    End Property
-#End If
+    '#If DEBUG Then
+    '    ''' <summary>
+    '    ''' The xml writer for this report.
+    '    ''' </summary>
+    '    ''' <value></value>
+    '    ''' <remarks></remarks>
+    '    Public Property XMLFileName() As String
+    '        Get
+    '            Return m_xmlFileName
+    '        End Get
+    '        Set(ByVal value As String)
+    '            m_xmlFileName = value
+    '        End Set
+    '    End Property
+    '#End If
 
     ''' <summary>
     ''' Creates a new default report.
@@ -383,29 +383,29 @@ Public Class Report
 #End If
     End Sub
 
-#If DEBUG Then
-    ''' <summary>
-    ''' Tries to write pending messages to the xml file (if any).
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public Sub Flush()
-        If m_xmlFileName <> "" Then
-            If m_Messages.Count > 0 Then
-                Dim m_xml As Xml.XmlTextWriter
-                m_xml = New Xml.XmlTextWriter(m_xmlFileName, Text.Encoding.UTF8)
-                m_xml.Formatting = Xml.Formatting.Indented
-                For Each msg As Message In m_Messages
-                    msg.Dump(m_xml)
-                Next
-                m_xml.Close()
-            ElseIf IO.File.Exists(m_xmlFileName) Then
-                Try
-                    IO.File.Delete(m_xmlFileName)
-                Catch ex As Exception
-                    'Nothing to handle.
-                End Try
-            End If
-        End If
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    ''' <summary>
+    '    ''' Tries to write pending messages to the xml file (if any).
+    '    ''' </summary>
+    '    ''' <remarks></remarks>
+    '    Public Sub Flush()
+    '        If m_xmlFileName <> "" Then
+    '            If m_Messages.Count > 0 Then
+    '                Dim m_xml As Xml.XmlTextWriter
+    '                m_xml = New Xml.XmlTextWriter(m_xmlFileName, Text.Encoding.UTF8)
+    '                m_xml.Formatting = Xml.Formatting.Indented
+    '                For Each msg As Message In m_Messages
+    '                    msg.Dump(m_xml)
+    '                Next
+    '                m_xml.Close()
+    '            ElseIf IO.File.Exists(m_xmlFileName) Then
+    '                Try
+    '                    IO.File.Delete(m_xmlFileName)
+    '                Catch ex As Exception
+    '                    'Nothing to handle.
+    '                End Try
+    '            End If
+    '        End If
+    '    End Sub
+    '#End If
 End Class

@@ -31,12 +31,14 @@ Public Class GTExpression
         result = m_RightExpression.GenerateCode(eqInfo) AndAlso result
 
         Select Case OperandTypeCode
-            Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Boolean, TypeCode.Char
+            Case TypeCode.Boolean
+                Emitter.EmitLT(Info, OperandType) 'LAMESPEC
+            Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Char
                 Emitter.EmitGT(Info, OperandType)
             Case TypeCode.DateTime
                 Emitter.EmitCall(Info, Compiler.TypeCache.Date_Compare__Date_Date)
                 Emitter.EmitLoadI4Value(Info, 0)
-                Emitter.EmitGt(Info, Compiler.TypeCache.Integer)
+                Emitter.EmitGT(Info, Compiler.TypeCache.Integer)
             Case TypeCode.Decimal
                 Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Compare__Decimal_Decimal)
                 Emitter.EmitLoadI4Value(Info, 0)

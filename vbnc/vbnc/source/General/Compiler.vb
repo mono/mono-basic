@@ -26,7 +26,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class Compiler
-    Implements IDisposable
+    'Implements IDisposable
 
     ''' <summary>
     ''' The filename of the resulting assembly.
@@ -69,12 +69,6 @@ Public Class Compiler
     ''' </summary>
     ''' <remarks></remarks>
     Private m_tm As tm
-
-    '''' <summary>
-    '''' The list that contains all the tokens in the code
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_Tokens As New Tokens
 
     ''' <summary>
     ''' Contains info about all the types and namespaces available.
@@ -230,6 +224,12 @@ Public Class Compiler
         End Get
     End Property
 
+    ReadOnly Property EmittingDebugInfo() As Boolean
+        Get
+            Return m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None
+        End Get
+    End Property
+
     Function HasPassedSequencePoint(ByVal Point As CompilerSequence) As Boolean
         Return SequenceTime(Point) > #1/1/1900#
     End Function
@@ -263,38 +263,6 @@ Public Class Compiler
         Return Compile() = 0
     End Function
 
-    '    Private Function Compile_Scan() As Boolean
-    '        'Scan and tokenize the source files
-    '        Dim ScanStarted As Double = VB.Timer
-    '        For Each file As CodeFile In CommandLine.Files
-    '            Scanner.ScanFile(file, Tokens)
-    '        Next
-    '        'Scanner.SetCodeEnd(Tokens)
-
-    '        SequenceTime(CompilerSequence.Scanned) = DateTime.Now
-
-    '#If DEBUG Then
-    '        If CommandLine.Files.Count = 1 Then
-    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "File '" & CommandLine.Files(0).FileName & "' scanned in " & Microsoft.VisualBasic.FormatNumber((Microsoft.VisualBasic.Timer - ScanStarted), 3) & " seconds")
-    '        Else
-    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "All files scanned in " & Microsoft.VisualBasic.FormatNumber((Microsoft.VisualBasic.Timer - ScanStarted), 3) & " seconds")
-    '        End If
-    '        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("{0} lines and {1} characters in total.", Scanner.TotalLineCount, Scanner.TotalCharCount))
-    '#End If
-
-    '#If DEBUG AndAlso False Then
-    '        'Dump the tokens
-    '        Dim xml As Xml.XmlTextWriter
-    '        xml = New Xml.XmlTextWriter(CreateTestOutputFilename(m_OutFilename, "tokens"), Text.Encoding.UTF8)
-    '        xml.Formatting = System.Xml.Formatting.Indented
-    '        DumperXML.Dump(Tokens, xml)
-    '        xml.Close()
-    '        xml = Nothing
-    '#End If
-
-    '        Return Report.Errors = 0
-    '    End Function
-
     Function Compile_CalculateOutputFilename() As Boolean
         If CommandLine.Out = "" Then
             'Get the first filename
@@ -323,13 +291,15 @@ Public Class Compiler
     Private Function Compile_CreateAssemblyAndModuleBuilders() As Boolean
         Dim assemblyName As Reflection.AssemblyName
 
-        'assemblyName = New AssemblyName()
-        'assemblyName.Name = IO.Path.GetFileNameWithoutExtension(m_OutFilename)
-
         assemblyName = Me.Assembly.GetName
 
         AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
-        ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None)
+        ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
+
+#If DEBUGREFLECTION Then
+        DebugReflection.AppendLine(String.Format("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", vbnc.Helper.GetObjectName(AssemblyBuilder), vbnc.Helper.GetObjectName(assemblyName), IO.Path.GetDirectoryName(m_OutFilename)))
+        DebugReflection.AppendLine(String.Format("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", vbnc.Helper.GetObjectName(ModuleBuilder), assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, vbnc.Helper.GetObjectName(AssemblyBuilder)))
+#End If
 
         If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
             m_SymbolWriter = ModuleBuilder.GetSymWriter
@@ -440,6 +410,18 @@ Public Class Compiler
     End Property
 #End If
 
+#If DEBUGREFLECTION Then
+    Public Shared DebugReflection As New System.Text.StringBuilder()
+#End If
+    Function GenerateMy() As Boolean
+        Dim result As Boolean = True
+        Dim generator As New MyGenerator(Me)
+
+        result = generator.Generate() AndAlso result
+
+        Return result
+    End Function
+
     ''' <summary>
     ''' Compile with the current options.
     ''' </summary>
@@ -473,8 +455,6 @@ Public Class Compiler
             'Set the culture to en-us to enable correct parsing of numbers, dates, etc.
             Threading.Thread.CurrentThread.CurrentCulture = Globalization.CultureInfo.GetCultureInfo("en-us")
 
-            'm_tm = New tm(Me)
-
             'Exit if no source files were specified
             If m_CommandLine.Files.Count = 0 Then
                 Report.ShowMessage(Messages.VBNC2011)
@@ -499,11 +479,10 @@ Public Class Compiler
             result = Compile_CalculateOutputFilename() AndAlso result
 
 
-#If DEBUG Then
-            'Errors before we know the out file name cannot be reported.
-            Report.XMLFileName = CreateTestOutputFilename(m_OutFilename, "messages")
-#End If
-
+            '#If DEBUG Then
+            '            'Errors before we know the out file name cannot be reported.
+            '            Report.XMLFileName = CreateTestOutputFilename(m_OutFilename, "messages")
+            '#End If
 
             'Load all the referenced assemblies and load all the types and namespaces into the type manager
             m_TypeCache = New TypeCache(Me)
@@ -514,6 +493,8 @@ Public Class Compiler
             result = m_TypeManager.LoadReferenced AndAlso result
             m_NameResolver = New NameResolution(Me) 'Must be created after referenced assemblies have been loaded
             m_TypeResolver = New TypeResolution(Me)
+
+            result = GenerateMy() AndAlso result
 
             'Parse the code into the type tree
 #If DEBUG Then
@@ -611,6 +592,25 @@ EndOfCompilation:
         Catch ex As Exception
             ShowExceptionInfo(ex)
             Return -1
+#If DEBUGREFLECTION Then
+        Finally
+            DebugReflection.AppendLine(String.Format("{0}.Save(""{1}"")", vbnc.Helper.GetObjectName(AssemblyBuilder), IO.Path.GetFileName(m_OutFilename)))
+
+            Dim tmp As New System.Text.StringBuilder()
+            Dim tmp2 As String = DebugReflection.ToString
+            tmp2 = "        " & tmp2.Replace(VB.vbNewLine, VB.vbNewLine & "        ")
+
+            DebugReflection.Length = 0
+            DebugReflection.Append(tmp2)
+            DebugReflection.Insert(0, String.Format("Imports System{0}Imports System.Reflection{0}Imports System.Reflection.Emit{0}Class generated{0}    Shared Sub Main(){0}", VB.vbNewLine))
+            DebugReflection.AppendLine("")
+            DebugReflection.AppendLine("    End Sub")
+            DebugReflection.AppendLine("End Class")
+            Compiler.Report.WriteLine("'>>>>>>>>>>>>>>>>")
+            Compiler.Report.WriteLine(DebugReflection.ToString)
+            Compiler.Report.WriteLine("'>>>>>>>>>>>>>>>>")
+            'IO.File.WriteAllText("C:\DebugReflection.vb", DebugReflection.ToString)
+#End If
         End Try
         vbnc.Helper.Assert(False, "End of program reached!")
         Return 1
@@ -989,33 +989,33 @@ EndOfCompilation:
         Return ""
     End Function
 
-#Region " IDisposable Support "
-    Private disposed As Boolean
+    '#Region " IDisposable Support "
+    '    Private disposed As Boolean
 
-    ' IDisposable
-    Private Overloads Sub Dispose(ByVal disposing As Boolean)
-        If Not Me.disposed Then
-            If disposing Then
-#If DEBUG Then
-                Report.Flush()
-#End If
-            End If
-        End If
-        Me.disposed = True
-    End Sub
+    '    ' IDisposable
+    '    Private Overloads Sub Dispose(ByVal disposing As Boolean)
+    '        If Not Me.disposed Then
+    '            If disposing Then
+    '                '#If DEBUG Then
+    '                '                Report.Flush()
+    '                '#End If
+    '            End If
+    '        End If
+    '        Me.disposed = True
+    '    End Sub
 
-    ' This code added by Visual Basic to correctly implement the disposable pattern.
-    Public Overloads Sub Dispose() Implements IDisposable.Dispose
-        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-        Dispose(True)
-        GC.SuppressFinalize(Me)
-    End Sub
+    '    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    '    Public Overloads Sub Dispose() Implements IDisposable.Dispose
+    '        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '        Dispose(True)
+    '        GC.SuppressFinalize(Me)
+    '    End Sub
 
-    Protected Overrides Sub Finalize()
-        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-        Dispose(False)
-        MyBase.Finalize()
-    End Sub
-#End Region
+    '    Protected Overrides Sub Finalize()
+    '        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '        Dispose(False)
+    '        MyBase.Finalize()
+    '    End Sub
+    '#End Region
 
 End Class

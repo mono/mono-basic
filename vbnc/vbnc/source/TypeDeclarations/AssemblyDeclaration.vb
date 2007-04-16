@@ -557,6 +557,10 @@ Public Class AssemblyDeclaration
 
         result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
 
+#If DEBUGREFLECTION Then
+        Compiler.DebugReflection.AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
+        Compiler.DebugReflection.AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & "")
+#End If
 
         If Compiler.CommandLine.KeyFile <> String.Empty Then
             keyfile = Compiler.CommandLine.KeyFile

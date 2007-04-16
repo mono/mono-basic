@@ -1,3 +1,76 @@
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/ArgumentList.vb, Expressions/AddressOfExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb: Provide a small
+	  work-around to let AddressOf expression work as a parameter to a
+	  method call when there's only one method it can be resolved to.
+	* Expressions/SimpleNameExpression.vb: Fix typo.
+	* Expressions/BinaryExpressions/LShiftExpression.vb,
+	  Expressions/BinaryExpressions/RShiftExpression.vb: Implement proper
+	  shifting according to the spec.
+	* Expressions/BinaryExpressions/GEExpression.vb,
+	  Expressions/BinaryExpressions/LEExpression.vb,
+	  Expressions/BinaryExpressions/GTExpression.vb,
+	  Expressions/BinaryExpressions/LTExpression.vb: Don't emit boolean
+	  conversions like the spec says.
+	* Expressions/Classifications/PropertyAccessClassification.vb: Allow a
+	  subclass to access non-public properties of the base class. (Patch
+	  by Frederik Carlier for #81375).
+	* Statements/IfStatement.vb: Add a null-check.
+	* Statements/EraseStatement.vb: Resolve any type references.
+	* Statements/GotoStatement.vb: A Goto might need into a leave
+	  instruction, so call the correct Emitter method.
+	* Members/PropertyDeclaration.vb: Add an Init overload.
+	* Members/MethodResolver.vb: A starter class that will implement method
+	  resolution in the future.
+	* Members/Attribute.vb: Resolve() can be called on an attribute several
+	  times, so guard against this.
+	* Members/FunctionSignature.vb: Return type requiredness is decided by
+	  option strict, not option explicit.
+	* Members/Attributes.vb: Add a FindAttributes method.
+	* Members/MethodDeclaration.vb: Add debug output and fix indentation.
+	* Members/ConstructorDeclaration.vb,
+	  Descriptors/GenericTypeDescriptor.vb, Types/TypeParameterList.vb,
+	  Types/TypeParameter.vb, Code/CodeBlock.vb,
+	  TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb: Add debug output.
+	* Members/MemberDeclarations.vb: Partial types only match if they have
+	  the same namespace, so fix it.
+	* Parser/Parser.vb: Show a warning if Option Strict is Off.
+	* Emit/Emitter.vb: Don't set the name of locals if we aren't emitting
+	  debug info. Implement switching methods according to the target
+	  vbversion. Fix EmitStoreVariable for generic parameters (should
+	  emit stobj and not st.ind).
+	* Emit/EmitLog.vb: Add a property to get the real ILGenerator.
+	* Descriptors/ByRefTypeDescriptor.vb: Implement
+	  IsGenericTypeDefinition.
+	* Tokens/IntegralLiteralToken.vb: Reimplement IIntegralLiteralToken,
+	  this fixes a few parser errors.
+	* Types/TypeName.vb: Add a convenience constructor and Init method.
+	* TypeDeclarations/ClassDeclaration.vb: Add debug output and implement
+	  handling of MyGroupCollectionAttribute.
+	* General/CodeFile.vb: It's now possible to create a code file with
+	  in-memory code. Used by the My generator to avoid creating a file.
+	* General/Helper.vb: Add debug output. Changed emission of methods so
+	  that if constrained is not required if the instance expression is a
+	  DeRefExpression (ByRef parameter). Change handling of command line
+	  arguments to handle the special string handling for defines (the
+	  backslashes in _MYTYPE=\"Empty\").
+	* General/TypeCache.vb: Add GetType, GetProperty, GetConstructor,
+	  GetMethod and GetField that will return nothing if the item to look
+	  on is nothing. Necessary since not everything will be loaded always
+	  (depends on which assemblies are referenced). Also change the code
+	  to use these methods.
+	* General/Compiler.vb: Remove IDisposable implementation, it's not
+	  needed. Add debug output.
+	* General/CommandLine.vb: Add a command line argument -vbversion to set
+	  which version of the vb language the compiler should target.
+	* General/Define.vb: Add properties to get the define as Boolean,
+	  String, Date and Double, and add a Parse () method that parses the
+	  defined value.
+	* General/MyGenerator.vb: Added, contains the code generation logic for
+	  the My namespace.
+
 2007-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.vbproj: Update.

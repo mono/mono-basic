@@ -118,7 +118,7 @@ Public Class FunctionSignature
                 If result = False Then Return result
                 m_ReturnType = m_TypeName.ResolvedType
             Else
-                If Me.Location.File.IsOptionExplicitOn Then
+                If Me.Location.File.IsOptionStrictOn Then
                     Helper.AddError("Function return type must be specified.")
                 Else
                     Helper.AddWarning("Function return type must be specified.")

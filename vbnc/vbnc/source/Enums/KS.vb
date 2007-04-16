@@ -31,7 +31,6 @@ Public Enum KS
     <KSEnumString("And", Nothing, True, False)> [And]
     <KSEnumString("Ansi", Nothing, True, False)> [Ansi]
     <KSEnumString("As", Nothing, True, False)> [As]
-    ' <KSEnumString("Assembly", Nothing, True, False)> [Assembly]
     <KSEnumString("Auto", Nothing, True, False)> [Auto]
     <KSEnumString("Boolean", Nothing, True, False)> [Boolean]
     <KSEnumString("ByRef", Nothing, True, False)> [ByRef]

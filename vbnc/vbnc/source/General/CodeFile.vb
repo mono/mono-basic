@@ -74,6 +74,8 @@ Public Class CodeFile
     Private m_ConditionalConstants As New Generic.List(Of ConditionalConstants)
     Private m_ConditionalConstantsLines As New Generic.List(Of Integer)
 
+    Private m_Code As String
+
     Sub AddConditionalConstants(ByVal Line As Integer, ByVal Constants As ConditionalConstants)
         m_ConditionalConstants.Add(Constants.Clone)
         m_ConditionalConstantsLines.Add(Line)
@@ -241,60 +243,33 @@ Public Class CodeFile
     Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As IBaseObject)
         MyBase.New(Parent)
         'Try to get the absolute path for all files.
-        m_FileName = IO.Path.GetFullPath(FileName)
+        If FileName Is Nothing OrElse FileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0 Then
+            m_FileName = FileName
+        Else
+            m_FileName = IO.Path.GetFullPath(FileName)
+        End If
         m_RelativePath = RelativePath
     End Sub
 
-    ''' <summary>
-    ''' Get the code of the file (the contents).
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    ReadOnly Property Code() As String
-        Get
-            Dim FileStream As System.IO.FileStream
-            Dim StreamReader As System.IO.StreamReader
-            Dim Encoding As System.Text.Encoding
-            Dim IsUTF8 As Boolean
-
-            Try
-                FileStream = New System.IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-                Try
-                    Encoding = Compiler.CommandLine.Encoding
-                    IsUTF8 = Encoding.CodePage = 65001
-
-                    ' No UTF-8 detection required when default is UTF-8.
-                    If Not IsUTF8 Then
-                        ' Decode using UTF-8 when can be decoded using UTF-8.
-                        StreamReader = New System.IO.StreamReader(FileStream, UTF8Throw, True)
-                        Try
-                            Return StreamReader.ReadToEnd()
-                        Catch e As ArgumentException
-                            FileStream.Position = 0
-                        End Try
-                    End If
-
-                    ' Byte order mark was already detected when default is not UTF-8.
-                    StreamReader = New System.IO.StreamReader(FileStream, Encoding, IsUTF8)
-                    Return StreamReader.ReadToEnd()
-                Finally
-                    FileStream.Close()
-                End Try
-            Catch e As Exception
-                Compiler.Report.ShowMessage(Messages.VBNC31007, FileName)
-                Return ""
-            End Try
-        End Get
-    End Property
+    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As IBaseObject, ByVal Code As String)
+        Me.New(FileName, RelativePath, Parent)
+        m_Code = Code
+    End Sub
 
     ReadOnly Property CodeStream() As IO.StreamReader
         Get
-            Dim FileStream As System.IO.FileStream
+            Dim Stream As System.IO.Stream
             Dim StreamReader As System.IO.StreamReader
 
             Try
-                FileStream = New System.IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-                StreamReader = New System.IO.StreamReader(FileStream, Compiler.CommandLine.Encoding, True)
+                If m_Code IsNot Nothing Then
+                    Stream = New System.IO.MemoryStream(Compiler.CommandLine.Encoding.GetBytes(m_Code))
+                Else
+                    Stream = New System.IO.FileStream(FileName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+                End If
+
+                StreamReader = New System.IO.StreamReader(Stream, Compiler.CommandLine.Encoding, True)
+
                 Return StreamReader
             Catch e As Exception
                 Compiler.Report.ShowMessage(Messages.VBNC31007, FileName)
@@ -322,6 +297,9 @@ Public Class CodeFile
     ''' <remarks></remarks>
     ReadOnly Property FileNameToReport() As String
         Get
+            If m_FileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars) >= 0 Then
+                Return m_FileName
+            End If
             Return System.IO.Path.Combine(m_RelativePath, System.IO.Path.GetFileName(m_FileName))
         End Get
     End Property

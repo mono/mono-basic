@@ -176,7 +176,7 @@ Public Class ValueClassification
         Me.New(DirectCast(ParentAndValue, ParsedObject))
         m_Type = ParentAndValue.ExpressionType
         m_Value = ParentAndValue
-        Helper.Assert(m_Type IsNot Nothing)
+        'Helper.Assert(m_Type IsNot Nothing)
     End Sub
 
     Sub New(ByVal ParentAndValue As Expression, ByVal ExpressionType As Type)

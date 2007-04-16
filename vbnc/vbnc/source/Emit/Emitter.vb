@@ -44,7 +44,9 @@ Partial Public Class Emitter
         Dim result As LocalBuilder
         Type = Helper.GetTypeOrTypeBuilder(Type)
         result = Info.ILGen.DeclareLocal(Type)
-        If Name <> "" Then result.SetLocalSymInfo(Name)
+        If Name <> String.Empty AndAlso Info.Compiler.EmittingDebugInfo Then
+            result.SetLocalSymInfo(Name)
+        End If
         Return result
     End Function
 
@@ -1016,10 +1018,12 @@ Partial Public Class Emitter
     Shared Sub EmitCall(ByVal Info As EmitInfo, ByVal Method As MethodInfo)
         Dim OriginalMethod As MethodBase = Method
 
-        Helper.Assert(Method IsNot Nothing)
+        Helper.Assert(Method IsNot Nothing, "The method Is Nothing")
 
         Dim minfo As MethodInfo
         minfo = Helper.GetMethodOrMethodBuilder(Method)
+
+        minfo = SwitchVersionedMethods(Info, minfo)
 
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
         If Method.IsStatic Then
@@ -1118,6 +1122,7 @@ Partial Public Class Emitter
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
 
         Method = Helper.GetMethodOrMethodBuilder(OriginalMethod)
+        Method = SwitchVersionedMethods(Info, Method)
 
 #If DEBUG Then
         If Method.GetType.Name <> "SymbolMethod" Then
@@ -2151,7 +2156,11 @@ Partial Public Class Emitter
     Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As ParameterInfo)
         Dim position As Integer = GetParameterPosition(Variable)
         If Variable.ParameterType.IsByRef Then
-            EmitStoreIndirect(Info, Variable.ParameterType)
+            If Variable.ParameterType.GetElementType.IsGenericParameter Then
+                EmitStoreObject(Info, Variable.ParameterType.GetElementType)
+            Else
+                EmitStoreIndirect(Info, Variable.ParameterType)
+            End If
         Else
             Info.ILGen.Emit(OpCodes.Starg, position)
             Info.Stack.Pop(Variable.ParameterType)
@@ -2223,4 +2232,22 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Throw)
         Info.Stack.Pop(Info.Compiler.TypeCache.Exception)
     End Sub
+
+    Shared Function SwitchVersionedMethods(ByVal Info As EmitInfo, ByVal UnversionedMethod As MethodInfo) As MethodInfo
+        If Info.Compiler.CommandLine.VBVersion <> CommandLine.VBVersions.V8 Then Return UnversionedMethod
+
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_IsNumeric Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_IsNumeric
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_SystemTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_SystemTypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_VbTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_VbTypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_TypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_TypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Interaction_CallByName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_CallByName
+
+#If ENABLECECIL Then
+        'Check if the object comparison above is true for cecil as well (that is if same method may have multiple object references)
+        'This will assert while compiling the compiler if object comparison doesn't hold for cecil.
+        Helper.Assert(UnversionedMethod.Name <> "IsNumeric")
+#End If
+
+        Return UnversionedMethod
+    End Function
 End Class

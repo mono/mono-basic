@@ -63,7 +63,13 @@ Public Class PropertySetDeclaration
             End If
             valueName = SetParameters(0).Name
         End If
-        mySignature.Parameters.Add(New Parameter(mySignature.Parameters, valueName, PropertySignature.TypeName))
+        Dim param As Parameter
+        If PropertySignature.ReturnType IsNot Nothing Then
+            param = New Parameter(mySignature.Parameters, valueName, PropertySignature.ReturnType)
+        Else
+            param = New Parameter(mySignature.Parameters, valueName, PropertySignature.TypeName)
+        End If
+        mySignature.Parameters.Add(param)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub

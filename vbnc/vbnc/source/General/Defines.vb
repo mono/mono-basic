@@ -26,7 +26,7 @@ Public Class Defines
     ''' <summary>
     ''' Returns the Define at the specified index.
     ''' </summary>
-    Shadows ReadOnly Property Item(ByVal Index As Integer) As Define
+    Default Shadows ReadOnly Property Item(ByVal Index As Integer) As Define
         Get
             Return DirectCast(MyBase.Item(Index), Define)
         End Get
@@ -40,15 +40,26 @@ Public Class Defines
     End Function
 
     Function IsDefined(ByVal str As String) As Boolean
-        For Each def As Define In Me
-            If NameResolution.CompareName(def.Symbol, str) Then
-                If def.Value <> "" Then
-                    Dim b As Boolean
-                    If Boolean.TryParse(def.Value, b) Then Return b
-                    If VB.IsNumeric(def.Value) Then Return CBool(CDbl(def.Value))
-                    Return False
-                End If
-            End If
-        Next
+        Dim def As Define
+        def = Item(str)
+        If def Is Nothing Then Return False
+
+        If def.Value <> "" Then
+            Dim b As Boolean
+            If Boolean.TryParse(def.Value, b) Then Return b
+            If VB.IsNumeric(def.Value) Then Return CBool(CDbl(def.Value))
+            Return False
+        End If
     End Function
+
+    Default Shadows ReadOnly Property Item(ByVal Name As String) As Define
+        Get
+            For Each def As Define In Me
+                If NameResolution.CompareName(def.Symbol, Name) Then
+                    Return def
+                End If
+            Next
+            Return Nothing
+        End Get
+    End Property
 End Class

@@ -67,6 +67,15 @@ Public Class AddressOfExpression
         Return tm.CurrentToken.Equals(KS.AddressOf)
     End Function
 
+    Function Resolve(ByVal DelegateType As Type) As Boolean
+        Dim result As Boolean = True
+
+        result = Classification.AsMethodPointerClassification.Resolve(DelegateType) AndAlso result
+        m_ExpressionType = DelegateType
+
+        Return result
+    End Function
+
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -91,7 +100,8 @@ Public Class AddressOfExpression
                     m_ExpressionType = assign.LSide.ExpressionType
                 Else
                     Dim aor As AddOrRemoveHandlerStatement = TryCast(Me.Parent, AddOrRemoveHandlerStatement)
-                    Dim al As ArgumentList = TryCast(Me.Parent.Parent, ArgumentList)
+                    Dim al As ArgumentList = TryCast(Me.Parent, ArgumentList)
+                    Dim doce As DelegateOrObjectCreationExpression = TryCast(Me.Parent, DelegateOrObjectCreationExpression)
                     If aor IsNot Nothing Then
                         If aor.EventHandler Is Me = False Then Throw New InternalException(Me)
                         If aor.Event.Classification.IsEventAccessClassification Then
@@ -99,21 +109,25 @@ Public Class AddressOfExpression
                         Else
                             Helper.AddError("(This message should probably be ignored, this is a compile time error to get to this situation, but the error should already have been shown)")
                         End If
-                    ElseIf al IsNot Nothing Then
-                        Dim doc As DelegateOrObjectCreationExpression = TryCast(al.Parent, DelegateOrObjectCreationExpression)
-                        If doc.IsDelegateCreationExpression Then
-                            Dim deltp As Type = doc.NonArrayTypeName.ResolvedType
+                    ElseIf doce IsNot Nothing Then
+                        If doce.IsDelegateCreationExpression Then
+                            Dim deltp As Type = doce.NonArrayTypeName.ResolvedType
                             m_ExpressionType = deltp
                         Else
                             Helper.AddError(Me.Location.ToString)
                         End If
+                    ElseIf al IsNot Nothing Then
+                        '  Helper.NotImplemented(Me.Location.ToString)
+                        m_ExpressionType = Info.Compiler.TypeCache.DelegateUnresolvedType
                     Else
-                        Helper.NotImplemented(Me.Location.ToString)
+                        Helper.AddError(Me.Location.ToString)
                     End If
                 End If
             End If
 
-            result = mpClassification.Resolve(m_ExpressionType) AndAlso result
+            If m_ExpressionType IsNot Nothing Then
+                result = mpClassification.Resolve(m_ExpressionType) AndAlso result
+            End If
         Else
             Helper.AddError(Me.Location.ToString)
         End If
@@ -137,5 +151,10 @@ Public Class AddressOfExpression
         m_Expression.Dump(Dumper)
     End Sub
 #End If
+
+End Class
+
+
+Class DelegateUnresolvedType
 
 End Class

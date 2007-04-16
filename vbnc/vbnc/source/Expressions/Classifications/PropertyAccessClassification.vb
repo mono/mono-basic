@@ -72,9 +72,9 @@ Public Class PropertyAccessClassification
         End If
 
         If Info.IsLHS Then
-            method = m_Property.GetSetMethod
+            method = m_Property.GetSetMethod(True)
         Else
-            method = m_Property.GetGetMethod
+            method = m_Property.GetGetMethod(True)
         End If
 
         'If m_InstanceExpression IsNot Nothing Then

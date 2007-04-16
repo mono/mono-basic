@@ -41,7 +41,7 @@ Public Class GotoStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Emitter.EmitBranch(Info, m_Destination.LabelBuilder)
+        Emitter.EmitBranchOrLeave(Info, m_Destination.LabelBuilder, Me, m_Destination)
 
         Return result
     End Function

@@ -30,6 +30,37 @@ Public Class Define
     ''' The value of this define.
     ''' </summary>
     Private m_Value As String
+    Private m_ObjectValue As Object
+
+    ReadOnly Property ObjectValue() As Object
+        Get
+            Return m_ObjectValue
+        End Get
+    End Property
+
+    ReadOnly Property ValueAsDouble() As Double
+        Get
+            Return CDbl(m_ObjectValue)
+        End Get
+    End Property
+
+    ReadOnly Property ValueAsString() As String
+        Get
+            Return CStr(m_ObjectValue)
+        End Get
+    End Property
+
+    ReadOnly Property ValueAsDate() As Date
+        Get
+            Return CDate(m_ObjectValue)
+        End Get
+    End Property
+
+    ReadOnly Property ValueAsBoolean() As Boolean
+        Get
+            Return CBool(m_ObjectValue)
+        End Get
+    End Property
 
     ''' <summary>
     ''' The symbol of this define.
@@ -55,5 +86,54 @@ Public Class Define
     Sub New(ByVal Symbol As String, ByVal Value As String)
         Me.m_Symbol = Symbol
         Me.m_Value = Value
+
+        Parse()
+    End Sub
+
+    ''' <summary>
+    ''' Some decent parsing is needed here.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Sub Parse()
+        If m_Value = String.Empty Then
+            m_ObjectValue = Nothing
+            Return
+        End If
+
+        If NameResolution.CompareName(m_Value, "Nothing") Then
+            m_ObjectValue = Nothing
+            Return
+        ElseIf NameResolution.CompareName(m_Value, "True") Then
+            m_ObjectValue = True
+            Return
+        ElseIf NameResolution.CompareName(m_Value, "False") Then
+            m_ObjectValue = False
+            Return
+        End If
+
+        If m_Value.StartsWith("#") Then
+            If m_Value.EndsWith("#") Then
+                m_ObjectValue = DateTime.Parse(m_Value.Substring(1, m_Value.Length - 2))
+                Return
+            Else
+                Helper.AddError("Invalid date constant: " & m_Value)
+            End If
+        End If
+
+        If m_Value.StartsWith("""") Then
+            If m_Value.EndsWith("""") Then
+                m_ObjectValue = m_Value.Substring(1, m_Value.Length - 2)
+                Return
+            Else
+                Helper.AddError("Invalid string constant: " & m_Value)
+            End If
+        End If
+
+        If True OrElse Microsoft.VisualBasic.IsNumeric(m_Value) Then
+            m_ObjectValue = VB.Val(m_Value)
+            Return
+        End If
+
+        Helper.AddError("Invalid constant: '" & m_Value & "' (Type=" & m_Value.GetType.FullName & ")")
     End Sub
 End Class

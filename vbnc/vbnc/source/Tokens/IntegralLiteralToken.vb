@@ -20,11 +20,11 @@
 
 Public Class IntegralLiteralToken(Of Type)
     Inherits LiteralTokenBase(Of Type)
-    'Implements IIntegralLiteralToken
+    Implements IIntegralLiteralToken
 
     Private m_Base As IntegerBase
 
-    ReadOnly Property Base() As IntegerBase 'Implements IIntegralLiteralToken.Base
+    ReadOnly Property Base() As IntegerBase Implements IIntegralLiteralToken.Base
         Get
             Return m_Base
         End Get
@@ -52,7 +52,7 @@ Public Class IntegralLiteralToken(Of Type)
         End Select
     End Function
 
-    Public ReadOnly Property IntegralLiteral() As ULong 'Implements IIntegralLiteralToken.IntegralLiteral
+    Public ReadOnly Property IntegralLiteral() As ULong Implements IIntegralLiteralToken.IntegralLiteral
         Get
             Return CULng(Literal.ToString)
         End Get

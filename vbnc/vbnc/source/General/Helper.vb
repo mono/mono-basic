@@ -36,6 +36,49 @@ Public Class Helper
 
     Public Const ALLNOBASEMEMBERS As BindingFlags = BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
 
+#If DEBUGREFLECTION Then
+    Private Shared object_ids As New ArrayList()
+    Private Shared object_nameshash As New Generic.Dictionary(Of String, Object)
+    Private Shared object_names As New Generic.List(Of String)
+
+    Shared Function GetObjectName(ByVal obj As Object) As String
+        If TypeOf obj Is EmitLog Then obj = DirectCast(obj, EmitLog).TheRealILGenerator
+
+
+        For i As Integer = 0 To object_ids.Count - 1
+            If object_ids(i) Is obj Then Return object_names(i)
+        Next
+
+        Dim type As Type = obj.GetType
+        Dim name As String
+        Dim typename As String
+
+        If type.FullName = "System.Reflection.Emit.TypeBuilderInstantiation" Then type = type.BaseType
+        If type.FullName = "System.RuntimeType" Then type = type.BaseType
+
+        Dim counter As Integer = 1
+        For i As Integer = 0 To object_ids.Count - 1
+            If object_ids(i).GetType Is type Then counter += 1 : Continue For
+            If type.IsArray AndAlso object_ids(i).GetType Is type.GetElementType Then counter += 1 : Continue For
+        Next
+        If type.IsArray Then
+            name = type.GetElementType.Name & "Array_" & counter
+            typename = type.GetElementType.FullName & "()"
+        Else
+            name = obj.GetType.Name & "_" & counter
+            typename = type.FullName
+        End If
+
+        Compiler.DebugReflection.AppendLine("Dim " & name & " As " & typename)
+
+        object_ids.Add(obj)
+        object_names.Add(name)
+        object_nameshash.Add(name, obj)
+
+        Return name
+    End Function
+#End If
+
 #If DEBUG Then
     Shared Function ShowDebugFor(ByVal name As String) As Boolean
         Static args As Hashtable
@@ -867,6 +910,27 @@ Public Class Helper
         End If
     End Function
 
+#If ENABLECECIL Then
+    ''' <summary>
+    ''' Checks if the specified type is a VB Module.
+    ''' </summary>
+    ''' <param name="type"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Shared Function IsModule(ByVal Compiler As Compiler, ByVal type As Mono.Cecil.TypeDefinition) As Boolean
+        Dim result As Boolean
+        'If TypeOf type Is TypeDescriptor Then
+        '    Return IsModule(Compiler, DirectCast(type, TypeDescriptor))
+        'Else
+        result = type.IsClass AndAlso Compiler.TypeCache.StandardModuleAttribute IsNot Nothing AndAlso type.CustomAttributes.IsDefined(Compiler.cecilTypeCache.StandardModuleAttribute)
+
+        'Compiler.Report.WriteLine("IsModule: type=" & type.FullName & ", result=" & result.ToString)
+        'If type.Name = "Constants" Then Stop
+        Return result
+        'End If
+    End Function
+#End If
+
     ''' <summary>
     ''' Checks if the specified type is a VB Module.
     ''' </summary>
@@ -1122,13 +1186,19 @@ Public Class Helper
 
             ieInfo = Info.Clone(True, False, ieDesiredType)
 
-            result = InstanceExpression.GenerateCode(ieInfo) AndAlso result
+            Dim derefExp As DeRefExpression = TryCast(InstanceExpression, DeRefExpression)
+            If needsConstrained AndAlso derefExp IsNot Nothing Then
+                result = derefExp.Expression.GenerateCode(Info.Clone(True, False, derefExp.Expression.ExpressionType)) AndAlso result
+            Else
+                result = InstanceExpression.GenerateCode(ieInfo) AndAlso result
 
-            If needsConstrained Then
-                constrainedLocal = Emitter.DeclareLocal(Info, InstanceExpression.ExpressionType)
-                Emitter.EmitStoreVariable(Info, constrainedLocal)
-                Emitter.EmitLoadVariableLocation(Info, constrainedLocal)
+                If needsConstrained Then
+                    constrainedLocal = Emitter.DeclareLocal(Info, InstanceExpression.ExpressionType)
+                    Emitter.EmitStoreVariable(Info, constrainedLocal)
+                    Emitter.EmitLoadVariableLocation(Info, constrainedLocal)
+                End If
             End If
+
         End If
 
         If Arguments IsNot Nothing Then
@@ -1199,7 +1269,7 @@ Public Class Helper
             Dim members As New Generic.List(Of MemberInfo)
             Dim properties As New Generic.List(Of PropertyInfo)
             'members.AddRange(tD.GetMembers())
-            members.AddRange(Compiler.TypeManager.GetCache(tD).FlattenedCache.GetAllMembers)
+            members.AddRange(Compiler.TypeManager.GetCache(tD).Cache.GetAllMembers)
             For Each member As MemberInfo In members
                 Dim propD As PropertyDescriptor = TryCast(member, PropertyDescriptor)
                 Dim prop As PropertyInfo = TryCast(member, PropertyInfo)
@@ -2144,7 +2214,9 @@ Public Class Helper
         Dim builder As New System.Text.StringBuilder
 
         For i As Integer = 0 To strLine.Length - 1
-            If strLine.Chars(i) = """" Then
+            If strLine.Chars(i) = "\" AndAlso i < strLine.Length - 1 AndAlso strLine.Chars(i + 1) = """" Then
+                builder.Append("""")
+            ElseIf strLine.Chars(i) = """" Then
                 If strLine.Length - 1 >= i + 1 AndAlso strLine.Chars(i + 1) = """" Then
                     builder.Append("""")
                 Else
@@ -2640,6 +2712,8 @@ Public Class Helper
             Parent.Compiler.Report.WriteLine(">IsAssignable to DestinationType.ElementType = " & IsAssignable(Parent.Compiler, fromType, DestinationType.GetElementType))
         End If
 #End If
+
+        Helper.Assert(fromType IsNot Nothing)
 
         If Helper.CompareType(fromType, DestinationType) Then
             'do nothing

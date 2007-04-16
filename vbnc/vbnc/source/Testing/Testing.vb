@@ -20,8 +20,8 @@
 
 'Just a module for quick testing of vbc internals
 'since compiler errors appears immediately
-Option Strict Off
 #If DEBUG Then
+Option Strict Off
 
 Module Test
 

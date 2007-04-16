@@ -60,12 +60,14 @@ Public Class PropertyGetDeclaration
         End If
         If PropertySignature.TypeName IsNot Nothing Then
             typename = PropertySignature.TypeName.Clone(mySignature)
+        ElseIf PropertySignature.ReturnType IsNot Nothing Then
+            typename = New TypeName(mySignature, PropertySignature.ReturnType)
         Else
             typename = Nothing
         End If
         name = "get_" & PropertySignature.Name
 
-        mySignature.Init(name, typeParams, params, retTypeAttributes, TypeName, PropertySignature.Location)
+        mySignature.Init(name, typeParams, params, retTypeAttributes, typename, PropertySignature.Location)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub

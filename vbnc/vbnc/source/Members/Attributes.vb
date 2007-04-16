@@ -41,12 +41,32 @@ Public Class Attributes
         Dim result As Boolean = False
 
         For Each att As Attribute In Me
-            If Helper.CompareType(att.AttributeType, attributeType) Then
+            If Helper.CompareType(att.AttributeType, AttributeType) Then
                 result = True
                 Exit For
             End If
         Next
 
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Might return nothing
+    ''' </summary>
+    ''' <param name="AttributeType"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function FindAttributes(ByVal AttributeType As Type) As Generic.List(Of Attribute)
+        Dim result As Generic.List(Of Attribute) = Nothing
+
+        If AttributeType Is Nothing Then Return Nothing
+
+        For Each att As Attribute In Me
+            If Helper.CompareType(att.AttributeType, AttributeType) Then
+                If result Is Nothing Then result = New Generic.List(Of Attribute)
+                result.Add(att)
+            End If
+        Next
         Return result
     End Function
 

@@ -121,6 +121,15 @@ Public Class ByRefTypeDescriptor
         End Get
     End Property
 
+    Public Overrides ReadOnly Property IsGenericTypeDefinition() As Boolean
+        Get
+            Dim result As Boolean
+            result = False
+            DumpMethodInfo(result)
+            Return result
+        End Get
+    End Property
+
     Protected Overrides ReadOnly Property AllDeclaredMembers() As System.Collections.Generic.List(Of System.Reflection.MemberInfo)
         Get
             Return New Generic.List(Of MemberInfo)

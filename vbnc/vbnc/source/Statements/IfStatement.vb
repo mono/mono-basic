@@ -96,9 +96,11 @@ Public Class IfStatement
 
         'False code
         Info.ILGen.MarkLabel(startFalse)
-        For Each eif As ElseIfStatement In m_ElseIfs
-            result = eif.GenerateCode(Info) AndAlso result
-        Next
+        If m_ElseIfs IsNot Nothing Then
+            For Each eif As ElseIfStatement In m_ElseIfs
+                result = eif.GenerateCode(Info) AndAlso result
+            Next
+        End If
 
         If m_FalseCode IsNot Nothing Then
             result = m_FalseCode.GenerateCode(Info) AndAlso result

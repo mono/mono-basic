@@ -75,6 +75,26 @@ Public Class PropertyDeclaration
         m_Set = setMethod
     End Sub
 
+    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Type)
+        MyBase.Init(Attributes, Modifiers, Name)
+
+        m_Signature = New FunctionSignature(Me)
+        m_Signature.Init(Name, Nothing, New ParameterList(m_Signature), Nothing, ReturnType, Nothing)
+
+        Dim getMethod As PropertyGetDeclaration
+        Dim setMethod As PropertySetDeclaration
+
+
+        getMethod = New PropertyGetDeclaration(Me)
+        getMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
+
+        setMethod = New PropertySetDeclaration(Me)
+        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing, Nothing)
+
+        m_Get = getMethod
+        m_Set = setMethod
+    End Sub
+
     Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, ByVal GetMethod As MethodDeclaration, ByVal SetMethod As MethodDeclaration, ByVal MemberImplementsClause As MemberImplementsClause)
         MyBase.Init(Attributes, Modifiers, Signature.Name)
         m_Signature = Signature

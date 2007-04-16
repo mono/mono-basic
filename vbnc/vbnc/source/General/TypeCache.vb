@@ -21,6 +21,8 @@ Public Class TypeCache
     Private m_Compiler As Compiler
 
     Public [Nothing] As System.Type
+    Public DelegateUnresolvedType As System.Type
+
     Public [Boolean] As System.Type
     Public [Byte] As System.Type
     Public Byte_Array As System.Type
@@ -31,6 +33,7 @@ Public Class TypeCache
     Public [Integer] As System.Type
     Public [Long] As System.Type
     Public [Object] As System.Type
+    Public Object_Array As System.Type
     Public [Short] As System.Type
     Public [Single] As System.Type
     Public [String] As System.Type
@@ -64,6 +67,7 @@ Public Class TypeCache
     Public [Array_SetValue] As System.Reflection.MethodInfo
     Public [Array_GetValue] As System.Reflection.MethodInfo
     Public [Array_CreateInstance] As System.Reflection.MethodInfo
+    Public System_ArgumentException As System.Type
     Public [System_Collections_Generic_IList1] As System.Type
     Public [System_Collections_Generic_ICollection1] As System.Type
     Public [System_Collections_Generic_IEnumerable1] As System.Type
@@ -144,6 +148,21 @@ Public Class TypeCache
     Public [MS_VB_CS_ProjectData] As System.Type
     Public [MS_VB_CS_LikeOperator] As System.Type
     Public [MS_VB_Strings] As System.Type
+    Public MS_VB_MyGroupCollectionAttribute As System.Type
+    Public MS_VB_CallType As System.Type
+    Public MS_VB_Information As System.Type
+    Public MS_VB_Information_IsNumeric As System.Reflection.MethodInfo
+    Public MS_VB_Information_SystemTypeName As System.Reflection.MethodInfo
+    Public MS_VB_Information_TypeName As System.Reflection.MethodInfo
+    Public MS_VB_Information_VbTypeName As System.Reflection.MethodInfo
+    Public MS_VB_Interaction As System.Type
+    Public MS_VB_Interaction_CallByName As System.Reflection.MethodInfo
+    Public MS_VB_CS_Versioned As System.Type
+    Public MS_VB_CS_Versioned_CallByName As System.Reflection.MethodInfo
+    Public MS_VB_CS_Versioned_IsNumeric As System.Reflection.MethodInfo
+    Public MS_VB_CS_Versioned_SystemTypeName As System.Reflection.MethodInfo
+    Public MS_VB_CS_Versioned_TypeName As System.Reflection.MethodInfo
+    Public MS_VB_CS_Versioned_VbTypeName As System.Reflection.MethodInfo
     Public [MS_VB_CS_StringType] As System.Type
     Public [MS_VB_CS_StandardModuleAttribute] As System.Type
     Public [MS_VB_CS_Operators] As System.Type
@@ -242,8 +261,9 @@ Public Class TypeCache
     Public [MS_VB_CS_Operators_CompareObjectLessEqual__Object_Object_Bool] As System.Reflection.MethodInfo
     Public [Delegate_Combine] As System.Reflection.MethodInfo
     Public [Delegate_Remove] As System.Reflection.MethodInfo
-    Public [MS_VB_Assembly] As System.Reflection.Assembly
-    Public [mscorlib] As System.Reflection.Assembly
+
+    Public vbruntime As System.Reflection.Assembly
+    Public mscorlib As System.Reflection.Assembly
     Public winforms As System.Reflection.Assembly
 
     Sub New(ByVal Compiler As Compiler)
@@ -257,126 +277,127 @@ Public Class TypeCache
     End Property
 
     Private Sub Init_corlib()
-        Me.Boolean = mscorlib.GetType("System.Boolean")
-        Me.Byte = mscorlib.GetType("System.Byte")
+        Me.Boolean = Me.GetType(mscorlib, "System.Boolean")
+        Me.Byte = Me.GetType(mscorlib, "System.Byte")
         Me.Byte_Array = Me.Byte.MakeArrayType()
-        Me.Char = mscorlib.GetType("System.Char")
-        Me.Date = mscorlib.GetType("System.DateTime")
-        Me.Decimal = mscorlib.GetType("System.Decimal")
-        Me.Double = mscorlib.GetType("System.Double")
-        Me.Integer = mscorlib.GetType("System.Int32")
-        Me.Long = mscorlib.GetType("System.Int64")
-        Me.Object = mscorlib.GetType("System.Object")
-        Me.Short = mscorlib.GetType("System.Int16")
-        Me.Single = mscorlib.GetType("System.Single")
-        Me.String = mscorlib.GetType("System.String")
+        Me.Char = Me.GetType(mscorlib, "System.Char")
+        Me.Date = Me.GetType(mscorlib, "System.DateTime")
+        Me.Decimal = Me.GetType(mscorlib, "System.Decimal")
+        Me.Double = Me.GetType(mscorlib, "System.Double")
+        Me.Integer = Me.GetType(mscorlib, "System.Int32")
+        Me.Long = Me.GetType(mscorlib, "System.Int64")
+        Me.Object = Me.GetType(mscorlib, "System.Object")
+        Me.Object_Array = Me.Object.MakeArrayType
+        Me.Short = Me.GetType(mscorlib, "System.Int16")
+        Me.Single = Me.GetType(mscorlib, "System.Single")
+        Me.String = Me.GetType(mscorlib, "System.String")
         Me.String_ByRef = [String].MakeByRefType
-        Me.SByte = mscorlib.GetType("System.SByte")
-        Me.UShort = mscorlib.GetType("System.UInt16")
-        Me.UInteger = mscorlib.GetType("System.UInt32")
-        Me.ULong = mscorlib.GetType("System.UInt64")
+        Me.SByte = Me.GetType(mscorlib, "System.SByte")
+        Me.UShort = Me.GetType(mscorlib, "System.UInt16")
+        Me.UInteger = Me.GetType(mscorlib, "System.UInt32")
+        Me.ULong = Me.GetType(mscorlib, "System.UInt64")
         Me.Integer_Array = [Integer].MakeArrayType
         Me.String_Array = [String].MakeArrayType
-        Me.Enum = mscorlib.GetType("System.Enum")
-        Me.Structure = mscorlib.GetType("System.ValueType")
-        Me.Delegate = mscorlib.GetType("System.Delegate")
-        Me.MulticastDelegate = mscorlib.GetType("System.MulticastDelegate")
-        Me.AsyncCallback = mscorlib.GetType("System.AsyncCallback")
-        Me.IAsyncResult = mscorlib.GetType("System.IAsyncResult")
-        Me.IEnumerator = mscorlib.GetType("System.Collections.IEnumerator")
-        Me.IEnumerator_get_Current = IEnumerator.GetProperty("Current").GetGetMethod(False)
-        Me.IEnumerator_MoveNext = IEnumerator.GetMethod("MoveNext")
-        Me.IEnumerable = mscorlib.GetType("System.Collections.IEnumerable")
-        Me.IEnumerable_GetEnumerator = IEnumerable.GetMethod("GetEnumerator")
-        Me.IDisposable = mscorlib.GetType("System.IDisposable")
-        Me.IDisposable_Dispose = IDisposable.GetMethod("Dispose")
-        Me.ValueType = mscorlib.GetType("System.ValueType")
-        Me.System_RuntimeTypeHandle = mscorlib.GetType("System.RuntimeTypeHandle")
-        Me.Type = mscorlib.GetType("System.Type")
-        Me.Type__GetTypeFromHandle_RuntimeTypeHandle = Type.GetMethod("GetTypeFromHandle", New Type() {System_RuntimeTypeHandle})
-        Me.Void = mscorlib.GetType("System.Void")
-        Me.Exception = mscorlib.GetType("System.Exception")
-        Me.Array = mscorlib.GetType("System.Array")
-        Me.Array_SetValue = Array.GetMethod("SetValue", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public, Nothing, Nothing, New Type() {Me.Object, Me.Integer_Array}, Nothing)
-        Me.Array_GetValue = Array.GetMethod("GetValue", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public, Nothing, Nothing, New Type() {Me.Integer_Array}, Nothing)
-        Me.Array_CreateInstance = Array.GetMethod("CreateInstance", BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.Static, Nothing, Nothing, New Type() {Me.Type, Me.Integer_Array}, Nothing)
-        Me.System_Collections_Generic_IList1 = mscorlib.GetType("System.Collections.Generic.IList`1")
-        Me.System_Collections_Generic_ICollection1 = mscorlib.GetType("System.Collections.Generic.ICollection`1")
-        Me.System_Collections_Generic_IEnumerable1 = mscorlib.GetType("System.Collections.Generic.IEnumerable`1")
-        Me.System_Reflection_AssemblyVersionAttribute = mscorlib.GetType("System.Reflection.AssemblyVersionAttribute")
-        Me.System_Reflection_AssemblyProductAttribute = mscorlib.GetType("System.Reflection.AssemblyProductAttribute")
-        Me.System_Reflection_AssemblyCompanyAttribute = mscorlib.GetType("System.Reflection.AssemblyCompanyAttribute")
-        Me.System_Reflection_AssemblyCopyrightAttribute = mscorlib.GetType("System.Reflection.AssemblyCopyrightAttribute")
-        Me.System_Reflection_AssemblyTrademarkAttribute = mscorlib.GetType("System.Reflection.AssemblyTrademarkAttribute")
-        Me.System_Reflection_AssemblyKeyNameAttribute = mscorlib.GetType("System.Reflection.AssemblyKeyNameAttribute")
-        Me.System_Reflection_AssemblyKeyFileAttribute = mscorlib.GetType("System.Reflection.AssemblyKeyFileAttribute")
-        Me.System_Reflection_AssemblyDelaySignAttribute = mscorlib.GetType("System.Reflection.AssemblyDelaySignAttribute")
-        Me.System_Diagnostics_ConditionalAttribute = mscorlib.GetType("System.Diagnostics.ConditionalAttribute")
-        Me.System_Diagnostics_DebuggableAttribute = mscorlib.GetType("System.Diagnostics.DebuggableAttribute")
-        Me.System_Diagnostics_DebuggableAttribute_DebuggingModes = mscorlib.GetType("System.Diagnostics.DebuggableAttribute+DebuggingModes")
-        Me.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes = System_Diagnostics_DebuggableAttribute.GetConstructor(New Type() {System_Diagnostics_DebuggableAttribute_DebuggingModes})
-        Me.System_ParamArrayAttribute = mscorlib.GetType("System.ParamArrayAttribute")
-        Me.System_ParamArrayAttribute__ctor = System_ParamArrayAttribute.GetConstructor(Type.EmptyTypes)
-        Me.System_Nullable = mscorlib.GetType("System.Nullable`1")
-        Me.RuntimeHelpers = mscorlib.GetType("System.Runtime.CompilerServices.RuntimeHelpers")
-        Me.STAThreadAttribute = mscorlib.GetType("System.STAThreadAttribute")
-        Me.STAThreadAttribute_Ctor = STAThreadAttribute.GetConstructor(Type.EmptyTypes)
-        Me.IntPtr = mscorlib.GetType("System.IntPtr")
-        Me.DateTimeConstantAttribute = mscorlib.GetType("System.Runtime.CompilerServices.DateTimeConstantAttribute")
-        Me.DateConstructor_Int64 = Me.Date.GetConstructor(New Type() {Me.Long})
-        Me.DecimalConstructor_Int32 = Me.Decimal.GetConstructor(New Type() {Me.Integer})
-        Me.DecimalConstructor_Int64 = Me.Decimal.GetConstructor(New Type() {Me.Long})
-        Me.DecimalConstructor_Double = Me.Decimal.GetConstructor(New Type() {Me.Double})
-        Me.DecimalConstructor_Single = Me.Decimal.GetConstructor(New Type() {Me.Single})
-        Me.DecimalConstructor_UInt64 = Me.Decimal.GetConstructor(New Type() {Me.ULong})
-        Me.DecimalConstructor_Int32_Int32_Int32_Boolean_Byte = Me.Decimal.GetConstructor(New Type() {Me.Integer, Me.Integer, Me.Integer, Me.Boolean, Me.Byte})
-        Me.Decimal_Zero = Me.Decimal.GetField("Zero")
-        Me.Decimal_One = Me.Decimal.GetField("One")
-        Me.Decimal_MinusOne = Me.Decimal.GetField("MinusOne")
-        Me.DecimalConstantAttribute = mscorlib.GetType("System.Runtime.CompilerServices.DecimalConstantAttribute")
-        Me.DecimalConstantAttributeConstructor_Byte_Byte_UInt32_UInt32_UInt32 = Me.DecimalConstantAttribute.GetConstructor(New Type() {Me.Byte, Me.Byte, Me.UInteger, Me.UInteger, Me.UInteger})
-        Me.DecimalConstantAttributeConstructor_Byte_Byte_Int32_Int32_Int32 = Me.DecimalConstantAttribute.GetConstructor(New Type() {Me.Byte, Me.Byte, Me.Integer, Me.Integer, Me.Integer})
-        Me.Decimal_Compare__Decimal_Decimal = Me.Decimal.GetMethod("Compare", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Date_Compare__Date_Date = Me.Date.GetMethod("Compare", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Date, Me.Date}, Nothing)
-        Me.Decimal_Add__Decimal_Decimal = Me.Decimal.GetMethod("Add", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Decimal_Subtract__Decimal_Decimal = Me.Decimal.GetMethod("Subtract", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Decimal_Divide__Decimal_Decimal = Me.Decimal.GetMethod("Divide", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Decimal_Multiply__Decimal_Decimal = Me.Decimal.GetMethod("Multiply", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Decimal_Remainder__Decimal_Decimal = Me.Decimal.GetMethod("Remainder", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal, Me.Decimal}, Nothing)
-        Me.Decimal_Negate__Decimal = Me.Decimal.GetMethod("Negate", BindingFlags.Public Or BindingFlags.Static, Nothing, New Type() {Me.Decimal}, Nothing)
-        Me.ParamArrayAttribute = mscorlib.GetType("System.ParamArrayAttribute")
-        Me.ParamArrayAttributeConstructor = ParamArrayAttribute.GetConstructor(System.Type.EmptyTypes)
-        Me.DefaultMemberAttribute = mscorlib.GetType("System.Reflection.DefaultMemberAttribute")
-        Me.DefaultMemberAttributeConstructor = DefaultMemberAttribute.GetConstructor(New Type() {Me.String})
-        Me.System_Convert = mscorlib.GetType("System.Convert")
-        Me.System_Convert_ToSingle__Decimal = System_Convert.GetMethod("ToSingle", New Type() {Me.Decimal})
-        Me.System_Convert_ToDouble__Decimal = System_Convert.GetMethod("ToDouble", New Type() {Me.Decimal})
-        Me.System_Convert_ToBoolean__Decimal = System_Convert.GetMethod("ToBoolean", New Type() {Me.Decimal})
-        Me.System_Convert_ToByte__Decimal = System_Convert.GetMethod("ToByte", New Type() {Me.Decimal})
-        Me.System_Convert_ToSByte__Decimal = System_Convert.GetMethod("ToSByte", New Type() {Me.Decimal})
-        Me.System_Convert_ToInt16__Decimal = System_Convert.GetMethod("ToInt16", New Type() {Me.Decimal})
-        Me.System_Convert_ToUInt16__Decimal = System_Convert.GetMethod("ToUInt16", New Type() {Me.Decimal})
-        Me.System_Convert_ToInt32__Decimal = System_Convert.GetMethod("ToInt32", New Type() {Me.Decimal})
-        Me.System_Convert_ToUInt32__Decimal = System_Convert.GetMethod("ToUInt32", New Type() {Me.Decimal})
-        Me.System_Convert_ToInt64__Decimal = System_Convert.GetMethod("ToInt64", New Type() {Me.Decimal})
-        Me.System_Convert_ToUInt64__Decimal = System_Convert.GetMethod("ToUInt64", New Type() {Me.Decimal})
-        Me.String_Concat__String_String = Me.String.GetMethod("Concat", New Type() {Me.String, Me.String})
-        Me.System_Diagnostics_Debugger_Break = mscorlib.GetType("System.Diagnostics.Debugger").GetMethod("Break", System.Type.EmptyTypes)
-        Me.System_Reflection_Missing_Value = mscorlib.GetType("System.Reflection.Missing").GetField("Value")
-        Me.System_Threading_Monitor = mscorlib.GetType("System.Threading.Monitor")
-        Me.System_Threading_Monitor_Enter__Object = System_Threading_Monitor.GetMethod("Enter", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-        Me.System_Threading_Monitor_Exit__Object = System_Threading_Monitor.GetMethod("Exit", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-        Me.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object = RuntimeHelpers.GetMethod("GetObjectValue", BindingFlags.ExactBinding Or BindingFlags.Static Or BindingFlags.Public, Nothing, CallingConventions.Any, New Type() {Me.Object}, Nothing)
-        Me.System_Math = mscorlib.GetType("System.Math")
-        Me.System_Math_Round__Double = System_Math.GetMethod("Round", BindingFlags.ExactBinding Or BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Double}, Nothing)
-        Me.System_Math_Pow__Double_Double = System_Math.GetMethod("Pow", New Type() {Me.Double, Me.Double})
-        Me.System_Runtime_InteropServices_DllImportAttribute = GetType(System.Runtime.InteropServices.DllImportAttribute)
+        Me.Enum = Me.GetType(mscorlib, "System.Enum")
+        Me.Structure = Me.GetType(mscorlib, "System.ValueType")
+        Me.Delegate = Me.GetType(mscorlib, "System.Delegate")
+        Me.MulticastDelegate = Me.GetType(mscorlib, "System.MulticastDelegate")
+        Me.AsyncCallback = Me.GetType(mscorlib, "System.AsyncCallback")
+        Me.IAsyncResult = Me.GetType(mscorlib, "System.IAsyncResult")
+        Me.IEnumerator = Me.GetType(mscorlib, "System.Collections.IEnumerator")
+        Me.IEnumerator_get_Current = GetProperty(IEnumerator, "Current").GetGetMethod(False)
+        Me.IEnumerator_MoveNext = GetMethod(IEnumerator, "MoveNext")
+        Me.IEnumerable = Me.GetType(mscorlib, "System.Collections.IEnumerable")
+        Me.IEnumerable_GetEnumerator = GetMethod(IEnumerable, "GetEnumerator")
+        Me.IDisposable = Me.GetType(mscorlib, "System.IDisposable")
+        Me.IDisposable_Dispose = GetMethod(IDisposable, "Dispose")
+        Me.ValueType = Me.GetType(mscorlib, "System.ValueType")
+        Me.System_RuntimeTypeHandle = Me.GetType(mscorlib, "System.RuntimeTypeHandle")
+        Me.Type = Me.GetType(mscorlib, "System.Type")
+        Me.Type__GetTypeFromHandle_RuntimeTypeHandle = GetMethod(Type, "GetTypeFromHandle", System_RuntimeTypeHandle)
+        Me.Void = Me.GetType(mscorlib, "System.Void")
+        Me.Exception = Me.GetType(mscorlib, "System.Exception")
+        Me.Array = Me.GetType(mscorlib, "System.Array")
+        Me.Array_SetValue = GetMethod(Array, "SetValue", Me.Object, Me.Integer_Array)
+        Me.Array_GetValue = GetMethod(Array, "GetValue", Me.Integer_Array)
+        Me.Array_CreateInstance = GetMethod(Array, "CreateInstance", Me.Type, Me.Integer_Array)
+        Me.System_ArgumentException = Me.GetType(mscorlib, "System.ArgumentException")
+        Me.System_Collections_Generic_IList1 = Me.GetType(mscorlib, "System.Collections.Generic.IList`1")
+        Me.System_Collections_Generic_ICollection1 = Me.GetType(mscorlib, "System.Collections.Generic.ICollection`1")
+        Me.System_Collections_Generic_IEnumerable1 = Me.GetType(mscorlib, "System.Collections.Generic.IEnumerable`1")
+        Me.System_Reflection_AssemblyVersionAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyVersionAttribute")
+        Me.System_Reflection_AssemblyProductAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyProductAttribute")
+        Me.System_Reflection_AssemblyCompanyAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyCompanyAttribute")
+        Me.System_Reflection_AssemblyCopyrightAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyCopyrightAttribute")
+        Me.System_Reflection_AssemblyTrademarkAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyTrademarkAttribute")
+        Me.System_Reflection_AssemblyKeyNameAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyKeyNameAttribute")
+        Me.System_Reflection_AssemblyKeyFileAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyKeyFileAttribute")
+        Me.System_Reflection_AssemblyDelaySignAttribute = Me.GetType(mscorlib, "System.Reflection.AssemblyDelaySignAttribute")
+        Me.System_Diagnostics_ConditionalAttribute = Me.GetType(mscorlib, "System.Diagnostics.ConditionalAttribute")
+        Me.System_Diagnostics_DebuggableAttribute = Me.GetType(mscorlib, "System.Diagnostics.DebuggableAttribute")
+        Me.System_Diagnostics_DebuggableAttribute_DebuggingModes = Me.GetType(mscorlib, "System.Diagnostics.DebuggableAttribute+DebuggingModes")
+        Me.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes = GetConstructor(System_Diagnostics_DebuggableAttribute, System_Diagnostics_DebuggableAttribute_DebuggingModes)
+        Me.System_ParamArrayAttribute = Me.GetType(mscorlib, "System.ParamArrayAttribute")
+        Me.System_ParamArrayAttribute__ctor = GetConstructor(System_ParamArrayAttribute)
+        Me.System_Nullable = Me.GetType(mscorlib, "System.Nullable`1")
+        Me.RuntimeHelpers = Me.GetType(mscorlib, "System.Runtime.CompilerServices.RuntimeHelpers")
+        Me.STAThreadAttribute = Me.GetType(mscorlib, "System.STAThreadAttribute")
+        Me.STAThreadAttribute_Ctor = GetConstructor(STAThreadAttribute)
+        Me.IntPtr = Me.GetType(mscorlib, "System.IntPtr")
+        Me.DateTimeConstantAttribute = Me.GetType(mscorlib, "System.Runtime.CompilerServices.DateTimeConstantAttribute")
+        Me.DateConstructor_Int64 = GetConstructor(Me.Date, Me.Long)
+        Me.DecimalConstructor_Int32 = GetConstructor(Me.Decimal, Me.Integer)
+        Me.DecimalConstructor_Int64 = GetConstructor(Me.Decimal, Me.Long)
+        Me.DecimalConstructor_Double = GetConstructor(Me.Decimal, Me.Double)
+        Me.DecimalConstructor_Single = GetConstructor(Me.Decimal, Me.Single)
+        Me.DecimalConstructor_UInt64 = GetConstructor(Me.Decimal, Me.ULong)
+        Me.DecimalConstructor_Int32_Int32_Int32_Boolean_Byte = GetConstructor(Me.Decimal, Me.Integer, Me.Integer, Me.Integer, Me.Boolean, Me.Byte)
+        Me.Decimal_Zero = GetField(Me.Decimal, "Zero")
+        Me.Decimal_One = GetField(Me.Decimal, "One")
+        Me.Decimal_MinusOne = GetField(Me.Decimal, "MinusOne")
+        Me.DecimalConstantAttribute = Me.GetType(mscorlib, "System.Runtime.CompilerServices.DecimalConstantAttribute")
+        Me.DecimalConstantAttributeConstructor_Byte_Byte_UInt32_UInt32_UInt32 = GetConstructor(Me.DecimalConstantAttribute, Me.Byte, Me.Byte, Me.UInteger, Me.UInteger, Me.UInteger)
+        Me.DecimalConstantAttributeConstructor_Byte_Byte_Int32_Int32_Int32 = GetConstructor(Me.DecimalConstantAttribute, Me.Byte, Me.Byte, Me.Integer, Me.Integer, Me.Integer)
+        Me.Decimal_Compare__Decimal_Decimal = GetMethod(Me.Decimal, "Compare", Me.Decimal, Me.Decimal)
+        Me.Date_Compare__Date_Date = GetMethod(Me.Date, "Compare", Me.Date, Me.Date)
+        Me.Decimal_Add__Decimal_Decimal = GetMethod(Me.Decimal, "Add", Me.Decimal, Me.Decimal)
+        Me.Decimal_Subtract__Decimal_Decimal = GetMethod(Me.Decimal, "Subtract", Me.Decimal, Me.Decimal)
+        Me.Decimal_Divide__Decimal_Decimal = GetMethod(Me.Decimal, "Divide", Me.Decimal, Me.Decimal)
+        Me.Decimal_Multiply__Decimal_Decimal = GetMethod(Me.Decimal, "Multiply", Me.Decimal, Me.Decimal)
+        Me.Decimal_Remainder__Decimal_Decimal = GetMethod(Me.Decimal, "Remainder", Me.Decimal, Me.Decimal)
+        Me.Decimal_Negate__Decimal = GetMethod(Me.Decimal, "Negate", Me.Decimal)
+        Me.ParamArrayAttribute = Me.GetType(mscorlib, "System.ParamArrayAttribute")
+        Me.ParamArrayAttributeConstructor = GetConstructor(ParamArrayAttribute)
+        Me.DefaultMemberAttribute = Me.GetType(mscorlib, "System.Reflection.DefaultMemberAttribute")
+        Me.DefaultMemberAttributeConstructor = GetConstructor(DefaultMemberAttribute, Me.String)
+        Me.System_Convert = Me.GetType(mscorlib, "System.Convert")
+        Me.System_Convert_ToSingle__Decimal = GetMethod(System_Convert, "ToSingle", Me.Decimal)
+        Me.System_Convert_ToDouble__Decimal = GetMethod(System_Convert, "ToDouble", Me.Decimal)
+        Me.System_Convert_ToBoolean__Decimal = GetMethod(System_Convert, "ToBoolean", Me.Decimal)
+        Me.System_Convert_ToByte__Decimal = GetMethod(System_Convert, "ToByte", Me.Decimal)
+        Me.System_Convert_ToSByte__Decimal = GetMethod(System_Convert, "ToSByte", Me.Decimal)
+        Me.System_Convert_ToInt16__Decimal = GetMethod(System_Convert, "ToInt16", Me.Decimal)
+        Me.System_Convert_ToUInt16__Decimal = GetMethod(System_Convert, "ToUInt16", Me.Decimal)
+        Me.System_Convert_ToInt32__Decimal = GetMethod(System_Convert, "ToInt32", Me.Decimal)
+        Me.System_Convert_ToUInt32__Decimal = GetMethod(System_Convert, "ToUInt32", Me.Decimal)
+        Me.System_Convert_ToInt64__Decimal = GetMethod(System_Convert, "ToInt64", Me.Decimal)
+        Me.System_Convert_ToUInt64__Decimal = GetMethod(System_Convert, "ToUInt64", Me.Decimal)
+        Me.String_Concat__String_String = GetMethod(Me.String, "Concat", Me.String, Me.String)
+        Me.System_Diagnostics_Debugger_Break = Me.GetType(mscorlib, "System.Diagnostics.Debugger").GetMethod("Break", System.Type.EmptyTypes)
+        Me.System_Reflection_Missing_Value = Me.GetType(mscorlib, "System.Reflection.Missing").GetField("Value")
+        Me.System_Threading_Monitor = Me.GetType(mscorlib, "System.Threading.Monitor")
+        Me.System_Threading_Monitor_Enter__Object = GetMethod(System_Threading_Monitor, "Enter", Me.Object)
+        Me.System_Threading_Monitor_Exit__Object = GetMethod(System_Threading_Monitor, "Exit", Me.Object)
+        Me.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object = GetMethod(RuntimeHelpers, "GetObjectValue", Me.Object)
+        Me.System_Math = Me.GetType(mscorlib, "System.Math")
+        Me.System_Math_Round__Double = GetMethod(System_Math, "Round", Me.Double)
+        Me.System_Math_Pow__Double_Double = GetMethod(System_Math, "Pow", Me.Double, Me.Double)
+        Me.System_Runtime_InteropServices_DllImportAttribute = Me.GetType(mscorlib, "System.Runtime.InteropServices.DllImportAttribute")
 
-        If winforms IsNot Nothing Then
-            Me.System_Windows_Forms_Form = winforms.GetType("System.Windows.Forms.Form")
-            Me.System_Windows_Forms_Application = winforms.GetType("System.Windows.Forms.Application")
-            Me.System_Windows_Forms_Application__Run = Me.System_Windows_Forms_Application.GetMethod("Run", New Type() {Me.System_Windows_Forms_Form}, Nothing)
-        End If
+        Me.System_Windows_Forms_Form = Me.GetType(winforms, "System.Windows.Forms.Form")
+        Me.System_Windows_Forms_Application = Me.GetType(winforms, "System.Windows.Forms.Application")
+        Me.System_Windows_Forms_Application__Run = Me.GetMethod(Me.System_Windows_Forms_Application, "Run", Me.System_Windows_Forms_Form)
+
     End Sub
 
     Private Sub Init()
@@ -384,150 +405,222 @@ Public Class TypeCache
         Init_corlib()
         Init_vbruntime()
 
-        Compiler.TypeCache.Nothing = GetType([Nothing])
+        [Nothing] = GetType([Nothing])
+        DelegateUnresolvedType = GetType(DelegateUnresolvedType)
 
     End Sub
 
     Private Function GetVBType(ByVal Name As String) As Type
-        If Compiler.CommandLine.NoVBRuntimeRef AndAlso MS_VB_Assembly Is Nothing Then
+        Dim result As Type = Nothing
+
+        If Compiler.CommandLine.NoVBRuntimeRef AndAlso vbruntime Is Nothing Then
             Dim tps As Generic.List(Of Type)
             tps = Compiler.TypeManager.GetType(Name, True)
 
+            If tps.Count = 1 Then
+                result = tps(0)
 #If DEBUG Then
-            If tps.Count = 0 Then Compiler.Report.WriteLine("Could not load VB Type: " & Name)
+            ElseIf tps.Count > 1 Then
+                Compiler.Report.WriteLine("Found " & tps.Count & " types with the name " & Name)
 #End If
-            If tps.Count = 0 Then Return Nothing
-            Helper.Assert(tps.Count <= 1, "Found " & tps.Count & " names for the type " & Name)
-
-            Return tps(0)
+            End If
         Else
-            Return MS_VB_Assembly.GetType(Name)
+            result = vbruntime.GetType(Name)
         End If
+
+#If DEBUG Then
+        If result Is Nothing Then
+            Compiler.Report.WriteLine("Could not load VB Type: " & Name)
+        End If
+#End If
+
+        Return result
+    End Function
+
+    Private Shadows Function [GetType](ByVal Assembly As Assembly, ByVal FullName As String) As Type
+        If Assembly Is Nothing Then Return Nothing
+        Return Assembly.GetType(FullName, False, False)
+    End Function
+
+    Private Function GetProperty(ByVal Type As Type, ByVal Name As String, ByVal ParamArray Types() As Type) As PropertyInfo
+        If Type Is Nothing Then Return Nothing
+        Return Type.GetProperty(Name, BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, Types, Nothing)
+    End Function
+
+    Private Function GetConstructor(ByVal Type As Type, ByVal ParamArray Types() As Type) As ConstructorInfo
+        If Type Is Nothing Then Return Nothing
+        Return Type.GetConstructor(BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding, Nothing, Types, Nothing)
+    End Function
+
+    Private Function GetMethod(ByVal Type As Type, ByVal Name As String, ByVal ParamArray Types() As Type) As MethodInfo
+        Dim result As MethodInfo
+        If Type Is Nothing Then
+#If DEBUG Then
+            Compiler.Report.WriteLine("Could not load the method '" & Name & "', the specified type was Nothing.")
+#End If
+            Return Nothing
+        End If
+        result = Type.GetMethod(Name, BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding, Nothing, Types, Nothing)
+
+#If DEBUG Then
+        If result Is Nothing Then
+            Compiler.Report.Write("Could not find the method '" & Name & "' on the type '" & Type.FullName)
+        End If
+#End If
+
+        Return result
+    End Function
+
+    Private Function GetField(ByVal Type As Type, ByVal Name As String) As FieldInfo
+        If Type Is Nothing Then Return Nothing
+        Return Type.GetField(Name)
     End Function
 
     Sub Init_vbruntime(Optional ByVal WithCurrentAssembly As Boolean = False)
-        If MS_VB_Assembly Is Nothing AndAlso WithCurrentAssembly = False Then Return
+        Dim staticBinding As BindingFlags = BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.ExactBinding
+
+        If vbruntime Is Nothing AndAlso WithCurrentAssembly = False Then Return
         If MS_VB_CompareMethod IsNot Nothing Then Return 'already loaded
         MS_VB_CompareMethod = GetVBType("Microsoft.VisualBasic.CompareMethod")
         MS_VB_CS_Conversions = GetVBType("Microsoft.VisualBasic.CompilerServices.Conversions")
         MS_VB_CS_ProjectData = GetVBType("Microsoft.VisualBasic.CompilerServices.ProjectData")
         MS_VB_CS_LikeOperator = GetVBType("Microsoft.VisualBasic.CompilerServices.LikeOperator")
+
         MS_VB_Strings = GetVBType("Microsoft.VisualBasic.Strings")
         MS_VB_CS_StringType = GetVBType("Microsoft.VisualBasic.CompilerServices.StringType")
+        MS_VB_MyGroupCollectionAttribute = GetVBType("Microsoft.VisualBasic.MyGroupCollectionAttribute")
+        MS_VB_CallType = GetVBType("Microsoft.VisualBasic.CallType")
+
+        MS_VB_Information = GetVBType("Microsoft.VisualBasic.Information")
+        MS_VB_Information_IsNumeric = GetMethod(MS_VB_Information, "IsNumeric", Me.Object)
+        MS_VB_Information_SystemTypeName = GetMethod(MS_VB_Information, "SystemTypeName", Me.String)
+        MS_VB_Information_TypeName = GetMethod(MS_VB_Information, "TypeName", Me.Object)
+        MS_VB_Information_VbTypeName = GetMethod(MS_VB_Information, "VbTypeName", Me.String)
+        MS_VB_Interaction = GetVBType("Microsoft.VisualBasic.Interaction")
+        MS_VB_Interaction_CallByName = GetMethod(MS_VB_Interaction, "CallByName", Me.Object, Me.String, Me.MS_VB_CallType, Me.Object_Array)
+
+        MS_VB_CS_Versioned = GetVBType("Microsoft.VisualBasic.CompilerServices.Versioned")
+        MS_VB_CS_Versioned_IsNumeric = GetMethod(MS_VB_CS_Versioned, "IsNumeric", Me.Object)
+        MS_VB_CS_Versioned_SystemTypeName = GetMethod(MS_VB_CS_Versioned, "SystemTypeName", Me.String)
+        MS_VB_CS_Versioned_TypeName = GetMethod(MS_VB_CS_Versioned, "TypeName", Me.Object)
+        MS_VB_CS_Versioned_TypeName = GetMethod(MS_VB_CS_Versioned, "VbTypeName", Me.String)
+        MS_VB_CS_Versioned_CallByName = GetMethod(MS_VB_CS_Versioned, "CallByName", Me.Object, Me.String, Me.MS_VB_CallType, Me.Object_Array)
+
         MS_VB_CS_StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
         MS_VB_CS_Operators = GetVBType("Microsoft.VisualBasic.CompilerServices.Operators")
         MS_VB_CS_OFC = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl")
         MS_VB_CS_Utils = GetVBType("Microsoft.VisualBasic.CompilerServices.Utils")
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
+
         MS_VB_CS_StaticLocalInitFlag = GetVBType("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag")
-        MS_VB_CS_StaticLocalInitFlag_State = MS_VB_CS_StaticLocalInitFlag.GetField("State", BindingFlags.Public Or BindingFlags.Instance)
-        MS_VB_CS_StaticLocalInitFlag_Ctor = MS_VB_CS_StaticLocalInitFlag.GetConstructor(Type.EmptyTypes)
+        MS_VB_CS_StaticLocalInitFlag_State = GetField(MS_VB_CS_StaticLocalInitFlag, "State")
+        MS_VB_CS_StaticLocalInitFlag_Ctor = GetConstructor(MS_VB_CS_StaticLocalInitFlag)
+
         MS_VB_CS_IncompleteInitializationException = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
-        MS_VB_CS_IncompleteInitializationException__ctor = MS_VB_CS_IncompleteInitializationException.GetConstructor(Type.EmptyTypes)
-        MS_VB_CS_PD_EndApp = MS_VB_CS_ProjectData.GetMethod("EndApp", BindingFlags.Static Or BindingFlags.Public, Nothing, Nothing, Type.EmptyTypes, Nothing)
-        MS_VB_CS_PD_CreateProjectError__Integer = MS_VB_CS_ProjectData.GetMethod("CreateProjectError", BindingFlags.ExactBinding Or BindingFlags.Public Or BindingFlags.Static, Nothing, CallingConventions.Standard, New Type() {[Integer]}, Nothing)
-        MS_VB_CS_PD_ClearProjectError = MS_VB_CS_ProjectData.GetMethod("ClearProjectError", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, Nothing, Type.EmptyTypes, Nothing)
-        MS_VB_CS_PD_SetProjectError__Exception = MS_VB_CS_ProjectData.GetMethod("SetProjectError", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Exception}, Nothing)
-        MS_VB_CS_PD_SetProjectError__Exception_Integer = MS_VB_CS_ProjectData.GetMethod("SetProjectError", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Exception, [Integer]}, Nothing)
-        If MS_VB_CS_Conversions IsNot Nothing Then
-            MS_VB_CS_Conversions_ToBoolean__Object = MS_VB_CS_Conversions.GetMethod("ToBoolean", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToChar__Object = MS_VB_CS_Conversions.GetMethod("ToChar", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToDate__Object = MS_VB_CS_Conversions.GetMethod("ToDate", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToByte__Object = MS_VB_CS_Conversions.GetMethod("ToByte", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToSByte__Object = MS_VB_CS_Conversions.GetMethod("ToSByte", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToShort__Object = MS_VB_CS_Conversions.GetMethod("ToShort", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToUShort__Object = MS_VB_CS_Conversions.GetMethod("ToUShort", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToInteger__Object = MS_VB_CS_Conversions.GetMethod("ToInteger", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToUInteger__Object = MS_VB_CS_Conversions.GetMethod("ToUInteger", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToLong__Object = MS_VB_CS_Conversions.GetMethod("ToLong", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToULong__Object = MS_VB_CS_Conversions.GetMethod("ToULong", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToSingle__Object = MS_VB_CS_Conversions.GetMethod("ToSingle", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToDouble__Object = MS_VB_CS_Conversions.GetMethod("ToDouble", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToDecimal__Object = MS_VB_CS_Conversions.GetMethod("ToDecimal", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToBoolean__String = MS_VB_CS_Conversions.GetMethod("ToBoolean", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToChar__String = MS_VB_CS_Conversions.GetMethod("ToChar", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToDate__String = MS_VB_CS_Conversions.GetMethod("ToDate", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToByte__String = MS_VB_CS_Conversions.GetMethod("ToByte", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToSByte__String = MS_VB_CS_Conversions.GetMethod("ToSByte", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToShort__String = MS_VB_CS_Conversions.GetMethod("ToShort", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToUShort__String = MS_VB_CS_Conversions.GetMethod("ToUShort", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToInteger__String = MS_VB_CS_Conversions.GetMethod("ToInteger", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToUInteger__String = MS_VB_CS_Conversions.GetMethod("ToUInteger", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToLong__String = MS_VB_CS_Conversions.GetMethod("ToLong", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToULong__String = MS_VB_CS_Conversions.GetMethod("ToULong", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToSingle__String = MS_VB_CS_Conversions.GetMethod("ToSingle", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToDouble__String = MS_VB_CS_Conversions.GetMethod("ToDouble", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToDecimal__String = MS_VB_CS_Conversions.GetMethod("ToDecimal", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String}, Nothing)
-            MS_VB_CS_Conversions_ToDecimal__Boolean = MS_VB_CS_Conversions.GetMethod("ToDecimal", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Boolean}, Nothing)
-            MS_VB_CS_Conversions_ToString__Decimal = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Decimal}, Nothing)
-            MS_VB_CS_Conversions_ToString__Boolean = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Boolean}, Nothing)
-            MS_VB_CS_Conversions_ToString__Char = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Char}, Nothing)
-            MS_VB_CS_Conversions_ToString__Date = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Date}, Nothing)
-            MS_VB_CS_Conversions_ToString__Byte = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Byte}, Nothing)
-            MS_VB_CS_Conversions_ToString__SByte = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.SByte}, Nothing)
-            MS_VB_CS_Conversions_ToString__Integer = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Integer}, Nothing)
-            MS_VB_CS_Conversions_ToString__UInteger = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.UInteger}, Nothing)
-            MS_VB_CS_Conversions_ToString__Long = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Long}, Nothing)
-            MS_VB_CS_Conversions_ToString__ULong = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.ULong}, Nothing)
-            MS_VB_CS_Conversions_ToString__Single = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Single}, Nothing)
-            MS_VB_CS_Conversions_ToString__Double = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Double}, Nothing)
-            MS_VB_CS_Conversions_ToString__Object = MS_VB_CS_Conversions.GetMethod("ToString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Conversions_ToGenericParameter_T__Object = MS_VB_CS_Conversions.GetMethod("ToGenericParameter", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-        End If
-        If MS_VB_CS_LikeOperator IsNot Nothing Then
-            MS_VB_CS_LikeOperator_LikeString__String_String_CompareMethod = MS_VB_CS_LikeOperator.GetMethod("LikeString", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.String, Me.String, MS_VB_CompareMethod}, Nothing)
-            MS_VB_CS_LikeOperator_LikeObject__Object_Object_CompareMethod = MS_VB_CS_LikeOperator.GetMethod("LikeObject", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object, Me.Object, MS_VB_CompareMethod}, Nothing)
-        End If
+        MS_VB_CS_IncompleteInitializationException__ctor = GetConstructor(MS_VB_CS_IncompleteInitializationException)
 
-        MS_VB_CS_StringType_MidStmtStr__String_Integer_Integer_String = MS_VB_CS_StringType.GetMethod("MidStmtStr", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {String_ByRef, Me.Integer, Me.Integer, Me.String}, Nothing)
-        If MS_VB_CS_OFC IsNot Nothing Then
-            MS_VB_CS_OFC_CheckForSyncLockOnValueType__Object = MS_VB_CS_OFC.GetMethod("CheckForSyncLockOnValueType", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, Nothing, New Type() {Me.Object}, Nothing)
-        End If
-        MS_VB_CS_Utils__CopyArray_Array_Array = MS_VB_CS_Utils.GetMethod("CopyArray", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Array, Array}, Nothing)
-        If MS_VB_CS_Operators IsNot Nothing Then
-            MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConditionalCompareObjectNotEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectNotEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConditionalCompareObjectGreater__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectGreater", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConditionalCompareObjectGreaterEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectGreaterEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConditionalCompareObjectLess__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectLess", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConditionalCompareObjectLessEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("ConditionalCompareObjectLessEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_CompareString__String_String_Bool = MS_VB_CS_Operators.GetMethod("CompareString", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.String, Me.String, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_ConcatenateObject__Object_Object = MS_VB_CS_Operators.GetMethod("ConcatenateObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_AddObject__Object_Object = MS_VB_CS_Operators.GetMethod("AddObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_AndObject__Object_Object = MS_VB_CS_Operators.GetMethod("AndObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_DivideObject__Object_Object = MS_VB_CS_Operators.GetMethod("DivideObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_ExponentObject__Object_Object = MS_VB_CS_Operators.GetMethod("ExponentObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_IntDivideObject__Object_Object = MS_VB_CS_Operators.GetMethod("IntDivideObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_LeftShiftObject__Object_Object = MS_VB_CS_Operators.GetMethod("LeftShiftObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_ModObject__Object_Object = MS_VB_CS_Operators.GetMethod("ModObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_MultiplyObject__Object_Object = MS_VB_CS_Operators.GetMethod("MultiplyObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_NegateObject__Object = MS_VB_CS_Operators.GetMethod("NegateObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Operators_NotObject__Object = MS_VB_CS_Operators.GetMethod("NotObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Operators_OrObject__Object_Object = MS_VB_CS_Operators.GetMethod("OrObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_PlusObject__Object = MS_VB_CS_Operators.GetMethod("PlusObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object}, Nothing)
-            MS_VB_CS_Operators_RightShiftObject__Object_Object = MS_VB_CS_Operators.GetMethod("RightShiftObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_SubtractObject__Object_Object = MS_VB_CS_Operators.GetMethod("SubtractObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_XorObject__Object_Object = MS_VB_CS_Operators.GetMethod("XorObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object}, Nothing)
-            MS_VB_CS_Operators_LikeObject__Object_Object = MS_VB_CS_Operators.GetMethod("LikeObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, MS_VB_CompareMethod}, Nothing)
-            MS_VB_CS_Operators_LikeString__String_String = MS_VB_CS_Operators.GetMethod("StringObject", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.String, Me.String, MS_VB_CompareMethod}, Nothing)
-            MS_VB_CS_Operators_CompareObjectEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareObjectEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_CompareObjectNotEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareObjectNotEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_CompareObjectGreater__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareObjectGreater", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_CompareObjectGreaterEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareGreaterNotEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-            MS_VB_CS_Operators_CompareObjectLess__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareObjectLess", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
+        MS_VB_CS_PD_EndApp = GetMethod(MS_VB_CS_ProjectData, "EndApp")
+        MS_VB_CS_PD_CreateProjectError__Integer = GetMethod(MS_VB_CS_ProjectData, "CreateProjectError", [Integer])
+        MS_VB_CS_PD_ClearProjectError = GetMethod(MS_VB_CS_ProjectData, "ClearProjectError")
+        MS_VB_CS_PD_SetProjectError__Exception = GetMethod(MS_VB_CS_ProjectData, "SetProjectError", Exception)
+        MS_VB_CS_PD_SetProjectError__Exception_Integer = GetMethod(MS_VB_CS_ProjectData, "SetProjectError", Exception, [Integer])
 
-            MS_VB_CS_Operators_CompareObjectLessEqual__Object_Object_Bool = MS_VB_CS_Operators.GetMethod("CompareObjectLessEqual", BindingFlags.Static Or BindingFlags.Public, Nothing, New Type() {Me.Object, Me.Object, Me.Boolean}, Nothing)
-        End If
-        Delegate_Combine = Me.Delegate.GetMethod("Combine", New Type() {Me.Delegate, Me.Delegate})
-        Delegate_Remove = Me.Delegate.GetMethod("Remove", New Type() {Me.Delegate, Me.Delegate})
+        MS_VB_CS_Conversions_ToBoolean__Object = GetMethod(MS_VB_CS_Conversions, "ToBoolean", Me.Object)
+        MS_VB_CS_Conversions_ToChar__Object = GetMethod(MS_VB_CS_Conversions, "ToChar", Me.Object)
+        MS_VB_CS_Conversions_ToDate__Object = GetMethod(MS_VB_CS_Conversions, "ToDate", Me.Object)
+        MS_VB_CS_Conversions_ToByte__Object = GetMethod(MS_VB_CS_Conversions, "ToByte", Me.Object)
+        MS_VB_CS_Conversions_ToSByte__Object = GetMethod(MS_VB_CS_Conversions, "ToSByte", Me.Object)
+        MS_VB_CS_Conversions_ToShort__Object = GetMethod(MS_VB_CS_Conversions, "ToShort", Me.Object)
+        MS_VB_CS_Conversions_ToUShort__Object = GetMethod(MS_VB_CS_Conversions, "ToUShort", Me.Object)
+        MS_VB_CS_Conversions_ToInteger__Object = GetMethod(MS_VB_CS_Conversions, "ToInteger", Me.Object)
+        MS_VB_CS_Conversions_ToUInteger__Object = GetMethod(MS_VB_CS_Conversions, "ToUInteger", Me.Object)
+        MS_VB_CS_Conversions_ToLong__Object = GetMethod(MS_VB_CS_Conversions, "ToLong", Me.Object)
+        MS_VB_CS_Conversions_ToULong__Object = GetMethod(MS_VB_CS_Conversions, "ToULong", Me.Object)
+        MS_VB_CS_Conversions_ToSingle__Object = GetMethod(MS_VB_CS_Conversions, "ToSingle", Me.Object)
+        MS_VB_CS_Conversions_ToDouble__Object = GetMethod(MS_VB_CS_Conversions, "ToDouble", Me.Object)
+        MS_VB_CS_Conversions_ToDecimal__Object = GetMethod(MS_VB_CS_Conversions, "ToDecimal", Me.Object)
+        MS_VB_CS_Conversions_ToBoolean__String = GetMethod(MS_VB_CS_Conversions, "ToBoolean", Me.String)
+        MS_VB_CS_Conversions_ToChar__String = GetMethod(MS_VB_CS_Conversions, "ToChar", Me.String)
+        MS_VB_CS_Conversions_ToDate__String = GetMethod(MS_VB_CS_Conversions, "ToDate", Me.String)
+        MS_VB_CS_Conversions_ToByte__String = GetMethod(MS_VB_CS_Conversions, "ToByte", Me.String)
+        MS_VB_CS_Conversions_ToSByte__String = GetMethod(MS_VB_CS_Conversions, "ToSByte", Me.String)
+        MS_VB_CS_Conversions_ToShort__String = GetMethod(MS_VB_CS_Conversions, "ToShort", Me.String)
+        MS_VB_CS_Conversions_ToUShort__String = GetMethod(MS_VB_CS_Conversions, "ToUShort", Me.String)
+        MS_VB_CS_Conversions_ToInteger__String = GetMethod(MS_VB_CS_Conversions, "ToInteger", Me.String)
+        MS_VB_CS_Conversions_ToUInteger__String = GetMethod(MS_VB_CS_Conversions, "ToUInteger", Me.String)
+        MS_VB_CS_Conversions_ToLong__String = GetMethod(MS_VB_CS_Conversions, "ToLong", Me.String)
+        MS_VB_CS_Conversions_ToULong__String = GetMethod(MS_VB_CS_Conversions, "ToULong", Me.String)
+        MS_VB_CS_Conversions_ToSingle__String = GetMethod(MS_VB_CS_Conversions, "ToSingle", Me.String)
+        MS_VB_CS_Conversions_ToDouble__String = GetMethod(MS_VB_CS_Conversions, "ToDouble", Me.String)
+        MS_VB_CS_Conversions_ToDecimal__String = GetMethod(MS_VB_CS_Conversions, "ToDecimal", Me.String)
+        MS_VB_CS_Conversions_ToDecimal__Boolean = GetMethod(MS_VB_CS_Conversions, "ToDecimal", Me.Boolean)
+        MS_VB_CS_Conversions_ToString__Decimal = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Decimal)
+        MS_VB_CS_Conversions_ToString__Boolean = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Boolean)
+        MS_VB_CS_Conversions_ToString__Char = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Char)
+        MS_VB_CS_Conversions_ToString__Date = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Date)
+        MS_VB_CS_Conversions_ToString__Byte = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Byte)
+        MS_VB_CS_Conversions_ToString__SByte = GetMethod(MS_VB_CS_Conversions, "ToString", Me.SByte)
+        MS_VB_CS_Conversions_ToString__Integer = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Integer)
+        MS_VB_CS_Conversions_ToString__UInteger = GetMethod(MS_VB_CS_Conversions, "ToString", Me.UInteger)
+        MS_VB_CS_Conversions_ToString__Long = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Long)
+        MS_VB_CS_Conversions_ToString__ULong = GetMethod(MS_VB_CS_Conversions, "ToString", Me.ULong)
+        MS_VB_CS_Conversions_ToString__Single = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Single)
+        MS_VB_CS_Conversions_ToString__Double = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Double)
+        MS_VB_CS_Conversions_ToString__Object = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Object)
+        MS_VB_CS_Conversions_ToGenericParameter_T__Object = GetMethod(MS_VB_CS_Conversions, "ToGenericParameter", Me.Object)
+
+        MS_VB_CS_LikeOperator_LikeString__String_String_CompareMethod = GetMethod(MS_VB_CS_LikeOperator, "LikeString", Me.String, Me.String, MS_VB_CompareMethod)
+        MS_VB_CS_LikeOperator_LikeObject__Object_Object_CompareMethod = GetMethod(MS_VB_CS_LikeOperator, "LikeObject", Me.Object, Me.Object, MS_VB_CompareMethod)
+
+        MS_VB_CS_StringType_MidStmtStr__String_Integer_Integer_String = GetMethod(MS_VB_CS_StringType, "MidStmtStr", String_ByRef, Me.Integer, Me.Integer, Me.String)
+
+        MS_VB_CS_OFC_CheckForSyncLockOnValueType__Object = GetMethod(MS_VB_CS_OFC, "CheckForSyncLockOnValueType", Me.Object)
+
+        MS_VB_CS_Utils__CopyArray_Array_Array = GetMethod(MS_VB_CS_Utils, "CopyArray", Array, Array)
+
+        MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_ConditionalCompareObjectNotEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectNotEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_ConditionalCompareObjectGreater__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectGreater", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_ConditionalCompareObjectGreaterEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectGreaterEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_ConditionalCompareObjectLess__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectLess", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_ConditionalCompareObjectLessEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectLessEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareString__String_String_Bool = GetMethod(MS_VB_CS_Operators, "CompareString", Me.String, Me.String, Me.Boolean)
+        MS_VB_CS_Operators_ConcatenateObject__Object_Object = GetMethod(MS_VB_CS_Operators, "ConcatenateObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_AddObject__Object_Object = GetMethod(MS_VB_CS_Operators, "AddObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_AndObject__Object_Object = GetMethod(MS_VB_CS_Operators, "AndObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_DivideObject__Object_Object = GetMethod(MS_VB_CS_Operators, "DivideObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_ExponentObject__Object_Object = GetMethod(MS_VB_CS_Operators, "ExponentObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_IntDivideObject__Object_Object = GetMethod(MS_VB_CS_Operators, "IntDivideObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_LeftShiftObject__Object_Object = GetMethod(MS_VB_CS_Operators, "LeftShiftObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_ModObject__Object_Object = GetMethod(MS_VB_CS_Operators, "ModObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_MultiplyObject__Object_Object = GetMethod(MS_VB_CS_Operators, "MultiplyObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_NegateObject__Object = GetMethod(MS_VB_CS_Operators, "NegateObject", Me.Object)
+        MS_VB_CS_Operators_NotObject__Object = GetMethod(MS_VB_CS_Operators, "NotObject", Me.Object)
+        MS_VB_CS_Operators_OrObject__Object_Object = GetMethod(MS_VB_CS_Operators, "OrObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_PlusObject__Object = GetMethod(MS_VB_CS_Operators, "PlusObject", Me.Object)
+        MS_VB_CS_Operators_RightShiftObject__Object_Object = GetMethod(MS_VB_CS_Operators, "RightShiftObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_SubtractObject__Object_Object = GetMethod(MS_VB_CS_Operators, "SubtractObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_XorObject__Object_Object = GetMethod(MS_VB_CS_Operators, "XorObject", Me.Object, Me.Object)
+        MS_VB_CS_Operators_LikeObject__Object_Object = GetMethod(MS_VB_CS_Operators, "LikeObject", Me.Object, Me.Object, MS_VB_CompareMethod)
+        MS_VB_CS_Operators_LikeString__String_String = GetMethod(MS_VB_CS_Operators, "StringObject", Me.String, Me.String, MS_VB_CompareMethod)
+        MS_VB_CS_Operators_CompareObjectEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareObjectNotEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectNotEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareObjectGreater__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectGreater", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareObjectGreaterEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareGreaterNotEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareObjectLess__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectLess", Me.Object, Me.Object, Me.Boolean)
+
+        MS_VB_CS_Operators_CompareObjectLessEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectLessEqual", Me.Object, Me.Object, Me.Boolean)
+
+        Delegate_Combine = GetMethod(Me.Delegate, "Combine", Me.Delegate, Me.Delegate)
+        Delegate_Remove = GetMethod(Me.Delegate, "Remove", Me.Delegate, Me.Delegate)
         StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
     End Sub
 
     Sub Init(ByVal Assemblies As Generic.List(Of Assembly))
         For Each a As Assembly In Assemblies
             If a.GetName.Name = "Microsoft.VisualBasic" Then
-                MS_VB_Assembly = a : Continue For
+                vbruntime = a : Continue For
             ElseIf a.GetName.Name = "mscorlib" Then
                 mscorlib = a : Continue For
             ElseIf a.GetName.Name = "System.Windows.Forms" Then
@@ -536,7 +629,7 @@ Public Class TypeCache
         Next
 
         Init()
-        If MS_VB_Assembly IsNot Nothing Then
+        If vbruntime IsNot Nothing Then
             Init_vbruntime()
         End If
     End Sub
@@ -545,4 +638,3 @@ Public Class TypeCache
         Return CType(CInt(tp1) << TypeCombinations.SHIFT Or CInt(tp2), TypeCombinations)
     End Function
 End Class
-

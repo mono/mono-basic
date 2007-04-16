@@ -399,7 +399,8 @@ Public Class SimpleNameExpression
                     Return True
                 Else
                     'Otherwise, the result is exactly the same as a member access of the form T.E, where T is the 
-                    'type containing the matching member and E is the identifier. In this case, it is an error for the                    'identifier to refer to a non-shared member.
+                    'type containing the matching member and E is the identifier. In this case, it is an error for the                    
+                    'identifier to refer to a non-shared member.
                     Classification = GetTypeClassification(members, firstcontainer)
                     Return True
                 End If
@@ -531,7 +532,7 @@ Public Class SimpleNameExpression
             Dim var As FieldInfo = TryCast(first, FieldInfo)
             Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
             If var.IsStatic AndAlso var.IsInitOnly AndAlso _
-             (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) = True) Then
+             (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) = False) Then
                 Return New ValueClassification(Me, var, Nothing)
             Else
                 Return New VariableClassification(Me, var, Nothing)

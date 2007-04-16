@@ -38,6 +38,7 @@ Public Class Attribute
     Private m_FieldValues As Generic.List(Of Object)
     Private m_Properties As Generic.List(Of PropertyInfo)
     Private m_PropertyValues As Generic.List(Of Object)
+    Private m_IsResolved As Boolean
 
     Private m_Instance As System.Attribute
 
@@ -63,19 +64,19 @@ Public Class Attribute
 
     ReadOnly Property IsAssembly() As Boolean
         Get
-            Return m_isassembly
+            Return m_IsAssembly
         End Get
     End Property
 
     ReadOnly Property IsModule() As Boolean
         Get
-            Return m_ismodule
+            Return m_IsModule
         End Get
     End Property
 
     ReadOnly Property SimpleTypeName() As SimpleTypeName
         Get
-            Return m_Simpletypename
+            Return m_SimpleTypeName
         End Get
     End Property
 
@@ -121,7 +122,6 @@ Public Class Attribute
         Return result
     End Function
 
-
     ReadOnly Property AttributeInstance() As System.Attribute
         Get
             If m_Instance Is Nothing Then
@@ -156,6 +156,8 @@ Public Class Attribute
 
         Dim argList As ArgumentList
 
+        If m_IsResolved Then Return result
+
         If m_AttributeArguments IsNot Nothing Then
             Helper.Assert(m_Arguments Is Nothing)
             Helper.Assert(m_Fields Is Nothing)
@@ -183,8 +185,15 @@ Public Class Attribute
 
                     name = item.IdentifierOrKeyword.Identifier
                     members = cache.LookupMembersFlattened(name)
+                    members = Helper.FilterExternalInaccessible(Info.Compiler, members)
                     If members.Count <> 1 Then
-                        Helper.NotImplemented("Property resolution for attribute arguments.")
+                        If members(0) Is members(1) Then
+                            Console.WriteLine("They are the same!")
+                        End If
+                        For Each m As MemberInfo In members
+                            Console.WriteLine(m.DeclaringType.FullName & ":" & m.Name)
+                        Next
+                        Helper.NotImplemented(String.Format("Property resolution for attribute arguments ({0} members named '{1}' in {2})" & Me.Location.AsString, members.Count, name, m_ResolvedType.FullName))
                     End If
                     member = members(0)
                     Select Case member.MemberType
@@ -243,11 +252,7 @@ Public Class Attribute
             End If
         Next
 
-        'If m_Arguments Is Nothing Then m_Arguments = New Object() {}
-        'If m_Fields Is Nothing Then m_Fields = New FieldInfo() {}
-        'If m_FieldValues Is Nothing Then m_FieldValues = New Object() {}
-        'If m_Properties Is Nothing Then m_Properties = New PropertyInfo() {}
-        'If m_PropertyValues Is Nothing Then m_PropertyValues = New Object() {}
+        m_IsResolved = result
 
         Return result
     End Function

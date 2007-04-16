@@ -90,6 +90,9 @@ Public Class ConstructedTypeName
 
         Dim nri As New TypeNameResolutionInfo(Me, Me, m_TypeArgumentList.Count)
         result = nri.Resolve AndAlso result
+
+        If result = False Then Return result
+
         If nri.FoundOnlyOneObject Then
             If nri.FoundIs(Of TypeDescriptor)() Then
                 m_OpenResolvedType = nri.FoundAs(Of TypeDescriptor)()

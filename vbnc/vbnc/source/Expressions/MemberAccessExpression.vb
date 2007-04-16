@@ -201,6 +201,7 @@ Public Class MemberAccessExpression
         '---------------------------------------------------------------------------------------------------------
 
         Dim Name As String = m_Second.Name
+        'If Name = "IsNumeric" Then Stop
 
         If m_First IsNot Nothing Then
             result = m_First.ResolveExpression(Info) AndAlso result

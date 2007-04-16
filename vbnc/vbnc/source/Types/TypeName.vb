@@ -44,12 +44,21 @@ Public Class TypeName
         End If
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal Type As Type)
+        MyBase.New(Parent)
+        m_ResolvedType = Type
+    End Sub
+
     Sub Init(ByVal NonArrayTypeName As NonArrayTypeName)
         m_TypeName = NonArrayTypeName
     End Sub
 
     Sub Init(ByVal ArrayTypeName As ArrayTypeName)
         m_TypeName = ArrayTypeName
+    End Sub
+
+    Sub Init(ByVal Type As Type)
+        m_ResolvedType = Type
     End Sub
 
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeName
@@ -151,7 +160,7 @@ Public Class TypeName
         ElseIf Me.IsNonArrayTypeName Then
             result = Me.AsNonArrayTypeName.ResolveTypeReferences AndAlso result
             m_ResolvedType = Me.AsNonArrayTypeName.ResolvedType
-        Else
+        ElseIf m_ResolvedType Is Nothing Then
             Throw New InternalException(Me)
         End If
 

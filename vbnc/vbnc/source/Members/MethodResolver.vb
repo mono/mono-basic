@@ -17,12 +17,12 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public Class TypeList
-    Inherits Generic.List(Of Type)
+''' <summary>
+''' A helper class to do method resolution
+''' </summary>
+''' <remarks></remarks>
+Public Class MethodResolver
+
 End Class
 
-#If ENABLECECIL Then
-Public Class CecilTypeList
-    Inherits Generic.List(Of Mono.Cecil.TypeDefinition)
-End Class
-#End If
+
