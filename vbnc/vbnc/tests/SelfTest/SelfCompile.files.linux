@@ -76,6 +76,7 @@
 "../../source/General/NothingType.vb"
 "../../source/General/TypeDictionary.vb"
 "../../source/General/TypeList.vb"
+"../../source/General/MyGenerator.vb"
 "../../source/Descriptors/GenericMethodDescriptor.vb"
 "../../source/Infos/DelegateResolveInfo.vb"
 "../../source/Infos/ExpressionResolveInfo.vb"

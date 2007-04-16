@@ -1,0 +1,2 @@
+-define:_MYTYPE=\"WindowsForms\"
+-target:library

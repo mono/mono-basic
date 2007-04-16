@@ -1,0 +1,4 @@
+-target:library
+-r:System.Windows.Forms.dll
+-imports:System.Windows.Forms
+-define:_MYTYPE=\"Empty\"

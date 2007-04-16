@@ -11,6 +11,8 @@ Module Test
                 i = 15
             Case 20.5
                 i = 20
+            Case 21.5
+                i = 21
             Case 30.5
                 i = 30
         End Select

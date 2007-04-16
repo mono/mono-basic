@@ -1,5 +1,14 @@
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* My: Added, contains tests for the My namespace.
+	* Unfixable: Added a few tests.
+	* Bugs: More tests.
+	* CompileTime: Even more tests.
+	* CompileTime2: Still more tests.
+	* SelfTest: Updated sources.
+
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.
 
 2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>

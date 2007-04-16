@@ -1,0 +1,30 @@
+Imports System.Windows.Forms
+
+Namespace MyForms1
+	Class a 
+		inherits Form
+		Class d 
+			inherits Form
+		end class
+	end class
+	Class b 
+		inherits Form
+	end class
+	Class c 
+		inherits Form
+		Class a 
+			inherits Form
+		end class
+    End Class
+
+    Namespace T1
+        Class T
+            Inherits form
+        End Class
+    End Namespace
+    Namespace T2
+        Class t
+            Inherits form
+        End Class
+    End Namespace
+End Namespace
