@@ -1,4 +1,9 @@
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	
+	* vbnc.exe.sources: Updated.
+	* vbnc.vbnc.rsp: Updated.
+
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.
 

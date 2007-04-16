@@ -74,6 +74,7 @@ source/General/DumperXML.vb
 source/General/IndentedTextWriter.vb
 source/General/MemberCache.vb
 source/General/MethodBaseDeclaration.vb
+source/General/MyGenerator.vb
 source/General/NamespaceDictionary.vb
 source/General/NothingType.vb
 source/General/TypeDictionary.vb
@@ -83,11 +84,13 @@ source/Infos/DelegateResolveInfo.vb
 source/Infos/ExpressionResolveInfo.vb
 source/Interfaces/IHasImplicitMembers.vb
 source/Interfaces/IHasImplicitTypes.vb
+source/Interfaces/IIntegralLiteralToken.vb
 source/Interfaces/ITokenReader.vb
 source/Members/EventHandlerDeclaration.vb
 source/Members/EventDeclaration.vb
 source/Members/MemberDeclaration.vb
 source/Members/MethodDeclaration.vb
+source/Members/MethodResolver.vb
 source/Members/PropertyDeclaration.vb
 source/Members/PropertyHandlerDeclaration.vb
 source/Names/Identifier.vb
@@ -115,7 +118,6 @@ source/Interfaces/IBaseObject.vb
 source/Interfaces/IDefinableType.vb
 source/Interfaces/IEmittable.vb
 source/Interfaces/IEventMemberDeclaration.vb
-source/Interfaces/IIntegralLiteralToken.vb
 source/Interfaces/ILiteralToken.vb
 source/Interfaces/IDefinableMember.vb
 source/Interfaces/IMember.vb
