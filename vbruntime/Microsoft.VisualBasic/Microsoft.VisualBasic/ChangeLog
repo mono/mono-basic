@@ -1,3 +1,8 @@
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MsgBoxStyle.vb: Revert ifdef, it was the other way.
+	* Collection.vb: Fix signatures to match MS.
+
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VbStrConv.vb, MsgBoxStyle.vb, Collection.vb, MsgBoxResult.vb:

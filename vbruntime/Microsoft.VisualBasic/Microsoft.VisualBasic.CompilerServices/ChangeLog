@@ -1,3 +1,9 @@
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Versioned.vb: Fix and speedup IsNumeric. Fixes #80955.
+	* InternalErrorException.vb: Mark it as serializable.
+	* Operators.vb: Remove warnings and fix corcompare issues.
+
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DoubleType.vb, StaticLocalInitFlag.vb, LateBinding.vb,

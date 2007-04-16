@@ -1,15 +1,3 @@
-2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* Microsoft.VisualBasic.CompilerServices/Versioned.vb: Fix and speedup
-	  IsNumeric. Fixes #80955.
-	* Microsoft.VisualBasic.CompilerServices/InternalErrorException.vb:
-	  Mark it as serializable.
-	* Microsoft.VisualBasic.CompilerServices/Operators.vb: Remove warnings
-	  and fix corcompare issues.
-	* Microsoft.VisualBasic/MsgBoxStyle.vb: Revert ifdef, it was the other
-	  way.
-	* Microsoft.VisualBasic/Collection.vb: Fix signatures to match MS.
-
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* AssemblyInfo.vb: Corcompare work.
