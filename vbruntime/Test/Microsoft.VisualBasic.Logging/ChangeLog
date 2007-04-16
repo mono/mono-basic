@@ -1,3 +1,7 @@
+2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LateBindingsTest*.vb: Ifdef out all tests that contain references to types mono haven't implemented yet.
+
 2007-01-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* AspLogTest.cs, FileLogTraceListener.cs, LogTest.cs

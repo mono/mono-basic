@@ -32,6 +32,7 @@ Imports System
 Imports System.Reflection
 Imports NUnit.Framework
 
+#If mono_not_yet Then
 <TestFixture()> _
 Public Class LateBindingTests6
     Class C100
@@ -348,3 +349,4 @@ labelA:
 
     End Sub
 End Class
+#End If

@@ -32,6 +32,8 @@ Imports System
 Imports System.Reflection
 Imports NUnit.Framework
 
+#If mono_not_yet Then 'No late binding for vbnc yet.
+
 <TestFixture()> _
 Public Class LateBindingTests2
 
@@ -1294,3 +1296,4 @@ Public Class LateBindingTests2
 #End Region
 
 End Class
+#End If

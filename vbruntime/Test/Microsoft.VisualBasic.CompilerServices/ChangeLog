@@ -1,3 +1,7 @@
+2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LateBindingsTest*.vb: Ifdef out all late binding tests since vbnc can't compile them yet.
+
 2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* LateBindingsTests2.vb: Mark LateBind_MS_Bug_NoFail as NotDotNet so that tests pass with MS.

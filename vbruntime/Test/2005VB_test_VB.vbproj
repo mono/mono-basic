@@ -19,7 +19,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>Microsoft.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <DefineConstants>NET_2_0=True,NET_VER=2.0</DefineConstants>
+    <DefineConstants>NET_2_0=True,NET_VER=2.0,mono_not_yet=True</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
