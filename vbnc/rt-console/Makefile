@@ -15,4 +15,4 @@ DISTFILES = \
 	rt-console.vbproj
 
 rt-console.exe.sources: rt-console.vbproj
-	MONO_PATH="../../class/lib/bootstrap$$PLATFORM_PATH_SEPARATOR$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:rt-console.vbproj -d:rt-console.exe.sources -m:l -x:r
+	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:rt-console.vbproj -d:rt-console.exe.sources -m:l -x:r
