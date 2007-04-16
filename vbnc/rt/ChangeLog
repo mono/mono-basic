@@ -1,3 +1,7 @@
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.
+
 2007-03-15  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: Don't install on 'make install'
