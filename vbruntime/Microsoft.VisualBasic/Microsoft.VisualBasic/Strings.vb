@@ -776,9 +776,9 @@ Namespace Microsoft.VisualBasic
                 Case TypeCode.String
                     Return CStr(Expression).Length
                 Case TypeCode.UInt16
-                    Return 4
+                    Return 2
                 Case TypeCode.UInt32
-                    Return 8
+                    Return 4
                 Case TypeCode.UInt64
                     Return 8
             End Select

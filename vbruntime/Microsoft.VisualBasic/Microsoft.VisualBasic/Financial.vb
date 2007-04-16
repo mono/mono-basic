@@ -87,7 +87,6 @@ Namespace Microsoft.VisualBasic
 
         Public Function FV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
                                     Optional ByVal PV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
-
             Dim result As Double = 0
             Dim start As Double = 0
             Dim eend As Double = NPer - 1
@@ -170,6 +169,8 @@ Namespace Microsoft.VisualBasic
 
         Public Function NPer(ByVal Rate As Double, ByVal Pmt As Double, ByVal PV As Double, _
                                     Optional ByVal FV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
+
+
             If Rate = -1 Then
                 Throw New ArgumentException("Argument 'Rate' is not a valid value.")
             End If
@@ -180,62 +181,76 @@ Namespace Microsoft.VisualBasic
                     Throw New ArgumentException("Cannot calculate number of periods using the arguments provided.")
                 End If
             End If
+            Dim iDue As Integer = Due
+            Dim tmp As Double = (Pmt * (1D + Rate * iDue)) / Rate
+            Dim ret As Double = Math.Log((tmp - FV) / (tmp + PV)) / Math.Log(1D + Rate)
+            Return ret
+            'If Rate = -1 Then
+            '    Throw New ArgumentException("Argument 'Rate' is not a valid value.")
+            'End If
+            'If Pmt = 0 Then
+            '    If Rate = 0 Then
+            '        Throw New ArgumentException("Argument 'Pmt' is not a valid value.")
+            '    Else
+            '        Throw New ArgumentException("Cannot calculate number of periods using the arguments provided.")
+            '    End If
+            'End If
 
-            Dim current As Double = 0
-            ' FIXME : what is the meaning of double period value ?
-            Dim pperiod As Integer = 0
-            Dim fperiod As Integer = 0
-            Dim apmt As Double = Math.Abs(Pmt)
+            'Dim current As Double = 0
+            '' FIXME : what is the meaning of double period value ?
+            'Dim pperiod As Integer = 0
+            'Dim fperiod As Integer = 0
+            'Dim apmt As Double = Math.Abs(Pmt)
 
-            If PV <> 0 Then
-                If PV * Pmt < 0 Then
-                    current = Math.Abs(PV)
-                    If Due = DueDate.BegOfPeriod Then
-                        current = current - current * Rate
-                    End If
-                    While current > 0
-                        current = current + current * Rate
-                        current = current + apmt
-                        pperiod = pperiod + 1
-                    End While
-                Else
-                    current = apmt
-                    If Due = DueDate.BegOfPeriod Then
-                        PV = PV * (1 + Rate)
-                    End If
-                    While current < Math.Abs(PV)
-                        current = current + current * Rate
-                        current = current + apmt
-                        pperiod = pperiod - 1
-                    End While
-                End If
-            End If
+            'If PV <> 0 Then
+            '    If PV * Pmt < 0 Then
+            '        current = Math.Abs(PV)
+            '        If Due = DueDate.BegOfPeriod Then
+            '            current = current - current * Rate
+            '        End If
+            '        While current > 0
+            '            current = current + current * Rate
+            '            current = current + apmt
+            '            pperiod = pperiod + 1
+            '        End While
+            '    Else
+            '        current = apmt
+            '        If Due = DueDate.BegOfPeriod Then
+            '            PV = PV * (1 + Rate)
+            '        End If
+            '        While current < Math.Abs(PV)
+            '            current = current + current * Rate
+            '            current = current + apmt
+            '            pperiod = pperiod - 1
+            '        End While
+            '    End If
+            'End If
 
-            If FV <> 0 Then
-                If FV * Pmt < 0 Then
-                    current = apmt
-                    If Due = DueDate.EndOfPeriod Then
-                        current = 0
-                    End If
-                    While current < Math.Abs(FV)
-                        current = current + current * Rate
-                        current = current + apmt
-                        fperiod = fperiod + 1
-                    End While
-                Else
-                    fperiod = 1
-                    current = Math.Abs(FV)
-                    If Due = DueDate.BegOfPeriod Then
-                        current = current - current * Rate
-                    End If
-                    While current > 0
-                        current = current + current * Rate
-                        current = current - apmt
-                        fperiod = fperiod - 1
-                    End While
-                End If
-            End If
-            Return pperiod + fperiod
+            'If FV <> 0 Then
+            '    If FV * Pmt < 0 Then
+            '        current = apmt
+            '        If Due = DueDate.EndOfPeriod Then
+            '            current = 0
+            '        End If
+            '        While current < Math.Abs(FV)
+            '            current = current + current * Rate
+            '            current = current + apmt
+            '            fperiod = fperiod + 1
+            '        End While
+            '    Else
+            '        fperiod = 1
+            '        current = Math.Abs(FV)
+            '        If Due = DueDate.BegOfPeriod Then
+            '            current = current - current * Rate
+            '        End If
+            '        While current > 0
+            '            current = current + current * Rate
+            '            current = current - apmt
+            '            fperiod = fperiod - 1
+            '        End While
+            '    End If
+            'End If
+            'Return pperiod + fperiod
         End Function
 
         Public Function IPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _

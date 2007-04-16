@@ -37,6 +37,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 	[TestFixture]
 	public class SpecialDirectoriesProxyTest
 	{
+		[Category ("TargetJvmNotSupported")]//System.Windows.Forms.Application, ServerComputer.FileSystem property
 		[Test]
 		public void PathTest()
 		{

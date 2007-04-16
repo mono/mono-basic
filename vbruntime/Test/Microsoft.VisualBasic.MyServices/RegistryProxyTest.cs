@@ -36,6 +36,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 	[TestFixture]
 	public class RegistryProxyTest
 	{
+		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestGetValue ()
 		{
@@ -43,7 +44,8 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			object value = registry.GetValue ("HKEY_CLASSES_ROOT", ".txt", "a");
 			Assert.AreEqual ("a", value, "#01");
 		}
-		
+
+		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestSetValue ()
 		{
@@ -60,7 +62,8 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			
 			registry.ClassesRoot.DeleteSubKey(name);
 		}
-		
+
+		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestSetValue2 ()
 		{
@@ -77,7 +80,8 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			
 			registry.ClassesRoot.DeleteSubKey(name);
 		}
-		
+
+		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestGlobalKeys ()
 		{

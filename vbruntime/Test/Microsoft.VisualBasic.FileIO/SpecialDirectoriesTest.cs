@@ -37,6 +37,8 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 	[TestFixture]
 	public class SpecialDirectoriesTest
 	{
+		[Category ("TargetJvmNotSupported")]
+		[Category ("TargetJvmNotSupported")]//System.Windows.Forms.Application, ServerComputer.FileSystem property
 		[Test]
 		public void PathTest()
 		{

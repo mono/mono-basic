@@ -43,33 +43,45 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 			
 			ex = new MalformedLineException ();
 			Assert.AreEqual (0, ex.LineNumber, "A1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: Exception of type 'Microsoft.VisualBasic.FileIO.MalformedLineException' was thrown. Line Number:0", ex.ToString (), "A2");
+#endif
 
 			ex = new MalformedLineException ("msg");
 			Assert.AreEqual (0, ex.LineNumber, "B1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg Line Number:0", ex.ToString (), "B2");
-
+#endif
 
 			ex = new MalformedLineException ("msg", new Exception ("InnerException"));
 			Assert.AreEqual (0, ex.LineNumber, "C1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException\r\n   --- End of inner exception stack trace --- Line Number:0", ex.ToString (), "C2");
+#endif
 
 			ex = new MalformedLineException ("msg", 52);
 			Assert.AreEqual (52, ex.LineNumber, "D1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg Line Number:52", ex.ToString (), "D2");
-
+#endif
 
 			ex = new MalformedLineException ("msg", 53, new Exception("InnerException"));
 			Assert.AreEqual (53, ex.LineNumber, "E1");
+			#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException\r\n   --- End of inner exception stack trace --- Line Number:53", ex.ToString (), "E2");
-
+#endif
 
 			ex = new MalformedLineException ();
 			Assert.AreEqual (0, ex.LineNumber, "F1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: Exception of type 'Microsoft.VisualBasic.FileIO.MalformedLineException' was thrown. Line Number:0", ex.ToString (), "F2");
+#endif
+
 			ex.LineNumber = -345;
 			Assert.AreEqual (-345, ex.LineNumber, "G1");
+#if !TARGET_JVM
 			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: Exception of type 'Microsoft.VisualBasic.FileIO.MalformedLineException' was thrown. Line Number:-345", ex.ToString (), "G2");
+#endif
 		}
 	}
 }

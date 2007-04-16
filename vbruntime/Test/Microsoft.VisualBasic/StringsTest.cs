@@ -594,7 +594,8 @@ namespace MonoTests.Microsoft_VisualBasic
 		#endregion
 
 		#region FormatDateTime Tests
-        
+
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void FormatDateTime_GeneralDate()
 		{
@@ -626,7 +627,8 @@ namespace MonoTests.Microsoft_VisualBasic
             //  Assert.AreEqual(tmptime.ToLongDateString() + tmptime.ToLongTimeString(), Strings.FormatDateTime(DateTime.MaxValue, DateFormat.GeneralDate));
 		    //Assert.AreEqual(tmptime.ToLongDateString() + tmptime.ToLongTimeString(),Strings.FormatDateTime(new DateTime(2000,12,5,3,23,45,5),DateFormat.GeneralDate));
 		}
-        
+
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void FormatDateTime_LongDate()
 		{
@@ -654,6 +656,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("Tuesday, December 05, 2000",Strings.FormatDateTime(new DateTime(2000,12,5,3,23,45,5),DateFormat.LongDate));
 		}
 
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void FormatDateTime_ShortDate()
 		{
@@ -680,6 +683,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("12/5/2000",Strings.FormatDateTime(new DateTime(2000,12,5,3,23,45,5),DateFormat.ShortDate));
 		}
 
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void FormatDateTime_LongTime()
 		{
@@ -712,6 +716,7 @@ namespace MonoTests.Microsoft_VisualBasic
             Assert.AreEqual(tmptime2.ToLongTimeString(), Strings.FormatDateTime(new DateTime(2000, 12, 5, 3, 23, 45, 5), DateFormat.LongTime));
 		}
 
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void FormatDateTime_ShortTime()
 		{
