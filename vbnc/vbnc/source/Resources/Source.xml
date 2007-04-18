@@ -709,7 +709,7 @@
 	</Message>
 	<Message id="30179" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>{0} '{1}' and {2} '{3}' conflict in {4} '{5}'.</VBNCValue>
 		<VBValue>|1 '|2' and |3 '|2' conflict in |4 '|5'.</VBValue>
 	</Message>
 	<Message id="30180" level="Error">

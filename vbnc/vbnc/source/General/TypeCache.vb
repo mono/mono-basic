@@ -214,7 +214,6 @@ Public Class TypeCache
     Public [MS_VB_CS_Conversions_ToString__Char] As System.Reflection.MethodInfo
     Public [MS_VB_CS_Conversions_ToString__Date] As System.Reflection.MethodInfo
     Public [MS_VB_CS_Conversions_ToString__Byte] As System.Reflection.MethodInfo
-    Public [MS_VB_CS_Conversions_ToString__SByte] As System.Reflection.MethodInfo
     Public [MS_VB_CS_Conversions_ToString__Integer] As System.Reflection.MethodInfo
     Public [MS_VB_CS_Conversions_ToString__UInteger] As System.Reflection.MethodInfo
     Public [MS_VB_CS_Conversions_ToString__Long] As System.Reflection.MethodInfo
@@ -464,7 +463,7 @@ Public Class TypeCache
 
 #If DEBUG Then
         If result Is Nothing Then
-            Compiler.Report.Write("Could not find the method '" & Name & "' on the type '" & Type.FullName)
+            Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Could not find the method '" & Name & "' on the type '" & Type.FullName)
         End If
 #End If
 
@@ -560,7 +559,6 @@ Public Class TypeCache
         MS_VB_CS_Conversions_ToString__Char = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Char)
         MS_VB_CS_Conversions_ToString__Date = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Date)
         MS_VB_CS_Conversions_ToString__Byte = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Byte)
-        MS_VB_CS_Conversions_ToString__SByte = GetMethod(MS_VB_CS_Conversions, "ToString", Me.SByte)
         MS_VB_CS_Conversions_ToString__Integer = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Integer)
         MS_VB_CS_Conversions_ToString__UInteger = GetMethod(MS_VB_CS_Conversions, "ToString", Me.UInteger)
         MS_VB_CS_Conversions_ToString__Long = GetMethod(MS_VB_CS_Conversions, "ToString", Me.Long)
@@ -603,11 +601,11 @@ Public Class TypeCache
         MS_VB_CS_Operators_SubtractObject__Object_Object = GetMethod(MS_VB_CS_Operators, "SubtractObject", Me.Object, Me.Object)
         MS_VB_CS_Operators_XorObject__Object_Object = GetMethod(MS_VB_CS_Operators, "XorObject", Me.Object, Me.Object)
         MS_VB_CS_Operators_LikeObject__Object_Object = GetMethod(MS_VB_CS_Operators, "LikeObject", Me.Object, Me.Object, MS_VB_CompareMethod)
-        MS_VB_CS_Operators_LikeString__String_String = GetMethod(MS_VB_CS_Operators, "StringObject", Me.String, Me.String, MS_VB_CompareMethod)
+        MS_VB_CS_Operators_LikeString__String_String = GetMethod(MS_VB_CS_Operators, "LikeString", Me.String, Me.String, MS_VB_CompareMethod)
         MS_VB_CS_Operators_CompareObjectEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectEqual", Me.Object, Me.Object, Me.Boolean)
         MS_VB_CS_Operators_CompareObjectNotEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectNotEqual", Me.Object, Me.Object, Me.Boolean)
         MS_VB_CS_Operators_CompareObjectGreater__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectGreater", Me.Object, Me.Object, Me.Boolean)
-        MS_VB_CS_Operators_CompareObjectGreaterEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareGreaterNotEqual", Me.Object, Me.Object, Me.Boolean)
+        MS_VB_CS_Operators_CompareObjectGreaterEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectGreaterEqual", Me.Object, Me.Object, Me.Boolean)
         MS_VB_CS_Operators_CompareObjectLess__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectLess", Me.Object, Me.Object, Me.Boolean)
 
         MS_VB_CS_Operators_CompareObjectLessEqual__Object_Object_Bool = GetMethod(MS_VB_CS_Operators, "CompareObjectLessEqual", Me.Object, Me.Object, Me.Boolean)

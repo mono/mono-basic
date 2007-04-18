@@ -1,3 +1,10 @@
+2007-04-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Resources/Source.xml, Resources/Errors.resx,
+	  TypeDeclarations/PartialTypeDeclaration.vb, General/Message.vb,
+	  General/Messages.vb: Add an error message.
+	* General/TypeCache.vb: Small fixes.
+
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/ArgumentList.vb, Expressions/AddressOfExpression.vb,

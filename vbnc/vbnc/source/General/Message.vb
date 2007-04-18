@@ -152,6 +152,18 @@ Public Class Message
                     strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1))
                 Case 3
                     strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2))
+                Case 4
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3))
+                Case 5
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4))
+                Case 6
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5))
+                Case 7
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6))
+                Case 8
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6), m_Parameters(i)(7))
+                Case 9
+                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6), m_Parameters(i)(7), m_Parameters(i)(8))
                 Case Else
                     Helper.NotImplemented("")
             End Select

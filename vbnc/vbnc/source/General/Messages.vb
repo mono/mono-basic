@@ -1003,7 +1003,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30178 = 30178
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "{0} '{1}' and {2} '{3}' conflict in {4} '{5}'."
     ''' VB   = "|1 '|2' and |3 '|2' conflict in |4 '|5'."
     ''' </summary>
     ''' <remarks></remarks>

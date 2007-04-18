@@ -68,6 +68,26 @@ Public MustInherit Class TypeDeclaration
 
     Private m_AddHandlers As New Generic.List(Of AddOrRemoveHandlerStatement)
 
+    ReadOnly Property DescriptiveType() As String
+        Get
+            If TypeOf Me Is ClassDeclaration Then
+                Return "class"
+            ElseIf TypeOf Me Is ModuleDeclaration Then
+                Return "module"
+            ElseIf TypeOf Me Is EnumDeclaration Then
+                Return "enum"
+            ElseIf TypeOf Me Is StructureDeclaration Then
+                Return "structure"
+            ElseIf TypeOf Me Is DelegateDeclaration Then
+                Return "delegate"
+            ElseIf TypeOf Me Is InterfaceDeclaration Then
+                Return "interface"
+            Else
+                Return "type"
+            End If
+        End Get
+    End Property
+
     ReadOnly Property AddHandlers() As Generic.List(Of AddOrRemoveHandlerStatement)
         Get
             Return m_AddHandlers

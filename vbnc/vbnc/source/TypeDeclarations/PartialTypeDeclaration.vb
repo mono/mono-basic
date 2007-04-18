@@ -156,13 +156,34 @@ Public MustInherit Class PartialTypeDeclaration
 
         If Me.IsPartial Then
             recursive = True
+
             For Each item As PartialTypeDeclaration In m_PartialDeclarations
                 If item IsNot Me Then result = item.ResolveType AndAlso result
             Next
             recursive = False
 
             If CheckForPartialKeyword() = False Then
-                Helper.AddError("Partial classes were found, but no partial keyword was used.")
+                Dim first As PartialTypeDeclaration = Me
+                For i As Integer = 0 To m_PartialDeclarations.Count - 1
+                    Dim current As PartialTypeDeclaration = m_PartialDeclarations(i)
+                    Dim parent, parentname As String
+
+                    If current Is Me Then Continue For
+
+                    If current.IsNestedType Then
+                        parent = current.DeclaringType.DescriptiveType
+                        parentname = current.DeclaringType.Name
+                    Else
+                        parent = "namespace"
+                        parentname = current.Namespace
+                        If parentname = String.Empty Then parentname = "<Default>"
+                    End If
+                    'We show the error twice, with the location of each type
+                    'vbc doesn't do it like this, which has always bothered me since the class with the error is almost
+                    'always the one with the location that's not reported.
+                    Compiler.Report.ShowMessage(Messages.VBNC30179, first.Location, first.DescriptiveType, first.Name, current.DescriptiveType, current.Name, parent, parentname)
+                Next
+                result = False
             End If
             If TypeOf Me Is ClassDeclaration Then
                 Dim inheritedTypes() As Type

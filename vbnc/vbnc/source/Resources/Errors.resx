@@ -172,7 +172,7 @@
   <data name="30176"><value>CHANGEME</value></data>
   <data name="30177"><value>CHANGEME</value></data>
   <data name="30178"><value>The modifier '{0}' is specified more than once.</value></data>
-  <data name="30179"><value>CHANGEME</value></data>
+  <data name="30179"><value>{0} '{1}' and {2} '{3}' conflict in {4} '{5}'.</value></data>
   <data name="30180"><value>CHANGEME</value></data>
   <data name="30181"><value>CHANGEME</value></data>
   <data name="30182"><value>CHANGEME</value></data>
