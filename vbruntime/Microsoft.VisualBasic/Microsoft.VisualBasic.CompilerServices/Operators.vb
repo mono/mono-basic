@@ -178,7 +178,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Function
 
-        Private Shared Function GetTypeCode(ByVal obj As Object) As TypeCode
+        Friend Shared Function GetTypeCode(ByVal obj As Object) As TypeCode
             If (obj Is Nothing) Then
                 Return TypeCode.Empty
             ElseIf (TypeOf obj Is IConvertible) Then
@@ -546,9 +546,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return AddObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
@@ -855,9 +852,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Return ret
                 End If
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
                 Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
             End Try
 
@@ -865,7 +859,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
 
-        Private Shared Function InvokeBinaryOperator(ByVal left As Object, ByVal right As Object, ByVal operation As String, ByRef ret As Object) As Boolean
+        Friend Shared Function InvokeBinaryOperator(ByVal left As Object, ByVal right As Object, ByVal operation As String, ByRef ret As Object) As Boolean
             Dim tleft As Type = left.GetType()
             Dim tright As Type = right.GetType()
             Dim types() As Type = {tleft, tright}
@@ -981,9 +975,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return DivideObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '/' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
@@ -1055,9 +1046,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return IntDivideObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Or (TypeOf ex Is DivideByZeroException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '\' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 
@@ -1121,9 +1109,19 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function LikeObject(ByVal Source As Object, ByVal Pattern As Object, ByVal CompareOption As CompareMethod) As Object
-            Dim strLeft As String = StringType.FromObject(Source)
-            Dim strRight As String = StringType.FromObject(Pattern)
-            Return LikeString(strLeft, strRight, CompareOption)
+            Try
+                Select Case GetTypeCode(Source)
+                    Case TypeCode.String
+                        Return LikeString(Source.ToString(), Pattern.ToString(), CompareOption)
+                    Case Else
+                        Dim ret As Object
+                        If (InvokeBinaryOperator(Source, Pattern, "op_Like", ret)) Then
+                            Return ret
+                        End If
+                End Select
+            Catch ex As Exception
+            End Try
+            Throw New InvalidCastException("Operator 'Like' is not defined for type '" + Source.GetType().ToString() + "' and type '" + Pattern.GetType().ToString() + "'.")
         End Function
 
         Public Shared Function LikeString(ByVal Source As String, ByVal Pattern As String, ByVal CompareOption As CompareMethod) As Boolean
@@ -1169,7 +1167,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return ModObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Or (TypeOf ex Is DivideByZeroException) Then
+                If (TypeOf ex Is DivideByZeroException) Then
                     Throw ex
                 End If
             End Try
@@ -1275,9 +1273,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return MultiplyObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '*' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 
@@ -1663,9 +1658,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return opHandler.DoBitWiseOp(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '" + opHandler.GetOpName() + "' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 
@@ -1937,9 +1929,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return SubtractObjects(o1, o2)
             Catch ex As Exception
-                If (TypeOf ex Is NotImplementedException) Then
-                    Throw ex
-                End If
             End Try
             Throw New InvalidCastException("Operator '-' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 

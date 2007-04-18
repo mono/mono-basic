@@ -31,13 +31,13 @@
 Imports System
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
-'MONOTODO:("What should it do?")
 Namespace Microsoft.VisualBasic.CompilerServices
+    'This attribute is used to instruct the compiler to call InitializeComponent method from the default synthetic constructor or 
+    'to validate that InitializeComponent is called upon the creation of the target class from a user defined constructor.
     <AttributeUsage(AttributeTargets.Class, AllowMultiple:=False, Inherited:=False), EditorBrowsable(EditorBrowsableState.Never)> _
     Public NotInheritable Class DesignerGeneratedAttribute
         Inherits Attribute
         Public Sub New()
-            Throw New NotImplementedException
         End Sub
     End Class
 End Namespace

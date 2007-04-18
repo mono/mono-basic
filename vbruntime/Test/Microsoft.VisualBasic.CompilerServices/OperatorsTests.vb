@@ -2949,6 +2949,27 @@ Public Class OperatorsTests
     End Sub
 
     <Test()> _
+   Sub TestOperatorsLikeObject()
+        Dim o1, o2, o3 As Object
+        o1 = New OperatorsImplementer
+        o2 = New Object
+        o3 = New Object
+
+        Assert.IsTrue(o1 Like o2)
+        Try
+            Dim b1 As Boolean = o2 Like o1
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+
+        Try
+            Dim b2 As Boolean = o3 Like o2
+            Assert.Fail()
+        Catch ex As InvalidCastException
+        End Try
+    End Sub
+
+    <Test()> _
     Sub TestOperatorsCompare()
         Dim _false As Object = False
         Dim _true As Object = True
@@ -3108,6 +3129,10 @@ Class OperatorsImplementer
 
     Public Shared Operator +(ByVal a As OperatorsImplementer) As Object
         Return "+ok"
+    End Operator
+
+    Public Shared Operator Like(ByVal a As OperatorsImplementer, ByVal b As Object) As Boolean
+        Return True
     End Operator
 
 End Class

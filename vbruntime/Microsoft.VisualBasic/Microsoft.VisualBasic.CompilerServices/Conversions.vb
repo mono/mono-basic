@@ -41,9 +41,19 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function ChangeType(ByVal Expression As Object, ByVal TargetType As Type) As Object
             Return System.Convert.ChangeType(Expression, TargetType)
         End Function
+
         Public Shared Function FromCharAndCount(ByVal Value As Char, ByVal Count As Integer) As String
-            Throw New NotImplementedException
+            If (Count < 0) Then
+                Throw New ArgumentException("Count")
+            End If
+            Dim cArr() As Char = New Char(Count) {}
+            Dim i As Integer = 0
+            While (i < Count)
+                cArr(i) = Value
+            End While
+            FromCharArray(cArr)
         End Function
+
         Public Shared Function FromCharArray(ByVal Value As Char()) As String
             Return New String(Value)
         End Function

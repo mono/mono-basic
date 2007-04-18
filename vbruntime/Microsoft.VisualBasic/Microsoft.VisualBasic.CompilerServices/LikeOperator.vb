@@ -37,20 +37,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function LikeObject(ByVal Source As Object, ByVal Pattern As Object, ByVal CompareOption As CompareMethod) As Object
-
-            'FIXME: add defense checks
-
-            Dim type1 As Type = Source.GetType()
-            Select Case Type.GetTypeCode(type1)
-                Case TypeCode.String
-                    Return LikeString(Source.ToString(), Pattern.ToString(), CompareOption)
-                Case Else 'TODO: support custom Like
-                    Throw New NotImplementedException("implement me: supporting custom Like")
-            End Select
-
+            Return Operators.LikeObject(Source, Pattern, CompareOption)
         End Function
+
         Public Shared Function LikeString(ByVal Source As String, ByVal Pattern As String, ByVal CompareOption As CompareMethod) As Boolean
-            Return StringType.StrLike(Source, Pattern, CompareOption)
+            Return Operators.LikeString(Source, Pattern, CompareOption)
         End Function
     End Class
 End Namespace
