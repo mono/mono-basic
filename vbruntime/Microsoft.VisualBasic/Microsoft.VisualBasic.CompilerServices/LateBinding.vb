@@ -155,7 +155,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim flags As BindingFlags
             If realType.IsArray Then
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod
+#If TARGET_JVM Then
+                Return realType.InvokeMember("GetValue", flags, Nothing, o, args, Nothing)
+#Else
                 Return realType.InvokeMember("Get", flags, Nothing, o, args, Nothing)
+#End If
             Else
                 Dim defaultMembers() As MemberInfo = realType.GetDefaultMembers()
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod Or BindingFlags.GetProperty
