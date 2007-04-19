@@ -85,7 +85,7 @@ Namespace Microsoft.VisualBasic.FileIO
         End Sub
 
         Public Shared Sub DeleteDirectory(ByVal directory As String, ByVal onDirectoryNotEmpty As DeleteDirectoryOption)
-            DeleteDirectory(directory, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently, UICancelOption.ThrowException, DeleteDirectoryOption.DeleteAllContents, False)
+            DeleteDirectory(directory, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently, UICancelOption.ThrowException, onDirectoryNotEmpty, False)
         End Sub
 
         Public Shared Sub DeleteDirectory(ByVal directory As String, ByVal showUI As UIOption, ByVal recycle As RecycleOption)

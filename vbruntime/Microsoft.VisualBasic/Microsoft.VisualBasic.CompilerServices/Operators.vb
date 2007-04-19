@@ -1046,6 +1046,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End Select
                 Return IntDivideObjects(o1, o2)
             Catch ex As Exception
+                If (TypeOf ex Is DivideByZeroException) Then
+                    Throw ex
+                End If
             End Try
             Throw New InvalidCastException("Operator '\' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
 
