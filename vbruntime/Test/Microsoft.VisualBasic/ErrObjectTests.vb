@@ -102,6 +102,15 @@ Public Class ErrObjectTests
         End Try
         Assert.AreEqual(True, caughtException)
     End Sub
+
+    <Test()> _
+    Public Shared Sub ErrNumber3()
+        Try
+            Err.Raise(vbObjectError - 1) ' vbObjectError=-2147221504
+        Catch e As Exception
+            Assert.AreEqual(vbObjectError - 1, Err.Number)
+        End Try
+    End Sub
 #End Region
 
 #Region "Raise tests"
