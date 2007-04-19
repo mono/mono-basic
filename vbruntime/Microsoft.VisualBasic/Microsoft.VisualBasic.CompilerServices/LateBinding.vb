@@ -156,7 +156,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If realType.IsArray Then
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod
 #If TARGET_JVM Then
-                Return realType.InvokeMember("GetValue", flags, Nothing, o, args, Nothing)
+                Dim lb As LateBinder = New LateBinder
+                Return realType.InvokeMember("GetValue", flags, LBinder, o, args)
 #Else
                 Return realType.InvokeMember("Get", flags, Nothing, o, args, Nothing)
 #End If

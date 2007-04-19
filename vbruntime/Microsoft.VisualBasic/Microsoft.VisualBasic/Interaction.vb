@@ -53,8 +53,16 @@ Namespace Microsoft.VisualBasic
             ' Removed Throw exception, as it does not really harm that the beep does not work.
         End Sub
         Public Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
-            'TODO: Call LateBinding
-            Throw New NotImplementedException
+            Select Case UseCallType
+                Case CallType.Get
+                    Return LateBinding.LateGet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing, Nothing)
+                Case CallType.Let
+                    Throw New NotImplementedException("Microsoft.VisualBasic.Interaction.CallByName Case CallType.Let")
+                Case CallType.Method
+                    LateBinding.LateCall(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing, Nothing)
+                Case CallType.Set
+                    LateBinding.LateSet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing)
+            End Select
         End Function
         Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 

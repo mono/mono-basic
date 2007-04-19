@@ -41,7 +41,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function CallByName(ByVal Instance As Object, ByVal MethodName As String, ByVal UseCallType As CallType, ByVal ParamArray Arguments As Object()) As Object
-            Throw New NotImplementedException
+            Return Interaction.CallByName(Instance, MethodName, UseCallType, Arguments)
         End Function
         Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean
 
@@ -62,13 +62,13 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         Public Shared Function SystemTypeName(ByVal VbName As String) As String
 
-            'TODO: support the new Data types (for example unsigned data types)
-
             Select Case VbName.ToLower()
                 Case "boolean"
                     Return "System.Boolean"
                 Case "byte"
                     Return "System.Byte"
+                Case "sbyte"
+                    Return "System.SByte"
                 Case "char"
                     Return "System.Char"
                 Case "date"
@@ -79,12 +79,18 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Return "System.Double"
                 Case "integer"
                     Return "System.Int32"
+                Case "uinteger"
+                    Return "System.UInt32"
                 Case "long"
                     Return "System.Int64"
+                Case "ulong"
+                    Return "System.UInt64"
                 Case "object"
                     Return "System.Object"
                 Case "short"
                     Return "System.Int16"
+                Case "ushort"
+                    Return "System.UInt16"
                 Case "single"
                     Return "System.Single"
                 Case "string"
@@ -110,19 +116,25 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
             TmpObjType = Expression.GetType().Name.ToLower
 
-            'TODO: support the new Data types (for example unsigned data types)
-
             Select Case TmpObjType
                 Case "string"
                     RetObjType = "String"
                 Case "int32"
                     RetObjType = "Integer"
+                Case "uint32"
+                    RetObjType = "UInteger"
                 Case "int16"
                     RetObjType = "Short"
+                Case "uint16"
+                    RetObjType = "UShort"
                 Case "int64"
                     RetObjType = "Long"
+                Case "uint64"
+                    RetObjType = "ULong"
                 Case "byte"
                     RetObjType = "Byte"
+                Case "sbyte"
+                    RetObjType = "SByte"
                 Case "boolean"
                     RetObjType = "Boolean"
                 Case "char"
@@ -131,6 +143,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     RetObjType = "Date"
                 Case "single"
                     RetObjType = "Single"
+                Case "double"
+                    RetObjType = "Double"
+                Case "decimal"
+                    RetObjType = "Decimal"
                 Case "object"
                     RetObjType = "Object"
                 Case Else
@@ -149,19 +165,25 @@ Namespace Microsoft.VisualBasic.CompilerServices
             tmpStr = SystemName.ToLower
             If SystemName.ToLower.StartsWith("system.") Then tmpStr = SystemName.ToLower.Substring(7)
 
-            'TODO: support the new Data types (for example unsigned data types)
-
             Select Case tmpStr
                 Case "string"
                     RetObjType = "String"
                 Case "int32"
                     RetObjType = "Integer"
+                Case "uint32"
+                    RetObjType = "UInteger"
                 Case "int16"
                     RetObjType = "Short"
+                Case "uint16"
+                    RetObjType = "UShort"
                 Case "int64"
                     RetObjType = "Long"
+                Case "uint64"
+                    RetObjType = "ULong"
                 Case "byte"
                     RetObjType = "Byte"
+                Case "sbyte"
+                    RetObjType = "SByte"
                 Case "boolean"
                     RetObjType = "Boolean"
                 Case "char"
@@ -170,10 +192,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     RetObjType = "Date"
                 Case "single"
                     RetObjType = "Single"
+                Case "double"
+                    RetObjType = "Double"
+                Case "decimal"
+                    RetObjType = "Decimal"
                 Case "object"
                     RetObjType = "Object"
                 Case Else
-                    RetObjType = Nothing
+                    RetObjType = tmpStr
             End Select
 
             Return RetObjType

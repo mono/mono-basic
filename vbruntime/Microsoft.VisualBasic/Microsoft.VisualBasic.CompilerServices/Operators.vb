@@ -1546,7 +1546,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Case TypeCode.UInt64
                     Return CType(Convert.ToUInt64(obj), Long)
             End Select
-            Throw New NotImplementedException()
         End Function
 
         Public Shared Function OrObject(ByVal o1 As Object, ByVal o2 As Object) As Object

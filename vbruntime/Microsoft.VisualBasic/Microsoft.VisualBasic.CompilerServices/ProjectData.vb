@@ -107,6 +107,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
 #End If
             Dim pd As ProjectData = Instance()
             pd.ProjectError.SetException(ex)
+#If TARGET_JVM Then
+            'Console.WriteLine(ex)
+#End If
         End Sub
 
 #If NET_VER >= 2.0 Then
