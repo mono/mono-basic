@@ -2139,7 +2139,7 @@ Public Class Helper
         If IsDebugging() Then
             Console.WriteLine(msg)
             Diagnostics.Debug.WriteLine(msg)
-            Stop
+            Helper.Stop()
         Else
             Throw New NotImplementedException(msg)
         End If
@@ -2151,7 +2151,7 @@ Public Class Helper
         Diagnostics.Debug.WriteLine(msg)
         Console.WriteLine(msg)
         If IsDebugging() Then
-            Stop
+            Helper.Stop()
         Else
             'Throw New NotImplementedException(msg)
         End If

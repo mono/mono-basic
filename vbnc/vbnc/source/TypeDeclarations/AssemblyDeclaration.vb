@@ -366,7 +366,7 @@ Public Class AssemblyDeclaration
                 'Resolve all non-type members.
                 result = nMember.ResolveMember(ResolveInfo.Default(Type.Compiler)) AndAlso result
             Else
-                Stop '?
+                Helper.Stop() '?
             End If
         Next
 

@@ -180,7 +180,9 @@ Public Class SimpleNameExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim Name As String = m_Identifier.Identifier
 
-        If False Then Stop
+        If False Then
+            Helper.Stop()
+        End If
 
         '---------------------------------------------------------------------------------------------------------
         'A simple name expression consists of a single identifier followed by an optional type argument list. 
