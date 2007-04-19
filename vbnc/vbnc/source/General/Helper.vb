@@ -2180,10 +2180,24 @@ Public Class Helper
         Console.WriteLine("Error recovery not implemented yet.")
     End Sub
 
+    Private Shared Sub IndirectedStop()
+        'Stop
+        'This is just a work-around for the s390 that doesn't have the break instruction implemented yet.
+        Throw New StopException("STOP")
+    End Sub
+
+    Class StopException
+        Inherits Exception
+
+        Sub New(ByVal Message As String)
+            MyBase.New(Message)
+        End Sub
+    End Class
+
     <Diagnostics.DebuggerHidden()> Shared Sub NotImplemented(Optional ByVal message As String = "")
         If IsDebugging() Then
             Diagnostics.Debug.WriteLine(message)
-            Stop
+            IndirectedStop()
         Else
             Throw New NotImplementedException(message)
         End If
@@ -2191,13 +2205,13 @@ Public Class Helper
 
     <Diagnostics.DebuggerHidden()> Shared Sub StopIfDebugging(Optional ByVal Condition As Boolean = True)
         If Condition AndAlso IsDebugging() Then
-            Stop
+            IndirectedStop()
         End If
     End Sub
 
     <Diagnostics.DebuggerHidden()> Shared Sub [Stop](Optional ByVal Message As String = "")
         If IsDebugging() Then
-            Stop
+            IndirectedStop()
         Else
             Throw New InternalException(Message)
         End If
