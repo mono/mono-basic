@@ -1177,7 +1177,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New InvalidCastException("Operator 'Mod' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
         End Function
 
-        Public Shared Function SizeDown(ByVal num As Long, ByVal minTC As TypeCode) As Object
+        Private Shared Function SizeDown(ByVal num As Long, ByVal minTC As TypeCode) As Object
             While (True)
                 Select Case minTC
 

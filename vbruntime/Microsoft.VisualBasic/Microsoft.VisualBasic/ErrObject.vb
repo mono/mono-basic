@@ -86,7 +86,7 @@ Namespace Microsoft.VisualBasic
                         Optional ByVal HelpFile As System.Object = Nothing, _
                         Optional ByVal HelpContext As System.Object = Nothing)
 
-            If Number > 65535 Then
+            If Number > 65535 Or Number = 0 Then
                 Throw New ArgumentException("Argument 'Number' is not a valid value.")
             End If
 

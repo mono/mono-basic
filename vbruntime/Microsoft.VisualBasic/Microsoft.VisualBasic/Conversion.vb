@@ -87,7 +87,10 @@ Namespace Microsoft.VisualBasic
             If TypeOf Number Is Byte Then
                 Return Conversion.Fix(Convert.ToByte(Number))
             ElseIf TypeOf Number Is Boolean Then
-                Return Conversion.Fix(DoubleType.FromObject(Number))
+                If (Convert.ToBoolean(Number)) Then
+                    Return 1
+                End If
+                Return 0
             ElseIf TypeOf Number Is Long Then
                 Return Conversion.Fix(Convert.ToInt64(Number))
             ElseIf TypeOf Number Is Decimal Then
@@ -115,79 +118,108 @@ Namespace Microsoft.VisualBasic
         Public Function Fix(ByVal Number As Single) As Single
             Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
         End Function
+
         Public Function Hex(ByVal Number As Byte) As String
-            Return NumberToHex(Number)
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
+
         Public Function Hex(ByVal Number As Integer) As String
-            Return NumberToHex(Number)
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
+
         Public Function Hex(ByVal Number As Long) As String
-            Return NumberToHex(Number)
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
+
+        Public Function Hex(ByVal Number As Short) As String
+            Return Convert.ToString(Number, 16).ToUpper
+        End Function
+
         Public Function Hex(ByVal Number As Object) As String
 
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
             End If
 
-#If TRACE Then
-            Console.WriteLine("TRACE:Conversion.Hex:input:" + Number.ToString())
-#End If
+            If (TypeOf Number Is IConvertible) Then
+                Dim tc As TypeCode = CType(Number, IConvertible).GetTypeCode()
 
-            If TypeOf Number Is Byte Then
-                Return NumberToHex(Convert.ToByte(Number))
-            ElseIf TypeOf Number Is Short Then
-                Return NumberToHex(Convert.ToInt16(Number))
-            ElseIf TypeOf Number Is Integer Then
-                Return NumberToHex(Convert.ToInt32(Number))
-            ElseIf TypeOf Number Is Long Then
-                Return NumberToHex(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is String Then
-                'support &H and &O
-                Dim strNumber As String
-                strNumber = Number.ToString
-                If strNumber.StartsWith("&") Then
-                    If strNumber.Substring(1, 1).ToUpper = "O" Then
-                        Return NumberToHex(Convert.ToInt64(strNumber.Substring(2), 8))
-                    ElseIf strNumber.Substring(1, 1).ToUpper = "H" Then
-                        Return NumberToHex(Convert.ToInt64(strNumber.Substring(2), 16))
-                    Else
-                        'this probably will throw an exception
-                        Return NumberToHex(Convert.ToInt64(Number))
-                    End If
-                Else
-                    Return NumberToHex(Convert.ToInt64(Number))
-                End If
-            ElseIf TypeOf Number Is Double Then
-                Return NumberToHex(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is Decimal Then
-                Return NumberToHex(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is Single Then
-                Return NumberToHex(Convert.ToInt32(Number))
+                Select Case tc
+                    Case TypeCode.Byte
+                        Return Hex(Convert.ToByte(Number))
+                    Case TypeCode.Decimal
+                        Return Hex(SizeDown(Convert.ToInt64(Number)))
+                    Case TypeCode.Double
+                        Return Hex(SizeDown(Convert.ToInt64(Number)))
+                    Case TypeCode.Int16
+                        Return Hex(Convert.ToInt16(Number))
+                    Case TypeCode.Int32
+                        Return Hex(Convert.ToInt32(Number))
+                    Case TypeCode.Int64
+                        Return Hex(Convert.ToInt64(Number))
+                    Case TypeCode.Single
+                        Return Hex(SizeDown(Convert.ToInt32(Number)))
+                    Case TypeCode.String
+                        Dim strNumber As String
+                        strNumber = Number.ToString
+                        If strNumber.StartsWith("&") Then
+                            If strNumber.Substring(1, 1).ToUpper = "O" Then
+                                Return Hex(SizeDown(Convert.ToInt64(strNumber.Substring(2), 8)))
+                            ElseIf strNumber.Substring(1, 1).ToUpper = "H" Then
+                                Return Hex(SizeDown(Convert.ToInt64(strNumber.Substring(2), 16)))
+                            Else
+                                Return Hex(SizeDown(Convert.ToInt64(Number)))
+                            End If
+                        Else
+                            Return Hex(SizeDown(Convert.ToInt64(Number)))
+                        End If
+#If NET_2_0 Then
+                    Case TypeCode.SByte
+                        Return Hex(Convert.ToSByte(Number))
+                    Case TypeCode.UInt16
+                        Return Hex(Convert.ToUInt16(Number))
+                    Case TypeCode.UInt32
+                        Return Hex(Convert.ToUInt32(Number))
+                    Case TypeCode.UInt64
+                        Return Hex(Convert.ToUInt64(Number))
+#End If
+                    Case Else
+                        Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
+
+                End Select
             Else
-                Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
+                Throw New System.ArgumentException("Argument 'Number' is not a number.")
             End If
         End Function
-        Public Function Hex(ByVal Number As Short) As String
-            Return NumberToHex(Number)
-        End Function
-        Private Function NumberToHex(ByVal Number As Long) As String
-#If TRACE Then
-            Console.WriteLine("TRACE:Conversion.NumberToHex:input:" + Number.ToString())
-#End If
 
-            If Number >= 0 Then
-                Return Convert.ToString(Number, 16).ToUpper
-            Else
-                'if the argument is negative - The unsigned value is the argument plus 2^32 
-                Number = Number + Convert.ToInt64(Math.Pow(2, 32))
-#If TRACE Then
-                Console.WriteLine("TRACE:Conversion.NumberToHex:Negative Number:" + Number.ToString())
-#End If
-                Return Convert.ToString(Number, 16).ToUpper
+        Private Function SizeDown(ByVal num As Long) As Object
+            'If (num <= Byte.MaxValue And num >= 0) Then
+            '    Return CType(num, Byte)
+            'End If
+
+            'If (num <= SByte.MaxValue And num >= SByte.MinValue) Then
+            '    Return CType(num, SByte)
+            'End If
+
+            'If (num <= Int16.MaxValue And num >= Int16.MinValue) Then
+            '    Return CType(num, Int16)
+            'End If
+
+            'If (num <= UInt16.MaxValue And num >= 0) Then
+            '    Return CType(num, UInt16)
+            'End If
+
+            If (num <= Int32.MaxValue And num >= Int32.MinValue) Then
+                Return CType(num, Int32)
             End If
 
+            If (num <= UInt32.MaxValue And num >= 0) Then
+                Return CType(num, UInt32)
+            End If
+
+            Return num
         End Function
+
         Public Function Int(ByVal Number As Decimal) As Decimal
             Return Decimal.Floor(Number)
         End Function
@@ -238,59 +270,74 @@ Namespace Microsoft.VisualBasic
             Return System.Convert.ToSingle(Math.Floor(Number))
         End Function
         Public Function Oct(ByVal Number As Byte) As String
-            Return NumberToOct(Number)
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         Public Function Oct(ByVal Number As Integer) As String
-            Return NumberToOct(Number)
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         Public Function Oct(ByVal Number As Long) As String
-            Return NumberToOct(Number)
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         Public Function Oct(ByVal Number As Object) As String
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
             End If
 
-            If TypeOf Number Is Byte Then
-                Return NumberToOct(Convert.ToByte(Number))
-            ElseIf TypeOf Number Is Short Then
-                Return NumberToOct(Convert.ToInt16(Number))
-            ElseIf TypeOf Number Is Integer Then
-                Return NumberToOct(Convert.ToInt32(Number))
-            ElseIf TypeOf Number Is Long Then
-                Return NumberToOct(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is String Then
-                Return NumberToOct(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is Double Then
-                Return NumberToOct(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is Decimal Then
-                Return NumberToOct(Convert.ToInt64(Number))
-            ElseIf TypeOf Number Is Single Then
-                Return NumberToOct(Convert.ToInt32(Number))
+            If (TypeOf Number Is IConvertible) Then
+                Dim tc As TypeCode = CType(Number, IConvertible).GetTypeCode()
+
+                Select Case tc
+                    Case TypeCode.Byte
+                        Return Oct(Convert.ToByte(Number))
+                    Case TypeCode.Decimal
+                        Return Oct(SizeDown(Convert.ToInt64(Number)))
+                    Case TypeCode.Double
+                        Return Oct(SizeDown(Convert.ToInt64(Number)))
+                    Case TypeCode.Int16
+                        Return Oct(Convert.ToInt16(Number))
+                    Case TypeCode.Int32
+                        Return Oct(Convert.ToInt32(Number))
+                    Case TypeCode.Int64
+                        Return Oct(Convert.ToInt64(Number))
+                    Case TypeCode.Single
+                        Return Oct(SizeDown(Convert.ToInt32(Number)))
+                    Case TypeCode.String
+                        Dim strNumber As String
+                        strNumber = Number.ToString
+                        If strNumber.StartsWith("&") Then
+                            If strNumber.Substring(1, 1).ToUpper = "O" Then
+                                Return Oct(SizeDown(Convert.ToInt64(strNumber.Substring(2), 8)))
+                            ElseIf strNumber.Substring(1, 1).ToUpper = "H" Then
+                                Return Oct(SizeDown(Convert.ToInt64(strNumber.Substring(2), 16)))
+                            Else
+                                Return Oct(SizeDown(Convert.ToInt64(Number)))
+                            End If
+                        Else
+                            Return Oct(SizeDown(Convert.ToInt64(Number)))
+                        End If
+#If NET_2_0 Then
+                    Case TypeCode.SByte
+                        Return Oct(Convert.ToSByte(Number))
+                    Case TypeCode.UInt16
+                        Return Oct(Convert.ToUInt16(Number))
+                    Case TypeCode.UInt32
+                        Return Oct(Convert.ToUInt32(Number))
+                    Case TypeCode.UInt64
+                        Return Oct(Convert.ToUInt64(Number))
+#End If
+                    Case Else
+                        Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
+
+                End Select
             Else
-                Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
+                Throw New System.ArgumentException("Argument 'Number' is not a number.")
             End If
         End Function
+
         Public Function Oct(ByVal Number As Short) As String
-            Return NumberToOct(Number)
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
-        Private Function NumberToOct(ByVal Number As Long) As String
-#If TRACE Then
-            Console.WriteLine("TRACE:Conversion.NumberToOct:input:" + Number.ToString())
-#End If
 
-            If Number >= 0 Then
-                Return Convert.ToString(Number, 8).ToUpper
-            Else
-                'if the argument is negative - The unsigned value is the argument plus 2^32 
-                Number = Number + Convert.ToInt64(Math.Pow(2, 32))
-#If TRACE Then
-                Console.WriteLine("TRACE:Conversion.NumberToOct:Negative Number:" + Number.ToString())
-#End If
-                Return Convert.ToString(Number, 8).ToUpper
-            End If
-
-        End Function
         Public Function Str(ByVal Number As Object) As String
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
@@ -549,35 +596,35 @@ Namespace Microsoft.VisualBasic
 #If NET_2_0 Then
         <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As SByte) As String
-            Return NumberToHex(CByte(Number))
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As UShort) As String
-            Return NumberToHex(CShort(Number))
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As UInteger) As String
-            Return NumberToHex(CInt(Number))
+            Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As ULong) As String
-            Return NumberToHex(CLng(Number))
+            Return Convert.ToString(CLng(Number), 16).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As SByte) As String
-            Return NumberToOct(CByte(Number))
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As UShort) As String
-            Return NumberToOct(CShort(Number))
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As UInteger) As String
-            Return NumberToOct(CInt(Number))
+            Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
         Public Function Oct(ByVal Number As ULong) As String
-            Return NumberToOct(CLng(Number))
+            Return Convert.ToString(CLng(Number), 8).ToUpper
         End Function
 #End If
     End Module

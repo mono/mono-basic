@@ -75,7 +75,8 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Financial.DDB (1, 1, 0, 1, 1);
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void DDBArg4()
@@ -101,7 +102,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			ddb = Financial.DDB (1000, 50, 10, 5, 2);
 			Assert.AreEqual(81.92000000000016, ddb, 0.00000001);
 		}
-	
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void DDB_1()
 		{
@@ -301,6 +303,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region FV Tests
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void FV()
 		{
@@ -323,6 +326,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual (-4.25, d,"#FV06");
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void FV_1()
 		{
@@ -635,6 +639,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Financial.MIRR(ref values,0.1,0.12);
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(DivideByZeroException))]
 		public void MIRR_6()
@@ -717,14 +722,16 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Financial.IPmt (3, 6, 4, 2, 2, DueDate.BegOfPeriod);
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void IPmtArgs2()
 		{
 			Financial.IPmt (3, 0, 4, 2, 2, DueDate.BegOfPeriod);
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void IPmt()
 		{
@@ -741,7 +748,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(8.92508391821792, d, 0.000001, "#IPmt04");
 
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void IPmt_1()
 		{
@@ -782,13 +790,15 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region Pmt Tests
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void PmtArgs()
 		{
 			Financial.Pmt (1, 0, 1, 1, DueDate.BegOfPeriod);
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void Pmt()
 		{
@@ -810,17 +820,18 @@ namespace MonoTests.Microsoft_VisualBasic
 			d = Financial.Pmt (0, 1, 0, 0, DueDate.EndOfPeriod);
 			Assert.AreEqual ( 0, d,"#Pmt06");
 		}
-	
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void Pmt_1()
 		{
-			Assert.AreEqual(-1095.7017014703874,Financial.Pmt(0.1/48, 48, 50000, 0, DueDate.EndOfPeriod ));
+			Assert.AreEqual (NormalizeDoubleAccuracy (- 1095.7017014703874), NormalizeDoubleAccuracy(Financial.Pmt (0.1 / 48, 48, 50000, 0, DueDate.EndOfPeriod)));
 
-			Assert.AreEqual(-1093.4237353550641,Financial.Pmt(0.1/48, 48, 50000, 0, DueDate.BegOfPeriod ));
+			Assert.AreEqual(NormalizeDoubleAccuracy(-1093.4237353550641),NormalizeDoubleAccuracy(Financial.Pmt(0.1/48, 48, 50000, 0, DueDate.BegOfPeriod )));
 
-			Assert.AreEqual(-3078.7717710778288,Financial.Pmt(0.1/48, 48, 50000, 100000, DueDate.EndOfPeriod ));
+			Assert.AreEqual(NormalizeDoubleAccuracy(-3078.7717710778288),NormalizeDoubleAccuracy(Financial.Pmt(0.1/48, 48, 50000, 100000, DueDate.EndOfPeriod )));
 
-			Assert.AreEqual(3182.938437744494,Financial.Pmt(0.1/48, -48, 50000, 100000, DueDate.EndOfPeriod ));
+			Assert.AreEqual(NormalizeDoubleAccuracy(3182.938437744494),NormalizeDoubleAccuracy(Financial.Pmt(0.1/48, -48, 50000, 100000, DueDate.EndOfPeriod )));
 		}
 
 		[Test]
@@ -835,6 +846,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region PPmt Tests
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void PPmtArgs1()
@@ -848,7 +860,8 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			double d = Financial.PPmt (1, 2, 1, 1, 1, DueDate.BegOfPeriod);
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void PPmt()
 		{
@@ -864,7 +877,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			d = Financial.PPmt (-5, 5, 7, -7, -2, DueDate.BegOfPeriod);
 			Assert.AreEqual( -0.175770521818777, d,0.000001,"#PPmt04");
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void PPmt_1()
 		{
@@ -981,7 +995,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			d = Financial.PV (1, 1, 1, 1, DueDate.EndOfPeriod);
 			Assert.AreEqual (-1, d,"#PV02");
 		}
-		
+
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void PV_1()
 		{
