@@ -54,6 +54,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#region Asc Tests
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void Asc1() 
 		{
@@ -399,6 +400,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("5",Strings.Format(5, String.Empty));
 		}
 
+		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void Format_Date1()
 		{
@@ -466,6 +468,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("Saturday, 01, 27, 2001",Strings.Format(d, "dddd, MM, d, yyyy"));
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void Format_Date_UserDefined2()
 		{
@@ -1621,6 +1624,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Strings.Split("aa aa aa aa aa aa", " ",0,CompareMethod.Binary);
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(OverflowException))]
 		public void Split_7()

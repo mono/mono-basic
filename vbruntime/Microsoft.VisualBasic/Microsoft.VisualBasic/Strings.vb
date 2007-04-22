@@ -1084,7 +1084,12 @@ Namespace Microsoft.VisualBasic
                     Dim carr() As Char = str.ToCharArray()
                     Dim inWord As Boolean = False
                     For i As Integer = 0 To carr.Length - 1
+#If NET_2_0 Then
+                        If (Char.IsLetter(carr(i)) Or carr(i) = "'"c Or Char.IsDigit(carr(i))) Then
+#Else
                         If (Char.IsLetter(carr(i)) Or carr(i) = "'"c) Then
+#End If
+
                             If Not inWord Then
                                 carr(i) = Char.ToUpper(carr(i))
                             Else

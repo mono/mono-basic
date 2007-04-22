@@ -1161,6 +1161,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		#region Val Tests
 
 		// Test the Val function
+		[Category ("TargetJvmNotWorking")]//bug parsing scientific notation number
 		[Test]
 		public void Val() 
 		{

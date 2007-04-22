@@ -655,6 +655,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			object o = col[3];
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void Index_7()
@@ -1162,6 +1163,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.IsFalse(en.MoveNext());
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void GetEnumerator_5()
 		{
@@ -1199,6 +1201,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.IsFalse(en.MoveNext());
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void GetEnumerator_10()
 		{
@@ -1239,6 +1242,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.IsFalse(en.MoveNext());
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 #if !NET_2_0
 		[ExpectedException(typeof(IndexOutOfRangeException))]
@@ -1265,6 +1269,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			object o = en.Current;
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void GetEnumerator_12()
 		{
@@ -1302,6 +1307,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.IsFalse(en.MoveNext());
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void GetEnumerator_13()
 		{
@@ -1372,6 +1378,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.IsFalse(en.MoveNext());
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 #if !NET_2_0
 		[ExpectedException(typeof(IndexOutOfRangeException))]
@@ -1646,6 +1653,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,((IList)col).IndexOf(s3));
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 #if NET_2_0
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -1782,7 +1790,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		#endregion
 
-
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void Dirty_Read()
@@ -1804,6 +1812,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		
 		// Test all the Exceptions we're supposed to throw
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void Exception ()
 		{
@@ -2153,6 +2162,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual (false, list.Contains ("Something"), "#9");
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void IList_Indexer_Get ()
 		{
@@ -2198,6 +2208,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual ("Baseball", val, "#6");
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 #if !NET_2_0
 		[Category ("NotDotNet")] // setter is badly broken in MS.NET 1.x
