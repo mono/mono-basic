@@ -123,11 +123,11 @@ Public Class LateBindingTests5
             Return True
         End Function
 
-        Function f3(ByVal j As Integer)
+        Function f3(ByVal j As Integer) As Integer
             i3 += j
         End Function
 
-        Function f4(ByVal j As Integer)
+        Function f4(ByVal j As Integer) As Integer
             i3 += j * 10
         End Function
     End Class

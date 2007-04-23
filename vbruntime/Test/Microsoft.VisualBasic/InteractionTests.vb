@@ -58,7 +58,7 @@ Public Class InteractionTests
     Public Sub Switch_2()
 
         Dim caughtException As Boolean = False
-        Dim CityName As String
+        Dim CityName As String = Nothing
 
         Try
             Interaction.Switch(CityName = "London", CityName = "Rome", "Italian", CityName = "Paris", "French")

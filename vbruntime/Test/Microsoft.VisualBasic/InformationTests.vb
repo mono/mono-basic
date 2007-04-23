@@ -54,8 +54,8 @@ Public Class InformationTests
         Dim oDT5 As Single
         Dim oDT6 As Double
         Dim oDT7 As Decimal
-        Dim oDT8 As String
-        Dim oDT9 As Object
+        Dim oDT8 As String = Nothing
+        Dim oDT9 As Object = Nothing
         Dim oDT10 As Boolean
         Dim oDT11 As Char
         Dim oDT12 As Date
@@ -77,7 +77,7 @@ Public Class InformationTests
 
     <Test()> _
     Public Sub IsNothing_2()
-        Dim oDT1 As Test1
+        Dim oDT1 As Test1 = Nothing
         Assert.AreEqual(True, Information.IsNothing(oDT1))
 
     End Sub

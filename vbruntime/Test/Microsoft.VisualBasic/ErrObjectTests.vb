@@ -77,7 +77,7 @@ Public Class ErrObjectTests
     <Test()> _
     Public Sub ErrNumber2()
 
-        Dim i As Integer
+        'Dim i As Integer
         Dim caughtException As Boolean
 
         ' Number is greater than 65535

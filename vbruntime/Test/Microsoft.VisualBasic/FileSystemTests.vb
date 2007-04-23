@@ -114,7 +114,7 @@ Public Class FilesSystemTest
     <Test()> _
     Public Sub CurDir_1()
 
-        Dim cur_dir, test_dir, tmpStr As String
+        Dim cur_dir, test_dir As String
         Dim bRes As Boolean = True
         FileSystem.ChDir(DATA_DIR)
         cur_dir = Directory.GetCurrentDirectory()
@@ -410,7 +410,7 @@ Public Class FilesSystemTest
         '' check attr to directory
         Dim test_dir As String = "GetAttr_Dirtest2"
         Dim file_attr, req_attr As FileAttribute
-        Dim fs As FileStream
+
         req_attr = FileAttributes.Hidden Or FileAttributes.Archive Or FileAttributes.Directory
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
 
@@ -675,7 +675,7 @@ Public Class FilesSystemTest
         '' check attr on directory
         Dim test_dir As String = "SetAttr_Dirtest2"
         Dim file_attr, req_attr As FileAttribute
-        Dim fs As FileStream
+
         req_attr = vbHidden Or vbArchive
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
 
@@ -936,7 +936,6 @@ Public Class FilesSystemTest
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir3)
         Dim test_file1 As String = "Dir_test_11_file_1.check"
         Dim test_file2 As String = "Dir_test_11_file_2.check"
-        Dim res_file As String
 
         Dim fs1 As FileStream = File.Create(DATA_DIR + sep_ch + test_file1, 1024)
         fs1.Close()

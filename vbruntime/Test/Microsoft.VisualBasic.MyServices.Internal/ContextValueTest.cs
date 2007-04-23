@@ -38,7 +38,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices.Internal
 	public class ContextValueTest
 	{
 		[Test]
-		[Ignore("No idea what this clas is supposed to do yet")]
+		[Ignore("No idea what this class is supposed to do yet")]
 		public void T1 ()
 		{
 		}		

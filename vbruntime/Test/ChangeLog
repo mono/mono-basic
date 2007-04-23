@@ -1,3 +1,27 @@
+2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 2005VB_test_VB.dll.rsp, 2005VB_test_VB.dll.sources: Updated.
+	* Microsoft.VisualBasic.CompilerServices/LateBindingTests4.vb,
+	  Microsoft.VisualBasic.CompilerServices/LateBindingTests5.vb,
+	  Microsoft.VisualBasic/ErrObjectTests.vb,
+	  Microsoft.VisualBasic/InteractionTests.vb,
+	  Microsoft.VisualBasic/InformationTests.vb: Remove warnings.
+	* bin, bin/nunit-console.exe.config, bin/nunit.util.dll,
+	  bin/nunit.framework.dll, bin/nunit-console.exe, bin/nunit.core.dll:
+	  Added for unit tests.
+	* Makefile: C# tests can now be run on Mono.
+	* Microsoft.VisualBasic/FileSystemTests.vb: Remove warnings and fix
+	  lineendings.
+	* Microsoft.VisualBasic.MyServices.Internal/ContextValueTest.cs: Fix
+	  typo and lineendings.
+	* Microsoft.VisualBasic.FileIO/TextFieldParserTest.cs,
+	  Microsoft.VisualBasic.FileIO/SpecialDirectoriesTest.cs,
+	  Microsoft.VisualBasic.FileIO/MalformedLineExceptionTest.cs,
+	  Microsoft.VisualBasic.FileIO/FileSystemTest.vb,
+	  Microsoft.VisualBasic.CompilerServices/ObjectTypeTests.vb,
+	  Microsoft.VisualBasic.CompilerServices/LateBindingTests6.vb: Fix
+	  lineendings.
+
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.

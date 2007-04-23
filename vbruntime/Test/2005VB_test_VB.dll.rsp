@@ -4,3 +4,5 @@
 -target:library
 -debug:full
 -novbruntimeref
+-libpath:bin
+-optionstrict-

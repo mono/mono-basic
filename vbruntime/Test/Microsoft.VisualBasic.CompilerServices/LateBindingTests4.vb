@@ -240,7 +240,7 @@ Public Class LateBindingTests4
 
     <Test()> _
     Public Sub LateBind_NamedParam_3()
-        Dim i As Integer
+        'Dim i As Integer
         Dim o As Object = New C7
         Dim a As Integer = o.F(a1:="caa", i:=2.321)
         Assert.AreEqual(10, a)
@@ -248,7 +248,7 @@ Public Class LateBindingTests4
     End Sub
 
     Class C8
-        Public Function F(ByRef i As Integer, ByRef j As Integer)
+        Public Function F(ByRef i As Integer, ByRef j As Integer) As Integer
             i = 9
             j = 10
         End Function
