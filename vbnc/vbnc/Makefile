@@ -41,3 +41,5 @@ uninstall-local: uninstall-extras
 uninstall-extras:
 	rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc.rsp
 
+install-binary: default
+	cp ../../class/lib/vbnc/* ../../class/lib/bootstrap
