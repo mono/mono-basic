@@ -1,0 +1,1 @@
+/target:winexe /main:MBasTest.MyForm /rootnamespace:MBasTest /r:System.dll /r:System.Windows.Forms.dll
