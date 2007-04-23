@@ -594,6 +594,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(s2,col[key2]);
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void Index_3()
@@ -1694,6 +1695,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(s3 + s3 + s3,col[10]);
 		}
 
+		[Category ("TargetJvmNotWorking")]
 		[Test]
 #if !NET_2_0
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
