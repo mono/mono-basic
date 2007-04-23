@@ -1060,8 +1060,18 @@ Public Class TypeDescriptor
     End Function
 
     Public Overrides Function IsSubclassOf(ByVal c As System.Type) As Boolean
-        DumpMethodInfo()
-        Return MyBase.IsSubclassOf(c)
+        Dim result As Boolean
+
+        Dim base As Type = Me.BaseType
+        Do While base IsNot Nothing
+            If Helper.CompareType(base, c) Then
+                result = True
+                Exit Do
+            End If
+            base = base.BaseType
+        Loop
+        DumpMethodInfo(result)
+        Return result
     End Function
 
     Protected Overrides Function IsValueTypeImpl() As Boolean

@@ -87,8 +87,9 @@ Public Class CatchStatement
             Info.Stack.Push(Compiler.TypeCache.Exception)
             Emitter.MarkLabel(Info, DoWhenComparison)
             Emitter.EmitPop(Info, Compiler.TypeCache.Exception)
-            result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
+            'result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+            result = CBoolExpression.GenerateCode(m_When, Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+            'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
             Emitter.MarkLabel(Info, EndWhen)
             Info.Stack.Pop(Compiler.TypeCache.Boolean)
             Emitter.EmitBeginCatch(Info, Nothing)

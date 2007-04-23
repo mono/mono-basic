@@ -86,8 +86,9 @@ Public Class IfStatement
         Dim startFalse As Label = Info.ILGen.DefineLabel
         EndLabel = Info.ILGen.DefineLabel
 
-        result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-        Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
+        'result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+        'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
+        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
 
         Emitter.EmitBranchIfFalse(Info, startFalse)
         'True code

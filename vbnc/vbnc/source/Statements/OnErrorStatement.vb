@@ -44,6 +44,14 @@ Public Class OnErrorStatement
         m_IsGotoZero = IsGotoZero
     End Sub
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        If m_ResolvedLabel IsNot Nothing Then result = m_ResolvedLabel.ResolveTypeReferences() AndAlso result
+
+        Return result
+    End Function
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

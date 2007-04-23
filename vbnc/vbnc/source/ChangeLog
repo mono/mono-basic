@@ -1,5 +1,19 @@
 2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/BinaryExpressions/BinaryExpression.vb: Don't use
+	  left/rightOperandType to determine intrinsicness, but the true
+	  typecode.
+	* Statements/IfStatement.vb, Statements/CatchStatement.vb: Use
+	  CBoolExpression to emit boolean conversion.
+	* Statements/OnErrorStatement.vb, Members/BoundList.vb: Implement
+	  ResolveTypeReferences.
+	* vbnc.vbproj: Update.
+	* Members/VariableDeclaration.vb: It's Strict On that requires variable
+	  type, not Explicit On.
+	* Descriptors/TypeDescriptor.vb: Implement IsSubclassOf.
+
+2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/Helper.vb: No workaround is necessary for the s390 anymore,
 	  remove it.
 	* General/MyGenerator.vb: Don't add a Main in MyApplication if a main

@@ -2151,7 +2151,7 @@ Public Class Helper
         Diagnostics.Debug.WriteLine(msg)
         Console.WriteLine(msg)
         If IsDebugging() Then
-            Helper.Stop()
+            'Helper.Stop()
         Else
             'Throw New NotImplementedException(msg)
         End If

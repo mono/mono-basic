@@ -52,4 +52,12 @@ Public Class BoundList
         Return Helper.ResolveCodeCollection(m_Expressions, info)
     End Function
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = Helper.ResolveTypeReferences(m_Expressions) AndAlso result
+
+        Return result
+    End Function
+
 End Class

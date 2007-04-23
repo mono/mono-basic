@@ -227,7 +227,7 @@ Public Class VariableDeclaration
                     m_NewExpression = New DelegateOrObjectCreationExpression(Me, m_TypeName.AsNonArrayTypeName, m_ArgumentList)
                 End If
             Else
-                If Me.Location.File.IsOptionExplicitOn Then
+                If Me.Location.File.IsOptionStrictOn Then
                     Helper.AddError("Variable type must be specified.")
                 Else
                     Helper.AddWarning("Variable type should be specified.")

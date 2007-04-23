@@ -170,8 +170,8 @@ Public MustInherit Class BinaryExpression
             '- The set of operators to be considered is all the user-defined operators in Y, plus O, if it exists.
             'If Y is an intrinsic type, then perform the same steps as for X (obviously, both can't be intrinsic types at this point).
             'Do overload resolution on the set of operators to be considered.
-            Dim isLeftIntrinsic As Boolean = leftOperandType <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.LeftType)
-            Dim isRightIntrinsic As Boolean = rightOperandType <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.RightType)
+            Dim isLeftIntrinsic As Boolean = Me.LeftTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.LeftType)
+            Dim isRightIntrinsic As Boolean = Me.RightTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.RightType)
 
             If isLeftIntrinsic AndAlso isRightIntrinsic OrElse IsOverloadable = False Then
                 Dim destinationType As Type

@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -75,6 +75,8 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>../bin/</OutputPath>
@@ -98,6 +100,8 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
     <OutputPath>../bin/</OutputPath>
@@ -125,6 +129,8 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
     <DebugSymbols>True</DebugSymbols>
@@ -160,6 +166,8 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -178,6 +186,8 @@
     <WarningLevel>1</WarningLevel>
     <NoWarn>
     </NoWarn>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
     <Import Include="System" />
