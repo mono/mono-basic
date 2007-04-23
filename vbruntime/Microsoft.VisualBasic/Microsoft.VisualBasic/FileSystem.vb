@@ -197,21 +197,17 @@ Namespace Microsoft.VisualBasic
         Public Function FileDateTime(ByVal PathName As String) As Date
             If (PathName = "") Then Throw New System.IO.FileNotFoundException("File " + "'" + "'" + " not found.")
 
-            Dim fi As New FileInfo(PathName)
-#If TARGET_JVM = False Then
-            Dim ch As Char
+            Dim InvalidChars() As Char
 #If NET_2_0 Then
-            For Each ch In Path.GetInvalidPathChars()
+            InvalidChars = Path.GetInvalidPathChars()
 #Else
-            For Each ch In Path.InvalidPathChars
+            InvalidChars = Path.InvalidPathChars
 #End If
+            If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
+                Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
+            End If
 
-                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
-            Next ch
-#Else
-            If Not (vmw.common.StringUtils.IndexOfAny(PathName,Path.GetInvalidPathChars()) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
-#End If
-
+            Dim fi As New FileInfo(PathName)
             If (fi.Exists) Then
                 Return fi.LastWriteTime
             Else
@@ -332,18 +328,16 @@ Namespace Microsoft.VisualBasic
         Public Function GetAttr(ByVal PathName As String) As Microsoft.VisualBasic.FileAttribute
 
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
-#If TARGET_JVM = False Then
-            Dim ch As Char
+
+            Dim InvalidChars() As Char
 #If NET_2_0 Then
-            For Each ch In Path.GetInvalidPathChars()
+            InvalidChars = Path.GetInvalidPathChars()
 #Else
-            For Each ch In Path.InvalidPathChars
+            InvalidChars = Path.InvalidPathChars
 #End If
-                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
-            Next ch
-#Else
-            If Not (vmw.common.StringUtils.IndexOfAny(PathName,Path.GetInvalidPathChars()) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
-#End If
+            If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
+                Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
+            End If
 
             Dim fi As New FileInfo(PathName)
             Dim di As New DirectoryInfo(PathName)
@@ -518,19 +512,15 @@ Namespace Microsoft.VisualBasic
 
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
-#If TARGET_JVM = False Then
-            Dim ch As Char
+            Dim InvalidChars() As Char
 #If NET_2_0 Then
-            For Each ch In Path.GetInvalidPathChars()
+            InvalidChars = Path.GetInvalidPathChars()
 #Else
-            For Each ch In Path.InvalidPathChars
+            InvalidChars = Path.InvalidPathChars
 #End If
-
-                If Not (PathName.IndexOf(ch) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
-            Next ch
-#Else
-            If Not (vmw.common.StringUtils.IndexOfAny(PathName,Path.GetInvalidPathChars()) = -1) Then Throw New System.IO.IOException("Bad file name or number.")
-#End If
+            If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
+                Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
+            End If
 
             Dim fi As New FileInfo(PathName)
             Dim di As New DirectoryInfo(PathName)
