@@ -51,7 +51,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             While (i < Count)
                 cArr(i) = Value
             End While
-            FromCharArray(cArr)
+            Return FromCharArray(cArr)
         End Function
 
         Public Shared Function FromCharArray(ByVal Value As Char()) As String

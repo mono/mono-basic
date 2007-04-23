@@ -117,7 +117,8 @@ Namespace Microsoft.VisualBasic
                     Else
                         If afterLast Then
                             If MoveNext() Then
-                                Return Current()
+                                Dim tmo As ColEnumerator = Me
+                                Return tmo.Current()
                             Else
                                 Return Nothing
                             End If

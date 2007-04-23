@@ -63,6 +63,7 @@ Namespace Microsoft.VisualBasic
                 Case CallType.Set
                     LateBinding.LateSet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing)
             End Select
+            Return Nothing
         End Function
         Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
@@ -118,6 +119,8 @@ Namespace Microsoft.VisualBasic
         Public Function Environ(ByVal Expression As String) As String
             Return Environment.GetEnvironmentVariable(Expression)
         End Function
+
+        <MonoLimitation("If this function is used the assembly have to be recompiled when you switch platforms.")> _
         Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
 
 #If TARGET_JVM = False Then
@@ -138,12 +141,12 @@ Namespace Microsoft.VisualBasic
             Catch ex As Exception
                 Return Nothing
             End Try
-            if (regk Is Nothing) Then 
-                  Return Nothing
+            If (regk Is Nothing) Then
+                Return Nothing
             Else
                 elm_count = regk.ValueCount
                 If elm_count = 0 Then Return Nothing
-            End If 
+            End If
 
             ReDim Preserve arr_str(elm_count)
             ReDim Preserve res_setting(elm_count - 1, 1)

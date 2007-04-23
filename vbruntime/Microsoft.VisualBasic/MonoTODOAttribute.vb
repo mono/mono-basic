@@ -32,71 +32,71 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-Namespace System
+'Namespace System
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoTODOAttribute
-        Inherits Attribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoTODOAttribute
+    Inherits Attribute
 
-        Private _comment As String
+    Private _comment As String
 
-        Public Sub New()
-        End Sub
+    Public Sub New()
+    End Sub
 
-        Public Sub New(ByVal comment As String)
-            _comment = comment
-        End Sub
+    Public Sub New(ByVal comment As String)
+        _comment = comment
+    End Sub
 
-        Public ReadOnly Property Comment() As String
-            Get
-                Return _comment
-            End Get
+    Public ReadOnly Property Comment() As String
+        Get
+            Return _comment
+        End Get
 
-        End Property
-    End Class
+    End Property
+End Class
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoDocumentationNoteAttribute
-        Inherits MonoTODOAttribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoDocumentationNoteAttribute
+    Inherits MonoTODOAttribute
 
-        Public Sub New(ByVal comment As String)
-            MyBase.New(comment)
-        End Sub
-    End Class
+    Public Sub New(ByVal comment As String)
+        MyBase.New(comment)
+    End Sub
+End Class
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoExtensionAttribute
-        Inherits MonoTODOAttribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoExtensionAttribute
+    Inherits MonoTODOAttribute
 
-        Public Sub New(ByVal comment As String)
-            MyBase.New(comment)
-        End Sub
-    End Class
+    Public Sub New(ByVal comment As String)
+        MyBase.New(comment)
+    End Sub
+End Class
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoInternalNoteAttribute
-        Inherits MonoTODOAttribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoInternalNoteAttribute
+    Inherits MonoTODOAttribute
 
-        Public Sub New(ByVal comment As String)
-            MyBase.New(comment)
-        End Sub
-    End Class
+    Public Sub New(ByVal comment As String)
+        MyBase.New(comment)
+    End Sub
+End Class
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoLimitationAttribute
-        Inherits MonoTODOAttribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoLimitationAttribute
+    Inherits MonoTODOAttribute
 
-        Public Sub New(ByVal comment As String)
-            MyBase.New(comment)
-        End Sub
-    End Class
+    Public Sub New(ByVal comment As String)
+        MyBase.New(comment)
+    End Sub
+End Class
 
-    <AttributeUsage(AttributeTargets.All)> _
-    Friend Class MonoNotSupportedAttribute
-        Inherits MonoTODOAttribute
+<AttributeUsage(AttributeTargets.All)> _
+Friend Class MonoNotSupportedAttribute
+    Inherits MonoTODOAttribute
 
-        Public Sub New(ByVal comment As String)
-            MyBase.New(comment)
-        End Sub
-    End Class
-End Namespace
+    Public Sub New(ByVal comment As String)
+        MyBase.New(comment)
+    End Sub
+End Class
+'End Namespace

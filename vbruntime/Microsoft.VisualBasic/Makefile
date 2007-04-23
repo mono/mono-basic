@@ -4,7 +4,7 @@ include ../../build/rules.make
 LIBRARY = Microsoft.VisualBasic.dll
 
 LOCAL_VBNC_FLAGS = \
-	@vbruntime.rsp
+	@vbruntime.rsp $(EXTRA_VBRUNTIME_FLAGS)
 
 NO_SIGN_ASSEMBLY = true
 
@@ -33,3 +33,4 @@ DISTFILES =	\
 
 Microsoft.VisualBasic.dll.sources: 2005VB.vbproj
 	MONO_PATH="../../class/lib/bootstrap$$PLATFORM_PATH_SEPARATOR$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l
+	MONO_PATH="../../class/lib/bootstrap$$PLATFORM_PATH_SEPARATOR$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources.win -m:w

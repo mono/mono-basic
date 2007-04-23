@@ -73,9 +73,9 @@ Imports System.Security
 #End If
 
 
-
+#If DONTSIGN = False Then
 <Assembly: AssemblyDelaySign(True)> 
 #If TARGET_JVM = False And INDEVENV = False Then
 <Assembly: AssemblyKeyFile("msfinal.pub")> 
 #End If
-
+#End If

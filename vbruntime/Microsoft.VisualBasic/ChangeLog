@@ -1,3 +1,18 @@
+2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win,
+	  strings.resources, Microsoft.VisualBasic.dll.sources: Update.
+	* Microsoft.VisualBasic.CompilerServices/Operators.vb: Fix warnings.
+	* Microsoft.VisualBasic.CompilerServices/Conversions.vb: Fix warning
+	  (and a bug as well).
+	* MonoTODOAttribute.vb: Fix lineendings.
+	* Microsoft.VisualBasic/Interaction.vb: Fix warning and add a note for
+	  GetAllSettings that if this method is used, the assembly has to be
+	  recompiled between MS and Mono.
+	* Microsoft.VisualBasic/Collection.vb: Fix warning.
+	* Makefile: Add EXTRA_VBRUNTIME_FLAGS, and create sources for windows
+	  as well.
+
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.

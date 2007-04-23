@@ -588,7 +588,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
 
-        Class AndHandler
+        Friend Class AndHandler
             Implements BitWiseOpHandler
 
             Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
@@ -710,7 +710,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_Equality", obj)) Then
                         Return obj
                     Else
@@ -728,7 +728,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_GreaterThan", obj)) Then
                         Return obj
                     Else
@@ -746,7 +746,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_GreaterThanOrEqual", obj)) Then
                         Return obj
                     Else
@@ -764,7 +764,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_LessThan", obj)) Then
                         Return obj
                     Else
@@ -782,7 +782,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_LessThanOrEqual", obj)) Then
                         Return obj
                     Else
@@ -800,7 +800,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 result = CompareObjectInternal(Left, Right, TextCompare)
                 If (result = CompareResult.NotResolved) Then
-                    Dim obj As Object
+                    Dim obj As Object = Nothing
                     If (InvokeBinaryOperator(Left, Right, "op_Inequality", obj)) Then
                         Return obj
                     Else
@@ -921,7 +921,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function DivideObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_Division", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -929,7 +929,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function IntDivideObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_IntegerDivision", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -937,7 +937,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function MultiplyObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_Multiply", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -945,7 +945,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function ModObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_Modulus", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1117,7 +1117,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Case TypeCode.String
                         Return LikeString(Source.ToString(), Pattern.ToString(), CompareOption)
                     Case Else
-                        Dim ret As Object
+                        Dim ret As Object = Nothing
                         If (InvokeBinaryOperator(Source, Pattern, "op_Like", ret)) Then
                             Return ret
                         End If
@@ -1385,7 +1385,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function LeftShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(Operand, Amount, "op_LeftShift", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1501,7 +1501,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function XorObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_ExclusiveOr", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1509,7 +1509,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function AndObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_BitwiseAnd", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1555,7 +1555,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return BitWiseOpObject(o1, o2, New OrHandler())
         End Function
 
-        Class OrHandler
+        Friend Class OrHandler
             Implements BitWiseOpHandler
 
             Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
@@ -1607,7 +1607,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Function
         End Class
 
-        Interface BitWiseOpHandler
+        Friend Interface BitWiseOpHandler
             Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object
             Function DoBitWiseOp(ByVal o1 As Byte, ByVal o2 As Byte) As Object
             Function DoBitWiseOp(ByVal o1 As Short, ByVal o2 As Short) As Object
@@ -1622,7 +1622,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Function GetOpName() As String
         End Interface
 
-        Public Shared Function BitWiseOpObject(ByVal o1 As Object, ByVal o2 As Object, ByVal opHandler As BitWiseOpHandler) As Object
+        Friend Shared Function BitWiseOpObject(ByVal o1 As Object, ByVal o2 As Object, ByVal opHandler As BitWiseOpHandler) As Object
             If (o1 Is Nothing) And (o2 Is Nothing) Then
                 Return 0
             End If
@@ -1844,7 +1844,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function SubtractObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Dim ret As Object
+            Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(o1, o2, "op_Subtraction", ret)) Then
                 Throw New InvalidOperationException()
             End If
@@ -1940,7 +1940,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return BitWiseOpObject(Left, Right, New XorHandler())
         End Function
 
-        Class XorHandler
+        Friend Class XorHandler
             Implements BitWiseOpHandler
 
             Public Function DoBitWiseOp(ByVal o1 As Boolean, ByVal o2 As Boolean) As Object Implements BitWiseOpHandler.DoBitWiseOp
