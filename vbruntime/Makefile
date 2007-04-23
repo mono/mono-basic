@@ -1,7 +1,7 @@
 thisdir = vbruntime
 include ../build/rules.make
 
-SUBDIRS := Microsoft.VisualBasic
+SUBDIRS := Microsoft.VisualBasic Test
 
 DISTFILES = Makefile VB.build.bat
 
