@@ -1,3 +1,10 @@
+2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/Helper.vb: No workaround is necessary for the s390 anymore,
+	  remove it.
+	* General/MyGenerator.vb: Don't add a Main in MyApplication if a main
+	  class is specified using a commandline option. Fixes #74955.
+
 2007-04-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Resources/Source.xml, Resources/Errors.resx,

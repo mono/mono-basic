@@ -2181,9 +2181,7 @@ Public Class Helper
     End Sub
 
     Private Shared Sub IndirectedStop()
-        'Stop
-        'This is just a work-around for the s390 that doesn't have the break instruction implemented yet.
-        Throw New StopException("STOP")
+        Stop
     End Sub
 
     Class StopException

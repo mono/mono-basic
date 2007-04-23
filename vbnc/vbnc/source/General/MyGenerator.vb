@@ -190,7 +190,7 @@ Public Class MyGenerator
         Code.Append("        Inherits ") : Code.AppendLine(baseClass)
         Code.AppendLine("        Public Sub New()")
         Code.AppendLine("        End Sub")
-        If Compiler.CommandLine.Target = CommandLine.Targets.Winexe Then
+        If Compiler.CommandLine.Target = CommandLine.Targets.Winexe AndAlso Compiler.CommandLine.Main = String.Empty Then
             Code.AppendLine("        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Advanced)> _")
             Code.AppendLine("        <Global.System.Diagnostics.DebuggerHidden()> _")
             Code.AppendLine("        Friend Shared Sub Main(ByVal Args As String())")
