@@ -15,6 +15,7 @@ DISTFILES = \
 	Make.cmd
 
 DISTFILES += $(wildcard *.vb) $(wildcard *.cs) $(wildcard */*.vb) $(wildcard */*.cs)
+DISTFILES += $(wildcard bin/*)
 
 MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$MONO_PATH"
 
