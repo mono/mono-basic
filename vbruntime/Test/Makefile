@@ -17,7 +17,7 @@ DISTFILES = \
 DISTFILES += $(wildcard *.vb) $(wildcard *.cs) $(wildcard */*.vb) $(wildcard */*.cs)
 DISTFILES += $(wildcard bin/*)
 
-MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$MONO_PATH"
+MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 2005VB_test_VB.dll.sources: 2005VB_test_VB.vbproj 
 	MONO_PATH=$(MONO_VB_PATH) mono ../../tools/extract-source/extract-source.exe -s:2005VB_test_VB.vbproj -d:2005VB_test_VB.dll.sources -m:l
@@ -36,7 +36,7 @@ test-cs: test-first 2005VB_test_CS.dll.sources
 test-vb: test-first 2005VB_test_VB.dll.sources 
 	$(VBNC) -out:bin/2005VB_test_VB.dll @2005VB_test_VB.dll.rsp @2005VB_test_VB.dll.sources /libpath:bin
 
-test-local: test-cs test-vb
+test-local: run-test-cs run-test-vb
 
 clean-local:
 	-rm -f bin/2005VB_test_VB.*
