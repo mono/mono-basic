@@ -2,6 +2,19 @@ thisdir = vbruntime/Test
 SUBDIRS =
 include ../../build/rules.make
 
+DISTFILES = \
+	2005VB_test_CS.csproj		\
+	2005VB_test_CS.dll.rsp		\
+	2005VB_test_CS.dll.sources	\
+	2005VB_test_CS.dll.sources.win	\
+	2005VB_test_VB.dll.rsp		\
+	2005VB_test_VB.dll.sources	\
+	2005VB_test_VB.dll.sources.win	\
+	2005VB_test_VB.vbproj		\
+	ChangeLog			\
+	Make.cmd
+
+
 MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$MONO_PATH"
 
 2005VB_test_VB.dll.sources: 2005VB_test_VB.vbproj 
