@@ -1,3 +1,7 @@
+2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Conversion.vb: Build fix.
+
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MsgBoxStyle.vb: Revert ifdef, it was the other way.

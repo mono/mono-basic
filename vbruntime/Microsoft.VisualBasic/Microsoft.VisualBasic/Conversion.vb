@@ -212,11 +212,11 @@ Namespace Microsoft.VisualBasic
             If (num <= Int32.MaxValue And num >= Int32.MinValue) Then
                 Return CType(num, Int32)
             End If
-
+#If NET_VER >= 2.0 Then
             If (num <= UInt32.MaxValue And num >= 0) Then
                 Return CType(num, UInt32)
             End If
-
+#End If
             Return num
         End Function
 
