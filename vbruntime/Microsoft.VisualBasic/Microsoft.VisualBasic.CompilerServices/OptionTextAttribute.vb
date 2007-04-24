@@ -32,7 +32,7 @@ Imports System
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
 Namespace Microsoft.VisualBasic.CompilerServices
-    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never), AttributeUsage(AttributeTargets.Class)> _
+    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never), AttributeUsage(AttributeTargets.Class, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class OptionTextAttribute
         Inherits Attribute
     End Class

@@ -101,9 +101,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
 #If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
-        Public Shared Sub SetProjectError(ByVal ex As Exception)
+        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
 #Else
-        Public Shared Sub SetProjectError(ByVal ex As Exception)
+        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
 #End If
             Dim pd As ProjectData = Instance()
             pd.ProjectError.SetException(ex)
@@ -111,9 +111,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
 #If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
-        Public Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
+        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
 #Else
-        Public Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
+        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
 #End If
             Throw New NotImplementedException("implement me: Erl")
             'FIXME: projectError.SetException(ex)
