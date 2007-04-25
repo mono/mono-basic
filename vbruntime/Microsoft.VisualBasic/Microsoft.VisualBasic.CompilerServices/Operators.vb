@@ -513,35 +513,35 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Select Case destTc
                     'Case TypeCode.Empty -> break
                     Case TypeCode.Boolean
-                        Return AddBooleans(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                        Return AddBooleans(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
                     Case TypeCode.Byte
-                        Return AddBytes(Convert.ToByte(o1), Convert.ToByte(o2))
+                        Return AddBytes(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
                     Case TypeCode.Char
-                        Return AddChars(Convert.ToChar(o1), Convert.ToChar(o2))
+                        Return AddChars(VBConvert.ToChar(o1), VBConvert.ToChar(o2))
                     Case TypeCode.DateTime
-                        Return AddDateTimes(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+                        Return AddDateTimes(VBConvert.ToDateTime(o1), VBConvert.ToDateTime(o2))
                     Case TypeCode.Decimal
-                        Return AddDecimals(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                        Return AddDecimals(VBConvert.ToDecimal(o1), VBConvert.ToDecimal(o2))
                     Case TypeCode.Double
-                        Return AddDoubles(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                        Return AddDoubles(VBConvert.ToDouble(o1), VBConvert.ToDouble(o2))
                     Case TypeCode.Int16
-                        Return AddInt16s(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                        Return AddInt16s(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
                     Case TypeCode.Int32
-                        Return AddInt32s(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                        Return AddInt32s(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
                     Case TypeCode.Int64
-                        Return AddInt64s(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                        Return AddInt64s(VBConvert.ToInt64(o1), VBConvert.ToInt64(o2))
                     Case TypeCode.SByte
-                        Return AddSBytes(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                        Return AddSBytes(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
                     Case TypeCode.Single
-                        Return AddSingles(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                        Return AddSingles(VBConvert.ToSingle(o1), VBConvert.ToSingle(o2))
                     Case TypeCode.String
-                        Return AddStrings(Convert.ToString(o1), Convert.ToString(o2))
+                        Return AddStrings(VBConvert.ToString(o1), VBConvert.ToString(o2))
                     Case TypeCode.UInt16
-                        Return AddUInt16s(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                        Return AddUInt16s(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
                     Case TypeCode.UInt32
-                        Return AddUInt32s(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                        Return AddUInt32s(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
                     Case TypeCode.UInt64
-                        Return AddUInt64s(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                        Return AddUInt64s(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
 
                 End Select
                 Return AddObjects(o1, o2)
@@ -556,25 +556,25 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Private Shared Function CreateNullObjectType(ByVal otype As Object) As Object
 
             If TypeOf otype Is Byte Then
-                Return Convert.ToByte(0)
+                Return VBConvert.ToByte(0)
             ElseIf TypeOf otype Is Boolean Then
-                Return Convert.ToBoolean(False)
+                Return VBConvert.ToBoolean(False)
             ElseIf TypeOf otype Is Long Then
-                Return Convert.ToInt64(0)
+                Return VBConvert.ToInt64(0)
             ElseIf TypeOf otype Is Decimal Then
-                Return Convert.ToDecimal(0)
+                Return VBConvert.ToDecimal(0)
             ElseIf TypeOf otype Is Short Then
-                Return Convert.ToInt16(0)
+                Return VBConvert.ToInt16(0)
             ElseIf TypeOf otype Is Integer Then
-                Return Convert.ToInt32(0)
+                Return VBConvert.ToInt32(0)
             ElseIf TypeOf otype Is Double Then
-                Return Convert.ToDouble(0)
+                Return VBConvert.ToDouble(0)
             ElseIf TypeOf otype Is Single Then
-                Return Convert.ToSingle(0)
+                Return VBConvert.ToSingle(0)
             ElseIf TypeOf otype Is String Then
-                Return Convert.ToString("")
+                Return VBConvert.ToString("")
             ElseIf TypeOf otype Is Char Then
-                Return Convert.ToChar(0)
+                Return VBConvert.ToChar(0)
             ElseIf TypeOf otype Is Date Then
                 Return Nothing
             Else
@@ -632,7 +632,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Function
 
             Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
-                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+                Return DoBitWiseOp(CType(VBConvert.ToDouble(o1), Long), CType(VBConvert.ToDouble(o2), Long))
             End Function
 
             Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
@@ -667,35 +667,35 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Select Case destTc
                 Case TypeCode.Boolean
-                    Return CompareBoolean(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                    Return CompareBoolean(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
                 Case TypeCode.Byte
-                    Return CompareByte(Convert.ToByte(o1), Convert.ToByte(o2))
+                    Return CompareByte(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
                 Case TypeCode.Char
-                    Return CompareChar(Convert.ToChar(o1), Convert.ToChar(o2))
+                    Return CompareChar(VBConvert.ToChar(o1), VBConvert.ToChar(o2))
                 Case TypeCode.DateTime
-                    Return CompareDate(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+                    Return CompareDate(VBConvert.ToDateTime(o1), VBConvert.ToDateTime(o2))
                 Case TypeCode.Decimal
-                    Return CompareDecimal(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                    Return CompareDecimal(VBConvert.ToDecimal(o1), VBConvert.ToDecimal(o2))
                 Case TypeCode.Double
-                    Return CompareDouble(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                    Return CompareDouble(VBConvert.ToDouble(o1), VBConvert.ToDouble(o2))
                 Case TypeCode.Int16
-                    Return CompareInt16(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                    Return CompareInt16(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
                 Case TypeCode.Int32
-                    Return CompareInt32(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                    Return CompareInt32(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
                 Case TypeCode.Int64
-                    Return CompareInt64(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                    Return CompareInt64(VBConvert.ToInt64(o1), VBConvert.ToInt64(o2))
                 Case TypeCode.SByte
-                    Return CompareSByte(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                    Return CompareSByte(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
                 Case TypeCode.Single
-                    Return CompareSingle(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                    Return CompareSingle(VBConvert.ToSingle(o1), VBConvert.ToSingle(o2))
                 Case TypeCode.String
-                    Return IntToCompareResult(CompareString(Convert.ToString(o1), Convert.ToString(o2), TextCompare))
+                    Return IntToCompareResult(CompareString(VBConvert.ToString(o1), VBConvert.ToString(o2), TextCompare))
                 Case TypeCode.UInt16
-                    Return CompareUInt16(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                    Return CompareUInt16(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
                 Case TypeCode.UInt32
-                    Return CompareUInt32(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                    Return CompareUInt32(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
                 Case TypeCode.UInt64
-                    Return CompareUInt64(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                    Return CompareUInt64(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
                 Case TypeCode.DBNull
                     Throw New InvalidOperationException
                 Case TypeCode.Empty
@@ -855,7 +855,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
             End Try
 
-            Return String.Concat(Convert.ToString(o1), Convert.ToString(o2))
+            Return String.Concat(VBConvert.ToString(o1), VBConvert.ToString(o2))
 
         End Function
 
@@ -967,11 +967,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Decimal
-                        Return Convert.ToDecimal(o1) / Convert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(o1) / VBConvert.ToDecimal(o2)
                     Case TypeCode.Double
-                        Return Convert.ToDouble(o1) / Convert.ToDouble(o2)
+                        Return VBConvert.ToDouble(o1) / VBConvert.ToDouble(o2)
                     Case TypeCode.Single
-                        Return Convert.ToSingle(o1) / Convert.ToSingle(o2)
+                        Return VBConvert.ToSingle(o1) / VBConvert.ToSingle(o2)
                 End Select
                 Return DivideObjects(o1, o2)
             Catch ex As Exception
@@ -980,8 +980,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function ExponentObject(ByVal Left As Object, ByVal Right As Object) As Object
-            Dim exp As Double = Convert.ToDouble(PlusObject(Right))
-            Dim base As Double = Convert.ToDouble(PlusObject(Left))
+            Dim exp As Double = VBConvert.ToDouble(PlusObject(Right))
+            Dim base As Double = VBConvert.ToDouble(PlusObject(Left))
 
             Return Math.Pow(base, exp)
         End Function
@@ -1016,7 +1016,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim resUnsign As Boolean = IsUnsignNum(o1) Or IsUnsignNum(o2)
             Dim tc As TypeCode = GetTypeCode(o1)
             If (tc = TypeCode.Boolean) Then
-                If (Convert.ToBoolean(o1)) Then
+                If (VBConvert.ToBoolean(o1)) Then
                     o1 = -1
                 Else
                     o1 = 0
@@ -1028,21 +1028,21 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return Convert.ToByte(o1) \ Convert.ToByte(o2)
+                        Return VBConvert.ToByte(o1) \ VBConvert.ToByte(o2)
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(o1) \ Convert.ToInt16(o2)
+                        Return VBConvert.ToInt16(o1) \ VBConvert.ToInt16(o2)
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(o1) \ Convert.ToInt32(o2)
+                        Return VBConvert.ToInt32(o1) \ VBConvert.ToInt32(o2)
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(o1) \ Convert.ToInt64(o2)
+                        Return VBConvert.ToInt64(o1) \ VBConvert.ToInt64(o2)
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(o1) \ Convert.ToSByte(o2)
+                        Return VBConvert.ToSByte(o1) \ VBConvert.ToSByte(o2)
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(o1) \ Convert.ToUInt16(o2)
+                        Return VBConvert.ToUInt16(o1) \ VBConvert.ToUInt16(o2)
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(o1) \ Convert.ToUInt32(o2)
+                        Return VBConvert.ToUInt32(o1) \ VBConvert.ToUInt32(o2)
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(o1) \ Convert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(o1) \ VBConvert.ToUInt64(o2)
                 End Select
                 Return IntDivideObjects(o1, o2)
             Catch ex As Exception
@@ -1075,34 +1075,34 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Select Case tcOperand
                     Case TypeCode.Boolean
-                        If (Convert.ToBoolean(Operand)) Then
+                        If (VBConvert.ToBoolean(Operand)) Then
                             Return -1S << intAmount
                         End If
                         Return 0
                     Case TypeCode.Byte
-                        Return Convert.ToByte(Operand) << intAmount
+                        Return VBConvert.ToByte(Operand) << intAmount
                     Case TypeCode.Decimal
-                        Return Convert.ToInt64(Convert.ToDecimal(Operand)) << intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToDecimal(Operand)) << intAmount
                     Case TypeCode.Double
-                        Return Convert.ToInt64(Convert.ToDouble(Operand)) << intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToDouble(Operand)) << intAmount
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(Operand) << intAmount
+                        Return VBConvert.ToInt16(Operand) << intAmount
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(Operand) << intAmount
+                        Return VBConvert.ToInt32(Operand) << intAmount
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(Operand) << intAmount
+                        Return VBConvert.ToInt64(Operand) << intAmount
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(Operand) << intAmount
+                        Return VBConvert.ToSByte(Operand) << intAmount
                     Case TypeCode.String
-                        Return Convert.ToInt64(Convert.ToString(Operand)) << intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToString(Operand)) << intAmount
                     Case TypeCode.Single
-                        Return Convert.ToInt64(Convert.ToSingle(Operand)) << intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToSingle(Operand)) << intAmount
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(Operand) << intAmount
+                        Return VBConvert.ToUInt16(Operand) << intAmount
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(Operand) << intAmount
+                        Return VBConvert.ToUInt32(Operand) << intAmount
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(Operand) << intAmount
+                        Return VBConvert.ToUInt64(Operand) << intAmount
 
                 End Select
 
@@ -1146,27 +1146,27 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return Convert.ToByte(o1) Mod Convert.ToByte(o2)
+                        Return VBConvert.ToByte(o1) Mod VBConvert.ToByte(o2)
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(o1) Mod Convert.ToInt16(o2)
+                        Return VBConvert.ToInt16(o1) Mod VBConvert.ToInt16(o2)
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(o1) Mod Convert.ToInt32(o2)
+                        Return VBConvert.ToInt32(o1) Mod VBConvert.ToInt32(o2)
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(o1) Mod Convert.ToInt64(o2)
+                        Return VBConvert.ToInt64(o1) Mod VBConvert.ToInt64(o2)
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(o1) Mod Convert.ToSByte(o2)
+                        Return VBConvert.ToSByte(o1) Mod VBConvert.ToSByte(o2)
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(o1) Mod Convert.ToUInt16(o2)
+                        Return VBConvert.ToUInt16(o1) Mod VBConvert.ToUInt16(o2)
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(o1) Mod Convert.ToUInt32(o2)
+                        Return VBConvert.ToUInt32(o1) Mod VBConvert.ToUInt32(o2)
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(o1) Mod Convert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(o1) Mod VBConvert.ToUInt64(o2)
                     Case TypeCode.Decimal
-                        Return Convert.ToDecimal(o1) Mod Convert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(o1) Mod VBConvert.ToDecimal(o2)
                     Case TypeCode.Double
-                        Return Convert.ToDouble(o1) Mod Convert.ToDouble(o2)
+                        Return VBConvert.ToDouble(o1) Mod VBConvert.ToDouble(o2)
                     Case TypeCode.Single
-                        Return Convert.ToSingle(o1) Mod Convert.ToSingle(o2)
+                        Return VBConvert.ToSingle(o1) Mod VBConvert.ToSingle(o2)
                 End Select
                 Return ModObjects(o1, o2)
             Catch ex As Exception
@@ -1252,27 +1252,27 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return MultiplyAndSize(Convert.ToByte(o1), Convert.ToByte(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToByte(o1), VBConvert.ToByte(o2), destTc)
                     Case TypeCode.Int16
-                        Return MultiplyAndSize(Convert.ToInt16(o1), Convert.ToInt16(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2), destTc)
                     Case TypeCode.Int32
-                        Return MultiplyAndSize(Convert.ToInt32(o1), Convert.ToInt32(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2), destTc)
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(o1) * Convert.ToInt64(o2)
+                        Return VBConvert.ToInt64(o1) * VBConvert.ToInt64(o2)
                     Case TypeCode.SByte
-                        Return MultiplyAndSize(Convert.ToSByte(o1), Convert.ToSByte(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2), destTc)
                     Case TypeCode.UInt16
-                        Return MultiplyAndSize(Convert.ToUInt16(o1), Convert.ToUInt16(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2), destTc)
                     Case TypeCode.UInt32
-                        Return MultiplyAndSize(Convert.ToUInt32(o1), Convert.ToUInt32(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2), destTc)
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(o1) * Convert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(o1) * VBConvert.ToUInt64(o2)
                     Case TypeCode.Decimal
-                        Return Convert.ToDecimal(o1) * Convert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(o1) * VBConvert.ToDecimal(o2)
                     Case TypeCode.Double
-                        Return Convert.ToDouble(o1) * Convert.ToDouble(o2)
+                        Return VBConvert.ToDouble(o1) * VBConvert.ToDouble(o2)
                     Case TypeCode.Single
-                        Return Convert.ToSingle(o1) * Convert.ToSingle(o2)
+                        Return VBConvert.ToSingle(o1) * VBConvert.ToSingle(o2)
                 End Select
                 Return MultiplyObjects(o1, o2)
             Catch ex As Exception
@@ -1402,31 +1402,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case tc
                     Case TypeCode.Boolean
-                        Return NegateBoolean(Convert.ToBoolean(Operand))
+                        Return NegateBoolean(VBConvert.ToBoolean(Operand))
                     Case TypeCode.Byte
-                        Return NegateByte(Convert.ToByte(Operand))
+                        Return NegateByte(VBConvert.ToByte(Operand))
                     Case TypeCode.Decimal
-                        Return NegateDecimal(Convert.ToDecimal(Operand))
+                        Return NegateDecimal(VBConvert.ToDecimal(Operand))
                     Case TypeCode.Double
-                        Return NegateDouble(Convert.ToDouble(Operand))
+                        Return NegateDouble(VBConvert.ToDouble(Operand))
                     Case TypeCode.Int16
-                        Return NegateInt16(Convert.ToInt16(Operand))
+                        Return NegateInt16(VBConvert.ToInt16(Operand))
                     Case TypeCode.Int32
-                        Return NegateInt32(Convert.ToInt32(Operand))
+                        Return NegateInt32(VBConvert.ToInt32(Operand))
                     Case TypeCode.Int64
-                        Return NegateInt64(Convert.ToInt64(Operand))
+                        Return NegateInt64(VBConvert.ToInt64(Operand))
                     Case TypeCode.SByte
-                        Return NegateSByte(Convert.ToSByte(Operand))
+                        Return NegateSByte(VBConvert.ToSByte(Operand))
                     Case TypeCode.Single
-                        Return NegateSingle(Convert.ToSingle(Operand))
+                        Return NegateSingle(VBConvert.ToSingle(Operand))
                     Case TypeCode.String
-                        Return NegateString(Convert.ToString(Operand))
+                        Return NegateString(VBConvert.ToString(Operand))
                     Case TypeCode.UInt16
-                        Return NegateUInt16(Convert.ToUInt16(Operand))
+                        Return NegateUInt16(VBConvert.ToUInt16(Operand))
                     Case TypeCode.UInt32
-                        Return NegateUInt32(Convert.ToUInt32(Operand))
+                        Return NegateUInt32(VBConvert.ToUInt32(Operand))
                     Case TypeCode.UInt64
-                        Return NegateUInt64(Convert.ToUInt64(Operand))
+                        Return NegateUInt64(VBConvert.ToUInt64(Operand))
                     Case TypeCode.Object
                         Return NegateObject_(Operand)
 
@@ -1445,7 +1445,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Friend Shared Function NotString(ByVal Operand As String) As Object
-            Return Not (CType((Convert.ToDouble(Operand)), Long))
+            Return Not (CType((VBConvert.ToDouble(Operand)), Long))
         End Function
 
 
@@ -1458,31 +1458,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case tc
                     Case TypeCode.Boolean
-                        Return Not Convert.ToBoolean(Operand)
+                        Return Not VBConvert.ToBoolean(Operand)
                     Case TypeCode.Byte
-                        Return Not Convert.ToByte(Operand)
+                        Return Not VBConvert.ToByte(Operand)
                     Case TypeCode.Decimal
-                        Return Not (CType((Convert.ToDecimal(Operand)), Long))
+                        Return Not (CType((VBConvert.ToDecimal(Operand)), Long))
                     Case TypeCode.Double
-                        Return Not (CType((Convert.ToDouble(Operand)), Long))
+                        Return Not (CType((VBConvert.ToDouble(Operand)), Long))
                     Case TypeCode.Int16
-                        Return Not Convert.ToInt16(Operand)
+                        Return Not VBConvert.ToInt16(Operand)
                     Case TypeCode.Int32
-                        Return Not Convert.ToInt32(Operand)
+                        Return Not VBConvert.ToInt32(Operand)
                     Case TypeCode.Int64
-                        Return Not Convert.ToInt64(Operand)
+                        Return Not VBConvert.ToInt64(Operand)
                     Case TypeCode.SByte
-                        Return Not Convert.ToSByte(Operand)
+                        Return Not VBConvert.ToSByte(Operand)
                     Case TypeCode.Single
-                        Return Not (CType((Convert.ToSingle(Operand)), Long))
+                        Return Not (CType((VBConvert.ToSingle(Operand)), Long))
                     Case TypeCode.String
-                        Return NotString(Convert.ToString(Operand))
+                        Return NotString(VBConvert.ToString(Operand))
                     Case TypeCode.UInt16
-                        Return Not Convert.ToUInt16(Operand)
+                        Return Not VBConvert.ToUInt16(Operand)
                     Case TypeCode.UInt32
-                        Return Not Convert.ToUInt32(Operand)
+                        Return Not VBConvert.ToUInt32(Operand)
                     Case TypeCode.UInt64
-                        Return Not Convert.ToUInt64(Operand)
+                        Return Not VBConvert.ToUInt64(Operand)
                     Case TypeCode.Object
                         Return NotObject_(Operand)
 
@@ -1520,34 +1520,34 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim tc As TypeCode = GetTypeCode(obj)
             Select Case tc
                 Case TypeCode.Boolean
-                    If (Convert.ToBoolean(obj)) Then
+                    If (VBConvert.ToBoolean(obj)) Then
                         Return -1L
                     End If
                     Return 0L
                 Case TypeCode.Byte
-                    Return CType(Convert.ToByte(obj), Long)
+                    Return CType(VBConvert.ToByte(obj), Long)
                 Case TypeCode.Int16
-                    Return CType(Convert.ToInt16(obj), Long)
+                    Return CType(VBConvert.ToInt16(obj), Long)
                 Case TypeCode.Int32
-                    Return CType(Convert.ToInt32(obj), Long)
+                    Return CType(VBConvert.ToInt32(obj), Long)
                 Case TypeCode.Int64
-                    Return Convert.ToInt64(obj)
+                    Return VBConvert.ToInt64(obj)
                 Case TypeCode.SByte
-                    Return CType(Convert.ToSByte(obj), Long)
+                    Return CType(VBConvert.ToSByte(obj), Long)
                 Case TypeCode.String
-                    Return CType(Math.Round(Convert.ToDouble(Convert.ToString(obj))), Long)
+                    Return CType(Math.Round(VBConvert.ToDouble(VBConvert.ToString(obj))), Long)
                 Case TypeCode.Double
-                    Return CType(Math.Round(Convert.ToDouble(obj)), Long)
+                    Return CType(Math.Round(VBConvert.ToDouble(obj)), Long)
                 Case TypeCode.Decimal
-                    Return CType(Math.Round(Convert.ToDecimal(obj)), Long)
+                    Return CType(Math.Round(VBConvert.ToDecimal(obj)), Long)
                 Case TypeCode.Single
-                    Return CType(Math.Round(Convert.ToSingle(obj)), Long)
+                    Return CType(Math.Round(VBConvert.ToSingle(obj)), Long)
                 Case TypeCode.UInt16
-                    Return CType(Convert.ToUInt16(obj), Long)
+                    Return CType(VBConvert.ToUInt16(obj), Long)
                 Case TypeCode.UInt32
-                    Return CType(Convert.ToUInt32(obj), Long)
+                    Return CType(VBConvert.ToUInt32(obj), Long)
                 Case TypeCode.UInt64
-                    Return CType(Convert.ToUInt64(obj), Long)
+                    Return CType(VBConvert.ToUInt64(obj), Long)
             End Select
         End Function
 
@@ -1599,7 +1599,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Function
 
             Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
-                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+                Return DoBitWiseOp(CType(VBConvert.ToDouble(o1), Long), CType(VBConvert.ToDouble(o2), Long))
             End Function
 
             Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
@@ -1637,25 +1637,25 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Boolean
-                        Return opHandler.DoBitWiseOp(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
                     Case TypeCode.Byte
-                        Return opHandler.DoBitWiseOp(Convert.ToByte(o1), Convert.ToByte(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
                     Case TypeCode.Int16
-                        Return opHandler.DoBitWiseOp(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
                     Case TypeCode.Int32
-                        Return opHandler.DoBitWiseOp(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
                     Case TypeCode.Int64
                         Return opHandler.DoBitWiseOp(GetAsLong(o1), GetAsLong(o2))
                     Case TypeCode.SByte
-                        Return opHandler.DoBitWiseOp(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
                     Case TypeCode.String
-                        Return opHandler.DoBitWiseOp(Convert.ToString(o1), Convert.ToString(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToString(o1), VBConvert.ToString(o2))
                     Case TypeCode.UInt16
-                        Return opHandler.DoBitWiseOp(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
                     Case TypeCode.UInt32
-                        Return opHandler.DoBitWiseOp(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
                     Case TypeCode.UInt64
-                        Return opHandler.DoBitWiseOp(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                        Return opHandler.DoBitWiseOp(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
 
                 End Select
                 Return opHandler.DoBitWiseOp(o1, o2)
@@ -1674,31 +1674,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case tc
                     Case TypeCode.Boolean
-                        Return PlusBoolean(Convert.ToBoolean(Operand))
+                        Return PlusBoolean(VBConvert.ToBoolean(Operand))
                     Case TypeCode.Byte
-                        Return Convert.ToByte(Operand)
+                        Return VBConvert.ToByte(Operand)
                     Case TypeCode.Decimal
-                        Return Convert.ToDecimal(Operand)
+                        Return VBConvert.ToDecimal(Operand)
                     Case TypeCode.Double
-                        Return Convert.ToDouble(Operand)
+                        Return VBConvert.ToDouble(Operand)
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(Operand)
+                        Return VBConvert.ToInt16(Operand)
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(Operand)
+                        Return VBConvert.ToInt32(Operand)
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(Operand)
+                        Return VBConvert.ToInt64(Operand)
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(Operand)
+                        Return VBConvert.ToSByte(Operand)
                     Case TypeCode.Single
-                        Return Convert.ToSingle(Operand)
+                        Return VBConvert.ToSingle(Operand)
                     Case TypeCode.String
-                        Return PlusString(Convert.ToString(Operand))
+                        Return PlusString(VBConvert.ToString(Operand))
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(Operand)
+                        Return VBConvert.ToUInt16(Operand)
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(Operand)
+                        Return VBConvert.ToUInt32(Operand)
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(Operand)
+                        Return VBConvert.ToUInt64(Operand)
                     Case TypeCode.Object
                         Return PlusObject_(Operand)
 
@@ -1712,29 +1712,29 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Dim tcAmount As TypeCode = GetTypeCode(Amount)
             Select Case tcAmount
                 Case TypeCode.Byte
-                    Return Convert.ToInt32(Convert.ToByte(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToByte(Amount))
                 Case TypeCode.Decimal
-                    Return Convert.ToInt32(Convert.ToDecimal(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToDecimal(Amount))
                 Case TypeCode.Double
-                    Return Convert.ToInt32(Convert.ToDouble(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToDouble(Amount))
                 Case TypeCode.Int16
-                    Return Convert.ToInt32(Convert.ToInt16(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToInt16(Amount))
                 Case TypeCode.Int32
-                    Return Convert.ToInt32(Convert.ToInt32(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToInt32(Amount))
                 Case TypeCode.Int64
-                    Return Convert.ToInt32(Convert.ToInt64(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToInt64(Amount))
                 Case TypeCode.SByte
-                    Return Convert.ToInt32(Convert.ToSByte(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToSByte(Amount))
                 Case TypeCode.String
-                    Return Convert.ToInt32(Convert.ToString(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToString(Amount))
                 Case TypeCode.Single
-                    Return Convert.ToInt32(Convert.ToSingle(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToSingle(Amount))
                 Case TypeCode.UInt16
-                    Return Convert.ToInt32(Convert.ToUInt16(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToUInt16(Amount))
                 Case TypeCode.UInt32
-                    Return Convert.ToInt32(Convert.ToUInt32(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToUInt32(Amount))
                 Case TypeCode.UInt64
-                    Return Convert.ToInt32(Convert.ToUInt64(Amount))
+                    Return VBConvert.ToInt32(VBConvert.ToUInt64(Amount))
 
             End Select
             Throw New InvalidCastException("Amount")
@@ -1760,34 +1760,34 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Select Case tcOperand
                     Case TypeCode.Boolean
-                        If (Convert.ToBoolean(Operand)) Then
+                        If (VBConvert.ToBoolean(Operand)) Then
                             Return -1S >> intAmount
                         End If
                         Return 0
                     Case TypeCode.Byte
-                        Return Convert.ToByte(Operand) >> intAmount
+                        Return VBConvert.ToByte(Operand) >> intAmount
                     Case TypeCode.Decimal
-                        Return Convert.ToInt64(Convert.ToDecimal(Operand)) >> intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToDecimal(Operand)) >> intAmount
                     Case TypeCode.Double
-                        Return Convert.ToInt64(Convert.ToDouble(Operand)) >> intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToDouble(Operand)) >> intAmount
                     Case TypeCode.Int16
-                        Return Convert.ToInt16(Operand) >> intAmount
+                        Return VBConvert.ToInt16(Operand) >> intAmount
                     Case TypeCode.Int32
-                        Return Convert.ToInt32(Operand) >> intAmount
+                        Return VBConvert.ToInt32(Operand) >> intAmount
                     Case TypeCode.Int64
-                        Return Convert.ToInt64(Operand) >> intAmount
+                        Return VBConvert.ToInt64(Operand) >> intAmount
                     Case TypeCode.SByte
-                        Return Convert.ToSByte(Operand) >> intAmount
+                        Return VBConvert.ToSByte(Operand) >> intAmount
                     Case TypeCode.String
-                        Return Convert.ToInt64(Convert.ToString(Operand)) >> intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToString(Operand)) >> intAmount
                     Case TypeCode.Single
-                        Return Convert.ToInt64(Convert.ToSingle(Operand)) >> intAmount
+                        Return VBConvert.ToInt64(VBConvert.ToSingle(Operand)) >> intAmount
                     Case TypeCode.UInt16
-                        Return Convert.ToUInt16(Operand) >> intAmount
+                        Return VBConvert.ToUInt16(Operand) >> intAmount
                     Case TypeCode.UInt32
-                        Return Convert.ToUInt32(Operand) >> intAmount
+                        Return VBConvert.ToUInt32(Operand) >> intAmount
                     Case TypeCode.UInt64
-                        Return Convert.ToUInt64(Operand) >> intAmount
+                        Return VBConvert.ToUInt64(Operand) >> intAmount
 
                 End Select
 
@@ -1902,31 +1902,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Select Case destTc
                     Case TypeCode.Boolean
-                        Return SubtractBooleans(Convert.ToBoolean(o1), Convert.ToBoolean(o2))
+                        Return SubtractBooleans(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
                     Case TypeCode.Byte
-                        Return SubtractBytes(Convert.ToByte(o1), Convert.ToByte(o2))
+                        Return SubtractBytes(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
                     Case TypeCode.Decimal
-                        Return SubtractDecimals(Convert.ToDecimal(o1), Convert.ToDecimal(o2))
+                        Return SubtractDecimals(VBConvert.ToDecimal(o1), VBConvert.ToDecimal(o2))
                     Case TypeCode.Double
-                        Return SubtractDoubles(Convert.ToDouble(o1), Convert.ToDouble(o2))
+                        Return SubtractDoubles(VBConvert.ToDouble(o1), VBConvert.ToDouble(o2))
                     Case TypeCode.Int16
-                        Return SubtractInt16s(Convert.ToInt16(o1), Convert.ToInt16(o2))
+                        Return SubtractInt16s(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
                     Case TypeCode.Int32
-                        Return SubtractInt32s(Convert.ToInt32(o1), Convert.ToInt32(o2))
+                        Return SubtractInt32s(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
                     Case TypeCode.Int64
-                        Return SubtractInt64s(Convert.ToInt64(o1), Convert.ToInt64(o2))
+                        Return SubtractInt64s(VBConvert.ToInt64(o1), VBConvert.ToInt64(o2))
                     Case TypeCode.SByte
-                        Return SubtractSBytes(Convert.ToSByte(o1), Convert.ToSByte(o2))
+                        Return SubtractSBytes(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
                     Case TypeCode.Single
-                        Return SubtractSingles(Convert.ToSingle(o1), Convert.ToSingle(o2))
+                        Return SubtractSingles(VBConvert.ToSingle(o1), VBConvert.ToSingle(o2))
                     Case TypeCode.UInt16
-                        Return SubtractUInt16s(Convert.ToUInt16(o1), Convert.ToUInt16(o2))
+                        Return SubtractUInt16s(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
                     Case TypeCode.UInt32
-                        Return SubtractUInt32s(Convert.ToUInt32(o1), Convert.ToUInt32(o2))
+                        Return SubtractUInt32s(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
                     Case TypeCode.UInt64
-                        Return SubtractUInt64s(Convert.ToUInt64(o1), Convert.ToUInt64(o2))
+                        Return SubtractUInt64s(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
                     Case TypeCode.DateTime
-                        Return SubtractDateTime(Convert.ToDateTime(o1), Convert.ToDateTime(o2))
+                        Return SubtractDateTime(VBConvert.ToDateTime(o1), VBConvert.ToDateTime(o2))
 
                 End Select
                 Return SubtractObjects(o1, o2)
@@ -1984,11 +1984,115 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Function
 
             Public Function DoBitWiseOp(ByVal o1 As String, ByVal o2 As String) As Object Implements BitWiseOpHandler.DoBitWiseOp
-                Return DoBitWiseOp(CType(Convert.ToDouble(o1), Long), CType(Convert.ToDouble(o2), Long))
+                Return DoBitWiseOp(CType(VBConvert.ToDouble(o1), Long), CType(VBConvert.ToDouble(o2), Long))
             End Function
 
             Public Function GetOpName() As String Implements BitWiseOpHandler.GetOpName
                 Return "Xor"
+            End Function
+        End Class
+
+        Class VBConvert
+            Public Shared Function ToBoolean(ByVal obj As Object) As Boolean
+                Return Convert.ToBoolean(obj)
+            End Function
+
+            Public Shared Function ToByte(ByVal obj As Object) As Byte
+                Return Convert.ToByte(obj)
+            End Function
+
+            Public Shared Function ToSByte(ByVal obj As Object) As SByte
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToSByte(obj)
+            End Function
+
+            Public Shared Function ToInt16(ByVal obj As Object) As Short
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToInt16(obj)
+            End Function
+
+            Public Shared Function ToUInt16(ByVal obj As Object) As UShort
+                Return Convert.ToUInt16(obj)
+            End Function
+
+            Public Shared Function ToInt32(ByVal obj As Object) As Integer
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToInt32(obj)
+            End Function
+
+            Public Shared Function ToUInt32(ByVal obj As Object) As UInteger
+                Return Convert.ToUInt32(obj)
+            End Function
+
+            Public Shared Function ToInt64(ByVal obj As Object) As Long
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToInt64(obj)
+            End Function
+
+            Public Shared Function ToUInt64(ByVal obj As Object) As ULong
+                Return Convert.ToUInt64(obj)
+            End Function
+
+            Public Shared Function ToSingle(ByVal obj As Object) As Single
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToSingle(obj)
+            End Function
+
+            Public Shared Function ToDouble(ByVal obj As Object) As Double
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToDouble(obj)
+            End Function
+
+            Public Shared Function ToDecimal(ByVal obj As Object) As Decimal
+                If (GetTypeCode(obj) = TypeCode.Boolean) Then
+                    If (CBool(obj)) Then
+                        Return -1
+                    End If
+                    Return 0
+                End If
+                Return Convert.ToDecimal(obj)
+            End Function
+
+            Public Shared Function ToChar(ByVal obj As Object) As Char
+                Return Convert.ToChar(obj)
+            End Function
+
+            Public Shared Function ToString(ByVal obj As Object) As String
+                Return Convert.ToString(obj)
+            End Function
+
+            Public Shared Function ToDateTime(ByVal obj As Object) As DateTime
+                Return Convert.ToDateTime(obj)
             End Function
         End Class
 
