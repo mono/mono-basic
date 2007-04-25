@@ -50,7 +50,7 @@ rem =
 rem = Grasshopper variables and jars
 rem ===========================
 
-SET VMW4J2EE_DIR=C:\Program Files\Mainsoft\Visual MainWin for J2EE V2
+SET VMW4J2EE_DIR=C:\Program Files\Mainsoft for Java EE
 SET VMW4J2EE_JGAC_DIR=java_refs\framework
 
 SET VMW4J2EE_JGAC_JARS="%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\mscorlib.jar"
