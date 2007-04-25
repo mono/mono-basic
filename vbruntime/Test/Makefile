@@ -44,10 +44,10 @@ clean-local:
 	-rm -fR bin/data
 	
 run-test-cs: test-cs
-	cd bin && mono --debug nunit-console.exe 2005VB_test_CS.dll
+	cd bin && mono --debug nunit-console.exe 2005VB_test_CS.dll /labels
 
 run-test-vb: test-vb
-	cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll
+	cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll /labels
 
 run-test-local: run-test-cs run-test-vb
 	
