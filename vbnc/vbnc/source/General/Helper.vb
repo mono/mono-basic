@@ -18,7 +18,7 @@
 ' 
 
 #If DEBUG Then
-#Const DEBUGMETHODRESOLUTION = 0
+#Const DEBUGMETHODRESOLUTION = 1
 #Const DEBUGMETHODADD = 0
 #Const EXTENDEDDEBUG = 0
 #End If
@@ -30,7 +30,7 @@ Public Class Helper
     Private m_Compiler As Compiler
     Private Shared m_SharedCompilers As New Generic.List(Of Compiler)
 
-    Public Shared LOGMETHODRESOLUTION As Boolean = True
+    Public Shared LOGMETHODRESOLUTION As Boolean = False
 
     Public Const ALLMEMBERS As BindingFlags = BindingFlags.FlattenHierarchy Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
 
@@ -41,9 +41,83 @@ Public Class Helper
     Private Shared object_nameshash As New Generic.Dictionary(Of String, Object)
     Private Shared object_names As New Generic.List(Of String)
 
-    Shared Function GetObjectName(ByVal obj As Object) As String
-        If TypeOf obj Is EmitLog Then obj = DirectCast(obj, EmitLog).TheRealILGenerator
+    Private Shared m_DebugReflection As System.Text.StringBuilder
+    Private Shared m_DebugReflectionFinalized As Boolean
 
+    Shared ReadOnly Property DebugReflectionOutput() As System.Text.StringBuilder
+        Get
+            If m_DebugReflection Is Nothing Then
+                m_DebugReflection = New System.Text.StringBuilder()
+                DebugReflection_Init()
+            End If
+
+            Return m_DebugReflection
+        End Get
+    End Property
+
+    Shared Function DebugReflection_Dump(ByVal Compiler As Compiler) As String
+        DebugReflection_Finalize(Compiler)
+        Return m_DebugReflection.ToString
+    End Function
+
+    Shared Sub DebugReflection_Init()
+        m_DebugReflection.AppendLine("Imports System")
+        m_DebugReflection.AppendLine("Imports System.Reflection")
+        m_DebugReflection.AppendLine("Imports System.Reflection.Emit")
+        m_DebugReflection.AppendLine("Class DebugReflection")
+        m_DebugReflection.AppendLine("    Shared Sub Main ()")
+    End Sub
+
+    Shared Sub DebugReflection_Finalize(ByVal Compiler As Compiler)
+        If m_DebugReflectionFinalized Then Return
+
+        m_DebugReflection.AppendLine(String.Format("        {0}.Save(""{1}"")", GetObjectName(Compiler.AssemblyBuilder), IO.Path.GetFileName(Compiler.OutFileName)))
+        m_DebugReflection.AppendLine("    End Sub")
+        m_DebugReflection.AppendLine("End Class")
+
+        m_DebugReflectionFinalized = True
+    End Sub
+
+    Shared Function DebugReflection_BuildArray(Of T)(ByVal Array As T()) As T()
+        Dim arr() As T
+        ReDim arr(Array.Length - 1)
+        System.Array.Copy(Array, arr, Array.Length)
+        For i As Integer = 0 To Array.Length - 1
+            Helper.DebugReflection_AppendLine("{0}({1}) = {2}", arr, i, arr(i))
+        Next
+        Return arr
+    End Function
+
+    Shared Sub DebugReflection_AppendLine(ByVal Line As String, ByVal ParamArray objects() As Object)
+        Dim strs() As String
+
+        If objects.Length > 0 Then
+            ReDim strs(objects.Length - 1)
+            For i As Integer = 0 To objects.Length - 1
+                strs(i) = GetObjectName(objects(i))
+            Next
+            Select Case strs.Length
+                Case 1
+                    Line = String.Format(Line, strs(0))
+                Case 2
+                    Line = String.Format(Line, strs(0), strs(1))
+                Case 3
+                    Line = String.Format(Line, strs(0), strs(1), strs(2))
+                Case 4
+                    Line = String.Format(Line, strs(0), strs(1), strs(2), strs(3))
+                Case 5
+                    Line = String.Format(Line, strs(0), strs(1), strs(2), strs(3), strs(4))
+                Case Else
+                    Line = String.Format(Line, strs)
+            End Select
+        End If
+        DebugReflectionOutput.AppendLine("        " & Line)
+    End Sub
+
+    Shared Function GetObjectName(ByVal obj As Object) As String
+        If obj Is Nothing Then Return "Nothing"
+        If TypeOf obj Is String Then Return CStr(obj)
+        If TypeOf obj Is EmitLog Then obj = DirectCast(obj, EmitLog).TheRealILGenerator
 
         For i As Integer = 0 To object_ids.Count - 1
             If object_ids(i) Is obj Then Return object_names(i)
@@ -55,6 +129,8 @@ Public Class Helper
 
         If type.FullName = "System.Reflection.Emit.TypeBuilderInstantiation" Then type = type.BaseType
         If type.FullName = "System.RuntimeType" Then type = type.BaseType
+        If type.FullName = "System.Reflection.MonoGenericClass" Then type = type.BaseType
+        If type.FullName = "System.MonoType" Then type = type.BaseType
 
         Dim counter As Integer = 1
         For i As Integer = 0 To object_ids.Count - 1
@@ -69,7 +145,7 @@ Public Class Helper
             typename = type.FullName
         End If
 
-        Compiler.DebugReflection.AppendLine("Dim " & name & " As " & typename)
+        Helper.DebugReflection_AppendLine("Dim " & name & " As " & typename)
 
         object_ids.Add(obj)
         object_names.Add(name)
@@ -1124,7 +1200,7 @@ Public Class Helper
             'result = EmitIntegerArray(Info, Arguments) AndAlso result
             Dim getMethod As MethodInfo
             getMethod = ArrayElementInitializer.GetGetMethod(Info.Compiler, ArrayType)
-            Helper.Assert(getMethod IsNot Nothing)
+            Helper.Assert(getMethod IsNot Nothing, "getMethod for type " & ArrayType.FullName & " could not be found (" & ArrayType.GetType.Name & ")")
             Emitter.EmitCallVirt(Info, getMethod)
             'Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.Array_GetValue)
             'If ElementType.IsValueType Then
@@ -2180,7 +2256,7 @@ Public Class Helper
         Console.WriteLine("Error recovery not implemented yet.")
     End Sub
 
-    Private Shared Sub IndirectedStop()
+    <Diagnostics.DebuggerHidden()> Private Shared Sub IndirectedStop()
         Stop
     End Sub
 

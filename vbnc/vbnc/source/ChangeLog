@@ -3,6 +3,11 @@
 	* General/TypeManager.vb: Not finding an assembly is a warning, so
 	  don't fail.
 
+2007-04-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/TypeManager.vb: Not finding an assembly is a warning, so
+	  don't fail.
+
 2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/BinaryExpressions/BinaryExpression.vb: Don't use
