@@ -92,7 +92,7 @@ Public Class ClassDeclaration
         Else
             BaseType = Compiler.TypeCache.Object
 #If DEBUGREFLECTION Then
-            Compiler.DebugReflection.AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
+            Helper.DebugReflection_AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
 #End If
         End If
 

@@ -58,10 +58,10 @@ Public Class TypeParameterList
         m_GenericParameters = TypeBuilder.DefineGenericParameters(Helper.GetNames(Me))
 #If DEBUGREFLECTION Then
         Dim arr As String() = New String() {"2"}
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = new String () {{{1}}}", Helper.GetObjectName(arr), """" & Helper.GetNames(Me)(0) & """"))
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineGenericParameters({2})", Helper.GetObjectName(m_GenericParameters), Helper.GetObjectName(TypeBuilder), Helper.GetObjectName(arr)))
+        Helper.DebugReflection_AppendLine(String.Format("{0} = new String () {{{1}}}", Helper.GetObjectName(arr), """" & Helper.GetNames(Me)(0) & """"))
+        Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.DefineGenericParameters({2})", Helper.GetObjectName(m_GenericParameters), Helper.GetObjectName(TypeBuilder), Helper.GetObjectName(arr)))
         For i As Integer = 0 To m_GenericParameters.Length - 1
-            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}({2})", Helper.GetObjectName(m_GenericParameters(i)), Helper.GetObjectName(m_GenericParameters), i))
+            Helper.DebugReflection_AppendLine(String.Format("{0} = {1}({2})", Helper.GetObjectName(m_GenericParameters(i)), Helper.GetObjectName(m_GenericParameters), i))
         Next
 #End If
         result = DefineGenericParameters(m_GenericParameters) AndAlso result
@@ -77,10 +77,10 @@ Public Class TypeParameterList
         m_GenericParameters = MethodBuilder.DefineGenericParameters(Helper.GetNames(Me))
 #If DEBUGREFLECTION Then
         Dim arr As String() = New String() {"2"}
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = new String () {{{1}}}", Helper.GetObjectName(arr), """" & Helper.GetNames(Me)(0) & """"))
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineGenericParameters({2})", Helper.GetObjectName(m_GenericParameters), Helper.GetObjectName(MethodBuilder), Helper.GetObjectName(arr)))
+        Helper.DebugReflection_AppendLine(String.Format("{0} = new String () {{{1}}}", Helper.GetObjectName(arr), """" & Helper.GetNames(Me)(0) & """"))
+        Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.DefineGenericParameters({2})", Helper.GetObjectName(m_GenericParameters), Helper.GetObjectName(MethodBuilder), Helper.GetObjectName(arr)))
         For i As Integer = 0 To m_GenericParameters.Length - 1
-            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}({2})", Helper.GetObjectName(m_GenericParameters(i)), Helper.GetObjectName(m_GenericParameters), i))
+            Helper.DebugReflection_AppendLine(String.Format("{0} = {1}({2})", Helper.GetObjectName(m_GenericParameters(i)), Helper.GetObjectName(m_GenericParameters), i))
         Next
 #End If
 

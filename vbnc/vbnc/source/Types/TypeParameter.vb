@@ -132,8 +132,21 @@ Public Class TypeParameter
                 End If
                 attributes = attributes Or constraint.SpecialConstraintAttribute
             Next
-            If basetype IsNot Nothing Then m_Builder.SetBaseTypeConstraint(basetype)
-            If interfaces.Count > 0 Then m_Builder.SetInterfaceConstraints(interfaces.ToArray)
+            If basetype IsNot Nothing Then
+                basetype = Helper.GetTypeOrTypeBuilder(basetype)
+                m_Builder.SetBaseTypeConstraint(basetype)
+#If DEBUGREFLECTION Then
+                Helper.DebugReflection_AppendLine("{0}.SetBaseTypeConstraint({1})", m_Builder, basetype)
+#End If
+            End If
+            If interfaces.Count > 0 Then
+                Dim types As Type() = Helper.GetTypeOrTypeBuilders(interfaces.ToArray)
+                m_Builder.SetInterfaceConstraints(types)
+#If DEBUGREFLECTION Then
+                types = Helper.DebugReflection_BuildArray(Of Type)(types)
+                Helper.DebugReflection_AppendLine("{0}.SetInterfaceConstraints({1})", m_Builder, types)
+#End If
+            End If
 
             If basetype IsNot Nothing Then interfaces.Add(basetype)
             m_GenericParameterConstraints = interfaces.ToArray
@@ -141,7 +154,7 @@ Public Class TypeParameter
 
         m_Builder.SetGenericParameterAttributes(attributes)
 #If DEBUGREFLECTION Then
-        Compiler.DebugReflection.AppendLine(String.Format("{0}.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes.{1})", Helper.GetObjectName(m_Builder), attributes.ToString))
+        Helper.DebugReflection_AppendLine("{0}.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes.{1})", m_Builder, attributes.ToString)
 #End If
         Return result
     End Function

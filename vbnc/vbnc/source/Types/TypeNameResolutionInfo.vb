@@ -299,7 +299,7 @@ Public Class TypeNameResolutionInfo
                             modules = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS).ToTypeList
                         End If
                     Else
-                        Helper.AddError()
+                        Helper.AddError("(1) Could not resolve: " & R & ", strNS:" & strNS & ", stCombinedNs: " & strCombinedNs & ", Location: " & FromWhere.Location.AsString)
                     End If
                 ElseIf Qualifier.FoundIs(Of IType)() Then
                     'Helper.NotImplemented()
@@ -338,7 +338,7 @@ Public Class TypeNameResolutionInfo
                     '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
                     '** or type, a compile-time error occurs.  (..)
                     If showError = False Then Continue For
-                    Helper.AddError()
+                    Helper.AddError("(2) Could not resolve: " & R & ", Location: " & FromWhere.Location.AsString)
                     Helper.NotImplemented()
                 End If
 

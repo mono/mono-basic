@@ -226,7 +226,6 @@ Public Class TypeManager
             refAssembly = LoadAssembly(strFile)
             If refAssembly Is Nothing Then
                 Compiler.Report.ShowMessage(Messages.VBNC90012, strFile)
-                result = False
             Else
                 If Assemblies.Contains(refAssembly) = False Then
                     If Compiler.CommandLine.Verbose Then

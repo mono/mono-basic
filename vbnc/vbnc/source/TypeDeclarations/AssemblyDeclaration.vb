@@ -558,8 +558,8 @@ Public Class AssemblyDeclaration
         result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
 
 #If DEBUGREFLECTION Then
-        Compiler.DebugReflection.AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
-        Compiler.DebugReflection.AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & "")
+        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
+        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
 #End If
 
         If Compiler.CommandLine.KeyFile <> String.Empty Then
@@ -690,7 +690,7 @@ Public Class AssemblyDeclaration
             Dim major, minor, build, revision As UShort
             parts = version.Split("."c)
 
-            If parts.Length < 3 OrElse parts.Length > 4 Then
+            If parts.Length > 4 Then
                 Return ShowInvalidVersionMessage(version, Location)
             End If
 
@@ -702,14 +702,18 @@ Public Class AssemblyDeclaration
                 Return ShowInvalidVersionMessage(version, Location)
             End If
 
-            If parts(2) = "*" Then
+            If parts.Length < 3 Then
+                'Use 0
+            ElseIf parts(2) = "*" Then
                 build = CUShort((Date.Now - New Date(2000, 1, 1)).TotalDays)
                 revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
             ElseIf Not UShort.TryParse(parts(2), build) Then
                 Return ShowInvalidVersionMessage(version, Location)
             End If
 
-            If parts.Length > 3 Then
+            If parts.Length < 4 Then
+                'Use 0
+            ElseIf parts.Length > 3 Then
                 If parts(3) = "*" Then
                     revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
                 ElseIf Not UShort.TryParse(parts(3), revision) Then

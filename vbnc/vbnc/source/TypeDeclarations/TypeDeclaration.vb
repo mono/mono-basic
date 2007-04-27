@@ -369,7 +369,7 @@ Public MustInherit Class TypeDeclaration
 #End If
             m_TypeBuilder = Compiler.ModuleBuilder.DefineType(FullName, Attr)
 #If DEBUGREFLECTION Then
-            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineType(""{2}"", {3})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(Compiler.ModuleBuilder), FullName, CInt(Attr).ToString))
+            Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.DefineType(""{2}"", {3})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(Compiler.ModuleBuilder), FullName, CInt(Attr).ToString))
 #End If
         End If
 
@@ -396,7 +396,7 @@ Public MustInherit Class TypeDeclaration
             m_TypeBuilder.SetParent(m_BaseType)
 
 #If DEBUGREFLECTION Then
-            Compiler.DebugReflection.AppendLine(String.Format("{0}.SetParent({1})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(m_BaseType)))
+            Helper.DebugReflection_AppendLine(String.Format("{0}.SetParent({1})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(m_BaseType)))
 #End If
 
             If m_ImplementedTypes IsNot Nothing Then
@@ -485,7 +485,7 @@ Public MustInherit Class TypeDeclaration
 #End If
         If m_TypeBuilder IsNot Nothing Then
 #If DEBUGREFLECTION Then
-            Compiler.DebugReflection.AppendLine(String.Format("{0}.CreateType ()", Helper.GetObjectName(m_TypeBuilder)))
+            Helper.DebugReflection_AppendLine(String.Format("{0}.CreateType ()", Helper.GetObjectName(m_TypeBuilder)))
 #End If
             m_FinalType = m_TypeBuilder.CreateType()
         ElseIf m_EnumBuilder IsNot Nothing Then
