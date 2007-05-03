@@ -31,8 +31,7 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-Imports System
-'Namespace System
+Namespace System
 
 <AttributeUsage(AttributeTargets.All)> _
 Friend Class MonoTODOAttribute
@@ -99,4 +98,4 @@ Friend Class MonoNotSupportedAttribute
         MyBase.New(comment)
     End Sub
 End Class
-'End Namespace
+End Namespace
