@@ -1,3 +1,6 @@
+2007-05-03  Roei Erez <roeie@mainsoft.com>
+	* LateBinding.vb fix a bug in arrays on TARGET_JVM
+	
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ProjectData.vb, OptionTextAttribute.vb: Corcompare fix.

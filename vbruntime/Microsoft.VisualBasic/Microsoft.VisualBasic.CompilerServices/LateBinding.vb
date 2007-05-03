@@ -52,9 +52,29 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Sub LateIndexSet(ByVal o As Object, ByVal args() As Object, ByVal paramnames() As String)
             Dim realType As System.Type = o.GetType()
             Dim flags As BindingFlags
+
             If realType.IsArray Then
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod
+
+#If TARGET_JVM Then
+                Dim argsArrUpBound As Integer = args.Length - 1
+
+                'FIXME There's a bug in LateBinder that given (Integer(), Object) args brings SetValue(Object,Long()) method,
+                ' resulting in invocation failure. The current workaround is always to cast indices to long.
+                Dim indicesArr(argsArrUpBound - 1) As Long
+
+                For i As Integer = 0 To argsArrUpBound - 1
+                    indicesArr(i) = CType(args(i), Long)
+                Next
+
+                Dim indicesArrArgs(1) As Object
+                indicesArrArgs(0) = args(argsArrUpBound)
+                indicesArrArgs(1) = indicesArr
+
+                realType.InvokeMember("SetValue", flags, LBinder, o, indicesArrArgs)
+#Else
                 realType.InvokeMember("Set", flags, Nothing, o, args, Nothing)
+#End If
             Else
                 Dim defaultMembers() As MemberInfo = realType.GetDefaultMembers()
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.SetProperty
@@ -156,8 +176,16 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If realType.IsArray Then
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod
 #If TARGET_JVM Then
-                Dim lb As LateBinder = New LateBinder
-                Return realType.InvokeMember("GetValue", flags, LBinder, o, args)
+
+                Dim argsArrUpBound As Integer = args.Length - 1
+
+                Dim indicesArr(argsArrUpBound) As Integer
+                args.CopyTo(indicesArr, 0)
+
+                Dim indicesArrArgs(0) As Object
+                indicesArrArgs(0) = indicesArr
+
+                Return realType.InvokeMember("GetValue", flags, LBinder, o, indicesArrArgs)
 #Else
                 Return realType.InvokeMember("Get", flags, Nothing, o, args, Nothing)
 #End If
