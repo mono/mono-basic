@@ -40,8 +40,6 @@ IF NOT EXIST "Test\bin\Debug\Microsoft.2005_VisualBasic_test.dll" GOTO EXCEPTION
 echo == Test dlls exists - start working ... == 
 
 rem set environment settings for running J2EE applications
-IF NOT DEFINED JAVA_HOME SET JAVA_HOME="C:\jdk1.5.0_06"
-echo using JAVA_HOME=%JAVA_HOME%
 
 
 rem ===========================
@@ -50,8 +48,16 @@ rem =
 rem = Grasshopper variables and jars
 rem ===========================
 
+if not defined VMW_HOME goto VMW_HOME_UNDEFINED
+SET VMW4J2EE_DIR=%VMW_HOME%
+goto VMW4J2EE_DIR_DEFINED
+:VMW_HOME_UNDEFINED
 SET VMW4J2EE_DIR=C:\Program Files\Mainsoft for Java EE
+:VMW4J2EE_DIR_DEFINED
 SET VMW4J2EE_JGAC_DIR=java_refs\framework
+
+IF NOT DEFINED JAVA_HOME SET JAVA_HOME=%VMW4J2EE_DIR%\jre
+echo using JAVA_HOME=%JAVA_HOME%
 
 SET VMW4J2EE_JGAC_JARS="%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\mscorlib.jar"
 SET VMW4J2EE_JGAC_JARS=%VMW4J2EE_JGAC_JARS%;"%VMW4J2EE_DIR%\%VMW4J2EE_JGAC_DIR%\System.jar"
@@ -66,7 +72,7 @@ SET NET_FRAMEWORK_DIR="%WINDIR%\Microsoft.NET\Framework\v2.0.50727"
 echo using NET_FRAMEWORK_DIR=%NET_FRAMEWORK_DIR%
 set path=%path%;%NET_FRAMEWORK_DIR%
 
-set NUNIT_PATH=..\..\mcs\nunit20\
+set NUNIT_PATH=..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java20\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java20\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java20\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java20\nunit-console.jar
 
 set CLASSPATH=%NUNIT_CLASSPATH%;%VMW4J2EE_JGAC_JARS%
@@ -82,6 +88,7 @@ set RUN_LOG=%COMMON_PREFIX%.run.log
 set NUNIT_OPTIONS=/exclude=NotWorking,Broken,TargetJvmNotWorking,TargetJvmNotSupported
 
 echo converting dll to jar without validator
+mkdir %CD%\Test\bin\Debug_Java20
 "%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\java_refs\jre";"%VMW4J2EE_DIR%\java_refs";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 rem echo running java validator
