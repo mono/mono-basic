@@ -12,7 +12,7 @@ Module Test
 
         Dim asm As System.Reflection.AssemblyName
         Dim i As Integer
-        asm = System.Reflection.Assembly.GetCallingAssembly().GetName()
+        asm = System.Reflection.Assembly.GetExecutingAssembly().GetName()
         If asm.Version.Major.ToString() <> "3" Then
             System.Console.WriteLine("Expected Major Version No. 3") : Return 1
         End If

@@ -1,0 +1,14 @@
+/quiet
+/target:library
+/r:System
+/r:System.Xml
+/r:System.Configuration
+/r:System.Data
+/r:System.Web
+/r:System.Web.Services
+/r:System.Drawing
+/r:Microsoft.VisualBasic.dll
+-r:System.dll
+-r:System.Windows.Forms.dll
+-imports:System
+-imports:Microsoft.VisualBasic

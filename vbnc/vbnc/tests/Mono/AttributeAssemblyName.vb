@@ -12,7 +12,7 @@ Module Test
 
         Dim asm As System.Reflection.AssemblyName
         Dim i As Integer
-        asm = System.Reflection.Assembly.GetCallingAssembly().GetName()
+        asm = System.Reflection.Assembly.GetExecutingAssembly().GetName()
         If asm.toString() <> "AttributeAssemblyName, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null" AndAlso _
            asm.toString() <> "AttributeAssemblyName_vbc, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null" Then
             System.Console.WriteLine("#A1 Atributes not working, got '" & asm.ToString()) : Return 1

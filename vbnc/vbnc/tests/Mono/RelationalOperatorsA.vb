@@ -16,6 +16,8 @@ Module M3
         Try
             Dim arr(16) As Boolean
 
+            System.Threading.Thread.CurrentThread.CurrentCulture = New System.Globalization.CultureInfo("en-US")
+
             Dim a1, a2, a3, a4 As Boolean
             a1 = False : a2 = False : a3 = True : a4 = True
 

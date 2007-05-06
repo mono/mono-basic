@@ -13,7 +13,7 @@ Module Test
         Dim asm As System.Reflection.Assembly
         Dim i As Integer
         asm = System.Reflection.Assembly.GetAssembly(GetType(Test))
-        Dim att As Object() = asm.GetCustomAttributes(False)
+        Dim att As Object() = asm.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
         For i = 0 To att.Length - 1
             If att(i).ToString() <> "System.Reflection.AssemblyTitleAttribute" Then
                 System.Console.WriteLine("Expected System.Reflection.AssemblyTitleAttribute") : Return 1

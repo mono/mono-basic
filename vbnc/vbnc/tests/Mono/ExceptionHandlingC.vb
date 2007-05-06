@@ -1,68 +1,69 @@
 Option Strict Off
+
 Imports System
 Imports Microsoft.VisualBasic
 
 Module ExceptionHandlingC
-    Dim failed As Boolean
-    Function f1() As Object
+
+    Sub f1()
         On Error GoTo ErrorHandler
         Dim i As Integer = 0
         i = 1 / i
         Console.WriteLine(i)
-        Exit Function
+        Exit Sub
 ErrorHandler:
-        System.Console.WriteLine("AA") : failed = True : Return 1
+        Throw New Exception("AA")
         Resume Next
-    End Function
+    End Sub
 
-    Function f2() As Object
+    Sub f2()
         On Error GoTo ErrorHandler
         f1()
-        Exit Function
+        Exit Sub
 ErrorHandler:
         If Err.Description <> "AA" Then
-            System.Console.WriteLine("#EHC1 - Error statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC1 - Error statement failed")
         End If
         Resume Next
-    End Function
+    End Sub
 
-    Function f3() As Object
+    Sub f3()
         On Error GoTo ErrorHandler
         Throw New DivideByZeroException()
-        Exit Function
+        Exit Sub
 ErrorHandler:
         If Not TypeOf Err.GetException Is DivideByZeroException Then
-            System.Console.WriteLine("#EHC2 - Error statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC2 - Error statement failed")
         End If
         Resume Next
-    End Function
+    End Sub
 
-    Function f4() As Object
+    Sub f4()
         On Error GoTo ErrorHandler
         Dim i As Integer = 0
         i = 5 / i
         On Error GoTo 0
         If i <> 1 Then
-            System.Console.WriteLine("#EHC3 - Error Statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC3 - Error Statement failed")
         End If
-        Exit Function
+        Exit Sub
 ErrorHandler:
         i = 5
         Resume   ' Execution resumes with the statement that caused the error
-    End Function
+    End Sub
 
-    Function f5() As Object
+    Sub f5()
         On Error GoTo ErrorHandler
         Error 6    ' Overflow Exception
-        Exit Function
+        Exit Sub
 ErrorHandler:
         If Err.Number <> 6 Then
-            System.Console.WriteLine("#EHC4 - Error Statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC4 - Error Statement failed")
         End If
         Resume Next
-    End Function
+    End Sub
 
-    Function f6() As Object
+    Sub f6()
         On Error GoTo ErrorHandler
         Dim i As Integer = 0, j As Integer
         i = 1 / i
@@ -71,34 +72,32 @@ ErrorHandler:
         On Error Resume Next
 
         i = 0
-        i = 1 / i ' create error 
+        i = 1 / i ' create error
         If Err.Number = 6 Then  ' handle error
             Err.Clear()
         Else
-            System.Console.WriteLine("#EHC5 - Error Statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC5 - Error Statement failed")
         End If
 
         i = 1 / i
         On Error GoTo -1
         If Err.Number <> 0 Then
-            System.Console.WriteLine("#EHC6 - Error Statement failed") : failed = True : Return 1
+            Throw New Exception("#EHC6 - Error Statement failed")
         End If
 
-        Exit Function
+        Exit Sub
 ErrorHandler:
         Select Case Err.Number
             Case 6
                 i = 1
             Case Else
-                System.Console.WriteLine("#EHC7 - Error Statement failed") : failed = True : Return 1
+                Throw New Exception("#EHC7 - Error Statement failed")
         End Select
         Resume
-    End Function
+    End Sub
 
-    Function Main() As Integer
+    Sub Main()
         f2() : f3() : f4() : f5() : f6()
-        If failed Then Return 1
-    End Function
+    End Sub
 
 End Module
-

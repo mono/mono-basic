@@ -1,0 +1,7 @@
+#-recurse:*.vb
+A.vb
+-r:System.Windows.Forms.dll,System.Drawing.dll,System.Xml.dll
+-imports:System.Collections.Generic,System.Collections,System,System.Windows.Forms,System.Diagnostics,System.Drawing
+-rootnamespace:rt
+-target:library
+-define:_MYTYPE=\"Empty\"

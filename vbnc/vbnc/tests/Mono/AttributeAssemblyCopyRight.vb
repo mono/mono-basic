@@ -13,7 +13,7 @@ Module Test
         Dim asm As System.Reflection.Assembly
         Dim i As Integer
         asm = System.Reflection.Assembly.GetAssembly(GetType(Test))
-        Dim att As Object() = asm.GetCustomAttributes(False)
+        Dim att As Object() = asm.GetCustomAttributes(GetType(System.Reflection.AssemblyCopyrightAttribute), False)
         For i = 0 To att.Length - 1
             If att(i).ToString() <> "System.Reflection.AssemblyCopyrightAttribute" Then
                 System.Console.WriteLine("AssemblyCopyright Attribute was not set properly") : Return 1

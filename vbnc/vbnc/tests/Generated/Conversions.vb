@@ -176,29 +176,6 @@ Namespace Z
                 End If
             Next
         End Sub
-
-        Shared Function ImplicitConversionSingleToDecimal1() As Integer
-            Dim result As Boolean
-            Dim source1 As Single
-            Dim dest1 As Decimal
-            Dim dest2 As Decimal
-
-            Try
-                source1 = CSng(100.001)
-                dest1 = CDec(source1) 'Assignment from other variable
-                dest2 = CDec(CSng(100.001)) 'Assignment from constant
-            Catch ex As Exception
-                System.Console.WriteLine("Unexpected error: " & ex.Message)
-                Return 2
-            End Try
-
-            result = (dest1 <> dest2) AndAlso (dest2 = New Decimal(CDbl(source1)) AndAlso (dest1 = New Decimal(CSng(source1))))
-
-            If result = False Then
-                System.Console.WriteLine("FAIL ImplicitConversionSingleToDecimal1, dest1={0},dest2={1}", dest1, dest2)
-                Return 1
-            End If
-        End Function
     End Class
 End Namespace
 

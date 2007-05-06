@@ -12,7 +12,7 @@ Module Test
 
         Dim asm As System.Reflection.AssemblyName
         Dim i As Integer
-        asm = System.Reflection.Assembly.GetCallingAssembly().GetName()
+        asm = System.Reflection.Assembly.GetExecutingAssembly().GetName()
         If asm.Version.ToString() <> "3.2.1.0" Then
             System.Console.WriteLine("Expected Version No. 3.2.1.0") : Return 1
         End If
