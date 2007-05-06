@@ -1,3 +1,8 @@
+2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DecimalType.vb: Add 2.0 conversion cases.
+	* Utils.vb: Implement GetResourceString. Fixes #81434.
+
 2007-05-03  Roei Erez <roeie@mainsoft.com>
 	* LateBinding.vb fix a bug in arrays on TARGET_JVM
 	

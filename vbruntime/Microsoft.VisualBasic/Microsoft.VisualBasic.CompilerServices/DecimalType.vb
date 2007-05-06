@@ -85,6 +85,16 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Return Convert.ToDecimal(DirectCast(Value, Single))
                 Case TypeCode.String
                     Return Parse(DirectCast(Value, String), NumberFormat)
+#If NET_VER >= 2.0 Then
+                Case TypeCode.SByte
+                    Return Convert.ToDecimal(DirectCast(Value, SByte))
+                Case TypeCode.UInt16
+                    Return Convert.ToDecimal(DirectCast(Value, UShort))
+                Case TypeCode.UInt32
+                    Return Convert.ToDecimal(DirectCast(Value, UInteger))
+                Case TypeCode.UInt64
+                    Return Convert.ToDecimal(DirectCast(Value, ULong))
+#End If
                 Case Else
                     Throw New InvalidCastException
             End Select

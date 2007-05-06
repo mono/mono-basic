@@ -30,10 +30,13 @@
 
 Imports System
 Imports System.Runtime.InteropServices
+Imports System.Resources
 
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Utils
+
+        Private Shared m_Resources As ResourceManager
 
         Private Sub New()
             'Nobody should see constructor
@@ -75,9 +78,29 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Sub ThrowException(ByVal hr As Integer)
             Throw New NotImplementedException
         End Sub
+
 #If NET_2_0 Then
         Public Shared Function GetResourceString(ByVal ResourceKey As String, ByVal ParamArray Args As String()) As String
-            Throw New NotImplementedException
+            Dim result As String
+
+            Try
+                result = String.Format(GetResourceString(ResourceKey), Args)
+            Catch ex As Exception
+                result = ResourceKey
+            End Try
+
+            Return result
+        End Function
+
+        Friend Shared Function GetResourceString(ByVal Name As String) As String
+            Try
+                If m_Resources Is Nothing Then
+                    m_Resources = New Resources.ResourceManager("strings", System.Reflection.Assembly.GetExecutingAssembly())
+                End If
+                Return m_Resources.GetString(Name)
+            Catch ex As Exception
+                Return "Error message not available."
+            End Try
         End Function
 #End If
     End Class
