@@ -22,7 +22,7 @@ Public Class CompilerGeneratedExpression
 
     Delegate Function GenerateCodeDelegate(ByVal Info As EmitInfo) As Boolean
 
-    Private m_Delegate As GenerateCodeDelegate
+    Protected m_Delegate As GenerateCodeDelegate
     Private m_ExpressionType As Type
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
@@ -42,8 +42,44 @@ Public Class CompilerGeneratedExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-
             Return m_ExpressionType
         End Get
     End Property
+End Class
+
+Public Class LoadLocalExpression
+    Inherits CompilerGeneratedExpression
+
+    Private m_Local As LocalBuilder
+
+    Sub New(ByVal Parent As ParsedObject, ByVal Local As LocalBuilder)
+        MyBase.New(Parent, Nothing, Local.LocalType)
+        MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
+        m_Local = Local
+    End Sub
+
+    Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        If Info.IsRHS Then
+            Emitter.EmitLoadVariable(Info, m_Local)
+        Else
+            Emitter.EmitStoreVariable(Info, m_Local)
+        End If
+
+        Return result
+    End Function
+End Class
+
+Public Class ValueOnStackExpression
+    Inherits CompilerGeneratedExpression
+
+    Sub New(ByVal Parent As ParsedObject, ByVal ExpressionType As Type)
+        MyBase.New(Parent, Nothing, ExpressionType)
+        MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
+    End Sub
+
+    Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Return True
+    End Function
 End Class

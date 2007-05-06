@@ -27,7 +27,7 @@ Public Class NamespaceDictionary
     Sub AddType(ByVal Type As Type)
         Dim [namespace] As String = Type.Namespace
 
-        If [namespace] Is Nothing Then [namespace] = ""
+        If [namespace] Is Nothing Then [namespace] = String.Empty
         GetTypes([namespace]).Add(Type)
     End Sub
 

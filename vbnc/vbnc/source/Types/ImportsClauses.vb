@@ -52,7 +52,7 @@ Public Class ImportsClauses
                 If ns.IsTypeImport Then
                     'A type cannot contain a module, nothing to do here.
                 ElseIf ns.IsNamespaceImport Then
-                    result.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(ns.NamespaceImported).TypesAsArray)
+                    result.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(ns.NamespaceImported.ToString).TypesAsArray)
                 Else
                     Continue For 'This import was not resolved correctly, don't use it.
                 End If

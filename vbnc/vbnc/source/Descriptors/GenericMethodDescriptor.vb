@@ -66,6 +66,7 @@ Public Class GenericMethodDescriptor
 #If DEBUG Then
         Try
             Dim tmp As Type() = Nothing
+            'Dim t As Type = Me.ReturnType
             If ClosedType.IsGenericTypeDefinition Then
                 tmp = ClosedType.GetGenericArguments
             ElseIf ClosedType.IsGenericType Then

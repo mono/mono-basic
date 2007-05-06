@@ -214,15 +214,17 @@ Public Class MemberAccessExpression
                 Helper.AddError()
                 Return False
             Else
-                m_First = m_WithStatement.WithExpression
+                m_First = m_WithStatement.WithVariableExpression
                 ' Helper.Assert(m_First.IsResolved)
             End If
         End If
 
+        If result = False Then Return result
+
         '* If E is a type parameter, then a compile-time error results.
         If m_First.Classification.IsTypeClassification AndAlso m_First.Classification.AsTypeClassification.IsTypeParameter Then
-            Helper.AddError()
-            Return False
+            result = Compiler.Report.ShowMessage(Messages.VBNC32098, Me.Location) AndAlso result
+            If result = False Then Return result
         End If
 
         '* If E is the keyword Global, and I is the name of an accessible type in the global namespace, 
@@ -265,7 +267,7 @@ Public Class MemberAccessExpression
             End If
 
             'TODO: The spec is missing info about modules in namespaces. Doing check anyway.
-            Dim modules As TypeDictionary = Compiler.TypeManager.GetModulesByNamespace(ns)
+            Dim modules As TypeDictionary = Compiler.TypeManager.GetModulesByNamespace(ns.ToString)
             Dim members As Generic.List(Of MemberInfo) = Helper.GetMembersOfTypes(Compiler, modules, Name)
             If members.Count > 0 Then
                 Dim first As Object = members(0)
@@ -318,7 +320,7 @@ Public Class MemberAccessExpression
             Dim members As Generic.List(Of MemberInfo)
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
-            members = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupMembersFlattened(Name)
+            members = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name).Members
 
             Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
             withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
@@ -465,9 +467,7 @@ Public Class MemberAccessExpression
 
             Dim members As Generic.List(Of MemberInfo)
 
-            'members = Helper.FilterByName(Helper.GetMembers(Compiler, T), Name)
-            'members = Helper.FilterByName(Compiler.TypeManager.GetCache(T).FlattenedCache.GetAllMembers.ToArray, Name)
-            members = Compiler.TypeManager.GetCache(T).LookupMembersFlattened(Name)
+            members = Compiler.TypeManager.GetCache(T).LookupFlattened(Name).Members
             Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
             withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
             If withTypeArgs IsNot Nothing Then
@@ -475,8 +475,11 @@ Public Class MemberAccessExpression
             End If
             members = Helper.FilterExternalInaccessible(Me.Compiler, members)
 
-            Helper.StopIfDebugging(members.Count = 0)
-
+            If members.Count = 0 Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+                If result = False Then Return result
+            End If
+            
             If members.Count > 0 Then
                 Dim first As Object = members(0)
                 '** If I identifies one or more methods, then the result is a method group with the associated type 

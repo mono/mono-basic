@@ -264,7 +264,8 @@ Public Class MethodGroupClassification
 
     Private Sub SetMethods(ByVal lst As Generic.List(Of MemberInfo))
         m_Group = New Generic.List(Of MemberInfo)
-        For Each member As MemberInfo In lst
+        For i As Integer = 0 To lst.Count - 1
+            Dim member As MemberInfo = lst(i)
             Dim method As MethodBase
             method = TryCast(member, MethodBase)
             Helper.Assert(method IsNot Nothing)
@@ -277,7 +278,8 @@ Public Class MethodGroupClassification
 
     Private Sub SetMethods(ByVal lst As Generic.List(Of MethodBase))
         m_Group = New Generic.List(Of MemberInfo)
-        For Each method As MethodBase In lst
+        For i As Integer = 0 To lst.Count - 1
+            Dim method As MethodBase = lst(i)
             m_Group.Add(method)
         Next
 #If DEBUG Then
@@ -331,6 +333,8 @@ Public Class MethodGroupClassification
             Case MemberTypes.Property
                 Dim prop As PropertyDeclaration = TryCast(codedMember, PropertyDeclaration)
                 methodtypes = prop.Signature.Parameters.ToTypeArray
+            Case MemberTypes.Event
+                methodtypes = Type.EmptyTypes
             Case Else
                 methodtypes = Nothing
                 Helper.NotImplemented()
@@ -343,7 +347,7 @@ Public Class MethodGroupClassification
                 Case MemberTypes.Property
                     grptypes = Helper.GetParameterTypes(Helper.GetParameters(codedMember.Compiler, DirectCast(member, PropertyInfo)))
                 Case MemberTypes.Event
-                    Helper.NotImplemented() : Return Nothing
+                    grptypes = Type.EmptyTypes
                 Case Else
                     Throw New InternalException(codedMember)
             End Select

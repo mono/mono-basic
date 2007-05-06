@@ -38,6 +38,15 @@ Public Class DictionaryAccessExpression
         MyBase.New(Parent)
     End Sub
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        If m_FirstPart IsNot Nothing Then result = m_FirstPart.ResolveTypeReferences AndAlso result
+        If m_SecondPart IsNot Nothing Then result = m_SecondPart.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
     Sub Init(ByVal FirstPart As Expression, ByVal SecondPart As IdentifierOrKeyword)
         m_FirstPart = FirstPart
         m_SecondPart = SecondPart
@@ -78,7 +87,7 @@ Public Class DictionaryAccessExpression
             firsttp = m_FirstPart.ExpressionType
         Else
             m_WithStatement = Me.FindFirstParent(Of WithStatement)()
-            firsttp = m_WithStatement.WithExpression.ExpressionType
+            firsttp = m_WithStatement.WithVariableExpression.ExpressionType
         End If
 
 
@@ -93,9 +102,9 @@ Public Class DictionaryAccessExpression
                 Helper.AddError()
             End If
         ElseIf attr.Length > 1 Then
-            Helper.NotImplemented()
+            Helper.NotImplemented("Attr.Length = " & attr.Length)
         Else
-            Helper.NotImplemented()
+            Helper.NotImplemented("Attr.Length = " & attr.Length & ", firsttp.GetType = " & firsttp.GetType.Name)
         End If
 
         Return result

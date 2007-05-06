@@ -60,7 +60,7 @@ Public Class AndAlsoExpression
                 Info.Stack.Pop(Compiler.TypeCache.Boolean) 'Both a true and a false value was added to the stack, remove one.
 
                 If opType = TypeCode.Object Then
-                    Emitter.EmitBox(Info)
+                    Emitter.EmitBox(Info, Compiler.TypeCache.Boolean)
                     Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 End If
             Case Else

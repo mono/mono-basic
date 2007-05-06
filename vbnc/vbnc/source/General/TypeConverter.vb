@@ -108,7 +108,7 @@ Public Class TypeConverter
 
     Public Shared IntDivResultTypes As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXBXBBBBBBBBBBBB-B" & _
+            "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXHHJJJLLLLLLX-L" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -123,15 +123,15 @@ Public Class TypeConverter
             "XBXLXLLLLLLLLLLLX-L" & _
             "XBXLXLLLLLLLLLLLX-L" & _
             "XBXLXLLLLLLLLLLLX-L" & _
-            "XBXXXXXXXXXXXXXXX-L" & _
+            "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
-            "XBXLXLLLLLLLLLLLL-L"
+            "XBXLXLLLLLLLLLLLX-L"
 
     Public Shared RealDivResultTypes As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXOXOOOOOOOONXOX-O" & _
+            "XBXOXOOOOOOOONOOX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXOXOOOOOOOONOOX-O" & _
             "XBXOXOOOOOOOONOOX-O" & _
@@ -171,10 +171,10 @@ Public Class TypeConverter
 
     Public Shared SubResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXBXBBBBBBBBBBBB-B" & _
+            "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXFHHJJLLPNOPX-O" & _
-            "XXXXSXXXXXXXXXXXX-X" & _
+            "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXFHHJJLLPNOPX-O" & _
             "XBXHXHGHIJKLMNOPX-O" & _
             "XBXHXHHHJJLLPNOPX-O" & _
@@ -186,7 +186,7 @@ Public Class TypeConverter
             "XBXNXNNNNNNNNNOPX-O" & _
             "XBXOXOOOOOOOOOOOX-O" & _
             "XBXPXPPPPPPPPPOPX-O" & _
-            "XBXXXXXXXXXXXXXXX-X" & _
+            "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
 
@@ -340,6 +340,24 @@ Public Class TypeConverter
             "XIX1111111111161I-0" & _
             "-------------------" & _
             "XIX00000000000000-I"
+
+    Shared Function GetErrorNumberForBinaryOperation(ByVal op As KS, ByVal left As TypeCode, ByVal right As TypeCode) As Integer
+        If op = KS.ShiftLeft OrElse op = KS.ShiftRight Then
+            If left = TypeCode.Object AndAlso (right = TypeCode.DateTime OrElse right = TypeCode.Char) Then Return 0
+            If left <> TypeCode.DateTime AndAlso left <> TypeCode.Char Then
+                If right = TypeCode.DateTime Then Return 30311
+                If right = TypeCode.Char Then Return 32006
+            End If
+        ElseIf (op = KS.Add OrElse op = KS.Minus) AndAlso left = TypeCode.DateTime AndAlso right = TypeCode.DateTime Then
+            Return 0
+        End If
+
+        Dim resultType As TypeCode
+        resultType = TypeConverter.GetBinaryResultType(op, left, right)
+
+        If resultType = TypeCode.Empty Then Return 30452
+        Return 0
+    End Function
 
     Shared Function GetErrorNumberForConversion(ByVal tp1 As TypeCode, ByVal tp2 As TypeCode, ByVal Implicit As Boolean) As Integer
         Select Case GetConversionResultType(tp1, tp2)
@@ -683,8 +701,8 @@ Public Class TypeConverter
         Helper.Assert(Source IsNot Nothing)
         Helper.Assert(Destination IsNot Nothing)
 
-        Dim dtc As TypeCode = Helper.GetTypeCode(Destination)
-        Dim stc As TypeCode = Helper.GetTypeCode(Source.GetType)
+        Dim dtc As TypeCode = Helper.GetTypeCode(Nothing, Destination)
+        Dim stc As TypeCode = Helper.GetTypeCode(Nothing, Source.GetType)
 
         'Console.WriteLine("ConvertTo: from " & stc.ToString() & " to " & dtc.ToString)
 
@@ -799,7 +817,7 @@ Public Class TypeConverter
             Case TypeCode.Int16
                 Throw New NotImplementedException
             Case TypeCode.Int32
-                Throw New NotImplementedException
+                Return CByte(DirectCast(Source, Integer))
             Case TypeCode.Int64
                 Throw New NotImplementedException
             Case TypeCode.Object
@@ -852,6 +870,8 @@ Public Class TypeConverter
             Case TypeCode.Single
                 Throw New NotImplementedException
             Case TypeCode.String
+                Dim str As String = DirectCast(Source, String)
+                If str.Length = 1 Then Return str(0)
                 Throw New NotImplementedException
             Case TypeCode.UInt16
                 Throw New NotImplementedException
@@ -1090,7 +1110,7 @@ Public Class TypeConverter
             Case TypeCode.Int16
                 Throw New NotImplementedException
             Case TypeCode.Int32
-                Throw New NotImplementedException
+                Return CShort(DirectCast(Source, Integer))
             Case TypeCode.Int64
                 Throw New NotImplementedException
             Case TypeCode.Object
@@ -1199,46 +1219,7 @@ Public Class TypeConverter
     End Function
 
     Public Shared Function ConvertToObject(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Object
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Return CObj(Source) ' Nothing 'Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Return CObj(Source) '                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
+        Return Source
     End Function
 
     Public Shared Function ConvertToSByte(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As SByte
@@ -1289,7 +1270,7 @@ Public Class TypeConverter
             Case TypeCode.Boolean
                 Throw New NotImplementedException
             Case TypeCode.Byte
-                Throw New NotImplementedException
+                Return DirectCast(Source, Byte)
             Case TypeCode.Char
                 Throw New NotImplementedException
             Case TypeCode.DateTime
@@ -1303,25 +1284,25 @@ Public Class TypeConverter
             Case TypeCode.Empty
                 Throw New NotImplementedException
             Case TypeCode.Int16
-                Throw New NotImplementedException
+                Return DirectCast(Source, Short)
             Case TypeCode.Int32
-                Throw New NotImplementedException
+                Return DirectCast(Source, Integer)
             Case TypeCode.Int64
-                Throw New NotImplementedException
+                Return DirectCast(Source, Long)
             Case TypeCode.Object
                 Throw New NotImplementedException
             Case TypeCode.SByte
-                Throw New NotImplementedException
+                Return DirectCast(Source, SByte)
             Case TypeCode.Single
-                Throw New NotImplementedException
+                Return DirectCast(Source, Single)
             Case TypeCode.String
                 Throw New NotImplementedException
             Case TypeCode.UInt16
-                Throw New NotImplementedException
+                Return DirectCast(Source, UShort)
             Case TypeCode.UInt32
-                Throw New NotImplementedException
+                Return DirectCast(Source, UInteger)
             Case TypeCode.UInt64
-                Throw New NotImplementedException
+                Return DirectCast(Source, ULong)
             Case Else
                 Throw New NotImplementedException()
         End Select

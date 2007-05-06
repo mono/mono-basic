@@ -141,11 +141,39 @@ Public MustInherit Class Token
     ''' <param name="AnySpecial"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Overridable Overloads Function Equals(ByVal ParamArray AnySpecial() As KS) As Boolean
+    Public Overridable Overloads Function Equals(ByVal AnySpecial() As KS) As Boolean
         For i As Integer = 0 To VB.UBound(AnySpecial)
             If Equals(AnySpecial(i)) = True Then Return True
         Next
         Return False
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS) As Boolean
+        Return Equals(a) OrElse Equals(b)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS, ByVal d As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS, ByVal d As KS, ByVal e As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d) OrElse Equals(e)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS, ByVal d As KS, ByVal e As KS, ByVal f As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d) OrElse Equals(e) OrElse Equals(f)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS, ByVal d As KS, ByVal e As KS, ByVal f As KS, ByVal g As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d) OrElse Equals(e) OrElse Equals(f) OrElse Equals(g)
+    End Function
+
+    Public Overloads Function Equals(ByVal a As KS, ByVal b As KS, ByVal c As KS, ByVal d As KS, ByVal e As KS, ByVal f As KS, ByVal g As KS, ByVal h As KS) As Boolean
+        Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d) OrElse Equals(e) OrElse Equals(f) OrElse Equals(g) OrElse Equals(h)
     End Function
 
     Public Overridable Overloads Function Equals(ByVal Special As KS) As Boolean
@@ -204,7 +232,7 @@ Public MustInherit Class Token
     End Function
 
     Function IsEndOfStatement() As Boolean
-        Return isEndOfLine(True) OrElse Equals(KS.Colon)
+        Return IsEndOfLine(True) OrElse Equals(KS.Colon)
     End Function
 
     Function IsEndOfLine(Optional ByVal onlyEndOfLine As Boolean = False) As Boolean

@@ -39,6 +39,7 @@
   <data name="2011"><value>No files to compile! Cannot do anything!</value></data>
   <data name="2014"><value>The response file '{0}' has already been included</value></data>
   <data name="2016"><value>Code page '{0}' is invalid or not supported</value></data>
+  <data name="2017"><value>The library '{0}' could not be found.</value></data>
   <data name="2019"><value>the option '{0}' cannot have the value '{1}'</value></data>
   <data name="20001"><value>	'{0}': not most specific.</value></data>
   <data name="30001"><value>There cannot be any statements in a namespace.</value></data>
@@ -246,7 +247,7 @@
   <data name="30281"><value>CHANGEME</value></data>
   <data name="30282"><value>CHANGEME</value></data>
   <data name="30283"><value>CHANGEME</value></data>
-  <data name="30284"><value>CHANGEME</value></data>
+  <data name="30284"><value>'Overrides' can't be used on {0}, because there is no such member in a base class.</value></data>
   <data name="30287"><value>CHANGEME</value></data>
   <data name="30288"><value>CHANGEME</value></data>
   <data name="30289"><value>CHANGEME</value></data>
@@ -332,7 +333,7 @@
   <data name="30444"><value>CHANGEME</value></data>
   <data name="30445"><value>CHANGEME</value></data>
   <data name="30451"><value>Could not resolve the name '{0}'</value></data>
-  <data name="30452"><value>CHANGEME</value></data>
+  <data name="30452"><value>Operator '{0}' is not defined for the types '{1}' and '{2}'.</value></data>
   <data name="30454"><value>CHANGEME</value></data>
   <data name="30455"><value>CHANGEME</value></data>
   <data name="30456"><value>'{0}' is not a member of '{1}'.</value></data>
@@ -410,7 +411,7 @@
   <data name="30578"><value>CHANGEME</value></data>
   <data name="30579"><value>CHANGEME</value></data>
   <data name="30580"><value>CHANGEME</value></data>
-  <data name="30581"><value>CHANGEME</value></data>
+  <data name="30581"><value>An 'AddressOf' expression can't be converted to '{0}', because '{0}' is not a delegate type.</value></data>
   <data name="30582"><value>CHANGEME</value></data>
   <data name="30583"><value>CHANGEME</value></data>
   <data name="30584"><value>CHANGEME</value></data>
@@ -830,6 +831,7 @@
   <data name="32069"><value>CHANGEME</value></data>
   <data name="32070"><value>CHANGEME</value></data>
   <data name="32071"><value>CHANGEME</value></data>
+  <data name="32098"><value>Type parameters can't be used as a qualifier.</value></data>
   <data name="32200"><value>CHANGEME</value></data>
   <data name="32201"><value>CHANGEME</value></data>
   <data name="32203"><value>CHANGEME</value></data>

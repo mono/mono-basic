@@ -46,7 +46,7 @@ Public Class CIntExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Type = Info.Compiler.TypeCache.Integer
         Select Case expTypeCode
             Case TypeCode.Char
@@ -65,7 +65,7 @@ Public Class CIntExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
 
@@ -78,7 +78,7 @@ Public Class CIntExpression
             Case TypeCode.Int32
                 'Nothing to do
             Case TypeCode.Char
-                info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
                 result = False
             Case TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
@@ -118,7 +118,7 @@ Public Class CIntExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32
                     Return CInt(originalValue) 'No range checking needed.

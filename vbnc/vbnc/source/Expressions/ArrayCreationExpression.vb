@@ -103,7 +103,7 @@ Public Class ArrayCreationExpression
                 If exp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) = False Then Throw New InternalException(Parent)
                 If exp.GenerateCode(Info.Clone(True)) = False Then Throw New InternalException(parent)
 
-                Emitter.EmitConversion(Parent.Compiler.TypeCache.Integer, Info)
+                Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.Integer, Info)
             Next
             EmitArrayConstructor(Info, ArrayType, Ranks)
         Else
@@ -192,15 +192,20 @@ Public Class ArrayCreationExpression
     Private Function EmitElementInitializer(ByVal Info As EmitInfo, ByVal Initializer As VariableInitializer, ByVal CurrentDepth As Integer, ByVal ElementIndex As Integer, ByVal ArrayVariable As LocalBuilder, ByVal ArrayType As Type, ByVal Indices As Generic.List(Of Integer)) As Boolean
         Dim result As Boolean = True
         Dim vi As VariableInitializer = Initializer
+        Dim elementType As Type = ArrayType.GetElementType
 
         If vi.IsRegularInitializer Then
             Emitter.EmitLoadVariable(Info, ArrayVariable)
             For i As Integer = 0 To Indices.Count - 1
                 Emitter.EmitLoadValue(Info.Clone(True, False, Compiler.TypeCache.Integer), Indices(i))
             Next
-            result = vi.AsRegularInitializer.GenerateCode(Info.Clone(True, False, ArrayType.GetElementType)) AndAlso result
+            If elementType.IsValueType AndAlso elementType.IsPrimitive = False AndAlso elementType.IsEnum = False Then
+                Emitter.EmitLoadElementAddress(Info, elementType, ArrayType)
+            End If
+
+            result = vi.AsRegularInitializer.GenerateCode(Info.Clone(True, False, elementType)) AndAlso result
             If CurrentDepth = 1 Then
-                Emitter.EmitStoreElement(Info, ArrayType.GetElementType, ArrayType)
+                Emitter.EmitStoreElement(Info, elementType, ArrayType)
             Else
                 Dim setmethod As MethodInfo
                 Dim settypes(CurrentDepth) As Type

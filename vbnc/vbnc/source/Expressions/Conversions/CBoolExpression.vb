@@ -36,7 +36,7 @@ Public Class CBoolExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
 
@@ -101,7 +101,7 @@ Public Class CBoolExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, Info.Compiler.TypeCache.Boolean.Name)
@@ -123,7 +123,7 @@ Public Class CBoolExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, _
                   TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal

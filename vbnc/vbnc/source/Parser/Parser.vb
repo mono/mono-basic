@@ -422,7 +422,7 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If iLastToken Is tm.CurrentToken Then
+            If iLastToken Is tm.CurrentToken AndAlso iLastToken IsNot EndOfLineToken.EOL Then
                 Throw New InternalException("Recursive problems, could not get past token: " & tm.CurrentToken.ToString() & " with location: " & tm.CurrentToken.Location.ToString)
             End If
         Loop
@@ -1239,15 +1239,12 @@ Partial Public Class Parser
     End Function
 
     Private Function ParseModifiers(ByVal Parent As ParsedObject, ByVal ValidModifiers As KS()) As Modifiers
-        Dim result As Modifiers
-        Dim tmp As New Generic.List(Of KS)
+        Dim result As New Modifiers(Parent)
 
         While tm.CurrentToken.Equals(ValidModifiers)
-            tmp.Add(tm.CurrentToken.AsKeyword.Keyword)
+            result.AddModifier(tm.CurrentToken.AsKeyword.Keyword)
             tm.NextToken()
         End While
-
-        result = New Modifiers(Parent, tmp)
 
         Return result
     End Function

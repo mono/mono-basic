@@ -74,6 +74,7 @@ Public Class DelegateDeclaration
 
         If TypeOf m_Signature Is FunctionSignature Then
             ReturnType = DirectCast(m_Signature, FunctionSignature).TypeName
+            If ReturnType Is Nothing Then ReturnType = New TypeName(Me, Compiler.TypeCache.Object)
         Else
             ReturnType = Nothing
         End If

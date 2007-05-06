@@ -77,7 +77,7 @@ Public Class SubDeclaration
         Return result
     End Function
 
-    Function DefineOverrides() As Boolean
+    Function DefineHandlesOrImplements() As Boolean
         Dim result As Boolean = True
 
         If m_HandlesOrImplements IsNot Nothing Then
@@ -98,7 +98,7 @@ Public Class SubDeclaration
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = DefineOverrides() AndAlso result
+        result = DefineHandlesOrImplements() AndAlso result
         result = MyBase.GenerateCode(Info) AndAlso result
 
         Return result

@@ -322,11 +322,13 @@ Public MustInherit Class BaseObject
     Private m_ObjectID As Integer = NewID()
     Public Shared ObjectIDStop As Integer
     Public Shared NextID As Integer
+
     ReadOnly Property ObjectID() As Integer Implements IBaseObject.ObjectID
         Get
             Return m_ObjectID
         End Get
     End Property
+
     Shared Function NewID() As Integer
         NextID += 1
         If ObjectIDStop = NextID Then

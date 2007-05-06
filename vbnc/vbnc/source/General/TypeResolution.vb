@@ -274,45 +274,6 @@ Public Class TypeResolution
         End Select
     End Function
 
-    Function StringToBuiltInType(ByVal Name As String) As Type
-        Select Case Name.ToLower
-            Case "boolean"
-                Return Compiler.TypeCache.Boolean
-            Case "byte"
-                Return Compiler.TypeCache.Byte
-            Case "char"
-                Return Compiler.TypeCache.Char
-            Case "date"
-                Return Compiler.TypeCache.Date
-            Case "decimal"
-                Return Compiler.TypeCache.Decimal
-            Case "double"
-                Return Compiler.TypeCache.Double
-            Case "integer"
-                Return Compiler.TypeCache.Integer
-            Case "long"
-                Return Compiler.TypeCache.Long
-            Case "object"
-                Return Compiler.TypeCache.Object
-            Case "short"
-                Return Compiler.TypeCache.Short
-            Case "string"
-                Return Compiler.TypeCache.String
-#If WHIDBEY Then
-            Case "sbyte"
-                Return Compiler.TypeCache.SByte
-            Case "ushort"
-                Return Compiler.TypeCache.UShort
-            Case "uinteger"
-                Return Compiler.TypeCache.UInteger
-            Case "ulong"
-                Return Compiler.TypeCache.ULong
-#End If
-            Case Else
-                Return Nothing
-        End Select
-    End Function
-
     Shared Function KeywordToTypeCode(ByVal Keyword As KS) As TypeCode
         Select Case Keyword
             Case KS.Boolean
@@ -446,13 +407,13 @@ Public Class TypeResolution
         If Helper.CompareType(Compiler.TypeCache.Nothing, FromType) Then Return True
         If FromType.IsByRef Then FromType = FromType.GetElementType
         If ToType.IsByRef Then ToType = ToType.GetElementType
-        tpFrom = Helper.GetTypeCode(FromType)
-        tpTo = Helper.GetTypeCode(ToType)
+        tpFrom = Helper.GetTypeCode(Compiler, FromType)
+        tpTo = Helper.GetTypeCode(Compiler, ToType)
         If tpTo = TypeCode.Object Then
             Return Helper.IsAssignable(Compiler, FromType, ToType) ' ToType.IsAssignableFrom(FromType)
-        ElseIf Helper.IsEnum(ToType) AndAlso Helper.IsEnum(FromType) = False Then
+        ElseIf Helper.IsEnum(Compiler, ToType) AndAlso Helper.IsEnum(Compiler, FromType) = False Then
             Return False
-        ElseIf Helper.IsEnum(ToType) AndAlso Helper.IsEnum(FromType) Then
+        ElseIf Helper.IsEnum(Compiler, ToType) AndAlso Helper.IsEnum(Compiler, FromType) Then
             Return Helper.CompareType(ToType, FromType)
         Else
             Dim result As Boolean
@@ -477,7 +438,7 @@ Public Class TypeResolution
 
     Function IsIntegralType(ByVal Type As TypeCode) As Boolean
         For Each t As Type In IntegralTypes
-            If Helper.GetTypeCode(t) = Type Then Return True
+            If Helper.GetTypeCode(Compiler, t) = Type Then Return True
         Next
         Return False
     End Function
@@ -575,7 +536,7 @@ Public Class TypeResolution
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function CheckNumericRange(ByVal value As Object, ByRef result As Object, ByVal desiredType As Type) As Boolean
-        Dim builtInType As BuiltInDataTypes = TypeResolution.TypeCodeToBuiltInType(Helper.GetTypeCode(desiredType))
+        Dim builtInType As BuiltInDataTypes = TypeResolution.TypeCodeToBuiltInType(Helper.GetTypeCode(Compiler, desiredType))
 
         If value Is Nothing Then 'Nothing can be converted into anything.
             result = Nothing
@@ -584,11 +545,11 @@ Public Class TypeResolution
 
         If IsNumericType(desiredType) = False Then Return False
 
-        If IsIntegralType(builtInType) AndAlso IsIntegralType(Helper.GetTypeCode(value.GetType)) Then
+        If IsIntegralType(builtInType) AndAlso IsIntegralType(Helper.GetTypeCode(Compiler, value.GetType)) Then
             Return CheckIntegralRange(value, result, builtInType)
         Else
-            Dim tpValue As TypeCode = Helper.GetTypeCode(value.GetType)
-            Dim desiredCode As TypeCode = Helper.GetTypeCode(desiredType)
+            Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, value.GetType)
+            Dim desiredCode As TypeCode = Helper.GetTypeCode(Compiler, desiredType)
 
             If Helper.CompareType(value.GetType, desiredType) Then
                 result = value
@@ -872,7 +833,7 @@ Public Class TypeResolution
     Public Function CheckIntegralRange(ByVal value As Object, ByRef result As Object, ByVal desiredType As BuiltInDataTypes) As Boolean
         Helper.Assert(value IsNot Nothing)
         Helper.Assert(IsIntegralType(desiredType))
-        Dim tpValue As TypeCode = Helper.GetTypeCode(value.GetType)
+        Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, value.GetType)
         Helper.Assert(IsIntegralType(tpValue))
         Select Case tpValue
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64

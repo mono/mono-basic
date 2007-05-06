@@ -85,19 +85,16 @@ Public Class BinaryAddExpression
                 Dim tlvalue, trvalue As Type
                 Dim clvalue, crvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
                 trvalue = rvalue.GetType
-                crvalue = Helper.GetTypeCode(trvalue)
+                crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 If clvalue = TypeCode.String AndAlso crvalue = TypeCode.String Then
                     Return CStr(lvalue) & CStr(rvalue)
                 End If
 
-                Dim smallest As Type
                 Dim csmallest As TypeCode
-                smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
-                Helper.Assert(smallest IsNot Nothing)
-                csmallest = Helper.GetTypeCode(smallest)
+                csmallest = vbnc.TypeConverter.GetBinaryAddResultType(clvalue, crvalue)
 
                 Select Case csmallest
                     Case TypeCode.Byte

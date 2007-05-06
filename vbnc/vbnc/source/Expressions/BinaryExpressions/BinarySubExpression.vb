@@ -49,7 +49,7 @@ Public Class BinarySubExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeResolution.TypeCodeToType(TypeConverter.GetBinarySubResultType(Helper.GetTypeCode(m_LeftExpression.ExpressionType), Helper.GetTypeCode(m_RightExpression.ExpressionType)))
+            Return Compiler.TypeResolution.TypeCodeToType(TypeConverter.GetBinarySubResultType(Helper.GetTypeCode(Compiler, m_LeftExpression.ExpressionType), Helper.GetTypeCode(Compiler, m_RightExpression.ExpressionType)))
         End Get
     End Property
 
@@ -81,9 +81,9 @@ Public Class BinarySubExpression
                 Dim tlvalue, trvalue As Type
                 Dim clvalue, crvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
                 trvalue = rvalue.GetType
-                crvalue = Helper.GetTypeCode(trvalue)
+                crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 Dim csmallest As TypeCode
                 csmallest = vbnc.TypeConverter.GetBinaryOperandType(Me.Keyword, clvalue, crvalue)

@@ -29,13 +29,36 @@
 Public Class LateBoundAccessClassification
     Inherits ExpressionClassification
 
-    ReadOnly Property Type() As Type
+    Private m_InstanceExpression As Expression
+    Private m_TypeArguments As TypeArgumentList
+
+
+    ReadOnly Property InstanceExpression() As Expression
         Get
-            Helper.NotImplemented() : Return Nothing
+            Return m_InstanceExpression
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject)
+    ReadOnly Property TypeArguments() As TypeArgumentList
+        Get
+            Return m_TypeArguments
+        End Get
+    End Property
+
+    ReadOnly Property Type() As Type
+        Get
+            Return Compiler.TypeCache.Object
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="Parent"></param>
+    ''' <param name="InstanceExpression">May be Nothing</param>
+    ''' <param name="TypeArguments">May be Nothing</param>
+    ''' <remarks></remarks>
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList)
         MyBase.New(Classifications.LateBoundAccess, Parent)
     End Sub
 End Class

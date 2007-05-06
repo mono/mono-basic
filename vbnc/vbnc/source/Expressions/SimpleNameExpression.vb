@@ -357,9 +357,15 @@ Public Class SimpleNameExpression
                 End If
             End If
 
+            Dim cache As MemberCacheEntry
             Dim members As Generic.List(Of MemberInfo)
-            members = Compiler.TypeManager.GetCache(container.TypeDescriptor).LookupMembersFlattened(Name)
-            members = Helper.FilterExternalInaccessible(Compiler, members)
+            cache = Compiler.TypeManager.GetCache(container.TypeDescriptor).LookupFlattened(Name)
+            If cache Is Nothing Then
+                members = New Generic.List(Of MemberInfo)
+            Else
+                members = cache.Members
+                members = Helper.FilterExternalInaccessible(Compiler, members)
+            End If
 
 #If EXTENDEDDEBUG Then
             Compiler.Report.WriteLine("Found " & membersArray.Length & " members, after filtering by name it's " & members.Count & " members")
@@ -383,7 +389,8 @@ Public Class SimpleNameExpression
                 Dim hasInstanceExpression As Boolean
                 Dim hasNotInstanceExpression As Boolean
 
-                For Each member As MemberInfo In members
+                For i As Integer = 0 To members.Count - 1
+                    Dim member As MemberInfo = members(i)
                     If member.MemberType = MemberTypes.TypeInfo OrElse member.MemberType = MemberTypes.NestedType Then
                         hasNotInstanceExpression = True
                     ElseIf Helper.IsShared(member) Then
@@ -491,7 +498,7 @@ Public Class SimpleNameExpression
         If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name) Then Return True
 
         '* Otherwise, the name given by the identifier is undefined and a compile-time error occurs.
-        Helper.AddError("Name '" & Name & "' could not be resolved, " & Me.Location.ToString)
+        Compiler.Report.ShowMessage(Messages.VBNC30451, Me.Location, Name)
 
         Return False
     End Function
@@ -708,7 +715,7 @@ Public Class SimpleNameExpression
 
         Dim modules As TypeDictionary
         Dim members As Generic.List(Of MemberInfo)
-        modules = Compiler.TypeManager.GetModulesByNamespace(foundNamespace)
+        modules = Compiler.TypeManager.GetModulesByNamespace(foundNamespace.ToString)
         members = Helper.GetMembersOfTypes(Compiler, modules, R)
         If members.Count = 1 Then
             Helper.Assert(Helper.IsTypeDeclaration(members(0)))

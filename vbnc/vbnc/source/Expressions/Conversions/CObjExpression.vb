@@ -41,7 +41,7 @@ Public Class CObjExpression
         Dim result As Boolean = True
 
         'Dim expType As Type = SourceType
-        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
         'Dim ExpressionType As Type = Info.Compiler.TypeCache.ULong
 
         Return result
@@ -53,7 +53,7 @@ Public Class CObjExpression
         If Info.IsRHS Then
             result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
             If Expression.ExpressionType.IsValueType OrElse Expression.ExpressionType.IsGenericParameter Then
-                Emitter.EmitBox(Info)
+                Emitter.EmitBox(Info, Expression.ExpressionType)
             End If
         Else
             Throw New InternalException(Expression)

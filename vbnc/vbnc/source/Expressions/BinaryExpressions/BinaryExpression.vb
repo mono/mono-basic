@@ -80,13 +80,13 @@ Public MustInherit Class BinaryExpression
 
     ReadOnly Property LeftTypeCode() As TypeCode
         Get
-            Return Helper.GetTypeCode(LeftType)
+            Return Helper.GetTypeCode(Compiler, LeftType)
         End Get
     End Property
 
     ReadOnly Property RightTypeCode() As TypeCode
         Get
-            Return Helper.GetTypeCode(RightType)
+            Return Helper.GetTypeCode(Compiler, RightType)
         End Get
     End Property
 
@@ -121,6 +121,8 @@ Public MustInherit Class BinaryExpression
         result = m_LeftExpression.ResolveExpression(Info) AndAlso result
         result = m_RightExpression.ResolveExpression(Info) AndAlso result
 
+        If result = False Then Return False
+
         If m_LeftExpression.Classification.IsValueClassification = False Then
             result = Helper.VerifyValueClassification(m_LeftExpression, Info) AndAlso result
         End If
@@ -129,7 +131,6 @@ Public MustInherit Class BinaryExpression
             result = Helper.VerifyValueClassification(m_RightExpression, Info) AndAlso result
         End If
 
-        If result = False Then Return False
 
         If Helper.CompareType(m_LeftExpression.ExpressionType, m_RightExpression.ExpressionType) = False Then
             If Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.Nothing) Then
@@ -209,7 +210,8 @@ Public MustInherit Class BinaryExpression
             Next
         End If
         If methods.Count = 0 Then
-            Helper.AddError("No conversion possible.")
+            result = Compiler.Report.ShowMessage(Messages.VBNC30452, Me.Location, Enums.GetKSStringAttribute(Me.Keyword).Value, Me.LeftType.FullName, Me.RightType.FullName) AndAlso result
+            If result = False Then Return result
         End If
         methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
         result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression), Nothing) AndAlso result

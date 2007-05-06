@@ -80,6 +80,8 @@ Public Class CallStatement
 
         result = m_Target.ResolveExpression(Info) AndAlso result
 
+        If result = False Then Return result
+
         If m_Target.Classification.IsMethodGroupClassification Then
             Dim tmp As New InvocationOrIndexExpression(Me)
             tmp.Init(m_Target, New ArgumentList(tmp))

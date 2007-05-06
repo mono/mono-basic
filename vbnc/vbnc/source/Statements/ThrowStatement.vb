@@ -57,7 +57,8 @@ Public Class ThrowStatement
         Dim result As Boolean = True
 
         If m_Exception IsNot Nothing Then
-            result = m_Exception.ResolveExpression(info) AndAlso result
+            result = m_Exception.ResolveExpression(Info) AndAlso result
+            If result = False Then Return result
             result = Helper.VerifyValueClassification(m_Exception, Info) AndAlso result
         End If
 

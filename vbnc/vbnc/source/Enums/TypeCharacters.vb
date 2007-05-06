@@ -59,6 +59,25 @@ Public Class TypeCharacters
     Private Const m_Characters As String = "%&@!#$"
     Private Shared m_DataTypes() As KS = {KS.None, KS.Integer, KS.Long, KS.Decimal, KS.Single, KS.Double, KS.String}
 
+    Shared Function TypeCharacterToType(ByVal Compiler As Compiler, ByVal TypeCharacter As TypeCharacters.Characters) As Type
+        Select Case GetDataType(TypeCharacter)
+            Case KS.Integer
+                Return Compiler.TypeCache.Integer
+            Case KS.Long
+                Return Compiler.TypeCache.Long
+            Case KS.Decimal
+                Return Compiler.TypeCache.Decimal
+            Case KS.Single
+                Return Compiler.TypeCache.Single
+            Case KS.Double
+                Return Compiler.TypeCache.Double
+            Case KS.String
+                Return Compiler.TypeCache.String
+            Case Else
+                Throw New InternalException("Unknown typecharacter: " & TypeCharacter.ToString())
+        End Select
+    End Function
+
     Shared Function IsTypeCharacter(ByVal chr As Char, ByRef result As Characters) As Boolean
         result = GetTypeCharacter(chr)
         Return result <> Characters.None
@@ -81,7 +100,7 @@ Public Class TypeCharacters
     End Function
 
     Shared Function GetDataType(ByVal TypeCharacter As Characters) As KS
-        Return m_DataTypes(TypeCharacter)
+        Return m_DataTypes(TypeCharacter + 1)
     End Function
 
     ''' <summary>

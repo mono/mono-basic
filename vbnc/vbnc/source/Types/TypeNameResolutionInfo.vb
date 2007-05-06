@@ -63,7 +63,7 @@ Public Class TypeNameResolutionInfo
         ElseIf TypeOf found Is TypeDescriptor Then
             Return DirectCast(found, TypeDescriptor)
         ElseIf TypeOf found Is TypeParameter Then
-            Return DirectCast(found, TypeParameter).typedescriptor
+            Return DirectCast(found, TypeParameter).TypeDescriptor
         Else
             Throw New InternalException("")
         End If
@@ -190,9 +190,9 @@ Public Class TypeNameResolutionInfo
                 Me.m_FoundObjects = tmp.m_FoundObjects
             Else
                 If Me.IsAttributeTypeName Then
-                    result = ResolveQualifiedName(tmp, New String() {qi.Second.IdentiferOrKeywordIdentifier & "Attribute", qi.Second.IdentiferOrKeywordIdentifier}, Me.TypeArgumentCount) AndAlso result
+                    result = ResolveQualifiedName(tmp, qi.Second.IdentiferOrKeywordIdentifier & "Attribute", qi.Second.IdentiferOrKeywordIdentifier, Me.TypeArgumentCount) AndAlso result
                 Else
-                    result = ResolveQualifiedName(tmp, New String() {qi.Second.IdentiferOrKeywordIdentifier}, Me.TypeArgumentCount) AndAlso result
+                    result = ResolveQualifiedName(tmp, qi.Second.IdentiferOrKeywordIdentifier, Nothing, Me.TypeArgumentCount) AndAlso result
                 End If
             End If
         ElseIf glob IsNot Nothing Then
@@ -219,7 +219,19 @@ Public Class TypeNameResolutionInfo
         Return result
     End Function
 
-    Private Function ResolveQualifiedName(ByVal Qualifier As TypeNameResolutionInfo, ByVal Rs As String(), ByVal TypeArgumentCount As Integer) As Boolean
+    Private Function ResolveQualifiedName(ByVal Qualifier As TypeNameResolutionInfo, ByVal R1 As String, ByVal R2 As String, ByVal TypeArgumentCount As Integer) As Boolean
+        Dim result As Boolean = True
+
+        result = ResolveQualifiedNameInternal(Qualifier, R1, R2 Is Nothing, TypeArgumentCount) AndAlso result
+
+        If result = False AndAlso R2 IsNot Nothing Then
+            result = ResolveQualifiedNameInternal(Qualifier, R2, True, TypeArgumentCount) 'AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Private Function ResolveQualifiedNameInternal(ByVal Qualifier As TypeNameResolutionInfo, ByVal R As String, ByVal ShowError As Boolean, ByVal TypeArgumentCount As Integer) As Boolean
         '---------------------------------------------------------------------------------------------------------
         '*************************************** Qualified Name Resolution '**************************************
         '---------------------------------------------------------------------------------------------------------
@@ -239,132 +251,147 @@ Public Class TypeNameResolutionInfo
         '---------------------------------------------------------------------------------------------------------
 
         Me.m_Qualifier = Qualifier
-        For Each R As String In Rs
-            Dim showError As Boolean
-            'Show the error if it is the last R to resolve in the R's
-            showError = Rs.Length = 1 OrElse Rs(Rs.GetUpperBound(0)) = R
 
-            If Qualifier.FoundOnlyOneObject Then
-                Dim modules As TypeList = Nothing
-                If Qualifier.IsGlobal Then
-                    'Helper.NotImplemented()
-                    If CheckOutermostNamespace(R, TypeArgumentCount) Then Return True
-                ElseIf Qualifier.FoundIs(Of [Namespace])() OrElse Qualifier.FoundIs(Of ImportsClause)() Then
-                    'Helper.NotImplemented()
-                    '** If R matches the name of a namespace or type in N, 
-                    '** then the qualified name refers to that namespace or type.
-                    Dim strNS As String
+        If Qualifier.FoundOnlyOneObject Then
+            Dim modules As TypeList = Nothing
+            If Qualifier.IsGlobal Then
+                'Helper.NotImplemented()
+                If CheckOutermostNamespace(R, TypeArgumentCount) Then Return True
+            ElseIf Qualifier.FoundIs(Of [Namespace])() OrElse Qualifier.FoundIs(Of ImportsClause)() Then
+                'Helper.NotImplemented()
+                '** If R matches the name of a namespace or type in N, 
+                '** then the qualified name refers to that namespace or type.
+                Dim strNS As String
 
-                    If Qualifier.FoundIs(Of [Namespace])() Then
-                        Dim ns As [Namespace]
-                        ns = Qualifier.FoundAs(Of [Namespace])()
-                        strNS = ns.FullName
-                    ElseIf Qualifier.FoundIs(Of ImportsClause)() Then
-                        Dim ic As ImportsClause
-                        ic = Qualifier.FoundAs(Of ImportsClause)()
-                        If ic.IsAliasClause Then
-                            Dim ac As ImportsAliasClause = ic.AsAliasClause
-                            If ac.NamespaceClause.IsNamespaceImport Then
-                                Dim ns As [Namespace]
-                                ns = ac.NamespaceClause.NamespaceImported
-                                strNS = ns.FullName
-                            ElseIf ac.NamespaceClause.IsTypeImport Then
-                                strNS = ac.NamespaceClause.TypeImported.FullName
-                            Else
-                                Throw New InternalException(FromWhere)
-                            End If
+                If Qualifier.FoundIs(Of [Namespace])() Then
+                    Dim ns As [Namespace]
+                    ns = Qualifier.FoundAs(Of [Namespace])()
+                    strNS = ns.FullName
+                ElseIf Qualifier.FoundIs(Of ImportsClause)() Then
+                    Dim ic As ImportsClause
+                    ic = Qualifier.FoundAs(Of ImportsClause)()
+                    If ic.IsAliasClause Then
+                        Dim ac As ImportsAliasClause = ic.AsAliasClause
+                        If ac.NamespaceClause.IsNamespaceImport Then
+                            Dim ns As [Namespace]
+                            ns = ac.NamespaceClause.NamespaceImported
+                            strNS = ns.FullName
+                        ElseIf ac.NamespaceClause.IsTypeImport Then
+                            strNS = ac.NamespaceClause.TypeImported.FullName
                         Else
-                            Throw New InternalException(fromwhere)
+                            Throw New InternalException(FromWhere)
                         End If
                     Else
                         Throw New InternalException(FromWhere)
                     End If
+                Else
+                    Throw New InternalException(FromWhere)
+                End If
 
-                    Dim strCombinedNs As String = String.Concat(strNS, ".", R)
-                    If FromWhere.Compiler.TypeManager.Namespaces.IsNamespace(strCombinedNs, True) Then
-                        m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(strCombinedNs))
-                    ElseIf FromWhere.Compiler.TypeManager.TypesByNamespace.ContainsKey(strNS) Then
-                        Dim types As TypeDictionary
-                        types = FromWhere.Compiler.TypeManager.TypesByNamespace(strNS)
-                        For Each tp As Type In types.Values
-                            If NameResolution.CompareName(tp.Name, vbnc.Helper.CreateGenericTypename(R, TypeArgumentCount)) Then
+                Dim nsp As [Namespace]
+                nsp = FromWhere.Compiler.TypeManager.Namespaces.FindNamespace(strNS, R)
+                If nsp IsNot Nothing Then
+                    m_FoundObjects.Add(nsp)
+                    Return True
+                End If
+
+                Dim types As TypeDictionary
+                types = FromWhere.Compiler.TypeManager.TypesByNamespace(strNS)
+                If types IsNot Nothing AndAlso types.Count > 0 Then
+                    Dim genericName As String
+                    genericName = vbnc.Helper.CreateGenericTypename(R, TypeArgumentCount)
+
+                    Dim typesByName As Generic.List(Of Type) = Nothing
+                    Dim tmp As Boolean
+                    tmp = FromWhere.Compiler.TypeManager.TypesByName.TryGetValue(genericName, typesByName)
+
+                    For Each tp As Type In types.Values
+                        If TypeOf tp Is TypeDescriptor Then
+                            If NameResolution.CompareName(tp.Name, genericName) Then
                                 m_FoundObjects.Add(tp)
                             End If
-                        Next
-
-                        '**	If N contains one or more standard modules, and R matches the name of a type in 
-                        '** exactly one standard module, then the qualified name refers to that type. If R 
-                        '** matches the name of types in more than one standard module, a compile-time error occurs.
-                        If m_FoundObjects.Count = 0 Then
-                            modules = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS).ToTypeList
-                        End If
-                    Else
-                        Helper.AddError("(1) Could not resolve: " & R & ", strNS:" & strNS & ", stCombinedNs: " & strCombinedNs & ", Location: " & FromWhere.Location.AsString)
-                    End If
-                ElseIf Qualifier.FoundIs(Of IType)() Then
-                    'Helper.NotImplemented()
-                    '** If R matches the name of a namespace or type in N, 
-                    '** then the qualified name refers to that namespace or type.
-                    Dim tp As IType = Qualifier.FoundAs(Of IType)()
-                    Dim types As Generic.List(Of IType) = tp.Members.GetSpecificMembers(Of IType)()
-                    For Each t As IType In types
-                        If NameResolution.CompareName(t.Name, R) Then
-                            m_FoundObjects.Add(t)
+                        Else
+                            If typesByName IsNot Nothing AndAlso typesByName.Contains(tp) Then
+                                m_FoundObjects.Add(tp)
+                            End If
                         End If
                     Next
-
-                    '**	If N contains one or more standard modules, and R matches the name of a type in 
-                    '** exactly one standard module, then the qualified name refers to that type. If R 
-                    '** matches the name of types in more than one standard module, a compile-time error occurs.
-                    If m_FoundObjects.Count = 0 Then
-                        modules = TypeDescriptor.CreateList(tp.Members.GetSpecificMembers(Of ModuleDeclaration)())
-                    End If
-                ElseIf Qualifier.FoundIs(Of Type)() Then
-                    '** If R matches the name of a namespace or type in N, 
-                    '** then the qualified name refers to that namespace or type.
-                    Dim tp As Type = Qualifier.FoundAs(Of Type)()
-                    Dim nestedtp As Type = tp.GetNestedType(R, BindingFlags.Instance Or BindingFlags.NonPublic Or BindingFlags.Public)
-
-                    If nestedtp IsNot Nothing Then m_FoundObjects.Add(nestedtp)
-
-                    '**	If N contains one or more standard modules, and R matches the name of a type in 
-                    '** exactly one standard module, then the qualified name refers to that type. If R 
-                    '** matches the name of types in more than one standard module, a compile-time error occurs.
-                    If m_FoundObjects.Count = 0 Then
-                        Helper.NotImplemented()
-                        modules = TypeDescriptor.CreateList(tp.GetNestedTypes())
-                    End If
-                Else
-                    '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
-                    '** or type, a compile-time error occurs.  (..)
-                    If showError = False Then Continue For
-                    Helper.AddError("(2) Could not resolve: " & R & ", Location: " & FromWhere.Location.AsString)
-                    Helper.NotImplemented()
+                    'Return True
                 End If
 
                 '**	If N contains one or more standard modules, and R matches the name of a type in 
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
-
-                If modules IsNot Nothing AndAlso modules.Count > 0 AndAlso CheckModules(modules, R, TypeArgumentCount) Then Return True
-
                 If m_FoundObjects.Count = 0 Then
-                    If showError = False Then Continue For
+                    modules = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS).ToTypeList
+                    'Return True
+                End If
 
-                    FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30456, FromWhere.Location, R, Qualifier.FoundObject.ToString)
-                    Return False
-                ElseIf m_FoundObjects.Count > 1 Then
-                    If showError = False Then Continue For
-                    Helper.AddError("Found " & m_FoundObjects.Count.ToString & " members in type or namespace '" & Qualifier.FoundObject.ToString & "'")
-                Else
-                    Return True
+                'Throw New InternalException("(1) Could not resolve: " & R & ", strNS:" & strNS & ", stCombinedNs: " & ", Location: " & FromWhere.Location.AsString)
+
+                'Return False
+            ElseIf Qualifier.FoundIs(Of IType)() Then
+                '** If R matches the name of a namespace or type in N, 
+                '** then the qualified name refers to that namespace or type.
+                Dim tp As IType = Qualifier.FoundAs(Of IType)()
+                Dim types As Generic.List(Of IType) = tp.Members.GetSpecificMembers(Of IType)()
+                For Each t As IType In types
+                    If NameResolution.CompareName(t.Name, R) Then
+                        m_FoundObjects.Add(t)
+                    End If
+                Next
+
+                '**	If N contains one or more standard modules, and R matches the name of a type in 
+                '** exactly one standard module, then the qualified name refers to that type. If R 
+                '** matches the name of types in more than one standard module, a compile-time error occurs.
+                If m_FoundObjects.Count = 0 Then
+                    modules = TypeDescriptor.CreateList(tp.Members.GetSpecificMembers(Of ModuleDeclaration)())
+                End If
+            ElseIf Qualifier.FoundIs(Of Type)() Then
+                '** If R matches the name of a namespace or type in N, 
+                '** then the qualified name refers to that namespace or type.
+                Dim tp As Type = Qualifier.FoundAs(Of Type)()
+                Dim nestedtp As Type = tp.GetNestedType(R, BindingFlags.Instance Or BindingFlags.NonPublic Or BindingFlags.Public)
+
+                If nestedtp IsNot Nothing Then m_FoundObjects.Add(nestedtp)
+
+                '**	If N contains one or more standard modules, and R matches the name of a type in 
+                '** exactly one standard module, then the qualified name refers to that type. If R 
+                '** matches the name of types in more than one standard module, a compile-time error occurs.
+                If m_FoundObjects.Count = 0 Then
+                    Helper.NotImplemented()
+                    modules = TypeDescriptor.CreateList(tp.GetNestedTypes())
                 End If
             Else
-                '**	If resolution of N fails, (...)
-                If showError = False Then Continue For
-                Helper.AddError("Qualifying member '" & Qualifier.m_Qualifier.FoundObject.ToString & "' resolves to '" & Qualifier.FoundObjects.Count.ToString & " objects" & "(R(0) = " & Rs(0) & ")")
+                '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
+                '** or type, a compile-time error occurs.  (..)
+                If ShowError = False Then Return False
+                Helper.AddError("(2) Could not resolve: " & R & ", Location: " & FromWhere.Location.AsString)
+                Helper.NotImplemented()
             End If
-        Next
+
+            '**	If N contains one or more standard modules, and R matches the name of a type in 
+            '** exactly one standard module, then the qualified name refers to that type. If R 
+            '** matches the name of types in more than one standard module, a compile-time error occurs.
+
+            If modules IsNot Nothing AndAlso modules.Count > 0 AndAlso CheckModules(modules, R, TypeArgumentCount) Then Return True
+
+            If m_FoundObjects.Count = 0 Then
+                If ShowError = False Then Return False
+
+                FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30456, FromWhere.Location, R, Qualifier.FoundObject.ToString)
+                Return False
+            ElseIf m_FoundObjects.Count > 1 Then
+                If ShowError = False Then Return False
+                Helper.AddError("Found " & m_FoundObjects.Count.ToString & " members in type or namespace '" & Qualifier.FoundObject.ToString & "'")
+            Else
+                Return True
+            End If
+        Else
+            '**	If resolution of N fails, (...)
+            If ShowError = False Then Return False
+            Helper.AddError("Qualifying member '" & Qualifier.m_Qualifier.FoundObject.ToString & "' resolves to '" & Qualifier.FoundObjects.Count.ToString & " objects" & "(R = " & R & ")")
+        End If
 
         Return False
     End Function
@@ -416,19 +443,21 @@ Public Class TypeNameResolutionInfo
             'Get all the members in the type corresponding to the Name
             Dim members As Generic.List(Of INameable)
             members = tp.Members.Declarations.Index.Item(vbnc.Helper.CreateGenericTypename(R, TypeArgumentCount))
-            Dim i As Integer = 0
-            While i <= members.Count - 1
-                Dim member As INameable = members(i)
-                'Remove all members that aren't types.
-                If TypeOf member Is IType = False Then
-                    members.RemoveAt(i)
-                Else
-                    i += 1
+            If members IsNot Nothing Then
+                Dim i As Integer = 0
+                While i <= members.Count - 1
+                    Dim member As INameable = members(i)
+                    'Remove all members that aren't types.
+                    If TypeOf member Is IType = False Then
+                        members.RemoveAt(i)
+                    Else
+                        i += 1
+                    End If
+                End While
+                If members.Count > 0 Then
+                    m_FoundObjects.AddRange(members.ToArray)
+                    Return True
                 End If
-            End While
-            If members.Count > 0 Then
-                m_FoundObjects.AddRange(members.ToArray)
-                Return True
             End If
 
             'Then check if there are type parameters with the corresponding name
@@ -589,20 +618,30 @@ Public Class TypeNameResolutionInfo
             ns = String.Empty
         End If
         Dim current As BaseObject = FromWhere
-        Dim dotR As String = "." & R
-        Dim nsDotR As String = ns & dotR
+        'Dim dotR As String = "." & R
+        'Dim nsDotR As String = ns & dotR
         Do
             If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(ns), TypeArgumentCount) Then Return True
-            If Helper.NameCompare(ns, R) OrElse ns.EndsWith(dotR, NameResolution.StringComparison) Then
+            If Helper.NameCompare(ns, R) Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
                 Return True
             End If
-            If ns <> String.Empty AndAlso TypeArgumentCount = 0 AndAlso FromWhere.Compiler.TypeManager.Namespaces.ContainsKey(nsDotR) Then
-                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(nsDotR))
+
+            If ns.Length > R.Length + 1 AndAlso ns.EndsWith(R, NameResolution.StringComparison) AndAlso ns(ns.Length - R.Length - 1) = "."c Then
+                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
                 Return True
             End If
+
+            If ns <> String.Empty AndAlso TypeArgumentCount = 0 Then
+                Dim nSpace As [Namespace]
+                nSpace = FromWhere.Compiler.TypeManager.Namespaces.FindNamespace(ns, R)
+                If nSpace IsNot Nothing Then
+                    m_FoundObjects.Add(nSpace)
+                    Return True
+                End If
+            End If
             ns = vbnc.Helper.GetNamespaceParent(ns)
-            nsDotR = ns & dotR
+            'nsDotR = ns & dotR
         Loop Until ns Is Nothing
 
         'Check the outermost namespace
@@ -724,7 +763,7 @@ Public Class TypeNameResolutionInfo
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsTypeImport Then
                 Dim tp As Type
-                tp = nsimp.TypeImported.GetNestedType(genericr)
+                tp = nsimp.TypeImported.GetNestedType(genericR)
                 If tp IsNot Nothing AndAlso Helper.IsModule(FromWhere.Compiler, tp) Then modules.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName

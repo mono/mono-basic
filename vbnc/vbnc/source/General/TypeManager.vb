@@ -54,6 +54,9 @@ Public Class TypeManager
 
     Private m_TypesByNamespaceAndName As New Generic.Dictionary(Of String, Generic.List(Of MemberInfo))
 
+    Private m_TypesByName As New Generic.Dictionary(Of String, Generic.List(Of Type))(NameResolution.StringComparer)
+    Private m_TypesByFullName As New Generic.Dictionary(Of String, Generic.List(Of Type))(NameResolution.StringComparer)
+
     ''' <summary>
     ''' All the modules indexed by namespace.
     ''' </summary>
@@ -83,6 +86,26 @@ Public Class TypeManager
     Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
 
     Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)(New TypeComparer)
+
+    Function IsTypeNamed(ByVal Type As Type, ByVal Name As String) As Boolean
+        If TypeOf Type Is TypeDescriptor Then Return NameResolution.CompareName(Type.Name, Name)
+        Dim types As Generic.List(Of Type) = Nothing
+        If m_TypesByName.TryGetValue(Name, types) = False Then Return False
+        Return types.Contains(Type)
+    End Function
+
+    Function IsTypeFullnamed(ByVal Type As Type, ByVal FullName As String) As Boolean
+        If TypeOf Type Is TypeDescriptor Then Return NameResolution.CompareName(Type.FullName, FullName)
+        Dim types As Generic.List(Of Type) = Nothing
+        If m_TypesByFullName.TryGetValue(FullName, types) = False Then Return False
+        Return types.Contains(Type)
+    End Function
+
+    ReadOnly Property TypesByName() As Generic.Dictionary(Of String, Generic.List(Of Type))
+        Get
+            Return m_TypesByName
+        End Get
+    End Property
 
     Function GetCache(ByVal Type As Type) As MemberCache
         If MemberCache.ContainsKey(Type) Then
@@ -199,7 +222,7 @@ Public Class TypeManager
         For Each tp As Type In InList
             Dim tpD As TypeDescriptor = TryCast(tp, TypeDescriptor)
             If OnlyCreatedTypes AndAlso tpD Is Nothing Then Continue For
-            If NameResolution.CompareName(Name, tp.Name) OrElse NameResolution.CompareName(Name, tp.FullName) Then
+            If IsTypeNamed(tp, Name) OrElse IsTypeFullnamed(tp, Name) Then
 #If EXTENDEDDEBUG Then
                 Compiler.Report.WriteLine("Found type: " & tp.Name)
 #End If
@@ -225,7 +248,8 @@ Public Class TypeManager
         For Each strFile As String In Compiler.CommandLine.References
             refAssembly = LoadAssembly(strFile)
             If refAssembly Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC90012, strFile)
+                Compiler.Report.ShowMessage(Messages.VBNC2017, strFile)
+                Return False
             Else
                 If Assemblies.Contains(refAssembly) = False Then
                     If Compiler.CommandLine.Verbose Then
@@ -338,6 +362,21 @@ Public Class TypeManager
             m_ModulesByNamespace.AddType(Type)
         End If
 
+        Dim name As String
+        Dim fullname As String
+        Dim types As Generic.List(Of Type) = Nothing
+        name = Type.Name
+        fullname = Type.FullName
+        If m_TypesByName.TryGetValue(name, types) = False Then
+            types = New Generic.List(Of Type)
+            m_TypesByName(name) = types
+        End If
+        types.Add(Type)
+        If m_TypesByFullName.TryGetValue(fullname, types) = False Then
+            types = New Generic.List(Of Type)
+            m_TypesByFullName(name) = types
+        End If
+        types.Add(Type)
     End Sub
 
 #If ENABLECECIL Then
@@ -592,15 +631,17 @@ Public Class TypeManager
 
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good as any type comparison would fail.
-        If m_GenericTypeCache.ContainsKey(result.Name) Then
+        Dim key As String = result.FullName
+        Helper.Assert(key IsNot Nothing AndAlso key <> "")
+        If m_GenericTypeCache.ContainsKey(key) Then
             'Revert to the cached type if it has already been created.
-            result = m_GenericTypeCache(result.Name)
+            result = m_GenericTypeCache(key)
         Else
             Dim addToCache As Boolean = True
             For Each item As Type In GenericArguments
                 If item.IsGenericParameter Then addToCache = False : Exit For
             Next
-            If addToCache Then m_GenericTypeCache.Add(result.Name, result)
+            If addToCache Then m_GenericTypeCache.Add(key, result)
         End If
 
         Return result

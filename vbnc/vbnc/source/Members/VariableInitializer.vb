@@ -60,6 +60,8 @@ Public Class VariableInitializer
 
         result = m_Initializer.ResolveCode(Info)
 
+        If result = False Then Return result
+
         Dim initExp As Expression = TryCast(m_Initializer, Expression)
         If initExp IsNot Nothing Then
             initExp = initExp.ReclassifyToValueExpression

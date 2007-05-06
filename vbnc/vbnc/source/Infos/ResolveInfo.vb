@@ -22,8 +22,14 @@ Public Class ResolveInfo
     Public CanFail As Boolean
     Public Compiler As Compiler
 
+    Private Shared DefaultInfo As ResolveInfo
+
     Shared Function [Default](ByVal Compiler As Compiler) As ResolveInfo
-        Return New ResolveInfo(Compiler)
+        If DefaultInfo Is Nothing Then
+            DefaultInfo = New ResolveInfo(Compiler)
+        End If
+        Helper.Assert(Compiler Is DefaultInfo.Compiler)
+        Return DefaultInfo
     End Function
 
     Sub New(ByVal Compiler As Compiler, Optional ByVal SkipFunctionReturnVariable As Boolean = False, Optional ByVal CanFail As Boolean = False)

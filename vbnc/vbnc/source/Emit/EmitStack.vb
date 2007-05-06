@@ -28,6 +28,11 @@ Public Class EmitStack
 
     Private m_Compiler As Compiler
 
+    Shadows Function Peek() As Type
+        Return MyBase.Peek
+    End Function
+
+    '<Diagnostics.Conditional("DEBUG")> _
     Public Sub SwitchHead(ByVal FromType As Type, ByVal ToType As Type)
         Me.Pop(FromType)
         Me.Push(ToType)
@@ -41,6 +46,7 @@ Public Class EmitStack
         End If
     End Sub
 
+    '<Diagnostics.Conditional("DEBUG")> _
     Shadows Sub Clear()
 #If LOGDEBUGSTACKTYPES Then
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Clearing the stack!")
@@ -59,6 +65,7 @@ Public Class EmitStack
         End Get
     End Property
 
+    '<Diagnostics.Conditional("DEBUG")> _
     Shadows Sub Push(ByVal Type As Type)
         MyBase.Push(Type)
 #If LOGDEBUGSTACKTYPES Then
@@ -79,7 +86,8 @@ Public Class EmitStack
         Return result
     End Function
 
-    Shadows Function Pop(ByVal Type As Type) As Type
+    '<Diagnostics.Conditional("DEBUG")> _
+    Shadows Sub Pop(ByVal Type As Type)
         Dim logStack As Boolean = False
 
 #If LOGDEBUGSTACKTYPES Then
@@ -113,12 +121,12 @@ Public Class EmitStack
         Return tmp
 #Else
         If Count > 0 Then
-            Return MyBase.Pop()
+            MyBase.Pop()
         Else
-            Return Nothing
+            'Return Nothing
         End If
 #End If
-    End Function
+    End Sub
 
     ''' <summary>
     ''' Are there any values left on the stack?

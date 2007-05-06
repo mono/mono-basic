@@ -36,7 +36,7 @@ Public Class CDateExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
 
@@ -83,7 +83,7 @@ Public Class CDateExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Type = Info.Compiler.TypeCache.Date
         Select Case expTypeCode
             Case TypeCode.Char

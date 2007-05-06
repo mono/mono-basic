@@ -38,7 +38,7 @@ Public Class ErrorStatement
         Dim result As Boolean = True
 
         result = m_ErrNumber.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Integer)) AndAlso result
-        Emitter.EmitConversion(Compiler.TypeCache.Integer, Info)
+        Emitter.EmitConversion(m_ErrNumber.ExpressionType, Compiler.TypeCache.Integer, Info)
         Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_PD_CreateProjectError__Integer)
         Emitter.EmitThrow(Info)
 

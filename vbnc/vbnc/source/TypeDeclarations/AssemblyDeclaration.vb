@@ -196,12 +196,12 @@ Public Class AssemblyDeclaration
             End Try
 #End If
             result = type.ResolveCode(Info) AndAlso result
-            vbnc.Helper.Assert(result = (Report.Errors = 0))
+            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         result = m_Attributes.ResolveCode(Info) AndAlso result
 
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        'vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         Return result
     End Function

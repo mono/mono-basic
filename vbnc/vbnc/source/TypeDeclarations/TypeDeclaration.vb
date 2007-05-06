@@ -143,9 +143,12 @@ Public MustInherit Class TypeDeclaration
     End Property
 
     Protected Sub FindDefaultConstructors()
-        Dim ctors As Generic.List(Of ConstructorDeclaration)
-        ctors = Me.Members.GetSpecificMembers(Of ConstructorDeclaration)()
-        For Each ctor As ConstructorDeclaration In ctors
+        For i As Integer = 0 To Me.Members.Count - 1
+            Dim member As IMember = Me.Members(i)
+            Dim ctor As ConstructorDeclaration = TryCast(member, ConstructorDeclaration)
+
+            If ctor Is Nothing Then Continue For
+
             Dim isdefault As Boolean
             isdefault = False
             If ctor.GetParameters.Length = 0 Then
@@ -419,6 +422,8 @@ Public MustInherit Class TypeDeclaration
     Public Function SetDefaultAttribute(ByVal Name As String) As Boolean
         Dim result As Boolean = True
         For Each att As Attribute In CustomAttributes
+            result = att.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
+            If result = False Then Return result
             If Helper.CompareType(att.AttributeType, Compiler.TypeCache.DefaultMemberAttribute) Then
                 Dim tmpName As String
                 tmpName = TryCast(att.GetArgument(0), String)

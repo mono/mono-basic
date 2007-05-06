@@ -119,9 +119,6 @@ Public Class AddOrRemoveHandlerStatement
         Return result
     End Function
 
-
-
-
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -131,8 +128,10 @@ Public Class AddOrRemoveHandlerStatement
         Dim delegatetp As Type = m_Event.Classification.AsEventAccess.Type
 
         If m_EventHandler.Classification.IsMethodPointerClassification Then
-            result = m_EventHandler.Classification.AsMethodPointerClassification.Resolve(delegatetp) AndAlso result
-            result = Helper.VerifyValueClassification(m_EventHandler, Info) AndAlso result
+            'result = m_EventHandler.Classification.AsMethodPointerClassification.Resolve(delegatetp) AndAlso result
+            m_EventHandler = m_EventHandler.ReclassifyMethodPointerToValueExpression(delegatetp)
+            result = m_EventHandler.ResolveExpression(Info) AndAlso result
+            'result = Helper.VerifyValueClassification(m_EventHandler, Info) AndAlso result
         End If
 
         Helper.Assert(m_EventHandler.Classification.IsValueClassification)

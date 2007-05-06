@@ -71,21 +71,17 @@ Public Class ExponentExpression
             Dim tlvalue, trvalue As Type
             Dim clvalue, crvalue As TypeCode
             tlvalue = lvalue.GetType
-            clvalue = Helper.GetTypeCode(tlvalue)
+            clvalue = Helper.GetTypeCode(Compiler, tlvalue)
             trvalue = rvalue.GetType
-            crvalue = Helper.GetTypeCode(trvalue)
+            crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
-            Dim smallest As Type
-            Dim csmallest As TypeCode
-            smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
-            Helper.Assert(smallest IsNot Nothing)
-            csmallest = Helper.GetTypeCode(smallest)
+            Helper.Assert(Compiler.TypeResolution.IsNumericType(tlvalue) AndAlso Compiler.TypeResolution.IsNumericType(trvalue))
 
             'An exponent operator always returns a double result.
-            Select Case csmallest
+            Select Case clvalue
                 Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, _
                  TypeCode.Int64, TypeCode.UInt64, TypeCode.Double, TypeCode.Single, TypeCode.Decimal
-                    Return CDbl(lvalue) Mod CDbl(rvalue)
+                    Return Math.Pow(CDbl(lvalue), CDbl(rvalue))
                 Case Else
                     Throw New InternalException(Me)
             End Select

@@ -84,9 +84,17 @@ Public Class ConstantDeclaration
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        result = m_TypeName.ResolveTypeReferences AndAlso result
-        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
+        If m_TypeName IsNot Nothing Then
+            result = m_TypeName.ResolveTypeReferences AndAlso result
+            If m_Identifier.HasTypeCharacter Then
+                Helper.AddError()
+            End If
+        ElseIf m_Identifier.HasTypeCharacter Then
+            m_TypeName = New TypeName(Me, TypeCharacters.TypeCharacterToType(Compiler, m_Identifier.TypeCharacter))
+        End If
 
+        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
+       
         Return result
     End Function
 
@@ -99,8 +107,12 @@ Public Class ConstantDeclaration
             If m_ConstantExpression.IsConstant Then
                 m_ConstantValue = m_ConstantExpression.ConstantValue
                 Helper.Assert(m_ConstantValue IsNot Nothing)
-                'Compiler.Report.WriteLine("Converting constant value from '" & m_ConstantValue.GetType.FullName & "' to '" & m_TypeName.ResolvedType.FullName & "'")
-                m_ConstantValue = TypeConverter.ConvertTo(m_ConstantValue, m_TypeName.ResolvedType)
+
+                If m_TypeName Is Nothing Then
+                    m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
+                Else
+                    m_ConstantValue = TypeConverter.ConvertTo(m_ConstantValue, m_TypeName.ResolvedType)
+                End If
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
                 Helper.AddError("Constant value is not constant!")
@@ -145,7 +157,7 @@ Public Class ConstantDeclaration
         ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.Date) Then
             Helper.NotImplementedYet("Emit value of a date constant")
         Else
-            If Helper.IsEnum(m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
+            If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
                 m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)
             End If
 

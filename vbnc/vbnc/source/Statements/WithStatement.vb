@@ -31,6 +31,8 @@ Public Class WithStatement
 
     Private m_WithVariable As LocalBuilder
 
+    Private m_WithVariableExpression As Expression
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -58,18 +60,22 @@ Public Class WithStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        m_WithVariable = Info.ILGen.DeclareLocal(Helper.GetTypeOrTypeBuilder(m_WithExpression.ExpressionType))
-        result = m_WithExpression.GenerateCode(Info.Clone(True, False, m_WithVariable.LocalType)) AndAlso result
-        Emitter.EmitStoreVariable(Info, m_WithVariable)
+        If m_WithExpression Is m_WithVariableExpression = False Then
+            m_WithVariable = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(m_WithExpression.ExpressionType), "WithVariable" & Me.ObjectID.ToString)
+            result = m_WithExpression.GenerateCode(Info.Clone(True, False, m_WithVariable.LocalType)) AndAlso result
+            Emitter.EmitStoreVariable(Info, m_WithVariable)
+        End If
 
         result = CodeBlock.GenerateCode(Info) AndAlso result
+
+        Emitter.FreeLocal(m_WithVariable)
 
         Return result
     End Function
 
-    ReadOnly Property WithExpression() As Expression
+    ReadOnly Property WithVariableExpression() As Expression
         Get
-            Return m_WithExpression
+            Return m_WithVariableExpression
         End Get
     End Property
 
@@ -77,7 +83,29 @@ Public Class WithStatement
         Dim result As Boolean = True
 
         result = m_WithExpression.ResolveExpression(Info) AndAlso result
+
+        If result Then
+            If m_WithExpression.ExpressionType.IsValueType AndAlso m_WithExpression.Classification.IsVariableClassification Then
+                m_WithVariableExpression = m_WithExpression
+            Else
+                m_WithVariableExpression = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateVariableCode), m_WithExpression.ExpressionType)
+                result = m_WithVariableExpression.ResolveExpression(Info) AndAlso result
+            End If
+        End If
+
         result = CodeBlock.ResolveCode(Info) AndAlso result
+
+        Return result
+    End Function
+
+    Function GenerateVariableCode(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        Helper.Assert(Info.IsRHS, "With variables can't be assigned to...")
+
+        If Info.IsRHS Then
+            Emitter.EmitLoadVariable(Info, m_WithVariable)
+        End If
 
         Return result
     End Function

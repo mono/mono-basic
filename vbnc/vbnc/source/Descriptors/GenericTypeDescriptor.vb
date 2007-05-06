@@ -149,11 +149,11 @@ Public Class GenericTypeDescriptor
                     End If
                     m_ClosedType = m_OpenType.MakeGenericType(m_TypeArguments)
 #If DEBUGREFLECTION Then
-                    Compiler.DebugReflection.AppendLine(String.Format("ReDim {0}({1})", Helper.GetObjectName(m_TypeArguments), m_TypeArguments.Length - 1))
+                    Helper.DebugReflection_AppendLine(String.Format("ReDim {0}({1})", Helper.GetObjectName(m_TypeArguments), m_TypeArguments.Length - 1))
                     For i As Integer = 0 To m_TypeArguments.Length - 1
-                        Compiler.DebugReflection.AppendLine(String.Format("{0}({2}) = {1}", Helper.GetObjectName(m_TypeArguments), Helper.GetObjectName(m_TypeArguments(i)), i))
+                        Helper.DebugReflection_AppendLine(String.Format("{0}({2}) = {1}", Helper.GetObjectName(m_TypeArguments), Helper.GetObjectName(m_TypeArguments(i)), i))
                     Next
-                    Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.MakeGenericType({2})", Helper.GetObjectName(m_ClosedType), Helper.GetObjectName(m_OpenType), Helper.GetObjectName(m_TypeArguments)))
+                    Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.MakeGenericType({2})", Helper.GetObjectName(m_ClosedType), Helper.GetObjectName(m_OpenType), Helper.GetObjectName(m_TypeArguments)))
 #End If
 
                     Compiler.TypeManager.RegisterReflectionType(m_ClosedType, Me)
@@ -337,10 +337,17 @@ Public Class GenericTypeDescriptor
             Dim result As String
 
             If m_FullName Is Nothing Then
+                Dim name As String = Me.Name
+                Dim tmp As Type = m_OpenType.DeclaringType
+                Do While tmp IsNot Nothing
+                    name = tmp.Name & "+" & name
+                    tmp = tmp.DeclaringType
+                Loop
+
                 If Me.Namespace <> "" Then
-                    m_FullName = Me.Namespace & "." & Me.Name
+                    m_FullName = Me.Namespace & "." & name
                 Else
-                    m_FullName = Me.Name
+                    m_FullName = name
                 End If
             End If
             result = m_FullName

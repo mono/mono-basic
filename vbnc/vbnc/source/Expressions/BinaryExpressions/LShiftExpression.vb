@@ -28,7 +28,7 @@ Public Class LShiftExpression
         Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
-        result = m_RightExpression.GenerateCode(expInfo) AndAlso result
+        result = m_RightExpression.GenerateCode(expInfo.Clone(Compiler.TypeCache.Integer)) AndAlso result
 
         Select Case OperandTypeCode
             Case TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Byte, TypeCode.SByte
@@ -102,7 +102,7 @@ Public Class LShiftExpression
                 Dim tlvalue As Type
                 Dim clvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
 
                 Select Case clvalue
                     Case TypeCode.Byte

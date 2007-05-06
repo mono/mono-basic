@@ -106,10 +106,10 @@ Public Class FunctionSignature
         End Get
     End Property
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
+    Public Overrides Function ResolveTypeReferences(ByVal ResolveTypeParameters As Boolean) As Boolean
         Dim result As Boolean = True
 
-        result = MyBase.ResolveTypeReferences AndAlso result
+        result = MyBase.ResolveTypeReferences(ResolveTypeParameters) AndAlso result
         If m_ReturnTypeAttributes IsNot Nothing Then result = m_ReturnTypeAttributes.ResolveTypeReferences AndAlso result
 
         If m_ReturnType Is Nothing Then
@@ -117,6 +117,8 @@ Public Class FunctionSignature
                 result = m_TypeName.ResolveTypeReferences AndAlso result
                 If result = False Then Return result
                 m_ReturnType = m_TypeName.ResolvedType
+            ElseIf Identifier.HasTypeCharacter Then
+                m_ReturnType = TypeCharacters.TypeCharacterToType(Compiler, Identifier.TypeCharacter)
             Else
                 If Me.Location.File.IsOptionStrictOn Then
                     Helper.AddError("Function return type must be specified.")

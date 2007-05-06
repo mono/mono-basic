@@ -46,7 +46,7 @@ Public Class CLngExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(info.Compiler, expType)
         Dim ExpressionType As Type = Info.Compiler.TypeCache.Long
         Select Case expTypeCode
             Case TypeCode.Char
@@ -65,7 +65,7 @@ Public Class CLngExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
 
@@ -116,7 +116,7 @@ Public Class CLngExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt32
                     Return CLng(originalValue) 'No range checking needed.

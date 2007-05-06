@@ -127,11 +127,18 @@ Public Class MethodDescriptor
             If m_Declaration.HandlesOrImplements IsNot Nothing Then
                 If m_Declaration.HandlesOrImplements.ImplementsClause IsNot Nothing Then
                     result = result Or MethodAttributes.Virtual Or MethodAttributes.NewSlot Or MethodAttributes.CheckAccessOnOverride
-                    If m_Declaration.Modifiers.Is(KS.Overridable) = False Then
+                    If m_Declaration.Modifiers.Is(KS.Overridable) = False AndAlso m_Declaration.Modifiers.Is(KS.MustOverride) = False Then
                         result = result Or MethodAttributes.Final
                     End If
                 End If
             End If
+
+            If TypeOf m_Declaration.Parent Is EventDeclaration Then
+                If DirectCast(m_Declaration.Parent, EventDeclaration).ImplementsClause IsNot Nothing Then
+                    result = result Or MethodAttributes.Virtual Or MethodAttributes.NewSlot Or MethodAttributes.CheckAccessOnOverride
+                End If
+            End If
+
             If m_Declaration.DeclaringType.IsInterface Then
                 result = result Or MethodAttributes.Abstract Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride Or MethodAttributes.NewSlot
             End If

@@ -56,7 +56,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
     <TreatSpecificWarningsAsErrors>42016,42017,42018,42019,42020,42021,42022,42028,42104,42030,42024</TreatSpecificWarningsAsErrors>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <NoWarn>
@@ -173,7 +173,7 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DebugSymbols>True</DebugSymbols>
     <DebugType>Full</DebugType>
-    <DocumentationFile>vbnc_ms.xml</DocumentationFile>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <OutputPath>../bin/</OutputPath>
@@ -186,6 +186,44 @@
     <WarningLevel>1</WarningLevel>
     <NoWarn>
     </NoWarn>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Self Compile|AnyCPU' ">
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc_ms</AssemblyName>
+    <OutputPath>./</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <RootNamespace>vbnc_ms</RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RuntimeTests|AnyCPU' ">
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc_ms</AssemblyName>
+    <OutputPath>./</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <RootNamespace>vbnc_ms</RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>4</WarningLevel>
     <OptionExplicit>True</OptionExplicit>
     <OptionStrict>True</OptionStrict>
   </PropertyGroup>
@@ -202,6 +240,9 @@
     </Compile>
     <Compile Include="..\tests\Generated\Conversions.vb">
       <Link>AutoGen\Conversions.vb</Link>
+    </Compile>
+    <Compile Include="..\tests\Generated\Operators.vb">
+      <Link>AutoGen\Operators.vb</Link>
     </Compile>
     <Compile Include="AutoGen\ZCompilerCodeGenerator.vb" />
     <Compile Include="Code\CodeBlock.vb" />
@@ -284,7 +325,6 @@
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
     <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
-    <Compile Include="Infos\DelegateResolveInfo.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
@@ -789,13 +829,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Expressions\Classifications\ExpressionClassification.Classifications.vb" />
-    <None Include="ConditionalCompilation\.svn\entries" />
-    <None Include="ConditionalCompilation\.svn\format" />
-    <None Include="ConditionalCompilation\.svn\prop-base\ConditionalCompilation.vb.svn-base" />
-    <None Include="ConditionalCompilation\.svn\text-base\ConditionalCompilation.vb.svn-base" />
-    <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstant.vb.svn-base" />
-    <None Include="ConditionalCompilation\.svn\text-base\ConditionalConstants.vb.svn-base" />
-    <None Include="ConditionalCompilation\.svn\text-base\ConditionalExpression.vb.svn-base" />
     <None Include="My Project\app.manifest" />
     <EmbeddedResource Include="vbnc.rsp" />
     <None Include="vbnc.snk" />
@@ -822,12 +855,6 @@
       <ProductName>.NET Framework 2.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ConditionalCompilation\.svn\props\" />
-    <Folder Include="ConditionalCompilation\.svn\tmp\prop-base\" />
-    <Folder Include="ConditionalCompilation\.svn\tmp\props\" />
-    <Folder Include="ConditionalCompilation\.svn\tmp\text-base\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.Targets" />
   <PropertyGroup>

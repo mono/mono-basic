@@ -248,13 +248,13 @@ Public Class InvocationOrIndexExpression
                 If m_Expression.ExpressionType.IsArray Then
                     result = ResolveArrayInvocation(m_Expression.ExpressionType) AndAlso result
                 Else
-                    result = ResolveIndexInvocation(Info.compiler, m_Expression.ExpressionType) AndAlso result
+                    result = ResolveIndexInvocation(Info.Compiler, m_Expression.ExpressionType) AndAlso result
                 End If
             Case ExpressionClassification.Classifications.PropertyAccess
                 If m_Expression.ExpressionType.IsArray Then
                     result = ResolveArrayInvocation(m_Expression.ExpressionType) AndAlso result
                 Else
-                    result = ResolveIndexInvocation(Info.compiler, m_Expression.ExpressionType) AndAlso result
+                    result = ResolveIndexInvocation(Info.Compiler, m_Expression.ExpressionType) AndAlso result
                 End If
             Case ExpressionClassification.Classifications.PropertyGroup
                 result = ResolvePropertyGroupInvocation() AndAlso result
@@ -277,7 +277,7 @@ Public Class InvocationOrIndexExpression
                     expType = m_Expression.ExpressionType
                 End If
 
-                result = ResolveIndexInvocation(Info.compiler, expType) AndAlso result
+                result = ResolveIndexInvocation(Info.Compiler, expType) AndAlso result
             Case Else
                 Helper.AddError("Some error...")
         End Select
@@ -305,6 +305,9 @@ Public Class InvocationOrIndexExpression
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
             result = propGroup.ResolveGroup(m_ArgumentList)
             Classification = propGroup
+        ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.Object) Then
+            Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing)
+            Classification = lbaClass
         Else
             result = False
             Helper.NotImplemented()
@@ -352,8 +355,8 @@ Public Class InvocationOrIndexExpression
         Dim argTypes As Generic.List(Of Type)
         Dim paramTypes() As Type
 
-        invokeMethod = Helper.GetInvokeMethod(compiler, DelegateType)
-        params = Helper.GetParameters(compiler, invokeMethod)
+        invokeMethod = Helper.GetInvokeMethod(Compiler, DelegateType)
+        params = Helper.GetParameters(Compiler, invokeMethod)
         paramTypes = Helper.GetTypes(params)
         argTypes = m_ArgumentList.GetTypes
 
@@ -422,18 +425,31 @@ Public Class InvocationOrIndexExpression
         Dim result As Boolean = True
         Dim mgc As MethodGroupClassification = m_Expression.Classification.AsMethodGroupClassification
 
-        Dim tmpResult As Boolean
-        Dim finalArguments As Generic.List(Of Argument) = Nothing
-        tmpResult = mgc.ResolveGroup(m_ArgumentList, finalArguments)
-        If tmpResult = False Then
-            tmpResult = ResolveReclassifyToValueThenIndex()
+        'If the method group only contains one method and that method takes no arguments and is a function, 
+        'then the method group is interpreted as an invocation expression 
+        'with an empty argument list and the result is used as the target of an index expression.
 
-            Helper.StopIfDebugging(tmpResult = False)
+        Dim reclassifyToIndex As Boolean
+        If mgc.Group.Count = 1 AndAlso m_ArgumentList.Count > 0 Then
+            Dim method As MethodInfo = TryCast(mgc.Group(0), MethodInfo)
 
-            Return tmpResult
-        Else
-            m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+            reclassifyToIndex = method IsNot Nothing
+            reclassifyToIndex = reclassifyToIndex AndAlso method.ReturnType IsNot Nothing
+            reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.Void) = False
+            reclassifyToIndex = reclassifyToIndex AndAlso Helper.GetParameters(Compiler, method).Length = 0
+
         End If
+
+        If reclassifyToIndex Then
+            Return ResolveReclassifyToValueThenIndex()
+        Else
+            Dim finalArguments As Generic.List(Of Argument) = Nothing
+            result = mgc.ResolveGroup(m_ArgumentList, finalArguments)
+            If result Then
+                m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+            End If
+        End If
+        Helper.StopIfDebugging(result = False)
 
         If mgc.ResolvedMethodInfo IsNot Nothing Then
             Dim methodInfo As MethodInfo = mgc.ResolvedMethodInfo

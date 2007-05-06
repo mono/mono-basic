@@ -84,6 +84,8 @@ Public Class ExpressionClassification
                 Return AsPropertyGroup.Type
             Case Classifications.Void
                 Return Compiler.TypeCache.Void
+            Case Classifications.LateBoundAccess
+                Return AsLateBoundAccess.Type
             Case Else
                 If ThrowIfNoType Then
                     Throw New InternalException("No type was found")

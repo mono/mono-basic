@@ -78,7 +78,7 @@ Public Class VariableClassification
                     Dim fD As FieldDescriptor = TryCast(Me.FieldInfo, FieldDescriptor)
                     If fD IsNot Nothing Then
                         If fD.Declaration.Modifiers.ContainsAny(KS.Const) Then Return True
-                        If Helper.IsEnum(fD.DeclaringType) Then Return True
+                        If Helper.IsEnum(Compiler, fD.DeclaringType) Then Return True
                         Return False
                     End If
 
@@ -220,7 +220,7 @@ Public Class VariableClassification
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(FieldInfo.FieldType, Info)
+                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, FieldInfo.FieldType, Info.Clone(Info.RHSExpression.ExpressionType))
                 Emitter.EmitStoreField(Info, FieldInfo)
             End If
         ElseIf LocalBuilder IsNot Nothing Then
@@ -233,16 +233,20 @@ Public Class VariableClassification
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification OrElse Info.RHSExpression.Classification.CanBeValueClassification)
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(LocalBuilder.LocalType, Info)
+                Emitter.EmitConversion(info.RHSExpression.ExpressionType, LocalBuilder.LocalType, Info)
                 Emitter.EmitStoreVariable(Info, LocalBuilder)
             End If
         ElseIf ParameterInfo IsNot Nothing Then
+            Dim isByRef As Boolean = ParameterInfo.ParameterType.IsByRef
             Helper.Assert(m_InstanceExpression Is Nothing)
             If Info.IsRHS Then
-                Helper.NotImplemented()
+                If isByRef Then
+                    Helper.NotImplemented()
+                Else
+                    Emitter.EmitLoadVariable(Info, ParameterInfo)
+                End If
             Else
                 Dim rInfo As EmitInfo
-                Dim isByRef As Boolean = ParameterInfo.ParameterType.IsByRef
                 If isByRef Then
                     Emitter.EmitLoadVariableLocation(Info, ParameterInfo)
                     rInfo = Info.Clone(True, False, ParameterInfo.ParameterType.GetElementType)
@@ -255,7 +259,7 @@ Public Class VariableClassification
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
                 If isByRef = False Then
-                    Emitter.EmitConversion(ParameterInfo.ParameterType, Info)
+                    Emitter.EmitConversion(Info.RHSExpression.ExpressionType, ParameterInfo.ParameterType, Info)
                 End If
                 Emitter.EmitStoreVariable(Info, ParameterInfo)
             End If
@@ -269,7 +273,7 @@ Public Class VariableClassification
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(m_Variable.VariableType, Info)
+                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
                 Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
                 Helper.NotImplemented()
             End If

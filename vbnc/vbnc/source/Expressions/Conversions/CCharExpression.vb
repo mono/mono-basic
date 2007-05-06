@@ -36,7 +36,7 @@ Public Class CCharExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.GenerateCode(Info.Clone(Info.Compiler.TypeCache.Char)) AndAlso result
 
@@ -80,7 +80,7 @@ Public Class CCharExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Type = Info.Compiler.TypeCache.Char
         Select Case expTypeCode
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
@@ -105,7 +105,7 @@ Public Class CCharExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
             Select Case tpCode
                 Case TypeCode.String
                     If CStr(originalValue).Length = 1 Then

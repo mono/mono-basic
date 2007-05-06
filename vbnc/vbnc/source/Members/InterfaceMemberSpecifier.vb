@@ -53,6 +53,12 @@ Public Class InterfaceMemberSpecifier
         End Get
     End Property
 
+    ReadOnly Property ResolvedEventInfo() As EventInfo
+        Get
+            Return TryCast(m_ResolvedMember, EventInfo)
+        End Get
+    End Property
+
     ReadOnly Property ResolvedMethodInfo() As MethodInfo
         Get
             Return TryCast(m_ResolvedMember, MethodInfo)
@@ -87,13 +93,11 @@ Public Class InterfaceMemberSpecifier
         Dim result As Boolean = True
 
         Dim lst As Generic.List(Of MemberInfo)
-        'lst = Helper.FilterByName(m_ResolvedType.GetMembers(BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.Public Or BindingFlags.FlattenHierarchy), m_2.Name)
-        lst = Compiler.TypeManager.GetCache(m_ResolvedType).LookupMembersFlattened(m_2.Name)
-        If lst.Count = 0 AndAlso m_ResolvedType.IsInterface Then
-            'lst.AddRange(Helper.GetMembers(Compiler, m_ResolvedType, m_2.Name))
-            'lst.AddRange(Helper.FilterByName(Compiler.TypeManager.GetCache(m_ResolvedType).FlattenedCache.GetAllMembers.ToArray, m_2.Name))
-            lst.AddRange(Compiler.TypeManager.GetCache(m_ResolvedType).LookupMembersFlattened(m_2.Name))
-        End If
+
+        lst = Compiler.TypeManager.GetCache(m_ResolvedType).LookupFlattenedMembers(m_2.Name)
+        'If lst.Count = 0 AndAlso m_ResolvedType.IsInterface Then
+        '    lst.AddRange(Compiler.TypeManager.GetCache(m_ResolvedType).LookupMembersFlattened(m_2.Name))
+        'End If
         m_ResolvedMember = MethodGroupClassification.ResolveInterfaceGroup(lst, Me.FindFirstParent(Of IMember))
         If m_ResolvedMember Is Nothing Then
             Helper.AddError("Implemented method has not the same signature as the interface method")
@@ -112,4 +116,13 @@ Public Class InterfaceMemberSpecifier
         Return result
     End Function
 
+
+    Public Function ResolveEarly() As Boolean
+        Dim result As Boolean = True
+
+        result = ResolveTypeReferences() AndAlso result
+        result = ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
+
+        Return result
+    End Function
 End Class

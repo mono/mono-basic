@@ -28,7 +28,7 @@ Public Class RShiftExpression
         Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
-        result = m_RightExpression.GenerateCode(expInfo) AndAlso result
+        result = m_RightExpression.GenerateCode(expInfo.Clone(Compiler.TypeCache.Integer)) AndAlso result
 
 
         Select Case OperandTypeCode
@@ -103,7 +103,7 @@ Public Class RShiftExpression
                 Dim tlvalue As Type
                 Dim clvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
 
                 Select Case clvalue
                     Case TypeCode.Byte

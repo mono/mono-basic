@@ -145,8 +145,9 @@ Public Class ForStatement
         stepvar = Emitter.DeclareLocal(Info, m_LoopType, "stepvar$" & Me.ObjectID.ToString)
 
         'Load the initial expression
-        result = m_LoopStartExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, loopClass)
+        'result = m_LoopStartExpression.GenerateCode(loadInfo) AndAlso result
+        result = loopClass.GenerateCode(Info.Clone(m_LoopStartExpression)) AndAlso result
+        'Emitter.EmitStoreVariable(Info, loopClass)
 
         'Load the max expression
         result = m_LoopEndExpression.GenerateCode(loadInfo) AndAlso result
@@ -165,17 +166,22 @@ Public Class ForStatement
         'This is the start of the next iteration
         Info.ILGen.MarkLabel(m_NextIteration)
 
-        'Load the current loop value
-        result = loopClass.GenerateCodeAsValue(loadInfo) AndAlso result
+        Dim addexp As New BinaryAddExpression(Me, loopexp, New LoadLocalExpression(Me, stepvar))
+        result = addexp.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+        'result = addexp.GenerateCode(Info.Clone) AndAlso result
 
-        'Load the value to add
-        Emitter.EmitLoadVariable(Info, stepvar)
+        ''Load the current loop value
+        'result = loopClass.GenerateCodeAsValue(loadInfo) AndAlso result
 
-        'Add them up
-        Emitter.EmitAdd(Info, m_LoopType)
+        ''Load the value to add
+        'Emitter.EmitLoadVariable(Info, stepvar)
+
+        ''Add them up
+        'Emitter.EmitAdd(Info, m_LoopType)
 
         'Store the result into the loop var
-        Emitter.EmitStoreVariable(Info, loopClass)
+        result = loopClass.GenerateCode(Info.Clone(addexp)) AndAlso result
+        'Emitter.EmitStoreVariable(Info, loopClass)
 
         Info.ILGen.MarkLabel(conditionLabel)
         'Load the current value

@@ -46,7 +46,7 @@ Public Class CByteExpression
         Dim result As Boolean = True
 
         Dim expType As Type = SourceType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Type = Info.Compiler.TypeCache.Byte
         Select Case expTypeCode
             Case TypeCode.Char
@@ -64,7 +64,7 @@ Public Class CByteExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
 
@@ -115,7 +115,7 @@ Public Class CByteExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.Byte
                     Return CByte(originalValue) 'No range checking needed.

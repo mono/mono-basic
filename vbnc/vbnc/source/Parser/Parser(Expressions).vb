@@ -484,13 +484,13 @@ Partial Class Parser
     End Function
 
 
-    Private Function ParseUnaryMinusExpression(ByVal Parent As ParsedObject) As UnaryMinusExpression
-        Dim result As New UnaryMinusExpression(Parent)
+    Private Function ParseUnaryMinusExpression(ByVal Info As ExpressionParseInfo) As UnaryMinusExpression
+        Dim result As New UnaryMinusExpression(Info.Parent)
 
         Dim m_Expression As Expression
         tm.AcceptIfNotInternalError(KS.Minus)
 
-        m_Expression = ParseExpression(result)
+        m_Expression = ParseExponent(Info)
         If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Expression)
@@ -541,14 +541,14 @@ Partial Class Parser
         Return result
     End Function
 
-    Private Function ParseUnaryPlusExpression(ByVal Parent As ParsedObject) As UnaryPlusExpression
-        Dim result As New UnaryPlusExpression(Parent)
+    Private Function ParseUnaryPlusExpression(ByVal Info As ExpressionParseInfo) As UnaryPlusExpression
+        Dim result As New UnaryPlusExpression(Info.Parent)
 
         Dim m_Expression As Expression
 
         tm.AcceptIfNotInternalError(KS.Add)
 
-        m_Expression = ParseExpression(result)
+        m_Expression = ParseExponent(Info)
         If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Expression)
@@ -743,7 +743,7 @@ Partial Class Parser
         Else
             Throw New InternalException(result)
         End If
-
+        tm.NextToken()
         tm.AcceptIfNotInternalError(KS.Colon)
         tm.AcceptIfNotInternalError(KS.Equals)
 
@@ -1058,7 +1058,7 @@ Partial Class Parser
                         breakloop = True
                 End Select
             ElseIf tm.CurrentToken.Equals(KS.Colon) Then
-                tm.NextToken()
+                'tm.NextToken()
             Else
                 breakloop = True
             End If
@@ -1287,9 +1287,9 @@ Partial Class Parser
         Dim result As UnaryExpression
 
         If tm.CurrentToken = KS.Add Then
-            result = ParseUnaryPlusExpression(Info.Parent)
+            result = ParseUnaryPlusExpression(Info)
         ElseIf tm.CurrentToken = KS.Minus Then
-            result = ParseUnaryMinusExpression(Info.Parent)
+            result = ParseUnaryMinusExpression(Info)
         Else
             Return ParseExponent(Info)
         End If

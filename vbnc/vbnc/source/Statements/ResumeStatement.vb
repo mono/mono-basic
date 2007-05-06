@@ -26,6 +26,10 @@ Public Class ResumeStatement
         m_IsResumeNext = IsResumeNext
     End Sub
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Return True
+    End Function
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

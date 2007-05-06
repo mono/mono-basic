@@ -49,7 +49,7 @@ Public Class Scanner
     ''' The current column.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_CurrentColumn As Integer
+    Private m_CurrentColumn As Short
 
     '''' <summary>
     '''' The code.
@@ -74,7 +74,7 @@ Public Class Scanner
     ''' Reset by IncLine, set by NewToken
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_TokensSeenOnLine As Boolean
+    Private m_TokensSeenOnLine As Integer
 
     Private m_Files As Generic.Queue(Of CodeFile)
 
@@ -481,7 +481,6 @@ Public Class Scanner
                 Case nlA, nlD, nl2028, nl2029
                     'vbc accepts this...
                     Compiler.Report.ShowMessage(Messages.VBNC90003)
-                    EatNewLine()
                     bEndOfString = True
                 Case nl0
                     ' End of file
@@ -631,18 +630,18 @@ Public Class Scanner
                     End If
                     Select Case tp
                         Case BuiltInDataTypes.Decimal
-                            GetNumber = New DecimalLiteralToken(GetCurrentLocation, Decimal.Parse(strResult, Globalization.NumberStyles.AllowDecimalPoint Or Globalization.NumberStyles.AllowExponent), Compiler, typeCharacter)
+                            GetNumber = New DecimalLiteralToken(GetCurrentLocation, Decimal.Parse(strResult, Helper.USCulture), Compiler, typeCharacter)
                         Case BuiltInDataTypes.Double
-                            GetNumber = New FloatingPointLiteralToken(Of Double)(GetCurrentLocation, Double.Parse(strResult), BuiltInDataTypes.Double, Compiler, typeCharacter)
+                            GetNumber = New FloatingPointLiteralToken(Of Double)(GetCurrentLocation, Double.Parse(strResult, Helper.USCulture), BuiltInDataTypes.Double, Compiler, typeCharacter)
                         Case BuiltInDataTypes.Single
-                            GetNumber = New FloatingPointLiteralToken(Of Single)(GetCurrentLocation, Single.Parse(strResult), BuiltInDataTypes.Single, Compiler, typeCharacter)
+                            GetNumber = New FloatingPointLiteralToken(Of Single)(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture), BuiltInDataTypes.Single, Compiler, typeCharacter)
                         Case BuiltInDataTypes.Integer, BuiltInDataTypes.Long, BuiltInDataTypes.Short, BuiltInDataTypes.UInteger, BuiltInDataTypes.ULong, BuiltInDataTypes.UShort
                             If bReal Then
                                 Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
                                 IntegerValue = 0
                             Else
                                 'Try to parse the result
-                                IntegerValue = ULong.Parse(strResult)
+                                IntegerValue = ULong.Parse(strResult, Helper.USCulture)
                             End If
                             'Check if value is out of range for data type.
                             Dim bOutOfRange As Boolean
@@ -663,10 +662,10 @@ Public Class Scanner
                                 Case Else
                                     Throw New InternalException("")
                             End Select
-                            If bOutOfRange Then
+                            If bOutOfRange AndAlso typeCharacter <> LiteralTypeCharacters_Characters.None Then
                                 Compiler.Report.ShowMessage(Messages.VBNC30439, typeCharacter.ToString)
                             End If
-                            GetNumber = GetIntegralToken(ULong.Parse(strResult), Base, typeCharacter)
+                            GetNumber = GetIntegralToken(ULong.Parse(strResult, Helper.USCulture), Base, typeCharacter)
                         Case Else
                             Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
                             GetNumber = New FloatingPointLiteralToken(Of Double)(GetCurrentLocation, 0, BuiltInDataTypes.Double, Compiler, LiteralTypeCharacters_Characters.None)
@@ -682,6 +681,7 @@ Public Class Scanner
             Case IntegerBase.Binary
                 Try
                     IntegerValue = Helper.BinToInt(strResult)
+                    IntegerValue = ConvertNonDecimalBits(IntegerValue, typeCharacter)
                 Catch ex As Exception
                     Compiler.Report.ShowMessage(Messages.VBNC90006, "binary")
                 End Try
@@ -708,99 +708,116 @@ Public Class Scanner
     End Function
 
     Private Function GetIntegralToken(ByVal Value As ULong, ByVal Base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim case_type As BuiltInDataTypes
         'TODO: Check bounds of value 
         If TypeCharacter = LiteralTypeCharacters_Characters.None Then
-            GoTo integertype
+            If Value > Integer.MaxValue Then
+                case_type = BuiltInDataTypes.Long
+            Else
+                case_type = BuiltInDataTypes.Integer
+            End If
         Else
-            Select Case LiteralTypeCharacters.GetBuiltInType(TypeCharacter)
-                Case BuiltInDataTypes.Integer
-integertype:
-                    Return New IntegralLiteralToken(Of Integer)(GetCurrentLocation, CInt(Value), Base, TypeCharacter, Compiler)
-                Case BuiltInDataTypes.UInteger
-                    Return New IntegralLiteralToken(Of UInteger)(GetCurrentLocation, CUInt(Value), Base, TypeCharacter, Compiler)
-                Case BuiltInDataTypes.Long
-                    Return New IntegralLiteralToken(Of Long)(GetCurrentLocation, CLng(Value), Base, TypeCharacter, Compiler)
-                Case BuiltInDataTypes.ULong
-                    Return New IntegralLiteralToken(Of ULong)(GetCurrentLocation, CULng(Value), Base, TypeCharacter, Compiler)
-                Case BuiltInDataTypes.Short
-                    Return New IntegralLiteralToken(Of Short)(GetCurrentLocation, CShort(Value), Base, TypeCharacter, Compiler)
-                Case BuiltInDataTypes.UShort
-                    Return New IntegralLiteralToken(Of UShort)(GetCurrentLocation, CUShort(Value), Base, TypeCharacter, Compiler)
-                Case Else
-                    Throw New InternalException("")
-            End Select
+            case_type = LiteralTypeCharacters.GetBuiltInType(TypeCharacter)
         End If
-    End Function
-    Private Function GetCurrentLocation() As Span
-        Return New Span(m_CodeFile, m_CurrentLine, m_CurrentColumn)
-    End Function
 
-    ''' <summary>
-    ''' Converts the specified string to the specified typecode
-    ''' </summary>
-    ''' <param name="Value"></param>
-    ''' <param name="Type"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function ConvertTo(ByVal Value As String, ByVal Type As TypeCode) As Object
-        Select Case Type
-            Case TypeCode.Boolean
-                Return CBool(Value)
-            Case TypeCode.Byte
-                Return CByte(Value)
-            Case TypeCode.Char
-                Return CChar(Value)
-            Case TypeCode.DateTime
-                Return CDate(Value)
-            Case TypeCode.DBNull
-                Throw New InternalException("")
-            Case TypeCode.Decimal
-                Return Convert.ToDecimal(Value, vbnc.Helper.USCulture)
-            Case TypeCode.Double
-                Return CDbl(Value)
-            Case TypeCode.Empty
-                Throw New InternalException("")
-            Case TypeCode.Int16
-                Return CShort(Value)
-            Case TypeCode.Int32
-                Return CInt(Value)
-            Case TypeCode.Int64
-                Return CLng(Value)
-            Case TypeCode.Object
-                Throw New InternalException("")
-            Case TypeCode.[SByte]
-                Return CSByte(Value)
-            Case TypeCode.Single
-                Return CSng(Value)
-            Case TypeCode.String
-                Return CStr(Value)
-            Case TypeCode.UInt16
-                Dim result As UInt16
-                If UInt16.TryParse(Value, result) Then
-                    Return result
-                Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30748, Value, KS.UShort.ToString)
-                    Return 0
-                End If
-            Case TypeCode.UInt32
-                Dim result As UInt32
-                If UInt32.TryParse(Value, result) Then
-                    Return result
-                Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30748, Value, KS.UInteger.ToString)
-                    Return 0
-                End If
-            Case TypeCode.UInt64
-                Dim result As UInt64
-                If UInt64.TryParse(Value, result) Then
-                    Return result
-                Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30748, Value, KS.ULong.ToString)
-                    Return 0
-                End If
+        Select Case case_type
+            Case BuiltInDataTypes.Integer
+                Return New IntegralLiteralToken(Of Integer)(GetCurrentLocation, ExtractInt(Value, Base), Base, TypeCharacter, Compiler)
+            Case BuiltInDataTypes.UInteger
+                Return New IntegralLiteralToken(Of UInteger)(GetCurrentLocation, ExtractUInt(Value, Base), Base, TypeCharacter, Compiler)
+            Case BuiltInDataTypes.Long
+                Return New IntegralLiteralToken(Of Long)(GetCurrentLocation, ExtractLong(Value, Base), Base, TypeCharacter, Compiler)
+            Case BuiltInDataTypes.ULong
+                Return New IntegralLiteralToken(Of ULong)(GetCurrentLocation, ExtractULong(Value, Base), Base, TypeCharacter, Compiler)
+            Case BuiltInDataTypes.Short
+                Return New IntegralLiteralToken(Of Short)(GetCurrentLocation, ExtractShort(Value, Base), Base, TypeCharacter, Compiler)
+            Case BuiltInDataTypes.UShort
+                Return New IntegralLiteralToken(Of UShort)(GetCurrentLocation, ExtractUShort(Value, Base), Base, TypeCharacter, Compiler)
             Case Else
                 Throw New InternalException("")
         End Select
+    End Function
+
+    Private Function ExtractInt(ByVal Value As ULong, ByVal Base As IntegerBase) As Integer
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CInt(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                If Value > Integer.MaxValue Then
+                    Return CInt(Integer.MinValue + (CUInt(Value) - Integer.MaxValue - 1))
+                Else
+                    Return CInt(Value)
+                End If
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Private Function ExtractUInt(ByVal Value As ULong, ByVal Base As IntegerBase) As UInteger
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CUInt(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                Return CUInt(Value)
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Private Function ExtractShort(ByVal Value As ULong, ByVal Base As IntegerBase) As Short
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CShort(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                If Value > Short.MaxValue Then
+                    Return CShort(Short.MinValue + (CUShort(Value) - Short.MaxValue - 1))
+                Else
+                    Return CShort(Value)
+                End If
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Private Function ExtractUShort(ByVal Value As ULong, ByVal Base As IntegerBase) As UShort
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CUShort(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                Return CUShort(Value)
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Private Function ExtractLong(ByVal Value As ULong, ByVal Base As IntegerBase) As Long
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CLng(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                If Value > Long.MaxValue Then
+                    Return CLng(Long.MinValue + (Value - Long.MaxValue - 1))
+                Else
+                    Return CLng(Value)
+                End If
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Private Function ExtractULong(ByVal Value As ULong, ByVal Base As IntegerBase) As ULong
+        Select Case Base
+            Case IntegerBase.Decimal
+                Return CULng(Value)
+            Case IntegerBase.Hex, IntegerBase.Octal
+                Return CULng(Value)
+            Case Else
+                Throw New InternalException("Unknown base: " & Base.ToString())
+        End Select
+    End Function
+
+    Function GetCurrentLocation() As Span
+        Return New Span(m_CodeFile, m_CurrentLine, m_CurrentColumn)
     End Function
 
     Private ReadOnly Property CurrentChar() As Char
@@ -810,7 +827,7 @@ integertype:
     End Property
 
     Private Function NextChar() As Char
-        m_CurrentColumn += 1
+        m_CurrentColumn += 1S
         m_TotalCharCount += 1
 
         m_PreviousChar = m_CurrentChar
@@ -832,15 +849,6 @@ integertype:
             Return m_PreviousChar
         End Get
     End Property
-
-    'Private Function PreviousChar(Optional ByVal Retrocede As Boolean = True) As Char
-    '    m_CurrentPosition -= 1
-    '    m_CurrentColumn -= 1
-    '    PreviousChar = CurrentChar()
-    '    If Not Retrocede Then
-    '        m_CurrentPosition += 1
-    '    End If
-    'End Function
 
     Private Function PeekChar() As Char
         If m_PeekedChars.Count = 0 Then
@@ -874,7 +882,7 @@ integertype:
     Private Sub IncLine()
         m_CurrentLine += 1
         m_CurrentColumn = 1
-        m_TokensSeenOnLine = False
+        m_TokensSeenOnLine = 0
     End Sub
 
     ''' <summary>
@@ -887,27 +895,6 @@ integertype:
         Return New SymbolToken(GetCurrentLocation, Symbol, Compiler)
     End Function
 
-    '''' <summary>
-    '''' Add the endofcode token to the token stream.
-    '''' </summary>
-    '''' <param name="Tokens"></param>
-    '''' <remarks></remarks>
-    'Public Sub SetCodeEnd(ByVal Tokens As Tokens)
-    '    m_Tokens = Tokens
-
-    '    '#If DEBUG Then
-    '    '        CheckEndOfFiles()
-    '    '#End If
-    '    '        SetMultiKeywords()
-    '    '#If DEBUG Then
-    '    '        CheckEndOfFiles()
-    '    '#End If
-    '    m_Tokens.StartAgain()
-
-    '    m_Tokens.Add(New EndOfCodeToken(Compiler))
-    '    m_Tokens = Nothing
-    'End Sub
-
     Private Function GetNextToken() As Token
         Dim Result As Token = Nothing
         Do
@@ -918,7 +905,8 @@ integertype:
                     EatComment()
                 Case nlD, nlA, nl2028, nl2029 'New line
                     EatNewLine()
-                    Result = New EndOfLineToken(GetCurrentLocation, Compiler)
+                    'Result = New EndOfLineToken(GetCurrentLocation, Compiler)
+                    Result = EndOfLineToken.GetEOL(Compiler)
                 Case nl0 'End of file
                     Result = New EndOfFileToken(GetCurrentLocation, Compiler)
                 Case ":"c ':
@@ -1065,7 +1053,7 @@ integertype:
                 Case "#"c
                     'Type characters are already scanned when they appear after a literal. 
                     'If scanning gets here, it is not a type character.
-                    If IsNewLine(PreviousChar) Then
+                    If m_TokensSeenOnLine = 0 Then
                         Result = NewToken(KS.Numeral)
                         NextChar()
                     Else
@@ -1118,6 +1106,13 @@ integertype:
                     End If
             End Select
         Loop While Result Is Nothing
+
+        If TypeOf Result Is EndOfLineToken = False Then
+            m_TokensSeenOnLine += 1
+        Else
+            m_TokensSeenOnLine = 0
+        End If
+
         Return Result
     End Function
 
@@ -1157,7 +1152,7 @@ integertype:
             Return New KeywordToken(New Span(current.Location, peeked.Location), attrib.MultiKeyword, Compiler)
         End If
 
-        If current.Equals(KS.Numeral) AndAlso Not Me.m_TokensSeenOnLine Then
+        If current.Equals(KS.Numeral) AndAlso m_TokensSeenOnLine = 1 Then
             peeked = Me.PeekExactToken
             If peeked.IsKeyword Then
                 Select Case peeked.AsKeyword.Keyword
@@ -1216,7 +1211,7 @@ integertype:
 
         m_CurrentLine = 1
         m_CurrentColumn = 1
-        m_TokensSeenOnLine = False
+        m_TokensSeenOnLine = 0
         m_CurrentChar = Nothing
         m_PreviousChar = Nothing
         m_PeekedChars.Clear()
@@ -1283,7 +1278,8 @@ integertype:
         If result.IsEndOfFile() Then
             If m_Current IsNot Nothing AndAlso Not m_Current.IsEndOfLine(True) Then
                 m_Peeked = result
-                result = New EndOfLineToken(m_Peeked.Location, Compiler)
+                'result = New EndOfLineToken(m_Peeked.Location, Compiler)
+                result = EndOfLineToken.GetEOL(Compiler)
             End If
             NextFile()
         End If

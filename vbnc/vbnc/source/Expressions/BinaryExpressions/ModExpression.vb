@@ -75,15 +75,15 @@ Public Class ModExpression
             Dim tlvalue, trvalue As Type
             Dim clvalue, crvalue As TypeCode
             tlvalue = lvalue.GetType
-            clvalue = Helper.GetTypeCode(tlvalue)
+            clvalue = Helper.GetTypeCode(Compiler, tlvalue)
             trvalue = rvalue.GetType
-            crvalue = Helper.GetTypeCode(trvalue)
+            crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
             Dim smallest As Type
             Dim csmallest As TypeCode
             smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
             Helper.Assert(smallest IsNot Nothing)
-            csmallest = Helper.GetTypeCode(smallest)
+            csmallest = Helper.GetTypeCode(Compiler, smallest)
 
             Select Case csmallest
                 Case TypeCode.Byte

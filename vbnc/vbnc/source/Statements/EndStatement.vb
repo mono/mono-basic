@@ -28,6 +28,10 @@ Public Class EndStatement
         MyBase.New(Parent)
     End Sub
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Return True
+    End Function
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

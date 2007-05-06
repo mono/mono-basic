@@ -281,7 +281,7 @@ Public Class CodeBlock
         'Add a label to the end of the code as the last item in the switch.
 
         If retvar IsNot Nothing Then
-            Helper.NotImplemented()
+            Emitter.EmitLeave(Info, Me.EndMethodLabel)
         Else
             Emitter.EmitLeave(Info, Me.EndMethodLabel)
         End If
@@ -362,7 +362,9 @@ Public Class CodeBlock
         Info.ILGen.MarkLabel(veryMethodEnd)
 
         If retvar IsNot Nothing Then
-            Helper.NotImplemented()
+            Emitter.MarkLabel(Info, m_EndOfMethodLabel.Value)
+            Emitter.EmitLoadVariable(Info, retvar)
+            Info.ILGen.Emit(OpCodes.Ret)
         Else
             Emitter.MarkLabel(Info, m_EndOfMethodLabel.Value)
             Info.ILGen.Emit(OpCodes.Ret)
@@ -436,8 +438,8 @@ Public Class CodeBlock
             Else
                 obj = info.Method.MethodBuilder
             End If
-            Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.GetILGenerator", Helper.GetObjectName(info.ILGen), Helper.GetObjectName(obj)))
-            Compiler.DebugReflection.AppendLine(String.Format("{0}.Emit (System.Reflection.Emit.Opcodes.Ret)", Helper.GetObjectName(info.ILGen)))
+            Helper.DebugReflection_AppendLine("{0} = {1}.GetILGenerator", info.ILGen, obj)
+            Helper.DebugReflection_AppendLine("{0}.Emit (System.Reflection.Emit.Opcodes.Ret)", info.ILGen)
 #End If
         End If
 
@@ -552,7 +554,9 @@ Public Class CodeBlock
     Function FindVariable(ByVal Name As String) As IAttributableNamedDeclaration
         Dim found As Generic.List(Of INameable)
         found = m_Variables.Index.Item(Name)
-        If found.Count = 1 Then
+        If found Is Nothing Then
+            Return Nothing
+        ElseIf found.Count = 1 Then
             Return DirectCast(found(0), IAttributableNamedDeclaration)
         ElseIf found.Count > 1 Then
             Throw New InternalException(Me)

@@ -83,6 +83,12 @@ Public Class AssignmentStatement
 
         If RSide.Classification.IsValueClassification Then
             'do nothing
+        ElseIf RSide.Classification.IsMethodPointerClassification Then
+            ''result = RSide.ResolveAddressOfExpression(m_LSide.ExpressionType) AndAlso result
+            'If result Then
+            m_RSide = m_RSide.ReclassifyMethodPointerToValueExpression(m_LSide.ExpressionType)
+            result = m_RSide.ResolveExpression(Info) AndAlso result
+            'End If
         ElseIf RSide.Classification.CanBeValueClassification Then
             RSide = RSide.ReclassifyToValueExpression()
             result = RSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
@@ -115,6 +121,14 @@ Public Class AssignmentStatement
                 m_RSide = objCreation
             End If
         End If
+
+        result = CreateTypeConversion() AndAlso result
+
+        Return result
+    End Function
+
+    Overridable Function CreateTypeConversion() As Boolean
+        Dim result As Boolean = True
 
         m_RSide = Helper.CreateTypeConversion(Me, m_RSide, m_LSide.ExpressionType, result)
 

@@ -140,7 +140,7 @@ Public MustInherit Class Expression
             Return Nothing
         End Get
     End Property
-        
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
@@ -299,6 +299,19 @@ Public MustInherit Class Expression
         Return False
     End Function
 
+    Function ResolveAddressOfExpression(ByVal DelegateType As Type) As Boolean
+        Dim result As Boolean = True
+        Dim aoe As AddressOfExpression = TryCast(Me, AddressOfExpression)
+
+        If aoe Is Nothing Then
+            result = False
+        Else
+            result = aoe.Resolve(DelegateType) AndAlso result
+        End If
+
+        Return result
+    End Function
+
     Function GetObjectReference() As Expression
         Dim result As Expression
         If TypeOf Me Is GetRefExpression Then
@@ -309,6 +322,8 @@ Public MustInherit Class Expression
                 result = derefExp.Expression
             ElseIf Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.Enum) Then
                 result = New BoxExpression(Me, Me, Me.ExpressionType)
+                'ElseIf Me.ExpressionType.IsValueType AndAlso Helper.IsNullableType(Compiler, Me.ExpressionType) = False Then
+                '    result = New BoxExpression(Me, Me, Me.ExpressionType)
             Else
                 result = New GetRefExpression(Me, Me)
             End If
@@ -316,7 +331,7 @@ Public MustInherit Class Expression
             result = Me
         End If
 
-            Return result
+        Return result
     End Function
 
     Function DereferenceByRef() As Expression
@@ -331,6 +346,11 @@ Public MustInherit Class Expression
         Return result
     End Function
 
+    ''' <summary>
+    ''' The resulting expression is NOT resolved.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Function ReclassifyToPropertyAccessExpression() As Expression
         Dim result As Expression
         Select Case m_Classification.Classification
@@ -364,6 +384,17 @@ Public MustInherit Class Expression
         Return result
     End Function
 
+    Function ReclassifyMethodPointerToValueExpression(ByVal DelegateType As Type) As Expression
+        Dim result As Expression = Nothing
+
+        Helper.Assert(Classification.IsMethodPointerClassification)
+        Helper.Assert(TypeOf Me Is AddressOfExpression)
+
+        result = New DelegateOrObjectCreationExpression(Me, DelegateType, DirectCast(Me, AddressOfExpression))
+
+        Return result
+    End Function
+
     ''' <summary>
     ''' Reclassifies an expression.
     ''' The resulting expression is NOT resolved.
@@ -387,7 +418,7 @@ Public MustInherit Class Expression
                 Helper.NotImplemented()
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.MethodPointer
-                result = New MethodPointerToValueExpression(Me, Me.Classification.AsMethodPointerClassification)
+                Throw New InternalException(Me, "Use the other overload.")
             Case ExpressionClassification.Classifications.EventAccess
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Void
@@ -402,6 +433,7 @@ Public MustInherit Class Expression
 
         Return result
     End Function
+
 
 #End Region
     '#If DEBUG Then
@@ -426,4 +458,10 @@ Public MustInherit Class Expression
             Return "<String representation of " & Me.GetType.FullName & " not implemented>"
         End Get
     End Property
+
+    'ReadOnly Property IsUnresolved() As Boolean
+    '    Get
+    '        Return
+    '    End Get
+    'End Property
 End Class

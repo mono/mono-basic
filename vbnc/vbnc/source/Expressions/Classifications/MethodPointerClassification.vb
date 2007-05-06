@@ -90,10 +90,16 @@ Public Class MethodPointerClassification
             Return True
         End If
 
+        If Helper.IsDelegate(Compiler, DelegateType) = False Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC30581, Me.Location, DelegateType.FullName) AndAlso result
+        End If
+
+        If result = False Then Return result
+
         Dim params() As ParameterInfo = Helper.GetDelegateArguments(Compiler, DelegateType)
         Dim paramtypes() As Type = Helper.GetParameterTypes(params)
 
-        m_ResolvedMethod = CType(Helper.ResolveGroupExact(m_MethodGroup.Group, paramtypes), MethodBase)
+        m_ResolvedMethod = CType(Helper.ResolveGroupExact(Compiler, m_MethodGroup.Group, paramtypes), MethodBase)
         m_DelegateType = DelegateType
 
         result = m_ResolvedMethod IsNot Nothing AndAlso result

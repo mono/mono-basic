@@ -18,7 +18,7 @@
 ' 
 
 #If DEBUG Then
-#Const DEBUGMETHODRESOLUTION = 1
+#Const DEBUGMETHODRESOLUTION = 0
 #Const DEBUGMETHODADD = 0
 #Const EXTENDEDDEBUG = 0
 #End If
@@ -170,22 +170,22 @@ Public Class Helper
     End Function
 #End If
 
-#If DEBUG Then
-    Shared Sub RunRT()
-        Dim path As String = "rt\bin\rt.exe"
-        Dim parent As String = VB.CurDir
-        Do Until parent.Length <= 3
-            Dim filename As String = IO.Path.Combine(parent, path)
-            If IO.File.Exists(filename) Then
-                Diagnostics.Process.Start(filename)
-                Return
-            End If
+    '#If DEBUG Then
+    '    Shared Sub RunRT()
+    '        Dim path As String = "rt\bin\rt.exe"
+    '        Dim parent As String = VB.CurDir
+    '        Do Until parent.Length <= 3
+    '            Dim filename As String = IO.Path.Combine(parent, path)
+    '            If IO.File.Exists(filename) Then
+    '                Diagnostics.Process.Start(filename)
+    '                Return
+    '            End If
 
-            parent = IO.Path.GetDirectoryName(parent)
-        Loop
-        System.Windows.Forms.MessageBox.Show("rt.exe not found.")
-    End Sub
-#End If
+    '            parent = IO.Path.GetDirectoryName(parent)
+    '        Loop
+    '        System.Windows.Forms.MessageBox.Show("rt.exe not found.")
+    '    End Sub
+    '#End If
 
     Shared Function FilterCustomAttributes(ByVal attributeType As Type, ByVal Inherit As Boolean, ByVal i As IAttributableDeclaration) As Object()
         Dim result As New Generic.List(Of Object)
@@ -418,9 +418,9 @@ Public Class Helper
         Return result.ToArray
     End Function
 
-    Shared Function GetTypeCode(ByVal Type As TypeDescriptor) As TypeCode
-        If Helper.IsEnum(Type) Then
-            Return GetTypeCode(Type.GetElementType)
+    Shared Function GetTypeCode(ByVal Compiler As Compiler, ByVal Type As TypeDescriptor) As TypeCode
+        If Helper.IsEnum(Compiler, Type) Then
+            Return GetTypeCode(Compiler, Type.GetElementType)
         Else
             Return TypeCode.Object
         End If
@@ -478,6 +478,10 @@ Public Class Helper
         Return NameCompare(Value1, Value2)
     End Function
 
+    Shared Function CompareNameStart(ByVal Whole As String, ByVal Start As String) As Boolean
+        Return String.Compare(Whole, 0, Start, 0, Start.Length, StringComparison.OrdinalIgnoreCase) = 0
+    End Function
+
     ''' <summary>
     ''' Compares two strings.
     ''' </summary>
@@ -500,12 +504,12 @@ Public Class Helper
         Return NameCompare(Value1, Value2)
     End Function
 
-    Shared Function GetTypeCode(ByVal Type As Type) As TypeCode
+    Shared Function GetTypeCode(ByVal Compiler As Compiler, ByVal Type As Type) As TypeCode
         Dim tD As TypeDescriptor = TryCast(Type, TypeDescriptor)
         If tD Is Nothing Then
             Return System.Type.GetTypeCode(Type)
         Else
-            Return GetTypeCode(tD)
+            Return GetTypeCode(Compiler, tD)
         End If
     End Function
 
@@ -537,7 +541,7 @@ Public Class Helper
         End If
     End Function
 
-    Shared Function IsEnum(ByVal Type As Type) As Boolean
+    Shared Function IsEnum(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
         If TypeOf Type Is TypeBuilder Then
             Return Type.IsEnum
         ElseIf TypeOf Type Is TypeParameterDescriptor Then
@@ -546,14 +550,18 @@ Public Class Helper
             Return Type.IsEnum
         End If
 
-        Dim FullName As String = Type.GetType.FullName
-        If FullName = "System.Type" Then
-            Return Type.IsEnum
-        ElseIf FullName.Contains("TypeBuilderInstantiation") Then
+        'Dim FullName As String = Type.GetType.FullName
+        'If FullName = "System.Type" Then
+        'Return Type.IsEnum
+        'Else
+        If Type.GetType Is Compiler.TypeCache.System_Reflection_Emit_TypeBuilderInstantiation Then
+            'ElseIf FullName.Contains("TypeBuilderInstantiation") Then
             Return False
-        ElseIf FullName.Contains("RuntimeType") Then
+        ElseIf Type.GetType Is Compiler.TypeCache.System_RuntimeType Then
+            'ElseIf FullName.Contains("RuntimeType") Then
             Return Type.IsEnum
-        ElseIf FullName.Contains("SymbolType") Then
+        ElseIf Type.GetType Is Compiler.TypeCache.System_Reflection_Emit_SymbolType Then
+            'ElseIf FullName.Contains("SymbolType") Then
             Return False
         ElseIf Type.GetType.Namespace = "System.Reflection.Emit" Then
             Return False
@@ -590,9 +598,10 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function GetMembersOfTypes(ByVal Compiler As Compiler, ByVal Types As TypeDictionary, ByVal Name As String) As Generic.List(Of MemberInfo)
         Dim result As New Generic.List(Of MemberInfo)
-        For Each type As Type In Types.TypesAsArray
-            'result.AddRange(Helper.FilterByName(type.GetMembers, Name))
-            result.AddRange(Compiler.TypeManager.GetCache(type).LookupMembersFlattened(Name))
+        For Each type As Type In Types.Values
+            Dim members As Generic.List(Of MemberInfo)
+            members = Compiler.TypeManager.GetCache(type).LookupFlattenedMembers(Name)
+            If members IsNot Nothing Then result.AddRange(members)
         Next
         Return result
     End Function
@@ -605,8 +614,9 @@ Public Class Helper
     Shared Function GetMembersOfTypes(ByVal Compiler As Compiler, ByVal Types As TypeList, ByVal Name As String) As Generic.List(Of MemberInfo)
         Dim result As New Generic.List(Of MemberInfo)
         For Each type As Type In Types
-            'result.AddRange(Helper.FilterByName(type.GetMembers, Name))
-            result.AddRange(Compiler.TypeManager.GetCache(type).LookupMembersFlattened(Name))
+            Dim members As Generic.List(Of MemberInfo)
+            members = Compiler.TypeManager.GetCache(type).LookupFlattenedMembers(Name)
+            If members IsNot Nothing Then result.AddRange(members)
         Next
         Return result
     End Function
@@ -628,7 +638,8 @@ Public Class Helper
     Shared Function FilterExternalInaccessible(ByVal Compiler As Compiler, ByVal Members As Generic.List(Of MemberInfo)) As Generic.List(Of MemberInfo)
         Dim result As New Generic.List(Of MemberInfo)
 
-        For Each member As MemberInfo In Members
+        For i As Integer = 0 To Members.Count - 1
+            Dim member As MemberInfo = Members(i)
             If (IsPrivate(member) OrElse IsFriend(member)) AndAlso Compiler.Assembly.IsDefinedHere(member.DeclaringType) = False Then
                 Continue For
             End If
@@ -744,7 +755,9 @@ Public Class Helper
 
         If TypeArguments IsNot Nothing Then argCount = TypeArguments.Count
 
-        For Each member As MemberInfo In Members
+        For i As Integer = 0 To Members.Count - 1
+            Dim member As MemberInfo = Members(i)
+
             Dim minfo As MethodInfo = TryCast(member, MethodInfo)
             If minfo IsNot Nothing Then
                 If minfo.GetGenericArguments.Length = argCount Then
@@ -1158,7 +1171,7 @@ Public Class Helper
         If isArraySetValue Then
             result = newValue.GenerateCode(Info.Clone(True, False, ElementType)) AndAlso result
             If ElementType.IsValueType Then
-                Emitter.EmitBox(Info)
+                Emitter.EmitBox(Info, ElementType)
             End If
             result = EmitIntegerArray(Info, Arguments) AndAlso result
             Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.Array_SetValue)
@@ -1167,7 +1180,7 @@ Public Class Helper
             Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.Integer)
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
-                Emitter.EmitConversion(Info.Compiler.TypeCache.Integer, Info)
+                Emitter.EmitConversion(Arguments(i).Expression.ExpressionType, Info.Compiler.TypeCache.Integer, Info)
                 methodtypes.Add(Info.Compiler.TypeCache.Integer)
             Next
 
@@ -1213,7 +1226,7 @@ Public Class Helper
             Dim methodtypes(Arguments.Count - 1) As Type
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
-                Emitter.EmitConversion(Info.Compiler.TypeCache.Integer, Info)
+                Emitter.EmitConversion(Info.Stack.Peek, Info.Compiler.TypeCache.Integer, Info)
                 methodtypes(i) = Info.Compiler.TypeCache.Integer
             Next
 
@@ -1225,10 +1238,6 @@ Public Class Helper
             End If
         End If
         Return result
-    End Function
-
-    Shared Function EmitArrayCreation(ByVal Info As EmitInfo) As Boolean
-
     End Function
 
     ''' <summary>
@@ -1330,15 +1339,17 @@ Public Class Helper
             If attrib Is Nothing Then Return False
 
             'members = Helper.FilterByName(Type.GetMembers(), attrib.MemberName)
-            members = Compiler.TypeManager.GetCache(Type).LookupMembersFlattened(attrib.MemberName)
+            members = Compiler.TypeManager.GetCache(Type).LookupFlattenedMembers(attrib.MemberName)
 
-            For Each member As MemberInfo In members
-                If member.MemberType = MemberTypes.Property Then
-                    properties.Add(DirectCast(member, PropertyInfo))
-                Else
-                    Throw New InternalException("")
-                End If
-            Next
+            If members IsNot Nothing Then
+                For Each member As MemberInfo In members
+                    If member.MemberType = MemberTypes.Property Then
+                        properties.Add(DirectCast(member, PropertyInfo))
+                    Else
+                        Throw New InternalException("")
+                    End If
+                Next
+            End If
             DefaultProperties = properties
             Return True
         Else
@@ -1684,7 +1695,7 @@ Public Class Helper
     Shared Function GetNamespaceParent(ByVal [Namespace] As String) As String
         If [Namespace] Is Nothing Then
             Throw New InternalException("")
-        ElseIf [Namespace] = "" Then
+        ElseIf [Namespace] = String.Empty Then
             Return Nothing
         Else
             Dim dotIdx As Integer
@@ -1694,7 +1705,7 @@ Public Class Helper
             ElseIf dotIdx = 0 Then
                 Throw New InternalException("A namespace starting with a dot??")
             Else
-                Return ""
+                Return String.Empty
             End If
         End If
     End Function
@@ -1930,7 +1941,7 @@ Public Class Helper
     ''' <param name="params"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function ResolveGroupExact(ByVal grp As Generic.List(Of MemberInfo), ByVal params() As Type) As MemberInfo
+    Shared Function ResolveGroupExact(ByVal Compiler As Compiler, ByVal grp As Generic.List(Of MemberInfo), ByVal params() As Type) As MemberInfo
         Dim result As MemberInfo = Nothing
 
         For i As Integer = 0 To grp.Count - 1
@@ -1945,7 +1956,13 @@ Public Class Helper
                         Exit For
                     End If
                 Case MemberTypes.Property
-                    Helper.NotImplemented()
+                    Dim method As PropertyInfo = DirectCast(member, PropertyInfo)
+                    Dim paramtypes As Type() = Helper.GetParameterTypes(Helper.GetParameters(Compiler, method))
+                    If Helper.CompareTypes(paramtypes, params) Then
+                        Helper.Assert(result Is Nothing)
+                        result = method
+                        Exit For
+                    End If
                 Case MemberTypes.Event
                     Helper.NotImplemented()
                 Case Else
@@ -2302,15 +2319,15 @@ Public Class Helper
         Dim builder As New System.Text.StringBuilder
 
         For i As Integer = 0 To strLine.Length - 1
-            If strLine.Chars(i) = "\" AndAlso i < strLine.Length - 1 AndAlso strLine.Chars(i + 1) = """" Then
-                builder.Append("""")
-            ElseIf strLine.Chars(i) = """" Then
-                If strLine.Length - 1 >= i + 1 AndAlso strLine.Chars(i + 1) = """" Then
-                    builder.Append("""")
+            If strLine.Chars(i) = "\"c AndAlso i < strLine.Length - 1 AndAlso strLine.Chars(i + 1) = """"c Then
+                builder.Append(""""c)
+            ElseIf strLine.Chars(i) = """"c Then
+                If strLine.Length - 1 >= i + 1 AndAlso strLine.Chars(i + 1) = """"c Then
+                    builder.Append(""""c)
                 Else
                     bInQuote = Not bInQuote
                 End If
-            ElseIf bInQuote = False AndAlso strLine.Chars(i) = " " Then
+            ElseIf bInQuote = False AndAlso strLine.Chars(i) = " "c Then
                 If builder.ToString.Trim() <> "" Then strs.Add(builder.ToString)
                 builder.Length = 0
                 iStart = i + 1
@@ -2403,7 +2420,7 @@ Public Class Helper
 
     Shared ReadOnly Property USCulture() As Globalization.CultureInfo
         Get
-            Return New Globalization.CultureInfo("en-US")
+            Return Globalization.CultureInfo.GetCultureInfo("en-US")
         End Get
     End Property
 
@@ -2681,13 +2698,14 @@ Public Class Helper
             Return True
         ElseIf Helper.CompareType(FromType, Compiler.TypeCache.Nothing) Then
             Return True
-        ElseIf FromType.FullName Is Nothing AndAlso ToType.FullName Is Nothing AndAlso FromType.IsArray = True AndAlso ToType.IsArray = True AndAlso FromType.Name.Equals(ToType.Name, StringComparison.Ordinal) Then
+        ElseIf FromType.IsArray = True AndAlso ToType.IsArray = True AndAlso FromType.FullName Is Nothing AndAlso ToType.FullName Is Nothing AndAlso  FromType.Name.Equals(ToType.Name, StringComparison.Ordinal) Then
             Return True
         ElseIf CompareType(ToType, Compiler.TypeCache.Object) Then
             Return True
         ElseIf TypeOf ToType Is GenericTypeParameterBuilder AndAlso TypeOf FromType Is Type Then
             Return ToType.Name = FromType.Name
-        ElseIf ToType.GetType.Name = "TypeBuilderInstantiation" Then
+        ElseIf ToType.GetType Is Compiler.TypeCache.System_Reflection_Emit_TypeBuilderInstantiation Then
+            'ElseIf ToType.GetType.Name = "TypeBuilderInstantiation" Then
             If Helper.CompareType(Helper.GetTypeOrTypeBuilder(FromType), ToType) Then
                 Return True
             Else
@@ -2720,7 +2738,7 @@ Public Class Helper
                 End If
             End If
             Return False
-        ElseIf Helper.IsEnum(FromType) AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, GetEnumType(Compiler, FromType), ToType) Then
+        ElseIf Helper.IsEnum(Compiler, FromType) AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, GetEnumType(Compiler, FromType), ToType) Then
             Return True
         ElseIf ToType.FullName IsNot Nothing AndAlso FromType.FullName IsNot Nothing AndAlso ToType.FullName.Equals(FromType.FullName, StringComparison.Ordinal) Then
             Return True
@@ -2733,11 +2751,27 @@ Public Class Helper
         ElseIf Helper.IsSubclassOf(FromType, ToType) Then
             Return False
         ElseIf FromType.IsArray AndAlso ToType.IsArray Then
-            Return Helper.IsAssignable(Compiler, FromType.GetElementType, ToType.GetElementType)
+            Dim fromElement As Type = FromType.GetElementType
+            Dim toElement As Type = ToType.GetElementType
+            If fromElement.IsValueType Xor toElement.IsValueType Then
+                Return False
+            Else
+                Return Helper.IsAssignable(Compiler, fromElement, toElement)
+            End If
         Else
             Helper.NotImplementedYet("Don't know if it possible to convert from " & FromType.Name & " to " & ToType.Name)
             Return False
         End If
+    End Function
+
+    Shared Function IsNullableType(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
+        If Type.IsValueType = False Then Return False
+        If CompareType(Type, Compiler.TypeCache.System_Nullable) Then Return True
+
+        If Type.IsGenericTypeDefinition Then Return False
+        If Type.IsGenericParameter Then Return False
+        If Type.IsGenericType = False Then Return False
+        Return Helper.CompareType(Type.GetGenericTypeDefinition, Compiler.TypeCache.System_Nullable)
     End Function
 
     Shared Function IsSubclassOf(ByVal BaseClass As Type, ByVal DerivedClass As Type) As Boolean
@@ -2819,15 +2853,15 @@ Public Class Helper
         ElseIf CompareType(fromExpr.ExpressionType, Parent.Compiler.TypeCache.Nothing) Then
             'do nothing
         ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.Enum) AndAlso fromExpr.ExpressionType.IsEnum Then
-            fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
+            fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
         ElseIf CompareType(fromExpr.ExpressionType, DestinationType) = False Then
-            Dim CTypeExp As CTypeExpression
+            Dim CTypeExp As Expression
 
             If fromExpr.ExpressionType.IsByRef Then
                 fromExpr = New DeRefExpression(fromExpr, fromExpr)
             End If
 
-            CTypeExp = New CTypeExpression(Parent, fromExpr, DestinationType)
+            CTypeExp = ConversionExpression.GetTypeConversion(Parent, fromExpr, DestinationType)
             result = CTypeExp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
             fromExpr = CTypeExp
         End If
@@ -3038,236 +3072,236 @@ Public Class Helper
         Return result
     End Function
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <param name="Parent"></param>
-    ''' <param name="Member"></param>
-    ''' <param name="InputParameters"></param>
-    ''' <param name="Arguments"></param>
-    ''' <param name="TypeArguments"></param>
-    ''' <param name="outExactArguments"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function IsApplicable(ByVal Parent As ParsedObject, ByVal Member As MemberInfo, ByVal InputParameters As ParameterInfo(), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList, ByRef outExactArguments() As Generic.List(Of Argument)) As Boolean
-        Dim matchedParameters As New Generic.List(Of ParameterInfo)
-        Dim exactArguments() As Generic.List(Of Argument) 'This contains the arguments in the exact order to emit
-        Dim method As MethodBase = TryCast(Member, MethodBase)
-        Dim prop As PropertyInfo = TryCast(Member, PropertyInfo)
+    '''' <summary>
+    '''' 
+    '''' </summary>
+    '''' <param name="Parent"></param>
+    '''' <param name="Member"></param>
+    '''' <param name="InputParameters"></param>
+    '''' <param name="Arguments"></param>
+    '''' <param name="TypeArguments"></param>
+    '''' <param name="outExactArguments"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Shared Function IsApplicable(ByVal Parent As ParsedObject, ByVal Member As MemberInfo, ByVal InputParameters As ParameterInfo(), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList, ByRef outExactArguments() As Generic.List(Of Argument)) As Boolean
+    '    Dim matchedParameters As New Generic.List(Of ParameterInfo)
+    '    Dim exactArguments() As Generic.List(Of Argument) 'This contains the arguments in the exact order to emit
+    '    Dim method As MethodBase = TryCast(Member, MethodBase)
+    '    Dim prop As PropertyInfo = TryCast(Member, PropertyInfo)
 
-        Dim isLastParamArray As Boolean
-        Dim paramArrayParameter As ParameterInfo = Nothing
-        Dim paramArrayExpression As ArrayCreationExpression = Nothing
-        Dim inputParametersCount As Integer = InputParameters.Length
+    '    Dim isLastParamArray As Boolean
+    '    Dim paramArrayParameter As ParameterInfo = Nothing
+    '    Dim paramArrayExpression As ArrayCreationExpression = Nothing
+    '    Dim inputParametersCount As Integer = InputParameters.Length
 
-        ReDim exactArguments(1)
-        'First element contains arguments to emit invocation of 
-        'exact paramarray type (as if it was a normal parameter)
-        'SomeMethod(New PType(){p1, p2, p3})
-        exactArguments(0) = New Generic.List(Of Argument)(Helper.CreateArray(Of Argument)(Nothing, inputParametersCount))
-        'Second element contains arguments to emit paramarray invocation
-        'SomeMethod(p1, p2, p3)
-        exactArguments(1) = New Generic.List(Of Argument)(exactArguments(0))
+    '    ReDim exactArguments(1)
+    '    'First element contains arguments to emit invocation of 
+    '    'exact paramarray type (as if it was a normal parameter)
+    '    'SomeMethod(New PType(){p1, p2, p3})
+    '    exactArguments(0) = New Generic.List(Of Argument)(Helper.CreateArray(Of Argument)(Nothing, inputParametersCount))
+    '    'Second element contains arguments to emit paramarray invocation
+    '    'SomeMethod(p1, p2, p3)
+    '    exactArguments(1) = New Generic.List(Of Argument)(exactArguments(0))
 
-        If inputParametersCount > 0 Then
-            isLastParamArray = Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(inputParametersCount - 1))
-            If isLastParamArray Then
-                paramArrayParameter = InputParameters(inputParametersCount - 1)
-                Dim paramArrayArg As New PositionalArgument(Parent)
+    '    If inputParametersCount > 0 Then
+    '        isLastParamArray = Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(inputParametersCount - 1))
+    '        If isLastParamArray Then
+    '            paramArrayParameter = InputParameters(inputParametersCount - 1)
+    '            Dim paramArrayArg As New PositionalArgument(Parent)
 
-                Helper.Assert(paramArrayExpression Is Nothing)
-                paramArrayExpression = New ArrayCreationExpression(paramArrayArg)
-                paramArrayExpression.Init(paramArrayParameter.ParameterType, New Expression() {})
+    '            Helper.Assert(paramArrayExpression Is Nothing)
+    '            paramArrayExpression = New ArrayCreationExpression(paramArrayArg)
+    '            paramArrayExpression.Init(paramArrayParameter.ParameterType, New Expression() {})
 
-                paramArrayArg.Init(paramArrayParameter.Position, paramArrayExpression)
-                exactArguments(1)(inputParametersCount - 1) = paramArrayArg
-            End If
-        End If
+    '            paramArrayArg.Init(paramArrayParameter.Position, paramArrayExpression)
+    '            exactArguments(1)(inputParametersCount - 1) = paramArrayArg
+    '        End If
+    '    End If
 
-        LogResolutionMessage(Parent.Compiler, "IsApplicable: isLastParamArray=" & isLastParamArray.ToString)
-        LogResolutionMessage(Parent.Compiler, "IsApplicable: inputParametersCount=" & inputParametersCount.ToString)
+    '    LogResolutionMessage(Parent.Compiler, "IsApplicable: isLastParamArray=" & isLastParamArray.ToString)
+    '    LogResolutionMessage(Parent.Compiler, "IsApplicable: inputParametersCount=" & inputParametersCount.ToString)
 
-        '(if there are more arguments than parameters and the last parameter is not a 
-        'paramarray parameter the method should not be applicable)
-        If Arguments.Count > InputParameters.Length Then
-            If InputParameters.Length < 1 Then
-                LogResolutionMessage(Parent.Compiler, "N/A: 1")
-                Return False
-            End If
-            If isLastParamArray = False Then
-                LogResolutionMessage(Parent.Compiler, "N/A: 2")
-                Return False
-            End If
-        End If
+    '    '(if there are more arguments than parameters and the last parameter is not a 
+    '    'paramarray parameter the method should not be applicable)
+    '    If Arguments.Count > InputParameters.Length Then
+    '        If InputParameters.Length < 1 Then
+    '            LogResolutionMessage(Parent.Compiler, "N/A: 1")
+    '            Return False
+    '        End If
+    '        If isLastParamArray = False Then
+    '            LogResolutionMessage(Parent.Compiler, "N/A: 2")
+    '            Return False
+    '        End If
+    '    End If
 
-        'Dim numberOfParamArrayElementParameters As Integer
-        Dim firstNamedArgument As Integer = Arguments.Count + 1
-        For i As Integer = 0 To Arguments.Count - 1
-            'First, match each positional argument in order to the list of method parameters. 
-            'If there are more positional arguments than parameters and the last parameter 
-            'is not a paramarray, the method is not applicable. Otherwise, the paramarray parameter 
-            'is expanded with parameters of the paramarray element type to match the number
-            'of positional arguments. If a positional argument is omitted, the method is not applicable.
-            If Arguments(i).IsNamedArgument Then
-                firstNamedArgument = i
-                Exit For '(No more positional arguments)
-            End If
+    '    'Dim numberOfParamArrayElementParameters As Integer
+    '    Dim firstNamedArgument As Integer = Arguments.Count + 1
+    '    For i As Integer = 0 To Arguments.Count - 1
+    '        'First, match each positional argument in order to the list of method parameters. 
+    '        'If there are more positional arguments than parameters and the last parameter 
+    '        'is not a paramarray, the method is not applicable. Otherwise, the paramarray parameter 
+    '        'is expanded with parameters of the paramarray element type to match the number
+    '        'of positional arguments. If a positional argument is omitted, the method is not applicable.
+    '        If Arguments(i).IsNamedArgument Then
+    '            firstNamedArgument = i
+    '            Exit For '(No more positional arguments)
+    '        End If
 
-            If inputParametersCount - 1 < i Then
-                '(more positional arguments than parameters)
-                If isLastParamArray = False Then '(last parameter is not a paramarray)
-                    LogResolutionMessage(Parent.Compiler, "N/A: 3")
-                    Return False
-                End If
+    '        If inputParametersCount - 1 < i Then
+    '            '(more positional arguments than parameters)
+    '            If isLastParamArray = False Then '(last parameter is not a paramarray)
+    '                LogResolutionMessage(Parent.Compiler, "N/A: 3")
+    '                Return False
+    '            End If
 
-                'Add the additional expressions to the param array creation expression.
-                Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1)
-                For j As Integer = i To Arguments.Count - 1
-                    'A paramarray element has to be specified.
-                    If Arguments(j).Expression Is Nothing Then
-                        LogResolutionMessage(Parent.Compiler, "N/A: 4")
-                        Return False
-                    End If
-                    paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(j).Expression)
-                Next
-                Exit For
-            Else
-                matchedParameters.Add(InputParameters(i))
+    '            'Add the additional expressions to the param array creation expression.
+    '            Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1)
+    '            For j As Integer = i To Arguments.Count - 1
+    '                'A paramarray element has to be specified.
+    '                If Arguments(j).Expression Is Nothing Then
+    '                    LogResolutionMessage(Parent.Compiler, "N/A: 4")
+    '                    Return False
+    '                End If
+    '                paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(j).Expression)
+    '            Next
+    '            Exit For
+    '        Else
+    '            matchedParameters.Add(InputParameters(i))
 
-                'Get the default value of the parameter if the specified argument has no expression.
-                Dim arg As Argument = Nothing
-                If Arguments(i).Expression Is Nothing Then
-                    If InputParameters(i).IsOptional = False Then
-                        Helper.Assert(False)
-                    Else
-                        Dim exp As Expression
-                        Dim pArg As New PositionalArgument(Parent)
-                        exp = GetOptionalValueExpression(pArg, InputParameters(i))
-                        pArg.Init(InputParameters(i).Position, exp)
-                        arg = pArg
-                    End If
-                Else
-                    arg = Arguments(i)
-                End If
+    '            'Get the default value of the parameter if the specified argument has no expression.
+    '            Dim arg As Argument = Nothing
+    '            If Arguments(i).Expression Is Nothing Then
+    '                If InputParameters(i).IsOptional = False Then
+    '                    Helper.Assert(False)
+    '                Else
+    '                    Dim exp As Expression
+    '                    Dim pArg As New PositionalArgument(Parent)
+    '                    exp = GetOptionalValueExpression(pArg, InputParameters(i))
+    '                    pArg.Init(InputParameters(i).Position, exp)
+    '                    arg = pArg
+    '                End If
+    '            Else
+    '                arg = Arguments(i)
+    '            End If
 
-                exactArguments(0)(i) = arg
-                If isLastParamArray AndAlso inputParametersCount - 1 = i Then
-                    Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 0)
-                    paramArrayExpression.ArrayElementInitalizer.AddInitializer(arg.Expression)
-                Else
-                    exactArguments(1)(i) = arg
-                End If
-            End If
-            '??? If a positional argument is omitted, the method is not applicable.
-        Next
+    '            exactArguments(0)(i) = arg
+    '            If isLastParamArray AndAlso inputParametersCount - 1 = i Then
+    '                Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 0)
+    '                paramArrayExpression.ArrayElementInitalizer.AddInitializer(arg.Expression)
+    '            Else
+    '                exactArguments(1)(i) = arg
+    '            End If
+    '        End If
+    '        '??? If a positional argument is omitted, the method is not applicable.
+    '    Next
 
 
-        For i As Integer = firstNamedArgument To Arguments.Count - 1
-            Helper.Assert(Arguments(i).IsNamedArgument)
+    '    For i As Integer = firstNamedArgument To Arguments.Count - 1
+    '        Helper.Assert(Arguments(i).IsNamedArgument)
 
-            'Next, match each named argument to a parameter with the given name. 
-            'If one of the named arguments fails to match, matches a paramarray parameter, 
-            'or matches an argument already matched with another positional or named argument,
-            'the method is not applicable.
+    '        'Next, match each named argument to a parameter with the given name. 
+    '        'If one of the named arguments fails to match, matches a paramarray parameter, 
+    '        'or matches an argument already matched with another positional or named argument,
+    '        'the method is not applicable.
 
-            Dim namedArgument As NamedArgument = DirectCast(Arguments(i), NamedArgument)
+    '        Dim namedArgument As NamedArgument = DirectCast(Arguments(i), NamedArgument)
 
-            Dim matched As Boolean = False
-            For j As Integer = 0 To inputParametersCount - 1
-                'Next, match each named argument to a parameter with the given name. 
-                If NameResolution.CompareName(InputParameters(i).Name, namedArgument.Name) Then
-                    If matchedParameters.Contains(InputParameters(i)) Then
-                        'If one of the named arguments (...) matches an argument already matched with 
-                        'another positional or named argument, the method is not applicable
-                        LogResolutionMessage(Parent.Compiler, "N/A: 5")
-                        Return False
-                    ElseIf Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(i)) Then
-                        'If one of the named arguments (...) matches a paramarray parameter, 
-                        '(...) the method is not applicable.
-                        LogResolutionMessage(Parent.Compiler, "N/A: 6")
-                        Return False
-                    Else
-                        matchedParameters.Add(InputParameters(i))
-                        exactArguments(0)(j) = Arguments(i)
-                        exactArguments(1)(j) = Arguments(i)
-                        matched = True
-                        Exit For
-                    End If
-                End If
-            Next
-            'If one of the named arguments fails to match (...) the method is not applicable
-            If matched = False Then
-                LogResolutionMessage(Parent.Compiler, "N/A: 7")
-                Return False
-            End If
-        Next
+    '        Dim matched As Boolean = False
+    '        For j As Integer = 0 To inputParametersCount - 1
+    '            'Next, match each named argument to a parameter with the given name. 
+    '            If NameResolution.CompareName(InputParameters(i).Name, namedArgument.Name) Then
+    '                If matchedParameters.Contains(InputParameters(i)) Then
+    '                    'If one of the named arguments (...) matches an argument already matched with 
+    '                    'another positional or named argument, the method is not applicable
+    '                    LogResolutionMessage(Parent.Compiler, "N/A: 5")
+    '                    Return False
+    '                ElseIf Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(i)) Then
+    '                    'If one of the named arguments (...) matches a paramarray parameter, 
+    '                    '(...) the method is not applicable.
+    '                    LogResolutionMessage(Parent.Compiler, "N/A: 6")
+    '                    Return False
+    '                Else
+    '                    matchedParameters.Add(InputParameters(i))
+    '                    exactArguments(0)(j) = Arguments(i)
+    '                    exactArguments(1)(j) = Arguments(i)
+    '                    matched = True
+    '                    Exit For
+    '                End If
+    '            End If
+    '        Next
+    '        'If one of the named arguments fails to match (...) the method is not applicable
+    '        If matched = False Then
+    '            LogResolutionMessage(Parent.Compiler, "N/A: 7")
+    '            Return False
+    '        End If
+    '    Next
 
-        'Next, if parameters that have not been matched are not optional, 
-        'the method is not applicable. If optional parameters remain, the default value 
-        'specified in the optional parameter declaration is matched to the parameter. 
-        'If an Object parameter does not specify a default value, then the expression 
-        'System.Reflection.Missing.Value is used. If an optional Integer parameter 
-        'has the Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute attribute, 
-        'then the literal 1 is supplied for text comparisons and the literal 0 otherwise.
+    '    'Next, if parameters that have not been matched are not optional, 
+    '    'the method is not applicable. If optional parameters remain, the default value 
+    '    'specified in the optional parameter declaration is matched to the parameter. 
+    '    'If an Object parameter does not specify a default value, then the expression 
+    '    'System.Reflection.Missing.Value is used. If an optional Integer parameter 
+    '    'has the Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute attribute, 
+    '    'then the literal 1 is supplied for text comparisons and the literal 0 otherwise.
 
-        For i As Integer = 0 To inputParametersCount - 1
-            If matchedParameters.Contains(InputParameters(i)) = False Then
-                'if parameters that have not been matched are not optional, the method is not applicable
-                If InputParameters(i).IsOptional = False AndAlso InputParameters(i) Is paramArrayParameter = False Then
-                    LogResolutionMessage(Parent.Compiler, "N/A: 8")
-                    Return False
-                End If
+    '    For i As Integer = 0 To inputParametersCount - 1
+    '        If matchedParameters.Contains(InputParameters(i)) = False Then
+    '            'if parameters that have not been matched are not optional, the method is not applicable
+    '            If InputParameters(i).IsOptional = False AndAlso InputParameters(i) Is paramArrayParameter = False Then
+    '                LogResolutionMessage(Parent.Compiler, "N/A: 8")
+    '                Return False
+    '            End If
 
-                Dim exp As Expression
-                Dim arg As New PositionalArgument(Parent)
-                exp = GetOptionalValueExpression(arg, InputParameters(i))
-                arg.Init(InputParameters(i).Position, exp)
-                exactArguments(0)(i) = arg
-                If IsParamArrayParameter(Parent.Compiler, InputParameters(i)) = False Then
-                    'he arraycreation has already been created and added to the exactArguments(1).
-                    exactArguments(1)(i) = arg
-                End If
-            End If
-        Next
+    '            Dim exp As Expression
+    '            Dim arg As New PositionalArgument(Parent)
+    '            exp = GetOptionalValueExpression(arg, InputParameters(i))
+    '            arg.Init(InputParameters(i).Position, exp)
+    '            exactArguments(0)(i) = arg
+    '            If IsParamArrayParameter(Parent.Compiler, InputParameters(i)) = False Then
+    '                'he arraycreation has already been created and added to the exactArguments(1).
+    '                exactArguments(1)(i) = arg
+    '            End If
+    '        End If
+    '    Next
 
-        'Finally, if type arguments have been specified, they are matched against
-        'the type parameter list. If the two lists do not have the same number of elements, 
-        'the method is not applicable, unless the type argument list is empty. If the 
-        'type argument list is empty, type inferencing is used to try and infer 
-        'the type argument list. If type inferencing fails, the method is not applicable.
-        'Otherwise, the type arguments are filled in the place of the 
-        'type parameters in the signature.
-        Dim genericTypeArgumentCount As Integer
-        Dim genericTypeArguments As Type()
-        If method IsNot Nothing AndAlso method.IsGenericMethod Then
-            genericTypeArguments = method.GetGenericArguments()
-            genericTypeArgumentCount = genericTypeArguments.Length
-        ElseIf prop IsNot Nothing Then
-            'property cannot be generic.
-        End If
+    '    'Finally, if type arguments have been specified, they are matched against
+    '    'the type parameter list. If the two lists do not have the same number of elements, 
+    '    'the method is not applicable, unless the type argument list is empty. If the 
+    '    'type argument list is empty, type inferencing is used to try and infer 
+    '    'the type argument list. If type inferencing fails, the method is not applicable.
+    '    'Otherwise, the type arguments are filled in the place of the 
+    '    'type parameters in the signature.
+    '    Dim genericTypeArgumentCount As Integer
+    '    Dim genericTypeArguments As Type()
+    '    If method IsNot Nothing AndAlso method.IsGenericMethod Then
+    '        genericTypeArguments = method.GetGenericArguments()
+    '        genericTypeArgumentCount = genericTypeArguments.Length
+    '    ElseIf prop IsNot Nothing Then
+    '        'property cannot be generic.
+    '    End If
 
-        If genericTypeArgumentCount > 0 AndAlso (TypeArguments Is Nothing OrElse TypeArguments.List.Count = 0) Then
-            'If the Then type argument list is empty, type inferencing is used to try and infer 
-            'the type argument list.
-            Helper.NotImplementedYet("Type argument inference")
-        ElseIf TypeArguments IsNot Nothing AndAlso TypeArguments.List.Count > 0 Then
-            'If the two lists do not have the same number of elements, the method is not applicable
-            If TypeArguments.List.Count <> genericTypeArgumentCount Then
-                LogResolutionMessage(Parent.Compiler, "N/A: 9")
-                Return False
-            End If
+    '    If genericTypeArgumentCount > 0 AndAlso (TypeArguments Is Nothing OrElse TypeArguments.List.Count = 0) Then
+    '        'If the Then type argument list is empty, type inferencing is used to try and infer 
+    '        'the type argument list.
+    '        Helper.NotImplementedYet("Type argument inference")
+    '    ElseIf TypeArguments IsNot Nothing AndAlso TypeArguments.List.Count > 0 Then
+    '        'If the two lists do not have the same number of elements, the method is not applicable
+    '        If TypeArguments.List.Count <> genericTypeArgumentCount Then
+    '            LogResolutionMessage(Parent.Compiler, "N/A: 9")
+    '            Return False
+    '        End If
 
-            Helper.NotImplemented("Type argument matching")
-        End If
+    '        Helper.NotImplemented("Type argument matching")
+    '    End If
 
-        outExactArguments = exactArguments
+    '    outExactArguments = exactArguments
 
-        Helper.AssertNotNothing(exactArguments(0))
-        Helper.AssertNotNothing(exactArguments(1))
-        Helper.Assert(exactArguments(0).Count = exactArguments(1).Count)
+    '    Helper.AssertNotNothing(exactArguments(0))
+    '    Helper.AssertNotNothing(exactArguments(1))
+    '    Helper.Assert(exactArguments(0).Count = exactArguments(1).Count)
 
-        Return True 'Method is applicable!!
-    End Function
+    '    Return True 'Method is applicable!!
+    'End Function
 
     Shared Function ArgumentsToExpressions(ByVal Arguments As Generic.List(Of Argument)) As Expression()
         Dim result(Arguments.Count - 1) As Expression
@@ -3284,13 +3318,13 @@ Public Class Helper
         'A member M is considered more applicable than N if their signatures are different and, 
         'for each pair of parameters Mj and Nj that matches an argument Aj, 
         'one of the following conditions is true:
-        '	Mj and Nj have identical types, or
-        '	There exists a widening conversion from the type of Mj to the type Nj, or
-        '	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
-        '	Mj is Byte and Nj is SByte, or
-        '	Mj is Short and Nj is UShort, or
-        '	Mj is Integer and Nj is UInteger, or 
-        '	Mj is Long and Nj is ULong.
+        '*	Mj and Nj have identical types, or
+        '*	There exists a widening conversion from the type of Mj to the type Nj, or
+        '*	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
+        '*	Mj is Byte and Nj is SByte, or
+        '*  Mj is Short and Nj is UShort, or
+        '*	Mj is Integer and Nj is UInteger, or 
+        '*	Mj is Long and Nj is ULong.
 
         'A member M is considered more applicable than N if their signatures are different 
         If Helper.CompareTypes(MTypes, NTypes) Then
@@ -3304,25 +3338,25 @@ Public Class Helper
 
             If MTypes.Length - 1 < i OrElse NTypes.Length - 1 < i Then Exit For
 
-            '	Mj and Nj have identical types, or
+            '*	Mj and Nj have identical types, or
             isEqual = Helper.CompareType(MTypes(i), NTypes(i))
 
-            '	There exists a widening conversion from the type of Mj to the type Nj, or
+            '*	There exists a widening conversion from the type of Mj to the type Nj, or
             isWidening = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, MTypes(i), NTypes(i))
 
-            '	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
-            isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(NTypes(i))
+            '*	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
+            isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(Compiler, NTypes(i))
 
-            '	Mj is Byte and Nj is SByte, or
+            '*	Mj is Byte and Nj is SByte, or
             isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.SByte)
 
-            '	Mj is Short and Nj is UShort, or
+            '*	Mj is Short and Nj is UShort, or
             isShort = Helper.CompareType(MTypes(i), Compiler.TypeCache.Short) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.UShort)
 
-            '	Mj is Integer and Nj is UInteger, or 
+            '*	Mj is Integer and Nj is UInteger, or 
             isInteger = Helper.CompareType(MTypes(i), Compiler.TypeCache.Integer) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.UInteger)
 
-            '	Mj is Long and Nj is ULong.
+            '*	Mj is Long and Nj is ULong.
             isLong = Helper.CompareType(MTypes(i), Compiler.TypeCache.Long) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.ULong)
 
             is1stMoreApplicable = isEqual OrElse isWidening OrElse isLiteral0 OrElse isByte OrElse isShort OrElse isInteger OrElse isLong
@@ -3504,9 +3538,9 @@ Public Class Helper
         End If
     End Function
 
-    Overloads Shared Function GetParameters(ByVal members As MemberInfo()) As ParameterInfo()
-        Helper.NotImplemented() : Return Nothing
-    End Function
+    'Overloads Shared Function GetParameters(ByVal members As MemberInfo()) As ParameterInfo()
+    '    Helper.NotImplemented() : Return Nothing
+    'End Function
 
     ''' <summary>
     ''' Gets the parameters of the specified method
@@ -3514,6 +3548,10 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal method As MethodInfo) As ParameterInfo()
+        If TypeOf method Is MethodDescriptor Then
+            Return method.GetParameters()
+        End If
+
         Dim name As String = method.GetType.Name
         If name = "MethodBuilderInstantiation" Then
             Return method.GetGenericMethodDefinition.GetParameters
@@ -3546,403 +3584,482 @@ Public Class Helper
         End If
     End Function
 
-    ''' <summary>
-    ''' Returns -1 if it is narrowing, 0 if argument is convertible, 1 if paramargument is convertible
-    ''' </summary>
-    ''' <param name="Compiler"></param>
-    ''' <param name="Argument"></param>
-    ''' <param name="ParamArgument"></param>
-    ''' <param name="Parameter"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Shared Function IsConvertible(ByVal Compiler As Compiler, ByVal Argument As Argument, ByVal ParamArgument As Argument, ByVal Parameter As ParameterInfo) As Integer
-        Dim inputType As Type
-        Dim argType, paramArgType As Type
+    '''' <summary>
+    '''' Returns false if it is narrowing, true if argument is convertible
+    '''' </summary>
+    '''' <param name="Compiler"></param>
+    '''' <param name="Argument"></param>
+    '''' <param name="Parameter"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Shared Function IsConvertible(ByVal Compiler As Compiler, ByVal Argument As Argument, ByVal Parameter As ParameterInfo) As Boolean
+    '    Dim inputType As Type
+    '    Dim argType, paramArgType As Type
 
-        inputType = Parameter.ParameterType
-        argType = Argument.Expression.ExpressionType
+    '    inputType = Parameter.ParameterType
+    '    argType = Argument.Expression.ExpressionType
 
-        Dim a, b As Boolean
-        a = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argType, inputType)
+    '    Dim a, b As Boolean
+    '    a = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argType, inputType)
 
-        paramArgType = Nothing
-        If Argument IsNot ParamArgument Then
-            Dim ace As ArrayCreationExpression
-            Dim elementType As Type = inputType.GetElementType
-            ace = TryCast(ParamArgument.Expression, ArrayCreationExpression)
-            Helper.Assert(ace IsNot Nothing)
-            b = True
-            For Each init As VariableInitializer In ace.ArrayElementInitalizer.Initializers
-                paramArgType = init.AsRegularInitializer.ExpressionType
-                If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, paramArgType, elementType) = False Then
-                    b = False
-                    Exit For
-                End If
-            Next
-        End If
+    '    paramArgType = Nothing
+    '    If Argument IsNot ParamArgument Then
+    '        Dim ace As ArrayCreationExpression
+    '        Dim elementType As Type = inputType.GetElementType
+    '        ace = TryCast(ParamArgument.Expression, ArrayCreationExpression)
+    '        Helper.Assert(ace IsNot Nothing)
+    '        b = True
+    '        For Each init As VariableInitializer In ace.ArrayElementInitalizer.Initializers
+    '            paramArgType = init.AsRegularInitializer.ExpressionType
+    '            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, paramArgType, elementType) = False Then
+    '                b = False
+    '                Exit For
+    '            End If
+    '        Next
+    '    End If
 
-        If a And b Then
-            'If a single argument expression matches a paramarray parameter
-            ' and the type of the argument expression is convertible to 
-            'both the type of the paramarray parameter and the paramarray element type, 
-            'the method is applicable in both its expanded and unexpanded forms, 
-            'with two exceptions. If the conversion from the type of the argument expression
-            ' to the paramarray type is narrowing, then the method is 
-            'only applicable in its expanded form. If the argument expression is 
-            'the null literal Nothing, then the method is only applicable in its unexpanded form. For example:
-            If TypeOf Argument.Expression Is NothingConstantExpression Then
-                Return 0
-            ElseIf Argument.Expression.IsConstant AndAlso (Argument.Expression.ConstantValue Is Nothing OrElse Argument.Expression.ConstantValue Is DBNull.Value) Then
-                Return 0
-            ElseIf Helper.CompareType(argType, paramArgType) Then
-                Return 0
-            Else
-                Helper.NotImplemented()
-                Return -1
-            End If
-        ElseIf a Then
-            Return 0
-        ElseIf b Then
-            Return 1
-        Else
-            Return -1
-        End If
-    End Function
+    '    If a And b Then
+    '        'If a single argument expression matches a paramarray parameter
+    '        ' and the type of the argument expression is convertible to 
+    '        'both the type of the paramarray parameter and the paramarray element type, 
+    '        'the method is applicable in both its expanded and unexpanded forms, 
+    '        'with two exceptions. If the conversion from the type of the argument expression
+    '        ' to the paramarray type is narrowing, then the method is 
+    '        'only applicable in its expanded form. If the argument expression is 
+    '        'the null literal Nothing, then the method is only applicable in its unexpanded form. For example:
+    '        If TypeOf Argument.Expression Is NothingConstantExpression Then
+    '            Return 0
+    '        ElseIf Argument.Expression.IsConstant AndAlso (Argument.Expression.ConstantValue Is Nothing OrElse Argument.Expression.ConstantValue Is DBNull.Value) Then
+    '            Return 0
+    '        ElseIf Helper.CompareType(argType, paramArgType) Then
+    '            Return 0
+    '        Else
+    '            Helper.NotImplemented()
+    '            Return -1
+    '        End If
+    '    ElseIf a Then
+    '        Return 0
+    '    ElseIf b Then
+    '        Return 1
+    '    Else
+    '        Return -1
+    '    End If
+    'End Function
 
-    Private Shared Function GetExpandedTypes(ByVal Compiler As Compiler, ByVal Parameters() As ParameterInfo, ByVal ArgumentCount As Integer) As Type()
-        Dim result(ArgumentCount - 1) As Type
-        Dim lastParameter As Integer = Parameters.Length - 1
 
-        Dim elementType As Type = Nothing
-        For i As Integer = 0 To ArgumentCount - 1
-            If i > lastParameter Then
-                result(i) = elementType
-            ElseIf i = lastParameter Then
-                If Helper.IsParamArrayParameter(Compiler, Parameters(lastParameter)) Then
-                    elementType = Parameters(lastParameter).ParameterType.GetElementType
-                    result(i) = elementType
-                Else
-                    result(i) = Parameters(i).ParameterType
-                End If
-            Else
-                result(i) = Parameters(i).ParameterType
-            End If
-        Next
+    '''' <summary>
+    '''' Returns -1 if it is narrowing, 0 if argument is convertible, 1 if paramargument is convertible
+    '''' </summary>
+    '''' <param name="Compiler"></param>
+    '''' <param name="Argument"></param>
+    '''' <param name="ParamArgument"></param>
+    '''' <param name="Parameter"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Shared Function IsConvertible(ByVal Compiler As Compiler, ByVal Argument As Argument, ByVal ParamArgument As Argument, ByVal Parameter As ParameterInfo) As Integer
+    '    Dim inputType As Type
+    '    Dim argType, paramArgType As Type
 
-        Helper.AssertNotNothing(result)
+    '    inputType = Parameter.ParameterType
+    '    argType = Argument.Expression.ExpressionType
 
-        Return result
-    End Function
+    '    Dim a, b As Boolean
+    '    a = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argType, inputType)
+
+    '    paramArgType = Nothing
+    '    If Argument IsNot ParamArgument Then
+    '        Dim ace As ArrayCreationExpression
+    '        Dim elementType As Type = inputType.GetElementType
+    '        ace = TryCast(ParamArgument.Expression, ArrayCreationExpression)
+    '        Helper.Assert(ace IsNot Nothing)
+    '        b = True
+    '        For Each init As VariableInitializer In ace.ArrayElementInitalizer.Initializers
+    '            paramArgType = init.AsRegularInitializer.ExpressionType
+    '            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, paramArgType, elementType) = False Then
+    '                b = False
+    '                Exit For
+    '            End If
+    '        Next
+    '    End If
+
+    '    If a And b Then
+    '        'If a single argument expression matches a paramarray parameter
+    '        ' and the type of the argument expression is convertible to 
+    '        'both the type of the paramarray parameter and the paramarray element type, 
+    '        'the method is applicable in both its expanded and unexpanded forms, 
+    '        'with two exceptions. If the conversion from the type of the argument expression
+    '        ' to the paramarray type is narrowing, then the method is 
+    '        'only applicable in its expanded form. If the argument expression is 
+    '        'the null literal Nothing, then the method is only applicable in its unexpanded form. For example:
+    '        If TypeOf Argument.Expression Is NothingConstantExpression Then
+    '            Return 0
+    '        ElseIf Argument.Expression.IsConstant AndAlso (Argument.Expression.ConstantValue Is Nothing OrElse Argument.Expression.ConstantValue Is DBNull.Value) Then
+    '            Return 0
+    '        ElseIf Helper.CompareType(argType, paramArgType) Then
+    '            Return 0
+    '        Else
+    '            Helper.NotImplemented()
+    '            Return -1
+    '        End If
+    '    ElseIf a Then
+    '        Return 0
+    '    ElseIf b Then
+    '        Return 1
+    '    Else
+    '        Return -1
+    '    End If
+    'End Function
+
+    'Shared Function GetExpandedTypes(ByVal Compiler As Compiler, ByVal Parameters() As ParameterInfo, ByVal ArgumentCount As Integer) As Type()
+    '    Dim result(ArgumentCount - 1) As Type
+    '    Dim lastParameter As Integer = Parameters.Length - 1
+
+    '    Dim elementType As Type = Nothing
+    '    For i As Integer = 0 To ArgumentCount - 1
+    '        If i > lastParameter Then
+    '            result(i) = elementType
+    '        ElseIf i = lastParameter Then
+    '            If Helper.IsParamArrayParameter(Compiler, Parameters(lastParameter)) Then
+    '                elementType = Parameters(lastParameter).ParameterType.GetElementType
+    '                result(i) = elementType
+    '            Else
+    '                result(i) = Parameters(i).ParameterType
+    '            End If
+    '        Else
+    '            result(i) = Parameters(i).ParameterType
+    '        End If
+    '    Next
+
+    '    Helper.AssertNotNothing(result)
+
+    '    Return result
+    'End Function
 
     Shared Function ResolveGroup(ByVal Parent As ParsedObject, ByVal InputGroup As Generic.List(Of MemberInfo), ByVal ResolvedGroup As Generic.List(Of MemberInfo), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList, ByRef OutputArguments As Generic.List(Of Argument)) As Boolean
         Dim result As Boolean = True
-        Dim Compiler As Compiler = Parent.Compiler
-        Dim Caller As TypeDeclaration = Parent.FindTypeParent
 
-        Helper.Assert(InputGroup.Count > 0)
-        Helper.Assert(ResolvedGroup.Count = 0)
-
-#If DEBUG Then
-        ResolvedGroup.Clear()
-#End If
-        'All the candidates are added to the resolved group and then they are removed
-        ResolvedGroup.AddRange(InputGroup)
-
-        Dim methodsLeft As Integer = ResolvedGroup.Count
-        Dim methodName As String = InputGroup(0).Name
-        Dim inputParameters()() As ParameterInfo = Helper.GetParameters(Compiler, InputGroup)
-        Dim inputTypes()() As Type = Helper.GetTypes(inputParameters)
-        'Dim matchedArguments(ResolvedGroup.Count - 1) As Generic.List(Of Argument)
-        Dim exactArguments(ResolvedGroup.Count - 1)() As Generic.List(Of Argument)
-        Dim exactArguments2(ResolvedGroup.Count - 1) As Generic.List(Of Argument)
-        'Dim matchedArgumentsTypes(ResolvedGroup.Count - 1)() As Type
-        'Dim expandedArgumentTypes(ResolvedGroup.Count - 1) As Generic.List(Of Type)
-        Dim codedArgumentsString As String = Nothing
-        Dim completeMethodName As String = Nothing
-
-#If DEBUGMETHODRESOLUTION Then
-        codedArgumentsString = "(" & Arguments.AsString & ")"
-        completeMethodName = methodName & codedArgumentsString
-#End If
-
-#If DEBUGMETHODRESOLUTION Then
-        Dim msg2 As String
-        msg2 = "Resolving: " & methodName
-        If Parent.HasLocation Then msg2 &= " (" & Parent.Location.ToString & ")"
-        LogResolutionMessage(Compiler, msg2)
-#End If
-
-        'Remove methods that aren't accesible 
-        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
-            If IsAccessible(Compiler, Caller, ResolvedGroup(i)) = False Then
-                LogResolutionMessage(Compiler, String.Format("NOT ACCESSIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                ResolvedGroup(i) = Nothing : methodsLeft -= 1
-            Else
-                LogResolutionMessage(Compiler, String.Format("ACCESSIBLE    : Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-            End If
-        Next
-        LogResolutionMessage(Compiler, String.Format("Found {0} accessible candidates.", methodsLeft.ToString))
-
-        'Remove methods that aren't applicable
-        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
-            If ResolvedGroup(i) Is Nothing Then Continue For
-            'matchedArguments(i) = New Generic.List(Of Argument)
-            'expandedArgumentTypes(i) = New Generic.List(Of Type)
-            Dim exactArgs() As Generic.List(Of Argument) = Nothing
-            If IsApplicable(Parent, ResolvedGroup(i), inputParameters(i), Arguments, TypeArguments, exactArgs) = False Then
-                LogResolutionMessage(Compiler, String.Format("NOT APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                ResolvedGroup(i) = Nothing : methodsLeft -= 1
-            Else
-                LogResolutionMessage(Compiler, String.Format("APPLICABLE    : Method call to '{0}{1}'  with arguments '{2}'", InputGroup(i).DeclaringType.FullName & ":" & methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                exactArguments(i) = exactArgs
-            End If
-        Next
-        LogResolutionMessage(Compiler, String.Format("Found {0} applicable candidates.", methodsLeft.ToString))
-
-        If methodsLeft <= 1 Then
-            GoTo Done
-        End If
-
-        'Eliminate all members from the set that require narrowing coercions to be applicable 
-        'to the argument list, except for the case where the argument expression type is Object. 
-        'If the set is empty, a compile-time error results. 
-        'If only one member remains in the set, that is the applicable member.
-        For i As Integer = 0 To ResolvedGroup.Count - 1
-            If ResolvedGroup(i) Is Nothing Then Continue For
-
-            For j As Integer = 0 To inputParameters(i).Length - 1
-                Dim arg, paramArg As Argument
-                Dim param As ParameterInfo
-
-                param = inputParameters(i)(j)
-                arg = exactArguments(i)(0)(j)
-                paramArg = exactArguments(i)(1)(j)
-
-                If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Object) Then Exit For
-
-                Dim IsConvertible As Integer
-                IsConvertible = Helper.IsConvertible(Compiler, arg, paramArg, param)
-
-                If IsConvertible = -1 Then
-                    LogResolutionMessage(Compiler, String.Format("NOT CONVERTIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                    ResolvedGroup(i) = Nothing : methodsLeft -= 1
-                    Exit For
-                Else
-                    exactArguments2(i) = exactArguments(i)(IsConvertible)
-                End If
-            Next
-        Next
-        LogResolutionMessage(Compiler, String.Format("Found {0} non-narrowing candidates (1).", methodsLeft.ToString))
-
-        If methodsLeft <= 1 Then GoTo Done
-
-        'Eliminate all remaining members from the set that require narrowing coercions 
-        'to be applicable to the argument list. 
-        For i As Integer = 0 To ResolvedGroup.Count - 1
-            If ResolvedGroup(i) Is Nothing Then Continue For
-
-            For j As Integer = 0 To inputParameters(i).Length - 1
-                Dim arg, paramArg As Argument
-                Dim param As ParameterInfo
-
-                param = inputParameters(i)(j)
-                arg = exactArguments(i)(0)(j)
-                paramArg = exactArguments(i)(1)(j)
-
-                Dim IsConvertible As Integer
-                IsConvertible = Helper.IsConvertible(Compiler, arg, paramArg, param)
-
-                If IsConvertible = -1 Then
-                    LogResolutionMessage(Compiler, String.Format("NOT CONVERTIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                    ResolvedGroup(i) = Nothing : methodsLeft -= 1
-                    Exit For
-                Else
-                    exactArguments2(i) = exactArguments(i)(IsConvertible)
-                End If
-            Next
-
-            If inputParameters(i).Length = 0 Then
-                exactArguments2(i) = exactArguments(i)(0)
-            End If
-        Next
-        LogResolutionMessage(Compiler, String.Format("Found {0} non-narrowing candidates (2).", methodsLeft.ToString))
-
-        If methodsLeft = 0 Then
-            'If the set is empty, 
-            'the type containing the method group is not an interface, and strict semantics are not being 
-            'used, the invocation target expression is reclassified as a late-bound method access. 
-            'If strict semantics are being used or the method group is contained in an interface 
-            'and the set is empty, a compile-time error results.
-            Helper.NotImplementedYet("Reclassify to late-bound method access.")
-        End If
-
-        If methodsLeft <= 1 Then GoTo Done
-
-        'Find most applicable methods.
-        Dim expandedArgumentTypes(ResolvedGroup.Count - 1)() As Type
-
-        For i As Integer = 0 To ResolvedGroup.Count - 1
-            If ResolvedGroup(i) Is Nothing Then Continue For
-            Helper.Assert(exactArguments2(i) IsNot Nothing)
-
-            For j As Integer = i + 1 To ResolvedGroup.Count - 1
-                If ResolvedGroup(j) Is Nothing Then Continue For
-                Helper.Assert(exactArguments2(j) IsNot Nothing)
-
-                Dim a, b As Boolean
-
-                If expandedArgumentTypes(i) Is Nothing Then
-                    expandedArgumentTypes(i) = GetExpandedTypes(Compiler, inputParameters(i), Arguments.Count)
-                End If
-                If expandedArgumentTypes(j) Is Nothing Then
-                    expandedArgumentTypes(j) = GetExpandedTypes(Compiler, inputParameters(j), Arguments.Count)
-                End If
-
-                a = IsFirstMoreApplicable(Compiler, exactArguments2(i), expandedArgumentTypes(i), expandedArgumentTypes(j))
-                b = IsFirstMoreApplicable(Compiler, exactArguments2(i), expandedArgumentTypes(j), expandedArgumentTypes(i))
-
-                If a = False AndAlso b = False Then
-                    'It is possible for M and N to have the same signature if one or both contains an expanded 
-                    'paramarray parameter. In that case, the member with the fewest number of arguments matching
-                    'expanded paramarray parameters is considered more applicable. 
-                    Dim iParamArgs, jParamArgs As Integer
-                    Dim tmp As ParameterInfo()
-
-                    tmp = inputParameters(i)
-                    If tmp.Length > 0 AndAlso Helper.IsParamArrayParameter(Compiler, tmp(tmp.Length - 1)) Then
-                        Dim exp As ArrayCreationExpression
-                        exp = TryCast(exactArguments(i)(1)(tmp.Length - 1).Expression, ArrayCreationExpression)
-                        Helper.Assert(exp IsNot Nothing)
-                        iParamArgs = exp.ArrayElementInitalizer.Initializers.Count + 1
-                    End If
-                    tmp = inputParameters(j)
-                    If tmp.Length > 0 AndAlso Helper.IsParamArrayParameter(Compiler, tmp(tmp.Length - 1)) Then
-                        Dim exp As ArrayCreationExpression
-                        exp = TryCast(exactArguments(j)(1)(tmp.Length - 1).Expression, ArrayCreationExpression)
-                        Helper.Assert(exp IsNot Nothing)
-                        jParamArgs = exp.ArrayElementInitalizer.Initializers.Count + 1
-                    End If
-                    If jParamArgs > iParamArgs Then
-                        a = True
-                    ElseIf iParamArgs > jParamArgs Then
-                        b = True
-                    End If
-                    Helper.Assert(iParamArgs <> jParamArgs OrElse (iParamArgs = 0 AndAlso jParamArgs = 0), InputGroup(0).Name)
-                End If
-
-                If a Xor b Then
-                    If a = False Then
-                        LogResolutionMessage(Compiler, String.Format("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
-                        ResolvedGroup(i) = Nothing : methodsLeft -= 1
-                        Exit For
-                    Else
-                        LogResolutionMessage(Compiler, String.Format("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(j)), codedArgumentsString))
-                        ResolvedGroup(j) = Nothing : methodsLeft -= 1
-                    End If
-                Else
-                    LogResolutionMessage(Compiler, String.Format("EQUALLY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", methodName, codedArgumentsString, Helper.ToString(inputTypes(i)), Helper.ToString(inputTypes(j))))
-                End If
-            Next
-        Next
-
-        If methodsLeft > 1 Then
-            'Remove methods from base classes with the same signature (if they are virtual or shadows).
-            Helper.NotImplementedYet("Remove methods from base classes with the same signature (if they are virtual or shadows). SHOULD NOT BE NECESSARY")
-            For i As Integer = 0 To ResolvedGroup.Count - 2
-                For j As Integer = i + 1 To ResolvedGroup.Count - 1
-                    Dim m1, m2 As MethodInfo
-                    m1 = TryCast(ResolvedGroup(i), MethodInfo)
-                    m2 = TryCast(ResolvedGroup(j), MethodInfo)
-                    If Not (m1 IsNot Nothing AndAlso m2 IsNot Nothing) Then Continue For
-                    If Not ((m1.IsVirtual AndAlso m2.IsVirtual) OrElse (m1.IsHideBySig OrElse m2.IsHideBySig)) Then Continue For
-                    If Helper.CompareType(m1.DeclaringType, m2.DeclaringType) Then Continue For
-                    If Helper.CompareTypes(inputTypes(i), inputTypes(j)) = False Then Continue For
-
-                    If Helper.IsAssignable(Compiler, m1.DeclaringType, m2.DeclaringType) Then
-                        If m1.Attributes = MethodAttributes.NewSlot Then Continue For
-                        ResolvedGroup(j) = Nothing : methodsLeft -= 1
-                    ElseIf Helper.IsAssignable(Compiler, m2.DeclaringType, m1.DeclaringType) Then
-                        If m2.Attributes = MethodAttributes.NewSlot Then Continue For
-                        ResolvedGroup(i) = Nothing : methodsLeft -= 1
-                    Else
-                        Helper.NotImplemented()
-                    End If
-                Next
-            Next
-        End If
-
-        If methodsLeft <= 1 Then GoTo Done
-
-Done:
-        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
-            If ResolvedGroup(i) Is Nothing Then ResolvedGroup.RemoveAt(i)
-        Next
-        Helper.Assert(methodsLeft = ResolvedGroup.Count)
-
-        result = ResolvedGroup.Count = 1
+        'If True Then
+        Dim methodResolver As New MethodResolver(Parent)
+        methodResolver.Init(InputGroup, Arguments, TypeArguments)
+        result = methodResolver.Resolve AndAlso result
 
         If result Then
-            For i As Integer = 0 To InputGroup.Count - 1
-                If InputGroup(i) Is ResolvedGroup(0) Then
-                    If exactArguments2(i) Is Nothing Then
-                        Dim params() As ParameterInfo
-                        params = inputParameters(i)
-                        Dim useParamArray As Boolean
-
-                        If params.Length > 0 Then
-                            Dim param As ParameterInfo = params(params.Length - 1)
-                            If Helper.IsParamArrayParameter(Compiler, param) Then
-                                If Arguments.Count <> params.Length Then
-                                    useParamArray = True
-                                ElseIf TypeOf Arguments.Arguments(params.Length - 1).Expression Is NothingConstantExpression = False Then
-                                    Dim convertible As Integer
-                                    Dim lastIndex As Integer = params.Length - 1
-                                    convertible = Helper.IsConvertible(Compiler, exactArguments(i)(0)(lastIndex), exactArguments(i)(1)(lastIndex), param)
-                                    If convertible = 1 Then
-                                        useParamArray = True
-                                    End If
-                                End If
-                            End If
-                        End If
-
-                        If useParamArray Then
-                            OutputArguments = exactArguments(i)(1)
-                        Else
-                            OutputArguments = exactArguments(i)(0)
-                        End If
-                    Else
-                        OutputArguments = exactArguments2(i)
-                    End If
-
-                    If OutputArguments.Count > 0 Then
-                        Dim ace As ArrayCreationExpression
-                        ace = TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)
-                        If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso IsParamArrayParameter(Compiler, inputParameters(i)(inputParameters(i).Length - 1)) Then
-                            If ace.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
-                                Helper.ErrorRecoveryNotImplemented()
-                            End If
-                        End If
-                    End If
-
-                    Exit For
-                End If
-            Next
+            OutputArguments = methodResolver.ResolvedCandidate.ExactArguments
+            ResolvedGroup.Add(methodResolver.ResolvedMember)
         End If
+        'Else
+        '    result = ResolveGroupInternal(Parent, InputGroup, ResolvedGroup, Arguments, TypeArguments, OutputArguments) AndAlso result
+        'End If
 
-
-#If DEBUGMETHODRESOLUTION Then
-        Dim msg As String
-        If ResolvedGroup.Count = 1 Then
-            msg = String.Format("Method call to '{0}' resolved: ", completeMethodName)
-            msg = msg & " to "
-            msg = msg & Helper.ToString(Compiler, GetParameters(Parent.Compiler, ResolvedGroup(0))) & VB.vbNewLine
-        Else
-            msg = String.Format("Method call to '{0}' NOT resolved ({1} methods were found).", completeMethodName, methodsLeft.ToString) & VB.vbNewLine
-        End If
-        LogResolutionMessage(Compiler, msg)
-#End If
         Return result
     End Function
+
+    '    Shared Function ResolveGroupInternal(ByVal Parent As ParsedObject, ByVal InputGroup As Generic.List(Of MemberInfo), ByVal ResolvedGroup As Generic.List(Of MemberInfo), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList, ByRef OutputArguments As Generic.List(Of Argument)) As Boolean
+    '        Dim result As Boolean = True
+    '        Dim Compiler As Compiler = Parent.Compiler
+    '        Dim Caller As TypeDeclaration = Parent.FindTypeParent
+
+    '        Helper.Assert(InputGroup.Count > 0)
+    '        Helper.Assert(ResolvedGroup.Count = 0)
+
+    '#If DEBUG Then
+    '        ResolvedGroup.Clear()
+    '#End If
+    '        'All the candidates are added to the resolved group and then they are removed
+    '        ResolvedGroup.AddRange(InputGroup)
+
+    '        Dim methodsLeft As Integer = ResolvedGroup.Count
+    '        Dim methodName As String = InputGroup(0).Name
+    '        Dim inputParameters()() As ParameterInfo = Helper.GetParameters(Compiler, InputGroup)
+    '        Dim inputTypes()() As Type = Helper.GetTypes(inputParameters)
+    '        Dim exactArguments(ResolvedGroup.Count - 1)() As Generic.List(Of Argument)
+    '        Dim exactArguments2(ResolvedGroup.Count - 1) As Generic.List(Of Argument)
+    '        Dim codedArgumentsString As String = Nothing
+    '        Dim completeMethodName As String = Nothing
+
+    '#If DEBUGMETHODRESOLUTION Then
+    '        codedArgumentsString = "(" & Arguments.AsString & ")"
+    '        completeMethodName = methodName & codedArgumentsString
+    '#End If
+
+    '#If DEBUGMETHODRESOLUTION Then
+    '        Dim msg2 As String
+    '        msg2 = "Resolving: " & methodName
+    '        If Parent.HasLocation Then msg2 &= " (" & Parent.Location.ToString & ")"
+    '        LogResolutionMessage(Compiler, msg2)
+    '#End If
+
+    '        'Remove methods that aren't accesible 
+    '        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
+    '            If IsAccessible(Compiler, Caller, ResolvedGroup(i)) = False Then
+    '                LogResolutionMessage(Compiler, String.Format("NOT ACCESSIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '            Else
+    '                LogResolutionMessage(Compiler, String.Format("ACCESSIBLE    : Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '            End If
+    '        Next
+    '        LogResolutionMessage(Compiler, String.Format("Found {0} accessible candidates.", methodsLeft.ToString))
+
+    '        'Remove methods that aren't applicable
+    '        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
+    '            If ResolvedGroup(i) Is Nothing Then Continue For
+    '            'matchedArguments(i) = New Generic.List(Of Argument)
+    '            'expandedArgumentTypes(i) = New Generic.List(Of Type)
+    '            Dim exactArgs() As Generic.List(Of Argument) = Nothing
+    '            If IsApplicable(Parent, ResolvedGroup(i), inputParameters(i), Arguments, TypeArguments, exactArgs) = False Then
+    '                LogResolutionMessage(Compiler, String.Format("NOT APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '            Else
+    '                LogResolutionMessage(Compiler, String.Format("APPLICABLE    : Method call to '{0}{1}'  with arguments '{2}'", InputGroup(i).DeclaringType.FullName & ":" & methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                exactArguments(i) = exactArgs
+    '            End If
+    '        Next
+    '        LogResolutionMessage(Compiler, String.Format("Found {0} applicable candidates.", methodsLeft.ToString))
+
+    '        If methodsLeft <= 1 Then
+    '            GoTo Done
+    '        End If
+
+    '        'Eliminate all members from the set that require narrowing coercions to be applicable 
+    '        'to the argument list, except for the case where the argument expression type is Object. 
+    '        'If the set is empty, a compile-time error results. 
+    '        'If only one member remains in the set, that is the applicable member.
+    '        For i As Integer = 0 To ResolvedGroup.Count - 1
+    '            If ResolvedGroup(i) Is Nothing Then Continue For
+
+    '            For j As Integer = 0 To inputParameters(i).Length - 1
+    '                Dim arg, paramArg As Argument
+    '                Dim param As ParameterInfo
+
+    '                param = inputParameters(i)(j)
+    '                arg = exactArguments(i)(0)(j)
+    '                paramArg = exactArguments(i)(1)(j)
+
+    '                If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Object) Then Exit For
+
+    '                Dim IsConvertible As Integer
+    '                IsConvertible = Helper.IsConvertible(Compiler, arg, paramArg, param)
+
+    '                If IsConvertible = -1 Then
+    '                    LogResolutionMessage(Compiler, String.Format("NOT CONVERTIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                    ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '                    Exit For
+    '                Else
+    '                    exactArguments2(i) = exactArguments(i)(IsConvertible)
+    '                End If
+    '            Next
+    '        Next
+    '        LogResolutionMessage(Compiler, String.Format("Found {0} non-narrowing candidates (1).", methodsLeft.ToString))
+
+    '        If methodsLeft <= 1 Then GoTo Done
+
+    '        'Eliminate all remaining members from the set that require narrowing coercions 
+    '        'to be applicable to the argument list. 
+    '        For i As Integer = 0 To ResolvedGroup.Count - 1
+    '            If ResolvedGroup(i) Is Nothing Then Continue For
+
+    '            For j As Integer = 0 To inputParameters(i).Length - 1
+    '                Dim arg, paramArg As Argument
+    '                Dim param As ParameterInfo
+
+    '                param = inputParameters(i)(j)
+    '                arg = exactArguments(i)(0)(j)
+    '                paramArg = exactArguments(i)(1)(j)
+
+    '                Dim IsConvertible As Integer
+    '                IsConvertible = Helper.IsConvertible(Compiler, arg, paramArg, param)
+
+    '                If IsConvertible = -1 Then
+    '                    LogResolutionMessage(Compiler, String.Format("NOT CONVERTIBLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                    ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '                    Exit For
+    '                Else
+    '                    exactArguments2(i) = exactArguments(i)(IsConvertible)
+    '                End If
+    '            Next
+
+    '            If inputParameters(i).Length = 0 Then
+    '                exactArguments2(i) = exactArguments(i)(0)
+    '            End If
+    '        Next
+    '        LogResolutionMessage(Compiler, String.Format("Found {0} non-narrowing candidates (2).", methodsLeft.ToString))
+
+    '        If methodsLeft = 0 Then
+    '            'If the set is empty, 
+    '            'the type containing the method group is not an interface, and strict semantics are not being 
+    '            'used, the invocation target expression is reclassified as a late-bound method access. 
+    '            'If strict semantics are being used or the method group is contained in an interface 
+    '            'and the set is empty, a compile-time error results.
+    '            Helper.NotImplementedYet("Reclassify to late-bound method access.")
+    '        End If
+
+    '        If methodsLeft <= 1 Then GoTo Done
+
+    '        'Find most applicable methods.
+    '        Dim expandedArgumentTypes(ResolvedGroup.Count - 1)() As Type
+
+    '        For i As Integer = 0 To ResolvedGroup.Count - 1
+    '            If ResolvedGroup(i) Is Nothing Then Continue For
+    '            Helper.Assert(exactArguments2(i) IsNot Nothing)
+
+    '            For j As Integer = i + 1 To ResolvedGroup.Count - 1
+    '                If ResolvedGroup(j) Is Nothing Then Continue For
+    '                Helper.Assert(exactArguments2(j) IsNot Nothing)
+
+    '                Dim a, b As Boolean
+
+    '                If expandedArgumentTypes(i) Is Nothing Then
+    '                    expandedArgumentTypes(i) = GetExpandedTypes(Compiler, inputParameters(i), Arguments.Count)
+    '                End If
+    '                If expandedArgumentTypes(j) Is Nothing Then
+    '                    expandedArgumentTypes(j) = GetExpandedTypes(Compiler, inputParameters(j), Arguments.Count)
+    '                End If
+
+    '                a = IsFirstMoreApplicable(Compiler, exactArguments2(i), expandedArgumentTypes(i), expandedArgumentTypes(j))
+    '                b = IsFirstMoreApplicable(Compiler, exactArguments2(i), expandedArgumentTypes(j), expandedArgumentTypes(i))
+
+    '                If a = False AndAlso b = False Then
+    '                    'It is possible for M and N to have the same signature if one or both contains an expanded 
+    '                    'paramarray parameter. In that case, the member with the fewest number of arguments matching
+    '                    'expanded paramarray parameters is considered more applicable. 
+    '                    Dim iParamArgs, jParamArgs As Integer
+    '                    Dim tmp As ParameterInfo()
+
+    '                    tmp = inputParameters(i)
+    '                    If tmp.Length > 0 AndAlso Helper.IsParamArrayParameter(Compiler, tmp(tmp.Length - 1)) Then
+    '                        Dim exp As ArrayCreationExpression
+    '                        exp = TryCast(exactArguments(i)(1)(tmp.Length - 1).Expression, ArrayCreationExpression)
+    '                        Helper.Assert(exp IsNot Nothing)
+    '                        iParamArgs = exp.ArrayElementInitalizer.Initializers.Count + 1
+    '                    End If
+    '                    tmp = inputParameters(j)
+    '                    If tmp.Length > 0 AndAlso Helper.IsParamArrayParameter(Compiler, tmp(tmp.Length - 1)) Then
+    '                        Dim exp As ArrayCreationExpression
+    '                        exp = TryCast(exactArguments(j)(1)(tmp.Length - 1).Expression, ArrayCreationExpression)
+    '                        Helper.Assert(exp IsNot Nothing)
+    '                        jParamArgs = exp.ArrayElementInitalizer.Initializers.Count + 1
+    '                    End If
+    '                    If jParamArgs > iParamArgs Then
+    '                        a = True
+    '                    ElseIf iParamArgs > jParamArgs Then
+    '                        b = True
+    '                    End If
+    '                    Helper.Assert(iParamArgs <> jParamArgs OrElse (iParamArgs = 0 AndAlso jParamArgs = 0), InputGroup(0).Name)
+    '                End If
+
+    '                If a Xor b Then
+    '                    If a = False Then
+    '                        LogResolutionMessage(Compiler, String.Format("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(i)), codedArgumentsString))
+    '                        ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '                        Exit For
+    '                    Else
+    '                        LogResolutionMessage(Compiler, String.Format("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", methodName, Helper.ToString(inputTypes(j)), codedArgumentsString))
+    '                        ResolvedGroup(j) = Nothing : methodsLeft -= 1
+    '                    End If
+    '                Else
+    '                    LogResolutionMessage(Compiler, String.Format("EQUALLY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", methodName, codedArgumentsString, Helper.ToString(inputTypes(i)), Helper.ToString(inputTypes(j))))
+    '                End If
+    '            Next
+    '        Next
+
+    '        If methodsLeft > 1 Then
+    '            'Remove methods from base classes with the same signature (if they are virtual or shadows).
+    '            Helper.NotImplementedYet("Remove methods from base classes with the same signature (if they are virtual or shadows). SHOULD NOT BE NECESSARY")
+    '            For i As Integer = 0 To ResolvedGroup.Count - 2
+    '                For j As Integer = i + 1 To ResolvedGroup.Count - 1
+    '                    Dim m1, m2 As MethodInfo
+    '                    m1 = TryCast(ResolvedGroup(i), MethodInfo)
+    '                    m2 = TryCast(ResolvedGroup(j), MethodInfo)
+    '                    If Not (m1 IsNot Nothing AndAlso m2 IsNot Nothing) Then Continue For
+    '                    If Not ((m1.IsVirtual AndAlso m2.IsVirtual) OrElse (m1.IsHideBySig OrElse m2.IsHideBySig)) Then Continue For
+    '                    If Helper.CompareType(m1.DeclaringType, m2.DeclaringType) Then Continue For
+    '                    If Helper.CompareTypes(inputTypes(i), inputTypes(j)) = False Then Continue For
+
+    '                    If Helper.IsAssignable(Compiler, m1.DeclaringType, m2.DeclaringType) Then
+    '                        If m1.Attributes = MethodAttributes.NewSlot Then Continue For
+    '                        ResolvedGroup(j) = Nothing : methodsLeft -= 1
+    '                    ElseIf Helper.IsAssignable(Compiler, m2.DeclaringType, m1.DeclaringType) Then
+    '                        If m2.Attributes = MethodAttributes.NewSlot Then Continue For
+    '                        ResolvedGroup(i) = Nothing : methodsLeft -= 1
+    '                    Else
+    '                        Helper.NotImplemented()
+    '                    End If
+    '                Next
+    '            Next
+    '        End If
+
+    '        If methodsLeft <= 1 Then GoTo Done
+
+    'Done:
+    '        For i As Integer = ResolvedGroup.Count - 1 To 0 Step -1
+    '            If ResolvedGroup(i) Is Nothing Then ResolvedGroup.RemoveAt(i)
+    '        Next
+    '        Helper.Assert(methodsLeft = ResolvedGroup.Count)
+
+    '        result = ResolvedGroup.Count = 1
+
+    '        If result Then
+    '            For i As Integer = 0 To InputGroup.Count - 1
+    '                If InputGroup(i) Is ResolvedGroup(0) Then
+    '                    If exactArguments2(i) Is Nothing Then
+    '                        Dim params() As ParameterInfo
+    '                        params = inputParameters(i)
+    '                        Dim useParamArray As Boolean
+
+    '                        If params.Length > 0 Then
+    '                            Dim param As ParameterInfo = params(params.Length - 1)
+    '                            If Helper.IsParamArrayParameter(Compiler, param) Then
+    '                                If Arguments.Count <> params.Length Then
+    '                                    useParamArray = True
+    '                                ElseIf TypeOf Arguments.Arguments(params.Length - 1).Expression Is NothingConstantExpression = False Then
+    '                                    Dim convertible As Integer
+    '                                    Dim lastIndex As Integer = params.Length - 1
+    '                                    convertible = Helper.IsConvertible(Compiler, exactArguments(i)(0)(lastIndex), exactArguments(i)(1)(lastIndex), param)
+    '                                    If convertible = 1 Then
+    '                                        useParamArray = True
+    '                                    End If
+    '                                End If
+    '                            End If
+    '                        End If
+
+    '                        If useParamArray Then
+    '                            OutputArguments = exactArguments(i)(1)
+    '                        Else
+    '                            OutputArguments = exactArguments(i)(0)
+    '                        End If
+    '                    Else
+    '                        OutputArguments = exactArguments2(i)
+    '                    End If
+
+    '                    If OutputArguments.Count > 0 Then
+    '                        Dim ace As ArrayCreationExpression
+    '                        ace = TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)
+    '                        If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso IsParamArrayParameter(Compiler, inputParameters(i)(inputParameters(i).Length - 1)) Then
+    '                            If ace.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
+    '                                Helper.ErrorRecoveryNotImplemented()
+    '                            End If
+    '                        End If
+    '                    End If
+
+    '                    Exit For
+    '                End If
+    '            Next
+    '        End If
+
+
+    '#If DEBUGMETHODRESOLUTION Then
+    '        Dim msg As String
+    '        If ResolvedGroup.Count = 1 Then
+    '            msg = String.Format("Method call to '{0}' resolved: ", completeMethodName)
+    '            msg = msg & " to "
+    '            msg = msg & Helper.ToString(Compiler, GetParameters(Parent.Compiler, ResolvedGroup(0))) & VB.vbNewLine
+    '        Else
+    '            msg = String.Format("Method call to '{0}' NOT resolved ({1} methods were found).", completeMethodName, methodsLeft.ToString) & VB.vbNewLine
+    '        End If
+    '        LogResolutionMessage(Compiler, msg)
+    '#End If
+    '        Return result
+    '    End Function
 
     ''' <summary>
     ''' Adds all the members to the derived class members, unless they are shadowed or overridden
@@ -4081,92 +4198,92 @@ Done:
         End Select
     End Function
 
-    Shared Sub RemoveShadowed(ByVal Compiler As Compiler, ByVal Members As Generic.List(Of MemberInfo))
-        Dim hash As New Generic.Dictionary(Of String, MemberInfo)
-        Dim shadowableNames As New Generic.List(Of String)
-        For i As Integer = Members.Count - 1 To 0 Step -1
-            Dim member As MemberInfo = Members(i)
-            Dim hashedMember As MemberInfo = hash(member.Name)
-            Dim hashedMemberType, memberType As Type
+    'Shared Sub RemoveShadowed(ByVal Compiler As Compiler, ByVal Members As Generic.List(Of MemberInfo))
+    '    Dim hash As New Generic.Dictionary(Of String, MemberInfo)
+    '    Dim shadowableNames As New Generic.List(Of String)
+    '    For i As Integer = Members.Count - 1 To 0 Step -1
+    '        Dim member As MemberInfo = Members(i)
+    '        Dim hashedMember As MemberInfo = hash(member.Name)
+    '        Dim hashedMemberType, memberType As Type
 
-            If hashedMember Is Nothing Then
-                hash.Add(member.Name, member)
-                Select Case member.MemberType
-                    Case MemberTypes.Property, MemberTypes.Method
-                        If IsHideBySig(member) Then
-                            For Each sig As String In Helper.GetOverloadableSignatures(Compiler, member)
-                                hash.Add(sig, member)
-                            Next
-                        End If
-                End Select
-                Continue For
-            End If
+    '        If hashedMember Is Nothing Then
+    '            hash.Add(member.Name, member)
+    '            Select Case member.MemberType
+    '                Case MemberTypes.Property, MemberTypes.Method
+    '                    If IsHideBySig(member) Then
+    '                        For Each sig As String In Helper.GetOverloadableSignatures(Compiler, member)
+    '                            hash.Add(sig, member)
+    '                        Next
+    '                    End If
+    '            End Select
+    '            Continue For
+    '        End If
 
-            hashedMemberType = hashedMember.DeclaringType
-            memberType = member.DeclaringType
+    '        hashedMemberType = hashedMember.DeclaringType
+    '        memberType = member.DeclaringType
 
-            If Helper.CompareType(hashedMemberType, memberType) Then Continue For
-            If hashedMemberType.IsInterface Xor memberType.IsInterface Then Continue For
+    '        If Helper.CompareType(hashedMemberType, memberType) Then Continue For
+    '        If hashedMemberType.IsInterface Xor memberType.IsInterface Then Continue For
 
-            Dim mostDerivedWins As Boolean
-            Dim isHashedMostDerived As Boolean
-            Dim isMemberMostDerived As Boolean
+    '        Dim mostDerivedWins As Boolean
+    '        Dim isHashedMostDerived As Boolean
+    '        Dim isMemberMostDerived As Boolean
 
-            Dim removeIndex As Integer = -1
-            If Helper.IsSubclassOf(hashedMemberType, memberType) Then
-                isHashedMostDerived = True
-                For j As Integer = Members.Count - 1 To 0 Step -1
-                    If Members(j) Is hashedMember Then
-                        removeIndex = j
-                        Exit For
-                    End If
-                Next
-            ElseIf Helper.IsSubclassOf(memberType, hashedMemberType) Then
-                isMemberMostDerived = True
-                removeIndex = i
-            End If
+    '        Dim removeIndex As Integer = -1
+    '        If Helper.IsSubclassOf(hashedMemberType, memberType) Then
+    '            isHashedMostDerived = True
+    '            For j As Integer = Members.Count - 1 To 0 Step -1
+    '                If Members(j) Is hashedMember Then
+    '                    removeIndex = j
+    '                    Exit For
+    '                End If
+    '            Next
+    '        ElseIf Helper.IsSubclassOf(memberType, hashedMemberType) Then
+    '            isMemberMostDerived = True
+    '            removeIndex = i
+    '        End If
 
-            If member.MemberType <> hashedMember.MemberType Then
-                mostDerivedWins = True
-            Else
-                Select Case member.MemberType
-                    Case MemberTypes.Constructor
-                        Continue For
-                    Case MemberTypes.Event, MemberTypes.Field, MemberTypes.NestedType, MemberTypes.TypeInfo
-                        mostDerivedWins = True
-                    Case MemberTypes.Property, MemberTypes.Method
-                        If isMemberMostDerived Then
-                            If IsHideBySig(member) Then
+    '        If member.MemberType <> hashedMember.MemberType Then
+    '            mostDerivedWins = True
+    '        Else
+    '            Select Case member.MemberType
+    '                Case MemberTypes.Constructor
+    '                    Continue For
+    '                Case MemberTypes.Event, MemberTypes.Field, MemberTypes.NestedType, MemberTypes.TypeInfo
+    '                    mostDerivedWins = True
+    '                Case MemberTypes.Property, MemberTypes.Method
+    '                    If isMemberMostDerived Then
+    '                        If IsHideBySig(member) Then
 
-                            Else
-                                mostDerivedWins = True
-                            End If
-                        ElseIf isHashedMostDerived Then
-                            If IsHideBySig(hashedMember) Then
+    '                        Else
+    '                            mostDerivedWins = True
+    '                        End If
+    '                    ElseIf isHashedMostDerived Then
+    '                        If IsHideBySig(hashedMember) Then
 
-                            Else
-                                mostDerivedWins = True
-                            End If
-                        Else
-                            Helper.NotImplemented()
-                        End If
-                    Case Else
-                        Throw New InternalException("")
-                End Select
-            End If
+    '                        Else
+    '                            mostDerivedWins = True
+    '                        End If
+    '                    Else
+    '                        Helper.NotImplemented()
+    '                    End If
+    '                Case Else
+    '                    Throw New InternalException("")
+    '            End Select
+    '        End If
 
 
-            If mostDerivedWins Then
-                'the most derived wins
-                If removeIndex >= 0 Then
-                    Members.RemoveAt(removeIndex)
-                    Continue For
-                End If
+    '        If mostDerivedWins Then
+    '            'the most derived wins
+    '            If removeIndex >= 0 Then
+    '                Members.RemoveAt(removeIndex)
+    '                Continue For
+    '            End If
 
-                Helper.NotImplementedYet("Is this shadowed?")
-            End If
-        Next
-    End Sub
+    '            Helper.NotImplementedYet("Is this shadowed?")
+    '        End If
+    '    Next
+    'End Sub
 
     Shared Function GetOverloadableSignatures(ByVal Compiler As Compiler, ByVal Member As MemberInfo) As String()
         Dim result As New Generic.List(Of String)

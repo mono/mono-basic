@@ -113,6 +113,16 @@ Public Class Compiler
 
     Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
 
+    Public Sub VerifyConsistency(ByVal result As Boolean, Optional ByVal Location As String = "")
+        If Report.Errors = 0 AndAlso result = False Then
+            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "No errors, but compilation failed? " & Location)
+            Throw New InternalException("Consistency check failed")
+        ElseIf Report.Errors > 0 AndAlso result Then
+            Report.WriteLine(vbnc.Report.ReportLevels.Debug, Report.Errors.ToString & " errors, but compilation succeeded? " & Location)
+            Throw New InternalException("Consistency check failed")
+        End If
+    End Sub
+
     ReadOnly Property OutFileName() As String
         Get
             Return m_OutFilename
@@ -297,8 +307,8 @@ Public Class Compiler
         ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
 
 #If DEBUGREFLECTION Then
-        DebugReflection.AppendLine(String.Format("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", vbnc.Helper.GetObjectName(AssemblyBuilder), vbnc.Helper.GetObjectName(assemblyName), IO.Path.GetDirectoryName(m_OutFilename)))
-        DebugReflection.AppendLine(String.Format("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", vbnc.Helper.GetObjectName(ModuleBuilder), assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, vbnc.Helper.GetObjectName(AssemblyBuilder)))
+        vbnc.Helper.DebugReflection_AppendLine("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", AssemblyBuilder, assemblyName, IO.Path.GetDirectoryName(m_OutFilename))
+        vbnc.Helper.DebugReflection_AppendLine("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", ModuleBuilder, assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, AssemblyBuilder)
 #End If
 
         If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
@@ -327,7 +337,7 @@ Public Class Compiler
 
         SequenceTime(CompilerSequence.Parsed) = DateTime.Now
 
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result)
 
 #If DEBUG AndAlso False Then
         Dim xml As Xml.XmlTextWriter
@@ -348,31 +358,31 @@ Public Class Compiler
         Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Resolve")
 #End If
         result = CommandLine.Imports.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "ResolveCode")
         If result = False Then Return result
 
         result = CommandLine.Files.Resolve(ResolveInfo.Default(Me)) AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "Resolve")
         If result = False Then Return result
 
         result = theAss.CreateImplicitTypes AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "CreateImplicitTypes")
         If result = False Then Return result
 
         result = theAss.ResolveTypes AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "ResolveTypes")
         If result = False Then Return result
 
         result = theAss.ResolveTypeReferences AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result
 
         result = theAss.CreateImplicitMembers AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "CreateImplicitMembers")
         If result = False Then Return result
 
         result = theAss.ResolveMembers AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
+        VerifyConsistency(result, "ResolveMembers")
         result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
 
         If CommandLine.NoVBRuntimeRef Then
@@ -384,11 +394,7 @@ Public Class Compiler
 
         SequenceTime(CompilerSequence.Resolved) = DateTime.Now
 
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
-
-#If DEBUG Then
-        Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Finished Resolve")
-#End If
+        VerifyConsistency(result, "FinishedResolve")
 
 #If DEBUG AndAlso False Then
         Dim xml As Xml.XmlTextWriter
@@ -410,9 +416,6 @@ Public Class Compiler
     End Property
 #End If
 
-#If DEBUGREFLECTION Then
-    Public Shared DebugReflection As New System.Text.StringBuilder()
-#End If
     Function GenerateMy() As Boolean
         Dim result As Boolean = True
         Dim generator As New MyGenerator(Me)
@@ -490,11 +493,14 @@ Public Class Compiler
             m_CecilTypeCache = New CecilTypeCache(Me)
 #End If
 
+            result = GenerateMy() AndAlso result
+
             result = m_TypeManager.LoadReferenced AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
             m_NameResolver = New NameResolution(Me) 'Must be created after referenced assemblies have been loaded
             m_TypeResolver = New TypeResolution(Me)
 
-            result = GenerateMy() AndAlso result
 
             'Parse the code into the type tree
 #If DEBUG Then
@@ -559,6 +565,11 @@ Public Class Compiler
                 GoTo ShowErrors
             End If
 
+#If DEBUGREFLECTION Then
+            'Since the assembly save crashes quite often, the finally won't get executed, so dump here as well.
+            IO.File.WriteAllText("DebugReflection.vb", vbnc.Helper.DebugReflection_Dump(Me))
+#End If
+
             'Save the assembly
             AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilder.FullName, m_OutFilename))
@@ -566,7 +577,7 @@ Public Class Compiler
             SequenceTime(CompilerSequence.End) = DateTime.Now
 
 ShowErrors:
-            vbnc.Helper.Assert((Report.Errors = 0 AndAlso result = True) OrElse (Report.Errors > 0 AndAlso result = False))
+            VerifyConsistency(result, "ShowErrors")
 
             If Report.Errors > 0 Or Report.Warnings > 0 Then
                 Compiler.Report.WriteLine("There were " & Report.Errors.ToString & " errors and " & Report.Warnings.ToString & " warnings.")
@@ -594,22 +605,7 @@ EndOfCompilation:
             Return -1
 #If DEBUGREFLECTION Then
         Finally
-            DebugReflection.AppendLine(String.Format("{0}.Save(""{1}"")", vbnc.Helper.GetObjectName(AssemblyBuilder), IO.Path.GetFileName(m_OutFilename)))
-
-            Dim tmp As New System.Text.StringBuilder()
-            Dim tmp2 As String = DebugReflection.ToString
-            tmp2 = "        " & tmp2.Replace(VB.vbNewLine, VB.vbNewLine & "        ")
-
-            DebugReflection.Length = 0
-            DebugReflection.Append(tmp2)
-            DebugReflection.Insert(0, String.Format("Imports System{0}Imports System.Reflection{0}Imports System.Reflection.Emit{0}Class generated{0}    Shared Sub Main(){0}", VB.vbNewLine))
-            DebugReflection.AppendLine("")
-            DebugReflection.AppendLine("    End Sub")
-            DebugReflection.AppendLine("End Class")
-            Compiler.Report.WriteLine("'>>>>>>>>>>>>>>>>")
-            Compiler.Report.WriteLine(DebugReflection.ToString)
-            Compiler.Report.WriteLine("'>>>>>>>>>>>>>>>>")
-            'IO.File.WriteAllText("C:\DebugReflection.vb", DebugReflection.ToString)
+            IO.File.WriteAllText("DebugReflection.vb", vbnc.Helper.DebugReflection_Dump(Me))
 #End If
         End Try
         vbnc.Helper.Assert(False, "End of program reached!")

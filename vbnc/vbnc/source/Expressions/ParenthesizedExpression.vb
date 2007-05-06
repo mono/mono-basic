@@ -75,7 +75,10 @@ Public Class ParenthesizedExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_Expression.ResolveExpression(info) AndAlso result
+        result = m_Expression.ResolveExpression(Info) AndAlso result
+
+        If result = False Then Return result
+
         result = Helper.VerifyValueClassification(m_Expression, Info) AndAlso result
 
         Classification = New ValueClassification(Me, Me.ExpressionType)

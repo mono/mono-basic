@@ -188,6 +188,12 @@ Public Class Message
         Return result
     End Function
 
+    ReadOnly Property IsWarning() As Boolean
+        Get
+
+        End Get
+    End Property
+
 #If DEBUG Then
     ''' <summary>
     ''' Dump this message to an xmlwriter.

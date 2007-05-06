@@ -329,11 +329,12 @@ Public Class TypeDescriptor
 
     Protected Overrides Function GetConstructorImpl(ByVal bindingAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal callConvention As System.Reflection.CallingConventions, ByVal types() As System.Type, ByVal modifiers() As System.Reflection.ParameterModifier) As System.Reflection.ConstructorInfo
         Dim result As ConstructorInfo = Nothing
-        Dim tmp As New Generic.List(Of MemberInfo)
+        Dim tmp As MemberInfo()
 
-        tmp.AddRange(GetMembers(bindingAttr))
+        tmp = GetMembers(bindingAttr)
 
-        For Each member As MemberInfo In tmp
+        For i As Integer = 0 To tmp.Length - 1
+            Dim member As MemberInfo = tmp(i)
             If member.MemberType = MemberTypes.Constructor Then
                 If Helper.CompareTypes(Helper.GetTypes(Helper.GetParameters(Compiler, member)), types) Then
                     Helper.Assert(result Is Nothing)
@@ -348,16 +349,9 @@ Public Class TypeDescriptor
     End Function
 
     Public Overloads Overrides Function GetConstructors(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.ConstructorInfo()
-        Dim result As New Generic.List(Of ConstructorInfo)
-        Dim tmp As New Generic.List(Of MemberInfo)
+        Dim result As Generic.List(Of ConstructorInfo)
 
-        tmp.AddRange(GetMembers(bindingAttr))
-
-        For Each item As MemberInfo In tmp
-            If item.MemberType = MemberTypes.Constructor Then
-                result.Add(DirectCast(item, ConstructorInfo))
-            End If
-        Next
+        result = GetMembers(Of ConstructorInfo)(MemberTypes.Constructor, bindingAttr)
 
         DumpMethodInfo(result.ToArray)
 
@@ -410,6 +404,7 @@ Public Class TypeDescriptor
         Dim members As Generic.List(Of INameable)
         members = m_Declaration.Members.Index.Item(name)
 
+        Helper.Assert(members IsNot Nothing)
         Helper.Assert(members.Count = 1)
         Helper.Assert(TypeOf members(0) Is IFieldMember)
         result = DirectCast(members(0), IFieldMember).FieldDescriptor
@@ -588,6 +583,32 @@ Public Class TypeDescriptor
             Return m_AllMembers
         End Get
     End Property
+
+    Private Overloads Function GetMembers(Of T As MemberInfo)(ByVal MemberType As MemberTypes, ByVal bindingAttr As System.Reflection.BindingFlags) As Generic.List(Of T)
+        Dim result As Generic.List(Of T)
+        Dim candidates As Generic.List(Of MemberInfo)
+
+        If (bindingAttr And BindingFlags.DeclaredOnly) = 0 Then
+            Helper.NotImplementedYet("Get* should not be called without DeclaredOnly, if base members are needed call Compiler.TypeManager.GetCache(type).FlattenedMembers")
+            candidates = AllMembers
+        Else
+            candidates = AllDeclaredMembers
+        End If
+
+        result = New Generic.List(Of T)(candidates.Count)
+
+        For i As Integer = 0 To candidates.Count - 1
+            Dim member As MemberInfo
+            member = candidates(i)
+
+            If member.MemberType <> MemberType Then Continue For
+            If IsMatch(member, bindingAttr) = False Then Continue For
+
+            result.Add(DirectCast(member, T))
+        Next
+
+        Return result
+    End Function
 
     Public Overloads Overrides Function GetMembers(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.MemberInfo()
         Dim result As New Generic.List(Of MemberInfo)
@@ -1061,6 +1082,8 @@ Public Class TypeDescriptor
 
     Public Overrides Function IsSubclassOf(ByVal c As System.Type) As Boolean
         Dim result As Boolean
+
+        If Helper.CompareType(c, Compiler.TypeCache.Object) Then Return True
 
         Dim base As Type = Me.BaseType
         Do While base IsNot Nothing

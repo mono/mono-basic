@@ -42,6 +42,11 @@
     <VBNCValue>Code page '{0}' is invalid or not supported</VBNCValue>
     <VBValue>code page '%s' is invalid or not installed</VBValue>
   </Message>
+  <Message id="2017" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>The library '{0}' could not be found.</VBNCValue>
+    <VBValue>could not find library '%s'</VBValue>
+  </Message>
   <Message id="2019" level="Error">
 		<Comment>Shows up as BC2014 when compiling.</Comment>
 		<VBNCValue>the option '{0}' cannot have the value '{1}'</VBNCValue>
@@ -1079,7 +1084,7 @@
 	</Message>
 	<Message id="30284" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Overrides' can't be used on {0}, because there is no such member in a base class.</VBNCValue>
 		<VBValue>|1 '|2' cannot be declared 'Overrides' because it does not override a |1 in a base |3.</VBValue>
 	</Message>
 	<Message id="30287" level="Error">
@@ -1509,7 +1514,7 @@
 	</Message>
 	<Message id="30452" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Operator '{0}' is not defined for the types '{1}' and '{2}'.</VBNCValue>
 		<VBValue>Operator '|1' is not defined for types '|2' and '|3'.</VBValue>
 	</Message>
 	<Message id="30454" level="Error">
@@ -1899,7 +1904,7 @@
 	</Message>
 	<Message id="30581" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>An 'AddressOf' expression can't be converted to '{0}', because '{0}' is not a delegate type.</VBNCValue>
 		<VBValue>'AddressOf' expression cannot be converted to '|1' because '|1' is not a delegate type.</VBValue>
 	</Message>
 	<Message id="30582" level="Error">
@@ -3997,6 +4002,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Constraint type '|1' already specified for this type parameter.</VBValue>
 	</Message>
+  <Message id="32098" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type parameters can't be used as a qualifier.</VBNCValue>
+    <VBValue>Type parameters cannot be used as qualifiers.</VBValue>
+  </Message>
 	<Message id="32200" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

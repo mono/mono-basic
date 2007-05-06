@@ -39,6 +39,51 @@ Public Class MemberImplementsClause
         m_ImplementsList = ImplementsList
     End Sub
 
+    Function DefineImplements(ByVal Declaration As EventDeclaration) As Boolean
+        Dim result As Boolean = True
+        Dim declType As TypeBuilder
+
+        Helper.Assert(Declaration IsNot Nothing)
+
+        declType = Declaration.DeclaringType.TypeBuilder
+
+        For i As Integer = 0 To m_ImplementsList.Count - 1
+            Dim ispec As InterfaceMemberSpecifier = m_ImplementsList(i)
+            Dim eventI As EventInfo
+
+            eventI = ispec.ResolvedEventInfo
+
+            Helper.Assert(eventI IsNot Nothing)
+
+            Dim addMethodI, removeMethodI, raiseMethodI As MethodInfo
+            Dim addMethod, removeMethod, raiseMethod As MethodInfo
+
+            addMethodI = Helper.GetMethodOrMethodBuilder(eventI.GetAddMethod(True))
+            removeMethodI = Helper.GetMethodOrMethodBuilder((eventI.GetRemoveMethod(True)))
+            raiseMethodI = Helper.GetMethodOrMethodBuilder(eventI.GetRaiseMethod(True))
+
+            addMethod = Helper.GetMethodOrMethodBuilder(Declaration.GetAddMethod(True))
+            removeMethod = Helper.GetMethodOrMethodBuilder(Declaration.GetRemoveMethod(True))
+            raiseMethod = Helper.GetMethodOrMethodBuilder(Declaration.GetRaiseMethod(True))
+
+            Helper.Assert((addMethodI Is Nothing Xor addMethod Is Nothing) = False)
+            Helper.Assert((removeMethodI Is Nothing Xor removeMethod Is Nothing) = False)
+            Helper.Assert((raiseMethodI Is Nothing Xor raiseMethod Is Nothing) = False)
+
+            If addMethod IsNot Nothing AndAlso addMethodI IsNot Nothing Then
+                declType.DefineMethodOverride(addMethod, addMethodI)
+            End If
+            If removeMethod IsNot Nothing AndAlso removeMethodI IsNot Nothing Then
+                declType.DefineMethodOverride(removeMethod, removeMethodI)
+            End If
+            If raiseMethod IsNot Nothing AndAlso raiseMethodI IsNot Nothing Then
+                declType.DefineMethodOverride(raiseMethod, raiseMethodI)
+            End If
+        Next
+
+        Return result
+    End Function
+
     Function DefineImplements(ByVal Builder As TypeBuilder, ByVal Method As MethodBuilder) As Boolean
         Dim result As Boolean = True
 
@@ -95,7 +140,7 @@ Public Class MemberImplementsClause
     End Property
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return m_ImplementsList.ResolveCode(info)
+        Return m_ImplementsList.ResolveCode(Info)
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean

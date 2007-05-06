@@ -36,6 +36,8 @@ Public MustInherit Class CompoundAssignmentStatement
 
         result = m_CompoundExpression.ResolveExpression(info) AndAlso result
 
+        m_CompoundExpression = Helper.CreateTypeConversion(Me, m_CompoundExpression, LSide.ExpressionType, result)
+
         Return result
     End Function
 
@@ -46,6 +48,12 @@ Public MustInherit Class CompoundAssignmentStatement
 
         Dim lInfo As EmitInfo = Info.Clone(m_CompoundExpression)
         result = LSide.GenerateCode(lInfo) AndAlso result
+
+        Return result
+    End Function
+
+    Public Overrides Function CreateTypeConversion() As Boolean
+        Dim result As Boolean = True
 
         Return result
     End Function

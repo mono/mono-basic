@@ -226,9 +226,11 @@ Public Class VariableDeclaration
                     End If
                     m_NewExpression = New DelegateOrObjectCreationExpression(Me, m_TypeName.AsNonArrayTypeName, m_ArgumentList)
                 End If
+            ElseIf m_VariableIdentifier.Identifier.HasTypeCharacter Then
+                m_FieldType = TypeCharacters.TypeCharacterToType(Compiler, m_VariableIdentifier.Identifier.TypeCharacter)
             Else
                 If Me.Location.File.IsOptionStrictOn Then
-                    Helper.AddError("Variable type must be specified.")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
                 Else
                     Helper.AddWarning("Variable type should be specified.")
                 End If
@@ -297,12 +299,15 @@ Public Class VariableDeclaration
     Friend Function DefineStaticMember() As Boolean
         Dim result As Boolean = True
 
-        Dim staticName As String
-        staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
-        m_FieldBuilder = Me.DeclaringType.TypeBuilder.DefineField(staticName, VariableTypeOrTypeBuilder, m_Descriptor.Attributes)
+        If m_FieldBuilder Is Nothing Then
 
-        If Me.HasInitializer Then
-            m_StaticInitBuilder = Me.DeclaringType.TypeBuilder.DefineField(m_FieldBuilder.Name & "$Init", Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag, m_FieldBuilder.Attributes)
+            Dim staticName As String
+            staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
+            m_FieldBuilder = Me.DeclaringType.TypeBuilder.DefineField(staticName, VariableTypeOrTypeBuilder, m_Descriptor.Attributes)
+
+            If Me.HasInitializer Then
+                m_StaticInitBuilder = Me.DeclaringType.TypeBuilder.DefineField(m_FieldBuilder.Name & "$Init", Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag, m_FieldBuilder.Attributes)
+            End If
         End If
 
         Return result

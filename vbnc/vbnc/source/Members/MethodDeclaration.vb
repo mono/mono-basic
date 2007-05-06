@@ -111,7 +111,7 @@ Public MustInherit Class MethodDeclaration
 #End If
         m_MethodBuilder = DeclaringType.TypeBuilder.DefineMethod(Name, Attributes)
 #If DEBUGREFLECTION Then
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineMethod(""{2}"", CType({3}, System.Reflection.MethodAttributes))", Helper.GetObjectName(m_MethodBuilder), Helper.GetObjectName(DeclaringType.TypeBuilder), Name, CInt(Attributes)))
+        Helper.DebugReflection_AppendLine("{0} = {1}.DefineMethod(""{2}"", CType({3}, System.Reflection.MethodAttributes))", m_MethodBuilder, DeclaringType.TypeBuilder, Name, CInt(Attributes).ToString())
 #End If
         Compiler.TypeManager.RegisterReflectionMember(m_MethodBuilder, Me.MemberDescriptor)
 

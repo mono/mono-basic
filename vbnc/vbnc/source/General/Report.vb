@@ -20,7 +20,7 @@
 Imports System.Resources
 #If DEBUG Then
 #Const STOPONERROR = True
-#Const STOPONWARNING = True
+#Const STOPONWARNING = False
 #End If
 
 ''' <summary>
@@ -275,43 +275,44 @@ Public Class Report
     ''' Shows the message with the specified location and parameters
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Sub ShowMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String)
-        ShowMessage(False, New Message(Message, Parameters, Location))
-    End Sub
+    Function ShowMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String) As Boolean
+        Return ShowMessage(False, New Message(Message, Parameters, Location))
+    End Function
 
     ''' <summary>
     ''' Shows the message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Sub ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String)
+    Function ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            ShowMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
+            Return ShowMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
         Else
             Dim loc As Span = Nothing
-            ShowMessage(Message, loc, Parameters)
+            Return ShowMessage(Message, loc, Parameters)
         End If
-    End Sub
+    End Function
 
     ''' <summary>
     ''' Shows the multiline message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Public Sub ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String)
+    Public Function ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String) As Boolean
         If Compiler.tm.IsCurrentTokenValid Then
-            ShowMessage(False, New Message(Message, Parameters, Compiler.tm.CurrentToken.Location))
+            Return ShowMessage(False, New Message(Message, Parameters, Compiler.tm.CurrentToken.Location))
         Else
-            ShowMessage(False, New Message(Message, Parameters, Nothing))
+            Return ShowMessage(False, New Message(Message, Parameters, Nothing))
         End If
-    End Sub
+    End Function
 
     ''' <summary>
     ''' Shows the multiline message with the specified location and parameters.
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub ShowMessage(ByVal Message() As Messages, ByVal Location As Span, ByVal ParamArray Parameters()() As String)
-        ShowMessage(False, New Message(Message, Parameters, Location))
-    End Sub
+    <Diagnostics.DebuggerHidden()> _
+    Function ShowMessage(ByVal Message() As Messages, ByVal Location As Span, ByVal ParamArray Parameters()() As String) As Boolean
+        Return ShowMessage(False, New Message(Message, Parameters, Location))
+    End Function
 
     ''' <summary>
     ''' Saves the multiline message with the specified parameters.
@@ -358,7 +359,11 @@ Public Class Report
     ''' to show it later with ShowSavedMessages()
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Sub ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message)
+    Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
+        Dim isOnlyWarning As Boolean = False
+
+        isOnlyWarning = Message.Level <= MessageLevel.Warning
+
         If SaveIt Then
             m_SavedMessages.Add(Message)
         Else
@@ -381,31 +386,7 @@ Public Class Report
             Helper.Stop()
         End If
 #End If
-    End Sub
 
-    '#If DEBUG Then
-    '    ''' <summary>
-    '    ''' Tries to write pending messages to the xml file (if any).
-    '    ''' </summary>
-    '    ''' <remarks></remarks>
-    '    Public Sub Flush()
-    '        If m_xmlFileName <> "" Then
-    '            If m_Messages.Count > 0 Then
-    '                Dim m_xml As Xml.XmlTextWriter
-    '                m_xml = New Xml.XmlTextWriter(m_xmlFileName, Text.Encoding.UTF8)
-    '                m_xml.Formatting = Xml.Formatting.Indented
-    '                For Each msg As Message In m_Messages
-    '                    msg.Dump(m_xml)
-    '                Next
-    '                m_xml.Close()
-    '            ElseIf IO.File.Exists(m_xmlFileName) Then
-    '                Try
-    '                    IO.File.Delete(m_xmlFileName)
-    '                Catch ex As Exception
-    '                    'Nothing to handle.
-    '                End Try
-    '            End If
-    '        End If
-    '    End Sub
-    '#End If
+        Return isOnlyWarning
+    End Function
 End Class

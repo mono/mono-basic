@@ -24,13 +24,16 @@ Public Class Modifiers
 
     Private m_ValidModifiers() As KS
     'Private m_Modifiers As Generic.List(Of KS)
-    Private m_Modifiers2(10) As KS
+    Private m_Modifiers() As KS
     Private m_Count As Integer
+
+    Private Const MAX As Integer = 10
 
     ReadOnly Property Count() As Integer
         Get
-            For i As Integer = 0 To 10
-                If m_Modifiers2(i) = KS.None Then
+            If m_Modifiers Is Nothing Then Return 0
+            For i As Integer = 0 To MAX
+                If m_Modifiers(i) = KS.None Then
                     Return i
                 End If
             Next
@@ -41,31 +44,31 @@ Public Class Modifiers
         End Get
     End Property
 
-    '<Obsolete()> ReadOnly Property Modifiers() As Generic.List(Of KS)
-    '    Get
-    '        'Return m_Modifiers
-    '    End Get
-    'End Property
-
     Sub New(ByVal Parent As ParsedObject, ByVal Modifiers As Generic.List(Of KS))
         MyBase.New(Parent)
         If Modifiers IsNot Nothing Then
+            Init()
             For i As Integer = 0 To Math.Min(10, Modifiers.Count - 1)
-                m_Modifiers2(i) = Modifiers(i)
+                m_Modifiers(i) = Modifiers(i)
             Next
         End If
-        'If Modifiers IsNot Nothing Then
-        '    m_Modifiers = Modifiers
-        'Else
-        '    m_Modifiers = New Generic.List(Of KS)
-        'End If
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal ParamArray Modifiers As KS())
         MyBase.New(Parent)
-        'm_Modifiers = New Generic.List(Of KS)(Modifiers)
         If Modifiers IsNot Nothing Then
-            Modifiers.CopyTo(m_Modifiers2, 0)
+            Init()
+            Modifiers.CopyTo(m_Modifiers, 0)
+        End If
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.New(Parent)
+    End Sub
+
+    Private Sub Init()
+        If m_Modifiers Is Nothing Then
+            ReDim m_Modifiers(MAX)
         End If
     End Sub
 
@@ -77,20 +80,27 @@ Public Class Modifiers
     Public Sub AddModifier(ByVal Modifier As KS)
         If Modifier = KS.None Then Return
         If Me.Is(Modifier) = False Then
-            For I As Integer = 0 To 10
-                If m_Modifiers2(I) = KS.None Then
-                    m_Modifiers2(I) = Modifier
+            Init()
+            For I As Integer = 0 To MAX
+                If m_Modifiers(I) = KS.None Then
+                    m_Modifiers(I) = Modifier
                     Return
                 End If
             Next
-            'm_Modifiers.Add(Modifier)
         End If
     End Sub
 
     Public Sub AddModifiers(ByVal Modifiers As Modifiers, ByVal ParamArray Except() As KS)
         If Modifiers.Count > 0 Then
-            For Each modifier As KS In Modifiers.m_Modifiers2
-                If Array.IndexOf(Except, modifier) < 0 Then
+            For i As Integer = 0 To MAX
+                Dim modifier As KS = Modifiers.m_Modifiers(i)
+                For j As Integer = 0 To Except.Length - 1
+                    If Except(j) = modifier Then
+                        modifier = KS.None
+                        Exit For
+                    End If
+                Next
+                If modifier <> KS.None Then
                     AddModifier(modifier)
                 End If
             Next
@@ -103,11 +113,24 @@ Public Class Modifiers
     ''' <param name="Modifiers"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function ContainsAny(ByVal ParamArray Modifiers() As KS) As Boolean
+    Function ContainsAny(ByVal Modifiers() As KS) As Boolean
         For i As Integer = 0 To Modifiers.Length - 1
             If Me.Is(Modifiers(i)) Then Return True
         Next
         Return False
+    End Function
+
+    ''' <summary>
+    ''' Returns true if any of the specified modifiers are found.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function ContainsAny(ByVal a As KS, ByVal b As KS) As Boolean
+        Return Me.Is(a) OrElse Me.Is(b)
+    End Function
+
+    Function ContainsAny(ByVal a As KS) As Boolean
+        Return Me.Is(a)
     End Function
 
     ''' <summary>
@@ -125,9 +148,10 @@ Public Class Modifiers
 
     ReadOnly Property [Is](ByVal Modifier As KS) As Boolean
         Get
+            If m_Modifiers Is Nothing Then Return False
             For i As Integer = 0 To 10
-                If m_Modifiers2(i) = Modifier Then Return True
-                If m_Modifiers2(i) = KS.None Then Return False
+                If m_Modifiers(i) = Modifier Then Return True
+                If m_Modifiers(i) = KS.None Then Return False
             Next
             Helper.Stop()
             'Return m_Modifiers.Contains(Modifier)
@@ -136,15 +160,10 @@ Public Class Modifiers
 
     ReadOnly Property ModifiersAsArray() As KS()
         Get
-            Return m_Modifiers2
+            Init()
+            Return m_Modifiers
         End Get
     End Property
-
-    '<Obsolete()> ReadOnly Property ModifiersAsArrayList() As Generic.List(Of KS)
-    '    Get
-    '        Return New Generic.List(Of KS)(m_Modifiers2) 'Return m_Modifiers
-    '    End Get
-    'End Property
 
     Function GetMethodAttributeScope() As MethodAttributes
         If Me.Is(KS.Public) Then

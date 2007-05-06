@@ -54,6 +54,13 @@ Public Class Namespaces
         End Get
     End Property
 
+    Function FindNamespace(ByVal A As String, ByVal B As String) As [Namespace]
+        For i As Integer = 0 To Count - 1
+            If Item(i).Equals(A, B) Then Return Item(i)
+        Next
+        Return Nothing
+    End Function
+
     ''' <summary>
     ''' Looks up the specified child of the namespace.
     ''' Returns nothing if nothing is found.
@@ -105,13 +112,23 @@ Public Class Namespaces
     ''' <remarks></remarks>
     Sub AddAllNamespaces(ByVal Parent As IBaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
         If ns = String.Empty Then Return
-        Dim splt() As String = ns.Split("."c)
-        Dim tmp As String = splt(0)
-        Add(Parent, tmp, IsGlobal)
-        For i As Integer = 1 To splt.GetUpperBound(0)
-            tmp = tmp & "." & splt(i)
+
+        If Me.ContainsKey(ns) Then Return
+
+        Add(Parent, ns, IsGlobal)
+
+        Dim idx As Integer = ns.LastIndexOf("."c)
+        If idx < 0 Then Return
+
+        Dim tmp As String = ns
+        Do
+            tmp = tmp.Substring(0, idx)
+            If Me.ContainsKey(tmp) Then Return
+
             Add(Parent, tmp, IsGlobal)
-        Next
+
+            idx = tmp.LastIndexOf("."c)
+        Loop While idx >= 0
     End Sub
 
     Overloads Sub Add(ByVal ns As [Namespace])
@@ -147,6 +164,14 @@ Public Class Namespaces
                 If strNS.StartsWith(Name) Then Return True
             Next
         End If
+        Return False
+    End Function
+
+    Function IsNamespaceExact(ByVal A As String, ByVal B As String) As Boolean
+        For i As Integer = 0 To Me.Count - 1
+            Dim ns As [Namespace] = Me.Item(i)
+            If ns.Equals(A, B) Then Return True
+        Next
         Return False
     End Function
 

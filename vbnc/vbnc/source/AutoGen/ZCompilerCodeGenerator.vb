@@ -148,7 +148,7 @@ Namespace Z
 
             For i As Integer = 0 To VB.UBound(TYPES)
                 Dim lefttype As String = TYPES(i)
-                Dim lefttypecode As TypeCode = Helper.GetTypeCode(TYPES2(i))
+                Dim lefttypecode As TypeCode = Helper.GetTypeCode(Nothing, TYPES2(i))
 
                 For k As Integer = 0 To VB.UBound(UNARYOPERATORS)
                     Dim unaryop As String = UNARYOPERATORS(k)
@@ -181,7 +181,7 @@ Namespace Z
 
                 For j As Integer = 0 To VB.UBound(TYPES)
                     Dim righttype As String = TYPES(j)
-                    Dim righttypecode As TypeCode = Helper.GetTypeCode(TYPES2(j))
+                    Dim righttypecode As TypeCode = Helper.GetTypeCode(Nothing, TYPES2(j))
                     For k As Integer = 0 To VB.UBound(BINARYOPERATORS)
                         Dim binaryop As String = BINARYOPERATORS(k)
                         Dim binaryopname As String = BINARYOPERATORSNAME(k)
@@ -620,7 +620,7 @@ Namespace Z
                     t1 = DirectCast(tp(i), Type)
                     t2 = DirectCast(tp(j), Type)
                     If i <> j Then
-                        conversion = TypeResolution.Conversion(Helper.GetTypeCode(t1), Helper.GetTypeCode(t2)).Conversion
+                        conversion = TypeResolution.Conversion(Helper.GetTypeCode(Nothing, t1), Helper.GetTypeCode(Nothing, t2)).Conversion
                         If conversion = ConversionType.Explicit Then
                             'code.AppendLine("   'Explicit conversion")
                         Else

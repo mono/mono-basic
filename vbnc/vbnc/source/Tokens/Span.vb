@@ -22,11 +22,12 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class Span
-    Private m_EndLine As Integer
-    Private m_EndColumn As Integer
     Private m_Line As Integer
-    Private m_Column As Integer
+    Private m_Column As Short
+    'Private m_EndLine As Integer
+    Private m_EndColumn As Short
     Private m_File As CodeFile
+
     Public Shared ReadOnly CommandLineSpan As Span = New Span(Nothing, -1, -1, -1, -1)
 
     ''' <summary>
@@ -48,11 +49,11 @@ Public Class Span
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property Column() As Integer
+    Public Property Column() As Short
         Get
             Return m_Column
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As Short)
             m_Column = value
         End Set
     End Property
@@ -119,11 +120,12 @@ Public Class Span
     ''' <remarks></remarks>
     Public Property EndLine() As Integer
         Get
-            If m_EndLine < Line Then Return Line
-            Return m_EndLine
+            Return Line
+            'If m_EndLine < Line Then Return Line
+            'Return m_EndLine
         End Get
         Set(ByVal value As Integer)
-            m_EndLine = value
+            'm_EndLine = value
         End Set
     End Property
 
@@ -132,24 +134,25 @@ Public Class Span
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property EndColumn() As Integer
+    Public Property EndColumn() As Short
         Get
-            If m_EndLine < Line Then
-                Return Column
-            ElseIf m_EndLine = Line AndAlso m_EndColumn < Column Then
+            'If m_EndLine < Line Then
+            '    Return Column
+            'ElseIf m_EndLine = Line AndAlso 
+            If m_EndColumn < Column Then
                 Return Column
             Else
                 Return m_EndColumn
             End If
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As Short)
             m_EndColumn = value
         End Set
     End Property
 
     Sub SpanTo(ByVal Location As Span)
         m_EndColumn = Location.m_EndColumn
-        m_EndLine = Location.m_EndLine
+        'm_EndLine = Location.m_EndLine
     End Sub
 
     '''' <summary>
@@ -160,8 +163,8 @@ Public Class Span
     '    'Default constructor
     'End Sub
 
-    Public Sub New(ByVal File As CodeFile, ByVal StartLine As Integer, ByVal StartColumn As Integer, Optional ByVal EndLine As Integer = 0, Optional ByVal EndColumn As Integer = 0)
-        m_EndLine = EndLine
+    Public Sub New(ByVal File As CodeFile, ByVal StartLine As Integer, ByVal StartColumn As Short, Optional ByVal EndLine As Integer = 0, Optional ByVal EndColumn As Short = 0)
+        ' m_EndLine = EndLine
         m_EndColumn = EndColumn
         m_File = File
         m_Line = StartLine

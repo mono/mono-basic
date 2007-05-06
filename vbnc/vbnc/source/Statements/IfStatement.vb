@@ -120,6 +120,8 @@ Public Class IfStatement
         If m_FalseCode IsNot Nothing Then result = m_FalseCode.ResolveCode(Info) AndAlso result
         If m_ElseIfs IsNot Nothing Then result = m_ElseIfs.ResolveCode(Info) AndAlso result
 
+        If result = False Then Return result
+
         If m_Condition.Classification.IsValueClassification Then
             'nothing to do
         ElseIf m_Condition.Classification.CanBeValueClassification Then

@@ -116,7 +116,7 @@ Public Class ForEachStatement
             Emitter.EmitLoadObject(Info, varType)
             Emitter.MarkLabel(Info, valueTPLoaded)
         Else
-            Emitter.EmitConversion(varType, Info.Clone(True, True, varType))
+            Emitter.EmitConversion(Compiler.TypeCache.Object, varType, Info.Clone(True, True, varType))
         End If
         Return True
     End Function

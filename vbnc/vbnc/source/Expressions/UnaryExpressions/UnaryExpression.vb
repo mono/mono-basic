@@ -92,11 +92,11 @@ Public MustInherit Class UnaryExpression
             'If X is an intrinsic types, look up the result type in our operator tables and use that.
             'If X is not an intrinsic type, do overload resolution on the set of operators to be considered.
             Dim destinationType As Type
-            Dim isRightIntrinsic As Boolean = Helper.GetTypeCode(m_Expression.ExpressionType) <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.m_Expression.ExpressionType)
+            Dim isRightIntrinsic As Boolean = Helper.GetTypeCode(Compiler, m_Expression.ExpressionType) <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.m_Expression.ExpressionType)
 
             If isRightIntrinsic Then
                 m_ExpressionType = Compiler.TypeResolution.TypeCodeToType(Me.ExpressionTypeCode)
-                If Helper.GetTypeCode(m_Expression.ExpressionType) <> operandType Then
+                If Helper.GetTypeCode(Compiler, m_Expression.ExpressionType) <> operandType Then
                     Dim ctypeexp As CTypeExpression
                     destinationType = Compiler.TypeResolution.TypeCodeToType(operandType)
                     ctypeexp = New CTypeExpression(Me, m_Expression, destinationType)
@@ -123,7 +123,7 @@ Public MustInherit Class UnaryExpression
 
     ReadOnly Property ExpressionTypeCode() As TypeCode
         Get
-            Return TypeConverter.GetUnaryResultType(Me.Keyword, Helper.GetTypeCode(Expression.ExpressionType))
+            Return TypeConverter.GetUnaryResultType(Me.Keyword, Helper.GetTypeCode(Compiler, Expression.ExpressionType))
         End Get
     End Property
 

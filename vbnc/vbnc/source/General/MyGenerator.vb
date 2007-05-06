@@ -53,6 +53,8 @@ Public Class MyGenerator
         Dim _MyTypeDefine As Define
         Dim _MyType As String
 
+        If Compiler.CommandLine.NoVBRuntimeRef Then Return result
+
         _MyTypeDefine = Compiler.CommandLine.Define("_MYTYPE")
         If _MyTypeDefine Is Nothing Then
             _MyType = String.Empty
@@ -190,7 +192,7 @@ Public Class MyGenerator
         Code.Append("        Inherits ") : Code.AppendLine(baseClass)
         Code.AppendLine("        Public Sub New()")
         Code.AppendLine("        End Sub")
-        If Compiler.CommandLine.Target = CommandLine.Targets.Winexe AndAlso Compiler.CommandLine.Main = String.Empty Then
+        If Compiler.CommandLine.Target = CommandLine.Targets.Winexe AndAlso Compiler.CommandLine.Main = String.Empty AndAlso baseClass = "Global.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase" Then
             Code.AppendLine("        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Advanced)> _")
             Code.AppendLine("        <Global.System.Diagnostics.DebuggerHidden()> _")
             Code.AppendLine("        Friend Shared Sub Main(ByVal Args As String())")
@@ -270,6 +272,8 @@ Public Class MyGenerator
         End If
 
         If Not _MyForms Then Return True
+
+        Compiler.CommandLine.References.Add("System.Windows.Forms.dll")
 
         Dim code As String = VB.vbNewLine & _
        "        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Never)> _" & VB.vbNewLine & _

@@ -22,7 +22,7 @@ Imports System.Reflection
 
 Public Class Index
     Private m_Parent As ParsedObject
-    Private m_lstCollections As New Generic.Dictionary(Of String, IndexList)
+    Private m_lstCollections As New Generic.Dictionary(Of String, IndexList)(NameResolution.StringComparer)
 
     Public Sub New(ByVal Parent As ParsedObject)
         m_Parent = Parent
@@ -45,11 +45,11 @@ Public Class Index
     Shadows Sub Add(ByVal Base As INameable)
         Dim idxList As IndexList
         'Does name exist already?
-        If m_lstCollections.ContainsKey(Base.Name.ToLower) Then
-            idxList = DirectCast(m_lstCollections.Item(Base.Name.ToLower), IndexList)
+        If m_lstCollections.ContainsKey(Base.Name) Then
+            idxList = DirectCast(m_lstCollections.Item(Base.Name), IndexList)
         Else 'If not, create a new indexlist
             idxList = New IndexList()
-            idxList.Name = Base.Name.ToLower
+            idxList.Name = Base.Name
             m_lstCollections.Add(idxList.Name, idxList)
         End If
         'Add the value
@@ -58,18 +58,18 @@ Public Class Index
 
     ''' <summary>
     ''' Looks an list of all TypeBase objects which has the specified Name. 
-    '''	If no TypeBase found, returns an empty arraylist
+    '''	If no TypeBase found, returns nothing
     ''' </summary>
     ''' <param name="Name"></param>
     ''' <value></value>
     ''' <remarks></remarks>
     Shadows ReadOnly Property Item(ByVal Name As String) As Generic.List(Of INameable)
         Get
-            Name = Name.ToLower
+            'Name = Name.ToLower
             If m_lstCollections.ContainsKey(Name) Then
-                Return CType(m_lstCollections.Item(Name), IndexList).Values
+                Return m_lstCollections.Item(Name).Values
             Else
-                Return New Generic.List(Of INameable)
+                Return Nothing
             End If
         End Get
     End Property
@@ -81,7 +81,7 @@ Public Class Index
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shadows Function ContainsName(ByVal Name As String) As Boolean
-        Return m_lstCollections.ContainsKey(Name.ToLower)
+        Return m_lstCollections.ContainsKey(Name)
     End Function
 
     ReadOnly Property GetAllTypeBases() As ArrayList

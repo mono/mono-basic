@@ -20,6 +20,17 @@
 Public Class EndOfLineToken
     Inherits Token
 
+    Public Shared EOL As EndOfLineToken
+
+    Shared Function GetEOL(ByVal Compiler As Compiler) As EndOfLineToken
+        Return New EndOfLineToken(Compiler.Scanner.GetCurrentLocation, Compiler)
+        If EOL Is Nothing Then
+            EOL = New EndOfLineToken(Compiler.Scanner.GetCurrentLocation, Compiler)
+        End If
+        Helper.Assert(Compiler Is EOL.Compiler)
+        Return EOL
+    End Function
+
     ''' <summary>
     ''' Create a new end of line token. 
     ''' </summary>

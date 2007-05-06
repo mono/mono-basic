@@ -61,9 +61,9 @@ Public Class ConstructorDeclaration
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
 
         If Modifiers IsNot Nothing AndAlso Modifiers.Is(KS.Shared) Then
-            Signature.Init(SharedConstructorName, Signature.TypeParameters, Signature.Parameters)
+            Signature.Init(New IdentifierToken(Signature.Identifier, SharedConstructorName), Signature.TypeParameters, Signature.Parameters)
         Else
-            Signature.Init(ConstructorName, Signature.TypeParameters, Signature.Parameters)
+            Signature.Init(New IdentifierToken(Signature.Identifier, ConstructorName), Signature.TypeParameters, Signature.Parameters)
         End If
 
         MyBase.Init(Attributes, Modifiers, Signature, Block)
@@ -229,8 +229,8 @@ Public Class ConstructorDeclaration
         Compiler.TypeManager.RegisterReflectionMember(m_ConstructorBuilder, Me.MemberDescriptor)
 
 #If DEBUGREFLECTION Then
-        Compiler.DebugReflection.AppendLine(String.Format("{0} = {1}.DefineConstructor(CType({2}, System.Reflection.MethodAttributes), System.Reflection.CallingConventions.Standard, Nothing)", Helper.GetObjectName(m_ConstructorBuilder), Helper.GetObjectName(declaringType.TypeBuilder), CInt(Me.Attributes)))
-        Compiler.DebugReflection.AppendLine(String.Format("{0}.SetImplementationFlags(CType({1}, System.Reflection.MethodImplAttributes))", Helper.GetObjectName(m_ConstructorBuilder), CInt(Me.GetMethodImplementationFlags)))
+        Helper.DebugReflection_AppendLine("{0} = {1}.DefineConstructor(CType({2}, System.Reflection.MethodAttributes), System.Reflection.CallingConventions.Standard, Nothing)", m_ConstructorBuilder, declaringType.TypeBuilder, CInt(Me.Attributes).ToString)
+        Helper.DebugReflection_AppendLine("{0}.SetImplementationFlags(CType({1}, System.Reflection.MethodImplAttributes))", m_ConstructorBuilder, CInt(Me.GetMethodImplementationFlags).ToString)
 #End If
 
         For i As Integer = 0 To Signature.Parameters.Count - 1

@@ -33,6 +33,8 @@ Public Class PowerAssignStatement
 #End If
 
     Protected Overloads Overrides Function ResolveStatement(ByVal LSide As Expression, ByVal RSide As Expression) As Expression
-        Return New ExponentExpression(Me, LSide, RSide)
+        Dim result As Expression = New ExponentExpression(Me, LSide, RSide)
+        result = ConversionExpression.GetTypeConversion(Me, result, LSide.ExpressionType)
+        Return result
     End Function
 End Class

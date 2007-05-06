@@ -93,7 +93,7 @@ Public Class GetRefExpression
                     Dim elementInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.Integer)
                     For i As Integer = 0 To varC.Arguments.Count - 1
                         result = varC.Arguments(i).GenerateCode(elementInfo) AndAlso result
-                        Emitter.EmitConversion(Compiler.TypeCache.Integer, Info)
+                        Emitter.EmitConversion(varC.Arguments(i).Expression.ExpressionType, Compiler.TypeCache.Integer, Info)
                         methodtypes.Add(Compiler.TypeCache.Integer)
                     Next
 
@@ -106,7 +106,7 @@ Public Class GetRefExpression
                             'result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
                             'Emitter.EmitStoreObject(Info, elementtype)
                         Else
-                            Helper.NotImplemented()
+                            Emitter.EmitLoadElementAddress(Info, elementtype, arrtype)
                             'result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
                             'Emitter.EmitStoreElement(Info, elementtype, arrtype)
                         End If

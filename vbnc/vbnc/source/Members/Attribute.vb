@@ -184,7 +184,7 @@ Public Class Attribute
                     Dim members As Generic.List(Of MemberInfo)
 
                     name = item.IdentifierOrKeyword.Identifier
-                    members = cache.LookupMembersFlattened(name)
+                    members = cache.LookupFlattenedMembers(name)
                     members = Helper.FilterExternalInaccessible(Info.Compiler, members)
                     If members.Count <> 1 Then
                         If members(0) Is members(1) Then
@@ -265,7 +265,9 @@ Public Class Attribute
             builder = GetAttributeBuilder()
             Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
         ElseIf m_IsModule Then
-            Helper.NotImplemented()
+            Dim builder As CustomAttributeBuilder
+            builder = GetAttributeBuilder()
+            Me.Compiler.ModuleBuilder.SetCustomAttribute(builder)
         Else
             Dim memberparent As IAttributableDeclaration = Me.FindFirstParent(Of IAttributableDeclaration)()
             If memberparent IsNot Nothing Then

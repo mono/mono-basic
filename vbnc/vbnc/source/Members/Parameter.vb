@@ -38,6 +38,12 @@ Public Class Parameter
     Private m_ParameterAttributes As ParameterAttributes = ParameterAttributes.None
     Private m_ParameterBuilder As ParameterBuilder
 
+    ReadOnly Property Identifier() As ParameterIdentifier
+        Get
+            Return m_ParameterIdentifier
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParameterList)
         MyBase.New(Parent)
     End Sub
@@ -260,8 +266,10 @@ Public Class Parameter
                         m_ParameterType = m_ParameterIdentifier.ArrayNameModifier.CreateArrayType(m_ParameterType)
                     End If
                 End If
+            ElseIf m_ParameterIdentifier.Identifier.HasTypeCharacter Then
+                m_ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
             Else
-                If Me.Location.File.IsOptionExplicitOn Then
+                If Me.Location.File.IsOptionStrictOn Then
                     Helper.AddError("Parameter type must be specified.")
                 Else
                     Helper.AddWarning("Parameter type should be specified.")

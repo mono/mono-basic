@@ -31,7 +31,7 @@ Public Class IntegralLiteralToken(Of Type)
     End Property
 
     Sub New(ByVal Range As Span, ByVal Literal As Type, ByVal Base As IntegerBase, ByVal LiteralTypeCharacter As LiteralTypeCharacters_Characters, ByVal Compiler As Compiler)
-        MyBase.New(Range, TypeResolution.TypeCodeToBuiltInType(Helper.GetTypeCode(Literal.GetType)), Compiler, LiteralTypeCharacter, Literal)
+        MyBase.New(Range, TypeResolution.TypeCodeToBuiltInType(Helper.GetTypeCode(Compiler, Literal.GetType)), Compiler, LiteralTypeCharacter, Literal)
         m_Base = Base
     End Sub
 

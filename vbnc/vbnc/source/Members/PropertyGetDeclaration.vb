@@ -67,7 +67,7 @@ Public Class PropertyGetDeclaration
         End If
         name = "get_" & PropertySignature.Name
 
-        mySignature.Init(name, typeParams, params, retTypeAttributes, typename, PropertySignature.Location)
+        mySignature.Init(New IdentifierToken(PropertySignature.Identifier, name), typeParams, params, retTypeAttributes, typename, PropertySignature.Location)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub

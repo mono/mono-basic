@@ -33,6 +33,15 @@ Public Class IdentifierToken
     Private m_TypeCharacter As TypeCharacters.Characters
     Private m_Escaped As Boolean
 
+    Property TypeCharacter() As TypeCharacters.Characters
+        Get
+            Return m_TypeCharacter
+        End Get
+        Set(ByVal value As TypeCharacters.Characters)
+            m_TypeCharacter = value
+        End Set
+    End Property
+
     ReadOnly Property HasTypeCharacter() As Boolean
         Get
             Return m_TypeCharacter <> TypeCharacters.Characters.None
@@ -44,6 +53,13 @@ Public Class IdentifierToken
         m_Identifier = Identifier
         m_TypeCharacter = TypeCharacter
         m_Escaped = Escaped
+    End Sub
+
+    Sub New(ByVal CopyFrom As IdentifierToken, ByVal Name As String)
+        MyBase.New(CopyFrom.Location, CopyFrom.Compiler)
+        m_Identifier = Name
+        m_TypeCharacter = CopyFrom.TypeCharacter
+        m_Escaped = CopyFrom.m_Escaped
     End Sub
 
     Overloads Shared Operator =(ByVal o1 As IdentifierToken, ByVal o2 As String) As Boolean

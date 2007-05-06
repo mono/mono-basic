@@ -56,6 +56,14 @@ Public Class DelegateOrObjectCreationExpression
         MyBase.New(Parent)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal DelegateType As Type, ByVal AddressOfExpression As AddressOfExpression)
+        MyBase.New(Parent)
+
+        m_IsDelegateCreationExpression = True
+        m_ResolvedType = DelegateType
+        m_ArgumentList = New ArgumentList(Me, AddressOfExpression)
+    End Sub
+
     Sub New(ByVal Parent As ParsedObject, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList)
         MyBase.new(Parent)
         Me.Init(TypeName, ArgumentList)
@@ -115,33 +123,31 @@ Public Class DelegateOrObjectCreationExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        '  result = m_NonArrayTypeName.ResolveTypeReferences AndAlso result
         Helper.Assert(m_ResolvedType IsNot Nothing)
-        m_IsDelegateCreationExpression = Helper.CompareType(m_ResolvedType.BaseType, Compiler.TypeCache.MulticastDelegate)
+        If m_IsDelegateCreationExpression = False Then
+            m_IsDelegateCreationExpression = Helper.CompareType(m_ResolvedType.BaseType, Compiler.TypeCache.MulticastDelegate)
+        End If
 
         If m_ArgumentList IsNot Nothing Then
-            If m_IsDelegateCreationExpression Then
-                Dim ri As New DelegateResolveInfo(Compiler, m_ResolvedType)
-                result = m_ArgumentList.ResolveCode(ri) AndAlso result
-            Else
-                result = m_ArgumentList.ResolveCode(Info) AndAlso result
-            End If
+            result = m_ArgumentList.ResolveCode(Info) AndAlso result
         Else
             m_ArgumentList = New ArgumentList(Me)
         End If
 
+        If result = False Then Return result
+
         If m_IsDelegateCreationExpression Then
             Dim type As Type = m_ResolvedType
             If m_ArgumentList.Count <> 1 Then
-                Helper.AddError("Delegate problems, " & Me.Location.ToString())
+                result = Compiler.Report.ShowMessage(Messages.VBNC32008) AndAlso result
             End If
-            If m_ArgumentList(0).Expression.Classification.IsMethodPointerClassification = False Then
-                Helper.AddError("Delegate problems 2, " & Me.Location.ToString())
+            If result AndAlso m_ArgumentList(0).Expression.Classification.IsMethodPointerClassification = False Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC32008) AndAlso result
             End If
-            With m_ArgumentList(0).Expression.Classification.AsMethodPointerClassification
-                result = .Resolve(type) AndAlso result
-            End With
-            Classification = New ValueClassification(Me, type)
+            If result Then
+                result = m_ArgumentList(0).Expression.ResolveAddressOfExpression(type) AndAlso result
+                Classification = New ValueClassification(Me, type)
+            End If
         Else
             Dim resolvedType As Type = m_ResolvedType
             If resolvedType.IsValueType AndAlso m_ArgumentList.Count = 0 Then

@@ -105,7 +105,8 @@ Public Class MemberCache
             m_FlattenedCache = New MemberCacheEntries(m_Cache)
         End If
         For Each cache As MemberCacheEntry In MemberCache.FlattenedCache.Values
-            For Each member As MemberInfo In cache.Members
+            For i As Integer = 0 To cache.Members.Count - 1
+                Dim member As MemberInfo = cache.Members(i)
                 If Not IsHidden(member) Then
                     If m_FlattenedCache.ContainsKey(cache.Name) = False Then
                         m_FlattenedCache.Add(New MemberCacheEntry(member))
@@ -139,7 +140,8 @@ Public Class MemberCache
             Return False
         End If
 
-        For Each thisMember As MemberInfo In current.Members
+        For i As Integer = 0 To current.Members.Count - 1
+            Dim thisMember As MemberInfo = current.Members(i)
             If thisMember.MemberType <> baseMember.MemberType Then
 #If DEBUG Then
                 LogExtended("MemberCache.IsHidden (true, different member types), type=" & m_Type.Name & ", name=" & thisMember.Name)
@@ -210,14 +212,12 @@ Public Class MemberCache
     ''' <remarks></remarks>
     Function LookupFlattened(ByVal Name As String) As MemberCacheEntry
         If m_FlattenedCacheInsensitive Is Nothing Then
-            m_FlattenedCacheInsensitive = New MemberCacheEntries(NameResolution.StringComparer)
+            m_FlattenedCacheInsensitive = New MemberCacheEntries(m_FlattenedCache.Count, NameResolution.StringComparer)
             For Each item As KeyValuePair(Of String, MemberCacheEntry) In m_FlattenedCache
-                Dim current As MemberCacheEntry
-                If m_FlattenedCacheInsensitive.ContainsKey(item.Key) = False Then
+                Dim current As MemberCacheEntry = Nothing
+                If m_FlattenedCacheInsensitive.TryGetValue(item.Key, current) = False Then
                     current = New MemberCacheEntry(item.Key)
                     m_FlattenedCacheInsensitive.Add(current)
-                Else
-                    current = m_FlattenedCacheInsensitive(item.Key)
                 End If
                 current.Members.AddRange(item.Value.Members)
             Next
@@ -229,6 +229,25 @@ Public Class MemberCache
         End If
     End Function
 
+    ''' <summary>
+    ''' This function returns the members list in the cache, or nothing
+    ''' </summary>
+    ''' <param name="Name"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function LookupFlattenedMembers(ByVal Name As String) As Generic.List(Of MemberInfo)
+        Dim cache As MemberCacheEntry = LookupFlattened(Name)
+        If cache Is Nothing Then Return Nothing
+        Return cache.Members
+    End Function
+
+    ''' <summary>
+    ''' This function returns a COPY of the members list in the cache.
+    ''' To be avoided if possible.
+    ''' </summary>
+    ''' <param name="Name"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Function LookupMembersFlattened(ByVal Name As String) As Generic.List(Of MemberInfo)
         Dim result As New Generic.List(Of MemberInfo)
 
@@ -284,6 +303,10 @@ Public Class MemberCacheEntries
 
     Sub New(ByVal compare As IEqualityComparer(Of String))
         MyBase.New(compare)
+    End Sub
+
+    Sub New(ByVal Capacity As Integer, ByVal compare As IEqualityComparer(Of String))
+        MyBase.New(Capacity, compare)
     End Sub
 
     Sub New(ByVal Dictionary As MemberCacheEntries)

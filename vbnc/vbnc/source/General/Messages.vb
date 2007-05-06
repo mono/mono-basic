@@ -72,6 +72,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2016 = 2016
 
     ''' <summary>
+    ''' VBNC = "The library '{0}' could not be found."
+    ''' VB   = "could not find library '%s'"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2017 = 2017
+
+    ''' <summary>
     ''' VBNC = "the option '{0}' cannot have the value '{1}'"
     ''' VB   = "the value '%2!ls!' is invalid for option '%1!ls!'"
     ''' </summary>
@@ -1521,7 +1528,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30283 = 30283
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Overrides' can't be used on {0}, because there is no such member in a base class."
     ''' VB   = "|1 '|2' cannot be declared 'Overrides' because it does not override a |1 in a base |3."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2123,7 +2130,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30451 = 30451
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Operator '{0}' is not defined for the types '{1}' and '{2}'."
     ''' VB   = "Operator '|1' is not defined for types '|2' and '|3'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2669,7 +2676,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30580 = 30580
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "An 'AddressOf' expression can't be converted to '{0}', because '{0}' is not a delegate type."
     ''' VB   = "'AddressOf' expression cannot be converted to '|1' because '|1' is not a delegate type."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5607,6 +5614,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32071 = 32071
+
+    ''' <summary>
+    ''' VBNC = "Type parameters can't be used as a qualifier."
+    ''' VB   = "Type parameters cannot be used as qualifiers."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32098 = 32098
 
     ''' <summary>
     ''' VBNC = "CHANGEME"

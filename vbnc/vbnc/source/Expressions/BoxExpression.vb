@@ -61,7 +61,7 @@ Public Class BoxExpression
         Dim result As Boolean = True
 
         result = m_Expression.GenerateCode(Info) AndAlso result
-        Emitter.EmitBox(Info, m_DestinationType)
+        Emitter.EmitBox(Info, m_Expression.ExpressionType)
 
         Return result
     End Function

@@ -22,6 +22,48 @@ Public MustInherit Class ConversionExpression
 
     Private m_Expression As Expression
 
+    Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Type) As Expression
+
+        If Helper.CompareType(fromExpr.ExpressionType, DestinationType) Then
+            Return fromExpr
+        End If
+
+        Select Case Helper.GetTypeCode(Parent.Compiler, DestinationType)
+            Case TypeCode.Boolean
+                Return New CBoolExpression(Parent, fromExpr)
+            Case TypeCode.Byte
+                Return New CByteExpression(Parent, fromExpr)
+            Case TypeCode.Char
+                Return New CCharExpression(Parent, fromExpr)
+            Case TypeCode.DateTime
+                Return New CDateExpression(Parent, fromExpr)
+            Case TypeCode.Decimal
+                Return New CDecExpression(Parent, fromExpr)
+            Case TypeCode.Double
+                Return New CDblExpression(Parent, fromExpr)
+            Case TypeCode.Int16
+                Return New CShortExpression(Parent, fromExpr)
+            Case TypeCode.Int32
+                Return New CIntExpression(Parent, fromExpr)
+            Case TypeCode.Int64
+                Return New CLngExpression(Parent, fromExpr)
+            Case TypeCode.SByte
+                Return New CSByteExpression(Parent, fromExpr)
+            Case TypeCode.Single
+                Return New CSngExpression(Parent, fromExpr)
+            Case TypeCode.String
+                Return New CStrExpression(Parent, fromExpr)
+            Case TypeCode.UInt16
+                Return New CUShortExpression(Parent, fromExpr)
+            Case TypeCode.UInt32
+                Return New CUIntExpression(Parent, fromExpr)
+            Case TypeCode.UInt64
+                Return New CULngExpression(Parent, fromExpr)
+            Case Else
+                Return New CTypeExpression(Parent, fromExpr, DestinationType)
+        End Select
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression.ResolveTypeReferences
     End Function

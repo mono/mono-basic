@@ -32,6 +32,7 @@ Public Class RegularEventDeclaration
     Private m_ImplicitEventDelegate As DelegateDeclaration
     ''' <summary>The implicitly defined field holding the delegate variable (of not a custom event).</summary>
     Private m_Variable As VariableDeclaration
+    Private m_ElementsCreated As Boolean
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
@@ -82,7 +83,7 @@ Public Class RegularEventDeclaration
     Public Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes
         Dim result As Boolean = True
         'An event creates the following members.
-        '1 - if the event is not an explicit delegate, a nested delegate in the 
+        '1 - if the event is not an explicit delegate, and not an implemented interface event, a nested delegate in the 
         '    parent called (name)EventHandler.
         '    the parameters to the delegate are the same as for the event 
         '    accessability is the same as for the event.
@@ -98,13 +99,48 @@ Public Class RegularEventDeclaration
         '6 - an event in the parent called (name) with the add, remove and raise methods of 3, 4 & 5
         '    accessability is the same as for the event.
 
+        If m_ElementsCreated Then Return result
+        m_ElementsCreated = True
+
         Dim m_AddMethod As RegularEventHandlerDeclaration
         Dim m_RemoveMethod As RegularEventHandlerDeclaration
         Dim m_Parameters As ParameterList = Me.Parameters
-        Dim m_Type As NonArrayTypeName = Me.Type
+        Dim m_Type As TypeName = Nothing
+
+        If Me.Type IsNot Nothing Then m_Type = New TypeName(Me, Me.Type)
+
 
         'Create the delegate, if necessary.
-        If m_Parameters IsNot Nothing Then
+        If ImplementsClause IsNot Nothing AndAlso ImplementsClause.ImplementsList.Count > 0 Then
+            Dim ism As InterfaceMemberSpecifier
+            ism = ImplementsClause.ImplementsList(0)
+
+            Helper.Assert(ImplementsClause.ImplementsList.Count = 1)
+            Helper.Assert(ism IsNot Nothing)
+
+            result = ism.ResolveEarly() AndAlso result
+
+            If result = False Then Return result
+
+            Helper.Assert(ism.ResolvedEventInfo IsNot Nothing)
+
+            Dim eD As EventDescriptor = TryCast(ism.ResolvedEventInfo, EventDescriptor)
+
+            If eD IsNot Nothing Then
+                If eD.EventDeclaration.EventType Is Nothing Then
+                    Dim red As RegularEventDeclaration = TryCast(eD.EventDeclaration, RegularEventDeclaration)
+                    If red IsNot Nothing Then
+                        result = red.CreateImplicitElements AndAlso result
+                        result = red.ResolveTypeReferences AndAlso result
+                    End If
+                End If
+                Helper.Assert(eD.EventDeclaration.EventType IsNot Nothing)
+                EventType = eD.EventDeclaration.EventType
+            Else
+                EventType = ism.ResolvedEventInfo.EventHandlerType
+            End If
+            m_Type = New TypeName(Me, EventType)
+        ElseIf m_Parameters IsNot Nothing Then
             m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
             m_ImplicitEventDelegate.Init(Nothing, New Modifiers(m_ImplicitEventDelegate, Me.Modifiers.ModifiersAsArray), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
             If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented()
@@ -121,14 +157,14 @@ Public Class RegularEventDeclaration
         'Create the variable.
         If DeclaringType.IsInterface = False Then
             Dim eventVariableModifiers As Modifiers
-            m_Variable = New VariableDeclaration(declaringtype)
+            m_Variable = New VariableDeclaration(DeclaringType)
             eventVariableModifiers = New Modifiers(m_Variable, KS.Private)
             If Me.IsShared Then eventVariableModifiers.AddModifier(KS.Shared)
             If m_ImplicitEventDelegate IsNot Nothing Then
                 m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.TypeDescriptor)
             Else
                 Helper.Assert(m_Type IsNot Nothing)
-                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", New TypeName(m_Variable, m_Type))
+                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_Type)
             End If
         Else
             m_Variable = Nothing
@@ -159,11 +195,13 @@ Public Class RegularEventDeclaration
         Dim result As Boolean = True
 
         result = m_ParametersOrType.ResolveTypeReferences AndAlso result
-        If Type IsNot Nothing Then
+        If EventType IsNot Nothing Then
+            'Nothing to do
+        ElseIf Type IsNot Nothing Then
             Helper.Assert(EventType Is Nothing)
             EventType = Type.ResolvedType
         ElseIf Parameters IsNot Nothing Then
-            Helper.Assert(EventType IsNot Nothing)
+            Helper.Assert(EventType IsNot Nothing OrElse ImplementsClause IsNot Nothing)
         Else
             Throw New InternalException(Me)
         End If

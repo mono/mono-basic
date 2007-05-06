@@ -52,7 +52,7 @@ Public Class PropertyGroupToPropertyAccessExpression
                 Compiler.Report.WriteLine("Property group resolution failed (unrecoverably), showing log")
                 Helper.LOGMETHODRESOLUTION = True
                 m_PropertyGroup.ResolveGroup(New ArgumentList(Me))
-                Helper.AddError("Failed to resolve property group")
+                Helper.AddError("Failed to resolve property group: " & Me.Location.AsString)
             End If
         End If
 

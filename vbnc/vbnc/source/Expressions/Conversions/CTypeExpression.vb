@@ -55,7 +55,7 @@ Public Class CTypeExpression
         Dim result As Boolean = True
 
         Dim expType As Type = Me.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(expType)
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
 
         Select Case expTypeCode
             Case TypeCode.Boolean
@@ -139,7 +139,7 @@ Public Class CTypeExpression
                 DestinationType = Helper.GetTypeOrTypeBuilder(DestinationType)
                 If Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(SourceType), DestinationType) Then
                     'Emitter.EmitUnbox_Any(Info, DestinationType)
-                    Emitter.EmitBox(Info)
+                    Emitter.EmitBox(Info, SourceType)
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
                     Helper.AddError()
@@ -147,7 +147,7 @@ Public Class CTypeExpression
             ElseIf DestinationType.IsValueType Then
                 Helper.NotImplemented()
             ElseIf DestinationType.IsInterface Then
-                Emitter.EmitBox(Info)
+                Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             Else
                 Throw New InternalException(Me)
@@ -171,7 +171,13 @@ Public Class CTypeExpression
             Else
                 Dim SourceElementType As Type = SourceType.GetElementType
                 Dim DestinationElementType As Type = DestinationType.GetElementType
-                'For any two reference types A and B, if A is a derived type of B or implements B, a conversion exists from an array of type A to a compatible array of type B. A compatible array is an array of the same rank and type. This relationship is known as array covariance. Array covariance in particular means that an element of an array whose element type is B may actually be an element of an array whose element type is A, provided that both A and B are reference types and that B is a base type of A or is implemented by A. 
+                'For any two reference types A and B, if A is a derived type of B or implements B, 
+                'a conversion exists from an array of type A to a compatible array of type B.
+                'A compatible array is an array of the same rank and type. 
+                'This relationship is known as array covariance. 
+                'Array covariance in particular means that an element of an array whose element type is B 
+                'may actually be an element of an array whose element type is A, 
+                'provided that both A and B are reference types and that B is a base type of A or is implemented by A. 
                 If Helper.CompareType(Compiler.TypeCache.Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse DestinationElementType.IsSubclassOf(SourceElementType) OrElse SourceElementType.IsSubclassOf(DestinationElementType) Then
@@ -217,7 +223,7 @@ Public Class CTypeExpression
             If Helper.CompareType(DestinationType, Compiler.TypeCache.Object) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
             ElseIf Helper.DoesTypeImplementInterface(Compiler, SourceType, DestinationType) Then
-                Emitter.EmitBox(Info)
+                Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, Compiler.TypeCache.Object, DestinationType)
             ElseIf Helper.CompareType(SourceType.BaseType, DestinationType) Then
                 Emitter.EmitBox(Info, DestinationType)
@@ -262,7 +268,7 @@ Public Class CTypeExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        Select Case Helper.GetTypeCode(Me.ExpressionType)
+        Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
             Case TypeCode.Boolean
                 result = CBoolExpression.Validate(Info, Expression.ExpressionType) AndAlso result
             Case TypeCode.Byte
@@ -317,9 +323,9 @@ Public Class CTypeExpression
 
     Public Overrides ReadOnly Property ConstantValue() As Object
         Get
-            Select Case Helper.GetTypeCode(Me.ExpressionType)
+            Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
                 Case TypeCode.String
-                    Select Case Helper.GetTypeCode(Me.Expression.ExpressionType)
+                    Select Case Helper.GetTypeCode(Compiler, Me.Expression.ExpressionType)
                         Case TypeCode.Char
                             Return CStr(Expression.ConstantValue)
                         Case Else

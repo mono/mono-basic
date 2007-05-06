@@ -108,12 +108,14 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitBranchIfFalse(ByVal Info As EmitInfo, ByVal Label As Label)
+#If DEBUG Then
         If Info.Stack.Peek.IsClass OrElse Info.Stack.Peek.IsInterface Then
             'comparison with Nothing, operand can be a class or interface.
             Info.Stack.Pop(Info.Stack.Peek)
         Else
             Info.Stack.Pop(Info.Compiler.TypeCache.Boolean)
         End If
+#End If
         Info.ILGen.Emit(OpCodes.Brfalse, Label)
     End Sub
 
@@ -387,16 +389,21 @@ Partial Public Class Emitter
         Return Info.ILGen.DeclareLocal(Type)
     End Function
 
+
+    <Diagnostics.Conditional("DEBUG")> _
     Private Shared Sub PopParameters(ByVal Info As EmitInfo, ByVal Params As ParameterInfo())
         For i As Integer = Params.GetUpperBound(0) To 0 Step -1
             Info.Stack.Pop(Params(i).ParameterType)
         Next
     End Sub
+
+    <Diagnostics.Conditional("DEBUG")> _
     Private Shared Sub PopParameters(ByVal Info As EmitInfo, ByVal Params As Type())
         For i As Integer = Params.GetUpperBound(0) To 0 Step -1
             Info.Stack.Pop(Params(i))
         Next
     End Sub
+
     Shared Sub EmitDup(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Dup)
         Info.Stack.Push(Info.Stack.Peek)
@@ -483,13 +490,13 @@ Partial Public Class Emitter
         Info.Stack.Push(ToType)
     End Sub
 
-    Shared Sub EmitValueTypeToObjectConversion(ByVal Info As EmitInfo, ByVal ToType As Type)
+    Shared Sub EmitValueTypeToObjectConversion(ByVal Info As EmitInfo, ByVal FromType As Type, ByVal ToType As Type)
         ToType = Helper.GetTypeOrTypeBuilder(ToType)
-        Dim FromType As Type = Info.Stack.Peek
+        'Dim FromType As Type = Info.Stack.Peek
         Dim FromTP, ToTP As TypeCode
 
-        FromTP = Helper.GetTypeCode(FromType)
-        ToTP = Helper.GetTypeCode(ToType)
+        FromTP = Helper.GetTypeCode(Info.Compiler, FromType)
+        ToTP = Helper.GetTypeCode(info.Compiler, ToType)
 
         Helper.Assert(ToTP = TypeCode.Object)
 
@@ -497,6 +504,8 @@ Partial Public Class Emitter
             Dim localvar As LocalBuilder = Info.ILGen.DeclareLocal(FromType)
             Emitter.EmitStoreVariable(Info, localvar)
             Emitter.EmitLoadVariableLocation(Info, localvar)
+        ElseIf FromType.BaseType.IsEnum AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.Enum) Then
+
         Else
             Helper.NotImplemented()
         End If
@@ -689,21 +698,23 @@ Partial Public Class Emitter
     ''' </summary>
     ''' <param name="ToType"></param>
     ''' <remarks></remarks>
-    Shared Sub EmitConversion(ByVal ToType As Type, ByVal Info As EmitInfo)
+    Shared Sub EmitConversion(ByVal FromType As Type, ByVal ToType As Type, ByVal Info As EmitInfo)
         Dim ToTypeOriginal, FromTypeOriginal As Type
+
+        If Helper.CompareType(FromType, Info.Compiler.TypeCache.Nothing) Then Return
 
         ToTypeOriginal = ToType
         ToType = Helper.GetTypeOrTypeBuilder(ToType)
 
-        Dim FromType As Type = Info.Stack.Peek
+        'Dim FromType As Type = Info.Stack.Peek
         Dim FromTP, ToTP As TypeCode
         Dim converted As Boolean = False
 
         FromTypeOriginal = FromType
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
 
-        FromTP = Helper.GetTypeCode(FromType)
-        ToTP = Helper.GetTypeCode(ToType)
+        FromTP = Helper.GetTypeCode(Info.Compiler, FromType)
+        ToTP = Helper.GetTypeCode(info.Compiler, ToType)
 
 #If DEBUGIMPLICITCONVERSION Then
                     		If FromTP <> ToTP OrElse FromTP = TypeCode.Object OrElse ToTP = TypeCode.Object Then
@@ -712,7 +723,7 @@ Partial Public Class Emitter
 #End If
 
         If ToTP = TypeCode.Object AndAlso FromTP <> TypeCode.Object AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.Object) = False Then
-            EmitValueTypeToObjectConversion(Info, ToType)
+            EmitValueTypeToObjectConversion(Info, FromType, ToType)
             Return
         End If
 
@@ -1185,7 +1196,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
         Info.Stack.Pop(ArrayType)
         Dim ElementType As Type = ArrayType.GetElementType
-        Select Case Helper.GetTypeCode(ElementType)
+        Select Case Helper.GetTypeCode(Info.Compiler, ElementType)
             Case TypeCode.Byte
                 Info.ILGen.Emit(OpCodes.Ldelem_U1)
             Case TypeCode.SByte, TypeCode.Boolean
@@ -1218,7 +1229,7 @@ Partial Public Class Emitter
 
     Shared Sub LoadElement(ByVal Info As EmitInfo, ByVal ElementType As Type)
         ElementType = Helper.GetTypeOrTypeBuilder(ElementType)
-        Select Case Helper.GetTypeCode(ElementType)
+        Select Case Helper.GetTypeCode(Info.Compiler, ElementType)
             Case TypeCode.Byte
                 Info.ILGen.Emit(OpCodes.Ldelem_U1)
             Case TypeCode.UInt16, TypeCode.Char
@@ -1262,7 +1273,7 @@ Partial Public Class Emitter
     Shared Sub EmitStoreElement(ByVal Info As EmitInfo, ByVal ElementType As Type, ByVal ArrayType As Type)
         ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
         ElementType = Helper.GetTypeOrTypeBuilder(ElementType)
-        Select Case Helper.GetTypeCode(ElementType)
+        Select Case Helper.GetTypeCode(Info.Compiler, ElementType)
             Case TypeCode.Int32, TypeCode.UInt32
                 Info.ILGen.Emit(OpCodes.Stelem_I4)
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Boolean
@@ -1282,7 +1293,7 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Stelem_Ref)
             Case TypeCode.Object
                 If ElementType.IsValueType Then
-                    Helper.NotImplemented()
+                    Info.ILGen.Emit(OpCodes.Stobj, ElementType)
                 ElseIf ElementType.IsGenericParameter Then
                     Info.ILGen.Emit(OpCodes.Stelem, ElementType)
                 Else
@@ -1440,7 +1451,7 @@ Partial Public Class Emitter
         Helper.Assert(Info.DesiredType IsNot Nothing)
 
         Dim tmp As EmitInfo = Info
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
 
         Select Case DesiredTypeCode
             Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Boolean
@@ -1473,7 +1484,7 @@ Partial Public Class Emitter
                 Return True
             Case TypeCode.Object
                 EmitLoadI4Value(tmp, Value)
-                EmitBox(Info)
+                EmitBox(Info, Info.Compiler.TypeCache.Integer)
                 Return True
         End Select
         Helper.NotImplemented()
@@ -1481,7 +1492,7 @@ Partial Public Class Emitter
 
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Long) As Boolean
         Helper.Assert(Info.DesiredType IsNot Nothing)
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
         If Value <= Integer.MaxValue AndAlso Value >= Integer.MinValue Then
             Return EmitLoadValue(Info, CInt(Value))
         End If
@@ -1505,7 +1516,7 @@ Partial Public Class Emitter
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As ULong) As Boolean
         Helper.Assert(Info.DesiredType IsNot Nothing)
 
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
         Dim tmp As EmitInfo = Info
 
         'If Value <= Integer.MaxValue AndAlso Value >= Integer.MinValue Then
@@ -1533,7 +1544,7 @@ Partial Public Class Emitter
     End Function
 
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Decimal) As Boolean
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
         Helper.Assert(Info.DesiredType IsNot Nothing)
         If Math.Truncate(Value) = Value Then
             If Value <= Integer.MaxValue AndAlso Value >= Integer.MinValue Then
@@ -1560,7 +1571,7 @@ Partial Public Class Emitter
 
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Double) As Boolean
         Helper.Assert(Info.DesiredType IsNot Nothing)
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
         Dim tmp As EmitInfo = Info
 
         Select Case DesiredTypeCode
@@ -1639,15 +1650,15 @@ Partial Public Class Emitter
     ''' <param name="Value">The value to emit. Set to DBNull.Value to emit a nothing value.</param>
     ''' <remarks></remarks>
     Overloads Shared Sub EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Object)
-        Helper.Assert(Info.IsRHS)
-        Helper.Assert(Info.DesiredType IsNot Nothing)
+        Helper.Assert(Info.IsRHS, "Not RHS")
+        Helper.Assert(Info.DesiredType IsNot Nothing, "No desired type")
 
         If Value Is Nothing Then Value = DBNull.Value
 
         Dim ActualType As Type = Value.GetType
-        Dim ActualTypeCode As TypeCode = Helper.GetTypeCode(ActualType)
+        Dim ActualTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, ActualType)
         Dim DesiredType As Type = Info.DesiredType
-        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(DesiredType)
+        Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(info.Compiler, DesiredType)
 
 #If EXTENDEDDEBUG Then
         Info.Compiler.Report.WriteLine(String.Format("Emitter.EmitLoadValue (EmitInfo, Object): ActualType={0}, DesiredType={1}, Value={2}", ActualTypeCode, DesiredTypeCode, Value))
@@ -1661,49 +1672,49 @@ Partial Public Class Emitter
                 EmitLoadValue(Info, CInt(Value))
                 Return
             Case TypeCode.Int64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Long, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Long, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CLng(Value))
                 Return
             Case TypeCode.Single
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Single, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Single, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Emitter.EmitLoadR4Value(Info, CSng(Value))
                 Return
             Case TypeCode.Double
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Double, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Double, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldc_R8, CDbl(Value))
                 Info.Stack.Push(Info.Compiler.TypeCache.Double)
                 Return
             Case TypeCode.String
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.Object, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.Object, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldstr, CStr(Value))
                 Info.Stack.Push(Info.Compiler.TypeCache.String)
                 Return
             Case TypeCode.Byte
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Byte, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.Byte)
                 Return
             Case TypeCode.UInt16
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UShort, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UShort, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.UShort)
                 Return
             Case TypeCode.UInt32
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UInteger, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UInteger, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CUInt(Value))
                 Return
             Case TypeCode.UInt64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.ULong, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.ULong, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CULng(Value))
                 Return
             Case TypeCode.Decimal
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Decimal, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Decimal, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDecimalValue(Info, CDec(Value))
                 Return
             Case TypeCode.DateTime
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Date, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Date, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDateValue(Info, CDate(Value))
                 Return
             Case TypeCode.Char
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Char, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType))
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Char, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, Microsoft.VisualBasic.AscW(CChar(Value)), Info.Compiler.TypeCache.Char)
                 Return
             Case TypeCode.Boolean
@@ -1715,7 +1726,7 @@ Partial Public Class Emitter
                 End If
                 Return
             Case Else
-                Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Missed case: " & Helper.GetTypeCode(Value.GetType).ToString)
+                Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Missed case: " & Helper.GetTypeCode(Info.Compiler, Value.GetType).ToString)
                 Helper.Stop()
         End Select
 
@@ -1748,7 +1759,7 @@ Partial Public Class Emitter
             Info.ILGen.Emit(OpCodes.Ldnull)
             Info.Stack.Push(Info.DesiredType)
         ElseIf Info.DesiredType.IsValueType Then
-            Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.DesiredType)
+            Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
             Select Case DesiredTypeCode
                 Case TypeCode.Boolean
                     EmitLoadI4Value(Info, CInt(False), Info.DesiredType)
@@ -1994,7 +2005,7 @@ Partial Public Class Emitter
         ByRefType = Helper.GetTypeOrTypeBuilder(ByRefType)
         Info.Stack.Pop(ByRefType)
         Dim elementtype As Type = ByRefType.GetElementType
-        Select Case Helper.GetTypeCode(elementtype)
+        Select Case Helper.GetTypeCode(Info.Compiler, elementtype)
             Case TypeCode.Byte
                 Info.ILGen.Emit(OpCodes.Ldind_U1)
             Case TypeCode.SByte
@@ -2129,7 +2140,7 @@ Partial Public Class Emitter
         Dim elementtype As Type = ByRefType.GetElementType
         Info.Stack.Pop(elementtype)
         Info.Stack.Pop(ByRefType)
-        Select Case Helper.GetTypeCode(elementtype)
+        Select Case Helper.GetTypeCode(Info.Compiler, elementtype)
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Boolean
                 Info.ILGen.Emit(OpCodes.Stind_I1)
             Case TypeCode.Int16, TypeCode.UInt16, TypeCode.Char
@@ -2185,25 +2196,24 @@ Partial Public Class Emitter
         End If
     End Sub
 
-    Shared Sub EmitBox(ByVal Info As EmitInfo)
-        Dim tp As Type = Info.Stack.Peek
-        Helper.Assert(tp.IsValueType OrElse tp.IsGenericParameter)
-        If tp.IsValueType OrElse tp.IsGenericParameter Then
-            EmitBox(Info, tp)
-        End If
-    End Sub
+    'Shared Sub EmitBox(ByVal Info As EmitInfo)
+    '    Dim tp As Type = Info.Stack.Peek
+    '    Helper.Assert(tp.IsValueType OrElse tp.IsGenericParameter)
+    '    If tp.IsValueType OrElse tp.IsGenericParameter Then
+    '        EmitBox(Info, tp)
+    '    End If
+    'End Sub
 
 
     ''' <summary>
     ''' Emits a box instruction, no checks are done.
     ''' </summary>
     ''' <param name="Info"></param>
-    ''' <param name="DestinationType"></param>
     ''' <remarks></remarks>
-    Shared Sub EmitBox(ByVal Info As EmitInfo, ByVal DestinationType As Type)
-        Dim OriginalDestinationType As Type = DestinationType
-        DestinationType = Helper.GetTypeOrTypeBuilder(DestinationType)
-        Info.ILGen.Emit(OpCodes.Box, DestinationType)
+    Shared Sub EmitBox(ByVal Info As EmitInfo, ByVal SourceType As Type)
+        Dim OriginalDestinationType As Type = SourceType
+        SourceType = Helper.GetTypeOrTypeBuilder(SourceType)
+        Info.ILGen.Emit(OpCodes.Box, SourceType)
         Info.Stack.SwitchHead(Info.Stack.Peek, Info.Compiler.TypeCache.Object) 'Push a object reference on the stack.
     End Sub
 

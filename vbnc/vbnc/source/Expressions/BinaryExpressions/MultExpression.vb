@@ -74,9 +74,9 @@ Public Class MultExpression
                 Dim tlvalue, trvalue As Type
                 Dim clvalue, crvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
                 trvalue = rvalue.GetType
-                crvalue = Helper.GetTypeCode(trvalue)
+                crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 Dim csmallest As TypeCode
                 csmallest = TypeConverter.GetBinaryOperandType(Me.Keyword, clvalue, crvalue)

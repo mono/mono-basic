@@ -42,28 +42,51 @@ Public Class MidAssignStatement
         m_Source = Source
     End Sub
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        If m_Target IsNot Nothing Then result = m_Target.ResolveTypeReferences AndAlso result
+        If m_Start IsNot Nothing Then result = m_Start.ResolveTypeReferences AndAlso result
+        If m_Length IsNot Nothing Then result = m_Length.ResolveTypeReferences AndAlso result
+        If m_Source IsNot Nothing Then result = m_Source.ResolveTypeReferences AndAlso result
+
+        Return result
+    End Function
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(m_Target.Classification.IsVariableClassification)
+        Helper.Assert(m_Target.Classification.IsVariableClassification OrElse m_Target.Classification.IsPropertyAccessClassification)
         Helper.Assert(m_Start.Classification.CanBeValueClassification)
         Helper.Assert(m_Length Is Nothing OrElse m_Length.Classification.CanBeValueClassification)
         Helper.Assert(m_Source.Classification.CanBeValueClassification)
 
-        result = m_Target.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.String_ByRef)) AndAlso result
+        Dim tmpLocal As LocalBuilder = Nothing
+        If m_Target.Classification.IsPropertyAccessClassification Then
+            tmpLocal = Emitter.DeclareLocal(Info, Compiler.TypeCache.String, "MidTmp" & ObjectID.ToString)
+            result = m_Target.GenerateCode(Info.Clone(True, False, tmpLocal.LocalType)) AndAlso result
+            Emitter.EmitStoreVariable(Info, tmpLocal)
+            Emitter.EmitLoadVariableLocation(Info, tmpLocal)
+        Else
+            result = m_Target.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.String_ByRef)) AndAlso result
+        End If
 
         result = m_Start.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Integer)) AndAlso result
-        Emitter.EmitConversion(Compiler.TypeCache.Integer, Info)
+        Emitter.EmitConversion(m_Start.ExpressionType, Compiler.TypeCache.Integer, Info)
         If m_Length IsNot Nothing Then
             result = m_Length.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Integer)) AndAlso result
-            Emitter.EmitConversion(Compiler.TypeCache.Integer, Info)
+            Emitter.EmitConversion(m_Length.ExpressionType, Compiler.TypeCache.Integer, Info)
         Else
             Emitter.EmitLoadI4Value(Info, Integer.MaxValue)
         End If
         result = m_Source.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.String)) AndAlso result
-        Emitter.EmitConversion(Compiler.TypeCache.String, Info)
+        Emitter.EmitConversion(m_Source.ExpressionType, Compiler.TypeCache.String, Info)
 
         Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_StringType_MidStmtStr__String_Integer_Integer_String)
+
+        If m_Target.Classification.IsPropertyAccessClassification Then
+            result = m_Target.GenerateCode(Info.Clone(New LoadLocalExpression(Me, tmpLocal))) AndAlso result
+        End If
 
         Return result
     End Function
@@ -75,6 +98,15 @@ Public Class MidAssignStatement
         result = m_Start.ResolveExpression(info) AndAlso result
         If m_Length IsNot Nothing Then result = m_Length.ResolveExpression(Info) AndAlso result
         result = m_Source.ResolveExpression(info) AndAlso result
+
+        If Not m_Target.Classification.IsVariableClassification AndAlso Not m_Target.Classification.IsPropertyAccessClassification Then
+            If m_Target.Classification.CanBePropertyAccessClassification Then
+                m_Target = m_Target.ReclassifyToPropertyAccessExpression()
+                result = m_Target.ResolveExpression(Info) AndAlso result
+            Else
+                result = False
+            End If
+        End If
 
         Compiler.Helper.AddCheck("The first argument is the target of the assignment and must be classified as a variable or a property access whose type is implicitly convertible to and from String. ")
         Compiler.Helper.AddCheck("The second parameter is the 1-based start position that corresponds to where the assignment should begin in the target string and must be classified as a value whose type must be implicitly convertible to Integer")

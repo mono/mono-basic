@@ -68,9 +68,9 @@ Public Class [Namespace]
         End If
     End Function
 
-    Shared Widening Operator CType(ByVal ns As [Namespace]) As String
-        Return ns.ToString
-    End Operator
+    'Shared Widening Operator CType(ByVal ns As [Namespace]) As String
+    '    Return ns.ToString
+    'End Operator
 
     Shared Operator &(ByVal ns As [Namespace], ByVal str As String) As [Namespace]
         If ns Is Nothing Then Throw New InternalException("")
@@ -104,6 +104,13 @@ Public Class [Namespace]
         End If
     End Function
 
+    Overloads Function Equals(ByVal A As String, ByVal B As String) As Boolean
+        If A.Length + B.Length + 1 <> m_Name.Length Then Return False
+        If m_Name.StartsWith(A, NameResolution.StringComparison) = False Then Return False
+        If m_Name.EndsWith(B, NameResolution.StringComparison) = False Then Return False
+        Return m_Name(A.Length) = "."c
+    End Function
+
     Overloads Function Equals(ByVal str As String) As Boolean
         If IsGlobal(str) Then
             If Me.Global = False Then
@@ -128,13 +135,13 @@ Public Class [Namespace]
         If IsGlobal(ns) Then
             Return ns.Substring(7)
         Else
-            Helper.Assert(ns.ToLower.StartsWith("global.") = False)
+            Helper.Assert(ns.StartsWith("Global.", NameResolution.StringComparison) = False)
             Return ns
         End If
     End Function
 
     Shared Function IsGlobal(ByVal ns As String) As Boolean
-        Return ns.Length > 7 AndAlso NameResolution.CompareName(ns.Substring(0, 7), "Global.")
+        Return ns.Length > 7 AndAlso NameResolution.CompareNameStart(ns, "Global.")
     End Function
 
 End Class

@@ -93,9 +93,12 @@ Public Class CaseClause
 
         Dim selectstmt As SelectStatement = Me.FindFirstParent(Of SelectStatement)()
 
+        m_Expression1 = Helper.CreateTypeConversion(Me, m_Expression1, selectstmt.Test.ExpressionType, result)
+
         If m_Expression2 IsNot Nothing Then
             result = m_Expression2.ResolveExpression(Info) AndAlso result
             result = Helper.VerifyValueClassification(m_Expression2, Info) AndAlso result
+            m_Expression2 = Helper.CreateTypeConversion(Me, m_Expression2, selectstmt.Test.ExpressionType, result)
 
             Dim lside, rside As Expression
             lside = New GEExpression(Me, selectstmt.CachedTest, m_Expression1)

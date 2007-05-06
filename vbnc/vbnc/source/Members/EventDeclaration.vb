@@ -195,6 +195,17 @@ Public Class EventDeclaration
         Return result
     End Function
 
+    Function DefineOverrides() As Boolean
+        Dim result As Boolean = True
+
+        If m_ImplementsClause IsNot Nothing Then
+            result = m_ImplementsClause.DefineImplements(Me)
+        End If
+
+        Return result
+    End Function
+
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -205,6 +216,7 @@ Public Class EventDeclaration
         m_Builder.SetRemoveOnMethod(m_RemoveMethod.MethodBuilder)
         If m_RaiseMethod IsNot Nothing Then m_Builder.SetRaiseMethod(m_RaiseMethod.MethodBuilder)
 
+        result = DefineOverrides() AndAlso result
         result = MyBase.GenerateCode(Info) AndAlso result
 
         Return result

@@ -1,3 +1,174 @@
+2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/PropertyGroupToPropertyAccessExpression.vb,
+	  Expressions/UnaryExpressions/UnaryMinusExpression.vb,
+	  Expressions/UnaryExpressions/UnaryExpression.vb,
+	  Expressions/UnaryExpressions/UnaryNotExpression.vb,
+	  Expressions/GetRefExpression.vb,
+	  Expressions/Conversions/CSByteExpression.vb,
+	  Expressions/Conversions/CSngExpression.vb,
+	  Expressions/Conversions/CIntExpression.vb,
+	  Expressions/Conversions/CBoolExpression.vb,
+	  Expressions/Conversions/CDecExpression.vb,
+	  Expressions/Conversions/CShortExpression.vb,
+	  Expressions/Conversions/CDblExpression.vb,
+	  Expressions/Conversions/CByteExpression.vb,
+	  Expressions/Conversions/CULngExpression.vb,
+	  Expressions/Conversions/CStrExpression.vb,
+	  Expressions/Conversions/CObjExpression.vb,
+	  Expressions/Conversions/CCharExpression.vb,
+	  Expressions/Conversions/CDateExpression.vb,
+	  Expressions/Conversions/CUIntExpression.vb,
+	  Expressions/Conversions/CLngExpression.vb,
+	  Expressions/Conversions/CTypeExpression.vb,
+	  Expressions/Conversions/CUShortExpression.vb,
+	  Expressions/BoxExpression.vb,
+	  Expressions/BinaryExpressions/OrElseExpression.vb,
+	  Expressions/BinaryExpressions/LShiftExpression.vb,
+	  Expressions/BinaryExpressions/EqualsExpression.vb,
+	  Expressions/BinaryExpressions/GEExpression.vb,
+	  Expressions/BinaryExpressions/BinaryAddExpression.vb,
+	  Expressions/BinaryExpressions/BinarySubExpression.vb,
+	  Expressions/BinaryExpressions/RShiftExpression.vb,
+	  Expressions/BinaryExpressions/IntDivisionExpression.vb,
+	  Expressions/BinaryExpressions/LEExpression.vb,
+	  Expressions/BinaryExpressions/AndExpression.vb,
+	  Expressions/BinaryExpressions/XorExpression.vb,
+	  Expressions/BinaryExpressions/GTExpression.vb,
+	  Expressions/BinaryExpressions/NotEqualsExpression.vb,
+	  Expressions/BinaryExpressions/LTExpression.vb,
+	  Expressions/BinaryExpressions/ModExpression.vb,
+	  Expressions/BinaryExpressions/OrExpression.vb,
+	  Expressions/BinaryExpressions/AndAlsoExpression.vb,
+	  Expressions/BinaryExpressions/MultExpression.vb,
+	  Expressions/BinaryExpressions/BinaryExpression.vb,
+	  Expressions/BinaryExpressions/RealDivisionExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb,
+	  Expressions/DictionaryAccessExpression.vb,
+	  Expressions/Classifications/MethodPointerClassification.vb,
+	  Expressions/Classifications/VariableClassification.vb,
+	  Statements/ForStatement.vb, Statements/ErrorStatement.vb,
+	  Statements/AssignStatements/CompoundAssignmentStatement.vb,
+	  Statements/DoStatement.vb, Statements/ForEachStatement.vb,
+	  Members/PropertyDeclaration.vb, Members/ConstantDeclaration.vb,
+	  Members/SubSignature.vb, Members/EventHandlerDeclaration.vb,
+	  Members/SubDeclaration.vb, Members/Parameter.vb,
+	  Members/ConstructorDeclaration.vb,
+	  Members/PropertyGetDeclaration.vb, Members/VariableDeclaration.vb,
+	  Members/PropertySetDeclaration.vb, Tokens/IntegralLiteralToken.vb,
+	  Types/TokenManager.vb, Types/ImportsClauses.vb,
+	  General/TypeResolution.vb: API updates.
+	* Expressions/AddressOfExpression.vb: Don't resolve any
+	  AddressOfExpression, they're supposed to be resolved by whatever
+	  expression/statement they're being assigned to.
+	* Expressions/Conversions/ConversionExpression.vb: Add
+	  GetTypeConversion that gets the specific type conversion according
+	  to the desired type.
+	* Expressions/CompilerGeneratedExpression.vb: Add LoadLocalExpression
+	  and ValueOnStackExpression.
+	* Expressions/MemberAccessExpression.vb: API updates and create fewer
+	  temporary lists.
+	* Expressions/SimpleNameExpression.vb: Create fewer temporary lists and
+	  use indexers instead of enumerators.
+	* Expressions/BinaryExpressions/ExponentExpression.vb: This is a power
+	  expression, not a mod expression, so emit the powered value, not
+	  the modded value.
+	* Expressions/ArrayCreationExpression.vb: EmitElementInitializer: If
+	  we're initializing an array of structures, load the structure's
+	  address.
+	* Expressions/ParenthesizedExpression.vb, Statements/IfStatement.vb,
+	  Statements/CallStatement.vb, Statements/ThrowStatement.vb,
+	  Members/VariableInitializer.vb: Short-circuit resolution.
+	* Expressions/Expression.vb: Add missing parts for delegates and
+	  AddressOf expressions.
+	* Expressions/MethodPointerToValueExpression.vb: Currently commented
+	  out.
+	* Expressions/DelegateOrObjectCreationExpression.vb: Add better error
+	  handling, and resolve delegate expressions according to the new
+	  logic.
+	* Expressions/Classifications/MethodGroupClassification.vb: Use
+	  indexers instead of enumerators.
+	* Expressions/Classifications/LateBoundAccessClassification.vb: Start
+	  implementing this.
+	* Enums/TypeCharacters.vb: Add TypeCharacterToType.
+	* Statements/CaseClause.vb: Create type conversions for case clauses.
+	* Statements/AssignStatements/AssignmentStatement.vb: Resolve delegates
+	  according to new logic.
+	* Statements/AssignStatements/MidAssignStatement.vb: Resolve Mid
+	  expressions.
+	* Statements/AddOrRemoveHandlerStatement.vb: Resolve according to new
+	  delegate resolution logic.
+	* Statements/WithStatement.vb: Don't use a temporary variable if the
+	  with expression is a structure.
+	* vbnc.vbproj, Resources/GenerateCodeAndResX.sh: Update.
+	* Members/MethodResolver.vb: Implemented better method resolution.
+	* Members/RegularEventDeclaration.vb,
+	  Members/MemberImplementsClause.vb: Implement event interface
+	  implementations.
+	* Members/Attribute.vb: Implement module attributes.
+	* Members/FunctionSignature.vb: Handle cases where the function name
+	  has a type character.
+	* Members/Modifiers.vb: Create fewer temporary arrays and lists.
+	* Members/InterfaceMemberSpecifier.vb: Resolve event interface
+	  implementation.
+	* Members/EventDeclaration.vb: Implement overriding of implemented
+	  events.
+	* Parser/Parser.vb: Create fewer temporary lists.
+	* Parser/Parser(Expressions).vb: Hopefully correctly parse unary
+	  expressions.
+	* Emit/Emitter.vb: Make a few more methods debug only, add some debug
+	  info and update calls to Helper.GetTypeCode.
+	* Descriptors/GenericTypeDescriptor.vb: Update FullName to correctly
+	  handle names of nested types.
+	* Descriptors/MethodDescriptor.vb: MustOverride methods can't be final,
+	  and implemented events get their corresponding flags as well.
+	* Descriptors/TypeDescriptor.vb: IsSubclassOf: everything is a subclass
+	  of Object, so special case this. Get*: create fewer lists, and use
+	  indexers instead of enumerators.
+	* Tokens/Token.vb: Add a few overloads to avoid array creations.
+	* Tokens/Span.vb: Make columns shorter and remove EndLine, all errors
+	  refer to the same line anyway.
+	* Types/TypeNameResolutionInfo.vb: Change resolution to use less
+	  temporary lists, arrays and strings.
+	* Code/CodeBlock.vb: Implement a few missing Opcodes.Ret cases.
+	* Resources/Source.xml, Resources/Errors.resx: Added a few error
+	  messages.
+	* TypeDeclarations/TypeDeclaration.vb: Short-circuit resolution and
+	  create less temporary lists.
+	* General/Report.vb: Make ShowMessage a function that returns false if
+	  the message is an error and true if it's a warning.
+	* General/Helper.vb: Add a Compiler parameter to GetTypeCode, IsEnum.
+	  Add CompareNameStart that doesn't allocate any strings. Use
+	  indexers instead of enumerators in a few places. API updates.
+	  Implement a few missing bits in a variety of methods. Move method
+	  resolution to MemberResolver.vb.
+	* General/Namespaces.vb: Add IsNamespaceExact and FindNamespace that
+	  doesn't create temporary strings.
+	* General/Scanner.vb: Number parsing now uses US culture. Accept
+	  integer literals greater than Int32.MaxValue (into longs).
+	  Correctly implement hex and octal negative values (Extract*
+	  methods).
+	* General/Namespace.vb: Add Equals that doesn't create any temporary
+	  strings.
+	* General/TypeCache.vb: Add a few runtime specific types to avoid
+	  calling FullName on types (instead do object comparison).
+	* General/Index.vb: Use a case-insensitive string comparer, and remove
+	  the calls to ToLower.
+	* General/TypeConverter.vb: Fix a few result types.
+	* General/Compiler.vb: Add VerifyConsistency that crashes if the
+	  consistency check fails. API updates.
+	* General/TypeManager.vb: Create a cache of types with their names and
+	  fullnames, used to check if a specific type has a specific name.
+	  Seems to create fewer strings.
+	* General/MethodBaseDeclaration.vb: Resolve event overrides. Currently
+	  disabled.
+	* General/MemberCache.vb: Added LookupFlattenedMembers that doesn't
+	  create any temporary lists. Remove use of enumerators.
+	* General/MyGenerator.vb: Don't emit any My things if -novbruntimeref
+	  is specified. If adding My.Forms, add a reference to SWF.
+	* General/Messages.vb: Add a few error messages.
+	* Infos/ResolveInfo.vb: Create a default resolveinfo.
+
 2007-04-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/TypeManager.vb: Not finding an assembly is a warning, so

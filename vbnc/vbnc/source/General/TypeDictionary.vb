@@ -27,10 +27,11 @@ Public Class TypeDictionary
     End Sub
 
     Shadows Sub Add(ByVal Type As Type)
-        If MyBase.ContainsKey(Type.Name) Then
+        Dim name As String = Type.Name
+        If MyBase.ContainsKey(name) Then
             System.Console.WriteLine("Already added type: " & Type.FullName)
         Else
-            MyBase.Add(Type.Name, Type)
+            MyBase.Add(name, Type)
         End If
     End Sub
 

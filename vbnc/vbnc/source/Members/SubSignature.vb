@@ -152,7 +152,7 @@ Public Class SubSignature
         Return ResolveTypeReferences(True)
     End Function
 
-    Overloads Function ResolveTypeReferences(ByVal ResolveTypeParameters As Boolean) As Boolean
+    Overridable Overloads Function ResolveTypeReferences(ByVal ResolveTypeParameters As Boolean) As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(m_ParameterList IsNot Nothing)

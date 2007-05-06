@@ -67,7 +67,7 @@ Public Class MemberDeclarations
             Dim items As Generic.List(Of INameable)
 
             items = Me.Index.Item(Item.Name)
-            If items.Count <> 1 Then
+            If items Is Nothing OrElse items.Count <> 1 Then
                 Helper.AddError()
                 Return
             End If
@@ -126,7 +126,8 @@ Public Class MemberDeclarations
     Function GetSpecificMembers(Of T)() As Generic.List(Of T)
         Dim result As New Generic.List(Of T)
 
-        For Each obj As BaseObject In Me
+        For i As Integer = 0 To Count - 1
+            Dim obj As IMember = Me.Item(i)
             If TypeOf obj Is T Then
                 result.Add(CType(CObj(obj), T))
             End If

@@ -301,7 +301,7 @@ Public Class tm
     ''' <param name="GotoNewline"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Diagnostics.DebuggerHidden()> Function AcceptIfNotError(ByVal Special As KS, ByVal Message As Messages, ByVal GotoNewline As Boolean, ByVal ParamArray MessageParameters() As String) As Boolean
+    <Diagnostics.DebuggerHidden()> Function AcceptIfNotError(ByVal Special As KS, ByVal Message As Messages, ByVal GotoNewline As Boolean, ByVal MessageParameters() As String) As Boolean
         If Accept(Special) Then
             Return True
         Else
@@ -311,6 +311,15 @@ Public Class tm
         End If
     End Function
 
+    <Diagnostics.DebuggerHidden()> Function AcceptIfNotError(ByVal Special As KS, ByVal Message As Messages, ByVal GotoNewline As Boolean, ByVal MessageParameter As String) As Boolean
+        If Accept(Special) Then
+            Return True
+        Else
+            If GotoNewline Then Me.GotoNewline(True)
+            Compiler.Report.ShowMessage(Message, MessageParameter)
+            Return False
+        End If
+    End Function
     ''' <summary>
     ''' GotoNewline defaults to false for this overload.
     ''' </summary>

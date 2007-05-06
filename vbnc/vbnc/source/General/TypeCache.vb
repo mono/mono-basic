@@ -265,6 +265,13 @@ Public Class TypeCache
     Public mscorlib As System.Reflection.Assembly
     Public winforms As System.Reflection.Assembly
 
+    'Stupid MS type system with some optimizations requires this
+    Public System_MonoType As Type
+    Public System_RuntimeType As Type
+    Public System_Reflection_Emit_TypeBuilder As Type
+    Public System_Reflection_Emit_TypeBuilderInstantiation As Type
+    Public System_Reflection_Emit_SymbolType As Type
+
     Sub New(ByVal Compiler As Compiler)
         m_Compiler = Compiler
     End Sub
@@ -399,8 +406,20 @@ Public Class TypeCache
 
     End Sub
 
-    Private Sub Init()
+    Private Sub Init_Optimizations()
+        If Helper.IsOnMono Then
+            System_MonoType = Me.GetType(mscorlib, "System.MonoType")
+        Else
+            System_RuntimeType = Me.GetType(mscorlib, "System.RuntimeType")
+            System_Reflection_Emit_TypeBuilderInstantiation = Me.GetType(mscorlib, "System.Reflection.Emit.TypeBuilderInstantiation")
+            System_Reflection_Emit_SymbolType = Me.GetType(mscorlib, "System.Reflection.Emit.SymbolType")
+        End If
+        System_Reflection_Emit_TypeBuilder = Me.GetType(mscorlib, "System.Reflection.Emit.TypeBuilder")
 
+    End Sub
+
+    Private Sub Init()
+        Init_Optimizations()
         Init_corlib()
         Init_vbruntime()
 

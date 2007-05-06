@@ -86,9 +86,9 @@ Public Class NotEqualsExpression
                 Dim tlvalue, trvalue As Type
                 Dim clvalue, crvalue As TypeCode
                 tlvalue = lvalue.GetType
-                clvalue = Helper.GetTypeCode(tlvalue)
+                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
                 trvalue = rvalue.GetType
-                crvalue = Helper.GetTypeCode(trvalue)
+                crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 If clvalue = TypeCode.Boolean AndAlso crvalue = TypeCode.Boolean Then
                     Return CBool(lvalue) <> CBool(rvalue)

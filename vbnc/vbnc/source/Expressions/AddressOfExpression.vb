@@ -42,6 +42,14 @@ Public Class AddressOfExpression
     Private m_Expression As Expression
     Private m_ExpressionType As Type
 
+    Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = Classification.AsMethodPointerClassification.GenerateCode(Info) AndAlso result
+
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression.ResolveTypeReferences
     End Function
@@ -88,46 +96,46 @@ Public Class AddressOfExpression
             mpClassification = New MethodPointerClassification(Me, m_Expression.Classification.AsMethodGroupClassification)
             Classification = mpClassification
 
+            m_ExpressionType = Info.Compiler.TypeCache.DelegateUnresolvedType
             'Try to find the desired type of the addressof expression.
-            Dim dri As DelegateResolveInfo = TryCast(Info, DelegateResolveInfo)
-            If dri IsNot Nothing Then
-                m_ExpressionType = dri.DelegateType
-            Else
-                Dim assign As AssignmentStatement
-                assign = TryCast(Me.Parent, AssignmentStatement)
-                If assign IsNot Nothing Then
-                    If assign.RSide Is Me = False Then Throw New InternalException(Me)
-                    m_ExpressionType = assign.LSide.ExpressionType
-                Else
-                    Dim aor As AddOrRemoveHandlerStatement = TryCast(Me.Parent, AddOrRemoveHandlerStatement)
-                    Dim al As ArgumentList = TryCast(Me.Parent, ArgumentList)
-                    Dim doce As DelegateOrObjectCreationExpression = TryCast(Me.Parent, DelegateOrObjectCreationExpression)
-                    If aor IsNot Nothing Then
-                        If aor.EventHandler Is Me = False Then Throw New InternalException(Me)
-                        If aor.Event.Classification.IsEventAccessClassification Then
-                            m_ExpressionType = aor.Event.Classification.AsEventAccess.EventInfo.EventHandlerType
-                        Else
-                            Helper.AddError("(This message should probably be ignored, this is a compile time error to get to this situation, but the error should already have been shown)")
-                        End If
-                    ElseIf doce IsNot Nothing Then
-                        If doce.IsDelegateCreationExpression Then
-                            Dim deltp As Type = doce.NonArrayTypeName.ResolvedType
-                            m_ExpressionType = deltp
-                        Else
-                            Helper.AddError(Me.Location.ToString)
-                        End If
-                    ElseIf al IsNot Nothing Then
-                        '  Helper.NotImplemented(Me.Location.ToString)
-                        m_ExpressionType = Info.Compiler.TypeCache.DelegateUnresolvedType
-                    Else
-                        Helper.AddError(Me.Location.ToString)
-                    End If
-                End If
-            End If
+            'If dri IsNot Nothing Then
+            '    m_ExpressionType = dri.DelegateType
+            'Else
+            '    Dim assign As AssignmentStatement
+            '    assign = TryCast(Me.Parent, AssignmentStatement)
+            '    If assign IsNot Nothing Then
+            '        If assign.RSide Is Me = False Then Throw New InternalException(Me)
+            '        m_ExpressionType = assign.LSide.ExpressionType
+            '    Else
+            '        Dim aor As AddOrRemoveHandlerStatement = TryCast(Me.Parent, AddOrRemoveHandlerStatement)
+            '        Dim al As ArgumentList = TryCast(Me.Parent, ArgumentList)
+            '        Dim doce As DelegateOrObjectCreationExpression = TryCast(Me.Parent, DelegateOrObjectCreationExpression)
+            '        If aor IsNot Nothing Then
+            '            If aor.EventHandler Is Me = False Then Throw New InternalException(Me)
+            '            If aor.Event.Classification.IsEventAccessClassification Then
+            '                m_ExpressionType = aor.Event.Classification.AsEventAccess.EventInfo.EventHandlerType
+            '            Else
+            '                Helper.AddError("(This message should probably be ignored, this is a compile time error to get to this situation, but the error should already have been shown)")
+            '            End If
+            '        ElseIf doce IsNot Nothing Then
+            '            If doce.IsDelegateCreationExpression Then
+            '                Dim deltp As Type = doce.NonArrayTypeName.ResolvedType
+            '                m_ExpressionType = deltp
+            '            Else
+            '                Helper.AddError(Me.Location.ToString)
+            '            End If
+            '        ElseIf al IsNot Nothing Then
+            '            '  Helper.NotImplemented(Me.Location.ToString)
+            '            m_ExpressionType = Info.Compiler.TypeCache.DelegateUnresolvedType
+            '        Else
+            '            Helper.AddError(Me.Location.ToString)
+            '        End If
+            '    End If
+            'End If
 
-            If m_ExpressionType IsNot Nothing Then
-                result = mpClassification.Resolve(m_ExpressionType) AndAlso result
-            End If
+            'If m_ExpressionType IsNot Nothing Then
+            '    result = mpClassification.Resolve(m_ExpressionType) AndAlso result
+            'End If
         Else
             Helper.AddError(Me.Location.ToString)
         End If

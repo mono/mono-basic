@@ -1103,7 +1103,7 @@ Public Class CommandLine
         For Each s As String In Args
             If s.StartsWith("@") Then
                 Dim strResponseFile As String = s.Substring(1)
-#If DEBUG Then
+                '#If DEBUG Then
                 'Hack for the testing to work in VS since the current directory is set to where the compiler
                 'is, not where the test is.
                 If strResponseFile.EndsWith("debug.rsp") AndAlso System.Diagnostics.Debugger.IsAttached Then
@@ -1120,7 +1120,7 @@ Public Class CommandLine
                         Next
                     Next
                 End If
-#End If
+                '#End If
                 result = ParseResponseFile(strResponseFile) AndAlso result
                 Continue For
             End If
