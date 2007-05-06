@@ -35,6 +35,10 @@ Module Main
             If result IsNot Nothing Then
                 Return CInt(result)
             End If
+        Catch ex As TargetInvocationException
+            Console.WriteLine(ex.InnerException.Message)
+            Console.WriteLine(ex.InnerException.StackTrace)
+            Return 1
         Catch ex As Exception
             Console.WriteLine(ex.Message)
             Console.WriteLine(ex.StackTrace)
