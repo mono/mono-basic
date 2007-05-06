@@ -1,3 +1,8 @@
+2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* strings.resources: Updated.
+	* strings.txt: Added two error messages used by My.Forms.
+
 2007-04-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MonoTODOAttribute.vb: Build fix.

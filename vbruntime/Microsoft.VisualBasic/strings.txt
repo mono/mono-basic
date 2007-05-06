@@ -118,3 +118,5 @@ ERR31027=Unable to activate object.
 ERR31032=Unable to create embedded object.
 ERR31036=Error saving to file.
 ERR31037=Error loading from file.
+WinForms_RecursiveFormCreate=There is a reference to a default instance from the constructor of a form, which leads to infinite recursion. Please refer to the form itself using 'Me' from within the constructor.
+WinForms_SeeInnerException=An error occured while creating the form. See Exception.InnerException for details. The error is: {0}
