@@ -616,9 +616,9 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual("3/3/2003",Strings.FormatDateTime(DateTime.Parse("3/3/2003"),DateFormat.GeneralDate));
 			Assert.AreEqual("9/10/1972",Strings.FormatDateTime(DateTime.Parse("9/10/1972"),DateFormat.GeneralDate));
 			Assert.AreEqual("1/12/1487",Strings.FormatDateTime(DateTime.Parse("1/12/1487"),DateFormat.GeneralDate));
-			Assert.AreEqual("7/7/0100",Strings.FormatDateTime(DateTime.Parse("7/7/100"),DateFormat.GeneralDate));
+			Assert.AreEqual("7/7/0100",Strings.FormatDateTime(DateTime.Parse("7/7/0100"),DateFormat.GeneralDate));
 			Assert.AreEqual("2/1/2022",Strings.FormatDateTime(DateTime.Parse("2/1/22"),DateFormat.GeneralDate));
-			Assert.AreEqual("6/6/0666",Strings.FormatDateTime(DateTime.Parse("6/6/666"),DateFormat.GeneralDate));
+			Assert.AreEqual("6/6/0666",Strings.FormatDateTime(DateTime.Parse("6/6/0666"),DateFormat.GeneralDate));
 			Assert.AreEqual("1/1/2000",Strings.FormatDateTime(DateTime.Parse("1/1/2000"),DateFormat.GeneralDate));
 			Assert.AreEqual("12/31/2000",Strings.FormatDateTime(DateTime.Parse("12/31/2000"),DateFormat.GeneralDate));
 			Assert.AreEqual("5/5/1000",Strings.FormatDateTime(DateTime.Parse("5/5/1000"),DateFormat.GeneralDate));
