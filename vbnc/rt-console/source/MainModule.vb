@@ -295,9 +295,20 @@ Class rt_console
 
         ReDim m_Counters([Enum].GetValues(GetType(Test.Results)).Length - 1)
 
+        m_BasePath = IO.Path.GetFullPath(m_BasePath)
+
+
         If CBool(IO.File.GetAttributes(m_BasePath) And IO.FileAttributes.Directory) Then
+            If IO.Path.GetDirectoryName(m_BasePath) <> Environment.CurrentDirectory Then
+                Environment.CurrentDirectory = m_BasePath
+            End If
             Return RunDirectory()
         Else
+            If IO.Path.GetDirectoryName(m_BasePath) <> Environment.CurrentDirectory Then
+                Environment.CurrentDirectory = IO.Path.GetDirectoryName(m_BasePath)
+                m_BasePath = IO.Path.GetFileName(m_BasePath)
+            End If
+
             Return RunFile()
         End If
     End Function
@@ -336,6 +347,7 @@ Class rt_console
 
     Function RunFile() As Boolean
         Dim t As Test
+
 
         t = New Test(m_BasePath, Nothing)
 
