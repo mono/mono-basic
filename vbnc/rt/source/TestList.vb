@@ -23,12 +23,28 @@
 ''' <remarks></remarks>
 <Serializable()> _
 Public Class TestList
-    Inherits Generic.List(Of Test)
     Implements IDisposable
+    Implements ICollection
+    Implements Generic.IEnumerable(Of Test)
 
+    Private m_List As New Generic.List(Of Test)
     Private m_Hashed As New Generic.Dictionary(Of String, Test)
     Private m_VBCPath As String
     Private m_VBNCPath As String
+
+    Sub AddRange(ByVal Tests As IEnumerable)
+        For Each item As Test In Tests
+            Add(item)
+        Next
+    End Sub
+
+    Sub RemoveAt(ByVal index As Integer)
+        Dim item As Test
+        item = m_List(index)
+
+        m_List.RemoveAt(index)
+        m_Hashed.Remove(item.Name)
+    End Sub
 
     ''' <summary>
     ''' Looks up the test on the name. 
@@ -48,11 +64,22 @@ Public Class TestList
         End Get
     End Property
 
+    Sub Clear()
+        m_List.Clear()
+        m_Hashed.Clear()
+    End Sub
+
+    Default Overloads ReadOnly Property Item(ByVal Index As Integer) As Test
+        Get
+            Return m_List(Index)
+        End Get
+    End Property
+
     Shadows Function Contains(ByVal Test As Test) As Boolean
         If Contains(Test.Name) Then
             Return True
         Else
-            Return MyBase.Contains(Test)
+            Return m_List.Contains(Test)
         End If
     End Function
 
@@ -62,7 +89,7 @@ Public Class TestList
 
     Shadows Sub Add(ByVal Test As Test)
         If Contains(Test) = False Then
-            MyBase.Add(Test)
+            m_List.Add(Test)
             m_Hashed.Add(Test.Name, Test)
         End If
     End Sub
@@ -245,4 +272,34 @@ Public Class TestList
         MyBase.Finalize()
     End Sub
 #End Region
+
+    Public Sub CopyTo(ByVal array As System.Array, ByVal index As Integer) Implements System.Collections.ICollection.CopyTo
+
+    End Sub
+
+    Public ReadOnly Property Count() As Integer Implements System.Collections.ICollection.Count
+        Get
+            Return m_List.Count
+        End Get
+    End Property
+
+    Public ReadOnly Property IsSynchronized() As Boolean Implements System.Collections.ICollection.IsSynchronized
+        Get
+            Return CType(m_List, ICollection).IsSynchronized
+        End Get
+    End Property
+
+    Public ReadOnly Property SyncRoot() As Object Implements System.Collections.ICollection.SyncRoot
+        Get
+            Return CType(m_List, ICollection).SyncRoot
+        End Get
+    End Property
+
+    Public Function GetEnumerator() As System.Collections.IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
+        Return m_List.GetEnumerator
+    End Function
+
+    Public Function GetEnumerator1() As System.Collections.Generic.IEnumerator(Of Test) Implements System.Collections.Generic.IEnumerable(Of Test).GetEnumerator
+        Return m_List.GetEnumerator
+    End Function
 End Class

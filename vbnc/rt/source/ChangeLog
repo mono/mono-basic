@@ -1,3 +1,8 @@
+2007-04-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ExternalProcessExecutor.vb: Handle exceptions while executing process instead of crashing.
+	* TestList.vb: Don't inherit from List anymore, instead use a list and a hashtable. Fixes issues where the list and hashtable would get out of sync.
+
 2007-03-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: Added GetTargetExtension and a field for this information.

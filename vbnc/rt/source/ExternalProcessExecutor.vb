@@ -165,7 +165,8 @@ Public Class ExternalProcessExecutor
     End Sub
 
     Public Function RunProcess() As Boolean
-        Using process As New Process
+        Dim process As New Process
+        Try
             If Helper.IsOnMono Then
                 process.StartInfo.FileName = "mono"
                 process.StartInfo.Arguments = "--debug " & m_Executable & " " & m_ExpandedCmdLine
@@ -213,8 +214,14 @@ Public Class ExternalProcessExecutor
                 process.StartInfo.FileName = tmpsourcefile
             End If
 
+            'Console.WriteLine("Executing: FileName={0}, Arguments={1}", process.StartInfo.FileName, process.StartInfo.Arguments)
+
             process.Start()
-            process.PriorityClass = ProcessPriorityClass.Idle
+            Try
+                'This may fail if the process exits before we get to this line
+                process.PriorityClass = ProcessPriorityClass.Idle
+            Catch
+            End Try
 
             m_StdOut = process.StandardOutput.ReadToEnd
             m_TimedOut = Not process.WaitForExit(m_TimeOut)
@@ -235,8 +242,12 @@ Public Class ExternalProcessExecutor
                     'Ignore this exception
                 End Try
             End If
-        End Using
-
+        Catch ex As Exception
+            m_ExitCode = Integer.MinValue
+            m_StdOut = "Exception while executing process: " & Environment.NewLine & ex.Message
+        Finally
+            If process IsNot Nothing Then process.Dispose()
+        End Try
         Return True
     End Function
 End Class
