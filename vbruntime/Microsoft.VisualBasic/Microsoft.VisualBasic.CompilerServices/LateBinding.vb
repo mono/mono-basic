@@ -61,17 +61,17 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 'FIXME There's a bug in LateBinder that given (Integer(), Object) args brings SetValue(Object,Long()) method,
                 ' resulting in invocation failure. The current workaround is always to cast indices to long.
-                Dim indicesArr(argsArrUpBound - 1) As Long
+                Dim longIndicesArr(argsArrUpBound - 1) As Long 'args contains (arr.Length - 1) indices + 1 object (value to set)
 
                 For i As Integer = 0 To argsArrUpBound - 1
-                    indicesArr(i) = CType(args(i), Long)
+                    longIndicesArr(i) = CType(args(i), Long)
                 Next
 
-                Dim indicesArrArgs(1) As Object
-                indicesArrArgs(0) = args(argsArrUpBound)
-                indicesArrArgs(1) = indicesArr
+                Dim newArgs(1) As Object        'array containing 2 elements - the array of [long] indices and the value to set.
+                newArgs(0) = args(argsArrUpBound)
+                newArgs(1) = longIndicesArr
 
-                realType.InvokeMember("SetValue", flags, LBinder, o, indicesArrArgs)
+                realType.InvokeMember("SetValue", flags, LBinder, o, newArgs)
 #Else
                 realType.InvokeMember("Set", flags, Nothing, o, args, Nothing)
 #End If
@@ -177,15 +177,18 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod
 #If TARGET_JVM Then
 
-                Dim argsArrUpBound As Integer = args.Length - 1
+                Dim indicesUpBound As Integer = args.Length - 1
 
-                Dim indicesArr(argsArrUpBound) As Integer
-                args.CopyTo(indicesArr, 0)
+                Dim longIndicesArr(indicesUpBound) As Long
 
-                Dim indicesArrArgs(0) As Object
-                indicesArrArgs(0) = indicesArr
+                For i As Integer = 0 To indicesUpBound
+                    longIndicesArr(i) = CType(args(i), Long)
+                Next
 
-                Return realType.InvokeMember("GetValue", flags, LBinder, o, indicesArrArgs)
+                Dim newArgs(0) As Object            'array containing a single element - the array of [long] indices
+                newArgs(0) = longIndicesArr
+
+                Return realType.InvokeMember("GetValue", flags, LBinder, o, newArgs)
 #Else
                 Return realType.InvokeMember("Get", flags, Nothing, o, args, Nothing)
 #End If
