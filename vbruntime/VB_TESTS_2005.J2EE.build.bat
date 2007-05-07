@@ -22,9 +22,10 @@ set /a sts=1%startTime:~6,2% - 100
 set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
 
 set OUTPUT_FILE_PREFIX=Microsoft.2005_VisualBasic
-set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.J2EE
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
 set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
 
 set VB_COMPILE_OPTIONS_J2EE_VB=/p:DefineConstants="NET_VER=2.0,NET_2_0=True,DEBUG=True,TRACE=True,TARGET_JVM=True"
 set VB_COMPILE_OPTIONS_J2EE_CS=/p:DefineConstants="NET_2_0;DEBUG;TRACE;TARGET_JVM;"
@@ -82,10 +83,12 @@ set CLASSPATH=%NUNIT_CLASSPATH%;%VMW4J2EE_JGAC_JARS%
 SET TEST_ASSEMBLY=Microsoft.2005_VisualBasic_test_VB
 
 set OUTPUT_FILE_PREFIX=%TEST_ASSEMBLY%
-set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.J2EE
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
 set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
 set NUNIT_OPTIONS=/exclude=NotWorking,Broken,TargetJvmNotWorking,TargetJvmNotSupported
+
 
 echo converting dll to jar without validator
 mkdir %CD%\Test\bin\Debug_Java20
@@ -97,14 +100,19 @@ rem IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
  
 echo Running tests
 rem run  Microsoft.VisualBasic_test.jar
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS% /xml=%TEST_ASSEMBLY%.xml %CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar >>%RUN_LOG% 2<&1
+copy %CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar .
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS% %TEST_ASSEMBLY%.jar /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
 
 SET TEST_ASSEMBLY=Microsoft.2005_VisualBasic_test
 
 set OUTPUT_FILE_PREFIX=%TEST_ASSEMBLY%
-set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.J2EE
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
 set BUILD_LOG=%COMMON_PREFIX%.build.log
 set RUN_LOG=%COMMON_PREFIX%.run.log
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
 
 echo converting dll to jar without validator
 "%VMW4J2EE_DIR%\bin\jcsc.exe" %CD%\Test\bin\Debug\%TEST_ASSEMBLY%.dll /debug:3 /novalidator /out:%CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar /classpath:%CLASSPATH% /lib:%CD%;"%VMW4J2EE_DIR%\java_refs\jre";"%VMW4J2EE_DIR%\java_refs";C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;enterprise=3D4D0A45DB93955D87296AEC9233A701locale >>%BUILD_LOG% 2<&1
@@ -115,8 +123,11 @@ rem IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
  
 echo Running tests
 rem run  Microsoft.VisualBasic_test.jar
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS% /xml=%TEST_ASSEMBLY%.xml %CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar >>%RUN_LOG% 2<&1
-
+copy %CD%\Test\bin\Debug_Java20\%TEST_ASSEMBLY%.jar .
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %NUNIT_OPTIONS%  %TEST_ASSEMBLY%.jar /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
 
 :FINALLY
 echo ======================
@@ -129,6 +140,5 @@ echo ========================
 echo ERROR --- Batch Terminated 
 popd
 echo ========================
-PAUSE
 
 :END
