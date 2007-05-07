@@ -2,7 +2,7 @@ thisdir = vbnc/vbnc
 SUBDIRS = tests
 include ../../build/rules.make
 
-LOCAL_VBNC_FLAGS = @vbnc.exe.rsp
+LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS)
 
 PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
@@ -43,3 +43,8 @@ uninstall-extras:
 
 install-binary: default
 	cp ../../class/lib/vbnc/* ../../class/lib/bootstrap
+
+boot-from-ms:
+	cd tests/SelfTest/ && boot.sh && rerun.sh
+	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
+	
