@@ -1,5 +1,10 @@
 2007-05-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Parser/Parser(Statements).vb: Accept grammar MS accepts as well
+	  (ElseIf can be written as Else If).
+
+2007-05-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Types/TokenManager.vb: When accepting newlines accept as many as
 	  possible.
 

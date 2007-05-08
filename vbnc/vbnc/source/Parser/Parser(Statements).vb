@@ -773,7 +773,7 @@ Partial Public Class Parser
         If m_TrueCode Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         m_ElseIfs = New BaseObjects(Of ElseIfStatement)(result)
-        While tm.CurrentToken = KS.ElseIf
+        While tm.CurrentToken = KS.ElseIf OrElse (m_OneLiner = False AndAlso tm.CurrentToken = KS.Else AndAlso tm.PeekToken = KS.If)
             Dim newElseIf As ElseIfStatement
             newElseIf = ParseElseIfStatement(result, m_OneLiner)
             m_ElseIfs.Add(newElseIf)
@@ -808,7 +808,13 @@ Partial Public Class Parser
         Dim m_Condition As Expression
         Dim m_Code As CodeBlock
 
-        tm.AcceptIfNotInternalError(KS.ElseIf)
+        If tm.Accept(KS.Else) Then
+            'This is not in the spec, but MS is accepting it anyway.
+            'See test Bugs/aspnet2.vb for a test case.
+            tm.AcceptIfNotInternalError(KS.If)
+        Else
+            tm.AcceptIfNotInternalError(KS.ElseIf)
+        End If
         m_Condition = ParseExpression(result)
         If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         'ElseIf cannot be a oneliner...
