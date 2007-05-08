@@ -377,7 +377,9 @@ Public Class tm
             Return result
         Else
             If CurrentToken.IsEndOfLine(True) OrElse CurrentToken() = KS.Colon Then
-                NextToken()
+                Do
+                    NextToken()
+                Loop While CurrentToken.IsEndOfLine(True) OrElse CurrentToken.Equals(KS.Colon)
                 Return True
             Else
                 If ReportError Then

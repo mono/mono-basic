@@ -1,3 +1,8 @@
+2007-05-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Types/TokenManager.vb: When accepting newlines accept as many as
+	  possible.
+
 2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/PropertyGroupToPropertyAccessExpression.vb,
