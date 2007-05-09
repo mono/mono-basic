@@ -1992,7 +1992,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Function
         End Class
 
-        Class VBConvert
+        Friend Class VBConvert
             Public Shared Function ToBoolean(ByVal obj As Object) As Boolean
                 Return Convert.ToBoolean(obj)
             End Function
@@ -2087,7 +2087,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return Convert.ToChar(obj)
             End Function
 
-            Public Shared Function ToString(ByVal obj As Object) As String
+            Public Shared Shadows Function ToString(ByVal obj As Object) As String
                 Return Convert.ToString(obj)
             End Function
 

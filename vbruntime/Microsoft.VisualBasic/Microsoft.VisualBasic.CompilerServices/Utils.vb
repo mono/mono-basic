@@ -51,21 +51,46 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return aryDest
             End If
 
-            Dim CopyLength As Long
-            CopyLength = arySrc.Length
+            If arySrc.Rank <> aryDest.Rank Then
+                Throw New InvalidCastException("'ReDim' cannot change the number of dimensions.")
+            End If
 
-            If CopyLength = 0 Then
-#If TRACE Then
-                Console.WriteLine("TRACE:Utils.CopyArray:arySrc.Length:" + arySrc.Length.ToString())
-#End If
+            Dim lastRank As Integer
+            Dim destLength As Integer
+            Dim srcLength As Integer
+            Dim lastLength As Integer
+            Dim copies As Long
+
+            lastRank = arySrc.Rank - 1
+            destLength = aryDest.GetUpperBound(lastRank) + 1
+            srcLength = arySrc.GetUpperBound(lastRank) + 1
+
+            'Check that all but the last dimension have the same length
+            For i As Integer = 0 To lastRank - 1
+                If arySrc.GetLongLength(i) <> aryDest.GetLongLength(i) Then
+                    Throw New InvalidCastException("'ReDim' can only change the rightmost dimension.")
+                End If
+            Next
+
+            If destLength = srcLength Then
+                'All dimensions have the same size, copy the entire array
+                Array.Copy(arySrc, aryDest, arySrc.LongLength)
                 Return aryDest
             End If
 
-            If CopyLength > aryDest.Length Then
-                CopyLength = aryDest.Length
+            lastLength = Math.Min(destLength, srcLength)
+
+            If lastRank = 0 Then
+                'There's only one dimension, copy the length
+                Array.Copy(arySrc, aryDest, lastLength)
+                Return aryDest
             End If
 
-            Array.Copy(arySrc, 0, aryDest, 0, CopyLength)
+            copies = arySrc.LongLength \ srcLength
+
+            For i As Long = 0 To copies - 1
+                Array.Copy(arySrc, i * srcLength, aryDest, i * destLength, lastLength)
+            Next
 
             Return aryDest
         End Function

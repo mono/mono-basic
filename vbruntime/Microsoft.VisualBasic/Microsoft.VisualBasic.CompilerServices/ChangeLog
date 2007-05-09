@@ -1,3 +1,8 @@
+2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Operators.vb: Remove warnings.
+	* Utils.vb: Implement multi-dimensional arrays correctly in CopyArray.
+
 2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DecimalType.vb: Add 2.0 conversion cases.
