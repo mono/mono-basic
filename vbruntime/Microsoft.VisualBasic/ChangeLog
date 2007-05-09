@@ -1,3 +1,16 @@
+2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 2005VB.vbproj: Finally found a way to send -novbruntimeref to the VS
+	  compiler. There's a hidden CompilerResponseFile option that can be
+	  set in the vbproj file, and I put -novbruntimeref in that response
+	  file. Building inside VS now works, with the minor caveat that the
+	  task-list still fills with errors (probably from the in-proc
+	  compiler VS uses), so I added an "Edit" configuration that doesn't
+	  build, but doesn't fill the task-list with errors.
+	* Helper.vb: Comment out this file for the moment.
+	* MonoTODOAttribute.vb: Fix indenting.
+	* 2005VB.rsp: Added.
+
 2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* strings.resources: Updated.
