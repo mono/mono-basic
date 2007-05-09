@@ -317,13 +317,12 @@ Namespace Microsoft.VisualBasic
                     End If
             End Select
 
-            '' FIXME: on .NET 2 this doesn`t pass compilation
-#If Not NET_2_0 Then
+
             '' Check If got Array Of Arrays then should return VariantType.Array | VariantType.Object 
-            If (VarName.GetType.IsArray) And (TypeOf VarName.GetType.GetElementType Is System.Array) Then
+            If (VarName.GetType.IsArray) AndAlso VarName.GetType.GetElementType Is GetType(System.Array) Then
                 Return (VariantType.Array Or VariantType.Object)
             End If
-#End If
+
             If VarName.GetType.IsArray Then
                 Return (VariantType.Array Or tmpVar)
             End If
