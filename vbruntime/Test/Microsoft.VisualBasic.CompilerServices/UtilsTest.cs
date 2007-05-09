@@ -69,10 +69,50 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 		}
 
 		[Test]
-		[Ignore ("Test for ReDim multiple-dimensioned array is not implemented yet")]
 		public void ReDimPreserve_MultipleDimensions() 
 		{
-			Assert.Fail("Test for ReDim multiple-dimensioned array is not implemented yet");
+			int [,,,] source = new int [,,,] {{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}};
+			int [,,,] destination = new int [1, 2, 3, 4];
+			
+			Utils.CopyArray (source, destination);
+
+			Assert.AreEqual (destination [0, 0, 0, 0], 1, "#01");
+			Assert.AreEqual (destination [0, 0, 0, 1], 2, "#02");
+			Assert.AreEqual (destination [0, 0, 0, 2], 0, "#03");
+			Assert.AreEqual (destination [0, 0, 0, 3], 0, "#04");
+			Assert.AreEqual (destination [0, 0, 1, 0], 3, "#05");
+			Assert.AreEqual (destination [0, 0, 1, 1], 4, "#06");
+			Assert.AreEqual (destination [0, 0, 1, 2], 0, "#07");
+			Assert.AreEqual (destination [0, 0, 1, 3], 0, "#08");
+			Assert.AreEqual (destination [0, 0, 2, 0], 5, "#09");
+			Assert.AreEqual (destination [0, 0, 2, 1], 6, "#10");
+			Assert.AreEqual (destination [0, 0, 2, 2], 0, "#11");
+			Assert.AreEqual (destination [0, 0, 2, 3], 0, "#12");
+
+			Assert.AreEqual (destination [0, 1, 0, 0], 7, "#21");
+			Assert.AreEqual (destination [0, 1, 0, 1], 8, "#22");
+			Assert.AreEqual (destination [0, 1, 0, 2], 0, "#23");
+			Assert.AreEqual (destination [0, 1, 0, 3], 0, "#24");
+			Assert.AreEqual (destination [0, 1, 1, 0], 9, "#25");
+			Assert.AreEqual (destination [0, 1, 1, 1], 10, "#26");
+			Assert.AreEqual (destination [0, 1, 1, 2], 0, "#27");
+			Assert.AreEqual (destination [0, 1, 1, 3], 0, "#28");
+			Assert.AreEqual (destination [0, 1, 2, 0], 11, "#29");
+			Assert.AreEqual (destination [0, 1, 2, 1], 12, "#30");
+			Assert.AreEqual (destination [0, 1, 2, 2], 0, "#31");
+			Assert.AreEqual (destination [0, 1, 2, 3], 0, "#32");
+
+
+			destination = new int [1, 2, 3, 1];
+
+			Utils.CopyArray (source, destination);
+
+			Assert.AreEqual (destination [0, 0, 0, 0], 1, "#A1");
+			Assert.AreEqual (destination [0, 0, 1, 0], 3, "#A2");
+			Assert.AreEqual (destination [0, 0, 2, 0], 5, "#A3");
+			Assert.AreEqual (destination [0, 1, 0, 0], 7, "#A4");
+			Assert.AreEqual (destination [0, 1, 1, 0], 9, "#A5");
+			Assert.AreEqual (destination [0, 1, 2, 0], 11, "#A6");
 		}
 			
 		[Test]
@@ -133,21 +173,44 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			Assert.IsNull (destination[0,2], "EmptyFifth");
 			Assert.IsNull (destination[1,2], "EmptySixth");
 		}
-	
-		// An nice way to test for exceptions the class under test should 
-		// throw is:
-		/*
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void OnValid() {
-			ConcreteCollection myCollection;
-			myCollection = new ConcreteCollection();
-			....
-			Assert.AreEqual ("#UniqueID", expected, actual);
-			....
-			Fail ("Message");
-		}
-		*/
 
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException), "'ReDim' cannot change the number of dimensions.")]
+		public void TestCopyArrayDifferentDimensions ()
+		{
+			string [] source = new string [2];
+			string [,] destination = new string [2, 2];
+			object result = Utils.CopyArray (source, destination);
+		}
+
+		[Test]
+		public void TestCopyArrayNullSource ()
+		{
+			string [,] destination = new string [2, 2];
+			object result = Utils.CopyArray (null, destination);
+			
+			Assert.AreSame (result, destination, "#01");
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException), "Object reference not set to an instance of an object.")]
+		public void TestCopyArrayNullDestination ()
+		{
+			string [] source = new string [2];
+			object result = Utils.CopyArray (source, null);
+		}
+
+		[Test]
+		public void TestCopyArrayReturnValue ()
+		{
+			string [] source = new string [2];
+			string [] destination = new string [2];
+			object result = Utils.CopyArray (source, destination);
+			
+			Assert.AreSame (result, destination, "#01");
+		}
+		
 	}
 }

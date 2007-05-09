@@ -1,3 +1,12 @@
+2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Microsoft.VisualBasic.CompilerServices/UtilsTest.cs: Added more
+	  tests.
+	* 2005VB_test_CS.csproj: Updated.
+	* 2005VB_test_VB.vbproj: Updated to reference the 2005VB project while
+	  testing.
+	* 2005VB_test_VB.rsp: Added.
+
 2007-04-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 2005VB_test_VB.dll.rsp, 2005VB_test_VB.dll.sources: Updated.

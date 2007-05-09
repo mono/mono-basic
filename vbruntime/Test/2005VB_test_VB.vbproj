@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MonoTests.Microsoft_VisualBasic</RootNamespace>
     <AssemblyName>Microsoft.2005_VisualBasic_test_VB</AssemblyName>
+    <CompilerResponseFile>2005VB_test_VB.rsp</CompilerResponseFile>
     <MyType>Windows</MyType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,6 +31,9 @@
     <DocumentationFile>Microsoft.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DefineConstants>NET_2_0=True</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
+    <OutputPath>bin\Edit\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
@@ -79,6 +83,12 @@
     </Compile>
     <Compile Include="Microsoft.VisualBasic\InformationTests.vb" />
     <Compile Include="Microsoft.VisualBasic\InteractionTests.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.VisualBasic\2005VB.vbproj">
+      <Project>{3F2C04ED-C36A-4EF9-9479-0227E9CA7824}</Project>
+      <Name>2005VB</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
