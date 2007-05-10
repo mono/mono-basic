@@ -402,7 +402,7 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function Val(ByVal Expression As Object) As Double
             If Expression Is Nothing Then
-                Throw New System.ArgumentNullException("Expression", "Value cannot be null.")
+                Return Val("")
             End If
 
             If TypeOf Expression Is Char Then
