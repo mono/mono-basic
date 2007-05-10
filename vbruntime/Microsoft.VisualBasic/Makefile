@@ -31,6 +31,8 @@ DISTFILES =	\
 	Microsoft.VisualBasic.dll.sources	\
 	Microsoft.VisualBasic.dll.sources.win	\
 	vbruntime.rsp				\
+	vbruntime1.rsp				\
+	vbruntime2.rsp				\
 	Helper.vb				\
 	2005VB.sln
 
