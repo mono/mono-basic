@@ -195,7 +195,7 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException), "Object reference not set to an instance of an object.")]
+		[ExpectedException (typeof (NullReferenceException))]
 		public void TestCopyArrayNullDestination ()
 		{
 			string [] source = new string [2];

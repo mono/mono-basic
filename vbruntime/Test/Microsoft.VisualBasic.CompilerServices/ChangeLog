@@ -1,3 +1,7 @@
+2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* UtilsTest.cs: Don't check exception message.
+
 2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* LateBindingsTest*.vb: Ifdef out all late binding tests since vbnc can't compile them yet.
