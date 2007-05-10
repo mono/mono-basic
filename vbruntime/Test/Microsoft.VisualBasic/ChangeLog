@@ -1,3 +1,8 @@
+2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CollectionTests.cs: Added a few more asserts.
+	* FinancialTests.cs: Fixes for the 1.0 profile.
+
 2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* StringsTest.cs: Work around #81535.

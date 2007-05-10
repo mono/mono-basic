@@ -510,19 +510,19 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			double[] values = new double[] {-50000, 20000, 20000, 20000, 10000};
 
-			Assert.AreEqual(0.164790984508933,Financial.IRR(ref values,0.1));
+			Assert.AreEqual(0.164790984508875,Financial.IRR(ref values,0.1), "A1");
 
-			Assert.AreEqual(0.164790984508933,Financial.IRR(ref values,0.3));
+			Assert.AreEqual (0.164790984508938, Financial.IRR (ref values, 0.3), "A2");
 
-			Assert.AreEqual(0.16479098450893415,Financial.IRR(ref values,0.5));
+			Assert.AreEqual (0.16479098450893415, Financial.IRR (ref values, 0.5), "A3");
 
 			values = new double[] {-100000, 40000, 35000, 30000, 25000};
 
-			Assert.AreEqual(0.124414495410257,Financial.IRR(ref values,0.1));
+			Assert.AreEqual (0.124414495406241, Financial.IRR (ref values, 0.1), "A4");
 
-			Assert.AreEqual(0.124414495410257, Financial.IRR (ref values, 0.3));
+			Assert.AreEqual (0.124414495415021, Financial.IRR (ref values, 0.3), "A5");
 
-			Assert.AreEqual(0.124414495410252,Financial.IRR(ref values,0.5));
+			Assert.AreEqual (0.124414495410257, Financial.IRR (ref values, 0.5), "A6");
 		}
 #endif
 

@@ -1268,6 +1268,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			col.Remove(1);
 			
 			object o = en.Current;
+			Assert.AreEqual (o1, o, "#01");
 		}
 
 		[Category ("TargetJvmNotWorking")]
@@ -1716,6 +1717,10 @@ namespace MonoTests.Microsoft_VisualBasic
 			((IList)col).Add(s3);
 
 			((IList)col).Insert(6,s1+s1);
+
+			Assert.AreEqual ("abc3", col [6], "#01");
+			Assert.AreEqual ("abc2", col [5], "#02");
+			Assert.AreEqual ("abc1abc1", col [7], "#03");
 		}
 
 		[Test]
@@ -2208,6 +2213,8 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			object val = list[-1];
 			Assert.AreEqual ("Baseball", val, "#6");
+			Assert.AreEqual ("Baseball", list [-2], "#7");
+			Assert.AreEqual ("Baseball", list [int.MinValue], "#8");
 		}
 
 		[Category ("TargetJvmNotWorking")]
