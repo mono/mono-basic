@@ -67,6 +67,10 @@ Namespace Microsoft.VisualBasic
             Private afterLast As Boolean = False
             Private m_col As Collection
 
+#If NET_VER >= 2.0 Then
+            Private m_Current As Object
+#End If
+
             Public Sub New(ByRef coll As Collection)
                 m_col = coll
                 currentKey = Nothing
@@ -89,28 +93,49 @@ Namespace Microsoft.VisualBasic
 
                 If currentKey Is Nothing And m_col.Count > 0 Then
                     currentKey = m_col.m_HashIndexers(0)
+#If NET_VER >= 2.0 Then
+                    m_Current = CurrentInternal
+#End If
                     Return True
                 End If
+
+#If NET_VER >= 2.0 Then
+                If afterLast Then
+                    m_Current = Nothing
+                    Return False
+                End If
+#End If
 
                 Dim index As Integer = m_col.m_HashIndexers.IndexOf(currentKey)
                 If index >= m_col.Count - 1 Then
                     afterLast = True
+#If NET_VER >= 2.0 Then
+                    m_Current = Nothing
+#End If
                     Return False
                 End If
 
                 currentKey = m_col.m_HashIndexers(index + 1)
                 afterLast = False
-                Return True
 
+#If NET_VER >= 2.0 Then
+                m_Current = CurrentInternal
+#End If
+                Return True
             End Function
 
             Public ReadOnly Property Current() As Object Implements System.Collections.IEnumerator.Current
                 Get
-#If NET_2_0 Then
-                    If currentKey Is Nothing Then
-                        Return Nothing
-                    End If
+#If NET_VER >= 2.0 Then
+                    Return m_Current
+#Else
+                    return CurrentInternal
 #End If
+                End Get
+            End Property
+
+            Private ReadOnly Property CurrentInternal() As Object
+                Get
                     Dim index As Integer = m_col.m_HashIndexers.IndexOf(currentKey)
                     If index > m_col.Count - 1 Then
                         Return Nothing
@@ -173,6 +198,8 @@ Namespace Microsoft.VisualBasic
         Default Public Overloads ReadOnly Property Item(ByVal index As Object) As Object
 #End If
             Get
+                If index Is Nothing Then Throw New IndexOutOfRangeException("Argument 'Index' is not a valid index.")
+
                 If TypeOf index Is Integer Then
                     Return Item(CInt(index))
                 Else
@@ -187,28 +214,45 @@ Namespace Microsoft.VisualBasic
 
         Default Public Overloads ReadOnly Property Item(ByVal index As Integer) As Object
             Get
-                Return IList_Item(index - 1)
+                'The behaviour of Collection.Item is NOT the same as the IList.Item interface implementation.
+                index = index - 1
+
+                If index > Count - 1 Or index < 0 Then
+                    Throw New IndexOutOfRangeException("Collection1 index must be in the range 1 to the size of the collection.")
+                End If
+
+                Return m_Hashtable(m_HashIndexers(index))
             End Get
         End Property
 
 #If NET_2_0 Then
         Default Public Overloads ReadOnly Property Item(ByVal index As String) As Object
             Get
-                Return m_Hashtable(index)
+                Return Item(CObj(index))
             End Get
         End Property
 #End If
 
         Private Property IList_Item(ByVal index As Integer) As Object Implements System.Collections.IList.Item
             Get
+                If index < 0 AndAlso Count > 0 Then
+                    'Oh man this behaviour is weird...
+                    index = 0
+                End If
+
                 If index > Count - 1 Or index < 0 Then
-                    Throw New IndexOutOfRangeException("Collection1 index must be in the range 1 to the size of the collection.")
+                    Throw New ArgumentOutOfRangeException("Collection1 index must be in the range 1 to the size of the collection.")
                 End If
 
                 Return m_Hashtable(m_HashIndexers(index))
 
             End Get
             Set(ByVal Value As Object)
+
+                If index < 0 AndAlso Count > 0 Then
+                    'Oh man this behaviour is weird...
+                    index = 0
+                End If
 
                 If index > Count Or index < 0 Then
                     Throw New ArgumentOutOfRangeException("Index")
@@ -316,16 +360,28 @@ Namespace Microsoft.VisualBasic
         End Sub
 
         Private Sub Insert(ByVal index As Integer, ByVal value As Object) Implements System.Collections.IList.Insert
-            Dim idx As Integer = index + 2
-            If idx > Count + 1 Then
+#If NET_VER >= 2.0 Then
+            If index < 0 Then
                 Throw New ArgumentOutOfRangeException
-            Else
-                If idx = Count Then
-                    Add(value)
-                Else
-                    Insert(idx, value, GetNextKey(value))
-                End If
             End If
+#End If
+
+#If NET_VER < 2.0 Then
+            If index + 2 > Count + 1 Then
+                Throw New ArgumentOutOfRangeException
+            End If
+#Else
+            If index + 1 > Count + 2 Then
+                Throw New ArgumentOutOfRangeException
+            End If
+#End If
+
+            If index + 2 >= Count Then
+                Add(value)
+            Else
+                Insert(index + 2, value, GetNextKey(value))
+            End If
+
         End Sub
 
         Private Sub Insert(ByVal index As Integer, ByVal value As Object, ByVal Key As String)

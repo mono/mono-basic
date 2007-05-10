@@ -36,6 +36,9 @@ Namespace Microsoft.VisualBasic.FileIO
         End Sub
 
         Private Shared Function RemovePathSeparator(ByVal Path As String) As String
+            If Path.Contains("\\") AndAlso Path.StartsWith("\\") = False Then
+                Path = Path.Replace("\\", "\")
+            End If
             If Path.EndsWith(System.IO.Path.DirectorySeparatorChar) Then
                 Return Path.Substring(0, Path.Length - 1)
             Else

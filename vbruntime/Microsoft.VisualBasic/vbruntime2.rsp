@@ -1,0 +1,5 @@
+/define:_MYTYPE=\"Empty\",NET_2_0=True,NET_VER=2.0
+/imports:System.Collections.Generic
+/codepage:65001
+/noconfig
+@vbruntime.rsp

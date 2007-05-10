@@ -441,6 +441,7 @@ Namespace Microsoft.VisualBasic
             Dim IsDecimal As Boolean = False
             Dim IsHex As Boolean = False
             Dim IsOct As Boolean = False
+            Dim IsE As Boolean
 
             '
             ' Loop on string and decide what is the base of the number.
@@ -476,7 +477,6 @@ Namespace Microsoft.VisualBasic
                             Return 0
                         End If
                     End If
-
                 Else
                     'the string didn't start with a digit or &H or &O
                     'its bad. return 0.
@@ -514,6 +514,11 @@ Namespace Microsoft.VisualBasic
                             'period already collected. exit the loop.
                             pos = InputStr.Length
                         End If
+                    ElseIf IsE = False AndAlso (CurrentChar = "E"c OrElse CurrentChar = "e"c) Then
+                        IsE = True
+                        NumericString &= CurrentChar
+                    ElseIf IsE AndAlso CurrentChar = "+" Then
+                        'ignore this
                     Else
                         'exit the loop
                         pos = InputStr.Length
@@ -565,7 +570,7 @@ Namespace Microsoft.VisualBasic
             Dim retVal As Double = 0
             If NumericString.Length > 0 Then
                 If IsDecimal Then
-                    retVal = Convert.ToDouble(NumericString, CultureInfo.InvariantCulture)
+                    retVal = Convert.ToDouble(NumericString, New CultureInfo("en-US"))
                     If IsNegative Then retVal = (-1) * retVal
                 ElseIf IsHex Then
                     NumericString = NumericString.ToUpper

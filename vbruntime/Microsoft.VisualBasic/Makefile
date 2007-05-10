@@ -3,8 +3,11 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualBasic.dll
 
-LOCAL_VBNC_FLAGS = \
-	@vbruntime.rsp $(EXTRA_VBRUNTIME_FLAGS)
+ifeq ("$(FXVERSION)", "1")
+LOCAL_VBNC_FLAGS = @vbruntime1.rsp $(EXTRA_VBRUNTIME_FLAGS)
+else
+LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
+endif
 
 NO_SIGN_ASSEMBLY = true
 

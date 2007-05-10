@@ -1,3 +1,16 @@
+2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Microsoft.VisualBasic.FileIO/SpecialDirectories.vb: Fix weird paths
+	  we get (includes \\ in the middle) on Windows.
+	* Microsoft.VisualBasic/Conversion.vb: Val: accept decimal values with
+	  E+- in them.
+	* Microsoft.VisualBasic/Collection.vb: Lots of updates to make
+	  Collection work in the 2.0 profile.
+	* vbruntime.rsp: Now this file only contains options common to both 1.0
+	  and 2.0 builds.
+	* vbruntime1.rsp: Contains 1.0 specific options.
+	* vbruntime2.rsp: Contains 2.0 specific options.
+
 2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 2005VB.vbproj: Finally found a way to send -novbruntimeref to the VS

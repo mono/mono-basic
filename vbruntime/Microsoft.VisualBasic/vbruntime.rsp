@@ -1,21 +1,11 @@
 /debug:full
-/noconfig
 /r:System.dll
 /r:mscorlib.dll
 /r:System.dll,System.Windows.Forms.dll,System.Data.dll,System.Drawing.dll,System.Web.dll,System.Xml.dll
 /novbruntimeref
-#/define:DEBUG=False,TRACE=false,NET_2_0=True,_MYTYPE=\"Empty\"
-/define:_MYTYPE=\"Empty\",NET_2_0=True,NET_VER=2.0
-/errorreport:prompt
-#/verbose
+/define:_MYTYPE=\"Empty\"
 /t:library
-#vbc v1.1 doesn't like this#/nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005
-/errorreport:prompt
 /optionstrict+
 /imports:System,System.Collections,System.Data,System.Diagnostics
-#vbc v1.1 doesn't like this#/imports:System.Collections.Generic
 /out:Microsoft.VisualBasic.dll
 /res:strings.resources
-/keyfile:msfinal.pub
-#vbc v1.1 doesn't like this#-codepage:65001
--codepage:65001
