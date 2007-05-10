@@ -6,6 +6,7 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Java|Any CPU = Debug_Java|Any CPU
+		Debug_Java20|Any CPU = Debug_Java20|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Edit|Any CPU = Edit|Any CPU
 		Release_Java|Any CPU = Release_Java|Any CPU
@@ -14,6 +15,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
 		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
 		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
 		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Debug|Any CPU.Build.0 = Debug_Java|Any CPU
 		{FA2508D1-1D86-46E4-9F84-6EEA940DF2F7}.Edit|Any CPU.ActiveCfg = Release_Java|Any CPU

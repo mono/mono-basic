@@ -31,10 +31,9 @@ set OUTPUT_FILE_PREFIX=VisualBasic_CS
 set RUNNING_FIXTURE=MonoTests.Microsoft_VisualBasic
 set TEST_SOLUTION=Test\2005VB_test_CS.JavaEE.sln
 set TEST_ASSEMBLY=Microsoft.2005_VisualBasic_test.jar
-set PROJECT_CONFIGURATION=Debug_Java
-rem set NUNIT_PATH=..\..\nunit20\
-rem set NUNIT_PATH_BIN=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%
-set NUNIT_PATH_BIN=nunit
+set PROJECT_CONFIGURATION=Debug_Java20
+set NUNIT_PATH=..\..\nunit20\
+set NUNIT_PATH_BIN=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%
 
 set startDate=%date%
 set startTime=%time%
@@ -118,7 +117,7 @@ REM ********************************************************
 @echo Running fixture "%RUNNING_FIXTURE%"
 REM ********************************************************
 
-copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
+copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 REM @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1

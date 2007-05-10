@@ -35,6 +35,20 @@
     <DefineConstants>JAVA=true,NET_VER=2.0,NET_2_0=True,DEBUG=True,TRACE=True,TARGET_JVM=True</DefineConstants>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug_Java\</OutputPath>
+    <DocumentationFile>Microsoft.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <DefineConstants>JAVA=true,NET_VER=2.0,NET_2_0=True,DEBUG=True,TRACE=True,TARGET_JVM=True</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
@@ -61,17 +75,17 @@
   <ItemGroup>
     <Reference Include="nunit.core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\nunit\nunit.core.dll</HintPath>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\nunit\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\nunit\nunit.util.dll</HintPath>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.util.dll</HintPath>
     </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="rt" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -109,7 +123,6 @@
     <Compile Include="Microsoft.VisualBasic\Helper.vb" />
     <Compile Include="Microsoft.VisualBasic\InformationTests.vb" />
     <Compile Include="Microsoft.VisualBasic\InteractionTests.vb" />
-    <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
