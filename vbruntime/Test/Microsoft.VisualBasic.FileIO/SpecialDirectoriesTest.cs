@@ -37,6 +37,7 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 	[TestFixture]
 	public class SpecialDirectoriesTest
 	{
+#if !TARGET_JVM
 		[Category ("TargetJvmNotSupported")]//System.Windows.Forms.Application, ServerComputer.FileSystem property
 		[Test]
 		public void PathTest()
@@ -51,6 +52,7 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Programs)), SpecialDirectories.Programs, "Programs");
 			Assert.AreEqual (FixPath (System.IO.Path.GetTempPath ()), SpecialDirectories.Temp, "Temp");
 		}
+#endif
 		
 		string FixPath (string path) 
 		{	// For some reason VB may return paths with \\ in them instead of just \.

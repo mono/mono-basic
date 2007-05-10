@@ -293,6 +293,7 @@ Public Class FilesSystemTest
 #Region "FileDateTime"
 
     'TargetJvmNotSupported - File metadata/attributes feature is not supported 
+#If Not TARGET_JVM Then
     <Test(), Category("TargetJvmNotSupported")> _
     Public Sub FileDateTime_1()
 
@@ -309,7 +310,9 @@ Public Class FilesSystemTest
         Thread.Sleep(600)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
+#End If
 
+#If Not TARGET_JVM Then
     'TargetJvmNotSupported - File metadata/attributes feature is not supported 
     <Test(), Category("TargetJvmNotSupported")> _
     Public Sub FileDateTime_2()
@@ -330,6 +333,7 @@ Public Class FilesSystemTest
         Thread.Sleep(60)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
+#End If
 
     <Test(), ExpectedException(GetType(FileNotFoundException))> _
     Public Sub FileDateTime_3()

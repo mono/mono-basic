@@ -25,7 +25,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #If NET_2_0 Then
-
+#If Not TARGET_JVM Then
 Imports Microsoft.VisualBasic.Devices
 Imports System.Windows.Forms
 Imports NUnit.Framework
@@ -71,4 +71,5 @@ Namespace Devices
         End Sub
     End Class
 End Namespace
+#End If
 #End If

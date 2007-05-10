@@ -25,6 +25,7 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #If NET_2_0 Then
+#If Not TARGET_JVM Then
 
 Imports Microsoft.VisualBasic.Devices
 
@@ -43,6 +44,7 @@ Namespace Devices
             Assert.IsNotNull(sc.Network, testname & "-5")
             Assert.IsNotNull(sc.Registry, testname & "-6")
 
+#If Not TARGET_JVM Then
             Assert.IsNotNull(sc.Audio, testname & "-7")
             Assert.IsNotNull(sc.Clipboard, testname & "-8")
             Assert.IsNotNull(sc.Keyboard, testname & "-9")
@@ -50,7 +52,9 @@ Namespace Devices
             Assert.IsNotNull(sc.Ports, testname & "-11")
             Assert.IsNotNull(sc.Screen, testname & "-12")
             Assert.AreSame(System.Windows.Forms.Screen.PrimaryScreen, sc.Screen, testname & "-13")
+#End If
         End Sub
     End Class
 End Namespace
+#End If
 #End If

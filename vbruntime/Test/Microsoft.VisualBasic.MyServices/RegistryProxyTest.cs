@@ -45,6 +45,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			Assert.AreEqual ("a", value, "#01");
 		}
 
+#if !TARGET_JVM
 		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestSetValue ()
@@ -81,7 +82,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			registry.ClassesRoot.DeleteSubKey(name);
 		}
 
-		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
+        [Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestGlobalKeys ()
 		{
@@ -110,8 +111,8 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			Assert.AreEqual ("HKEY_USERS", users.Name, "Users");
 			
 		}
-		
-		Microsoft.VisualBasic.MyServices.RegistryProxy getProxy ()
+#endif
+        Microsoft.VisualBasic.MyServices.RegistryProxy getProxy ()
 		{
 			return (new Microsoft.VisualBasic.Devices.Computer()).Registry;
 		}

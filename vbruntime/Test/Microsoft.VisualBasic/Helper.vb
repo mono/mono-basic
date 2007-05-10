@@ -33,6 +33,7 @@ Imports System.IO
 Public Class Helper
 
     'TargetJvmNotSupported - AppDomain.GetAssemblies
+#If Not TARGET_JVM Then
     <Test(), Category("TargetJvmNotSupported")> _
     Public Sub PrintRuntimePath()
         For Each a As Reflection.Assembly In AppDomain.CurrentDomain.GetAssemblies
@@ -42,6 +43,7 @@ Public Class Helper
             End If
         Next
     End Sub
+#End If
 
 #If NET_VER >= 2.0 Then
     Public Shared Sub CompareBytes(ByVal aa() As Byte, ByVal bb() As Byte, ByVal testname As String)

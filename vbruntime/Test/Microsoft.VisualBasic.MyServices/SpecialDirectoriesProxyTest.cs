@@ -37,6 +37,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 	[TestFixture]
 	public class SpecialDirectoriesProxyTest
 	{
+#if !TARGET_JVM
 		[Category ("TargetJvmNotSupported")]//System.Windows.Forms.Application, ServerComputer.FileSystem property
 		[Test]
 		public void PathTest()
@@ -53,6 +54,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			Assert.AreEqual (FixPath (Environment.GetFolderPath (Environment.SpecialFolder.Programs)), sd.Programs, "Programs");
 			Assert.AreEqual (FixPath (System.IO.Path.GetTempPath ()), sd.Temp, "Temp");
 		}
+#endif
 		
 		string FixPath (string path) 
 		{
