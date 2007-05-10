@@ -46,10 +46,22 @@ Namespace Microsoft.VisualBasic.CompilerServices
         ' Although there is one ProjectData, every thread which set get VB errors must have its own ErrObject
         <ThreadStatic()> _
         Friend Shared m_projectError As ErrObject
+#If TARGET_JVM Then
+        private Shared m_projectErrorSlot as LocalDataStoreSlot = System.Threading.Thread.AllocateDataSlot()
+#End If
 
         Friend ReadOnly Property ProjectError() As ErrObject
             Get
+#If TARGET_JVM Then
+                                dim errObj as Object = System.Threading.Thread.GetData(m_projectErrorSlot)
+                                if (errObj is Nothing)
+                                    errObj = New ErrObject
+                                    System.Threading.Thread.SetData(m_projectErrorSlot, errObj)
+                                End if
+                                return CType( errObj, ErrObject)
+#Else
                 Return m_projectError
+#End If
             End Get
         End Property
         Private Sub New()
@@ -63,11 +75,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If Inst Is Nothing Then
                 Inst = New ProjectData
             End If
-
+#If Not TARGET_JVM Then
             If m_projectError Is Nothing Then
                 m_projectError = New ErrObject
             End If
-
+#End If
             Return Inst
         End Function
         'ClearProjectError is called by the statement "On Error Resume Next"
