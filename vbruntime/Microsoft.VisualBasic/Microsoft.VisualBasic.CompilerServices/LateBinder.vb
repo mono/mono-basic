@@ -100,6 +100,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                                                 ByVal names() As String, _
                                                 ByRef state As Object) As System.Reflection.MethodBase
 
+
             state = GetStateInstance()
             CType(state, BState).oargs = CType(args.Clone(), Object())
 
@@ -126,7 +127,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         End If
                     End If
                 Else
-                    If Not names Is Nothing Then ' thre are name matches but not parameter matches
+                    If Not names Is Nothing Then ' there are name matches but not parameter matches
                         Throw New AmbiguousMatchException
                     End If
                 End If
@@ -980,6 +981,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     current = CompareTypes(type1, type2, IsParamArray(parameters, i))
                 End If
 
+                If current = TypeConversion.NotConvertible Then
+                    Return current
+                End If
+
                 If i = 0 Then
                     previous = current
                 Else
@@ -1034,6 +1039,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Dim typeCode1 As TypeCode = Type.GetTypeCode(type1)
             Dim typeCode2 As TypeCode = Type.GetTypeCode(type2)
+
+            If type1.IsPrimitive And type2.IsEnum Then
+                Return TypeConversion.Narrowing
+            ElseIf type1.IsEnum And type2.IsPrimitive Then
+                Return TypeConversion.Widening
+            End If
 
             If type1.IsPrimitive And type2.IsPrimitive Then
 
