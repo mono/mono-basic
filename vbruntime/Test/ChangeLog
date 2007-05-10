@@ -1,3 +1,9 @@
+2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Make.cmd: Update, can now build both 1.0 and 2.0.
+	* Makefile: Update to use either mcs or gmcs according to target
+	  version.
+
 2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Microsoft.VisualBasic.CompilerServices/UtilsTest.cs: Added more
