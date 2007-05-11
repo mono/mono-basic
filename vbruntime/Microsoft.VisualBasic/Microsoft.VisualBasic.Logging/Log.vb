@@ -84,11 +84,12 @@ Namespace Microsoft.VisualBasic.Logging
 #Const TRACE = TRACEDEFAULT
 
         End Sub
-
+#End If
         Public Sub WriteException(ByVal ex As Exception)
             WriteException(ex, TraceEventType.Error, String.Empty, GetIDOfType(TraceEventType.Error))
         End Sub
 
+#If mono_not_yet Then
         Public Sub WriteException(ByVal ex As Exception, ByVal severity As TraceEventType, ByVal additionalInfo As String)
             WriteException(ex, severity, additionalInfo, GetIDOfType(severity))
         End Sub
@@ -103,13 +104,14 @@ Namespace Microsoft.VisualBasic.Logging
             End If
             WriteEntry(msg, severity, id)
         End Sub
-
+#End If
         Public ReadOnly Property DefaultFileLogWriter() As FileLogTraceListener
             Get
                 Return TryCast(m_Source.Listeners("FileLog"), FileLogTraceListener)
             End Get
         End Property
 
+#If mono_not_yet Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Public ReadOnly Property TraceSource() As TraceSource
             Get

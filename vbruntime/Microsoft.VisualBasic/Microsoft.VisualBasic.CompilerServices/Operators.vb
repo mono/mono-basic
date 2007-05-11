@@ -1234,7 +1234,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return num 'will never get here
         End Function
 
-        Public Shared Function MultiplyAndSize(ByVal o1 As Long, ByVal o2 As Long, ByVal tc As TypeCode) As Object
+        Friend Shared Function MultiplyAndSize(ByVal o1 As Long, ByVal o2 As Long, ByVal tc As TypeCode) As Object
             Return SizeDown(o1 * o2, tc)
         End Function
         Public Shared Function MultiplyObject(ByVal o1 As Object, ByVal o2 As Object) As Object
@@ -1384,7 +1384,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return ret
         End Function
 
-        Public Shared Function LeftShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
+        Friend Shared Function LeftShiftObject_(ByVal Operand As Object, ByVal Amount As Object) As Object
             Dim ret As Object = Nothing
             If Not (InvokeBinaryOperator(Operand, Amount, "op_LeftShift", ret)) Then
                 Throw New InvalidOperationException()

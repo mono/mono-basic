@@ -171,7 +171,7 @@ Namespace Microsoft.VisualBasic.Logging
         End Sub
 
 
-        Public Overrides Sub Write(ByVal message As String)
+        Public Overloads Overrides Sub Write(ByVal message As String)
             Dim stream As System.IO.StreamWriter
             stream = GetOpenStream()
 
@@ -182,7 +182,7 @@ Namespace Microsoft.VisualBasic.Logging
             If m_AutoFlush Then stream.Flush()
         End Sub
 
-        Public Overrides Sub WriteLine(ByVal message As String)
+        Public Overloads Overrides Sub WriteLine(ByVal message As String)
             Dim stream As System.IO.StreamWriter
             stream = GetOpenStream()
 

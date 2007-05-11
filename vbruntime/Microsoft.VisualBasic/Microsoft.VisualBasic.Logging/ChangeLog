@@ -1,3 +1,7 @@
+2007-05-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileLogTraceListener.vb, Log.vb: Corcompare fixes.
+
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Log.vb, FileLogTraceListener.vb: Removed mono_not_yet from a couple
