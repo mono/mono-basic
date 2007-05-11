@@ -86,7 +86,11 @@ Namespace Microsoft.VisualBasic.Logging
         End Sub
 #End If
         Public Sub WriteException(ByVal ex As Exception)
+#If mono_not_yet Then
+            Throw New NotImplementedException
+#Else
             WriteException(ex, TraceEventType.Error, String.Empty, GetIDOfType(TraceEventType.Error))
+#End If
         End Sub
 
 #If mono_not_yet Then
