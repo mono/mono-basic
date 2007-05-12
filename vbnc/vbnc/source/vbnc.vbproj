@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -322,7 +322,6 @@
     <Compile Include="General\MyGenerator.vb" />
     <Compile Include="General\NamespaceDictionary.vb" />
     <Compile Include="General\NothingType.vb" />
-    <Compile Include="General\TypeCache.Generated.vb" />
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
     <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
