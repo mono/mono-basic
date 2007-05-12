@@ -32,10 +32,10 @@ Public Class ConcatExpression
 
         Select Case OperandTypeCode
             Case TypeCode.String
-                Emitter.EmitCall(Info, Compiler.TypeCache.String_Concat__String_String)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_String__Concat_String_String)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ConcatenateObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConcatenateObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select
@@ -54,8 +54,8 @@ Public Class ConcatExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return m_LeftExpression.IsConstant AndAlso (Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.String) OrElse Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.Char)) _
-              AndAlso m_RightExpression.IsConstant AndAlso (Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.String) OrElse Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.Char))
+            Return m_LeftExpression.IsConstant AndAlso (Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_Char)) _
+              AndAlso m_RightExpression.IsConstant AndAlso (Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_Char))
         End Get
     End Property
 

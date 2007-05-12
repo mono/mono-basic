@@ -34,8 +34,8 @@ Public Class IntDivisionExpression
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64
                 Emitter.EmitIntDiv(Info, OperandType)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_IntDivideObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__IntDivideObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

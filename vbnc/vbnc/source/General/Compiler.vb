@@ -88,12 +88,19 @@ Public Class Compiler
     ''' <remarks></remarks>
     Public AssemblyBuilder As System.Reflection.Emit.AssemblyBuilder
 
+#If ENABLECECIL Then
+    Public AssemblyBuilderCecil As Mono.Cecil.AssemblyDefinition
+#End If
+
     ''' <summary>
     ''' The one and only module in the assembly
     ''' </summary>
     ''' <remarks></remarks>
     Public ModuleBuilder As System.Reflection.Emit.ModuleBuilder
 
+#If ENABLECECIL Then
+    Public ModuleBuilderCecil As Mono.Cecil.ModuleDefinition
+#End If
     ''' <summary>
     ''' Represents the conditinal compiler.
     ''' </summary>
@@ -315,6 +322,11 @@ Public Class Compiler
             m_SymbolWriter = ModuleBuilder.GetSymWriter
         End If
 
+#If ENABLECECIL Then
+        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, Mono.Cecil.AssemblyKind.Dll)
+        ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
+#End If
+
         Return Compiler.Report.Errors = 0
     End Function
 
@@ -384,13 +396,6 @@ Public Class Compiler
         result = theAss.ResolveMembers AndAlso result
         VerifyConsistency(result, "ResolveMembers")
         result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
-
-        If CommandLine.NoVBRuntimeRef Then
-            m_TypeCache.Init_vbruntime(True)
-#If ENABLECECIL Then
-            m_CecilTypeCache.Init_vbruntime(True)
-#End If
-        End If
 
         SequenceTime(CompilerSequence.Resolved) = DateTime.Now
 
@@ -574,6 +579,12 @@ Public Class Compiler
             AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilder.FullName, m_OutFilename))
 
+#If ENABLECECIL Then
+
+            Mono.Cecil.AssemblyFactory.SaveAssembly(AssemblyBuilderCecil, m_OutFilename & ".cecil.dll")
+            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename & ".cecil.dll"))
+#End If
+
             SequenceTime(CompilerSequence.End) = DateTime.Now
 
 ShowErrors:
@@ -692,14 +703,14 @@ EndOfCompilation:
         'Only methods called 'Main'
         If vbnc.Helper.CompareName(method.Name, "Main") = False Then Return False
         'Only methods with no return type or Integer return type
-        If method.ReturnType IsNot Nothing AndAlso method.ReturnType IsNot Compiler.TypeCache.Void AndAlso method.ReturnType IsNot Compiler.TypeCache.Integer Then Return False
+        If method.ReturnType IsNot Nothing AndAlso method.ReturnType IsNot Compiler.TypeCache.System_Void AndAlso method.ReturnType IsNot Compiler.TypeCache.System_Int32 Then Return False
 
         'Only methods with no parameters or methods with one String() parameter
         Dim params() As ParameterInfo
         params = method.GetParameters
         If params.Length = 0 Then Return True
         If params.Length > 1 Then Return False
-        If params(0).ParameterType Is Compiler.TypeCache.String_Array AndAlso params(0).IsOptional = False AndAlso params(0).IsOut = False Then Return True
+        If params(0).ParameterType Is Compiler.TypeCache.System_String_Array AndAlso params(0).IsOptional = False AndAlso params(0).IsOut = False Then Return True
 
         Return False
     End Function
@@ -911,7 +922,7 @@ EndOfCompilation:
                 Else
                     entryMethod = DirectCast(lstMethods(0), MethodBuilder)
                 End If
-                entryMethod.SetCustomAttribute(TypeCache.STAThreadAttribute_Ctor, New Byte() {})
+                entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
                 AssemblyBuilder.SetEntryPoint(entryMethod)
             End If
 

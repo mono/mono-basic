@@ -36,12 +36,12 @@ Public Class BinaryAddExpression
             Case TypeCode.Double, TypeCode.Single
                 Emitter.EmitAdd(Info, OperandType)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Add__Decimal_Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Add_Decimal_Decimal)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_AddObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__AddObject_Object_Object)
             Case TypeCode.String
-                Emitter.EmitCall(Info, Compiler.TypeCache.String_Concat__String_String)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_String__Concat_String_String)
             Case Else
                 Throw New InternalException(Me)
         End Select

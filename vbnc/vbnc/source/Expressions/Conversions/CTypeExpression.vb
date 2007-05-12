@@ -89,7 +89,7 @@ Public Class CTypeExpression
             Case TypeCode.UInt64
                 CULngExpression.GenerateCode(Me.Expression, Info)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Compiler.TypeCache.Object) Then
+                If Helper.CompareType(expType, Compiler.TypeCache.System_Object) Then
                     CObjExpression.GenerateCode(Me.Expression, Info)
                 Else
                     result = GenerateCTypeCode(Info, expType, Me.Expression.ExpressionType)
@@ -160,7 +160,7 @@ Public Class CTypeExpression
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
                     result = False
                 End If
-            ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.Array) Then
+            ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_Array) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             ElseIf DestinationType.IsArray = False Then
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
@@ -178,13 +178,13 @@ Public Class CTypeExpression
                 'Array covariance in particular means that an element of an array whose element type is B 
                 'may actually be an element of an array whose element type is A, 
                 'provided that both A and B are reference types and that B is a base type of A or is implemented by A. 
-                If Helper.CompareType(Compiler.TypeCache.Object, SourceElementType) Then
+                If Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse DestinationElementType.IsSubclassOf(SourceElementType) OrElse SourceElementType.IsSubclassOf(DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.DoesTypeImplementInterface(Compiler, SourceElementType, DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf DestinationElementType.IsInterface AndAlso Helper.CompareType(Compiler.TypeCache.Object, SourceElementType) Then
+                ElseIf DestinationElementType.IsInterface AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf SourceElementType.IsEnum AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
                     'Conversions also exist between an array of an enumerated type and an array of the enumerated type's underlying type of the same rank.
@@ -200,7 +200,7 @@ Public Class CTypeExpression
         ElseIf SourceType.IsClass Then
             If DestinationType.IsGenericParameter Then
                 Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions_ToGenericParameter_T__Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 Emitter.EmitCall(Info, method)
@@ -220,11 +220,11 @@ Public Class CTypeExpression
             End If
         ElseIf SourceType.IsValueType Then
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
-            If Helper.CompareType(DestinationType, Compiler.TypeCache.Object) Then
+            If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
             ElseIf Helper.DoesTypeImplementInterface(Compiler, SourceType, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
-                Emitter.EmitCastClass(Info, Compiler.TypeCache.Object, DestinationType)
+                Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, DestinationType)
             ElseIf Helper.CompareType(SourceType.BaseType, DestinationType) Then
                 Emitter.EmitBox(Info, DestinationType)
             Else
@@ -233,7 +233,7 @@ Public Class CTypeExpression
         ElseIf SourceType.IsInterface Then
             If DestinationType.IsGenericParameter Then
                 Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions_ToGenericParameter_T__Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 Emitter.EmitCall(Info, method)
@@ -300,7 +300,7 @@ Public Class CTypeExpression
             Case TypeCode.UInt64
                 result = CULngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
             Case TypeCode.Object, TypeCode.DBNull
-                If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Object) Then
+                If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Object) Then
                     result = CObjExpression.Validate(Info, Expression.ExpressionType) AndAlso result
                 Else
                     'Helper.NotImplementedYet("") Anything to do here?
@@ -342,7 +342,7 @@ Public Class CTypeExpression
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             If Expression.IsConstant Then
-                If m_ResolvedDestinationType IsNot Nothing AndAlso Helper.CompareType(m_ResolvedDestinationType, Compiler.TypeCache.String) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.Char) Then
+                If m_ResolvedDestinationType IsNot Nothing AndAlso Helper.CompareType(m_ResolvedDestinationType, Compiler.TypeCache.System_String) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char) Then
                     Return True
                 Else
                     Return False

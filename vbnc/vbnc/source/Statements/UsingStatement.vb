@@ -98,7 +98,7 @@ Public Class UsingStatement
             Emitter.EmitLoadVariable(Info, tmpvar)
             Emitter.EmitBranchIfFalse(Info, endblock2)
             Emitter.EmitLoadVariable(Info, tmpvar)
-            Emitter.EmitCallVirt(Info, Compiler.TypeCache.IDisposable_Dispose)
+            Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_IDisposable__Dispose)
             Info.ILGen.MarkLabel(endblock2)
             Info.ILGen.EndExceptionBlock()
         Loop

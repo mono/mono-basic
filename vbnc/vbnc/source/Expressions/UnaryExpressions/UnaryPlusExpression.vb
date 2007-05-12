@@ -42,8 +42,8 @@ Public Class UnaryPlusExpression
             Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_PlusObject__Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__PlusObject_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

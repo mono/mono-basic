@@ -36,22 +36,22 @@ Public Class GEExpression
             Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Char
                 Emitter.EmitGE(Info, OperandType)
             Case TypeCode.DateTime
-                Emitter.EmitCall(Info, Compiler.TypeCache.Date_Compare__Date_Date)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_DateTime__Compare_DateTime_DateTime)
                 Emitter.EmitLoadI4Value(Info, 0)
-                Emitter.EmitGE(Info, Compiler.TypeCache.Integer)
+                Emitter.EmitGE(Info, Compiler.TypeCache.System_Int32)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Compare__Decimal_Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Compare_Decimal_Decimal)
                 Emitter.EmitLoadI4Value(Info, 0)
-                Emitter.EmitGE(Info, Compiler.TypeCache.Integer)
+                Emitter.EmitGE(Info, Compiler.TypeCache.System_Int32)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ConditionalCompareObjectGreaterEqual__Object_Object_Bool)
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConditionalCompareObjectGreaterEqual_Object_Object_Boolean)
             Case TypeCode.String
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_CompareString__String_String_Bool)
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__CompareString_String_String_Boolean)
                 Emitter.EmitLoadI4Value(Info, 0)
-                Emitter.EmitGE(Info, Compiler.TypeCache.Integer)
+                Emitter.EmitGE(Info, Compiler.TypeCache.System_Int32)
             Case Else
                 Throw New InternalException(Me)
         End Select

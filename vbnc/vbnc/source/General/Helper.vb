@@ -991,10 +991,7 @@ Public Class Helper
         If TypeOf type Is TypeDescriptor Then
             Return IsModule(Compiler, DirectCast(type, TypeDescriptor))
         Else
-            result = type.IsClass AndAlso Compiler.TypeCache.StandardModuleAttribute IsNot Nothing AndAlso type.IsDefined(Compiler.TypeCache.StandardModuleAttribute, False)
-
-            'Compiler.Report.WriteLine("IsModule: type=" & type.FullName & ", result=" & result.ToString)
-            'If type.Name = "Constants" Then Stop
+            result = type.IsClass AndAlso Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso type.IsDefined(Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute, False)
             Return result
         End If
     End Function
@@ -1011,7 +1008,7 @@ Public Class Helper
         'If TypeOf type Is TypeDescriptor Then
         '    Return IsModule(Compiler, DirectCast(type, TypeDescriptor))
         'Else
-        result = type.IsClass AndAlso Compiler.TypeCache.StandardModuleAttribute IsNot Nothing AndAlso type.CustomAttributes.IsDefined(Compiler.cecilTypeCache.StandardModuleAttribute)
+        result = type.IsClass AndAlso Compiler.CecilTypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso type.CustomAttributes.IsDefined(Compiler.CecilTypeCache.MS_VB_CS_StandardModuleAttribute)
 
         'Compiler.Report.WriteLine("IsModule: type=" & type.FullName & ", result=" & result.ToString)
         'If type.Name = "Constants" Then Stop
@@ -1126,7 +1123,7 @@ Public Class Helper
     Shared Function EmitIntegerArray(ByVal Info As EmitInfo, ByVal Arguments As ArgumentList) As Boolean
         Dim result As Boolean = True
 
-        Dim arrayType As Type = Info.Compiler.TypeCache.Integer_Array
+        Dim arrayType As Type = Info.Compiler.TypeCache.System_Int32_Array
         Dim elementType As Type = arrayType.GetElementType
         Dim tmpVar As LocalBuilder = Info.ILGen.DeclareLocal(arrayType)
         Dim elementInfo As EmitInfo = Info.Clone(True, False, elementType)
@@ -1174,14 +1171,14 @@ Public Class Helper
                 Emitter.EmitBox(Info, ElementType)
             End If
             result = EmitIntegerArray(Info, Arguments) AndAlso result
-            Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.Array_SetValue)
+            Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.System_Array__SetValue)
         Else
             Dim methodtypes As New Generic.List(Of Type)
-            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.Integer)
+            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32)
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
-                Emitter.EmitConversion(Arguments(i).Expression.ExpressionType, Info.Compiler.TypeCache.Integer, Info)
-                methodtypes.Add(Info.Compiler.TypeCache.Integer)
+                Emitter.EmitConversion(Arguments(i).Expression.ExpressionType, Info.Compiler.TypeCache.System_Int32, Info)
+                methodtypes.Add(Info.Compiler.TypeCache.System_Int32)
             Next
 
             Dim rInfo As EmitInfo = Info.Clone(True, False, ElementType)
@@ -1209,7 +1206,7 @@ Public Class Helper
         result = ArrayVariable.GenerateCode(Info) AndAlso result
 
         If isArrayGetValue Then
-            result = Arguments.GenerateCode(Info, Helper.CreateArray(Of Type)(Info.Compiler.TypeCache.Integer, Arguments.Length)) AndAlso result
+            result = Arguments.GenerateCode(Info, Helper.CreateArray(Of Type)(Info.Compiler.TypeCache.System_Int32, Arguments.Length)) AndAlso result
             'result = EmitIntegerArray(Info, Arguments) AndAlso result
             Dim getMethod As MethodInfo
             getMethod = ArrayElementInitializer.GetGetMethod(Info.Compiler, ArrayType)
@@ -1222,12 +1219,12 @@ Public Class Helper
             '    Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.Object, ElementType)
             'End If
         Else
-            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.Integer)
+            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32)
             Dim methodtypes(Arguments.Count - 1) As Type
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
-                Emitter.EmitConversion(Info.Stack.Peek, Info.Compiler.TypeCache.Integer, Info)
-                methodtypes(i) = Info.Compiler.TypeCache.Integer
+                Emitter.EmitConversion(Info.Stack.Peek, Info.Compiler.TypeCache.System_Int32, Info)
+                methodtypes(i) = Info.Compiler.TypeCache.System_Int32
             Next
 
             If isNonPrimitiveValueType Then
@@ -1313,7 +1310,7 @@ Public Class Helper
     End Function
 
     Shared Function IsDelegate(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
-        Return Helper.IsSubclassOf(Compiler.TypeCache.MulticastDelegate, Type)
+        Return Helper.IsSubclassOf(Compiler.TypeCache.System_MulticastDelegate, Type)
     End Function
 
     ''' <summary>
@@ -2698,9 +2695,9 @@ Public Class Helper
             Return True
         ElseIf Helper.CompareType(FromType, Compiler.TypeCache.Nothing) Then
             Return True
-        ElseIf FromType.IsArray = True AndAlso ToType.IsArray = True AndAlso FromType.FullName Is Nothing AndAlso ToType.FullName Is Nothing AndAlso  FromType.Name.Equals(ToType.Name, StringComparison.Ordinal) Then
+        ElseIf FromType.IsArray = True AndAlso ToType.IsArray = True AndAlso FromType.FullName Is Nothing AndAlso ToType.FullName Is Nothing AndAlso FromType.Name.Equals(ToType.Name, StringComparison.Ordinal) Then
             Return True
-        ElseIf CompareType(ToType, Compiler.TypeCache.Object) Then
+        ElseIf CompareType(ToType, Compiler.TypeCache.System_Object) Then
             Return True
         ElseIf TypeOf ToType Is GenericTypeParameterBuilder AndAlso TypeOf FromType Is Type Then
             Return ToType.Name = FromType.Name
@@ -2742,9 +2739,9 @@ Public Class Helper
             Return True
         ElseIf ToType.FullName IsNot Nothing AndAlso FromType.FullName IsNot Nothing AndAlso ToType.FullName.Equals(FromType.FullName, StringComparison.Ordinal) Then
             Return True
-        ElseIf Helper.CompareType(Compiler.TypeCache.UInteger, ToType) AndAlso Helper.CompareType(Compiler.TypeCache.UShort, FromType) Then
+        ElseIf Helper.CompareType(Compiler.TypeCache.System_UInt32, ToType) AndAlso Helper.CompareType(Compiler.TypeCache.System_UInt16, FromType) Then
             Return True
-        ElseIf Helper.CompareType(FromType, Compiler.TypeCache.Object) Then
+        ElseIf Helper.CompareType(FromType, Compiler.TypeCache.System_Object) Then
             Return False
         ElseIf Helper.IsSubclassOf(ToType, FromType) Then
             Return True
@@ -2766,12 +2763,12 @@ Public Class Helper
 
     Shared Function IsNullableType(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
         If Type.IsValueType = False Then Return False
-        If CompareType(Type, Compiler.TypeCache.System_Nullable) Then Return True
+        If CompareType(Type, Compiler.TypeCache.System_Nullable1) Then Return True
 
         If Type.IsGenericTypeDefinition Then Return False
         If Type.IsGenericParameter Then Return False
         If Type.IsGenericType = False Then Return False
-        Return Helper.CompareType(Type.GetGenericTypeDefinition, Compiler.TypeCache.System_Nullable)
+        Return Helper.CompareType(Type.GetGenericTypeDefinition, Compiler.TypeCache.System_Nullable1)
     End Function
 
     Shared Function IsSubclassOf(ByVal BaseClass As Type, ByVal DerivedClass As Type) As Boolean
@@ -2852,7 +2849,7 @@ Public Class Helper
             'do nothing
         ElseIf CompareType(fromExpr.ExpressionType, Parent.Compiler.TypeCache.Nothing) Then
             'do nothing
-        ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.Enum) AndAlso fromExpr.ExpressionType.IsEnum Then
+        ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_Enum) AndAlso fromExpr.ExpressionType.IsEnum Then
             fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
         ElseIf CompareType(fromExpr.ExpressionType, DestinationType) = False Then
             Dim CTypeExp As Expression
@@ -2893,6 +2890,14 @@ Public Class Helper
             Return True
         End If
     End Function
+
+#If ENABLECECIL Then
+    Shared Function CompareType(ByVal t1 As Mono.Cecil.TypeReference, ByVal t2 As Mono.Cecil.TypeReference) As Boolean
+        If t1 Is t2 Then Return True
+        Helper.Assert(t1.FullName.Equals(t2.FullName) = False)
+        Return False
+    End Function
+#End If
 
     Shared Function CompareType(ByVal t1 As Type, ByVal t2 As Type) As Boolean
         If t1 Is Nothing AndAlso t2 Is Nothing Then Return True
@@ -2991,8 +2996,8 @@ Public Class Helper
         If pD IsNot Nothing Then
             result = pD.IsParamArray
         Else
-            result = Parameter.IsDefined(Compiler.TypeCache.ParamArrayAttribute, False)
-            LogResolutionMessage(Compiler, "IsParamArrayParameter: result=" & result & ", ParamArrayAttribute=" & Compiler.TypeCache.ParamArrayAttribute.FullName)
+            result = Parameter.IsDefined(Compiler.TypeCache.System_ParamArrayAttribute, False)
+            LogResolutionMessage(Compiler, "IsParamArrayParameter: result=" & result & ", ParamArrayAttribute=" & Compiler.TypeCache.System_ParamArrayAttribute.FullName)
         End If
         Return result
     End Function
@@ -3047,19 +3052,19 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function GetOptionalValueExpression(ByVal Parent As ParsedObject, ByVal Parameter As ParameterInfo) As Expression
         Dim result As Expression
-        If Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.Object) Then
+        If Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.System_Object) Then
             'If an Object parameter does not specify a default value, then the expression 
             'System.Reflection.Missing.Value is used. 
-            result = New LoadFieldExpression(Parent, Parent.Compiler.TypeCache.System_Reflection_Missing_Value)
-        ElseIf Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.Integer) AndAlso Parameter.IsDefined(Parent.Compiler.TypeCache.MS_VB_CS_OptionCompareAttribute, False) Then
+            result = New LoadFieldExpression(Parent, Parent.Compiler.TypeCache.System_Reflection_Missing__Value)
+        ElseIf Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.System_Int32) AndAlso Parameter.IsDefined(Parent.Compiler.TypeCache.MS_VB_CS_OptionCompareAttribute, False) Then
             'If an optional Integer parameter 
             'has the Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute attribute, 
             'then the literal 1 is supplied for text comparisons and the literal 0 otherwise
             Dim cExp As ConstantExpression
             If Parent.Location.File.IsOptionCompareText Then
-                cExp = New ConstantExpression(Parent, 1I, Parent.Compiler.TypeCache.Integer)
+                cExp = New ConstantExpression(Parent, 1I, Parent.Compiler.TypeCache.System_Int32)
             Else
-                cExp = New ConstantExpression(Parent, 0I, Parent.Compiler.TypeCache.Integer)
+                cExp = New ConstantExpression(Parent, 0I, Parent.Compiler.TypeCache.System_Int32)
             End If
             result = cExp
         Else
@@ -3348,16 +3353,16 @@ Public Class Helper
             isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(Compiler, NTypes(i))
 
             '*	Mj is Byte and Nj is SByte, or
-            isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.SByte)
+            isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
 
             '*	Mj is Short and Nj is UShort, or
-            isShort = Helper.CompareType(MTypes(i), Compiler.TypeCache.Short) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.UShort)
+            isShort = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int16) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt16)
 
             '*	Mj is Integer and Nj is UInteger, or 
-            isInteger = Helper.CompareType(MTypes(i), Compiler.TypeCache.Integer) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.UInteger)
+            isInteger = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int32) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt32)
 
             '*	Mj is Long and Nj is ULong.
-            isLong = Helper.CompareType(MTypes(i), Compiler.TypeCache.Long) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.ULong)
+            isLong = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int64) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt64)
 
             is1stMoreApplicable = isEqual OrElse isWidening OrElse isLiteral0 OrElse isByte OrElse isShort OrElse isInteger OrElse isLong
             result = is1stMoreApplicable AndAlso result
@@ -3556,7 +3561,7 @@ Public Class Helper
         If name = "MethodBuilderInstantiation" Then
             Return method.GetGenericMethodDefinition.GetParameters
         ElseIf name = "SymbolMethod" OrElse name = "MonoArrayMethod" Then
-            Return CreateArray(Of ParameterInfo)(New ParameterDescriptor(Compiler.TypeCache.Integer, 1, Nothing), method.DeclaringType.GetArrayRank())
+            Return CreateArray(Of ParameterInfo)(New ParameterDescriptor(Compiler.TypeCache.System_Int32, 1, Nothing), method.DeclaringType.GetArrayRank())
         Else
             Return method.GetParameters
         End If
@@ -4198,92 +4203,6 @@ Public Class Helper
         End Select
     End Function
 
-    'Shared Sub RemoveShadowed(ByVal Compiler As Compiler, ByVal Members As Generic.List(Of MemberInfo))
-    '    Dim hash As New Generic.Dictionary(Of String, MemberInfo)
-    '    Dim shadowableNames As New Generic.List(Of String)
-    '    For i As Integer = Members.Count - 1 To 0 Step -1
-    '        Dim member As MemberInfo = Members(i)
-    '        Dim hashedMember As MemberInfo = hash(member.Name)
-    '        Dim hashedMemberType, memberType As Type
-
-    '        If hashedMember Is Nothing Then
-    '            hash.Add(member.Name, member)
-    '            Select Case member.MemberType
-    '                Case MemberTypes.Property, MemberTypes.Method
-    '                    If IsHideBySig(member) Then
-    '                        For Each sig As String In Helper.GetOverloadableSignatures(Compiler, member)
-    '                            hash.Add(sig, member)
-    '                        Next
-    '                    End If
-    '            End Select
-    '            Continue For
-    '        End If
-
-    '        hashedMemberType = hashedMember.DeclaringType
-    '        memberType = member.DeclaringType
-
-    '        If Helper.CompareType(hashedMemberType, memberType) Then Continue For
-    '        If hashedMemberType.IsInterface Xor memberType.IsInterface Then Continue For
-
-    '        Dim mostDerivedWins As Boolean
-    '        Dim isHashedMostDerived As Boolean
-    '        Dim isMemberMostDerived As Boolean
-
-    '        Dim removeIndex As Integer = -1
-    '        If Helper.IsSubclassOf(hashedMemberType, memberType) Then
-    '            isHashedMostDerived = True
-    '            For j As Integer = Members.Count - 1 To 0 Step -1
-    '                If Members(j) Is hashedMember Then
-    '                    removeIndex = j
-    '                    Exit For
-    '                End If
-    '            Next
-    '        ElseIf Helper.IsSubclassOf(memberType, hashedMemberType) Then
-    '            isMemberMostDerived = True
-    '            removeIndex = i
-    '        End If
-
-    '        If member.MemberType <> hashedMember.MemberType Then
-    '            mostDerivedWins = True
-    '        Else
-    '            Select Case member.MemberType
-    '                Case MemberTypes.Constructor
-    '                    Continue For
-    '                Case MemberTypes.Event, MemberTypes.Field, MemberTypes.NestedType, MemberTypes.TypeInfo
-    '                    mostDerivedWins = True
-    '                Case MemberTypes.Property, MemberTypes.Method
-    '                    If isMemberMostDerived Then
-    '                        If IsHideBySig(member) Then
-
-    '                        Else
-    '                            mostDerivedWins = True
-    '                        End If
-    '                    ElseIf isHashedMostDerived Then
-    '                        If IsHideBySig(hashedMember) Then
-
-    '                        Else
-    '                            mostDerivedWins = True
-    '                        End If
-    '                    Else
-    '                        Helper.NotImplemented()
-    '                    End If
-    '                Case Else
-    '                    Throw New InternalException("")
-    '            End Select
-    '        End If
-
-
-    '        If mostDerivedWins Then
-    '            'the most derived wins
-    '            If removeIndex >= 0 Then
-    '                Members.RemoveAt(removeIndex)
-    '                Continue For
-    '            End If
-
-    '            Helper.NotImplementedYet("Is this shadowed?")
-    '        End If
-    '    Next
-    'End Sub
 
     Shared Function GetOverloadableSignatures(ByVal Compiler As Compiler, ByVal Member As MemberInfo) As String()
         Dim result As New Generic.List(Of String)
@@ -4309,4 +4228,7 @@ Public Class Helper
         Return result.ToArray
     End Function
 
+    Shared Function GetCombination(ByVal tp1 As TypeCode, ByVal tp2 As TypeCode) As TypeCombinations
+        Return CType(CInt(tp1) << TypeCombinations.SHIFT Or CInt(tp2), TypeCombinations)
+    End Function
 End Class

@@ -58,28 +58,28 @@ Public Class CBoolExpression
             Case TypeCode.Double
                 Emitter.EmitLoadR8Value(Info, 0.0, expType)
                 Emitter.EmitEquals(Info, expType)
-                Emitter.EmitLoadI4Value(Info, 0I, Info.Compiler.TypeCache.Boolean)
-                Emitter.EmitEquals(Info, Info.Compiler.TypeCache.Boolean)
+                Emitter.EmitLoadI4Value(Info, 0I, Info.Compiler.TypeCache.System_Boolean)
+                Emitter.EmitEquals(Info, Info.Compiler.TypeCache.System_Boolean)
             Case TypeCode.Single
                 Emitter.EmitLoadR4Value(Info, 0.0!, expType)
                 Emitter.EmitEquals(Info, expType)
-                Emitter.EmitLoadI4Value(Info, 0I, info.Compiler.TypeCache.Boolean)
-                Emitter.EmitEquals(Info, Info.Compiler.TypeCache.Boolean)
+                Emitter.EmitLoadI4Value(Info, 0I, info.Compiler.TypeCache.System_Boolean)
+                Emitter.EmitEquals(Info, Info.Compiler.TypeCache.System_Boolean)
             Case TypeCode.Object
-                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__Object Is Nothing")
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object)
+                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__Object Is Nothing")
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object)
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__String IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__String Is Nothing")
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__String)
+                Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_String IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__String Is Nothing")
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_String)
             Case TypeCode.Decimal
-                Helper.Assert(Info.Compiler.TypeCache.System_Convert_ToBoolean__Decimal IsNot Nothing, "System_Convert_ToBoolean__Decimal Is Nothing")
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToBoolean__Decimal)
+                Helper.Assert(Info.Compiler.TypeCache.System_Convert__ToBoolean_Decimal IsNot Nothing, "System_Convert_ToBoolean__Decimal Is Nothing")
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToBoolean_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -104,7 +104,7 @@ Public Class CBoolExpression
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, Info.Compiler.TypeCache.Boolean.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, Info.Compiler.TypeCache.System_Boolean.Name)
                 result = False
         End Select
 
@@ -114,7 +114,7 @@ Public Class CBoolExpression
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             'CHECK: Is this true?
-            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.String) = False
+            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) = False
         End Get
     End Property
 
@@ -139,7 +139,7 @@ Public Class CBoolExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Boolean '_Descriptor
+            Return Compiler.TypeCache.System_Boolean '_Descriptor
         End Get
     End Property
 End Class

@@ -81,26 +81,26 @@ Public Class NameResolution
         Compiler.Report.WriteLine("IsConstantMethod: " & Method.Name & ", parameter=" & Parameter.ToString & ", parameter.gettype=" & Parameter.GetType.Name)
 #End If
         Dim isConstant As Boolean
-        If IsMethod(Method, "Chr", Compiler.TypeCache.Integer, Compiler.TypeCache.Char) Then
+        If IsMethod(Method, "Chr", Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Char) Then
             If TypeOf Parameter Is Integer = False Then Return False
             Dim intParam As Integer = CInt(Parameter)
             'CHECK: Documentation says <= 128, vbc says < 128.
             isConstant = intParam >= 0 AndAlso intParam < 128
             If isConstant Then Result = Microsoft.VisualBasic.Strings.Chr(intParam)
-        ElseIf IsMethod(Method, "ChrW", Compiler.TypeCache.Integer, Compiler.TypeCache.Char) Then
+        ElseIf IsMethod(Method, "ChrW", Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Char) Then
             Helper.Assert(TypeOf Parameter Is Integer)
             isConstant = True
             Result = Microsoft.VisualBasic.Strings.ChrW(CInt(Parameter))
-        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.Char, Compiler.TypeCache.Integer) Then
+        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32) Then
             isConstant = TypeOf Parameter Is Char
             If isConstant Then Result = Microsoft.VisualBasic.Asc(CChar(Parameter))
-        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.Char, Compiler.TypeCache.Integer) Then
+        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32) Then
             isConstant = TypeOf Parameter Is Char
             If isConstant Then Result = Microsoft.VisualBasic.AscW(CChar(Parameter))
-        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.String, Compiler.TypeCache.Integer) Then
+        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.System_String, Compiler.TypeCache.System_Int32) Then
             isConstant = TypeOf Parameter Is String AndAlso CStr(Parameter) <> ""
             If isConstant Then Result = Microsoft.VisualBasic.Asc(CStr(Parameter))
-        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.String, Compiler.TypeCache.Integer) Then
+        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.System_String, Compiler.TypeCache.System_Int32) Then
             isConstant = TypeOf Parameter Is String AndAlso CStr(Parameter) <> ""
             If isConstant Then Result = Microsoft.VisualBasic.AscW(CStr(Parameter))
         Else

@@ -63,13 +63,13 @@ Public Class MethodPointerClassification
             result = m_MethodGroup.InstanceExpression.GenerateCode(Info.Clone(True, False, m_MethodGroup.InstanceExpression.ExpressionType)) AndAlso result
             Emitter.EmitDup(Info)
         Else
-            Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.Object))
+            Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Object))
         End If
 
         Emitter.EmitLoadVftn(Info, m_ResolvedMethod)
 
         Dim ctor As ConstructorInfo
-        ctor = m_DelegateType.GetConstructor(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, New Type() {Compiler.TypeCache.Object, Compiler.TypeCache.IntPtr}, Nothing)
+        ctor = m_DelegateType.GetConstructor(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, New Type() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr}, Nothing)
         Emitter.EmitNew(Info, ctor)
 
         Return result
@@ -123,7 +123,7 @@ Public Class MethodPointerClassification
 
     ReadOnly Property Type() As Type
         Get
-            Return Compiler.TypeCache.IntPtr
+            Return Compiler.TypeCache.System_IntPtr
         End Get
     End Property
 

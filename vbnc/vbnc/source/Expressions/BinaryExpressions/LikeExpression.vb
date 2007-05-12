@@ -40,10 +40,10 @@ Public Class LikeExpression
 
         Select Case MyBase.OperandTypeCode
             Case TypeCode.String
-                Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_LikeOperator_LikeString__String_String_CompareMethod)
+                Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_LikeOperator__LikeString_String_String_CompareMethod)
             Case TypeCode.Object
                 'Helper.Assert(Helper.CompareType(ExpressionType, Compiler.TypeCache.Object))
-                Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_LikeOperator_LikeObject__Object_Object_CompareMethod)
+                Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_LikeOperator__LikeObject_Object_Object_CompareMethod)
             Case Else
                 Throw New InternalException(Me)
         End Select

@@ -37,10 +37,10 @@ Public Class BinarySubExpression
             Case TypeCode.Double, TypeCode.Single
                 Emitter.EmitSub(Info, OperandType)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Subtract__Decimal_Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Subtract_Decimal_Decimal)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_SubtractObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__SubtractObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

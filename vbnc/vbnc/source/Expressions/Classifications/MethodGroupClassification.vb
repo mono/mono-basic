@@ -196,7 +196,7 @@ Public Class MethodGroupClassification
                 End If
             Else
                 If m.ReturnType Is Nothing Then
-                    Return Compiler.TypeCache.Void
+                    Return Compiler.TypeCache.System_Void
                 Else
                     Return m.ReturnType
                 End If

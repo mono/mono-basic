@@ -142,7 +142,7 @@ Public Class UsingDeclarator
                 End If
             End If
         ElseIf m_VariableInitializer IsNot Nothing Then
-            UsingVariableType = Compiler.TypeCache.Object
+            UsingVariableType = Compiler.TypeCache.System_Object
             m_IsVariableDeclaration = True
         Else
             Helper.Assert(m_ArgumentList Is Nothing)

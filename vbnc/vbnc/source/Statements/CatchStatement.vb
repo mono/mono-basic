@@ -74,24 +74,24 @@ Public Class CatchStatement
 
             Emitter.EmitBeginExceptionFilter(Info)
             'Check if the exception object is of type System.Exception.
-            Emitter.EmitIsInst(Info, Compiler.TypeCache.Object, Compiler.TypeCache.Exception)
+            Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
             Emitter.EmitDup(Info)
             'If True, do the comparison
-            Emitter.EmitBranchIfTrue(Info, DoWhenComparison, Compiler.TypeCache.Exception)
+            Emitter.EmitBranchIfTrue(Info, DoWhenComparison, Compiler.TypeCache.System_Exception)
             'Otherwise load a false value and go to the end of the filter.
-            Emitter.EmitPop(Info, Compiler.TypeCache.Exception)
+            Emitter.EmitPop(Info, Compiler.TypeCache.System_Exception)
             Emitter.EmitLoadValue(Info, False)
             Emitter.EmitBranch(Info, EndWhen)
 
             'Do the when clause.
-            Info.Stack.Push(Compiler.TypeCache.Exception)
+            Info.Stack.Push(Compiler.TypeCache.System_Exception)
             Emitter.MarkLabel(Info, DoWhenComparison)
-            Emitter.EmitPop(Info, Compiler.TypeCache.Exception)
+            Emitter.EmitPop(Info, Compiler.TypeCache.System_Exception)
             'result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            result = CBoolExpression.GenerateCode(m_When, Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+            result = CBoolExpression.GenerateCode(m_When, Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
             Emitter.MarkLabel(Info, EndWhen)
-            Info.Stack.Pop(Compiler.TypeCache.Boolean)
+            Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
             Emitter.EmitBeginCatch(Info, Nothing)
         Else
             Helper.Assert(m_ExceptionType IsNot Nothing)
@@ -100,13 +100,13 @@ Public Class CatchStatement
 
         If m_VariableDeclaration Is Nothing Then
             If m_ExceptionType Is Nothing Then
-                Emitter.EmitPop(Info, Compiler.TypeCache.Object)
+                Emitter.EmitPop(Info, Compiler.TypeCache.System_Object)
             Else
                 Emitter.EmitPop(Info, m_ExceptionType)
             End If
         Else
             result = m_VariableDeclaration.GenerateCode(Info) AndAlso result
-            Emitter.EmitIsInst(Info, Compiler.TypeCache.Object, m_ExceptionType)
+            Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Object, m_ExceptionType)
             Emitter.EmitStoreVariable(Info, m_VariableDeclaration.LocalBuilder)
         End If
         result = CodeBlock.GenerateCode(Info) AndAlso result
@@ -137,12 +137,12 @@ Public Class CatchStatement
         If m_TypeName IsNot Nothing Then
             m_ExceptionType = m_TypeName.ResolvedType
             Helper.Assert(m_ExceptionType IsNot Nothing)
-            If Helper.CompareType(Compiler.TypeCache.Exception, m_ExceptionType) = False AndAlso Helper.IsSubclassOf(Compiler.TypeCache.Exception, m_ExceptionType) = False Then
+            If Helper.CompareType(Compiler.TypeCache.System_Exception, m_ExceptionType) = False AndAlso Helper.IsSubclassOf(Compiler.TypeCache.System_Exception, m_ExceptionType) = False Then
                 Helper.AddError("Exception type does not inherit from System.Exception")
                 result = True
             End If
         ElseIf m_When Is Nothing Then
-            m_ExceptionType = Compiler.TypeCache.Exception
+            m_ExceptionType = Compiler.TypeCache.System_Exception
         End If
         If m_Variable IsNot Nothing Then
             m_VariableDeclaration = New VariableDeclaration(Me, Nothing, m_Variable, False, m_TypeName, Nothing, Nothing)

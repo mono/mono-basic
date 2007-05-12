@@ -88,8 +88,8 @@ Public Class DoStatement
         Info.ILGen.MarkLabel(startLabel)
         If m_PreCondition IsNot Nothing Then
             Info.ILGen.MarkLabel(m_NextIteration)
-            result = m_PreCondition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            Emitter.EmitConversion(m_PreCondition.ExpressionType, Compiler.TypeCache.Boolean, Info)
+            result = m_PreCondition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+            Emitter.EmitConversion(m_PreCondition.ExpressionType, Compiler.TypeCache.System_Boolean, Info)
             If m_IsWhile Then
                 Emitter.EmitBranchIfFalse(Info, EndLabel)
             Else
@@ -101,8 +101,8 @@ Public Class DoStatement
 
         If m_PostCondition IsNot Nothing Then
             Info.ILGen.MarkLabel(m_NextIteration)
-            result = m_PostCondition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            Emitter.EmitConversion(m_PostCondition.ExpressionType, Compiler.TypeCache.Boolean, Info)
+            result = m_PostCondition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+            Emitter.EmitConversion(m_PostCondition.ExpressionType, Compiler.TypeCache.System_Boolean, Info)
             If m_IsWhile Then
                 Emitter.EmitBranchIfFalse(Info, EndLabel)
             Else

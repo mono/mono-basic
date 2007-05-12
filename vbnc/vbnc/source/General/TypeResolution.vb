@@ -24,9 +24,9 @@
 Public Class TypeResolution
     Inherits Helper
 
-    Friend BuiltInTypes As New ArrayList(New Type() {Compiler.TypeCache.Boolean, Compiler.TypeCache.Byte, Compiler.TypeCache.Char, Compiler.TypeCache.Date, Compiler.TypeCache.Double, Compiler.TypeCache.Integer, Compiler.TypeCache.Long, Compiler.TypeCache.Object, Compiler.TypeCache.Short, Compiler.TypeCache.Single, Compiler.TypeCache.String, Compiler.TypeCache.SByte, Compiler.TypeCache.UShort, Compiler.TypeCache.UInteger, Compiler.TypeCache.ULong})
-    Friend NumericTypes As New ArrayList(New Type() {Compiler.TypeCache.Byte, Compiler.TypeCache.SByte, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single, Compiler.TypeCache.Short, Compiler.TypeCache.UShort, Compiler.TypeCache.Integer, Compiler.TypeCache.UInteger, Compiler.TypeCache.Long, Compiler.TypeCache.ULong})
-    Friend IntegralTypes As New ArrayList(New Type() {Compiler.TypeCache.Byte, Compiler.TypeCache.SByte, Compiler.TypeCache.Short, Compiler.TypeCache.UShort, Compiler.TypeCache.Integer, Compiler.TypeCache.UInteger, Compiler.TypeCache.Long, Compiler.TypeCache.ULong})
+    Friend BuiltInTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Boolean, Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Char, Compiler.TypeCache.System_DateTime, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_String, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Uint64})
+    Friend NumericTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
+    Friend IntegralTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Uint16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
 
     Private valCanBeContainBy(15)() As Type
 
@@ -71,24 +71,24 @@ Public Class TypeResolution
         MyBase.New(Compiler)
 
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Boolean)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Byte)) = New Type() {Compiler.TypeCache.Byte, Compiler.TypeCache.Short, Compiler.TypeCache.UShort, Compiler.TypeCache.Integer, Compiler.TypeCache.UInteger, Compiler.TypeCache.Long, Compiler.TypeCache.ULong, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Byte)) = New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Char)) = Nothing
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Date)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Decimal)) = New Type() {Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Double)) = New Type() {Compiler.TypeCache.Double}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Integer)) = New Type() {Compiler.TypeCache.Integer, Compiler.TypeCache.Long, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Long)) = New Type() {Compiler.TypeCache.Long, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Decimal)) = New Type() {Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Double)) = New Type() {Compiler.TypeCache.System_Double}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Integer)) = New Type() {Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Long)) = New Type() {Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Object)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[SByte])) = New Type() {Compiler.TypeCache.SByte, Compiler.TypeCache.Short, Compiler.TypeCache.Integer, Compiler.TypeCache.Long, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Short)) = New Type() {Compiler.TypeCache.Short, Compiler.TypeCache.Integer, Compiler.TypeCache.Long, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Single)) = New Type() {Compiler.TypeCache.Double, Compiler.TypeCache.Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[SByte])) = New Type() {Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Short)) = New Type() {Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Single)) = New Type() {Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.String)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UInteger])) = New Type() {Compiler.TypeCache.UInteger, Compiler.TypeCache.Long, Compiler.TypeCache.ULong, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[ULong])) = New Type() {Compiler.TypeCache.ULong, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UShort])) = New Type() {Compiler.TypeCache.UShort, Compiler.TypeCache.Integer, Compiler.TypeCache.UInteger, Compiler.TypeCache.Long, Compiler.TypeCache.ULong, Compiler.TypeCache.Decimal, Compiler.TypeCache.Double, Compiler.TypeCache.Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UInteger])) = New Type() {Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[ULong])) = New Type() {Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UShort])) = New Type() {Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
 
 
- 
+
     End Sub
 
     ''' <summary>
@@ -195,41 +195,41 @@ Public Class TypeResolution
     Function TypeCodeToType(ByVal Code As TypeCode) As Type
         Select Case Code
             Case TypeCode.Boolean
-                Return Compiler.TypeCache.Boolean
+                Return Compiler.TypeCache.System_Boolean
             Case TypeCode.Byte
-                Return Compiler.TypeCache.Byte
+                Return Compiler.TypeCache.System_Byte
             Case TypeCode.Char
-                Return Compiler.TypeCache.Char
+                Return Compiler.TypeCache.System_Char
             Case TypeCode.DateTime
-                Return Compiler.TypeCache.Date
+                Return Compiler.TypeCache.System_DateTime
             Case TypeCode.DBNull
                 Throw New InternalException("")
             Case TypeCode.Decimal
-                Return Compiler.TypeCache.Decimal
+                Return Compiler.TypeCache.System_Decimal
             Case TypeCode.Double
-                Return Compiler.TypeCache.Double
+                Return Compiler.TypeCache.System_Double
             Case TypeCode.Empty
                 Throw New InternalException("")
             Case TypeCode.Int16
-                Return Compiler.TypeCache.Short
+                Return Compiler.TypeCache.System_Int16
             Case TypeCode.Int32
-                Return Compiler.TypeCache.Integer
+                Return Compiler.TypeCache.System_Int32
             Case TypeCode.Int64
-                Return Compiler.TypeCache.Long
+                Return Compiler.TypeCache.System_Int64
             Case TypeCode.Object
-                Return Compiler.TypeCache.Object
+                Return Compiler.TypeCache.System_Object
             Case TypeCode.SByte
-                Return Compiler.TypeCache.SByte
+                Return Compiler.TypeCache.System_SByte
             Case TypeCode.Single
-                Return Compiler.TypeCache.Single
+                Return Compiler.TypeCache.System_Single
             Case TypeCode.String
-                Return Compiler.TypeCache.String
+                Return Compiler.TypeCache.System_String
             Case TypeCode.UInt16
-                Return Compiler.TypeCache.UShort
+                Return Compiler.TypeCache.System_UInt16
             Case TypeCode.UInt32
-                Return Compiler.TypeCache.UInteger
+                Return Compiler.TypeCache.System_UInt32
             Case TypeCode.UInt64
-                Return Compiler.TypeCache.ULong
+                Return Compiler.TypeCache.System_UInt64
             Case Else
                 Throw New InternalException("")
         End Select
@@ -323,37 +323,37 @@ Public Class TypeResolution
     Function KeywordToType(ByVal Keyword As KS) As Type
         Select Case Keyword
             Case KS.Boolean
-                Return Compiler.TypeCache.Boolean
+                Return Compiler.TypeCache.System_Boolean
             Case KS.Byte
-                Return Compiler.TypeCache.Byte
+                Return Compiler.TypeCache.System_Byte
             Case KS.Char
-                Return Compiler.TypeCache.Char
+                Return Compiler.TypeCache.System_Char
             Case KS.Date
-                Return Compiler.TypeCache.Date
+                Return Compiler.TypeCache.System_DateTime
             Case KS.Decimal
-                Return Compiler.TypeCache.Decimal
+                Return Compiler.TypeCache.System_Decimal
             Case KS.Double
-                Return Compiler.TypeCache.Double
+                Return Compiler.TypeCache.System_Double
             Case KS.Integer
-                Return Compiler.TypeCache.Integer
+                Return Compiler.TypeCache.System_Int32
             Case KS.Long
-                Return Compiler.TypeCache.Long
+                Return Compiler.TypeCache.System_Int64
             Case KS.Object
-                Return Compiler.TypeCache.Object
+                Return Compiler.TypeCache.System_Object
             Case KS.Single
-                Return Compiler.TypeCache.Single
+                Return Compiler.TypeCache.System_Single
             Case KS.Short
-                Return Compiler.TypeCache.Short
+                Return Compiler.TypeCache.System_Int16
             Case KS.String
-                Return Compiler.TypeCache.String
+                Return Compiler.TypeCache.System_String
             Case KS.[SByte]
-                Return Compiler.TypeCache.SByte
+                Return Compiler.TypeCache.System_SByte
             Case KS.[UShort]
-                Return Compiler.TypeCache.UShort
+                Return Compiler.TypeCache.System_UInt16
             Case KS.[UInteger]
-                Return Compiler.TypeCache.UInteger
+                Return Compiler.TypeCache.System_UInt32
             Case KS.[ULong]
-                Return Compiler.TypeCache.ULong
+                Return Compiler.TypeCache.System_UInt64
             Case Else
                 'Throw New InternalException("Don't know if this can actually happen, though. KS = " & Keyword.ToString)
                 Return Nothing
@@ -361,37 +361,37 @@ Public Class TypeResolution
     End Function
 
     Function TypeToKeyword(ByVal Type As Type) As KS
-        If Helper.CompareType(Type, Compiler.TypeCache.Boolean) Then
+        If Helper.CompareType(Type, Compiler.TypeCache.System_Boolean) Then
             Return KS.Boolean
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Byte) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Byte) Then
             Return KS.Byte
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Char) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Char) Then
             Return KS.Char
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Date) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_DateTime) Then
             Return KS.Date
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Decimal) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Decimal) Then
             Return KS.Decimal
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Double) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Double) Then
             Return KS.Double
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Integer) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Int32) Then
             Return KS.Integer
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Long) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Int64) Then
             Return KS.Long
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Object) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Object) Then
             Return KS.Object
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Short) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Int16) Then
             Return KS.Short
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.Single) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Single) Then
             Return KS.Single
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.String) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_String) Then
             Return KS.String
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.SByte) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_SByte) Then
             Return KS.[SByte]
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.UShort) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_UInt16) Then
             Return KS.[UShort]
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.UInteger) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_UInt32) Then
             Return KS.[UInteger]
-        ElseIf Helper.CompareType(Type, Compiler.TypeCache.ULong) Then
+        ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_UInt64) Then
             Return KS.[ULong]
         Else
             Return KS.None
@@ -448,17 +448,17 @@ Public Class TypeResolution
     End Function
 
     Function IsSignedIntegralType(ByVal Type As Type) As Boolean
-        Return Helper.CompareType(Type, Compiler.TypeCache.SByte) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.Short) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.Integer) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.Long)
+        Return Helper.CompareType(Type, Compiler.TypeCache.System_SByte) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_Int16) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_Int32) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_Int64)
     End Function
 
     Function IsUnsignedIntegralType(ByVal Type As Type) As Boolean
-        Return Helper.CompareType(Type, Compiler.TypeCache.Byte) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.UShort) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.UInteger) OrElse _
-         Helper.CompareType(Type, Compiler.TypeCache.ULong)
+        Return Helper.CompareType(Type, Compiler.TypeCache.System_Byte) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_UInt16) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_UInt32) OrElse _
+         Helper.CompareType(Type, Compiler.TypeCache.System_UInt64)
     End Function
 
     ''' <summary>

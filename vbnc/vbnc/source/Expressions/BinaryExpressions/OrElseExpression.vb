@@ -29,7 +29,7 @@ Public Class OrElseExpression
         Select Case opType
             Case TypeCode.Boolean, TypeCode.Object
                 If opType = TypeCode.Object Then
-                    Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
+                    Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 End If
 
                 Dim loadtrue, endexp As Reflection.Emit.Label
@@ -38,13 +38,13 @@ Public Class OrElseExpression
 
                 result = m_LeftExpression.GenerateCode(Info) AndAlso result
                 If opType = TypeCode.Object Then
-                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object)
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object)
                 End If
                 Emitter.EmitBranchIfTrue(Info, loadtrue)
 
                 result = m_RightExpression.GenerateCode(Info) AndAlso result
                 If opType = TypeCode.Object Then
-                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Conversions_ToBoolean__Object)
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object)
                 End If
                 Emitter.EmitBranchIfTrue(Info, loadtrue)
 
@@ -55,10 +55,10 @@ Public Class OrElseExpression
                 Emitter.EmitLoadValue(Info, True) 'Load true value
 
                 Info.ILGen.MarkLabel(endexp) 'The end of the expression
-                Info.Stack.Pop(Compiler.TypeCache.Boolean) 'Both a true and a false value was added to the stack, remove one.
+                Info.Stack.Pop(Compiler.TypeCache.System_Boolean) 'Both a true and a false value was added to the stack, remove one.
 
                 If opType = TypeCode.Object Then
-                    Emitter.EmitBox(Info, Compiler.TypeCache.Boolean)
+                    Emitter.EmitBox(Info, Compiler.TypeCache.System_Boolean)
                     Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 End If
             Case Else

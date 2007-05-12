@@ -37,11 +37,11 @@ Public Class Is_IsNotExpression
 
         If m_LeftExpression.ExpressionType.IsGenericParameter Then
             m_LeftExpression = New BoxExpression(Me, m_LeftExpression, m_LeftExpression.ExpressionType)
-            m_DesiredNothingType = Compiler.TypeCache.Object
+            m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If
         If m_RightExpression.ExpressionType.IsGenericParameter Then
             m_RightExpression = New BoxExpression(Me, m_RightExpression, m_RightExpression.ExpressionType)
-            m_DesiredNothingType = Compiler.TypeCache.Object
+            m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If
 
         Return result
@@ -91,7 +91,7 @@ Public Class Is_IsNotExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Boolean
+            Return Compiler.TypeCache.System_Boolean
         End Get
     End Property
 

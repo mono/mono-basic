@@ -42,7 +42,7 @@ Public Class GetTypeExpression
         Dim result As Boolean = True
 
         Emitter.EmitLoadToken(Info, m_TypeName.ResolvedType)
-        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.Type__GetTypeFromHandle_RuntimeTypeHandle)
+        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
 
         Return result
     End Function
@@ -72,7 +72,7 @@ Public Class GetTypeExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Type
+            Return Compiler.TypeCache.System_Type
         End Get
     End Property
 

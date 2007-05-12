@@ -320,7 +320,7 @@ Public MustInherit Class Expression
             If TypeOf Me Is DeRefExpression Then
                 Dim derefExp As DeRefExpression = DirectCast(Me, DeRefExpression)
                 result = derefExp.Expression
-            ElseIf Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.Enum) Then
+            ElseIf Helper.CompareType(Me.ExpressionType.BaseType, Compiler.TypeCache.System_Enum) Then
                 result = New BoxExpression(Me, Me, Me.ExpressionType)
                 'ElseIf Me.ExpressionType.IsValueType AndAlso Helper.IsNullableType(Compiler, Me.ExpressionType) = False Then
                 '    result = New BoxExpression(Me, Me, Me.ExpressionType)

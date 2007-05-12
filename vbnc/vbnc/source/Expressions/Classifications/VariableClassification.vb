@@ -82,14 +82,14 @@ Public Class VariableClassification
                         Return False
                     End If
 
-                    decAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.DecimalConstantAttribute, False)
+                    decAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute, False)
                     If decAttrs IsNot Nothing AndAlso decAttrs.Length = 1 Then
                         ConstantValue = DirectCast(decAttrs(0), System.Runtime.CompilerServices.DecimalConstantAttribute).Value()
                         Return True
                     End If
 
                     Dim dtAttrs() As Object
-                    dtAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.DateTimeConstantAttribute, False)
+                    dtAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute, False)
                     If dtAttrs IsNot Nothing AndAlso dtAttrs.Length = 1 Then
                         ConstantValue = DirectCast(dtAttrs(0), System.Runtime.CompilerServices.DateTimeConstantAttribute).Value()
                         Return True

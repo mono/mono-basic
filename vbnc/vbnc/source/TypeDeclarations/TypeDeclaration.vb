@@ -57,6 +57,7 @@ Public MustInherit Class TypeDeclaration
     'Information collected during define phase.
 #If ENABLECECIL Then
     Private m_CecilType As Mono.Cecil.TypeDefinition
+    Private m_CecilBaseType As Mono.Cecil.TypeReference
 #End If
     Private m_TypeBuilder As TypeBuilder
     'Another hack for another bug in the ms runtime: you cannot create an attribute when the attribute's constructor has a enum parameter and the enum parameter is defined with a typebuilder, it only works if the enum parameter's type is defined with an enumbuilder.
@@ -245,7 +246,23 @@ Public MustInherit Class TypeDeclaration
             Helper.Assert(m_BaseType IsNot Nothing)
         End Set
     End Property
-
+#If ENABLECECIL Then
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Property CecilBaseType() As Mono.Cecil.TypeReference
+        Get
+            Return m_CecilBaseType
+        End Get
+        Protected Set(ByVal value As Mono.Cecil.TypeReference)
+            m_CecilBaseType = value
+            Helper.Assert(m_CecilBaseType IsNot Nothing)
+        End Set
+    End Property
+#End If
     Private ReadOnly Property BaseType2() As System.Type Implements IType.BaseType
         Get
             Return BaseType
@@ -374,7 +391,15 @@ Public MustInherit Class TypeDeclaration
 #If DEBUGREFLECTION Then
             Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.DefineType(""{2}"", {3})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(Compiler.ModuleBuilder), FullName, CInt(Attr).ToString))
 #End If
+
         End If
+
+#If ENABLECECIL Then
+            If m_CecilBaseType Is Nothing Then m_CecilBaseType = Compiler.CecilTypeCache.System_Object
+            m_CecilBaseType = Compiler.ModuleBuilderCecil.Import(m_CecilBaseType)
+            m_CecilType = New Mono.Cecil.TypeDefinition(Name, Me.Namespace, CType(Attr, Mono.Cecil.TypeAttributes), m_CecilBaseType)
+            Compiler.ModuleBuilderCecil.Types.Add(m_CecilType)
+#End If
 
         Compiler.TypeManager.RegisterReflectionType(m_TypeBuilder, Me.TypeDescriptor)
 
@@ -385,6 +410,12 @@ Public MustInherit Class TypeDeclaration
 
     Public Overridable Function DefineTypeHierarchy() As Boolean Implements IDefinableType.DefineTypeHierarchy
         Dim result As Boolean = True
+
+#If ENABLECECIL Then
+        If IsNestedType Then
+            DeclaringType.CecilType.NestedTypes.Add(m_CecilType)
+        End If
+#End If
 
         If m_TypeBuilder IsNot Nothing Then
             m_BaseType = Helper.GetTypeOrTypeBuilder(m_BaseType)
@@ -424,7 +455,7 @@ Public MustInherit Class TypeDeclaration
         For Each att As Attribute In CustomAttributes
             result = att.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
             If result = False Then Return result
-            If Helper.CompareType(att.AttributeType, Compiler.TypeCache.DefaultMemberAttribute) Then
+            If Helper.CompareType(att.AttributeType, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute) Then
                 Dim tmpName As String
                 tmpName = TryCast(att.GetArgument(0), String)
                 If tmpName IsNot Nothing AndAlso NameResolution.CompareNameOrdinal(Name, tmpName) = False Then
@@ -437,7 +468,7 @@ Public MustInherit Class TypeDeclaration
 
         Helper.NotImplementedYet("Check that the property is indexed.")
         Dim attrib As Attribute
-        attrib = New Attribute(Me, Compiler.TypeCache.DefaultMemberAttribute, Name)
+        attrib = New Attribute(Me, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, Name)
         result = attrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
         CustomAttributes.Add(attrib)
         Return result

@@ -1,0 +1,286 @@
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+
+''
+
+'
+'^{.*} = GetType\({:i}, {:q}\)$									type \2 \3
+'^{.*} = GetArrayType\({:i}\)$									type \2 \3
+'^{.*} = GetMethod\({:i}, {:q}\)$								method \2 \3
+'^{.*} = GetMethod\({:i}, {:q}, {:i}\)$							method \2 \3 \4
+'^{.*} = GetMethod\({:i}, {:q}, {:i}, {:i}\)$					method \2 \3 \4 \5
+'^{.*} = GetConstructor\({:i}, {:i}, {:i}, {:i}, {:i}, {:i}\)$	ctor \2 \3 \4 \5 \6 \7 \8
+'^{.*} = GetConstructor\({:i}\)$								ctor \2
+'^{.*} = GetField\({:i}, {:q}\)$								field \2 \3
+'^{.*} = GetVBType\({:q}\)$										vbtype \2
+'
+	
+type mscorlib "System.Boolean"
+type mscorlib "System.Byte"
+array System_Byte
+type mscorlib "System.Char"
+type mscorlib "System.DateTime"
+type mscorlib "System.Decimal"
+type mscorlib "System.Double"
+type mscorlib "System.Int32"
+type mscorlib "System.Int64"
+type mscorlib "System.Object"
+array System_Object
+type mscorlib "System.Int16"
+type mscorlib "System.Single"
+type mscorlib "System.String"
+byref System_String
+array System_String
+type mscorlib "System.SByte"
+type mscorlib "System.UInt16"
+type mscorlib "System.UInt32"
+type mscorlib "System.UInt64"
+array System_Int32
+type mscorlib "System.Enum"
+type mscorlib "System.ValueType"
+type mscorlib "System.Delegate"
+type mscorlib "System.MulticastDelegate"
+type mscorlib "System.AsyncCallback"
+type mscorlib "System.IAsyncResult"
+type mscorlib "System.Collections.IEnumerator"
+method System_Collections_IEnumerator "get_Current"
+method System_Collections_IEnumerator "MoveNext"
+type mscorlib "System.Collections.IEnumerable"
+method System_Collections_IEnumerable "GetEnumerator"
+type mscorlib "System.IDisposable"
+method System_IDisposable "Dispose"
+type mscorlib "System.RuntimeTypeHandle"
+type mscorlib "System.Type"
+method System_Type "GetTypeFromHandle" System_RuntimeTypeHandle
+type mscorlib "System.Void"
+type mscorlib "System.Exception"
+type mscorlib "System.Array"
+method2 System_Array "SetValue" System_Object System_Int32_Array
+method2 System_Array "GetValue" System_Int32_Array
+method2 System_Array "CreateInstance" System_Type System_Int32_Array
+type mscorlib "System.ArgumentException"
+type mscorlib "System.Collections.Generic.IList`1"
+type mscorlib "System.Collections.Generic.ICollection`1"
+type mscorlib "System.Collections.Generic.IEnumerable`1"
+type mscorlib "System.Reflection.AssemblyVersionAttribute"
+type mscorlib "System.Reflection.AssemblyProductAttribute"
+type mscorlib "System.Reflection.AssemblyCompanyAttribute"
+type mscorlib "System.Reflection.AssemblyCopyrightAttribute"
+type mscorlib "System.Reflection.AssemblyTrademarkAttribute"
+type mscorlib "System.Reflection.AssemblyKeyNameAttribute"
+type mscorlib "System.Reflection.AssemblyKeyFileAttribute"
+type mscorlib "System.Reflection.AssemblyDelaySignAttribute"
+type mscorlib "System.Diagnostics.ConditionalAttribute"
+type mscorlib "System.Diagnostics.DebuggableAttribute"
+type mscorlib "System.Diagnostics.DebuggableAttribute+DebuggingModes"
+ctor System_Diagnostics_DebuggableAttribute System_Diagnostics_DebuggableAttribute_DebuggingModes 
+type mscorlib "System.ParamArrayAttribute"
+ctor System_ParamArrayAttribute
+type mscorlib "System.Nullable`1"
+type mscorlib "System.Runtime.CompilerServices.RuntimeHelpers"
+type mscorlib "System.STAThreadAttribute"
+ctor System_STAThreadAttribute
+type mscorlib "System.IntPtr"
+type mscorlib "System.Runtime.CompilerServices.DateTimeConstantAttribute"
+ctor System_DateTime System_Int64 
+ctor System_Decimal System_Int32 
+ctor System_Decimal System_Int64 
+ctor System_Decimal System_Double 
+ctor System_Decimal System_Single 
+ctor System_Decimal System_UInt64 
+ctor System_Decimal System_Int32 System_Int32 System_Int32 System_Boolean System_Byte 
+field System_Decimal "Zero"
+field System_Decimal "One"
+field System_Decimal "MinusOne"
+type mscorlib "System.Runtime.CompilerServices.DecimalConstantAttribute"
+ctor System_Runtime_CompilerServices_DecimalConstantAttribute System_Byte System_Byte System_UInt32 System_UInt32 System_UInt32 
+ctor System_Runtime_CompilerServices_DecimalConstantAttribute System_Byte System_Byte System_Int32 System_Int32 System_Int32 
+method System_Decimal "Compare" System_Decimal System_Decimal
+method System_DateTime "Compare" System_DateTime System_DateTime
+method System_Decimal "Add" System_Decimal System_Decimal
+method System_Decimal "Subtract" System_Decimal System_Decimal
+method System_Decimal "Divide" System_Decimal System_Decimal
+method System_Decimal "Multiply" System_Decimal System_Decimal
+method System_Decimal "Remainder" System_Decimal System_Decimal
+method System_Decimal "Negate" System_Decimal
+type mscorlib "System.Reflection.DefaultMemberAttribute"
+ctor System_Reflection_DefaultMemberAttribute System_String 
+type mscorlib "System.Convert"
+method System_Convert "ToSingle" System_Decimal
+method System_Convert "ToDouble" System_Decimal
+method System_Convert "ToBoolean" System_Decimal
+method System_Convert "ToByte" System_Decimal
+method System_Convert "ToSByte" System_Decimal
+method System_Convert "ToInt16" System_Decimal
+method System_Convert "ToUInt16" System_Decimal
+method System_Convert "ToInt32" System_Decimal
+method System_Convert "ToUInt32" System_Decimal
+method System_Convert "ToInt64" System_Decimal
+method System_Convert "ToUInt64" System_Decimal
+method System_String "Concat" System_String System_String
+type mscorlib "System.Diagnostics.Debugger"
+method System_Diagnostics_Debugger "Break"
+type mscorlib "System.Reflection.Missing"
+field System_Reflection_Missing "Value"
+type mscorlib "System.Threading.Monitor"
+method System_Threading_Monitor "Enter" System_Object
+method System_Threading_Monitor "Exit" System_Object
+method System_Runtime_CompilerServices_RuntimeHelpers "GetObjectValue" System_Object
+type mscorlib "System.Math"
+method System_Math "Round" System_Double
+method System_Math "Pow" System_Double System_Double
+type mscorlib "System.Runtime.InteropServices.DllImportAttribute"
+
+type winforms "System.Windows.Forms.Form"
+type winforms "System.Windows.Forms.Application"
+method2 System_Windows_Forms_Application "Run" System_Windows_Forms_Form
+
+method2 System_Delegate "Combine" System_Delegate System_Delegate    
+method2 System_Delegate "Remove" System_Delegate System_Delegate    
+
+
+vbtype "Microsoft.VisualBasic.CompareMethod"
+vbtype "Microsoft.VisualBasic.CompilerServices.Conversions"
+vbtype "Microsoft.VisualBasic.CompilerServices.ProjectData"
+vbtype "Microsoft.VisualBasic.CompilerServices.LikeOperator"
+
+vbtype "Microsoft.VisualBasic.Strings"
+vbtype "Microsoft.VisualBasic.CompilerServices.StringType"
+vbtype "Microsoft.VisualBasic.MyGroupCollectionAttribute"
+vbtype "Microsoft.VisualBasic.CallType"
+
+vbtype "Microsoft.VisualBasic.Information"
+method2 MS_VB_Information "IsNumeric" System_Object 
+method2 MS_VB_Information "SystemTypeName" System_String 
+method2 MS_VB_Information "TypeName" System_Object 
+method2 MS_VB_Information "VbTypeName" System_String 
+vbtype "Microsoft.VisualBasic.Interaction"
+method2 MS_VB_Interaction "CallByName" System_Object System_String MS_VB_CallType System_Object_Array  
+
+vbtype "Microsoft.VisualBasic.CompilerServices.Versioned"
+method2 MS_VB_CS_Versioned "IsNumeric" System_Object 
+method2 MS_VB_CS_Versioned "SystemTypeName" System_String 
+method2 MS_VB_CS_Versioned "TypeName" System_Object 
+method2 MS_VB_CS_Versioned "VbTypeName" System_String 
+method2 MS_VB_CS_Versioned "CallByName" System_Object System_String MS_VB_CallType System_Object_Array  
+
+vbtype "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute"
+vbtype "Microsoft.VisualBasic.CompilerServices.Operators"
+vbtype "Microsoft.VisualBasic.CompilerServices.ObjectFlowControl"
+vbtype "Microsoft.VisualBasic.CompilerServices.Utils"
+vbtype "Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute"
+vbtype "Microsoft.VisualBasic.CompilerServices.OptionTextAttribute"
+
+vbtype "Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag"
+field MS_VB_CS_StaticLocalInitFlag "State"
+ctor MS_VB_CS_StaticLocalInitFlag
+
+vbtype "Microsoft.VisualBasic.CompilerServices.IncompleteInitialization"
+ctor MS_VB_CS_IncompleteInitialization
+
+method MS_VB_CS_ProjectData "EndApp"
+method MS_VB_CS_ProjectData "CreateProjectError" System_Int32 
+method MS_VB_CS_ProjectData "ClearProjectError"
+method MS_VB_CS_ProjectData "SetProjectError" System_Exception 
+method MS_VB_CS_ProjectData "SetProjectError" System_Exception System_Int32
+
+method MS_VB_CS_Conversions "ToBoolean" System_Object 
+method MS_VB_CS_Conversions "ToChar" System_Object 
+method MS_VB_CS_Conversions "ToDate" System_Object 
+method MS_VB_CS_Conversions "ToByte" System_Object 
+method MS_VB_CS_Conversions "ToSByte" System_Object 
+method MS_VB_CS_Conversions "ToShort" System_Object 
+method MS_VB_CS_Conversions "ToUShort" System_Object 
+method MS_VB_CS_Conversions "ToInteger" System_Object 
+method MS_VB_CS_Conversions "ToUInteger" System_Object 
+method MS_VB_CS_Conversions "ToLong" System_Object 
+method MS_VB_CS_Conversions "ToULong" System_Object 
+method MS_VB_CS_Conversions "ToSingle" System_Object 
+method MS_VB_CS_Conversions "ToDouble" System_Object 
+method MS_VB_CS_Conversions "ToDecimal" System_Object 
+method MS_VB_CS_Conversions "ToBoolean" System_String 
+method MS_VB_CS_Conversions "ToChar" System_String 
+method MS_VB_CS_Conversions "ToDate" System_String 
+method MS_VB_CS_Conversions "ToByte" System_String 
+method MS_VB_CS_Conversions "ToSByte" System_String 
+method MS_VB_CS_Conversions "ToShort" System_String 
+method MS_VB_CS_Conversions "ToUShort" System_String 
+method MS_VB_CS_Conversions "ToInteger" System_String 
+method MS_VB_CS_Conversions "ToUInteger" System_String 
+method MS_VB_CS_Conversions "ToLong" System_String 
+method MS_VB_CS_Conversions "ToULong" System_String 
+method MS_VB_CS_Conversions "ToSingle" System_String 
+method MS_VB_CS_Conversions "ToDouble" System_String 
+method MS_VB_CS_Conversions "ToDecimal" System_String 
+method MS_VB_CS_Conversions "ToDecimal" System_Boolean 
+method MS_VB_CS_Conversions "ToString" System_Decimal 
+method MS_VB_CS_Conversions "ToString" System_Boolean 
+method MS_VB_CS_Conversions "ToString" System_Char 
+method MS_VB_CS_Conversions "ToString" System_DateTime 
+method MS_VB_CS_Conversions "ToString" System_Byte 
+method MS_VB_CS_Conversions "ToString" System_Int32 
+method MS_VB_CS_Conversions "ToString" System_UInt32 
+method MS_VB_CS_Conversions "ToString" System_Int64 
+method MS_VB_CS_Conversions "ToString" System_UInt64 
+method MS_VB_CS_Conversions "ToString" System_Single 
+method MS_VB_CS_Conversions "ToString" System_Double 
+method MS_VB_CS_Conversions "ToString" System_Object 
+method MS_VB_CS_Conversions "ToGenericParameter" System_Object 
+
+method MS_VB_CS_LikeOperator "LikeString" System_String System_String MS_VB_CompareMethod   
+method MS_VB_CS_LikeOperator "LikeObject" System_Object System_Object MS_VB_CompareMethod   
+
+method MS_VB_CS_StringType "MidStmtStr" System_String_ByRef System_Int32 System_Int32 System_String  
+
+method MS_VB_CS_ObjectFlowControl "CheckForSyncLockOnValueType" System_Object 
+
+method MS_VB_CS_Utils "CopyArray" System_Array System_Array
+
+method MS_VB_CS_Operators "ConditionalCompareObjectEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "ConditionalCompareObjectNotEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "ConditionalCompareObjectGreater" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "ConditionalCompareObjectGreaterEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "ConditionalCompareObjectLess" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "ConditionalCompareObjectLessEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "CompareString" System_String System_String System_Boolean   
+method MS_VB_CS_Operators "ConcatenateObject" System_Object System_Object    
+method MS_VB_CS_Operators "AddObject" System_Object System_Object    
+method MS_VB_CS_Operators "AndObject" System_Object System_Object    
+method MS_VB_CS_Operators "DivideObject" System_Object System_Object    
+method MS_VB_CS_Operators "ExponentObject" System_Object System_Object    
+method MS_VB_CS_Operators "IntDivideObject" System_Object System_Object    
+method MS_VB_CS_Operators "LeftShiftObject" System_Object System_Object    
+method MS_VB_CS_Operators "ModObject" System_Object System_Object    
+method MS_VB_CS_Operators "MultiplyObject" System_Object System_Object    
+method MS_VB_CS_Operators "NegateObject" System_Object 
+method MS_VB_CS_Operators "NotObject" System_Object 
+method MS_VB_CS_Operators "OrObject" System_Object System_Object    
+method MS_VB_CS_Operators "PlusObject" System_Object 
+method MS_VB_CS_Operators "RightShiftObject" System_Object System_Object    
+method MS_VB_CS_Operators "SubtractObject" System_Object System_Object    
+method MS_VB_CS_Operators "XorObject" System_Object System_Object    
+method MS_VB_CS_Operators "LikeObject" System_Object System_Object MS_VB_CompareMethod   
+method MS_VB_CS_Operators "LikeString" System_String System_String MS_VB_CompareMethod   
+method MS_VB_CS_Operators "CompareObjectEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "CompareObjectNotEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "CompareObjectGreater" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "CompareObjectGreaterEqual" System_Object System_Object System_Boolean   
+method MS_VB_CS_Operators "CompareObjectLess" System_Object System_Object System_Boolean   
+
+method MS_VB_CS_Operators "CompareObjectLessEqual" System_Object System_Object System_Boolean   

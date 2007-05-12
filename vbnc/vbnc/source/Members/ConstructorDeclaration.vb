@@ -312,7 +312,7 @@ Public Class ConstructorDeclaration
         For Each variable As VariableDeclaration In parent.StaticVariables
             If variable.HasInitializer AndAlso variable.DeclaringMethod.IsShared = Me.IsShared Then
                 If Me.IsShared = False Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-                Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag_Ctor)
+                Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__ctor)
                 Emitter.EmitStoreField(Info, variable.StaticInitBuilder)
             End If
         Next

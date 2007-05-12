@@ -125,7 +125,7 @@ Public Class DelegateOrObjectCreationExpression
 
         Helper.Assert(m_ResolvedType IsNot Nothing)
         If m_IsDelegateCreationExpression = False Then
-            m_IsDelegateCreationExpression = Helper.CompareType(m_ResolvedType.BaseType, Compiler.TypeCache.MulticastDelegate)
+            m_IsDelegateCreationExpression = Helper.CompareType(m_ResolvedType.BaseType, Compiler.TypeCache.System_MulticastDelegate)
         End If
 
         If m_ArgumentList IsNot Nothing Then

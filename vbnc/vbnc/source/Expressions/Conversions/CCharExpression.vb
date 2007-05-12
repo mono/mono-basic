@@ -38,7 +38,7 @@ Public Class CCharExpression
         Dim expType As Type = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
-        result = Expression.GenerateCode(Info.Clone(Info.Compiler.TypeCache.Char)) AndAlso result
+        result = Expression.GenerateCode(Info.Clone(Info.Compiler.TypeCache.System_Char)) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Char
@@ -50,15 +50,15 @@ Public Class CCharExpression
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
                 result = False
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToChar__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToChar_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'Nothing to do
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToChar__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToChar_String)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -81,7 +81,7 @@ Public Class CCharExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Char
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Char
         Select Case expTypeCode
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32007, expType.Name)
@@ -126,7 +126,7 @@ Public Class CCharExpression
     Overrides ReadOnly Property ExpressionType() As Type
         Get
 
-            Return Compiler.TypeCache.Char '_Descriptor
+            Return Compiler.TypeCache.System_Char '_Descriptor
         End Get
     End Property
 End Class

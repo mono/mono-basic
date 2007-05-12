@@ -252,18 +252,18 @@ Public Class CodeBlock
         UnstructuredSwitchHandler = Info.ILGen.DefineLabel
         UnstructuredSwitchHandlerEnd = Info.ILGen.DefineLabel
 
-        UnstructuredExceptionHandlerVariable = Info.ILGen.DeclareLocal(Compiler.TypeCache.Integer)
-        IsInUnstructuredHandler = Info.ILGen.DeclareLocal(Compiler.TypeCache.Integer)
+        UnstructuredExceptionHandlerVariable = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
+        IsInUnstructuredHandler = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
 
         EndUnstructuredExceptionHandler = Info.ILGen.BeginExceptionBlock()
         UnstructuredExceptionLabels = New Generic.List(Of Label)
 
         'At entry to the method, the exception-handler location and the exception are both set to Nothing. 
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
 
         UnstructuredExceptionLabels.Add(UnstructuredSwitchHandlerEnd) 'index 0
         If Me.HasResume Then
-            Me.CurrentInstruction = Info.ILGen.DeclareLocal(Compiler.TypeCache.Integer)
+            Me.CurrentInstruction = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
             ResumeNextExceptionHandler = Info.ILGen.DefineLabel
 
             UnstructuredExceptionLabels.Add(ResumeNextExceptionHandler) 'index 1
@@ -288,7 +288,7 @@ Public Class CodeBlock
 
         Me.UnstructuredExceptionLabels.Add(UnstructuredSwitchHandlerEnd)
 
-        Dim tmpVar As LocalBuilder = Info.ILGen.DeclareLocal(Compiler.TypeCache.Integer)
+        Dim tmpVar As LocalBuilder = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
         If Me.HasResume Then
             'Increment the instruction pointer index with one, then jump to the switch
             Info.ILGen.MarkLabel(ResumeNextExceptionHandler)
@@ -296,7 +296,7 @@ Public Class CodeBlock
             Emitter.EmitStoreVariable(Info, IsInUnstructuredHandler)
             Emitter.EmitLoadVariable(Info, CurrentInstruction)
             Emitter.EmitLoadI4Value(Info, 1)
-            Emitter.EmitAdd(Info, Compiler.TypeCache.Integer)
+            Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
             Emitter.EmitStoreVariable(Info, tmpVar)
             Emitter.EmitLeave(Info, UnstructuredSwitchHandler)
         End If
@@ -320,28 +320,28 @@ Public Class CodeBlock
         'if it was not raised when in the unstructured handler and if there actually
         'is a registered exception handler.
         Info.ILGen.BeginExceptFilterBlock()
-        Info.Stack.Push(Compiler.TypeCache.Object)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.Object, Compiler.TypeCache.Exception)
-        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.Exception))
-        Emitter.EmitGT_Un(Info, Compiler.TypeCache.Exception) 'TypeOf ... Is System.Exception
+        Info.Stack.Push(Compiler.TypeCache.System_Object)
+        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
+        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Exception))
+        Emitter.EmitGT_Un(Info, Compiler.TypeCache.System_Exception) 'TypeOf ... Is System.Exception
 
         Emitter.EmitLoadVariable(Info, Me.UnstructuredExceptionHandlerVariable)
         Emitter.EmitLoadI4Value(Info, 0)
-        Emitter.EmitGT(Info, Compiler.TypeCache.Integer) 'if a handler is registered.
-        Emitter.EmitAnd(Info, Compiler.TypeCache.Boolean)
+        Emitter.EmitGT(Info, Compiler.TypeCache.System_Int32) 'if a handler is registered.
+        Emitter.EmitAnd(Info, Compiler.TypeCache.System_Boolean)
 
         Emitter.EmitLoadVariable(Info, Me.IsInUnstructuredHandler)
         Emitter.EmitLoadI4Value(Info, 0)
-        Emitter.EmitGT(Info, Compiler.TypeCache.Integer) 'if code is in a unstructured handler or not
-        Emitter.EmitAnd(Info, Compiler.TypeCache.Boolean)
+        Emitter.EmitGT(Info, Compiler.TypeCache.System_Int32) 'if code is in a unstructured handler or not
+        Emitter.EmitAnd(Info, Compiler.TypeCache.System_Boolean)
 
-        Info.Stack.Pop(Compiler.TypeCache.Boolean)
+        Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
 
         'create the catch block
         Info.ILGen.BeginCatchBlock(Nothing)
-        Info.Stack.Push(Compiler.TypeCache.Object)
-        Emitter.EmitCastClass(Info, Compiler.TypeCache.Object, Compiler.TypeCache.Exception)
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_SetProjectError__Exception)
+        Info.Stack.Push(Compiler.TypeCache.System_Object)
+        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__SetProjectError_Exception)
         Emitter.EmitLeave(Info, UnstructuredExceptionHandler)
 
         Info.ILGen.EndExceptionBlock()
@@ -349,16 +349,16 @@ Public Class CodeBlock
         'Create an internal exception if the code gets here.
         Info.ILGen.MarkLabel(m_InternalExceptionLocation)
         Emitter.EmitLoadI4Value(Info, -2146828237)
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_CreateProjectError__Integer)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__CreateProjectError_Int32)
         Emitter.EmitThrow(Info)
 
         Info.ILGen.MarkLabel(EndMethodLabel)
 
         Dim veryMethodEnd As Label = Info.ILGen.DefineLabel
-        Emitter.EmitLoadVariable(Info.Clone(True, False, Compiler.TypeCache.Boolean), IsInUnstructuredHandler)
-        Info.Stack.SwitchHead(Compiler.TypeCache.Integer, Compiler.TypeCache.Boolean)
+        Emitter.EmitLoadVariable(Info.Clone(True, False, Compiler.TypeCache.System_Boolean), IsInUnstructuredHandler)
+        Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfFalse(Info, veryMethodEnd)
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
         Info.ILGen.MarkLabel(veryMethodEnd)
 
         If retvar IsNot Nothing Then

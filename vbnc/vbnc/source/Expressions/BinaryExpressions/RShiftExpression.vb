@@ -28,7 +28,7 @@ Public Class RShiftExpression
         Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
-        result = m_RightExpression.GenerateCode(expInfo.Clone(Compiler.TypeCache.Integer)) AndAlso result
+        result = m_RightExpression.GenerateCode(expInfo.Clone(Compiler.TypeCache.System_Int32)) AndAlso result
 
 
         Select Case OperandTypeCode
@@ -45,11 +45,11 @@ Public Class RShiftExpression
                         shift = 63
                 End Select
                 Emitter.EmitLoadI4Value(Info, shift)
-                Emitter.EmitAnd(Info, Info.Compiler.TypeCache.Integer)
+                Emitter.EmitAnd(Info, Info.Compiler.TypeCache.System_Int32)
                 Emitter.EmitRShift(Info, OperandType)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_RightShiftObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__RightShiftObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select
@@ -94,7 +94,7 @@ Public Class RShiftExpression
 
                 Dim shifts As Integer 'This needs to be an integer.
                 Dim tmpShifts As Object = Nothing
-                If Compiler.TypeResolution.CheckNumericRange(rvalue, tmpShifts, Compiler.TypeCache.Integer) = False Then
+                If Compiler.TypeResolution.CheckNumericRange(rvalue, tmpShifts, Compiler.TypeCache.System_Int32) = False Then
                     Helper.Stop() 'Add error.
                 Else
                     shifts = CInt(tmpShifts)

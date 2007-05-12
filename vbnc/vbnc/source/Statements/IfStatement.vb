@@ -88,7 +88,7 @@ Public Class IfStatement
 
         'result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
         'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
-        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
 
         Emitter.EmitBranchIfFalse(Info, startFalse)
         'True code
@@ -132,7 +132,7 @@ Public Class IfStatement
                 Helper.AddError()
                 Return result
             End If
-            m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.Boolean, result)
+            m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
 
             If result = False Then
                 Helper.AddError()

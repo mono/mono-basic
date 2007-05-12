@@ -64,19 +64,19 @@ Public Class OnErrorStatement
 
         If m_IsGotoMinusOne Then
             '•	On Error GoTo -1 resets the most recent exception to Nothing.
-            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
         ElseIf m_IsGotoZero Then
             '•	On Error GoTo 0 resets the most recent exception-handler location to Nothing.
-            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             Emitter.EmitLoadI4Value(Info, 0)
             Emitter.EmitStoreVariable(Info, parent.UnstructuredExceptionHandlerVariable)
         ElseIf m_IsResumeNext Then
-            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             '•	On Error Resume Next, establishes the Resume Next behavior as the most recent exception-handler location.
             Emitter.EmitLoadI4Value(Info, 1) 'Load the index of the switch table, 1 = resume next handler.
             Emitter.EmitStoreVariable(Info, parent.UnstructuredExceptionHandlerVariable)
         Else
-            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             Dim index As Integer
             If parent.UnstructuredExceptionLabels.Contains(m_ResolvedLabel.LabelBuilder) = False Then
                 parent.UnstructuredExceptionLabels.Add(m_ResolvedLabel.LabelBuilder)

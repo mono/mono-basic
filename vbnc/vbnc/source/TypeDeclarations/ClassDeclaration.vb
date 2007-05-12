@@ -90,9 +90,12 @@ Public Class ClassDeclaration
             If result = False Then Return result
             BaseType = m_Inherits.ResolvedType
         Else
-            BaseType = Compiler.TypeCache.Object
+            BaseType = Compiler.TypeCache.System_Object
 #If DEBUGREFLECTION Then
             Helper.DebugReflection_AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
+#End If
+#If ENABLECECIL Then
+            CecilBaseType = Compiler.CecilTypeCache.System_Object
 #End If
         End If
 
@@ -301,7 +304,7 @@ Public Class ClassDeclaration
             Dim set_if2_code As New CodeBlock(set_if2)
             Dim set_throw As New ThrowStatement(set_if2_code)
             Dim set_throw_creation As New DelegateOrObjectCreationExpression(set_throw)
-            Dim set_throw_arg1 As New ConstantExpression(set_throw_creation, "Property can only be set to Nothing", Compiler.TypeCache.String)
+            Dim set_throw_arg1 As New ConstantExpression(set_throw_creation, "Property can only be set to Nothing", Compiler.TypeCache.System_String)
             Dim set_throw_args As New ArgumentList(set_throw_creation, set_throw_arg1)
             Dim set_dispose As New CallStatement(set_if1)
             Dim set_dispose_invocation As New InvocationOrIndexExpression(set_dispose)

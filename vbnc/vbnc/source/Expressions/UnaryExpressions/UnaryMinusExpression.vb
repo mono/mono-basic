@@ -36,7 +36,7 @@ Public Class UnaryMinusExpression
         Select Case OperandTypeCode
             Case TypeCode.Decimal
                 result = Expression.GenerateCode(expInfo) AndAlso result
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Negate__Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Negate_Decimal)
             Case TypeCode.Single, TypeCode.Double
                 result = Expression.GenerateCode(expInfo) AndAlso result
                 Emitter.EmitNeg(Info)
@@ -44,9 +44,9 @@ Public Class UnaryMinusExpression
                 result = Expression.GenerateCode(expInfo) AndAlso result
                 Emitter.EmitNeg(Info)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 result = Me.Expression.GenerateCode(expInfo) AndAlso result
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_NegateObject__Object)
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__NegateObject_Object)
             Case TypeCode.Int32
                 Emitter.EmitLoadI4Value(Info, 0)
                 result = Expression.GenerateCode(expInfo) AndAlso result

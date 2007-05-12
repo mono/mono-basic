@@ -32,7 +32,7 @@ Public Class StopStatement
         Dim result As Boolean = True
 
         ' Helper.NotImplemented()
-        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Diagnostics_Debugger_Break)
+        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Diagnostics_Debugger__Break)
 
         Return result
     End Function

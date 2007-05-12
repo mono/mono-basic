@@ -234,7 +234,7 @@ Public Class VariableDeclaration
                 Else
                     Helper.AddWarning("Variable type should be specified.")
                 End If
-                m_FieldType = Compiler.TypeCache.Object
+                m_FieldType = Compiler.TypeCache.System_Object
             End If
         End If
 
@@ -379,21 +379,21 @@ Public Class VariableDeclaration
         'Monitor.Enter(initvar)
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
-        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor_Enter__Object)
+        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Enter_Object)
         'Try
         Dim exBlock As Label
         exBlock = Info.ILGen.BeginExceptionBlock()
         '   If initvar.State = 0 Then
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
-        Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag_State)
+        Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
         Emitter.EmitLoadI4Value(Info, 0I)
         Info.ILGen.Emit(OpCodes.Bne_Un_S, elseIfLabel)
         '       initvar.State = 2
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
         Emitter.EmitLoadI4Value(Info, 2I)
-        Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag_State)
+        Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
         '       (initalization)
         result = EmitVariableInitializer(Info) AndAlso result
         Emitter.EmitBranch(Info, endIfLabel)
@@ -401,11 +401,11 @@ Public Class VariableDeclaration
         Emitter.MarkLabel(Info, elseIfLabel)
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
-        Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag_State)
+        Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
         Emitter.EmitLoadI4Value(Info, 2I)
         Info.ILGen.Emit(OpCodes.Bne_Un_S, endIfLabel)
         '       Throw New IncompleteInitializationException
-        Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_IncompleteInitializationException__ctor)
+        Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_IncompleteInitialization__ctor)
         Emitter.EmitThrow(Info)
         '   End If
         Emitter.MarkLabel(Info, endIfLabel)
@@ -416,11 +416,11 @@ Public Class VariableDeclaration
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
         Emitter.EmitLoadI4Value(Info, 1I)
-        Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag_State)
+        Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
         '   Monitor.Exit(initvar)
         If Not m_StaticInitBuilder.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
         Emitter.EmitLoadVariable(Info, m_StaticInitBuilder)
-        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor_Exit__Object)
+        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Exit_Object)
         'End Try
         Info.ILGen.EndExceptionBlock()
         Return result

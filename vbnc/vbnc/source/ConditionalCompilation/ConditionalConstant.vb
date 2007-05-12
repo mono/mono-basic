@@ -47,16 +47,16 @@ Public Class ConditionalConstant
     ReadOnly Property ConstantType() As Type
         Get
             If Value Is Nothing Then
-                Return Compiler.TypeCache.Object
+                Return Compiler.TypeCache.System_Object
             ElseIf TypeOf Value Is Date Then
-                Return Compiler.TypeCache.Date
+                Return Compiler.TypeCache.System_DateTime
             ElseIf TypeOf Value Is String Then
-                Return Compiler.TypeCache.String
+                Return Compiler.TypeCache.System_String
             ElseIf TypeOf Value Is Boolean Then
-                Return Compiler.TypeCache.Boolean
+                Return Compiler.TypeCache.System_Boolean
             Else
                 Helper.Assert(VB.IsNumeric(Value))
-                Return Compiler.TypeCache.Double
+                Return Compiler.TypeCache.System_Double
             End If
         End Get
     End Property
@@ -68,28 +68,28 @@ Public Class ConditionalConstant
     End Property
 
     Function AsBoolean() As Boolean
-        Helper.Assert(ConstantType Is Compiler.TypeCache.Boolean)
+        Helper.Assert(ConstantType Is Compiler.TypeCache.System_Boolean)
         Return CBool(Value)
     End Function
 
     Function AsDouble() As Double
-        Helper.Assert(ConstantType Is Compiler.TypeCache.Double)
+        Helper.Assert(ConstantType Is Compiler.TypeCache.System_Double)
         Return CDbl(Value)
     End Function
 
     Function AsString() As String
-        Helper.Assert(ConstantType Is Compiler.TypeCache.String)
+        Helper.Assert(ConstantType Is Compiler.TypeCache.System_String)
         Return CStr(Value)
     End Function
 
     Function AsObject() As Object
-        Helper.Assert(ConstantType Is Compiler.TypeCache.Object)
+        Helper.Assert(ConstantType Is Compiler.TypeCache.System_Object)
         Helper.Assert(Value Is Nothing)
         Return Value
     End Function
 
     Function AsDate() As Date
-        Helper.Assert(ConstantType Is Compiler.TypeCache.Date)
+        Helper.Assert(ConstantType Is Compiler.TypeCache.System_DateTime)
         Return CDate(Value)
     End Function
 

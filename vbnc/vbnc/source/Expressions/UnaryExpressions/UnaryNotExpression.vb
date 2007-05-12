@@ -39,12 +39,12 @@ Public Class UnaryNotExpression
         Select Case Me.OperandTypeCode
 
             Case TypeCode.Boolean
-                Emitter.EmitLoadI4Value(Info, 0I, Compiler.TypeCache.Boolean)
-                Emitter.EmitEquals(Info, Compiler.TypeCache.Boolean)
+                Emitter.EmitLoadI4Value(Info, 0I, Compiler.TypeCache.System_Boolean)
+                Emitter.EmitEquals(Info, Compiler.TypeCache.System_Boolean)
             Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64
                 Emitter.EmitNot(Info, OperandType)
             Case TypeCode.Object
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_NotObject__Object)
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__NotObject_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

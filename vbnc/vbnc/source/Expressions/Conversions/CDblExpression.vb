@@ -47,7 +47,7 @@ Public Class CDblExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Double
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Double
         Select Case expTypeCode
             Case TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30532, expType.Name)
@@ -89,15 +89,15 @@ Public Class CDblExpression
             Case TypeCode.Single
                 Emitter.EmitConv_R8(Info, expType)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDouble__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDouble_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDouble__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDouble_String)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToDouble__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToDouble_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -107,7 +107,7 @@ Public Class CDblExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.String) = False
+            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) = False
         End Get
     End Property
 
@@ -132,7 +132,7 @@ Public Class CDblExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Double '_Descriptor
+            Return Compiler.TypeCache.System_Double '_Descriptor
         End Get
     End Property
 End Class

@@ -1083,7 +1083,7 @@ Public Class TypeDescriptor
     Public Overrides Function IsSubclassOf(ByVal c As System.Type) As Boolean
         Dim result As Boolean
 
-        If Helper.CompareType(c, Compiler.TypeCache.Object) Then Return True
+        If Helper.CompareType(c, Compiler.TypeCache.System_Object) Then Return True
 
         Dim base As Type = Me.BaseType
         Do While base IsNot Nothing

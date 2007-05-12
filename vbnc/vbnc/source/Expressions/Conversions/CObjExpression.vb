@@ -74,7 +74,7 @@ Public Class CObjExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Object
+            Return Compiler.TypeCache.System_Object
         End Get
     End Property
 End Class

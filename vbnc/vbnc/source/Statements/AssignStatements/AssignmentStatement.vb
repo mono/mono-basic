@@ -110,7 +110,7 @@ Public Class AssignmentStatement
             Helper.AddError("Left hand side expression must be classifiable as a variable or a property access.")
         End If
 
-        If m_LSide.ExpressionType.IsGenericType AndAlso Helper.CompareType(Compiler.TypeCache.System_Nullable, m_LSide.ExpressionType.GetGenericTypeDefinition) Then
+        If m_LSide.ExpressionType.IsGenericType AndAlso Helper.CompareType(Compiler.TypeCache.System_Nullable1, m_LSide.ExpressionType.GetGenericTypeDefinition) Then
             Dim lTypeArg As Type()
             lTypeArg = m_LSide.ExpressionType.GetGenericArguments
             If lTypeArg.Length = 1 AndAlso Helper.CompareType(lTypeArg(0), m_RSide.ExpressionType) Then

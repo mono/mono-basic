@@ -125,7 +125,7 @@ Public Class FunctionSignature
                 Else
                     Helper.AddWarning("Function return type must be specified.")
                 End If
-                m_ReturnType = Compiler.TypeCache.Object
+                m_ReturnType = Compiler.TypeCache.System_Object
             End If
         End If
 

@@ -127,8 +127,8 @@ Public Class InvocationOrIndexExpression
         Dim result As Boolean = True
 
         If m_AscWExpression IsNot Nothing Then
-            result = m_AscWExpression.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Char)) AndAlso result
-            Info.Stack.SwitchHead(Compiler.TypeCache.Char, Compiler.TypeCache.Integer)
+            result = m_AscWExpression.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Char)) AndAlso result
+            Info.Stack.SwitchHead(Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32)
 
             Return result
         End If
@@ -305,7 +305,7 @@ Public Class InvocationOrIndexExpression
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
             result = propGroup.ResolveGroup(m_ArgumentList)
             Classification = propGroup
-        ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.Object) Then
+        ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Object) Then
             Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing)
             Classification = lbaClass
         Else
@@ -335,7 +335,7 @@ Public Class InvocationOrIndexExpression
 
         argtypes = m_ArgumentList.GetTypes
         For Each argtype As Type In argtypes
-            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argtype, Compiler.TypeCache.Integer) = False Then
+            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argtype, Compiler.TypeCache.System_Int32) = False Then
                 Helper.AddError("Array argument must be implicitly convertible to Integer.")
                 Return False
             End If
@@ -435,7 +435,7 @@ Public Class InvocationOrIndexExpression
 
             reclassifyToIndex = method IsNot Nothing
             reclassifyToIndex = reclassifyToIndex AndAlso method.ReturnType IsNot Nothing
-            reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.Void) = False
+            reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.System_Void) = False
             reclassifyToIndex = reclassifyToIndex AndAlso Helper.GetParameters(Compiler, method).Length = 0
 
         End If
@@ -457,9 +457,9 @@ Public Class InvocationOrIndexExpression
             If Compiler.CommandLine.NoVBRuntimeRef AndAlso methodInfo.DeclaringType.Module Is Compiler.ModuleBuilder AndAlso methodInfo.IsStatic AndAlso Helper.CompareNameOrdinal(methodInfo.Name, "AscW") Then
                 Dim methodParameters() As ParameterInfo = Helper.GetParameters(Compiler, methodInfo)
 
-                If methodParameters.Length <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.Char) Then
+                If methodParameters.Length <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.System_Char) Then
                     m_AscWExpression = ArgumentList(0).Expression
-                    m_ExpressionType = Compiler.TypeCache.Integer
+                    m_ExpressionType = Compiler.TypeCache.System_Int32
                     Classification = New ValueClassification(Me, m_ExpressionType)
 
                     Return result

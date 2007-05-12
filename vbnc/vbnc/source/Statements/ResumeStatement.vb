@@ -43,16 +43,16 @@ Public Class ResumeStatement
         Loop
 
         'Clear the error.
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_ClearProjectError)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
 
         'Test if the code is in an exception handler
         Emitter.EmitLoadVariable(Info, block.IsInUnstructuredHandler)
-        Info.Stack.SwitchHead(Compiler.TypeCache.Integer, Compiler.TypeCache.Boolean)
+        Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfTrue(Info, ResumeOK)
 
         'If code is not in an exception handler raise an error
         Emitter.EmitLoadI4Value(Info, -2146828268)
-        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_PD_CreateProjectError__Integer)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__CreateProjectError_Int32)
         Emitter.EmitThrow(Info)
 
         Info.ILGen.MarkLabel(ResumeOK)
@@ -61,7 +61,7 @@ Public Class ResumeStatement
         'Increment the instruction pointer if it is a Resume Next statement
         If m_IsResumeNext Then
             Emitter.EmitLoadI4Value(Info, 1)
-            Emitter.EmitAdd(Info, Compiler.TypeCache.Integer)
+            Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
         End If
         'If everything is ok, jump to the instruction switch (adding one to the instruction if necessary)
         Emitter.EmitLeave(Info, block.UnstructuredSwitchHandler)

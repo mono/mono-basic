@@ -47,7 +47,7 @@ Public Class CSByteExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.SByte
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_SByte
         Select Case expTypeCode
             Case TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
@@ -88,22 +88,22 @@ Public Class CSByteExpression
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Emitter.EmitConv_I1_Overflow_Underflow(Info, expType)
             Case TypeCode.Double
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
                 Emitter.EmitConv_I1_Overflow(Info, expType)
             Case TypeCode.Single
                 Emitter.EmitConv_R8(Info, expType)
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
-                Emitter.EmitConv_I1_Overflow(Info, Info.Compiler.TypeCache.Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
+                Emitter.EmitConv_I1_Overflow(Info, Info.Compiler.TypeCache.System_Double)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToSByte__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSByte_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToSByte__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSByte_String)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToSByte__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToSByte_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -136,7 +136,7 @@ Public Class CSByteExpression
     End Property
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.SByte '_Descriptor
+            Return Compiler.TypeCache.System_SByte '_Descriptor
         End Get
     End Property
 End Class

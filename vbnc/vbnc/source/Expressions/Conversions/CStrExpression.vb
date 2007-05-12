@@ -61,41 +61,41 @@ Public Class CStrExpression
 
         Select Case expTypeCode
             Case TypeCode.Boolean
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Boolean)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Boolean)
             Case TypeCode.String
                 'Nothing to do
             Case TypeCode.Char
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Char)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Char)
             Case TypeCode.DateTime
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Date)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_DateTime)
             Case TypeCode.SByte, TypeCode.Int16
-                Info.Stack.SwitchHead(expType, Info.Compiler.TypeCache.Integer)
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Integer)
+                Info.Stack.SwitchHead(expType, Info.Compiler.TypeCache.System_Int32)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
             Case TypeCode.Int32
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Integer)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
             Case TypeCode.Int64
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Long)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int64)
             Case TypeCode.Byte
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Byte)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Byte)
             Case TypeCode.UInt16, TypeCode.UInt32
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__UInteger)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_UInt32)
             Case TypeCode.UInt64
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__ULong)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_UInt64)
             Case TypeCode.Double
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Double)
             Case TypeCode.Single
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Single)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Single)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'No conversion necessary
-                    Info.Stack.SwitchHead(Info.Compiler.TypeCache.Nothing, Info.Compiler.TypeCache.String)
+                    Info.Stack.SwitchHead(Info.Compiler.TypeCache.Nothing, Info.Compiler.TypeCache.System_String)
                 Else
-                    result = CTypeExpression.GenerateUserDefinedConversionCode(Info, Expression, Info.Compiler.TypeCache.String) AndAlso result
+                    result = CTypeExpression.GenerateUserDefinedConversionCode(Info, Expression, Info.Compiler.TypeCache.System_String) AndAlso result
                 End If
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToString__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -105,7 +105,7 @@ Public Class CStrExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant AndAlso (Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.String) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.Char))
+            Return Expression.IsConstant AndAlso (Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char))
         End Get
     End Property
 
@@ -127,7 +127,7 @@ Public Class CStrExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.String '_Descriptor
+            Return Compiler.TypeCache.System_String '_Descriptor
         End Get
     End Property
 End Class

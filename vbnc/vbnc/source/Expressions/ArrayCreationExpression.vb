@@ -95,7 +95,7 @@ Public Class ArrayCreationExpression
         If asim.ArrayTypeModifiers Is Nothing OrElse True Then
             Dim Ranks As Integer = asim.BoundList.Expressions.Length
             For i As Integer = 0 To Ranks - 1
-                Dim litexp As New ConstantExpression(Parent, 1, Parent.Compiler.TypeCache.Integer)
+                Dim litexp As New ConstantExpression(Parent, 1, Parent.Compiler.TypeCache.System_Int32)
                 Dim exp As BinaryAddExpression
 
                 exp = New BinaryAddExpression(Parent, asim.BoundList.Expressions(i), litexp)
@@ -103,7 +103,7 @@ Public Class ArrayCreationExpression
                 If exp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) = False Then Throw New InternalException(Parent)
                 If exp.GenerateCode(Info.Clone(True)) = False Then Throw New InternalException(parent)
 
-                Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.Integer, Info)
+                Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.System_Int32, Info)
             Next
             EmitArrayConstructor(Info, ArrayType, Ranks)
         Else
@@ -143,7 +143,7 @@ Public Class ArrayCreationExpression
             Emitter.EmitNewArr(Info, ArrayType.GetElementType)
         Else
             Dim ctor As ConstructorInfo
-            Dim types() As Type = Helper.CreateArray(Of Type)(Info.Compiler.TypeCache.Integer, Ranks)
+            Dim types() As Type = Helper.CreateArray(Of Type)(Info.Compiler.TypeCache.System_Int32, Ranks)
 
             ctor = Info.Compiler.TypeManager.GetRegisteredType(ArrayType).GetConstructor(BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, Nothing, types, Nothing)
 
@@ -197,7 +197,7 @@ Public Class ArrayCreationExpression
         If vi.IsRegularInitializer Then
             Emitter.EmitLoadVariable(Info, ArrayVariable)
             For i As Integer = 0 To Indices.Count - 1
-                Emitter.EmitLoadValue(Info.Clone(True, False, Compiler.TypeCache.Integer), Indices(i))
+                Emitter.EmitLoadValue(Info.Clone(True, False, Compiler.TypeCache.System_Int32), Indices(i))
             Next
             If elementType.IsValueType AndAlso elementType.IsPrimitive = False AndAlso elementType.IsEnum = False Then
                 Emitter.EmitLoadElementAddress(Info, elementType, ArrayType)
@@ -210,7 +210,7 @@ Public Class ArrayCreationExpression
                 Dim setmethod As MethodInfo
                 Dim settypes(CurrentDepth) As Type
                 For i As Integer = 0 To CurrentDepth - 1
-                    settypes(i) = Compiler.TypeCache.Integer
+                    settypes(i) = Compiler.TypeCache.System_Int32
                 Next
                 settypes(CurrentDepth) = ArrayType.GetElementType
                 setmethod = ArrayType.GetMethod("Set", settypes)

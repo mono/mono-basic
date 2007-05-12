@@ -90,11 +90,11 @@ Public Class GetRefExpression
 
                     Dim methodtypes As New Generic.List(Of Type)
 
-                    Dim elementInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.Integer)
+                    Dim elementInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.System_Int32)
                     For i As Integer = 0 To varC.Arguments.Count - 1
                         result = varC.Arguments(i).GenerateCode(elementInfo) AndAlso result
-                        Emitter.EmitConversion(varC.Arguments(i).Expression.ExpressionType, Compiler.TypeCache.Integer, Info)
-                        methodtypes.Add(Compiler.TypeCache.Integer)
+                        Emitter.EmitConversion(varC.Arguments(i).Expression.ExpressionType, Compiler.TypeCache.System_Int32, Info)
+                        methodtypes.Add(Compiler.TypeCache.System_Int32)
                     Next
 
                     Dim rInfo As EmitInfo = Info.Clone(True, False, elementtype)

@@ -58,7 +58,7 @@ Public Class EnumDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-        BaseType = Compiler.TypeCache.Enum
+        BaseType = Compiler.TypeCache.System_Enum
 
         result = MyBase.ResolveType AndAlso result
 

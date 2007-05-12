@@ -64,16 +64,16 @@ Public Class SyncLockStatement
         result = m_Lock.GenerateCode(Info.Clone(True, False, lockType)) AndAlso result
         Emitter.EmitStoreVariable(Info, lockVariable)
 
-        If Helper.CompareType(Compiler.TypeCache.Object, lockVariable.LocalType) Then
+        If Helper.CompareType(Compiler.TypeCache.System_Object, lockVariable.LocalType) Then
             Emitter.EmitLoadVariable(Info, lockVariable)
-            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_OFC_CheckForSyncLockOnValueType__Object)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ObjectFlowControl__CheckForSyncLockOnValueType_Object)
         End If
 
         Dim endException As Label
         endException = Info.ILGen.BeginExceptionBlock()
         'Enter the lock
         Emitter.EmitLoadVariable(Info, lockVariable)
-        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor_Enter__Object)
+        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Enter_Object)
 
         'Emit the code
         result = CodeBlock.GenerateCode(Info) AndAlso result
@@ -81,7 +81,7 @@ Public Class SyncLockStatement
 
         'Exit the lock
         Emitter.EmitLoadVariable(Info, lockVariable)
-        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor_Exit__Object)
+        Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Exit_Object)
 
         Info.ILGen.EndExceptionBlock()
 

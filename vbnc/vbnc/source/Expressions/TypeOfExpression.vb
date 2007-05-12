@@ -61,8 +61,8 @@ Public Class TypeOfExpression
         End If
         Emitter.EmitIsInst(Info, m_Expression.ExpressionType, m_Type.ResolvedType)
 
-        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.Object))
-        Info.Stack.SwitchHead(Compiler.TypeCache.Object, Helper.GetTypeOrTypeBuilder(m_Type.ResolvedType))
+        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Object))
+        Info.Stack.SwitchHead(Compiler.TypeCache.System_Object, Helper.GetTypeOrTypeBuilder(m_Type.ResolvedType))
         If m_Is Then
             Emitter.EmitNotEquals(Info, m_Type.ResolvedType)
         Else
@@ -99,7 +99,7 @@ Public Class TypeOfExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Boolean '_Descriptor
+            Return Compiler.TypeCache.System_Boolean '_Descriptor
         End Get
     End Property
 

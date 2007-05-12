@@ -471,7 +471,7 @@ Public Class MemberCandidate
             param = InputParameters(j)
             arg = ExactArguments(j)
 
-            If ExceptObject AndAlso Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Object) Then Continue For
+            If ExceptObject AndAlso Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.System_Object) Then Continue For
 
             Dim IsConvertible As Boolean
             'IsConvertible = Helper.IsConvertible(Compiler, arg, param)

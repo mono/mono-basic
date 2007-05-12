@@ -559,17 +559,17 @@ Public Class ConditionalExpression
     'Helper conversion functions
     Private Function ToDouble(ByVal value As Object, ByRef Result As Double) As Boolean
         Dim vTp As Type = value.GetType
-        If Helper.CompareType(vTp, Compiler.TypeCache.Byte) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Decimal) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Double) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Integer) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Long) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.SByte) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Short) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.Single) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.UInteger) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.ULong) OrElse _
-            Helper.CompareType(vTp, Compiler.TypeCache.UShort) Then
+        If Helper.CompareType(vTp, Compiler.TypeCache.System_Byte) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Decimal) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Double) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Int32) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Int64) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_SByte) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Int16) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_Single) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_UInt32) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_UInt64) OrElse _
+            Helper.CompareType(vTp, Compiler.TypeCache.System_UInt16) Then
             Result = CDbl(value)
             Return True
         Else

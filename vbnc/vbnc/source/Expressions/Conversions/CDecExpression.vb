@@ -47,7 +47,7 @@ Public Class CDecExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Decimal
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Decimal
         Select Case expTypeCode
             Case TypeCode.DateTime, TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
@@ -68,7 +68,7 @@ Public Class CDecExpression
 
         Select Case expTypeCode
             Case TypeCode.Boolean
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDecimal__Boolean)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDecimal_Boolean)
             Case TypeCode.Decimal
                 'Nothing to do
             Case TypeCode.DateTime, TypeCode.Char
@@ -76,32 +76,32 @@ Public Class CDecExpression
                 result = False
             Case TypeCode.SByte, TypeCode.Int16
                 Emitter.EmitConv_I4_Overflow(Info, expType)
-                Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Int32)
+                Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
             Case TypeCode.Int32
-                Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Int32)
+                Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
             Case TypeCode.Int64
-                Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Int64)
+                Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Int64)
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Emitter.EmitConv_U8_Overflow_Underflow(Info, expType)
-                Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_UInt64)
+                Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_UInt64)
             Case TypeCode.Double
-                Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Double)
+                Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Double)
             Case TypeCode.Single
                 If Expression.IsConstant Then
                     'VBC BUG? This seems to be a bug in vbc.exe.
                     Emitter.EmitLoadDecimalValue(Info, New Decimal(CDbl(Expression.ConstantValue)))
                 Else
                     'CORRECT CODE.
-                    Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Single)
+                    Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Single)
                 End If
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDecimal__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDecimal_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDecimal__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDecimal_String)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -135,7 +135,7 @@ Public Class CDecExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Decimal '_Descriptor
+            Return Compiler.TypeCache.System_Decimal '_Descriptor
         End Get
     End Property
 End Class

@@ -85,7 +85,7 @@ Public Class ForEachStatement
         Dim isClass As Boolean = isgenericparameter = False AndAlso varType.IsClass
 
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.IEnumerator_get_Current)
+        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__get_Current)
 
         Dim valueTPLoad As Label
         Dim valueTPLoaded As Label
@@ -98,7 +98,7 @@ Public Class ForEachStatement
             tmpStructureVariable = Emitter.DeclareLocal(Info, varType)
             Emitter.EmitDup(Info)
             Emitter.EmitBranchIfTrue(Info, valueTPLoad)
-            Emitter.EmitPop(Info, Compiler.TypeCache.Object)
+            Emitter.EmitPop(Info, Compiler.TypeCache.System_Object)
             Emitter.EmitLoadVariable(Info, tmpStructureVariable)
             Emitter.EmitBranch(Info, valueTPLoaded)
             Emitter.FreeLocal(tmpStructureVariable)
@@ -109,14 +109,14 @@ Public Class ForEachStatement
         If isGenericParameter Then
             Emitter.EmitUnbox_Any(Info, varType)
         ElseIf isClass Then
-            Emitter.EmitCastClass(Info, Compiler.TypeCache.Object, varType)
+            Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, varType)
         ElseIf isValueType Then
             Emitter.MarkLabel(Info, valueTPLoad)
             Emitter.EmitUnbox(Info, varType)
             Emitter.EmitLoadObject(Info, varType)
             Emitter.MarkLabel(Info, valueTPLoaded)
         Else
-            Emitter.EmitConversion(Compiler.TypeCache.Object, varType, Info.Clone(True, True, varType))
+            Emitter.EmitConversion(Compiler.TypeCache.System_Object, varType, Info.Clone(True, True, varType))
         End If
         Return True
     End Function
@@ -129,7 +129,7 @@ Public Class ForEachStatement
 
         result = m_LoopControlVariable.GenerateCode(Info) AndAlso result 'Creates the localbuilder if necessary
 
-        m_Enumerator = Info.ILGen.DeclareLocal(Compiler.TypeCache.IEnumerator)
+        m_Enumerator = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Collections_IEnumerator)
         EndLabel = Info.ILGen.DefineLabel
         m_NextIteration = Info.ILGen.DefineLabel
         startIteration = Info.ILGen.DefineLabel
@@ -137,12 +137,12 @@ Public Class ForEachStatement
         beginEx = Info.ILGen.BeginExceptionBlock()
 
         Compiler.Helper.AddCheck("Check correct type of foreach loop container.")
-        Helper.Assert(Helper.CompareType(Compiler.TypeCache.Object, m_InExpression.ExpressionType) OrElse Helper.IsAssignable(Compiler, m_InExpression.ExpressionType, Compiler.TypeCache.IEnumerable))
+        Helper.Assert(Helper.CompareType(Compiler.TypeCache.System_Object, m_InExpression.ExpressionType) OrElse Helper.IsAssignable(Compiler, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable))
 
         'Load the container variable and get the enumerator
         result = m_InExpression.GenerateCode(Info.Clone(True, False, m_InExpression.ExpressionType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Compiler.TypeCache.IEnumerable)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.IEnumerable_GetEnumerator)
+        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable)
+        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator)
         Emitter.EmitStoreVariable(Info, m_Enumerator)
 
         'Jump to the next iteration
@@ -161,7 +161,7 @@ Public Class ForEachStatement
         Emitter.MarkLabel(Info, m_NextIteration)
         Emitter.EmitNop(Info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.IEnumerator_MoveNext)
+        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__MoveNext)
         'Jump to the code for the next element
         Emitter.EmitBranchIfTrue(Info, startIteration)
         'End of try code.
@@ -171,11 +171,11 @@ Public Class ForEachStatement
         Emitter.EmitBeginFinallyBlock(Info)
         Dim EndFinally As Label = Emitter.DefineLabel(info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.IEnumerator, Compiler.TypeCache.IDisposable)
+        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
         Emitter.EmitBranchIfFalse(Info, EndFinally)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.IEnumerator, Compiler.TypeCache.IDisposable)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.IDisposable_Dispose)
+        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
+        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_IDisposable__Dispose)
         Emitter.MarkLabel(info, EndFinally)
         Emitter.EmitEndExceptionBlock(Info)
 

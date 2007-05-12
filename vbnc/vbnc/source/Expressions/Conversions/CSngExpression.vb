@@ -47,7 +47,7 @@ Public Class CSngExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Single
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Single
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
@@ -84,15 +84,15 @@ Public Class CSngExpression
             Case TypeCode.Double
                 Emitter.EmitConv_R4(Info, expType)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToSingle__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSingle_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToSingle__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSingle_String)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToSingle__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToSingle_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -126,7 +126,7 @@ Public Class CSngExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Single '_Descriptor
+            Return Compiler.TypeCache.System_Single '_Descriptor
         End Get
     End Property
 End Class

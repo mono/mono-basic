@@ -44,7 +44,7 @@ Public Class CDateExpression
             Case TypeCode.DateTime
                 'Nothing to do
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.Double.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.System_Double.Name, expType.Name)
                 result = False
             Case TypeCode.Double
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30533, expType.Name)
@@ -53,15 +53,15 @@ Public Class CDateExpression
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
                 result = False
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDate__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDate_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDate__Object)
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDate_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToDate__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDate_String)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -84,10 +84,10 @@ Public Class CDateExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Date
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_DateTime
         Select Case expTypeCode
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.Double.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.System_Double.Name, expType.Name)
                 result = False
             Case TypeCode.Double
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30533, expType.Name)
@@ -104,7 +104,7 @@ Public Class CDateExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.Date)
+            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_DateTime)
         End Get
     End Property
 
@@ -120,7 +120,7 @@ Public Class CDateExpression
     Overrides ReadOnly Property ExpressionType() As Type
         Get
 
-            Return Compiler.TypeCache.Date '_Descriptor
+            Return Compiler.TypeCache.System_DateTime '_Descriptor
         End Get
     End Property
 End Class

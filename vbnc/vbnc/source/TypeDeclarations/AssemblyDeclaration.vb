@@ -630,17 +630,18 @@ Public Class AssemblyDeclaration
         Dim ToCapiPublicKeyBlob As MethodInfo
         Dim FromCapiPrivateKeyBlob As MethodInfo
         Dim RSA As Type
+        Dim mscorlib As Assembly = GetType(Integer).Assembly
 
 #If DEBUG Then
         Compiler.Report.WriteLine("Signing on Mono")
 #End If
 
         Try
-            RSA = Compiler.TypeCache.mscorlib.GetType("System.Security.Cryptography.RSA")
-            CryptoConvert = Compiler.TypeCache.mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
-            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.Byte_Array}, Nothing)
+            RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
+            CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
+            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
             ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
-            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.Byte_Array}, Nothing)
+            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
 
             If DelaySign Then
                 If blob.Length = 16 Then

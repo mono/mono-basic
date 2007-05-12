@@ -83,7 +83,7 @@ Public Class ExpressionClassification
             Case Classifications.PropertyGroup
                 Return AsPropertyGroup.Type
             Case Classifications.Void
-                Return Compiler.TypeCache.Void
+                Return Compiler.TypeCache.System_Void
             Case Classifications.LateBoundAccess
                 Return AsLateBoundAccess.Type
             Case Else

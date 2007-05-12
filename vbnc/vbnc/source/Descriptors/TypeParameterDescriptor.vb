@@ -54,7 +54,7 @@ Public Class TypeParameterDescriptor
         Dim result As MemberInfo() = Nothing
         Dim tmpResult As New Generic.List(Of MemberInfo)
 
-        tmpResult.AddRange(Compiler.TypeCache.Object.GetMembers(bindingAttr))
+        tmpResult.AddRange(Compiler.TypeCache.System_Object.GetMembers(bindingAttr))
         If m_TypeParameter.TypeParameterConstraints Is Nothing OrElse m_TypeParameter.TypeParameterConstraints.Constraints.Count = 0 Then
             'tmpResult.AddRange(Compiler.TypeCache.Object.GetMembers(bindingAttr))
         Else
@@ -239,7 +239,7 @@ Public Class TypeParameterDescriptor
             End If
 
             If result Is Nothing Then
-                result = Compiler.TypeCache.Object
+                result = Compiler.TypeCache.System_Object
             End If
 
             DumpMethodInfo(result)

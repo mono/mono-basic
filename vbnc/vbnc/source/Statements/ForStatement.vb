@@ -329,7 +329,7 @@ Public Class ForStatement
             Emitter.EmitLoadValue(Info.Clone(True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
             Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
             Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
-            Info.Stack.Pop(Compiler.TypeCache.Boolean)
+            Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
             Emitter.EmitLE(Info, m_LoopType) 'Positive check
             Emitter.EmitBranch(Info, endCheck)
             Emitter.MarkLabel(Info, negativeLabel)
@@ -369,7 +369,7 @@ Public Class ForStatement
         If m_LoopStepExpression IsNot Nothing Then
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         Else
-            m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.Integer)
+            m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
         End If
 
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result

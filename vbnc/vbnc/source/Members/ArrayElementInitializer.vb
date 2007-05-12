@@ -113,7 +113,7 @@ Public Class ArrayElementInitializer
         Dim elementtype As Type = arraytype.GetElementType
         Dim tmpvar As LocalBuilder = Info.ILGen.DeclareLocal(Helper.GetTypeOrTypeBuilder(arraytype))
         Dim elementInfo As EmitInfo = Info.Clone(True, False, elementtype)
-        Dim indexInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.Integer)
+        Dim indexInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.System_Int32)
 
         'Create the array.
         ArrayCreationExpression.EmitArrayCreation(Info, arraytype, m_Elements)
@@ -180,7 +180,7 @@ Public Class ArrayElementInitializer
         Dim result As MethodInfo
         Dim elementType As Type = ArrayType.GetElementType
         Dim ranks As Integer = ArrayType.GetArrayRank
-        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.Integer, ranks)
+        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, ranks)
 
         If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
             ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
@@ -197,7 +197,7 @@ Public Class ArrayElementInitializer
         Dim result As MethodInfo
         Dim elementType As Type = ArrayType.GetElementType
         Dim ranks As Integer = ArrayType.GetArrayRank
-        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.Integer, ranks + 1)
+        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, ranks + 1)
 
         methodtypes(ranks) = elementType
 

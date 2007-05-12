@@ -34,10 +34,10 @@ Public Class RealDivisionExpression
             Case TypeCode.Double, TypeCode.Single
                 Emitter.EmitRealDiv(Info, OperandType)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Divide__Decimal_Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Divide_Decimal_Decimal)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_DivideObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__DivideObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

@@ -91,7 +91,7 @@ Public Class DictionaryAccessExpression
         End If
 
 
-        Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.DefaultMemberAttribute, True)
+        Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, True)
         If attr.Length = 1 Then
             Dim att As DefaultMemberAttribute = TryCast(attr(0), DefaultMemberAttribute)
             Helper.Assert(att IsNot Nothing)

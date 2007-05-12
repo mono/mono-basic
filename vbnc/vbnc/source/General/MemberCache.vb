@@ -84,7 +84,7 @@ Public Class MemberCache
                     icache = m_Compiler.TypeManager.GetCache(iface)
                     FlattenWith(icache)
                 Next
-                FlattenWith(m_Compiler.TypeManager.GetCache(Compiler.TypeCache.Object))
+                FlattenWith(m_Compiler.TypeManager.GetCache(Compiler.TypeCache.System_Object))
             Else
                 m_FlattenedCache = m_Cache
             End If

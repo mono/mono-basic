@@ -36,7 +36,7 @@ Public Class StructureDeclaration
     Public Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-        MyBase.BaseType = Compiler.TypeCache.ValueType
+        MyBase.BaseType = Compiler.TypeCache.System_ValueType
 
         result = MyBase.ResolveType AndAlso result
 

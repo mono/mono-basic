@@ -74,7 +74,7 @@ Public Class DelegateDeclaration
 
         If TypeOf m_Signature Is FunctionSignature Then
             ReturnType = DirectCast(m_Signature, FunctionSignature).TypeName
-            If ReturnType Is Nothing Then ReturnType = New TypeName(Me, Compiler.TypeCache.Object)
+            If ReturnType Is Nothing Then ReturnType = New TypeName(Me, Compiler.TypeCache.System_Object)
         Else
             ReturnType = Nothing
         End If
@@ -82,8 +82,8 @@ Public Class DelegateDeclaration
         'Create the constructor
         m_Constructor = New ConstructorDeclaration(Me)
         m_Constructor.Init(Nothing)
-        m_Constructor.Signature.Parameters.Add("TargetObject", Compiler.TypeCache.Object)
-        m_Constructor.Signature.Parameters.Add("TargetMethod", Compiler.TypeCache.IntPtr)
+        m_Constructor.Signature.Parameters.Add("TargetObject", Compiler.TypeCache.System_Object)
+        m_Constructor.Signature.Parameters.Add("TargetMethod", Compiler.TypeCache.System_IntPtr)
         m_Constructor.Attributes = Reflection.MethodAttributes.Public Or Reflection.MethodAttributes.SpecialName Or Reflection.MethodAttributes.RTSpecialName
         m_Constructor.SetImplementationFlags(MethodImplAttributes.Runtime)
 
@@ -124,9 +124,9 @@ Public Class DelegateDeclaration
                 endInvokeParameters.Add(Parameters(i).Clone(endInvokeParameters))
             End If
         Next
-        beginInvokeParameters.Add(New Parameter(beginInvokeParameters, "DelegateCallback", Compiler.TypeCache.AsyncCallback))
-        beginInvokeParameters.Add(New Parameter(beginInvokeParameters, "DelegateAsyncState", Compiler.TypeCache.Object))
-        endInvokeParameters.Add(New Parameter(endInvokeParameters, "DelegateAsyncResult", Compiler.TypeCache.IAsyncResult))
+        beginInvokeParameters.Add(New Parameter(beginInvokeParameters, "DelegateCallback", Compiler.TypeCache.System_AsyncCallback))
+        beginInvokeParameters.Add(New Parameter(beginInvokeParameters, "DelegateAsyncState", Compiler.TypeCache.System_Object))
+        endInvokeParameters.Add(New Parameter(endInvokeParameters, "DelegateAsyncResult", Compiler.TypeCache.System_IAsyncResult))
 
         If ReturnType Is Nothing Then
             invokeSignature = New SubSignature(m_Invoke, STR_Invoke, invokeParameters)
@@ -137,7 +137,7 @@ Public Class DelegateDeclaration
             endInvokeSignature = New FunctionSignature(m_EndInvoke)
             DirectCast(endInvokeSignature, FunctionSignature).Init(STR_EndInvoke, Nothing, endInvokeParameters, Nothing, ReturnType, Me.Location)
         End If
-        beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.IAsyncResult, Me.Location)
+        beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.System_IAsyncResult, Me.Location)
 
         m_Invoke.Init(Nothing, New Modifiers(m_Invoke), invokeSignature, Nothing, Nothing)
         m_BeginInvoke.Init(Nothing, New Modifiers(m_BeginInvoke), beginInvokeSignature, Nothing, Nothing)
@@ -169,7 +169,7 @@ Public Class DelegateDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-        BaseType = Compiler.TypeCache.MulticastDelegate
+        BaseType = Compiler.TypeCache.System_MulticastDelegate
 
         result = m_Signature.ResolveTypeReferences(False) AndAlso result
 

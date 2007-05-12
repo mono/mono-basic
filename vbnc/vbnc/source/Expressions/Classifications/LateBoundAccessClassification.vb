@@ -47,7 +47,7 @@ Public Class LateBoundAccessClassification
 
     ReadOnly Property Type() As Type
         Get
-            Return Compiler.TypeCache.Object
+            Return Compiler.TypeCache.System_Object
         End Get
     End Property
 

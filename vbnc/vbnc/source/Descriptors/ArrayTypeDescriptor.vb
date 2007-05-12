@@ -126,7 +126,7 @@ Public Class ArrayTypeDescriptor
     Public Overrides Function GetInterfaces() As System.Type()
         Dim result As New Generic.List(Of Type)
 
-        result.AddRange(Compiler.TypeCache.Array.GetInterfaces)
+        result.AddRange(Compiler.TypeCache.System_Array.GetInterfaces)
 
         Dim typeArgs As Type() = New Type() {m_ElementType}
         result.Add(Compiler.TypeManager.MakeGenericType(Me.Parent, Compiler.TypeCache.System_Collections_Generic_IList1, typeArgs))
@@ -202,7 +202,7 @@ Public Class ArrayTypeDescriptor
     Public Overrides ReadOnly Property BaseType() As System.Type
         Get
             Dim result As Type
-            result = Compiler.TypeCache.Array
+            result = Compiler.TypeCache.System_Array
             MyBase.DumpMethodInfo(result)
             Return result
         End Get

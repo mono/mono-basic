@@ -152,9 +152,9 @@ Public Class ConstantDeclaration
 
         If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
             m_FieldBuilder.SetConstant(Nothing)
-        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.Decimal) Then
+        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_Decimal) Then
             Helper.NotImplementedYet("Emit value of a decimal constant")
-        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.Date) Then
+        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_DateTime) Then
             Helper.NotImplementedYet("Emit value of a date constant")
         Else
             If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then

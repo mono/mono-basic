@@ -48,7 +48,7 @@ Public Class ElseIfStatement
 
         Dim falseLabel As Label = Info.ILGen.DefineLabel
 
-        result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
+        result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
         Emitter.EmitBranchIfFalse(Info, falseLabel)
 
         result = CodeBlock.GenerateCode(Info) AndAlso result
@@ -85,7 +85,7 @@ Public Class ElseIfStatement
                 Helper.AddError()
                 Return result
             End If
-            m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.Boolean, result)
+            m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
 
             If result = False Then
                 Helper.AddError()

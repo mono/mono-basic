@@ -33,7 +33,7 @@ Public Class BooleanLiteralExpression
     Overrides ReadOnly Property ExpressionType() As Type
         Get
 
-            Return Compiler.TypeCache.Boolean '_Descriptor
+            Return Compiler.TypeCache.System_Boolean '_Descriptor
         End Get
     End Property
 

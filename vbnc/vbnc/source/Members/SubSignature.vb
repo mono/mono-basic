@@ -111,7 +111,7 @@ Public Class SubSignature
 
     Overridable ReadOnly Property ReturnParameter() As ParameterInfo
         Get
-            If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(Compiler.TypeCache.Void, 1, Me)
+            If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(Compiler.TypeCache.System_Void, 1, Me)
             Return m_ReturnParameter
         End Get
     End Property

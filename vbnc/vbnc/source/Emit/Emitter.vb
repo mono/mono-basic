@@ -61,20 +61,20 @@ Partial Public Class Emitter
     Shared Sub EmitBeginExceptionFilter(ByVal Info As EmitInfo)
         Helper.Assert(Info.InExceptionFilter = False)
         Info.ILGen.BeginExceptFilterBlock()
-        Info.Stack.Push(Info.Compiler.TypeCache.Object)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Object)
         Info.InExceptionFilter = True
     End Sub
 
     Shared Sub EmitBeginCatch(ByVal Info As EmitInfo, ByVal ExceptionType As Type)
         If ExceptionType IsNot Nothing Then ExceptionType = Helper.GetTypeOrTypeBuilder(ExceptionType)
         If Info.InExceptionFilter Then
-            Info.Stack.Pop(Info.Compiler.TypeCache.Boolean)
+            Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
         End If
         Info.ILGen.BeginCatchBlock(ExceptionType)
         If ExceptionType IsNot Nothing Then
             Info.Stack.Push(ExceptionType)
         Else
-            Info.Stack.Push(Info.Compiler.TypeCache.Object)
+            Info.Stack.Push(Info.Compiler.TypeCache.System_Object)
         End If
         Info.InExceptionFilter = False
     End Sub
@@ -113,20 +113,20 @@ Partial Public Class Emitter
             'comparison with Nothing, operand can be a class or interface.
             Info.Stack.Pop(Info.Stack.Peek)
         Else
-            Info.Stack.Pop(Info.Compiler.TypeCache.Boolean)
+            Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
         End If
 #End If
         Info.ILGen.Emit(OpCodes.Brfalse, Label)
     End Sub
 
     Shared Sub EmitBranchIfTrue(ByVal Info As EmitInfo, ByVal Label As Label)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
         Info.ILGen.Emit(OpCodes.Brtrue, Label)
     End Sub
 
     Shared Sub EmitBranchIfTrue(ByVal Info As EmitInfo, ByVal Label As Label, ByVal Type As Type)
         Type = Helper.GetTypeOrTypeBuilder(Type)
-        Helper.Assert(Helper.CompareType(Type, Info.Compiler.TypeCache.Boolean) OrElse Type.IsClass OrElse Type.IsInterface)
+        Helper.Assert(Helper.CompareType(Type, Info.Compiler.TypeCache.System_Boolean) OrElse Type.IsClass OrElse Type.IsInterface)
         Info.Stack.Pop(Type)
         Info.ILGen.Emit(OpCodes.Brtrue, Label)
     End Sub
@@ -224,7 +224,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(CompareType)
         Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitNotEquals(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -234,7 +234,7 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Ceq)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGE(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -244,7 +244,7 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Clt)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGT(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -252,7 +252,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(CompareType)
         Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Cgt)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGT_Un(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -260,7 +260,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(CompareType)
         Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Cgt_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitLE(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -270,7 +270,7 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Cgt)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitLT(ByVal Info As EmitInfo, ByVal CompareType As Type)
@@ -278,7 +278,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(CompareType)
         Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Clt)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitAdd(ByVal Info As EmitInfo, ByVal OperandType As Type)
@@ -333,12 +333,12 @@ Partial Public Class Emitter
         Info.Stack.Pop(Info.Stack.Peek)
         Info.Stack.Pop(Info.Stack.Peek)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitRShift(ByVal Info As EmitInfo, ByVal OpType As Type)
         OpType = Helper.GetTypeOrTypeBuilder(OpType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Shr)
         Info.Stack.Push(OpType)
@@ -346,7 +346,7 @@ Partial Public Class Emitter
 
     Shared Sub EmitLShift(ByVal Info As EmitInfo, ByVal OpType As Type)
         OpType = Helper.GetTypeOrTypeBuilder(OpType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Shl)
         Info.Stack.Push(OpType)
@@ -374,7 +374,7 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Ceq)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.Boolean)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
     ''' <summary>
     ''' Create a local parameter. 
@@ -430,7 +430,7 @@ Partial Public Class Emitter
         Else
             Helper.Stop()
         End If
-        Info.Stack.Push(Info.Compiler.TypeCache.IntPtr)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_IntPtr)
     End Sub
 
     Shared Sub EmitInitObj(ByVal Info As EmitInfo, ByVal Type As Type)
@@ -504,7 +504,7 @@ Partial Public Class Emitter
             Dim localvar As LocalBuilder = Info.ILGen.DeclareLocal(FromType)
             Emitter.EmitStoreVariable(Info, localvar)
             Emitter.EmitLoadVariableLocation(Info, localvar)
-        ElseIf FromType.BaseType.IsEnum AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.Enum) Then
+        ElseIf FromType.BaseType.IsEnum AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.System_Enum) Then
 
         Else
             Helper.NotImplemented()
@@ -515,182 +515,182 @@ Partial Public Class Emitter
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U1)
-        Info.Stack.Push(Info.Compiler.TypeCache.Byte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_U1_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U1)
-        Info.Stack.Push(Info.Compiler.TypeCache.Byte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_U1_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U1_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.Byte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_I1(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I1)
-        Info.Stack.Push(Info.Compiler.TypeCache.SByte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_I1_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I1)
-        Info.Stack.Push(Info.Compiler.TypeCache.SByte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_I1_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I1_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.SByte)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_U2(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U2)
-        Info.Stack.Push(Info.Compiler.TypeCache.UShort)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_U2_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U2)
-        Info.Stack.Push(Info.Compiler.TypeCache.UShort)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_U2_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U2_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.UShort)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_I2(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I2)
-        Info.Stack.Push(Info.Compiler.TypeCache.Short)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_I2_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I2)
-        Info.Stack.Push(Info.Compiler.TypeCache.Short)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_I2_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I2_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.Short)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_U4(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U4)
-        Info.Stack.Push(Info.Compiler.TypeCache.UInteger)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_U4_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U4)
-        Info.Stack.Push(Info.Compiler.TypeCache.UInteger)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_U4_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U4_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.UInteger)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_I4(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I4)
-        Info.Stack.Push(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_I4_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I4)
-        Info.Stack.Push(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_I4_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I4_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_U8(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U8)
-        Info.Stack.Push(Info.Compiler.TypeCache.ULong)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_U8_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U8)
-        Info.Stack.Push(Info.Compiler.TypeCache.ULong)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_U8_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U8_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.ULong)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_I8(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I8)
-        Info.Stack.Push(Info.Compiler.TypeCache.Long)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_I8_Overflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I8)
-        Info.Stack.Push(Info.Compiler.TypeCache.Long)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_I8_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I8_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.Long)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_R8(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_R8)
-        Info.Stack.Push(Info.Compiler.TypeCache.Double)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
     End Sub
 
     Shared Sub EmitConv_R4(ByVal Info As EmitInfo, ByVal FromType As Type)
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_R4)
-        Info.Stack.Push(Info.Compiler.TypeCache.Single)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Single)
     End Sub
 
     ''' <summary>
@@ -722,12 +722,12 @@ Partial Public Class Emitter
                     		End If
 #End If
 
-        If ToTP = TypeCode.Object AndAlso FromTP <> TypeCode.Object AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.Object) = False Then
+        If ToTP = TypeCode.Object AndAlso FromTP <> TypeCode.Object AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.System_Object) = False Then
             EmitValueTypeToObjectConversion(Info, FromType, ToType)
             Return
         End If
 
-        Dim Switch As TypeCombinations = TypeCache.GetCombination(FromTP, ToTP)
+        Dim Switch As TypeCombinations = Helper.GetCombination(FromTP, ToTP)
 
         Select Case Switch
             Case TypeCombinations.Boolean_Boolean, _
@@ -855,8 +855,8 @@ Partial Public Class Emitter
                 If Info.IsExplicitConversion = False Then
                     Helper.AddError()
                 Else
-                    Emitter.EmitUnbox(Info, Info.Compiler.TypeCache.Integer)
-                    Emitter.EmitLdobj(Info, Info.Compiler.TypeCache.Integer)
+                    Emitter.EmitUnbox(Info, Info.Compiler.TypeCache.System_Int32)
+                    Emitter.EmitLdobj(Info, Info.Compiler.TypeCache.System_Int32)
                     converted = True
                 End If
 
@@ -889,12 +889,12 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Conv_R4)
                 converted = True
             Case TypeCombinations.Decimal_Single
-                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert_ToSingle__Decimal)
+                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert__ToSingle_Decimal)
                 converted = True
 
                 'ToDouble conversions
             Case TypeCombinations.Decimal_Double
-                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert_ToDouble__Decimal)
+                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert__ToDouble_Decimal)
                 converted = True
             Case TypeCombinations.SByte_Double, _
                   TypeCombinations.Byte_Double, _
@@ -913,72 +913,72 @@ Partial Public Class Emitter
              TypeCombinations.SByte_Decimal, _
              TypeCombinations.Int16_Decimal
                 Info.ILGen.Emit(OpCodes.Conv_I4)
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DecimalConstructor_Int32)
+                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
                 converted = True
             Case TypeCombinations.UInt16_Decimal, _
                TypeCombinations.UInt32_Decimal
                 Info.ILGen.Emit(OpCodes.Conv_I8)
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DecimalConstructor_Int64)
+                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int64)
                 converted = True
             Case TypeCombinations.Int32_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DecimalConstructor_Int32)
+                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
                 converted = True
             Case TypeCombinations.UInt64_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DecimalConstructor_UInt64)
+                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_UInt64)
                 converted = True
             Case TypeCombinations.Int64_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DecimalConstructor_Int64)
+                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int64)
                 converted = True
 
                 'ToObject conversions
             Case TypeCombinations.SByte_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.SByte)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_SByte)
                 converted = True
             Case TypeCombinations.Byte_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Byte)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Byte)
                 converted = True
             Case TypeCombinations.Int16_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Short)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int16)
                 converted = True
             Case TypeCombinations.UInt16_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.UShort)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt16)
                 converted = True
             Case TypeCombinations.Int32_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Integer)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int32)
                 converted = True
             Case TypeCombinations.UInt32_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.UInteger)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt32)
                 converted = True
             Case TypeCombinations.Int64_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Long)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int64)
                 converted = True
             Case TypeCombinations.UInt64_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.ULong)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt64)
                 converted = True
             Case TypeCombinations.Single_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Single)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Single)
                 converted = True
             Case TypeCombinations.Double_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Double)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Double)
                 converted = True
             Case TypeCombinations.String_Object
                 converted = True
             Case TypeCombinations.Decimal_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Decimal)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Decimal)
                 converted = True
             Case TypeCombinations.DateTime_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Date)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_DateTime)
                 converted = True
             Case TypeCombinations.Boolean_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Boolean)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Boolean)
                 converted = True
             Case TypeCombinations.Char_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.Char)
+                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Char)
                 converted = True
             Case TypeCombinations.DBNull_Object
                 converted = True 'Nothing to object
             Case TypeCombinations.Object_String
-                Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.Object, Info.Compiler.TypeCache.String)
+                Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.System_Object, Info.Compiler.TypeCache.System_String)
                 converted = True
             Case Else
                 Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Missed option: " & Switch.ToString)
@@ -1047,7 +1047,7 @@ Partial Public Class Emitter
             Info.ILGen.Emit(OpCodes.Call, minfo)
         End If
 
-        If minfo.ReturnType IsNot Nothing AndAlso Helper.CompareType(minfo.ReturnType, Info.Compiler.TypeCache.Void) = False Then
+        If minfo.ReturnType IsNot Nothing AndAlso Helper.CompareType(minfo.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
             Info.Stack.Push(DirectCast(OriginalMethod, MethodInfo).ReturnType)
         End If
 
@@ -1147,7 +1147,7 @@ Partial Public Class Emitter
         Info.Stack.Pop(Method.DeclaringType)
         Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
 
-        If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.Void) = False Then
+        If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
             Info.Stack.Push(OriginalMethod.ReturnType)
         End If
     End Sub
@@ -1177,7 +1177,7 @@ Partial Public Class Emitter
 
     Shared Sub EmitNewArr(ByVal Info As EmitInfo, ByVal Type As Type)
         Type = Helper.GetTypeOrTypeBuilder(Type)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.ILGen.Emit(OpCodes.Newarr, Type)
         Info.Stack.Push(Type.MakeArrayType)
     End Sub
@@ -1186,14 +1186,14 @@ Partial Public Class Emitter
         ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
         ElementType = Helper.GetTypeOrTypeBuilder(ElementType)
         Info.ILGen.Emit(OpCodes.Ldelema, ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(ArrayType)
         Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ElementType))
     End Sub
 
     Shared Sub EmitLoadElement(ByVal Info As EmitInfo, ByVal ArrayType As Type)
         ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(ArrayType)
         Dim ElementType As Type = ArrayType.GetElementType
         Select Case Helper.GetTypeCode(Info.Compiler, ElementType)
@@ -1258,7 +1258,7 @@ Partial Public Class Emitter
             Case Else
                 Helper.NotImplemented()
         End Select
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(ElementType.MakeArrayType)
         Info.Stack.Push(ElementType)
     End Sub
@@ -1303,7 +1303,7 @@ Partial Public Class Emitter
                 Helper.Stop()
         End Select
         Info.Stack.Pop(ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(ArrayType)
     End Sub
 
@@ -1341,20 +1341,20 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub CreateArray(ByVal Info As EmitInfo, ByVal ElementType As Type, ByVal Elements As Integer)
         ElementType = Helper.GetTypeOrTypeBuilder(ElementType)
-        EmitLoadValue(Info.Clone(True, False, Info.Compiler.TypeCache.Integer), Elements)
+        EmitLoadValue(Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32), Elements)
         EmitNewArr(Info, ElementType)
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Boolean)
         If I Then
-            EmitLoadI4Value(Info, -1, Info.Compiler.TypeCache.Boolean)
+            EmitLoadI4Value(Info, -1, Info.Compiler.TypeCache.System_Boolean)
         Else
-            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.Boolean)
+            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.System_Boolean)
         End If
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger)
-        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.UInteger)
+        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger, ByVal TypeToPushOnStack As Type)
@@ -1363,7 +1363,7 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Integer)
-        EmitLoadI4Value(Info, I, Info.Compiler.TypeCache.Integer)
+        EmitLoadI4Value(Info, I, Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As ULong, ByVal TypeToPushOnStack As Type)
@@ -1372,12 +1372,12 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As ULong)
-        EmitLoadI8Value(Info, BitConverter.ToInt64(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.ULong)
+        EmitLoadI8Value(Info, BitConverter.ToInt64(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As Long)
         Info.ILGen.Emit(OpCodes.Ldc_I8, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.Long)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As Long, ByVal TypeToPushOnStack As Type)
@@ -1388,7 +1388,7 @@ Partial Public Class Emitter
 
     Shared Sub EmitLoadR8Value(ByVal Info As EmitInfo, ByVal I As Double)
         Info.ILGen.Emit(OpCodes.Ldc_R8, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.Double)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
     End Sub
 
     Shared Sub EmitLoadR8Value(ByVal Info As EmitInfo, ByVal I As Double, ByVal TypeToPushOnStack As Type)
@@ -1399,7 +1399,7 @@ Partial Public Class Emitter
 
     Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single)
         Info.ILGen.Emit(OpCodes.Ldc_R4, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.Single)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Single)
     End Sub
 
     Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single, ByVal TypeToPushOnStack As Type)
@@ -1484,7 +1484,7 @@ Partial Public Class Emitter
                 Return True
             Case TypeCode.Object
                 EmitLoadI4Value(tmp, Value)
-                EmitBox(Info, Info.Compiler.TypeCache.Integer)
+                EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
                 Return True
         End Select
         Helper.NotImplemented()
@@ -1603,7 +1603,7 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Overloads Shared Sub EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As String)
         Info.ILGen.Emit(OpCodes.Ldstr, Value)
-        Info.Stack.Push(Info.Compiler.TypeCache.String)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_String)
     End Sub
 
     ''' <summary>
@@ -1614,9 +1614,9 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Overloads Shared Sub EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Boolean)
         If Value Then
-            EmitLoadI4Value(Info, 1, Info.Compiler.TypeCache.Boolean)
+            EmitLoadI4Value(Info, 1, Info.Compiler.TypeCache.System_Boolean)
         Else
-            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.Boolean)
+            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.System_Boolean)
         End If
     End Sub
 
@@ -1672,57 +1672,57 @@ Partial Public Class Emitter
                 EmitLoadValue(Info, CInt(Value))
                 Return
             Case TypeCode.Int64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Long, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Int64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CLng(Value))
                 Return
             Case TypeCode.Single
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Single, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Single, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Emitter.EmitLoadR4Value(Info, CSng(Value))
                 Return
             Case TypeCode.Double
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Double, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Double, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldc_R8, CDbl(Value))
-                Info.Stack.Push(Info.Compiler.TypeCache.Double)
+                Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
                 Return
             Case TypeCode.String
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.Object, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.System_Object, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldstr, CStr(Value))
-                Info.Stack.Push(Info.Compiler.TypeCache.String)
+                Info.Stack.Push(Info.Compiler.TypeCache.System_String)
                 Return
             Case TypeCode.Byte
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
-                EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.Byte)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_Byte)
                 Return
             Case TypeCode.UInt16
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UShort, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
-                EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.UShort)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt16, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_UInt16)
                 Return
             Case TypeCode.UInt32
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.UInteger, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt32, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CUInt(Value))
                 Return
             Case TypeCode.UInt64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.ULong, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CULng(Value))
                 Return
             Case TypeCode.Decimal
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Decimal, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Decimal, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDecimalValue(Info, CDec(Value))
                 Return
             Case TypeCode.DateTime
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Date, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_DateTime, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDateValue(Info, CDate(Value))
                 Return
             Case TypeCode.Char
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Char, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.String, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
-                EmitLoadI4Value(Info, Microsoft.VisualBasic.AscW(CChar(Value)), Info.Compiler.TypeCache.Char)
+                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Char, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.System_String, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                EmitLoadI4Value(Info, Microsoft.VisualBasic.AscW(CChar(Value)), Info.Compiler.TypeCache.System_Char)
                 Return
             Case TypeCode.Boolean
                 'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Boolean, DesiredType))
                 If CBool(Value) Then
-                    EmitLoadI4Value(Info, 1, Info.Compiler.TypeCache.Boolean)
+                    EmitLoadI4Value(Info, 1, Info.Compiler.TypeCache.System_Boolean)
                 Else
-                    EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.Boolean)
+                    EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.System_Boolean)
                 End If
                 Return
             Case Else
@@ -1784,7 +1784,7 @@ Partial Public Class Emitter
                 Case Else
                     Helper.NotImplemented()
             End Select
-        ElseIf Helper.CompareType(Info.DesiredType, Info.Compiler.TypeCache.Enum) Then
+        ElseIf Helper.CompareType(Info.DesiredType, Info.Compiler.TypeCache.System_Enum) Then
             Info.ILGen.Emit(OpCodes.Ldnull)
             Info.Stack.Push(Info.DesiredType)
         Else
@@ -1798,11 +1798,11 @@ Partial Public Class Emitter
     ''' <param name="Info"></param>
     ''' <remarks></remarks>
     Shared Sub EmitLoadDateValue(ByVal Info As EmitInfo, ByVal DateValue As Date)
-        Dim emitLong As EmitInfo = Info.Clone(Info.Compiler.TypeCache.Long)
+        Dim emitLong As EmitInfo = Info.Clone(Info.Compiler.TypeCache.System_Int64)
         EmitLoadI8Value(emitLong, DateValue.Ticks)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Long)
-        Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.DateConstructor_Int64)
-        Info.Stack.Push(Info.Compiler.TypeCache.Date)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int64)
+        Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_DateTime__ctor_Int64)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_DateTime)
     End Sub
 
     ''' <summary>
@@ -1822,21 +1822,21 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub EmitLoadDecimalValue(ByVal Info As EmitInfo, ByVal decimalValue As DecimalFields)
         If decimalValue.Value = -1 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.Decimal_MinusOne)
-            Info.Stack.Push(Info.Compiler.TypeCache.Decimal)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__MinusOne)
+            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 0 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.Decimal_Zero)
-            Info.Stack.Push(Info.Compiler.TypeCache.Decimal)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__Zero)
+            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 1 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.Decimal_One)
-            Info.Stack.Push(Info.Compiler.TypeCache.Decimal)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__One)
+            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         Else
             EmitLoadI4Value(Info, decimalValue.Lo)
             EmitLoadI4Value(Info, decimalValue.Mid)
             EmitLoadI4Value(Info, decimalValue.Hi)
-            EmitLoadI4Value(Info, CInt(decimalValue.SignAsBit), Info.Compiler.TypeCache.Boolean)
-            EmitLoadI4Value(Info, CInt(decimalValue.Scale), Info.Compiler.TypeCache.Byte)
-            Emitter.EmitNew(Info, Info.Compiler.TypeCache.DecimalConstructor_Int32_Int32_Int32_Boolean_Byte)
+            EmitLoadI4Value(Info, CInt(decimalValue.SignAsBit), Info.Compiler.TypeCache.System_Boolean)
+            EmitLoadI4Value(Info, CInt(decimalValue.Scale), Info.Compiler.TypeCache.System_Byte)
+            Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Int32_Int32_Int32_Boolean_Byte)
         End If
     End Sub
 
@@ -2180,7 +2180,7 @@ Partial Public Class Emitter
 
     Shared Sub EmitSwitch(ByVal Info As EmitInfo, ByVal Labels() As Label)
         Info.ILGen.Emit(OpCodes.Switch, Labels)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Integer)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitStoreField(ByVal Info As EmitInfo, ByVal Field As FieldInfo)
@@ -2214,7 +2214,7 @@ Partial Public Class Emitter
         Dim OriginalDestinationType As Type = SourceType
         SourceType = Helper.GetTypeOrTypeBuilder(SourceType)
         Info.ILGen.Emit(OpCodes.Box, SourceType)
-        Info.Stack.SwitchHead(Info.Stack.Peek, Info.Compiler.TypeCache.Object) 'Push a object reference on the stack.
+        Info.Stack.SwitchHead(Info.Stack.Peek, Info.Compiler.TypeCache.System_Object) 'Push a object reference on the stack.
     End Sub
 
     Shared Sub EmitUnbox(ByVal Info As EmitInfo, ByVal ToType As Type)
@@ -2240,17 +2240,17 @@ Partial Public Class Emitter
 
     Shared Sub EmitThrow(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Throw)
-        Info.Stack.Pop(Info.Compiler.TypeCache.Exception)
+        Info.Stack.Pop(Info.Compiler.TypeCache.System_Exception)
     End Sub
 
     Shared Function SwitchVersionedMethods(ByVal Info As EmitInfo, ByVal UnversionedMethod As MethodInfo) As MethodInfo
         If Info.Compiler.CommandLine.VBVersion <> CommandLine.VBVersions.V8 Then Return UnversionedMethod
 
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_IsNumeric Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_IsNumeric
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_SystemTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_SystemTypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_VbTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_VbTypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information_TypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_TypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Interaction_CallByName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned_CallByName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__IsNumeric Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__IsNumeric
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__SystemTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__SystemTypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__VbTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__VbTypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__TypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__TypeName
+        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Interaction__CallByName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__CallByName
 
 #If ENABLECECIL Then
         'Check if the object comparison above is true for cecil as well (that is if same method may have multiple object references)

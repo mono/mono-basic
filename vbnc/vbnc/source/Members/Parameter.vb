@@ -167,7 +167,7 @@ Public Class Parameter
         Dim result As Boolean = True
 
         If m_ParameterBuilder.IsOptional Then
-            If Helper.IsOnMS AndAlso ((Me.ParameterType.IsByRef AndAlso m_ConstantValue IsNot Nothing) OrElse (m_ParameterType.Equals(Compiler.TypeCache.Object) AndAlso m_ConstantValue IsNot Nothing AndAlso m_ConstantValue.GetType.Equals(Compiler.TypeCache.Object) = False)) Then
+            If Helper.IsOnMS AndAlso ((Me.ParameterType.IsByRef AndAlso m_ConstantValue IsNot Nothing) OrElse (m_ParameterType.Equals(Compiler.TypeCache.System_Object) AndAlso m_ConstantValue IsNot Nothing AndAlso m_ConstantValue.GetType.Equals(Compiler.TypeCache.System_Object) = False)) Then
                 'HACK (a really big one...)
                 'The reflection.Emit is not able to set a constant value when the 
                 'parameter type is a byref type. Do all this to bypass all checks.
@@ -178,7 +178,7 @@ Public Class Parameter
                 Dim tk As Integer = DirectCast(GetType(ParameterBuilder).GetField("m_pdToken", BindingFlags.NonPublic Or BindingFlags.Instance).GetValue(m_ParameterBuilder), ParameterToken).Token
                 Dim vt As Type = GetType(String).Assembly.GetType("System.Variant")
                 Dim ctor As ConstructorInfo
-                ctor = vt.GetConstructor(BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.Object}, Nothing)
+                ctor = vt.GetConstructor(BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Object}, Nothing)
 
                 Dim v As Object = Activator.CreateInstance(vt, New Object() {m_ConstantValue})
                 mthd.Invoke(Nothing, New Object() {m, tk, v})
@@ -274,7 +274,7 @@ Public Class Parameter
                 Else
                     Helper.AddWarning("Parameter type should be specified.")
                 End If
-                m_ParameterType = Compiler.TypeCache.Object
+                m_ParameterType = Compiler.TypeCache.System_Object
             End If
         End If
         Helper.Assert(m_ParameterType IsNot Nothing)

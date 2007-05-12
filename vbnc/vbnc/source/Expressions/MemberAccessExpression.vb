@@ -621,7 +621,7 @@ Public Class MemberAccessExpression
                 If T IsNot Nothing Then
                     Dim td As TypeDescriptor = TryCast(T, TypeDescriptor)
                     Dim compresult As Boolean = False
-                    If td Is Nothing Then compresult = Helper.CompareType(T, Compiler.TypeCache.Object)
+                    If td Is Nothing Then compresult = Helper.CompareType(T, Compiler.TypeCache.System_Object)
                     If compresult Then
                         Helper.NotImplemented()
                     End If

@@ -47,7 +47,7 @@ Public Class CShortExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.Short
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Int16
         Select Case expTypeCode
             Case TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
@@ -88,22 +88,22 @@ Public Class CShortExpression
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Emitter.EmitConv_I2_Overflow_Underflow(Info, expType)
             Case TypeCode.Double
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
                 Emitter.EmitConv_I2_Overflow(Info, expType)
             Case TypeCode.Single
                 Emitter.EmitConv_R8(Info, expType)
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
-                Emitter.EmitConv_I2_Overflow(Info, Info.Compiler.TypeCache.Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
+                Emitter.EmitConv_I2_Overflow(Info, Info.Compiler.TypeCache.System_Double)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToShort__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToShort_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToShort__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToShort_String)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToInt16__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToInt16_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -137,7 +137,7 @@ Public Class CShortExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.Short '_Descriptor
+            Return Compiler.TypeCache.System_Int16 '_Descriptor
         End Get
     End Property
 End Class

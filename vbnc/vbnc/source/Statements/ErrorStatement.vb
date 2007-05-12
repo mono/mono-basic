@@ -37,9 +37,9 @@ Public Class ErrorStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_ErrNumber.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Integer)) AndAlso result
-        Emitter.EmitConversion(m_ErrNumber.ExpressionType, Compiler.TypeCache.Integer, Info)
-        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_PD_CreateProjectError__Integer)
+        result = m_ErrNumber.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Int32)) AndAlso result
+        Emitter.EmitConversion(m_ErrNumber.ExpressionType, Compiler.TypeCache.System_Int32, Info)
+        Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__CreateProjectError_Int32)
         Emitter.EmitThrow(Info)
 
         Return result

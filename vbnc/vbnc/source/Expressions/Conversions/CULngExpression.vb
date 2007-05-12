@@ -47,7 +47,7 @@ Public Class CULngExpression
 
         Dim expType As Type = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.ULong
+        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_UInt64
         Select Case expTypeCode
             Case TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
@@ -87,22 +87,22 @@ Public Class CULngExpression
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Emitter.EmitConv_u8_Overflow_Underflow(Info, expType)
             Case TypeCode.Double
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
                 Emitter.EmitConv_U8_Overflow(Info, expType)
             Case TypeCode.Single
                 Emitter.EmitConv_R8(Info, expType)
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math_Round__Double)
-                Emitter.EmitConv_U8_Overflow(Info, Info.Compiler.TypeCache.Double)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Math__Round_Double)
+                Emitter.EmitConv_U8_Overflow(Info, Info.Compiler.TypeCache.System_Double)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.Object) Then
-                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToULong__Object)
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToULong_Object)
                 Else
                     Helper.NotImplemented()
                 End If
             Case TypeCode.String
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions_ToULong__String)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToULong_String)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert_ToUInt64__Decimal)
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToUInt64_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select
@@ -136,7 +136,7 @@ Public Class CULngExpression
 
     Overrides ReadOnly Property ExpressionType() As Type
         Get
-            Return Compiler.TypeCache.ULong '_Descripotr
+            Return Compiler.TypeCache.System_UInt64 '_Descripotr
         End Get
     End Property
 End Class

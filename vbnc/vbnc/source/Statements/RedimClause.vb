@@ -70,12 +70,12 @@ Public Class RedimClause
 
     Private Function GenerateCodeForNewArray(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim rankTypes() As Type = Helper.CreateArray(Of Type)(Compiler.TypeCache.Integer, m_Rank)
+        Dim rankTypes() As Type = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, m_Rank)
 
         Helper.Assert(m_Rank >= 1)
 
         If m_Rank = 1 Then
-            result = m_ArgumentList.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Integer), rankTypes) AndAlso result
+            result = m_ArgumentList.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Int32), rankTypes) AndAlso result
             Emitter.EmitNewArr(Info, m_ElementType)
         Else
             'Dim ctor As ConstructorInfo
@@ -92,12 +92,12 @@ Public Class RedimClause
             ArrayType = Helper.GetTypeOrTypeBuilder(m_ArrayType)
 
             Emitter.EmitLoadToken(Info, ElementType)
-            Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.Type__GetTypeFromHandle_RuntimeTypeHandle)
+            Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
 
             result = Helper.EmitIntegerArray(Info, m_ArgumentList) AndAlso result
-            Emitter.EmitCall(Info, Compiler.TypeCache.Array_CreateInstance)
+            Emitter.EmitCall(Info, Compiler.TypeCache.System_Array__CreateInstance)
 
-            Emitter.EmitCastClass(Info, Compiler.TypeCache.Array, ArrayType)
+            Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array, ArrayType)
         End If
         Return result
     End Function
@@ -105,10 +105,10 @@ Public Class RedimClause
     Private Function GenerateCodeForPreserve(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         result = m_Expression.GenerateCode(Info.Clone(True, False, m_ArrayType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_Expression.ExpressionType, Compiler.TypeCache.Array)
+        Emitter.EmitCastClass(Info, m_Expression.ExpressionType, Compiler.TypeCache.System_Array)
         result = GenerateCodeForNewArray(Info) AndAlso result
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Utils__CopyArray_Array_Array)
-        Emitter.EmitCastClass(Info, Compiler.TypeCache.Array, m_ArrayType)
+        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array, m_ArrayType)
         Return result
     End Function
 
@@ -144,11 +144,11 @@ Public Class RedimClause
         End If
 
         m_ArrayType = m_Expression.ExpressionType
-        m_IsObjectArray = Helper.CompareType(Compiler.TypeCache.Object, m_ArrayType)
+        m_IsObjectArray = Helper.CompareType(Compiler.TypeCache.System_Object, m_ArrayType)
 
         If m_IsObjectArray Then
             m_Rank = m_ArgumentList.Count
-            m_ElementType = Compiler.TypeCache.Object
+            m_ElementType = Compiler.TypeCache.System_Object
             If m_Rank = 1 Then
                 m_ArrayType = m_ElementType.MakeArrayType()
             Else
@@ -168,7 +168,7 @@ Public Class RedimClause
 
             For i As Integer = 0 To m_ArgumentList.Count - 1
                 Dim arg As Argument = m_ArgumentList(i)
-                Dim add As New ConstantExpression(Me, 1, Compiler.TypeCache.Integer)
+                Dim add As New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
                 arg.Expression = New BinaryAddExpression(Me, arg.Expression, add)
                 result = arg.Expression.ResolveExpression(Info) AndAlso result
             Next

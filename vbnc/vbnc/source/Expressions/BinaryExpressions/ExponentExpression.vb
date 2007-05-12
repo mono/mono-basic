@@ -32,10 +32,10 @@ Public Class ExponentExpression
 
         Select Case OperandTypeCode
             Case TypeCode.Double
-                Emitter.EmitCall(Info, Compiler.TypeCache.System_Math_Pow__Double_Double)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Math__Pow_Double_Double)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ExponentObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ExponentObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

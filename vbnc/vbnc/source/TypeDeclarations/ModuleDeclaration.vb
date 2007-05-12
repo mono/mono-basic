@@ -33,7 +33,7 @@ Public Class ModuleDeclaration
         Dim result As Boolean = True
         Dim newAttrib As Attribute
 
-        newAttrib = New Attribute(Me, Compiler.TypeCache.StandardModuleAttribute)
+        newAttrib = New Attribute(Me, Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
         result = newAttrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
 
         MyBase.CustomAttributes.Add(newAttrib)
@@ -57,7 +57,7 @@ Public Class ModuleDeclaration
     Public Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-        MyBase.BaseType = Compiler.TypeCache.Object
+        MyBase.BaseType = Compiler.TypeCache.System_Object
         result = MyBase.ResolveType AndAlso result
 
         Me.FindDefaultConstructors()

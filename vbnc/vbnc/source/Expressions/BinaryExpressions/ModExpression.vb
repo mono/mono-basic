@@ -36,10 +36,10 @@ Public Class ModExpression
             Case TypeCode.Double, TypeCode.Single
                 Emitter.EmitMod(Info, OperandType)
             Case TypeCode.Decimal
-                Emitter.EmitCall(Info, Compiler.TypeCache.Decimal_Remainder__Decimal_Decimal)
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Decimal__Remainder_Decimal_Decimal)
             Case TypeCode.Object
-                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.Object))
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators_ModObject__Object_Object)
+                Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
+                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ModObject_Object_Object)
             Case Else
                 Throw New InternalException(Me)
         End Select

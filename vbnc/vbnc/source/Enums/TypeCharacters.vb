@@ -62,17 +62,17 @@ Public Class TypeCharacters
     Shared Function TypeCharacterToType(ByVal Compiler As Compiler, ByVal TypeCharacter As TypeCharacters.Characters) As Type
         Select Case GetDataType(TypeCharacter)
             Case KS.Integer
-                Return Compiler.TypeCache.Integer
+                Return Compiler.TypeCache.System_Int32
             Case KS.Long
-                Return Compiler.TypeCache.Long
+                Return Compiler.TypeCache.System_Int64
             Case KS.Decimal
-                Return Compiler.TypeCache.Decimal
+                Return Compiler.TypeCache.System_Decimal
             Case KS.Single
-                Return Compiler.TypeCache.Single
+                Return Compiler.TypeCache.System_Single
             Case KS.Double
-                Return Compiler.TypeCache.Double
+                Return Compiler.TypeCache.System_Double
             Case KS.String
-                Return Compiler.TypeCache.String
+                Return Compiler.TypeCache.System_String
             Case Else
                 Throw New InternalException("Unknown typecharacter: " & TypeCharacter.ToString())
         End Select

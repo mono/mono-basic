@@ -105,9 +105,9 @@ Public Class FieldDescriptor
             If TypeOf m_Declaration Is ConstantDeclaration Then
                 result = result Or FieldAttributes.Static
                 Helper.Assert(m_Declaration.FieldType IsNot Nothing)
-                If Helper.CompareType(m_Declaration.FieldType, Compiler.TypeCache.Decimal) Then
+                If Helper.CompareType(m_Declaration.FieldType, Compiler.TypeCache.System_Decimal) Then
                     result = result Or FieldAttributes.InitOnly
-                ElseIf Helper.CompareType(m_Declaration.FieldType, Compiler.TypeCache.Date) Then
+                ElseIf Helper.CompareType(m_Declaration.FieldType, Compiler.TypeCache.System_DateTime) Then
                     result = result Or FieldAttributes.InitOnly
                 Else
                     result = result Or FieldAttributes.Literal

@@ -36,7 +36,7 @@ Public Class EndStatement
         Dim result As Boolean = True
 
         Dim ilgen As ILGenerator = Me.FindFirstParent(Of IMethod).ILGenerator
-        ilgen.EmitCall(OpCodes.Call, Compiler.TypeCache.MS_VB_CS_PD_EndApp, Nothing)
+        ilgen.EmitCall(OpCodes.Call, Compiler.TypeCache.MS_VB_CS_ProjectData__EndApp, Nothing)
 
         Return result
     End Function

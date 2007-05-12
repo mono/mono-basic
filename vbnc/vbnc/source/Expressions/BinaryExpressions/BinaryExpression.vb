@@ -149,10 +149,10 @@ Public MustInherit Class BinaryExpression
         If operandType = TypeCode.Empty Then
             'Try operator overloading
             If DoOperatorOverloading() = False Then
-                If (Me.Keyword = KS.ShiftLeft OrElse Me.Keyword = KS.ShiftRight) AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Char) = False AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.Date) = False Then
-                    If Helper.CompareType(Me.RightType, Compiler.TypeCache.Char) Then
+                If (Me.Keyword = KS.ShiftLeft OrElse Me.Keyword = KS.ShiftRight) AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.System_Char) = False AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.System_DateTime) = False Then
+                    If Helper.CompareType(Me.RightType, Compiler.TypeCache.System_Char) Then
                         Compiler.Report.ShowMessage(Messages.VBNC32006, Me.LeftType.Name)
-                    ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.Date) Then
+                    ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.System_DateTime) Then
                         Compiler.Report.ShowMessage(Messages.VBNC30311, Me.LeftType.Name, Me.RightType.Name)
                     Else
                         Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
@@ -171,8 +171,8 @@ Public MustInherit Class BinaryExpression
             '- The set of operators to be considered is all the user-defined operators in Y, plus O, if it exists.
             'If Y is an intrinsic type, then perform the same steps as for X (obviously, both can't be intrinsic types at this point).
             'Do overload resolution on the set of operators to be considered.
-            Dim isLeftIntrinsic As Boolean = Me.LeftTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.LeftType)
-            Dim isRightIntrinsic As Boolean = Me.RightTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.Object, Me.RightType)
+            Dim isLeftIntrinsic As Boolean = Me.LeftTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.LeftType)
+            Dim isRightIntrinsic As Boolean = Me.RightTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.RightType)
 
             If isLeftIntrinsic AndAlso isRightIntrinsic OrElse IsOverloadable = False Then
                 Dim destinationType As Type

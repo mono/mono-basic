@@ -263,7 +263,10 @@ Public Class TypeManager
             End If
         Next
 
-        Compiler.TypeCache.Init(Assemblies)
+        Compiler.TypeCache.Init()
+#If ENABLECECIL Then
+        Compiler.CecilTypeCache.Init()
+#End If
 
         Return result
     End Function
