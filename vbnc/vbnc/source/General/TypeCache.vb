@@ -300,6 +300,7 @@ Public MustInherit Class TypeCacheBase
         InitOptimizations()
         InitAssemblies()
         InitInternal()
+        InitVBNCTypes()
     End Sub
 
     Protected MustOverride Sub InitInternal()
