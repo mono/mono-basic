@@ -279,6 +279,14 @@ Public Class TypeManager
     Function LoadReferenced() As Boolean
         Dim result As Boolean = True
         result = LoadReferencedAssemblies() AndAlso result
+
+        If Compiler.CommandLine.NoVBRuntimeRef = False Then
+            Compiler.TypeCache.InitInternalVB()
+#If ENABLECECIL Then
+            Compiler.CecilTypeCache.InitInternalVB()
+#End If
+        End If
+
         result = LoadReferencedTypes() AndAlso result
 
 #If EXTENDEDDEBUG Then

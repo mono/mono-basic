@@ -990,8 +990,13 @@ Public Class Helper
         Dim result As Boolean
         If TypeOf type Is TypeDescriptor Then
             Return IsModule(Compiler, DirectCast(type, TypeDescriptor))
+        ElseIf TypeOf Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute Is TypeDescriptor Then
+            'We're compiling the vbruntime, so no external type may be a module (we know that we're not referencing any external assemblies with modules)
+            Return False
+        ElseIf Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute Is Nothing Then
+            Return False
         Else
-            result = type.IsClass AndAlso Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso type.IsDefined(Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute, False)
+            result = type.IsClass AndAlso type.IsDefined(Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute, False)
             Return result
         End If
     End Function
@@ -1473,6 +1478,16 @@ Public Class Helper
         Return result
     End Function
 
+#If ENABLECECIL Then
+    Shared Function GetTypeDefinition(ByVal Compiler As Compiler, ByVal Type As Type) As Mono.Cecil.TypeReference
+        Dim tD As TypeDescriptor = TryCast(Type, TypeDescriptor)
+        If tD IsNot Nothing Then
+            Return tD.Declaration.CecilType
+        Else
+            Return Compiler.ModuleBuilderCecil.Import(Type)
+        End If
+    End Function
+#End If
     Shared Sub ApplyTypeArguments(ByVal Members As Generic.List(Of MemberInfo), ByVal TypeArguments As TypeArgumentList)
         If TypeArguments Is Nothing OrElse TypeArguments.Count = 0 Then Return
 

@@ -389,6 +389,11 @@ Public Class Compiler
         VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result
 
+        m_TypeCache.InitInternalVBMembers()
+#If ENABLECECIL Then
+        m_CecilTypeCache.InitInternalVBMembers()
+#End If
+
         result = theAss.CreateImplicitMembers AndAlso result
         VerifyConsistency(result, "CreateImplicitMembers")
         If result = False Then Return result
@@ -486,12 +491,6 @@ Public Class Compiler
             'Calculate the output filename
             result = Compile_CalculateOutputFilename() AndAlso result
 
-
-            '#If DEBUG Then
-            '            'Errors before we know the out file name cannot be reported.
-            '            Report.XMLFileName = CreateTestOutputFilename(m_OutFilename, "messages")
-            '#End If
-
             'Load all the referenced assemblies and load all the types and namespaces into the type manager
             m_TypeCache = New TypeCache(Me)
 #If ENABLECECIL Then
@@ -514,7 +513,15 @@ Public Class Compiler
             result = Compile_Parse() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
+
             m_TypeManager.LoadCompiledTypes()
+
+            If CommandLine.NoVBRuntimeRef Then
+                m_TypeCache.InitInternalVB()
+#If ENABLECECIL Then
+                m_CecilTypeCache.InitInternalVB()
+#End If
+            End If
 
             'Resolve the code
 #If DEBUG Then
@@ -581,8 +588,8 @@ Public Class Compiler
 
 #If ENABLECECIL Then
 
-            Mono.Cecil.AssemblyFactory.SaveAssembly(AssemblyBuilderCecil, m_OutFilename & ".cecil.dll")
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename & ".cecil.dll"))
+            Mono.Cecil.AssemblyFactory.SaveAssembly(AssemblyBuilderCecil, m_OutFilename)
+            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename))
 #End If
 
             SequenceTime(CompilerSequence.End) = DateTime.Now

@@ -68,6 +68,9 @@ Public MustInherit Class TypeCacheBase
     Shared Function Generate(ByVal Lines As String(), ByVal Cecil As Boolean) As String
         Dim variables As New System.Text.StringBuilder
         Dim getters As New System.Text.StringBuilder
+        Dim vbtypes As New System.Text.StringBuilder
+        Dim vbmembers As New System.Text.StringBuilder
+
         'Turns out using public fields instead of private fields with property getters is about 10% faster during bootstrapping.
         'Quite possibly because there's quite more code to compile with the properties
         Dim publicfields As Boolean = True
@@ -75,6 +78,9 @@ Public MustInherit Class TypeCacheBase
         If publicfields Then
             getters.AppendLine("    Protected Overrides Sub InitInternal ()")
         End If
+
+        vbtypes.AppendLine("    Public Overrides Sub InitInternalVB()")
+        vbmembers.AppendLine("    Public Overrides Sub InitInternalVBMembers()")
 
         For Each line As String In Lines
             If line.StartsWith("'") Then Continue For
@@ -84,6 +90,8 @@ Public MustInherit Class TypeCacheBase
             Dim name, type, find, parameters As String
             Dim param As Integer = Integer.MaxValue
             Dim noparaminname As Boolean = False
+            Dim isVB As Boolean = False
+            Dim isVBMember As Boolean = False
 
             parameters = Nothing
 
@@ -93,14 +101,22 @@ Public MustInherit Class TypeCacheBase
                     name = name.Replace("Microsoft.VisualBasic.CompilerServices.", "MS_VB_CS_")
                     name = name.Replace("Microsoft.VisualBasic.", "MS_VB_")
                     name = name.Replace("""", "").Replace(".", "_").Replace("`", "").Replace("+", "_")
-                    If Cecil Then type = "Mono.Cecil.TypeReference" Else type = "System.Type"
+                    If Cecil Then type = "Mono.Cecil.TypeDefinition" Else type = "System.Type"
                     find = "GetVBType"
                     parameters = splitted(1)
+                    isVB = True
                 Case "type"
                     name = splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "").Replace("+", "_")
                     If Cecil Then type = "Mono.Cecil.TypeDefinition" Else type = "System.Type"
                     find = "[GetType]"
                     parameters = splitted(1) & ", " & splitted(2)
+#If ENABLECECIL Then
+                    If Cecil AndAlso splitted(2).IndexOf("+"c) > 0 Then
+                        Dim declaringtype As String = splitted(2).Substring(0, splitted(2).LastIndexOf("+"c)).Replace(".", "_").Replace("""", "")
+                        Dim nestedtype As String = """" & splitted(2).Substring(splitted(2).LastIndexOf("+"c) + 1)
+                        parameters = declaringtype & ", " & nestedtype
+                    End If
+#End If
                 Case "array"
                     name = splitted(1).Replace("""", "").Replace(".", "_").Replace("`", "") & "_Array"
                     If Cecil Then type = "Mono.Cecil.TypeReference" Else type = "System.Type"
@@ -118,23 +134,27 @@ Public MustInherit Class TypeCacheBase
                     param = 3
                     find = "GetMethod"
                     parameters = splitted(1) & ", " & splitted(2)
+                    isVBMember = splitted(1).StartsWith("MS_")
                 Case "property"
                     name = splitted(1) & "__" & splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "")
                     If Cecil Then type = "Mono.Cecil.PropertyDefinition" Else type = "System.Reflection.PropertyInfo"
                     param = 3
                     find = "GetProperty"
                     parameters = splitted(1) & ", " & splitted(2)
+                    isVBMember = splitted(1).StartsWith("MS_")
                 Case "field"
                     name = splitted(1) & "__" & splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "")
                     If Cecil Then type = "Mono.Cecil.FieldDefinition" Else type = "System.Reflection.FieldInfo"
                     find = "GetField"
                     parameters = splitted(1) & ", " & splitted(2)
+                    isVBMember = splitted(1).StartsWith("MS_")
                 Case "ctor"
                     name = splitted(1) & "__ctor"
                     If Cecil Then type = "Mono.Cecil.MethodDefinition" Else type = "System.Reflection.ConstructorInfo"
                     param = 2
                     find = "GetConstructor"
                     parameters = splitted(1)
+                    isVBMember = splitted(1).StartsWith("MS_")
                 Case Else
                     Helper.Stop()
                     Throw New NotImplementedException(splitted(0))
@@ -159,8 +179,16 @@ Public MustInherit Class TypeCacheBase
                 variables.AppendLine(String.Format("    Private m_{0} As {1}", name, type))
             End If
 
+            Dim text As String
             If publicfields Then
-                getters.AppendLine(String.Format("        {0} = {1}({2})", name, find, parameters))
+                text = String.Format("        {0} = {1}({2})", name, find, parameters)
+                If isVB Then
+                    vbtypes.AppendLine(text)
+                ElseIf isVBMember Then
+                    vbmembers.AppendLine(text)
+                Else
+                    getters.AppendLine(text)
+                End If
             Else
                 getters.AppendLine(String.Format("    Public ReadOnly Property {0} As {1}", name, type))
                 getters.AppendLine(String.Format("        Get"))
@@ -177,7 +205,10 @@ Public MustInherit Class TypeCacheBase
             getters.AppendLine("    End Sub")
         End If
 
-        Return variables.ToString & Environment.NewLine & getters.ToString
+        vbtypes.AppendLine("    End Sub")
+        vbmembers.AppendLine("    End Sub")
+
+        Return variables.ToString & Environment.NewLine & getters.ToString & Environment.NewLine & vbtypes.ToString & Environment.NewLine & vbmembers.ToString
     End Function
 #End If
 
@@ -205,14 +236,27 @@ Public MustInherit Class TypeCacheBase
     End Function
 
     Friend Function GetMethod(ByVal Type As Type, ByVal Name As String, ByVal ParamArray Types() As Type) As MethodInfo
-        Dim result As MethodInfo
+        Dim result As MethodInfo = Nothing
         If Type Is Nothing Then
 #If DEBUG Then
             Compiler.Report.WriteLine("Could not load the method '" & Name & "', the specified type was Nothing.")
 #End If
             Return Nothing
         End If
-        result = Type.GetMethod(Name, BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding Or BindingFlags.NonPublic, Nothing, Types, Nothing)
+        Dim tD As TypeDescriptor = TryCast(Type, TypeDescriptor)
+        If tD IsNot Nothing AndAlso False Then
+            Dim members As MethodInfo()
+            members = tD.GetMethods(BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding Or BindingFlags.NonPublic)
+            For i As Integer = 0 To members.Length - 1
+                If NameResolution.CompareNameOrdinal(members(i).Name, Name) Then
+                    Helper.Assert(result Is Nothing)
+                    result = members(i)
+                End If
+            Next
+        Else
+            result = Type.GetMethod(Name, BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding Or BindingFlags.NonPublic, Nothing, Types, Nothing)
+        End If
+
 
 #If DEBUG Then
         If result Is Nothing Then
@@ -232,7 +276,23 @@ Public MustInherit Class TypeCacheBase
 
     Protected Overloads Function [GetType](ByVal Assembly As Mono.Cecil.AssemblyDefinition, ByVal FullName As String) As Mono.Cecil.TypeDefinition
         If Assembly Is Nothing Then Return Nothing
-        Return Assembly.MainModule.Types.Item(FullName)
+        Dim result As Mono.Cecil.TypeDefinition
+        result = Assembly.MainModule.Types.Item(FullName)
+        If result Is Nothing Then Compiler.Report.WriteLine(String.Format("Could not load the type '{0}' from the assembly '{1}'", FullName, Assembly.Name.FullName))
+        Return result
+    End Function
+
+    Protected Overloads Function [GetType](ByVal Type As Mono.Cecil.TypeDefinition, ByVal Name As String) As Mono.Cecil.TypeDefinition
+        If Type Is Nothing Then Return Nothing
+        Dim result As Mono.Cecil.TypeDefinition = Nothing
+        For Each item As Mono.Cecil.TypeDefinition In Type.NestedTypes
+            If NameResolution.CompareNameOrdinal(item.Name, Name) Then
+                result = item
+                Exit For
+            End If
+        Next
+        If result Is Nothing Then Compiler.Report.WriteLine(String.Format("Could not load the nested type '{0}' from the type '{1}'", Name, Type.FullName))
+        Return result
     End Function
 
     Protected Function GetByRefType(ByVal Type As Mono.Cecil.TypeDefinition) As Mono.Cecil.TypeReference
@@ -279,15 +339,18 @@ Public MustInherit Class TypeCacheBase
             Return Nothing
         End If
 
-        result = Type.Methods.GetMethod(Name, Types)
-
-#If DEBUG Then
-        If result Is Nothing Then
-            Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Could not find the method '" & Name & "' on the type '" & Type.FullName)
+        If Name.StartsWith(".") Then
+            result = Type.Constructors.GetConstructor(NameResolution.CompareNameOrdinal(Name, ".cctor"), Types)
+        Else
+            result = Type.Methods.GetMethod(Name, Types)
         End If
+#If DEBUG Then
+            If result Is Nothing Then
+                Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Could not find the method '" & Name & "' on the type '" & Type.FullName)
+            End If
 #End If
 
-        Return result
+            Return result
     End Function
 
     Protected Function GetField(ByVal Type As Mono.Cecil.TypeDefinition, ByVal Name As String) As Mono.Cecil.FieldDefinition
@@ -310,6 +373,12 @@ Public MustInherit Class TypeCacheBase
     Protected MustOverride Sub InitAssemblies()
 
     Protected MustOverride Sub InitVBNCTypes()
+
+    Public MustOverride Sub InitInternalVB()
+
+    Public Overridable Sub InitInternalVBMembers()
+
+    End Sub
 
 End Class
 
@@ -392,6 +461,9 @@ Public Class TypeCache
         DelegateUnresolvedType = GetType(DelegateUnresolvedType)
     End Sub
 
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
 End Class
 
 #If ENABLECECIL Then
@@ -834,6 +906,9 @@ Partial Public Class TypeCache
         System_Windows_Forms_Application__Run = GetMethod(System_Windows_Forms_Application, "Run", System_Windows_Forms_Form)
         System_Delegate__Combine = GetMethod(System_Delegate, "Combine", System_Delegate, System_Delegate)
         System_Delegate__Remove = GetMethod(System_Delegate, "Remove", System_Delegate, System_Delegate)
+    End Sub
+
+    Public Overrides Sub InitInternalVB()
         MS_VB_CompareMethod = GetVBType("Microsoft.VisualBasic.CompareMethod")
         MS_VB_CS_Conversions = GetVBType("Microsoft.VisualBasic.CompilerServices.Conversions")
         MS_VB_CS_ProjectData = GetVBType("Microsoft.VisualBasic.CompilerServices.ProjectData")
@@ -843,18 +918,8 @@ Partial Public Class TypeCache
         MS_VB_MyGroupCollectionAttribute = GetVBType("Microsoft.VisualBasic.MyGroupCollectionAttribute")
         MS_VB_CallType = GetVBType("Microsoft.VisualBasic.CallType")
         MS_VB_Information = GetVBType("Microsoft.VisualBasic.Information")
-        MS_VB_Information__IsNumeric = GetMethod(MS_VB_Information, "IsNumeric", System_Object)
-        MS_VB_Information__SystemTypeName = GetMethod(MS_VB_Information, "SystemTypeName", System_String)
-        MS_VB_Information__TypeName = GetMethod(MS_VB_Information, "TypeName", System_Object)
-        MS_VB_Information__VbTypeName = GetMethod(MS_VB_Information, "VbTypeName", System_String)
         MS_VB_Interaction = GetVBType("Microsoft.VisualBasic.Interaction")
-        MS_VB_Interaction__CallByName = GetMethod(MS_VB_Interaction, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_Versioned = GetVBType("Microsoft.VisualBasic.CompilerServices.Versioned")
-        MS_VB_CS_Versioned__IsNumeric = GetMethod(MS_VB_CS_Versioned, "IsNumeric", System_Object)
-        MS_VB_CS_Versioned__SystemTypeName = GetMethod(MS_VB_CS_Versioned, "SystemTypeName", System_String)
-        MS_VB_CS_Versioned__TypeName = GetMethod(MS_VB_CS_Versioned, "TypeName", System_Object)
-        MS_VB_CS_Versioned__VbTypeName = GetMethod(MS_VB_CS_Versioned, "VbTypeName", System_String)
-        MS_VB_CS_Versioned__CallByName = GetMethod(MS_VB_CS_Versioned, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
         MS_VB_CS_Operators = GetVBType("Microsoft.VisualBasic.CompilerServices.Operators")
         MS_VB_CS_ObjectFlowControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl")
@@ -862,9 +927,22 @@ Partial Public Class TypeCache
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
         MS_VB_CS_StaticLocalInitFlag = GetVBType("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag")
+        MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
+    End Sub
+
+    Public Overrides Sub InitInternalVBMembers()
+        MS_VB_Information__IsNumeric = GetMethod(MS_VB_Information, "IsNumeric", System_Object)
+        MS_VB_Information__SystemTypeName = GetMethod(MS_VB_Information, "SystemTypeName", System_String)
+        MS_VB_Information__TypeName = GetMethod(MS_VB_Information, "TypeName", System_Object)
+        MS_VB_Information__VbTypeName = GetMethod(MS_VB_Information, "VbTypeName", System_String)
+        MS_VB_Interaction__CallByName = GetMethod(MS_VB_Interaction, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
+        MS_VB_CS_Versioned__IsNumeric = GetMethod(MS_VB_CS_Versioned, "IsNumeric", System_Object)
+        MS_VB_CS_Versioned__SystemTypeName = GetMethod(MS_VB_CS_Versioned, "SystemTypeName", System_String)
+        MS_VB_CS_Versioned__TypeName = GetMethod(MS_VB_CS_Versioned, "TypeName", System_Object)
+        MS_VB_CS_Versioned__VbTypeName = GetMethod(MS_VB_CS_Versioned, "VbTypeName", System_String)
+        MS_VB_CS_Versioned__CallByName = GetMethod(MS_VB_CS_Versioned, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_StaticLocalInitFlag__State = GetField(MS_VB_CS_StaticLocalInitFlag, "State")
         MS_VB_CS_StaticLocalInitFlag__ctor = GetConstructor(MS_VB_CS_StaticLocalInitFlag)
-        MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
         MS_VB_CS_IncompleteInitialization__ctor = GetConstructor(MS_VB_CS_IncompleteInitialization)
         MS_VB_CS_ProjectData__EndApp = GetMethod(MS_VB_CS_ProjectData, "EndApp")
         MS_VB_CS_ProjectData__CreateProjectError_Int32 = GetMethod(MS_VB_CS_ProjectData, "CreateProjectError", System_Int32)
@@ -1249,7 +1327,7 @@ Partial Public Class CecilTypeCache
         System_Reflection_AssemblyDelaySignAttribute = [GetType](mscorlib, "System.Reflection.AssemblyDelaySignAttribute")
         System_Diagnostics_ConditionalAttribute = [GetType](mscorlib, "System.Diagnostics.ConditionalAttribute")
         System_Diagnostics_DebuggableAttribute = [GetType](mscorlib, "System.Diagnostics.DebuggableAttribute")
-        System_Diagnostics_DebuggableAttribute_DebuggingModes = [GetType](mscorlib, "System.Diagnostics.DebuggableAttribute+DebuggingModes")
+        System_Diagnostics_DebuggableAttribute_DebuggingModes = [GetType](System_Diagnostics_DebuggableAttribute, "DebuggingModes")
         System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes = GetConstructor(System_Diagnostics_DebuggableAttribute, System_Diagnostics_DebuggableAttribute_DebuggingModes)
         System_ParamArrayAttribute = [GetType](mscorlib, "System.ParamArrayAttribute")
         System_ParamArrayAttribute__ctor = GetConstructor(System_ParamArrayAttribute)
@@ -1312,6 +1390,9 @@ Partial Public Class CecilTypeCache
         System_Windows_Forms_Application__Run = GetMethod(System_Windows_Forms_Application, "Run", System_Windows_Forms_Form)
         System_Delegate__Combine = GetMethod(System_Delegate, "Combine", System_Delegate, System_Delegate)
         System_Delegate__Remove = GetMethod(System_Delegate, "Remove", System_Delegate, System_Delegate)
+    End Sub
+
+    Public Overrides Sub InitInternalVB()
         MS_VB_CompareMethod = GetVBType("Microsoft.VisualBasic.CompareMethod")
         MS_VB_CS_Conversions = GetVBType("Microsoft.VisualBasic.CompilerServices.Conversions")
         MS_VB_CS_ProjectData = GetVBType("Microsoft.VisualBasic.CompilerServices.ProjectData")
@@ -1321,18 +1402,8 @@ Partial Public Class CecilTypeCache
         MS_VB_MyGroupCollectionAttribute = GetVBType("Microsoft.VisualBasic.MyGroupCollectionAttribute")
         MS_VB_CallType = GetVBType("Microsoft.VisualBasic.CallType")
         MS_VB_Information = GetVBType("Microsoft.VisualBasic.Information")
-        MS_VB_Information__IsNumeric = GetMethod(MS_VB_Information, "IsNumeric", System_Object)
-        MS_VB_Information__SystemTypeName = GetMethod(MS_VB_Information, "SystemTypeName", System_String)
-        MS_VB_Information__TypeName = GetMethod(MS_VB_Information, "TypeName", System_Object)
-        MS_VB_Information__VbTypeName = GetMethod(MS_VB_Information, "VbTypeName", System_String)
         MS_VB_Interaction = GetVBType("Microsoft.VisualBasic.Interaction")
-        MS_VB_Interaction__CallByName = GetMethod(MS_VB_Interaction, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_Versioned = GetVBType("Microsoft.VisualBasic.CompilerServices.Versioned")
-        MS_VB_CS_Versioned__IsNumeric = GetMethod(MS_VB_CS_Versioned, "IsNumeric", System_Object)
-        MS_VB_CS_Versioned__SystemTypeName = GetMethod(MS_VB_CS_Versioned, "SystemTypeName", System_String)
-        MS_VB_CS_Versioned__TypeName = GetMethod(MS_VB_CS_Versioned, "TypeName", System_Object)
-        MS_VB_CS_Versioned__VbTypeName = GetMethod(MS_VB_CS_Versioned, "VbTypeName", System_String)
-        MS_VB_CS_Versioned__CallByName = GetMethod(MS_VB_CS_Versioned, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
         MS_VB_CS_Operators = GetVBType("Microsoft.VisualBasic.CompilerServices.Operators")
         MS_VB_CS_ObjectFlowControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl")
@@ -1340,9 +1411,22 @@ Partial Public Class CecilTypeCache
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
         MS_VB_CS_StaticLocalInitFlag = GetVBType("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag")
+        MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
+    End Sub
+
+    Public Overrides Sub InitInternalVBMembers()
+        MS_VB_Information__IsNumeric = GetMethod(MS_VB_Information, "IsNumeric", System_Object)
+        MS_VB_Information__SystemTypeName = GetMethod(MS_VB_Information, "SystemTypeName", System_String)
+        MS_VB_Information__TypeName = GetMethod(MS_VB_Information, "TypeName", System_Object)
+        MS_VB_Information__VbTypeName = GetMethod(MS_VB_Information, "VbTypeName", System_String)
+        MS_VB_Interaction__CallByName = GetMethod(MS_VB_Interaction, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
+        MS_VB_CS_Versioned__IsNumeric = GetMethod(MS_VB_CS_Versioned, "IsNumeric", System_Object)
+        MS_VB_CS_Versioned__SystemTypeName = GetMethod(MS_VB_CS_Versioned, "SystemTypeName", System_String)
+        MS_VB_CS_Versioned__TypeName = GetMethod(MS_VB_CS_Versioned, "TypeName", System_Object)
+        MS_VB_CS_Versioned__VbTypeName = GetMethod(MS_VB_CS_Versioned, "VbTypeName", System_String)
+        MS_VB_CS_Versioned__CallByName = GetMethod(MS_VB_CS_Versioned, "CallByName", System_Object, System_String, MS_VB_CallType, System_Object_Array)
         MS_VB_CS_StaticLocalInitFlag__State = GetField(MS_VB_CS_StaticLocalInitFlag, "State")
         MS_VB_CS_StaticLocalInitFlag__ctor = GetConstructor(MS_VB_CS_StaticLocalInitFlag)
-        MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
         MS_VB_CS_IncompleteInitialization__ctor = GetConstructor(MS_VB_CS_IncompleteInitialization)
         MS_VB_CS_ProjectData__EndApp = GetMethod(MS_VB_CS_ProjectData, "EndApp")
         MS_VB_CS_ProjectData__CreateProjectError_Int32 = GetMethod(MS_VB_CS_ProjectData, "CreateProjectError", System_Int32)
