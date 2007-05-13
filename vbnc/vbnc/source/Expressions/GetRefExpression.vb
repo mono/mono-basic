@@ -64,7 +64,8 @@ Public Class GetRefExpression
                 Dim varC As VariableClassification = m_Expression.Classification.AsVariableClassification
 
                 If varC.InstanceExpression IsNot Nothing Then
-                    result = varC.InstanceExpression.GenerateCode(refInfo) AndAlso result
+                    result = varC.InstanceExpression.GenerateCode(Info.Clone(varC.InstanceExpression.ExpressionType)) AndAlso result
+                    'result = varC.InstanceExpression.GenerateCode(refInfo) AndAlso result
                 End If
 
                 If varC.LocalBuilder IsNot Nothing Then

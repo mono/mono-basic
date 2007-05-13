@@ -201,7 +201,6 @@ Public Class MemberAccessExpression
         '---------------------------------------------------------------------------------------------------------
 
         Dim Name As String = m_Second.Name
-        'If Name = "IsNumeric" Then Stop
 
         If m_First IsNot Nothing Then
             result = m_First.ResolveExpression(Info) AndAlso result
@@ -548,6 +547,9 @@ Public Class MemberAccessExpression
                         Return True
                     ElseIf T.IsValueType Then
                         If m_First.Classification.IsVariableClassification Then
+                            If Not TypeOf m_First Is InstanceExpression Then
+                                m_First = m_First.GetObjectReference
+                            End If
                             If fld.IsStatic Then
                                 Classification = New VariableClassification(Me, fld, Nothing)
                             Else
