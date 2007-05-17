@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug_Java\</OutputPath>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
     <DocumentationFile>Microsoft.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <SkipValidation>false</SkipValidation>

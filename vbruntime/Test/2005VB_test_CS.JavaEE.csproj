@@ -39,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug_Java\</OutputPath>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
     <DefineConstants>JAVA;NET_2_0;DEBUG;TRACE;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

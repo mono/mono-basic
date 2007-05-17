@@ -33,14 +33,12 @@ Imports Microsoft.VisualBasic.CompilerServices
 Imports System
 
 Namespace Microsoft.VisualBasic
-    'MONOTODO: this is an empty class. implement it.
     Public Module Financial
 
         Public Function DDB(ByVal Cost As Double, ByVal Salvage As Double, _
                                     ByVal Life As Double, ByVal Period As Double, _
                                     Optional ByVal Factor As Double = 2.0) As Double
-            If Period > Life Or Factor < 0 Or Salvage < 0 _
-            Or Life < 0 Or Period < 0 Then
+            If Period > Life Or Factor <= 0 Or Salvage < 0 Or Life < 0 Or Period <= 0 Then
                 Throw New ArgumentException("Argument 'Factor' is not a valid value.")
             End If
 
@@ -49,17 +47,19 @@ Namespace Microsoft.VisualBasic
             'Throw New ArgumentException("Argument 'Factor' is not a valid value.")
             'End If
 
-            Dim rate As Double = (1.0 / Life) * Factor
-            Dim prior As Double = 0
-            Dim deprecation As Double = 0
-            Dim basis As Double = 0
-            For i As Double = 0 To Period - 1.0
-                basis = Cost - prior
-                deprecation = Math.Min(basis - Salvage, basis * rate)
-                prior = prior + deprecation
-            Next
+            ' Below we use power of (Period - 1).
+            ' Tested Period < 1 and it behaves like Period = 1
+            if Period < 1 Then
+                Period = 1
+            End If
 
-            Return deprecation
+            Dim Rate As Double = Factor / Life
+            Dim PreviousValue As Double = Cost * (1 - Rate) ^ (Period - 1)
+            PreviousValue = Math.Max (PreviousValue, Salvage)
+            Dim CurrentValue As Double = Cost * (1 - Rate) ^ Period
+            CurrentValue = Math.Max (CurrentValue, Salvage)
+            Return PreviousValue - CurrentValue
+
         End Function
 
         Public Function SLN(ByVal Cost As Double, ByVal Salvage As Double, _
@@ -87,26 +87,26 @@ Namespace Microsoft.VisualBasic
 
         Public Function FV(ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, _
                                     Optional ByVal PV As Double = 0, Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
-            Dim result As Double = 0
-            Dim start As Double = 0
-            Dim eend As Double = NPer - 1
+
+            if NPer < 0 Then
+                if Due = DueDate.EndOfPeriod Then
+                    Due = DueDate.BegOfPeriod
+                Else
+                    Due = DueDate.EndOfPeriod
+                End if
+                Return FV (1 / ( 1 + Rate) - 1, -NPer, -Pmt, Pv, Due)
+            End If
+
+            If NPer = 0 Or Rate = 0 Then
+                Return -(PV + Pmt * NPer)
+            End If
 
             If Due = DueDate.BegOfPeriod Then
-                start = 1
-                eend = NPer
+                Pmt = Pmt * (1 + Rate)
             End If
 
-            For i As Double = start To eend
-                result = result + (1 + Rate) ^ i
-            Next
-
-            result = result * Pmt
-
-            If PV <> 0 Then
-                result = result + (1 + Rate) ^ NPer
-            End If
-
-            Return -result
+            Dim ExpRate as Double = (1 + Rate) ^ NPer
+            Return -(PV * ExpRate + Pmt * (ExpRate - 1) / Rate)
 
         End Function
 
@@ -256,58 +256,48 @@ Namespace Microsoft.VisualBasic
         Public Function IPmt(ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, _
                                     ByVal PV As Double, Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
-            If Per > NPer Or NPer < 0 Then
+
+            If Per <= 0 Or Per > NPer Or NPer < 0 Then
                 Throw New ArgumentException("Argument 'Per' is not a valid value.")
             End If
 
-            Dim pmt1 As Double = Math.Abs(Pmt(Rate, NPer, PV, FV, Due))
-            Dim principal As Double = Math.Abs(PV)
-            Dim ipmt1 As Double = 0
-            Dim ppmt1 As Double = 0
-
-            For current As Double = 1 To Per
-                If current <> 1 And Due = DueDate.EndOfPeriod Then
-                    ipmt1 = Rate * principal
-                End If
-                ppmt1 = pmt1 - ipmt1
-                principal = principal - ppmt1
-            Next
-
-            If PV > 0 Or (PV = 0 And FV > 0) Then
-                Return -ipmt1
-            Else
-                Return ipmt1
+            If Per = 1 AndAlso Due = DueDate.BegOfPeriod Then
+                Return 0 ' The formula below doesn't cover this special case
             End If
+
+            Dim Pmt As Double = Financial.Pmt(Rate, NPer, PV, FV, Due)
+            Dim PreviousPV As Double = Financial.FV (Rate, Per - 1, Pmt, PV, Due)
+            If Due = DueDate.BegOfPeriod Then
+                PreviousPV = PreviousPV / (1 + Rate)
+            End If
+            Return PreviousPV * Rate
+
         End Function
 
         Public Function Pmt(ByVal Rate As Double, ByVal NPer As Double, ByVal PV As Double, _
                                     Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
+
             If NPer = 0 Then
                 Throw New ArgumentException("Argument 'NPer' is not a valid value.")
             End If
 
-            Dim spv As Double = 1
-            Dim epv As Double = NPer
-            Dim sfv As Double = 0
-            Dim efv As Double = NPer - 1
-            Dim dfpv As Double = 0
-            Dim dffv As Double = 0
-
-            If Due = DueDate.BegOfPeriod Then
-                spv = 0
-                epv = NPer - 1
-                sfv = 1
-                efv = NPer
+            if NPer < 0 Then
+                Return -Pmt (Rate, -NPer, Fv, Pv, Due)
             End If
 
-            For i As Double = spv To epv
-                dfpv = dfpv + 1 / ((1 + Rate) ^ i)
-            Next
+            If Rate = 0 Then
+                Return -(PV + FV) / NPer
+            End If
 
-            For i As Double = sfv To efv
-                dffv = dffv + 1 / ((1 + Rate) ^ i)
-            Next
+            Dim ExpRate As Double = (1 + Rate) ^ NPer
+            Dim dfpv As Double = (1 - 1 / ExpRate) / Rate
+            Dim dffv As Double = (ExpRate - 1) / Rate
+
+            If Due = DueDate.BegOfPeriod Then
+                dffv = dffv * (1 + Rate)
+                dfpv = dfpv * (1 + Rate)
+            End If
 
             Return -(PV / dfpv + FV / dffv)
 
@@ -317,29 +307,7 @@ Namespace Microsoft.VisualBasic
                                     ByVal PV As Double, Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
 
-            If Per > NPer Or NPer < 0 Then
-                Throw New ArgumentException("Argument 'Per' is not a valid value.")
-            End If
-
-
-            Dim pmt1 As Double = Math.Abs(Pmt(Rate, NPer, PV, FV, Due))
-            Dim principal As Double = Math.Abs(PV)
-            Dim ipmt1 As Double = 0
-            Dim ppmt1 As Double = 0
-
-            For current As Double = 1 To Per
-                If current <> 1 And Due = DueDate.EndOfPeriod Then
-                    ipmt1 = Rate * principal
-                End If
-                ppmt1 = pmt1 - ipmt1
-                principal = principal - ppmt1
-            Next
-
-            If PV > 0 Or (PV = 0 And FV > 0) Then
-                Return -ppmt1
-            Else
-                Return ppmt1
-            End If
+            Return Pmt (Rate, NPer, PV, FV, Due) - IPmt (Rate, Per, NPer, PV, FV, Due)
         End Function
 
         Public Function NPV(ByVal Rate As Double, ByRef ValueArray() As Double) As Double
@@ -363,18 +331,14 @@ Namespace Microsoft.VisualBasic
                                     Optional ByVal FV As Double = 0, _
                                     Optional ByVal Due As DueDate = DueDate.EndOfPeriod) As Double
             Dim result As Double = 0
-            If Rate < 0 Then
-                result = -FV - (Pmt * NPer)
+            Dim d As Double = (1 + Rate) ^ NPer
+            Dim n As Double
+            If Due = DueDate.EndOfPeriod Then
+                n = -FV - Pmt * (d - 1) / Rate
             Else
-                Dim d As Double = (1 + Rate) ^ NPer
-                Dim n As Double
-                If Due = DueDate.EndOfPeriod Then
-                    n = -FV - Pmt * (d - 1) / Rate
-                Else
-                    n = -FV - Pmt * (1 + Rate) * (d - 1) / Rate
-                End If
-                result = n / d
+                n = -FV - Pmt * (1 + Rate) * (d - 1) / Rate
             End If
+            result = n / d
             Return result
         End Function
     End Module
