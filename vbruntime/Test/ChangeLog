@@ -1,3 +1,9 @@
+2007-05-17  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Microsoft.VisualBasic/FinancialTests.cs: Added scenarios where period
+	  is non integral (e.g. 48.3). Added precision to most comparisons so
+	  small differences in calculation formulas won't fail the tests.
+
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Make.cmd: Update, can now build both 1.0 and 2.0.

@@ -1,3 +1,8 @@
+2007-05-17  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Financial.vb: Fix calculations. The biggest issue was non integral
+	  periods. E.g. IPmt(0.1/48, 24.5, 48, 50000, 0, DueDate.EndOfPeriod)
+
 2007-05-09  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Information.vb: Fix type comparison.
