@@ -105,7 +105,7 @@ Public Class AddOrRemoveHandlerStatement
         Dim evt As EventInfo = m_Event.Classification.AsEventAccess.EventInfo
 
         result = m_Event.Classification.AsEventAccess.GenerateCode(Info) AndAlso result
-        result = m_EventHandler.Classification.GenerateCode(Info.Clone(m_EventHandler.ExpressionType)) AndAlso result
+        result = m_EventHandler.Classification.GenerateCode(Info.Clone(True, False, m_EventHandler.ExpressionType)) AndAlso result
 
         If IsAddHandler Then
             handler = evt.GetAddMethod()
@@ -132,6 +132,9 @@ Public Class AddOrRemoveHandlerStatement
             m_EventHandler = m_EventHandler.ReclassifyMethodPointerToValueExpression(delegatetp)
             result = m_EventHandler.ResolveExpression(Info) AndAlso result
             'result = Helper.VerifyValueClassification(m_EventHandler, Info) AndAlso result
+        ElseIf m_EventHandler.Classification.IsValueClassification = False AndAlso m_EventHandler.Classification.CanBeValueClassification Then
+            m_EventHandler = m_EventHandler.ReclassifyToValueExpression()
+            result = m_EventHandler.ResolveExpression(Info) AndAlso result
         End If
 
         Helper.Assert(m_EventHandler.Classification.IsValueClassification)
