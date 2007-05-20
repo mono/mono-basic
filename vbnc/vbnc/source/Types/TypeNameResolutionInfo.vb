@@ -44,7 +44,7 @@ Public Class TypeNameResolutionInfo
     ''' <remarks></remarks>
     ReadOnly Property IsGlobal() As Boolean
         Get
-            Return m_FoundObjects.Count = 1 AndAlso ((TypeOf m_FoundObjects(0) Is KeywordToken AndAlso DirectCast(m_FoundObjects(0), KeywordToken).Equals(KS.Global)) OrElse (TypeOf m_FoundObjects(0) Is GlobalExpression))
+            Return m_FoundObjects.Count = 1 AndAlso ((TypeOf m_FoundObjects(0) Is Token AndAlso DirectCast(m_FoundObjects(0), Token).Equals(KS.Global)) OrElse (TypeOf m_FoundObjects(0) Is GlobalExpression))
         End Get
     End Property
 
@@ -160,7 +160,7 @@ Public Class TypeNameResolutionInfo
 
         If qi IsNot Nothing Then
             If qi.IsFirstQualifiedIdentifier Then
-                If qi.Second IsNot Nothing Then
+                If qi.Second.IsSomething Then
                     tmp = New TypeNameResolutionInfo(qi.FirstAsQualifiedIdentifier, FromWhere, 0)
                 Else
                     tmp = New TypeNameResolutionInfo(qi.FirstAsQualifiedIdentifier, FromWhere, Me.TypeArgumentCount)
@@ -170,9 +170,9 @@ Public Class TypeNameResolutionInfo
             ElseIf qi.IsFirstGlobal Then
                 Helper.Assert(TypeArgumentCount = 0)
                 tmp = New TypeNameResolutionInfo(qi.FirstAsGlobal, FromWhere)
-                Helper.Assert(qi.Second IsNot Nothing)
+                'Helper.Assert(qi.Second IsNot Nothing)
             ElseIf qi.IsFirstIdentifier Then
-                If qi.Second Is Nothing Then
+                If qi.Second.IsSomething = False Then
                     tmp = New TypeNameResolutionInfo(qi.FirstAsIdentifier, FromWhere, Me.TypeArgumentCount)
                     tmp.IsAttributeTypeName = Me.IsAttributeTypeName
                 Else
@@ -186,7 +186,7 @@ Public Class TypeNameResolutionInfo
             result = tmp.Resolve AndAlso result
             If result = False Then Return result
 
-            If qi.Second Is Nothing Then
+            If qi.Second.IsSomething = False Then
                 Me.m_FoundObjects = tmp.m_FoundObjects
             Else
                 If Me.IsAttributeTypeName Then
@@ -812,11 +812,11 @@ Public Class TypeNameResolutionInfo
             '* the unqualified name refers to that import alias.
             '---------------------------------------------------------------------------------------------------------
             Helper.Assert(FromWhere IsNot Nothing)
-            Helper.Assert(FromWhere.HasLocation)
-            Helper.Assert(FromWhere.Location.File IsNot Nothing)
-            Helper.Assert(FromWhere.Location.File.Imports IsNot Nothing)
+            'Helper.Assert(FromWhere.HasLocation)
+            Helper.Assert(FromWhere.File IsNot Nothing)
+            Helper.Assert(FromWhere.File.Imports IsNot Nothing)
 
-            If CheckImportsAlias(R, FromWhere.Location.File.Imports, TypeArgumentCount) Then Return True
+            If CheckImportsAlias(R, FromWhere.File.Imports, TypeArgumentCount) Then Return True
 
             '---------------------------------------------------------------------------------------------------------
             '*	If the source file containing the name reference has one or more imports:
@@ -830,7 +830,7 @@ Public Class TypeNameResolutionInfo
             '** nested type in exactly one standard module, then the unqualified name refers to that type. If R matches 
             '** the name of accessible nested types in more than one standard module, a compile-time error occurs.
             '---------------------------------------------------------------------------------------------------------
-            If CheckImports(R, FromWhere.Location.File.Imports, TypeArgumentCount) Then Return True
+            If CheckImports(R, FromWhere.File.Imports, TypeArgumentCount) Then Return True
 
             '---------------------------------------------------------------------------------------------------------
             '* If the compilation environment defines one or more import aliases, and R matches the name of one of 
@@ -854,6 +854,7 @@ Public Class TypeNameResolutionInfo
         '---------------------------------------------------------------------------------------------------------
         '* Otherwise, a compile-time error occurs.
         '---------------------------------------------------------------------------------------------------------
+
         FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30451, FromWhere.Location, Rs(0))
 
         '---------------------------------------------------------------------------------------------------------

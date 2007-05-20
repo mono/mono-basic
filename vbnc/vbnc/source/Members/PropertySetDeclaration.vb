@@ -54,7 +54,7 @@ Public Class PropertySetDeclaration
         End If
         name = "set_" & PropertySignature.Name
 
-        mySignature.Init(New IdentifierToken(PropertySignature.Identifier, name), typeParams, params)
+        mySignature.Init(Token.CreateIdentifierToken(PropertySignature.Identifier, name), typeParams, params)
 
         Dim valueName As String = "value"
         If SetParameters IsNot Nothing AndAlso SetParameters.Count > 0 Then
@@ -69,7 +69,7 @@ Public Class PropertySetDeclaration
         Else
             param = New Parameter(mySignature.Parameters, valueName, PropertySignature.TypeName)
         End If
-        param.Identifier.Identifier.TypeCharacter = mySignature.Identifier.TypeCharacter
+        param.Identifier.Identifier = Token.CreateIdentifierToken(param.Identifier.Identifier.Location, param.Identifier.Identifier.Identifier, mySignature.Identifier.TypeCharacter, False)
         mySignature.Parameters.Add(param)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
@@ -77,7 +77,7 @@ Public Class PropertySetDeclaration
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.AccessModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.AccessModifiers)
             i += 1
         End While
         Return tm.PeekToken(i) = KS.Set

@@ -99,7 +99,7 @@ Public Class OnErrorStatement
             Helper.AddError("No structured exception handling in the same method.")
         End If
 
-        If m_Label IsNot Nothing Then
+        If m_Label.IsSomething Then
             block = Me.FindFirstParent(Of CodeBlock)()
             m_ResolvedLabel = block.FindLabel(m_Label)
             Compiler.Helper.AddCheck("Label must exist.")
@@ -108,20 +108,20 @@ Public Class OnErrorStatement
         Return result
     End Function
 
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        dumper.Write("On Error ")
-        If m_IsGotoMinusOne Then
-            Dumper.Write("Goto -1")
-        ElseIf m_IsGotoZero Then
-            Dumper.Write("Goto 0")
-        ElseIf m_IsResumeNext Then
-            Dumper.Write("Resume Next")
-        Else
-            Dumper.Write("Goto ")
-            m_Label.Dump(dumper)
-        End If
-        Dumper.WriteLine("")
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
+    '        dumper.Write("On Error ")
+    '        If m_IsGotoMinusOne Then
+    '            Dumper.Write("Goto -1")
+    '        ElseIf m_IsGotoZero Then
+    '            Dumper.Write("Goto 0")
+    '        ElseIf m_IsResumeNext Then
+    '            Dumper.Write("Resume Next")
+    '        Else
+    '            Dumper.Write("Goto ")
+    '            m_Label.Dump(dumper)
+    '        End If
+    '        Dumper.WriteLine("")
+    '    End Sub
+    '#End If
 End Class

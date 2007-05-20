@@ -43,7 +43,7 @@ Public MustInherit Class TypeDeclaration
     'Information collected during parse phase.
     Private m_Members As MemberDeclarations
     Private m_Namespace As String
-    Private m_Name As IdentifierToken
+    Private m_Name As Token
 
     'Information collected during resolve phase.
     Private m_BaseType As Type
@@ -104,7 +104,7 @@ Public MustInherit Class TypeDeclaration
         Helper.Assert(m_Namespace IsNot Nothing)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As IdentifierToken, ByVal TypeArgumentCount As Integer)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeArgumentCount As Integer)
         MyBase.Init(CustomAttributes, Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
 
         m_Members = Members
@@ -113,7 +113,7 @@ Public MustInherit Class TypeDeclaration
         Helper.Assert(DeclaringType IsNot Nothing OrElse TypeOf Me.Parent Is AssemblyDeclaration)
         Helper.Assert(m_Members IsNot Nothing)
         Helper.Assert(m_Namespace IsNot Nothing)
-        Helper.Assert(m_Name IsNot Nothing)
+        'Helper.Assert(m_Name IsNot Nothing)
     End Sub
 
     Protected Property BeforeFieldInit() As Boolean
@@ -185,7 +185,7 @@ Public MustInherit Class TypeDeclaration
         End Set
     End Property
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
             Return m_Name
         End Get
@@ -346,7 +346,7 @@ Public MustInherit Class TypeDeclaration
 
         result = MyBase.ResolveTypeReferences AndAlso result
 
-        If Location.File IsNot Nothing AndAlso Location.File.IsOptionCompareText Then
+        If File IsNot Nothing AndAlso File.IsOptionCompareText Then
             Dim textAttribute As Attribute
             textAttribute = New Attribute(Me, Compiler.TypeCache.MS_VB_CS_OptionTextAttribute)
             CustomAttributes.Add(textAttribute)
@@ -368,7 +368,7 @@ Public MustInherit Class TypeDeclaration
         Dim result As Boolean = True
 
         Helper.Assert(m_BaseType IsNot Nothing OrElse Me.TypeDescriptor.IsInterface)
-        Helper.Assert(m_Name IsNot Nothing)
+        'Helper.Assert(m_Name IsNot Nothing)
 
         'Create the type builder.
         Dim Attr As TypeAttributes
@@ -395,10 +395,8 @@ Public MustInherit Class TypeDeclaration
         End If
 
 #If ENABLECECIL Then
-            If m_CecilBaseType Is Nothing Then m_CecilBaseType = Compiler.CecilTypeCache.System_Object
-            m_CecilBaseType = Compiler.ModuleBuilderCecil.Import(m_CecilBaseType)
-            m_CecilType = New Mono.Cecil.TypeDefinition(Name, Me.Namespace, CType(Attr, Mono.Cecil.TypeAttributes), m_CecilBaseType)
-            Compiler.ModuleBuilderCecil.Types.Add(m_CecilType)
+        m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Me.Namespace, CType(Attr, Mono.Cecil.TypeAttributes), Nothing)
+        Compiler.ModuleBuilderCecil.Types.Add(m_CecilType)
 #End If
 
         Compiler.TypeManager.RegisterReflectionType(m_TypeBuilder, Me.TypeDescriptor)
@@ -412,6 +410,12 @@ Public MustInherit Class TypeDeclaration
         Dim result As Boolean = True
 
 #If ENABLECECIL Then
+        If m_BaseType IsNot Nothing Then
+            m_CecilBaseType = Helper.GetTypeDefinition(Compiler, m_BaseType)
+        Else
+            m_CecilBaseType = Nothing
+        End If
+        m_CecilType.BaseType = m_CecilBaseType
         If IsNestedType Then
             DeclaringType.CecilType.NestedTypes.Add(m_CecilType)
         End If

@@ -31,13 +31,13 @@ Public Class LiteralExpression
     ''' Save the value of the literal expression here.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Value As LiteralToken
+    Private m_Value As Token
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Value As LiteralToken)
+    Shadows Sub Init(ByVal Value As Token)
         MyBase.Init(Value.LiteralValue, Value.LiteralValue.GetType)
         m_Value = Value
     End Sub
@@ -80,9 +80,9 @@ Public Class LiteralExpression
         Return result
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        DirectCast(m_Value, Token).Dump(Dumper)
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
+    '        DirectCast(m_Value, Token).Dump(Dumper)
+    '    End Sub
+    '#End If
 End Class

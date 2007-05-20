@@ -58,9 +58,14 @@ Public Class VariableToValueExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim isByRef As Boolean = Info.DesiredType.IsByRef
 
         If m_Variable.InstanceExpression IsNot Nothing Then
-            result = m_Variable.InstanceExpression.GenerateCode(Info) AndAlso result
+            Dim exp As Type = m_Variable.InstanceExpression.ExpressionType
+            If exp.IsValueType AndAlso exp.IsByRef = False Then
+                exp = exp.MakeByRefType
+            End If
+            result = m_Variable.InstanceExpression.GenerateCode(Info.Clone(exp)) AndAlso result
         End If
 
         If m_Variable.FieldInfo IsNot Nothing Then
@@ -96,7 +101,7 @@ Public Class VariableToValueExpression
         End If
 
         If Info.DesiredType.IsByRef Then
-            Dim elementType As Type = Info.DesiredType.GetElementType
+            Dim elementType As Type = Helper.GetTypeOrTypeBuilder(Info.DesiredType.GetElementType)
             Dim local As LocalBuilder
             local = Info.ILGen.DeclareLocal(elementType)
 

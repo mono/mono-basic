@@ -29,10 +29,10 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
 
-        m_Modifiers = ParseModifiers(Parent, Enums.ConstantModifiers)
+        m_Modifiers = ParseModifiers(Parent, ModifierMasks.ConstantModifiers)
 
         tm.AcceptIfNotInternalError(KS.Const)
-        m_Modifiers.AddModifier(KS.Const)
+        m_Modifiers.AddModifiers(ModifierMasks.Const)
 
         result = ParseConstantDeclarations(Parent, Info.Attributes, m_Modifiers)
 
@@ -67,7 +67,7 @@ Partial Class Parser
         Dim m_Signature As FunctionSignature = Nothing
         Dim m_ImplementsClause As MemberImplementsClause = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.MustOverridePropertyModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.MustOverridePropertyModifiers)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
@@ -104,7 +104,7 @@ Partial Class Parser
         Dim m_TypeName As TypeName = Nothing
         Dim m_Block As CodeBlock = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.ConversionOperatorModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ConversionOperatorModifiers)
 
         tm.AcceptIfNotInternalError(KS.Operator)
 
@@ -149,7 +149,7 @@ Partial Class Parser
     Private Function ParseEnumMemberDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo, ByVal EnumIndex As Integer) As EnumMemberDeclaration
         Dim result As New EnumMemberDeclaration(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_ConstantExpression As Expression
 
         If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -175,7 +175,7 @@ Partial Class Parser
     Private Function ParseOperand(ByVal Parent As ParsedObject) As Operand
         Dim result As New Operand(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeName As TypeName
 
         tm.Accept(KS.ByVal)
@@ -222,7 +222,7 @@ Partial Class Parser
         Dim m_ReturnTypeAttributes As New Attributes(Parent)
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, Enums.OperatorModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.OperatorModifiers)
 
         tm.AcceptIfNotInternalError(KS.Operator)
 
@@ -290,7 +290,7 @@ Partial Class Parser
         Dim m_HandlesOrImplements As HandlesOrImplements = Nothing
         Dim m_Block As CodeBlock = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.MustOverrideProcedureModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.MustOverrideProcedureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Function)
 
@@ -304,7 +304,7 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
-        If m_Modifiers.Is(KS.MustOverride) = False Then
+        If m_Modifiers.Is(ModifierMasks.MustOverride) = False Then
             m_Block = ParseCodeBlock(result, False)
             If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
@@ -337,7 +337,7 @@ Partial Class Parser
         Dim m_HandlesOrImplements As HandlesOrImplements = Nothing
         Dim m_Block As CodeBlock = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.MustOverrideProcedureModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.MustOverrideProcedureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Sub)
 
@@ -350,7 +350,7 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
-        If m_Modifiers.Is(KS.MustOverride) = False Then
+        If m_Modifiers.Is(ModifierMasks.MustOverride) = False Then
             m_Block = ParseCodeBlock(result, False)
             If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
@@ -459,7 +459,7 @@ Partial Class Parser
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_Signature As SubSignature = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.InterfaceProcedureModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.InterfaceProcedureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Sub)
 
@@ -485,7 +485,7 @@ Partial Class Parser
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_Signature As FunctionSignature = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.InterfaceProcedureModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.InterfaceProcedureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Function)
 
@@ -509,17 +509,17 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_CharsetModifier As KS = Nothing
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
         Dim m_ParameterList As ParameterList = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.ExternalMethodModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ExternalMethodModifiers)
 
         tm.AcceptIfNotInternalError(KS.Declare)
 
-        If tm.CurrentToken.Equals(Enums.CharSetModifiers) Then
-            m_CharsetModifier = tm.CurrentToken.AsKeyword.Keyword
+        If tm.CurrentToken.Equals(ModifierMasks.CharSetModifiers) Then
+            m_CharsetModifier = tm.CurrentToken.Keyword
             tm.NextToken()
         End If
 
@@ -566,18 +566,18 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_CharsetModifier As KS
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
         Dim m_ParameterList As ParameterList = Nothing
         Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_TypeName As TypeName = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.ExternalMethodModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ExternalMethodModifiers)
         tm.AcceptIfNotInternalError(KS.Declare)
 
-        If tm.CurrentToken.Equals(Enums.CharSetModifiers) Then
-            m_CharsetModifier = tm.CurrentToken.AsKeyword.Keyword
+        If tm.CurrentToken.Equals(ModifierMasks.CharSetModifiers) Then
+            m_CharsetModifier = tm.CurrentToken.Keyword
             tm.NextToken()
         End If
 
@@ -624,17 +624,17 @@ Partial Class Parser
     Private Function ParseAliasClause(ByVal Parent As ParsedObject) As AliasClause
         Dim result As New AliasClause(Parent)
 
-        Dim m_StringLiteral As StringLiteralToken = Nothing
+        Dim m_StringLiteral As Token = Nothing
 
         tm.AcceptIfNotInternalError(KS.Alias)
 
         If tm.CurrentToken.IsStringLiteral Then
-            m_StringLiteral = tm.CurrentToken.AsStringLiteral
+            m_StringLiteral = tm.CurrentToken
         Else
             Helper.NotImplemented() 'TODO: Adderror
         End If
 
-        result.init(m_StringLiteral)
+        result.Init(m_StringLiteral)
 
         Return result
     End Function
@@ -646,18 +646,18 @@ Partial Class Parser
     Private Function ParseLibraryClause(ByVal Parent As ParsedObject) As LibraryClause
         Dim result As New LibraryClause(Parent)
 
-        Dim m_StringLiteral As StringLiteralToken
+        Dim m_StringLiteral As Token
 
         tm.AcceptIfNotInternalError(KS.Lib)
 
         If tm.CurrentToken.IsStringLiteral Then
-            m_StringLiteral = tm.CurrentToken.AsStringLiteral
+            m_StringLiteral = tm.CurrentToken
         Else
             Helper.NotImplemented() 'TODO: Adderror
             m_StringLiteral = Nothing
         End If
 
-        result.init(m_StringLiteral)
+        result.Init(m_StringLiteral)
 
         Return result
     End Function
@@ -670,7 +670,7 @@ Partial Class Parser
     Private Function ParseConstantDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo, ByVal Modifiers As Modifiers) As ConstantDeclaration
         Dim result As New ConstantDeclaration(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeName As TypeName = Nothing
         Dim m_ConstantExpression As Expression = Nothing
 
@@ -699,7 +699,7 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
 
-        m_Modifiers = ParseModifiers(Parent, Enums.LocalModifiers)
+        m_Modifiers = ParseModifiers(Parent, ModifierMasks.LocalModifiers)
 
         result = ParseVariableDeclarators(Parent, m_Modifiers, New ParseAttributableInfo(Compiler, Nothing))
         If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -715,7 +715,7 @@ Partial Class Parser
 
         Dim m_VariableModifiers As Modifiers
 
-        m_VariableModifiers = ParseModifiers(Parent, Enums.VariableModifiers)
+        m_VariableModifiers = ParseModifiers(Parent, ModifierMasks.VariableModifiers)
 
         result = ParseVariableDeclarators(Parent, m_VariableModifiers, Info)
 
@@ -807,7 +807,7 @@ Partial Class Parser
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_Signature As FunctionSignature = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.InterfacePropertyModifier)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.InterfacePropertyModifier)
 
         tm.AcceptIfNotInternalError(KS.Property)
 

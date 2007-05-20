@@ -69,8 +69,9 @@ Public MustInherit Class MemberDeclaration
 
         If m_CustomAttributes Is Nothing Then m_CustomAttributes = New Attributes(Me)
 
+        If m_Name Is Nothing Then Throw New InternalException(Me.Location.ToString(Compiler))
         Helper.Assert(m_CustomAttributes IsNot Nothing)
-        Helper.Assert(m_Modifiers IsNot Nothing)
+        'Helper.Assert(vbnc.Modifiers.IsNothing(m_Modifiers) = False)
     End Sub
 
     Protected Sub Rename(ByVal Name As String)
@@ -94,7 +95,7 @@ Public MustInherit Class MemberDeclaration
 
     Public Overridable ReadOnly Property IsShared() As Boolean Implements IMember.IsShared
         Get
-            Return Me.Modifiers.Is(KS.Shared) OrElse DeclaringType.IsShared OrElse Me.Modifiers.Is(KS.Const)
+            Return Me.Modifiers.Is(ModifierMasks.Shared) OrElse DeclaringType.IsShared OrElse Me.Modifiers.Is(ModifierMasks.Const)
         End Get
     End Property
 
@@ -108,6 +109,7 @@ Public MustInherit Class MemberDeclaration
 
     Public ReadOnly Property Name() As String Implements INameable.Name
         Get
+            If m_Name Is Nothing Then Throw New InternalException(Me.GetType().FullName)
             Return m_Name
         End Get
     End Property

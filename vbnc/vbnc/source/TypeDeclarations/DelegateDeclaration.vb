@@ -120,7 +120,7 @@ Public Class DelegateDeclaration
         For i As Integer = 0 To paramCount - 1
             invokeParameters.Add(Parameters(i).Clone(invokeParameters))
             beginInvokeParameters.Add(Parameters(i).Clone(beginInvokeParameters))
-            If Parameters(i).Modifiers.Is(KS.ByRef) Then
+            If Parameters(i).Modifiers.Is(ModifierMasks.ByRef) Then
                 endInvokeParameters.Add(Parameters(i).Clone(endInvokeParameters))
             End If
         Next
@@ -139,9 +139,9 @@ Public Class DelegateDeclaration
         End If
         beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.System_IAsyncResult, Me.Location)
 
-        m_Invoke.Init(Nothing, New Modifiers(m_Invoke), invokeSignature, Nothing, Nothing)
-        m_BeginInvoke.Init(Nothing, New Modifiers(m_BeginInvoke), beginInvokeSignature, Nothing, Nothing)
-        m_EndInvoke.Init(Nothing, New Modifiers(m_EndInvoke), endInvokeSignature, Nothing, Nothing)
+        m_Invoke.Init(Nothing, New Modifiers(), invokeSignature, Nothing, Nothing)
+        m_BeginInvoke.Init(Nothing, New Modifiers(), beginInvokeSignature, Nothing, Nothing)
+        m_EndInvoke.Init(Nothing, New Modifiers(), endInvokeSignature, Nothing, Nothing)
 
         Dim attr As MethodAttributes
         Dim implattr As MethodImplAttributes = MethodImplAttributes.Runtime
@@ -169,6 +169,10 @@ Public Class DelegateDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
+#If ENABLECECIL Then
+        CecilBaseType = Compiler.CecilTypeCache.System_MulticastDelegate
+#End If
+
         BaseType = Compiler.TypeCache.System_MulticastDelegate
 
         result = m_Signature.ResolveTypeReferences(False) AndAlso result
@@ -180,7 +184,7 @@ Public Class DelegateDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.TypeModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.TypeModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Delegate)

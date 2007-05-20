@@ -51,7 +51,7 @@ Public MustInherit Class EventHandlerDeclaration
         Dim mySignature As SubSignature
 
         mySignature = New SubSignature(Me)
-        mySignature.Init(New IdentifierToken(EventName.Token.Location, name, EventName.Token.TypeCharacter, False, Compiler), Nothing, Parameters)
+        mySignature.Init(Token.CreateIdentifierToken(EventName.Token.Location, name, EventName.Token.TypeCharacter, False), Nothing, Parameters)
 
         MyBase.Init(Attributes, Modifiers, mySignature, Code)
     End Sub

@@ -75,7 +75,7 @@ Public Class ConditionalCompiler
     Function IsDefinedAtLocation(ByVal Symbol As String, ByVal Location As Span) As Boolean
         Dim constants As ConditionalConstants
 
-        constants = Location.File.GetConditionalConstants(Location.Line)
+        constants = Location.File(Compiler).GetConditionalConstants(Location.Line)
 
         If constants IsNot Nothing AndAlso constants.ContainsKey(Symbol) Then
             Return constants(Symbol).IsDefined
@@ -142,7 +142,7 @@ Public Class ConditionalCompiler
             vbnc.tm.GotoNewline(m_Reader, True)
             Return
         End If
-        name = current.AsIdentifier.Identifier
+        name = current.Identifier
 
         If Not vbnc.tm.Accept(m_Reader, KS.Equals, True) Then
             Return
@@ -152,7 +152,7 @@ Public Class ConditionalCompiler
 
         If Not Me.IfdOut Then
             m_CurrentConstants.Add(New ConditionalConstant(name, value))
-            current.Location.File.AddConditionalConstants(current.Location.Line, m_CurrentConstants)
+            current.Location.File(Compiler).AddConditionalConstants(current.Location.Line, m_CurrentConstants)
         End If
 
         ParseEndOfLine()
@@ -282,7 +282,7 @@ Public Class ConditionalCompiler
     Public Function [Next]() As Token Implements ITokenReader.Next
         Dim result As Token
 
-        If m_Peeked IsNot Nothing Then
+        If m_Peeked.IsSomething Then
             m_Current = m_Peeked
             m_Peeked = Nothing
             Return m_Current
@@ -301,14 +301,14 @@ Public Class ConditionalCompiler
                 Return result
             End If
 
-#If DEBUG Then
-            If result IsNot Nothing AndAlso result.Location.Column <= 40 AndAlso IfdOut AndAlso Helper.ShowDebugFor("CONDITIONALCOMPILER") Then
-                Compiler.Report.WriteLine("EXCLUDED: " & result.Location.ToString())
-            End If
-#End If
+            '#If DEBUG Then
+            '            If result IsNot Nothing AndAlso result.Location.Column <= 40 AndAlso IfdOut AndAlso Helper.ShowDebugFor("CONDITIONALCOMPILER") Then
+            '                Compiler.Report.WriteLine("EXCLUDED: " & result.Location.ToString(Compiler))
+            '            End If
+            '#End If
 
             If result.IsKeyword Then
-                Select Case result.AsKeyword.Keyword
+                Select Case result.Keyword
                     Case KS.ConditionalIf
                         ParseIf()
                     Case KS.ConditionalElse
@@ -349,7 +349,7 @@ Public Class ConditionalCompiler
     End Function
 
     Public Function Peek() As Token Implements ITokenReader.Peek
-        If m_Peeked IsNot Nothing Then Return m_Peeked
+        If m_Peeked.IsSomething Then Return m_Peeked
         m_Peeked = [Next]()
         Return m_Peeked
     End Function

@@ -35,7 +35,7 @@ Public Class RegularPropertyDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.PropertyModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.PropertyModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Property)

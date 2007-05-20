@@ -276,7 +276,7 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
     Function ShowMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String) As Boolean
-        Return ShowMessage(False, New Message(Message, Parameters, Location))
+        Return ShowMessage(False, New Message(Compiler, Message, Parameters, Location))
     End Function
 
     ''' <summary>
@@ -300,9 +300,9 @@ Public Class Report
     <Diagnostics.DebuggerHidden()> _
     Public Function ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String) As Boolean
         If Compiler.tm.IsCurrentTokenValid Then
-            Return ShowMessage(False, New Message(Message, Parameters, Compiler.tm.CurrentToken.Location))
+            Return ShowMessage(False, New Message(Compiler, Message, Parameters, Compiler.tm.CurrentToken.Location))
         Else
-            Return ShowMessage(False, New Message(Message, Parameters, Nothing))
+            Return ShowMessage(False, New Message(Compiler, Message, Parameters, Nothing))
         End If
     End Function
 
@@ -311,7 +311,7 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
     Function ShowMessage(ByVal Message() As Messages, ByVal Location As Span, ByVal ParamArray Parameters()() As String) As Boolean
-        Return ShowMessage(False, New Message(Message, Parameters, Location))
+        Return ShowMessage(False, New Message(Compiler, Message, Parameters, Location))
     End Function
 
     ''' <summary>
@@ -320,9 +320,9 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> Sub SaveMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String)
         If Compiler.tm.IsCurrentTokenValid Then
-            ShowMessage(True, New Message(Message, Parameters, Compiler.tm.CurrentToken.Location))
+            ShowMessage(True, New Message(Compiler, Message, Parameters, Compiler.tm.CurrentToken.Location))
         Else
-            ShowMessage(True, New Message(Message, Parameters, Nothing))
+            ShowMessage(True, New Message(Compiler, Message, Parameters, Nothing))
         End If
     End Sub
 
@@ -330,7 +330,7 @@ Public Class Report
     ''' Saves the multiline message with the specified location and parameters.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> Sub SaveMessage(ByVal Message() As Messages, ByVal Location As Span, ByVal ParamArray Parameters()() As String)
-        ShowMessage(True, New Message(Message, Parameters, Location))
+        ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
     End Sub
 
     ''' <summary>
@@ -338,7 +338,7 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
     Sub SaveMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String)
-        ShowMessage(True, New Message(Message, Parameters, Location))
+        ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
     End Sub
 
     ''' <summary>

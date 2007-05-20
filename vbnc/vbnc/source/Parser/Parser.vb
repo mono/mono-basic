@@ -145,7 +145,7 @@ Partial Public Class Parser
         If tm.Accept(KS.On) Then
             m_Off = False
         ElseIf tm.Accept("Off") Then
-            Console.WriteLine("Warning (" & tm.CurrentToken.Location.File.FileName & "): Option Strict Off will probably fail.")
+            Console.WriteLine("Warning (" & tm.CurrentToken.Location.File(Compiler).FileName & "): Option Strict Off will probably fail.")
             m_Off = True
         End If
 
@@ -285,13 +285,13 @@ Partial Public Class Parser
     Private Shared Function ParseImportsAliasClause(ByVal Parent As ParsedObject, ByVal str As String) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_Second As ImportsNamespaceClause = Nothing
 
         Dim values() As String = str.Split("="c)
         If values.Length <> 2 Then Return Nothing
 
-        m_Identifier = New IdentifierToken(Span.CommandLineSpan, values(0), TypeCharacters.Characters.None, False, Parent.Compiler)
+        m_Identifier = Token.CreateIdentifierToken(Span.CommandLineSpan, values(0), TypeCharacters.Characters.None, False)
 
         m_Second = ParseImportsNamespaceClause(result, values(1))
         If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -313,7 +313,7 @@ Partial Public Class Parser
     Private Function ParseImportsAliasClause(ByVal Parent As ParsedObject) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_Second As ImportsNamespaceClause = Nothing
 
         If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -405,7 +405,7 @@ Partial Public Class Parser
             '[  OptionStatement+  ]
             '[  ImportsStatement+  ]
 
-            If Me.ParseFileHeader(tm.CurrentToken.Location.File, result) = False Then
+            If Me.ParseFileHeader(tm.CurrentToken.Location.File(Compiler), result) = False Then
                 Helper.ErrorRecoveryNotImplemented()
             End If
             ''	[  AttributesStatement+  ]
@@ -422,8 +422,8 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If iLastToken Is tm.CurrentToken AndAlso iLastToken IsNot EndOfLineToken.EOL Then
-                Throw New InternalException("Recursive problems, could not get past token: " & tm.CurrentToken.ToString() & " with location: " & tm.CurrentToken.Location.ToString)
+            If iLastToken.IsSomething = tm.CurrentToken.IsSomething AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
+                Throw New InternalException("Recursive problems, could not get past token: " & tm.CurrentToken.ToString() & " with location: " & tm.CurrentToken.Location.ToString(Compiler))
             End If
         Loop
 
@@ -594,7 +594,7 @@ Partial Public Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseList(Of T)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
-        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentToken.Location.ToString)
+        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentToken.Location.ToString(Compiler))
         Do
             Dim newObject As T
             newObject = ParseMethod(Parent)
@@ -932,7 +932,7 @@ Partial Public Class Parser
         Dim tmp As New Generic.List(Of Expression)
 
         Do
-            If tm.CurrentToken.IsIntegerLiteral AndAlso tm.CurrentToken.AsIntegerLiteral.IntegralLiteral = 0 AndAlso tm.PeekToken.Equals(KS.To) Then tm.NextToken(2)
+            If tm.CurrentToken.IsIntegerLiteral AndAlso tm.CurrentToken.IntegralLiteral = 0 AndAlso tm.PeekToken.Equals(KS.To) Then tm.NextToken(2)
             newExp = ParseExpression(result)
             If newExp Is Nothing Then
                 If m_ShowErrors = False Then Return Nothing
@@ -1162,12 +1162,12 @@ Partial Public Class Parser
         ElseIf first.Length > 7 AndAlso NameResolution.CompareName(first.Substring(1, 7), "Global.") Then
             m_First = New GlobalExpression(result)
         Else
-            Dim i As New IdentifierToken(Parent.Location, first, TypeCharacters.Characters.None, False, Parent.Compiler)
+            Dim i As Token = Token.CreateIdentifierToken(Parent.Location, first, TypeCharacters.Characters.None, False)
             m_First = New Identifier(result, i)
         End If
 
         If second IsNot Nothing Then
-            m_Second = New IdentifierToken(Span.CommandLineSpan, second, TypeCharacters.Characters.None, False, Parent.Compiler)
+            m_Second = Token.CreateIdentifierToken(Span.CommandLineSpan, second, TypeCharacters.Characters.None, False)
         End If
 
         result.Init(m_First, m_Second)
@@ -1199,7 +1199,7 @@ Partial Public Class Parser
         End If
 
         While tm.Accept(KS.Dot)
-            If m_Second IsNot Nothing Then m_First = New QualifiedIdentifier(Parent, m_First, m_Second)
+            If m_Second.IsSomething Then m_First = New QualifiedIdentifier(Parent, m_First, m_Second)
             If tm.CurrentToken.IsIdentifierOrKeyword Then
                 m_Second = tm.CurrentToken
                 tm.NextToken()
@@ -1218,7 +1218,7 @@ Partial Public Class Parser
         Dim result As Identifier
 
         If tm.CurrentToken.IsIdentifier Then
-            result = New Identifier(Parent, tm.CurrentToken.AsIdentifier)
+            result = New Identifier(Parent, tm.CurrentToken)
             tm.NextToken()
         Else
             result = Nothing
@@ -1232,17 +1232,17 @@ Partial Public Class Parser
 
         If vbnc.BuiltInTypeName.IsBuiltInTypeName(tm) = False Then Throw New InternalException(Parent)
 
-        m_Typename = tm.CurrentToken.AsKeyword.Keyword
+        m_Typename = tm.CurrentToken.Keyword
         tm.NextToken()
 
         Return New BuiltInTypeName(Parent, m_Typename)
     End Function
 
-    Private Function ParseModifiers(ByVal Parent As ParsedObject, ByVal ValidModifiers As KS()) As Modifiers
-        Dim result As New Modifiers(Parent)
+    Private Function ParseModifiers(ByVal Parent As ParsedObject, ByVal ValidModifiers As ModifierMasks) As Modifiers
+        Dim result As New Modifiers()
 
         While tm.CurrentToken.Equals(ValidModifiers)
-            result.AddModifier(tm.CurrentToken.AsKeyword.Keyword)
+            result.AddModifier(tm.CurrentToken.Keyword)
             tm.NextToken()
         End While
 

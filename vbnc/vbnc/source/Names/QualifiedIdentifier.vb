@@ -126,7 +126,7 @@ Public Class QualifiedIdentifier
             Return m_Second
         End Get
         Set(ByVal value As Token)
-            Helper.Assert(value Is Nothing)
+            'Helper.Assert(value Is Nothing)
             m_Second = value
         End Set
     End Property
@@ -189,7 +189,7 @@ Public Class QualifiedIdentifier
                 Else
                     Throw New InternalException(Me)
                 End If
-                If m_Second IsNot Nothing Then
+                If m_Second.IsSomething Then
                     m_Name = m_Name & "." & m_Second.ToString
                 End If
             End If

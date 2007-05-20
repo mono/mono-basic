@@ -16,8 +16,8 @@
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-Public Enum LiteralTypeCharacters_Characters
-    None = -1
+Public Enum LiteralTypeCharacters_Characters As Byte
+    None '= -1
     <KSEnumString("S")> ShortCharacter
     <KSEnumString("US")> UnsignedShortCharacter
     <KSEnumString("I")> IntegerCharacter
@@ -35,8 +35,8 @@ Public Enum LiteralTypeCharacters_Characters
     <KSEnumString("@")> DecimalTypeCharacter
 
 End Enum
-Public Class LiteralTypeCharacters
 
+Public Class LiteralTypeCharacters
     Private Shared m_Characters() As String = {"S", "US", "I", "UI", "L", "UL", "%", "&", "F", "R", "D", "!", "#", "@"}
     Private Shared m_Types() As BuiltInDataTypes = {BuiltInDataTypes.Short, BuiltInDataTypes.UShort, BuiltInDataTypes.Integer, BuiltInDataTypes.UInteger, BuiltInDataTypes.Long, BuiltInDataTypes.ULong, BuiltInDataTypes.Integer, BuiltInDataTypes.Long, BuiltInDataTypes.Single, BuiltInDataTypes.Double, BuiltInDataTypes.Decimal, BuiltInDataTypes.Single, BuiltInDataTypes.Double, BuiltInDataTypes.Decimal}
 
@@ -52,14 +52,14 @@ Public Class LiteralTypeCharacters
         If chr = LiteralTypeCharacters_Characters.None Then
             Throw New InternalException("")
         Else
-            Return m_Types(chr)
+            Return m_Types(chr - 1)
         End If
     End Function
 
     Shared Function GetTypeCharacter(ByVal chr As String) As LiteralTypeCharacters_Characters
         chr = chr.ToUpperInvariant
         For i As Integer = 0 To m_Characters.GetUpperBound(0)
-            If m_Characters(i).Equals(chr, StringComparison.Ordinal) Then Return CType(i, LiteralTypeCharacters_Characters)
+            If m_Characters(i).Equals(chr, StringComparison.Ordinal) Then Return CType(i + 1, LiteralTypeCharacters_Characters)
         Next
         Return LiteralTypeCharacters_Characters.None
     End Function
@@ -68,7 +68,7 @@ Public Class LiteralTypeCharacters
         If chr = LiteralTypeCharacters_Characters.None Then
             Return ""
         Else
-            Return m_Characters(chr)
+            Return m_Characters(chr - 1)
         End If
     End Function
 End Class

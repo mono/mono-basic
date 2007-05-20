@@ -91,7 +91,7 @@ Partial Class Parser
         Dim m_ImplementsClause As MemberImplementsClause = Nothing
         Dim m_EventAccessorDeclarations As EventAccessorDeclarations = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.EventModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.EventModifiers)
 
         tm.AcceptIfNotInternalError(KS.CustomEvent)
 
@@ -137,7 +137,7 @@ Partial Class Parser
         Dim m_ParametersOrType As ParametersOrType
 
 
-        m_Modifiers = ParseModifiers(result, Enums.InterfaceEventModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.InterfaceEventModifiers)
 
         tm.AcceptIfNotInternalError(KS.Event)
 
@@ -199,7 +199,7 @@ Partial Class Parser
         Dim m_ParametersOrType As ParametersOrType
         Dim m_ImplementsClause As MemberImplementsClause
 
-        m_Modifiers = ParseModifiers(result, Enums.EventModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.EventModifiers)
 
         tm.AcceptIfNotInternalError(KS.Event)
 
@@ -255,7 +255,7 @@ Partial Class Parser
 
         Dim endkeyword As KS
         If tm.CurrentToken.Equals(KS.AddHandler, KS.RemoveHandler, KS.RaiseEvent) Then
-            m_HandlerType = tm.CurrentToken.AsKeyword.Keyword
+            m_HandlerType = tm.CurrentToken.Keyword
             endkeyword = Enums.GetKSStringAttribute(m_HandlerType).MultiKeyword
             tm.NextToken()
         Else
@@ -281,7 +281,7 @@ Partial Class Parser
         If m_ParameterList Is Nothing Then m_ParameterList = New ParameterList(result)
 
         If m_HandlerType = KS.RaiseEvent Then
-            m_Modifiers = New Modifiers(result, KS.Private)
+            m_Modifiers = New Modifiers(ModifierMasks.Private)
         Else
             m_modifiers = EventModifiers
         End If

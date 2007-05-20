@@ -265,7 +265,7 @@ Public MustInherit Class MethodBaseDeclaration
     Overridable Function ResolveOverrides() As Boolean
         Dim result As Boolean = True
 
-        If Me.Modifiers.Is(KS.Overrides) = False Then Return result
+        If Me.Modifiers.Is(ModifierMasks.Overrides) = False Then Return result
 
         Return result
 

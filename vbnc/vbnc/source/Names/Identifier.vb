@@ -25,18 +25,18 @@
 Public Class Identifier
     Inherits ParsedObject
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As IdentifierToken)
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Token)
         MyBase.new(Parent)
         m_Identifier = Identifier
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken)
+    Sub Init(ByVal Identifier As Token)
         m_Identifier = Identifier
     End Sub
 
@@ -45,7 +45,7 @@ Public Class Identifier
         Return New Identifier(NewParent, m_Identifier)
     End Function
 
-    ReadOnly Property Token() As IdentifierToken
+    ReadOnly Property Token() As Token
         Get
             Return m_Identifier
         End Get

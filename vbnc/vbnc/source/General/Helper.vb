@@ -887,15 +887,6 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function FilterTo(Of DesiredType As Class, CollectionType As Class)(ByVal Types As Generic.List(Of CollectionType)) As Generic.List(Of CollectionType)
-        Dim result As New Generic.List(Of CollectionType)
-        For Each t As CollectionType In Types
-            If TypeOf t Is DesiredType Then result.Add(t)
-        Next
-        Return result
-    End Function
-
-
     ''' <summary>
     ''' Finds a non-private, non-shared constructor with no parameters in the array.
     ''' If nothing found, returns nothing.
@@ -2374,40 +2365,40 @@ Public Class Helper
     ''' </remarks>
     Shared Function getTypeAttributeScopeFromScope(ByVal Modifiers As Modifiers, ByVal isNested As Boolean) As System.Reflection.TypeAttributes
         If Not isNested Then
-            If Modifiers IsNot Nothing Then
-                If Modifiers.Is(KS.Public) Then
-                    Return Reflection.TypeAttributes.Public
-                Else
-                    Return Reflection.TypeAttributes.NotPublic
-                End If
+            'If vbnc.Modifiers.IsNothing(Modifiers) = False Then
+            If Modifiers.Is(ModifierMasks.Public) Then
+                Return Reflection.TypeAttributes.Public
             Else
-                Return TypeAttributes.NotPublic
+                Return Reflection.TypeAttributes.NotPublic
             End If
+            'Else
+            '  Return TypeAttributes.NotPublic
+            'End If
         Else
-            If Modifiers IsNot Nothing Then
-                If Modifiers.Is(KS.Public) Then
-                    Return Reflection.TypeAttributes.NestedPublic
-                ElseIf Modifiers.Is(KS.Friend) Then
-                    If Modifiers.Is(KS.Protected) Then
-                        Return Reflection.TypeAttributes.NestedFamORAssem
-                        '0Return Reflection.TypeAttributes.NotPublic
-                        'Return Reflection.TypeAttributes.VisibilityMask
-                    Else
-                        Return Reflection.TypeAttributes.NestedAssembly
-                        'Return Reflection.TypeAttributes.NotPublic
-                    End If
-                ElseIf Modifiers.Is(KS.Protected) Then
-                    Return Reflection.TypeAttributes.NestedFamily
-                    'Return Reflection.TypeAttributes.NotPublic
-                ElseIf Modifiers.Is(KS.Private) Then
-                    Return Reflection.TypeAttributes.NestedPrivate
-                Else
-                    'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Default scope set to public...")
-                    Return Reflection.TypeAttributes.NestedPublic
-                End If
+        'If vbnc.Modifiers.IsNothing(Modifiers) = False Then
+        If Modifiers.Is(ModifierMasks.Public) Then
+            Return Reflection.TypeAttributes.NestedPublic
+        ElseIf Modifiers.Is(ModifierMasks.Friend) Then
+            If Modifiers.Is(ModifierMasks.Protected) Then
+                Return Reflection.TypeAttributes.NestedFamORAssem
+                '0Return Reflection.TypeAttributes.NotPublic
+                'Return Reflection.TypeAttributes.VisibilityMask
             Else
-                Return Reflection.TypeAttributes.NestedPublic
+                Return Reflection.TypeAttributes.NestedAssembly
+                'Return Reflection.TypeAttributes.NotPublic
             End If
+        ElseIf Modifiers.Is(ModifierMasks.Protected) Then
+            Return Reflection.TypeAttributes.NestedFamily
+            'Return Reflection.TypeAttributes.NotPublic
+        ElseIf Modifiers.Is(ModifierMasks.Private) Then
+            Return Reflection.TypeAttributes.NestedPrivate
+        Else
+            'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Default scope set to public...")
+            Return Reflection.TypeAttributes.NestedPublic
+        End If
+        ' Else
+        'Return Reflection.TypeAttributes.NestedPublic
+        'End If
         End If
     End Function
 
@@ -2862,6 +2853,12 @@ Public Class Helper
                 result = fromExpr.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
             End If
             'do nothing
+        ElseIf DestinationType.IsByRef AndAlso Parent.Compiler.TypeResolution.IsImplicitlyConvertible(Parent.Compiler, fromExpr.ExpressionType, DestinationType.GetElementType) Then
+            Dim tmpExp As Expression
+            tmpExp = CreateTypeConversion(Parent, fromExpr, DestinationType.GetElementType, result)
+            If result = False Then Return fromExpr
+
+            fromExpr = tmpExp
         ElseIf CompareType(fromExpr.ExpressionType, Parent.Compiler.TypeCache.Nothing) Then
             'do nothing
         ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_Enum) AndAlso fromExpr.ExpressionType.IsEnum Then
@@ -3076,7 +3073,7 @@ Public Class Helper
             'has the Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute attribute, 
             'then the literal 1 is supplied for text comparisons and the literal 0 otherwise
             Dim cExp As ConstantExpression
-            If Parent.Location.File.IsOptionCompareText Then
+            If Parent.Location.File(Parent.Compiler).IsOptionCompareText Then
                 cExp = New ConstantExpression(Parent, 1I, Parent.Compiler.TypeCache.System_Int32)
             Else
                 cExp = New ConstantExpression(Parent, 0I, Parent.Compiler.TypeCache.System_Int32)

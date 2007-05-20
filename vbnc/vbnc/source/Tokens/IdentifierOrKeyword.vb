@@ -48,9 +48,9 @@ Public Class IdentifierOrKeyword
     ReadOnly Property Name() As String
         Get
             If IsIdentifier Then
-                Return AsIdentifier.Identifier
+                Return Token.Identifier
             ElseIf IsKeyword Then
-                Return AsKeyword.Identifier
+                Return Token.Identifier
             Else
                 Throw New InternalException(Me)
             End If
@@ -65,27 +65,27 @@ Public Class IdentifierOrKeyword
 
     ReadOnly Property IsIdentifier() As Boolean
         Get
-            Return TypeOf m_Token Is IdentifierToken
+            Return m_Token.IsIdentifier
         End Get
     End Property
 
     ReadOnly Property IsKeyword() As Boolean
         Get
-            Return TypeOf m_Token Is KeywordToken
+            Return m_Token.IsKeyword
         End Get
     End Property
 
-    ReadOnly Property AsIdentifier() As IdentifierToken
-        Get
-            Return DirectCast(m_Token, IdentifierToken)
-        End Get
-    End Property
+    'ReadOnly Property AsIdentifier() As IdentifierToken
+    '    Get
+    '        Return DirectCast(m_Token, IdentifierToken)
+    '    End Get
+    'End Property
 
-    ReadOnly Property AsKeyword() As KeywordToken
-        Get
-            Return DirectCast(m_Token, KeywordToken)
-        End Get
-    End Property
+    'ReadOnly Property AsKeyword() As KeywordToken
+    '    Get
+    '        Return DirectCast(m_Token, KeywordToken)
+    '    End Get
+    'End Property
 
     ReadOnly Property Token() As Token
         Get

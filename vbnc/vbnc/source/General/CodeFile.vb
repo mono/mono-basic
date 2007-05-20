@@ -72,16 +72,16 @@ Public Class CodeFile
     Private m_SymbolDocument As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
 
     Private m_ConditionalConstants As New Generic.List(Of ConditionalConstants)
-    Private m_ConditionalConstantsLines As New Generic.List(Of Integer)
+    Private m_ConditionalConstantsLines As New Generic.List(Of UInteger)
 
     Private m_Code As String
 
-    Sub AddConditionalConstants(ByVal Line As Integer, ByVal Constants As ConditionalConstants)
+    Sub AddConditionalConstants(ByVal Line As UInteger, ByVal Constants As ConditionalConstants)
         m_ConditionalConstants.Add(Constants.Clone)
         m_ConditionalConstantsLines.Add(Line)
     End Sub
 
-    Function GetConditionalConstants(ByVal Line As Integer) As ConditionalConstants
+    Function GetConditionalConstants(ByVal Line As UInteger) As ConditionalConstants
         If m_ConditionalConstantsLines.Count = 0 Then Return Nothing
 
         'If the first #const is after the line, no constants in this file at the line

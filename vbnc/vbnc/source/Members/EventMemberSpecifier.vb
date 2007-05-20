@@ -67,7 +67,7 @@ Public Class EventMemberSpecifier
         If result = False Then Helper.ErrorRecoveryNotImplemented()
 
         If m_Expression.Classification.IsEventAccessClassification = False Then
-            Helper.AddError("Must handle an event: " & Location.ToString)
+            Helper.AddError("Must handle an event: " & Location.ToString(Compiler))
         End If
 
         Helper.NotImplementedYet("Variable must have WithEvents")

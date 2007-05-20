@@ -38,7 +38,7 @@ Partial Public Class Parser
             Throw New InternalException(parent)
         End If
 
-        If tm.PeekToken.IsEndOfLine(True) Then
+        If tm.PeekToken.IsEndOfLineOnly Then
             tm.NextToken()
         End If
 
@@ -134,14 +134,14 @@ Partial Public Class Parser
         Else
             If tm.Accept(KS.GoTo) = False Then Helper.ErrorRecoveryNotImplemented()
             If tm.CurrentToken.IsIntegerLiteral Then
-                If tm.CurrentToken.AsIntegerLiteral.IntegralLiteral = 0 Then
+                If tm.CurrentToken.IntegralLiteral = 0 Then
                     m_IsGotoZero = True
                 Else
                     m_Label = tm.CurrentToken
                 End If
                 tm.NextToken()
             ElseIf tm.CurrentToken = KS.Minus AndAlso tm.PeekToken.IsIntegerLiteral Then
-                If tm.PeekToken.AsIntegerLiteral.IntegralLiteral = 1 Then
+                If tm.PeekToken.IntegralLiteral = 1 Then
                     m_IsGotoMinusOne = True
                     tm.NextToken(2)
                 Else
@@ -191,7 +191,7 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError(KS.Exit)
         If tm.CurrentToken.Equals(KS.Sub, KS.Function, KS.Property, KS.Do, KS.For, KS.Try, KS.While, KS.Select) Then
-            m_ExitWhat = tm.CurrentToken.AsKeyword.Keyword
+            m_ExitWhat = tm.CurrentToken.Keyword
             tm.NextToken()
         Else
             Compiler.Report.ShowMessage(Messages.VBNC30240)
@@ -222,7 +222,7 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError(KS.Continue)
         If tm.CurrentToken.Equals(KS.Do, KS.For, KS.While) Then
-            m_ContinueWhat = tm.CurrentToken.AsKeyword.Keyword
+            m_ContinueWhat = tm.CurrentToken.Keyword
             tm.NextToken()
         Else
             Compiler.Report.ShowMessage(Messages.VBNC30781)
@@ -441,7 +441,7 @@ Partial Public Class Parser
     Private Function ParseUsingDeclarator(ByVal Parent As ParsedObject) As UsingDeclarator
         Dim result As New UsingDeclarator(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_IsNew As Boolean
         Dim m_IsVariableDeclaration As Boolean
         Dim m_TypeName As NonArrayTypeName
@@ -696,7 +696,7 @@ Partial Public Class Parser
         Dim result As New CatchStatement(Parent)
 
         Dim m_Code As CodeBlock
-        Dim m_Variable As IdentifierToken = Nothing
+        Dim m_Variable As Token = Nothing
         Dim m_When As Expression = Nothing
         Dim m_TypeName As NonArrayTypeName = Nothing
 
@@ -1039,13 +1039,13 @@ Partial Public Class Parser
                 Compiler.Report.ShowMessage(Messages.VBNC30239)
                 m_Comparison = KS.Equals
             Else
-                m_Comparison = tm.CurrentToken.AsSymbol.Symbol
+                m_Comparison = tm.CurrentToken.Symbol
                 tm.NextToken()
             End If
             m_Expression1 = ParseExpression(result)
             If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         ElseIf tm.CurrentToken.Equals(CaseClause.RelationalOperators) Then
-            m_Comparison = tm.CurrentToken.AsSymbol.Symbol
+            m_Comparison = tm.CurrentToken.Symbol
             tm.NextToken()
             m_Expression1 = ParseExpression(result)
             If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented()

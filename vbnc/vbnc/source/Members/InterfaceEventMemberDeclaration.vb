@@ -31,7 +31,7 @@ Public Class InterfaceEventMemberDeclaration
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.InterfaceEventModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.InterfaceEventModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Event)

@@ -38,7 +38,7 @@ Public MustInherit Class PartialTypeDeclaration
         MyBase.new(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As IdentifierToken, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters)
         m_TypeImplementsClauses = [Implements]
         If m_TypeImplementsClauses Is Nothing Then m_TypeImplementsClauses = New TypeImplementsClauses(Me)
@@ -97,9 +97,9 @@ Public MustInherit Class PartialTypeDeclaration
             Dim result As TypeAttributes
 
             If m_PartialDeclarations IsNot Nothing AndAlso m_PartialDeclarations.Count > 1 Then
-                mods = New Modifiers(Me)
+                mods = New Modifiers()
                 For Each tp As PartialTypeDeclaration In m_PartialDeclarations
-                    mods.AddModifiers(tp.Modifiers)
+                    mods.AddModifiers(tp.Modifiers.Mask)
                 Next
             Else
                 mods = Modifiers
@@ -262,7 +262,7 @@ Public MustInherit Class PartialTypeDeclaration
     Private Function CheckForPartialKeyword() As Boolean
         Helper.Assert(Me.IsPartial)
         For Each partialDeclaration As PartialTypeDeclaration In m_PartialDeclarations
-            If partialDeclaration.Modifiers.Is(KS.Partial) Then Return True
+            If partialDeclaration.Modifiers.Is(ModifierMasks.Partial) Then Return True
         Next
         Return False
     End Function

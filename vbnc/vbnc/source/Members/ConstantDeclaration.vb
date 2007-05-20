@@ -28,7 +28,7 @@ Public Class ConstantDeclaration
 
     Private m_Descriptor As New FieldDescriptor(Me)
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_TypeName As TypeName
     Private m_ConstantExpression As Expression
 
@@ -48,7 +48,7 @@ Public Class ConstantDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As IdentifierToken, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Token, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
         MyBase.Init(Attributes, Modifiers, Identifier.Name)
         m_Identifier = Identifier
         m_TypeName = TypeName
@@ -61,7 +61,7 @@ Public Class ConstantDeclaration
     ''' </summary>
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.ConstantModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.ConstantModifiers)
             i += 1
         End While
         Return tm.PeekToken(i) = KS.Const
@@ -197,7 +197,7 @@ Public Class ConstantDeclaration
         End Get
     End Property
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
             Return m_Identifier
         End Get

@@ -89,7 +89,7 @@ Public Class ParameterList
         Dim result As Boolean = True
 
         For i As Integer = 0 To Count - 1
-            If Me(i).Modifiers.Is(KS.Optional) = OptionalParameters Then
+            If Me(i).Modifiers.Is(ModifierMasks.Optional) = OptionalParameters Then
                 result = Me(i).ResolveCode(Info) AndAlso result
             End If
         Next

@@ -58,7 +58,7 @@ Public Class SimpleTypeName
 
     Friend Sub ChangeQualifiedIdentifier(ByVal qi As QualifiedIdentifier)
         Helper.Assert(IsQualifiedIdentifier)
-        Helper.Assert(AsQualifiedIdentifier.Second IsNot Nothing)
+        'Helper.Assert(AsQualifiedIdentifier.Second IsNot Nothing)
         Helper.Assert(AsQualifiedIdentifier.First Is qi)
         m_TypeName = qi
     End Sub

@@ -40,7 +40,7 @@ Public Class EnumDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As IdentifierToken, ByVal EnumType As KS)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal EnumType As KS)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, 0)
         m_QualifiedName = EnumType
     End Sub
@@ -58,6 +58,9 @@ Public Class EnumDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
+#If ENABLECECIL Then
+        CecilBaseType = Compiler.CecilTypeCache.System_Enum
+#End If
         BaseType = Compiler.TypeCache.System_Enum
 
         result = MyBase.ResolveType AndAlso result
@@ -117,7 +120,7 @@ Public Class EnumDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.TypeModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.TypeModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Enum)

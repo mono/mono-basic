@@ -25,21 +25,21 @@ Public Class Operand
     Inherits ParsedObject
     Implements INameable
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_TypeName As TypeName
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal TypeName As TypeName)
+    Sub Init(ByVal Identifier As Token, ByVal TypeName As TypeName)
         m_Identifier = Identifier
         m_TypeName = TypeName
     End Sub
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
-            Return m_identifier
+            Return m_Identifier
         End Get
     End Property
 

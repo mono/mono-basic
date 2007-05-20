@@ -52,9 +52,9 @@ Public Class Parameter
         MyBase.New(Parent)
         m_ParameterIdentifier = New ParameterIdentifier(Me, Name)
         m_ParameterType = ParameterType
-        m_Modifiers = New Modifiers(Me)
+        m_Modifiers = New Modifiers()
 
-        Helper.Assert(m_Modifiers IsNot Nothing)
+        'Helper.Assert(vbnc.Modifiers.IsNothing(m_Modifiers) = False)
         Helper.Assert(m_ParameterIdentifier IsNot Nothing)
     End Sub
 
@@ -62,9 +62,9 @@ Public Class Parameter
         MyBase.New(Parent)
         m_ParameterIdentifier = New ParameterIdentifier(Me, Name)
         m_TypeName = ParameterType
-        m_Modifiers = New Modifiers(Me)
+        m_Modifiers = New Modifiers()
 
-        Helper.Assert(m_Modifiers IsNot Nothing)
+        'Helper.Assert(vbnc.Modifiers.IsNothing(m_Modifiers) = False)
         Helper.Assert(m_ParameterIdentifier IsNot Nothing)
     End Sub
 
@@ -75,7 +75,7 @@ Public Class Parameter
         m_TypeName = TypeName
         m_ConstantExpression = ConstantExpression
 
-        Helper.Assert(m_Modifiers IsNot Nothing)
+        'Helper.Assert(vbnc.Modifiers.IsNothing(m_Modifiers) = False)
         Helper.Assert(m_ParameterIdentifier IsNot Nothing)
         '    Helper.Assert(m_TypeName IsNot Nothing)
     End Sub
@@ -189,7 +189,7 @@ Public Class Parameter
             End If
         End If
 
-        If Me.Modifiers.ContainsAny(KS.ParamArray) Then
+        If Me.Modifiers.Is(ModifierMasks.ParamArray) Then
             Dim cab As CustomAttributeBuilder
             cab = New CustomAttributeBuilder(Compiler.TypeCache.System_ParamArrayAttribute__ctor, New Object() {})
             m_ParameterBuilder.SetCustomAttribute(cab)
@@ -221,7 +221,7 @@ Public Class Parameter
             result = m_ConstantExpression.ResolveExpression(info) AndAlso result
         End If
 
-        If Me.Modifiers.ContainsAny(KS.Optional) Then
+        If Me.Modifiers.Is(ModifierMasks.Optional) Then
             m_ParameterAttributes = Reflection.ParameterAttributes.Optional
             If m_ConstantExpression Is Nothing Then
                 Helper.AddError("Optional parameters must have a constant expression.")
@@ -269,7 +269,7 @@ Public Class Parameter
             ElseIf m_ParameterIdentifier.Identifier.HasTypeCharacter Then
                 m_ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
             Else
-                If Me.Location.File.IsOptionStrictOn Then
+                If Me.Location.File(Compiler).IsOptionStrictOn Then
                     Helper.AddError("Parameter type must be specified.")
                 Else
                     Helper.AddWarning("Parameter type should be specified.")
@@ -278,7 +278,7 @@ Public Class Parameter
             End If
         End If
         Helper.Assert(m_ParameterType IsNot Nothing)
-        If m_Modifiers.Is(KS.ByRef) Then
+        If m_Modifiers.Is(ModifierMasks.ByRef) Then
             m_ParameterType = Compiler.TypeManager.MakeByRefType(Me, m_ParameterType)
         End If
 

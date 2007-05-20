@@ -38,6 +38,9 @@ Public Class StructureDeclaration
 
         MyBase.BaseType = Compiler.TypeCache.System_ValueType
 
+#If ENABLECECIL Then
+        MyBase.CecilBaseType = Compiler.CecilTypeCache.System_ValueType
+#End If
         result = MyBase.ResolveType AndAlso result
 
         Return result
@@ -45,7 +48,7 @@ Public Class StructureDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.StructureModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.StructureModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Structure)

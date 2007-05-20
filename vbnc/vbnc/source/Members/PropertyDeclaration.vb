@@ -110,13 +110,13 @@ Public Class PropertyDeclaration
     Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal MemberImplementsClause As MemberImplementsClause)
         Dim GetMethod As PropertyGetDeclaration
         Dim SetMethod As PropertySetDeclaration
-        If Modifiers.Is(KS.ReadOnly) = False Then
+        If Modifiers.Is(ModifierMasks.ReadOnly) = False Then
             SetMethod = New PropertySetDeclaration(Me)
             SetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing, Nothing)
         Else
             SetMethod = Nothing
         End If
-        If Modifiers.Is(KS.WriteOnly) = False Then
+        If Modifiers.Is(ModifierMasks.WriteOnly) = False Then
             GetMethod = New PropertyGetDeclaration(Me)
             GetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing)
         Else
@@ -133,13 +133,13 @@ Public Class PropertyDeclaration
 
     ReadOnly Property CanRead() As Boolean
         Get
-            Return Modifiers.Is(KS.WriteOnly) = False
+            Return Modifiers.Is(ModifierMasks.WriteOnly) = False
         End Get
     End Property
 
     ReadOnly Property CanWrite() As Boolean
         Get
-            Return Modifiers.Is(KS.ReadOnly) = False
+            Return Modifiers.Is(ModifierMasks.ReadOnly) = False
         End Get
     End Property
 
@@ -214,7 +214,7 @@ Public Class PropertyDeclaration
         If m_Get IsNot Nothing Then result = m_Get.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
 
-        If Modifiers.Is(KS.Default) Then
+        If Modifiers.Is(ModifierMasks.Default) Then
             Dim tp As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
             result = tp.SetDefaultAttribute(Me.Name) AndAlso result
         End If

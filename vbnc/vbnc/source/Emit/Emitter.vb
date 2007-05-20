@@ -33,11 +33,11 @@ Partial Public Class Emitter
 
     Shared Sub MarkSequencePoint(ByVal Info As EmitInfo, ByVal Location As Span)
         'If Location Is Nothing Then Return
-        If Location.File Is Nothing Then Return
-        If Location.File.SymbolDocument Is Nothing Then Return
+        If Location.File(Info.Compiler) Is Nothing Then Return
+        If Location.File(Info.Compiler).SymbolDocument Is Nothing Then Return
         If Location.Line <= 0 Then Return
 
-        Info.ILGen.MarkSequencePoint(Location.File.SymbolDocument, Location.Line, Location.Column, Location.EndLine, Location.EndColumn)
+        Info.ILGen.MarkSequencePoint(Location.File(Info.Compiler).SymbolDocument, CInt(Location.Line), Location.Column, CInt(Location.Line), Location.EndColumn)
     End Sub
 
     Shared Function DeclareLocal(ByVal Info As EmitInfo, ByVal Type As Type, Optional ByVal Name As String = "") As LocalBuilder
@@ -1690,7 +1690,7 @@ Partial Public Class Emitter
                 Info.Stack.Push(Info.Compiler.TypeCache.System_String)
                 Return
             Case TypeCode.Byte
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_Byte)
                 Return
             Case TypeCode.UInt16

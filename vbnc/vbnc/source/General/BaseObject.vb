@@ -38,14 +38,6 @@ Public MustInherit Class BaseObject
     Private m_Location As Span
 
     Private Shared m_Compiler As Compiler
-
-    ReadOnly Property HasLocation() As Boolean
-        Get
-            Return m_Location IsNot Nothing
-            Return True
-        End Get
-    End Property
-
     ''' <summary>
     ''' The location in the source of this object.
     ''' </summary>
@@ -53,7 +45,7 @@ Public MustInherit Class BaseObject
     ''' <remarks></remarks>
     Friend Property Location() As Span Implements IBaseObject.Location
         Get
-            If m_Location IsNot Nothing AndAlso m_Location.File Is Nothing AndAlso m_Location.Column = 0 AndAlso m_Location.Line = 0 AndAlso m_Parent IsNot Nothing AndAlso m_Parent.Location IsNot Nothing Then
+            If m_Location.HasFile = False AndAlso m_Location.Column = 0 AndAlso m_Location.Line = 0 AndAlso m_Parent IsNot Nothing Then
                 Return m_Parent.Location
             End If
             Return m_Location
@@ -61,6 +53,12 @@ Public MustInherit Class BaseObject
         Set(ByVal value As Span)
             m_Location = value
         End Set
+    End Property
+
+    ReadOnly Property File() As CodeFile
+        Get
+            Return Location.File(Compiler)
+        End Get
     End Property
 
     Overridable ReadOnly Property FullName() As String Implements IBaseObject.FullName
@@ -122,15 +120,6 @@ Public MustInherit Class BaseObject
         Else
             Return Parent.FindFirstParent(Of T1, T2)()
         End If
-        'Dim found As IBaseObject = TryCast(Parent, T1)
-        'If found Is Nothing Then found = TryCast(Parent, T2)
-        'If found IsNot Nothing Then
-        '    Return found
-        'ElseIf Parent Is Nothing Then
-        '    Return Nothing
-        'Else
-        '    Return Parent.FindFirstParent(Of T1, T2)()
-        'End If
     End Function
 
     ''' <summary>
@@ -142,7 +131,7 @@ Public MustInherit Class BaseObject
         'If m_Parent IsNot Nothing AndAlso tm IsNot Nothing Then m_Location = tm.CurrentToken.Location
 #If DEBUG Then
         Helper.Assert(Parent IsNot Me)
-        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler OrElse TypeOf Me Is Modifiers)
+        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler)
         'Make sure there aren't any circular references.
         Dim tmp As IBaseObject = Parent
         Do While tmp IsNot Nothing
@@ -160,7 +149,7 @@ Public MustInherit Class BaseObject
         m_Location = Location
 #If DEBUG Then
         Helper.Assert(Parent IsNot Me)
-        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler OrElse TypeOf Me Is Modifiers)
+        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler)
         'Make sure there aren't any circular references.
         Dim tmp As IBaseObject = Parent
         Do While tmp IsNot Nothing
@@ -270,11 +259,11 @@ Public MustInherit Class BaseObject
 
             Dim tmp As BaseObject = Me
             Do Until tmp Is Nothing
-                If tmp.Location Is Nothing Then
-                    result &= "(" & tmp.GetType.Name & "): (no location)" & vb.vbNewLine
-                Else
-                    result &= "(" & tmp.GetType.Name & "): " & tmp.Location.ToString & VB.vbNewLine
-                End If
+                'If tmp.HasLocation = False Then
+                '    result &= "(" & tmp.GetType.Name & "): (no location)" & VB.vbNewLine
+                'Else
+                result &= "(" & tmp.GetType.Name & "): " & tmp.Location.ToString(Compiler) & VB.vbNewLine
+                'End If
                 tmp = tmp.Parent
             Loop
 

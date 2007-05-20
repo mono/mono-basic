@@ -22,6 +22,7 @@
 ''' A compiler message might have several lines.
 ''' </summary>
 Public Class Message
+    Private m_Compiler As Compiler
 
     ''' <summary>
     ''' The actual message itself.
@@ -99,7 +100,7 @@ Public Class Message
     ''' </summary>
     ''' <param name="Message"></param>
     ''' <remarks></remarks>
-    Sub New(ByVal Message As Messages, ByVal Location As Span)
+    Sub New(ByVal Compiler As Compiler, ByVal Message As Messages, ByVal Location As Span)
         Me.m_Message = New Messages() {Message}
         Me.m_Location = Location
         Me.m_Parameters = New String()() {}
@@ -108,7 +109,7 @@ Public Class Message
     ''' <summary>
     ''' Create a new message with the specified data.
     ''' </summary>
-    Sub New(ByVal Message As Messages(), ByVal Parameters()() As String, ByVal Location As Span)
+    Sub New(ByVal Compiler As Compiler, ByVal Message As Messages(), ByVal Parameters()() As String, ByVal Location As Span)
         Me.m_Message = Message
         Me.m_Location = Location
         Me.m_Parameters = Parameters
@@ -117,7 +118,7 @@ Public Class Message
     ''' <summary>
     ''' Create a new message with the specified data.
     ''' </summary>
-    Sub New(ByVal Message As Messages, ByVal Parameters() As String, ByVal Location As Span)
+    Sub New(ByVal Compiler As Compiler, ByVal Message As Messages, ByVal Parameters() As String, ByVal Location As Span)
         Me.m_Message = New Messages() {Message}
         Me.m_Location = Location
         If Parameters Is Nothing Then
@@ -126,6 +127,12 @@ Public Class Message
             Me.m_Parameters = New String()() {Parameters}
         End If
     End Sub
+
+    ReadOnly Property Compiler() As Compiler
+        Get
+            Return m_Compiler
+        End Get
+    End Property
 
     ''' <summary>
     ''' Formats the message to a string.
@@ -172,13 +179,13 @@ Public Class Message
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
 
         'Get the location string
-        If Location IsNot Nothing Then
-            strLocation = Location.ToString()
-            result = MESSAGEFORMATWITHLOCATION
-        Else
-            strLocation = ""
-            result = MESSAGEFORMAT
-        End If
+        'If Location IsNot Nothing Then
+        strLocation = Location.ToString(Compiler)
+        result = MESSAGEFORMATWITHLOCATION
+        'Else
+        'strLocation = ""
+        'result = MESSAGEFORMAT
+        'End If
 
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)
@@ -188,28 +195,22 @@ Public Class Message
         Return result
     End Function
 
-    ReadOnly Property IsWarning() As Boolean
-        Get
-
-        End Get
-    End Property
-
-#If DEBUG Then
-    ''' <summary>
-    ''' Dump this message to an xmlwriter.
-    ''' </summary>
-    ''' <param name="xml"></param>
-    ''' <remarks></remarks>
-    Sub Dump(ByVal xml As Xml.XmlWriter)
-        xml.WriteStartElement("Message")
-        xml.WriteAttributeString("Level", Level.ToString)
-        'If Location IsNot Nothing Then 
-        Location.Dump(xml)
-        'End If
-        For i As Integer = 0 To m_Message.GetUpperBound(0)
-            xml.WriteString(Me.ToString)
-        Next
-        xml.WriteEndElement()
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    ''' <summary>
+    '    ''' Dump this message to an xmlwriter.
+    '    ''' </summary>
+    '    ''' <param name="xml"></param>
+    '    ''' <remarks></remarks>
+    '    Sub Dump(ByVal xml As Xml.XmlWriter)
+    '        xml.WriteStartElement("Message")
+    '        xml.WriteAttributeString("Level", Level.ToString)
+    '        'If Location IsNot Nothing Then 
+    '        Location.Dump(xml)
+    '        'End If
+    '        For i As Integer = 0 To m_Message.GetUpperBound(0)
+    '            xml.WriteString(Me.ToString)
+    '        Next
+    '        xml.WriteEndElement()
+    '    End Sub
+    '#End If
 End Class

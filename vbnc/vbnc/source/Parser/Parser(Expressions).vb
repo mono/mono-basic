@@ -32,7 +32,7 @@ Partial Class Parser
 
         Helper.Assert(tm.CurrentToken.Equals(Enums.BuiltInTypeTypeNames))
 
-        m_Type = CType(tm.CurrentToken.AsKeyword.Keyword, BuiltInDataTypes)
+        m_Type = CType(tm.CurrentToken.Keyword, BuiltInDataTypes)
         tm.NextToken()
 
         result.Init(m_Type)
@@ -372,7 +372,7 @@ Partial Class Parser
     Private Function ParseVariableIdentifier(ByVal Parent As ParsedObject) As VariableIdentifier
         Dim result As New VariableIdentifier(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_ArrayNameModifier As ArrayNameModifier
 
         If tm.CurrentToken.IsIdentifier = False Then
@@ -411,7 +411,7 @@ Partial Class Parser
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         m_Event = New SimpleNameExpression(result)
-        m_Event.Identifier = New IdentifierToken(m_Identifier.Location, m_Identifier.Identifier, TypeCharacters.Characters.None, m_Identifier.IsKeyword, m_Identifier.Compiler)
+        m_Event.Identifier = Token.CreateIdentifierToken(m_Identifier.Location, m_Identifier.Identifier, TypeCharacters.Characters.None, m_Identifier.IsKeyword)
 
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
@@ -589,13 +589,13 @@ Partial Class Parser
     Private Function ParseLoopControlVariable(ByVal Parent As ParsedObject) As LoopControlVariable
         Dim result As New LoopControlVariable(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_ArrayNameModifier As ArrayNameModifier = Nothing
         Dim m_TypeName As TypeName = Nothing
         Dim m_Expression As Expression = Nothing
 
         'First try first option
-        Dim tmpI As IdentifierToken = Nothing, tmpANM As ArrayNameModifier = Nothing
+        Dim tmpI As Token = Nothing, tmpANM As ArrayNameModifier = Nothing
         Dim iCurrent As RestorablePoint = tm.GetRestorablePoint
         Dim doExpression As Boolean = True
         If tm.AcceptIdentifier(tmpI) Then
@@ -737,9 +737,9 @@ Partial Class Parser
         Dim Expression As Expression = Nothing
 
         If tm.CurrentToken.IsIdentifier Then
-            Name = tm.CurrentToken.AsIdentifier.Identifier
+            Name = tm.CurrentToken.Identifier
         ElseIf tm.CurrentToken.IsKeyword Then
-            Name = tm.CurrentToken.AsKeyword.Identifier
+            Name = tm.CurrentToken.Identifier
         Else
             Throw New InternalException(result)
         End If
@@ -791,7 +791,7 @@ Partial Class Parser
     Private Function ParseSimpleNameExpression(ByVal Parent As ParsedObject) As SimpleNameExpression
         Dim result As New SimpleNameExpression(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeArgumentList As TypeArgumentList
 
         If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -839,7 +839,7 @@ Partial Class Parser
                 lside = ParseExpression(New ExpressionParseInfo(result, True, False))
                 If lside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
                 If tm.CurrentToken.IsSymbol Then
-                    Select Case tm.CurrentToken.AsSymbol.Symbol
+                    Select Case tm.CurrentToken.Symbol
                         Case KS.Equals
                             tm.NextToken()
                             Dim newStmt As New AssignmentStatement(result)
@@ -921,7 +921,7 @@ Partial Class Parser
                     result.AddStatement(newStmt)
                 End If
             ElseIf tm.CurrentToken.IsKeyword Then
-                Select Case tm.CurrentToken.AsKeyword.Keyword
+                Select Case tm.CurrentToken.Keyword
                     Case KS.Dim, KS.Static, KS.Const
                         Dim newVariables As Generic.List(Of VariableDeclaration)
                         newVariables = ParseLocalDeclarationStatement(result)
@@ -1180,11 +1180,11 @@ Partial Class Parser
             value = ParseUnaryPlusMinus(Info)
             If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         ElseIf tm.CurrentToken.IsKeyword Then
-            Select Case tm.CurrentToken.AsKeyword.Keyword
+            Select Case tm.CurrentToken.Keyword
                 Case KS.Not
                     value = ParseNot(Info)
                 Case KS.DirectCast, KS.TryCast, KS.CType
-                    value = ParseCTypeExpression(Info.Parent, tm.CurrentToken.AsKeyword.Keyword)
+                    value = ParseCTypeExpression(Info.Parent, tm.CurrentToken.Keyword)
                 Case KS.AddressOf
                     value = ParseAddressOfExpression(Info.Parent)
                 Case KS.[New]
@@ -1304,7 +1304,7 @@ Partial Class Parser
 
         While tm.CurrentToken.Equals(KS.Mult, KS.RealDivision)
             Dim op As KS
-            op = tm.CurrentToken.AsSymbol.Symbol
+            op = tm.CurrentToken.Symbol
             tm.NextToken()
             rSide = ParseUnaryPlusMinus(Info)
             If op = KS.Mult Then
@@ -1352,7 +1352,7 @@ Partial Class Parser
 
         While tm.CurrentToken.Equals(KS.Add, KS.Minus)
             Dim op As KS
-            op = tm.CurrentToken.AsSymbol.Symbol
+            op = tm.CurrentToken.Symbol
             tm.NextToken()
             rSide = ParseMod(Info)
             If op = KS.Add Then
@@ -1388,7 +1388,7 @@ Partial Class Parser
 
         While tm.CurrentToken.Equals(KS.ShiftRight, KS.ShiftLeft)
             Dim op As KS
-            op = tm.CurrentToken.AsSymbol.Symbol
+            op = tm.CurrentToken.Symbol
             tm.NextToken()
             rSide = ParseConcat(Info)
             If op = KS.ShiftRight Then
@@ -1412,9 +1412,9 @@ Partial Class Parser
           (tm.CurrentToken = KS.Is AndAlso Info.IsInTypeOf = False)
             Dim op As KS
             If tm.CurrentToken.IsSymbol Then
-                op = tm.CurrentToken.AsSymbol.Symbol
+                op = tm.CurrentToken.Symbol
             ElseIf tm.CurrentToken.IsKeyword Then
-                op = tm.CurrentToken.AsKeyword.Keyword
+                op = tm.CurrentToken.Keyword
             Else
                 Throw New InternalException(tm.CurrentToken.Location)
             End If
@@ -1466,7 +1466,7 @@ Partial Class Parser
 
         While tm.CurrentToken.Equals(KS.And, KS.AndAlso)
             Dim op As KS
-            op = tm.CurrentToken.AsKeyword.Keyword
+            op = tm.CurrentToken.Keyword
             tm.NextToken()
             rSide = ParseNot(Info)
             If op = KS.And Then
@@ -1488,7 +1488,7 @@ Partial Class Parser
 
         While tm.CurrentToken.Equals(KS.Or, KS.OrElse, KS.Xor)
             Dim op As KS
-            op = tm.CurrentToken.AsKeyword.Keyword
+            op = tm.CurrentToken.Keyword
             tm.NextToken()
             rSide = ParseAnd_AndAlso(Info)
             If op = KS.Or Then
@@ -1563,9 +1563,9 @@ Partial Class Parser
     Private Function ParseLiteralExpression(ByVal Parent As ParsedObject) As LiteralExpression
         Dim result As LiteralExpression
 
-        Dim m_Value As LiteralToken
-        m_Value = TryCast(tm.CurrentToken, LiteralToken)
-        If m_Value Is Nothing Then
+        Dim m_Value As Token
+        m_Value = tm.CurrentToken
+        If m_Value.IsLiteral = False Then
             result = Nothing
         Else
             result = New LiteralExpression(Parent)

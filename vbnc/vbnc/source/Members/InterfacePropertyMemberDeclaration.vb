@@ -33,7 +33,7 @@ Public Class InterfacePropertyMemberDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.InterfacePropertyModifier)
+        While tm.PeekToken(i).Equals(ModifierMasks.InterfacePropertyModifier)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Property)

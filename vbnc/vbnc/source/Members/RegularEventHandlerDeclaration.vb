@@ -24,7 +24,7 @@ Public Class RegularEventHandlerDeclaration
         MyBase.new(Parent)
 
         Dim Code As ImplicitCodeBlock
-        If (Parent.Modifiers.Is(KS.MustOverride) OrElse DeclaringType.IsInterface) Then
+        If (Parent.Modifiers.Is(ModifierMasks.MustOverride) OrElse DeclaringType.IsInterface) Then
             Code = Nothing
         Else
             Select Case HandlerType

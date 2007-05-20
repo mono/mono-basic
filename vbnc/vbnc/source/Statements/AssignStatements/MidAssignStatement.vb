@@ -117,7 +117,7 @@ Public Class MidAssignStatement
     End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
-        Return tm.CurrentToken = "Mid" AndAlso tm.PeekToken = KS.LParenthesis
+        Return tm.CurrentToken.Equals("Mid") AndAlso tm.PeekToken = KS.LParenthesis
     End Function
 #If DEBUG Then
     Public Sub Dump(ByVal Dumper As IndentedTextWriter)

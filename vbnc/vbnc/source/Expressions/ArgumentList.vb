@@ -90,7 +90,7 @@ Public Class ArgumentList
                 m_Arguments(i).Expression = del
             End If
 
-            If par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef = False Then
+            If par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef = False AndAlso par.ParameterType.GetElementType.IsValueType = False Then
                 If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
                     exp = New GetRefExpression(Me, arg.Expression)
                 Else

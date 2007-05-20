@@ -115,7 +115,7 @@ Public Class CodeBlock
         End If
 
         For Each var As VariableDeclaration In m_Variables
-            If var.Modifiers.ContainsAny(KS.Static) Then
+            If var.Modifiers.Is(ModifierMasks.Static) Then
                 list.Add(var)
             End If
         Next
@@ -472,7 +472,7 @@ Public Class CodeBlock
         Dim result As Boolean = True
 
 #If DEBUG Then
-        Info.Stack.CheckStackEmpty("Start of block " & Me.GetType.Name & " - " & Location.ToString & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
+        Info.Stack.CheckStackEmpty("Start of block " & Me.GetType.Name & " - " & Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
 #End If
 
         For i As Integer = 0 To m_Variables.Count - 1
@@ -485,7 +485,7 @@ Public Class CodeBlock
             Dim stmt As BaseObject = m_Sequence.Item(i)
 
 #If DEBUG Then
-            Info.Stack.CheckStackEmpty("Start of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
+            Info.Stack.CheckStackEmpty("Start of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
 #End If
 
             Emitter.MarkSequencePoint(Info, stmt.Location)
@@ -493,7 +493,7 @@ Public Class CodeBlock
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
             result = stmt.GenerateCode(Info) AndAlso result
 #If DEBUG Then
-            Info.Stack.CheckStackEmpty("End of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
+            Info.Stack.CheckStackEmpty("End of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
 #End If
         Next
 

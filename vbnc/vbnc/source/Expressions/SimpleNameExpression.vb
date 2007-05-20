@@ -30,14 +30,14 @@
 Public Class SimpleNameExpression
     Inherits Expression
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_TypeArgumentList As TypeArgumentList
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal TypeArgumentList As TypeArgumentList)
+    Sub Init(ByVal Identifier As Token, ByVal TypeArgumentList As TypeArgumentList)
         m_Identifier = Identifier
         m_TypeArgumentList = TypeArgumentList
     End Sub
@@ -54,11 +54,11 @@ Public Class SimpleNameExpression
         Return result
     End Function
 
-    Property Identifier() As IdentifierToken
+    Property Identifier() As Token
         Get
             Return m_Identifier
         End Get
-        Set(ByVal value As IdentifierToken)
+        Set(ByVal value As Token)
             m_Identifier = value
         End Set
     End Property
@@ -284,7 +284,7 @@ Public Class SimpleNameExpression
                 'The expression is classified as a variable if it is a local variable, static variable (...)
                 Dim varDecl As VariableDeclaration
                 varDecl = DirectCast(var, VariableDeclaration)
-                If varDecl.Modifiers.ContainsAny(KS.Static) AndAlso varDecl.DeclaringMethod.IsShared = False Then
+                If varDecl.Modifiers.Is(ModifierMasks.Static) AndAlso varDecl.DeclaringMethod.IsShared = False Then
                     Classification = New VariableClassification(Me, varDecl, CreateMeExpression)
                 Else
                     Classification = New VariableClassification(Me, varDecl)
@@ -463,7 +463,7 @@ Public Class SimpleNameExpression
 
         '* If the source file has one or more import aliases, and the identifier matches the name of one of them,
         '   then the identifier refers to that namespace or type.
-        If ResolveAliasImports(Me.Location.File.Imports, Name) Then Return True
+        If ResolveAliasImports(Me.Location.File(Compiler).Imports, Name) Then Return True
 
         '* If the source file containing the name reference has one or more imports:
         '** If the identifier matches the name of an accessible type or type member in exactly one import, 
@@ -477,7 +477,7 @@ Public Class SimpleNameExpression
         '   the result is exactly the same as a member access of the form M.E, where M is the standard 
         '   module containing the matching member and E is the identifier. If the identifier matches 
         '   accessible type members in more than one standard module, a compile-time error occurs.
-        If ResolveImports(Me.Location.File.Imports, Name) Then Return True
+        If ResolveImports(Me.Location.File(Compiler).Imports, Name) Then Return True
 
         '* If the compilation environment defines one or more import aliases, and the identifier matches 
         '  the name of one of them, then the identifier refers to that namespace or type.
@@ -541,7 +541,7 @@ Public Class SimpleNameExpression
             Dim var As FieldInfo = TryCast(first, FieldInfo)
             Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
             If var.IsStatic AndAlso var.IsInitOnly AndAlso _
-             (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) = False) Then
+             (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                 Return New ValueClassification(Me, var, Nothing)
             Else
                 Return New VariableClassification(Me, var, Nothing)
@@ -610,7 +610,7 @@ Public Class SimpleNameExpression
         End If
 
         If members.Count > 1 Then
-            Compiler.Report.WriteLine("Found " & members.Count & " members for SimpleNameExpression = " & Me.ToString & ", " & Me.Location.ToString)
+            Compiler.Report.WriteLine("Found " & members.Count & " members for SimpleNameExpression = " & Me.ToString & ", " & Me.Location.ToString(Compiler))
             For i As Integer = 0 To members.Count - 1
                 Compiler.Report.WriteLine(">#" & (i + 1).ToString & ".MemberType=" & members(i).MemberType.ToString & ",DeclaringType=" & members(i).DeclaringType.FullName)
             Next
@@ -637,7 +637,7 @@ Public Class SimpleNameExpression
             methodParent = FindFirstParent(Of IMethod)()
             typeParent = FindFirstParent(Of TypeDeclaration)()
 
-            isNotInCtorAndReadOnly = var.IsInitOnly AndAlso (ctorParent Is Nothing OrElse ctorParent.Modifiers.Is(KS.Shared) <> var.IsStatic) AndAlso (typeParent Is Nothing OrElse typeParent.IsShared <> var.IsStatic)
+            isNotInCtorAndReadOnly = var.IsInitOnly AndAlso (ctorParent Is Nothing OrElse ctorParent.Modifiers.Is(ModifierMasks.Shared) <> var.IsStatic) AndAlso (typeParent Is Nothing OrElse typeParent.IsShared <> var.IsStatic)
 
             If isNotInCtorAndReadOnly Then ' >?? (Parent.FindFirstParent(Of IMethod).Modifiers.Is(KS.Shared) <> var.IsStatic) Then
                 Return New ValueClassification(Me, var, CreateMeExpression)
@@ -858,19 +858,19 @@ Public Class SimpleNameExpression
             Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
             Return True
         End If
-        Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString)
+        Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString(Compiler))
         Return True
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_Identifier.Dump(Dumper)
-        If m_TypeArgumentList IsNot Nothing Then
-            Dumper.Write("(Of ")
-            Compiler.Dumper.Dump(m_TypeArgumentList)
-            Dumper.Write(")")
-        End If
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
+    '        m_Identifier.Dump(Dumper)
+    '        If m_TypeArgumentList IsNot Nothing Then
+    '            Dumper.Write("(Of ")
+    '            Compiler.Dumper.Dump(m_TypeArgumentList)
+    '            Dumper.Write(")")
+    '        End If
+    '    End Sub
+    '#End If
 
 End Class

@@ -45,7 +45,7 @@ Public Class SubDeclaration
 
     Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As MethodAttributes, ByVal ParameterTypes As Type())
         MyBase.New(Parent)
-        MyBase.Init(Nothing, New Modifiers(Me), New SubSignature(Me, Name, ParameterTypes))
+        MyBase.Init(Nothing, New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
         MyBase.Attributes = MethodAttributes
     End Sub
 
@@ -126,13 +126,13 @@ Public Class SubDeclaration
 
     ReadOnly Property IsMustOverride() As Boolean
         Get
-            Return Modifiers.Is(KS.MustOverride)
+            Return Modifiers.Is(ModifierMasks.MustOverride)
         End Get
     End Property
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.MustOverrideProcedureModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.MustOverrideProcedureModifiers)
             i += 1
         End While
         Return tm.PeekToken(i) = KS.Sub AndAlso tm.PeekToken(i + 1).IsIdentifier

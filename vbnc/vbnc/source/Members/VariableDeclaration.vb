@@ -64,7 +64,7 @@ Public Class VariableDeclaration
         m_Name = m_VariableIdentifier.Name
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As IdentifierToken, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Token, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
         MyBase.Init(Attributes, Modifiers, VariableIdentifier.Name)
@@ -76,10 +76,10 @@ Public Class VariableDeclaration
         m_Name = m_VariableIdentifier.Name
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As IdentifierToken, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As Token, _
     ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
-        MyBase.Init(Attributes, New Modifiers(Me), Identifier.Name)
+        MyBase.Init(Attributes, New Modifiers(), Identifier.Name)
         m_VariableIdentifier = New VariableIdentifier(Me, Identifier)
         m_IsNew = IsNew
         m_TypeName = New TypeName(Me, TypeName)
@@ -151,7 +151,7 @@ Public Class VariableDeclaration
 
     ReadOnly Property IsLocalVariable() As Boolean
         Get
-            Return Me.Modifiers.ContainsAny(KS.Static) = False AndAlso Me.FindFirstParent(Of CodeBlock)() IsNot Nothing
+            Return Me.Modifiers.Is(ModifierMasks.Static) = False AndAlso Me.FindFirstParent(Of CodeBlock)() IsNot Nothing
         End Get
     End Property
 
@@ -163,7 +163,7 @@ Public Class VariableDeclaration
 
     ReadOnly Property IsStaticVariable() As Boolean
         Get
-            Return Me.Modifiers.ContainsAny(KS.Static)
+            Return Me.Modifiers.Is(ModifierMasks.Static)
         End Get
     End Property
 
@@ -229,7 +229,7 @@ Public Class VariableDeclaration
             ElseIf m_VariableIdentifier.Identifier.HasTypeCharacter Then
                 m_FieldType = TypeCharacters.TypeCharacterToType(Compiler, m_VariableIdentifier.Identifier.TypeCharacter)
             Else
-                If Me.Location.File.IsOptionStrictOn Then
+                If Me.Location.File(Compiler).IsOptionStrictOn Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
                 Else
                     Helper.AddWarning("Variable type should be specified.")
@@ -336,7 +336,7 @@ Public Class VariableDeclaration
                 If m_LocalBuilder Is Nothing Then result = DefineLocalVariable(Info) AndAlso result
                 Helper.Assert(m_LocalBuilder IsNot Nothing)
                 result = EmitVariableInitializer(Info) AndAlso result
-            ElseIf Me.Modifiers.ContainsAny(KS.Static) Then
+            ElseIf Me.Modifiers.Is(ModifierMasks.Static) Then
                 result = EmitStaticInitializer(Info) AndAlso result
             Else
                 'Field builder has been defined in DefineMember
@@ -457,7 +457,7 @@ Public Class VariableDeclaration
     ''' </summary>
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.VariableModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.VariableModifiers)
             i += 1
         End While
         Return i > 0 AndAlso tm.PeekToken(i).IsIdentifier
@@ -472,20 +472,16 @@ Public Class VariableDeclaration
     Public Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
         Dim result As Boolean = True
 
-        If Me.Modifiers.ContainsAny(KS.WithEvents) = False Then Return result
+        If Me.Modifiers.Is(ModifierMasks.WithEvents) = False Then Return result
 
         Dim parentType As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
         Dim propertyAccessor As New PropertyDeclaration(parentType)
-        Dim modifiers As New Modifiers(propertyAccessor, KS.Private)
+        Dim modifiers As New Modifiers(ModifierMasks.Private)
 
-        If Me.Modifiers.Is(KS.Shared) Then
-            modifiers.AddModifier(KS.Shared)
+        If Me.Modifiers.Is(ModifierMasks.Shared) Then
+            modifiers.AddModifiers(ModifierMasks.Shared)
         End If
-        For Each modifier As KS In Me.Modifiers.ModifiersAsArray
-            If Array.IndexOf(Enums.AccessModifiers, modifier) >= 0 Then
-                modifiers.AddModifier(modifier)
-            End If
-        Next
+        modifiers.AddModifiers(Me.Modifiers.Mask And ModifierMasks.AccessModifiers)
 
         propertyAccessor.Init(New Attributes(propertyAccessor), modifiers, Name, m_TypeName)
         result = propertyAccessor.ResolveTypeReferences() AndAlso result

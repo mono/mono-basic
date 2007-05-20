@@ -313,14 +313,14 @@ Public Class TypeDescriptor
         ElseIf TypeOf m_Declaration Is InterfaceDeclaration Then
             result = result Or TypeAttributes.Interface Or TypeAttributes.Abstract
         End If
-        If m_Declaration.Modifiers IsNot Nothing Then
-            If m_Declaration.Modifiers.Is(KS.NotInheritable) Then
-                result = result Or TypeAttributes.Sealed
-            End If
-            If m_Declaration.Modifiers.Is(KS.MustInherit) Then
-                result = result Or TypeAttributes.Abstract
-            End If
+        'If Modifiers.IsNothing(m_Declaration.Modifiers) = False Then
+        If m_Declaration.Modifiers.Is(ModifierMasks.NotInheritable) Then
+            result = result Or TypeAttributes.Sealed
         End If
+        If m_Declaration.Modifiers.Is(ModifierMasks.MustInherit) Then
+            result = result Or TypeAttributes.Abstract
+        End If
+        'End If
 
         DumpMethodInfo(result)
 
@@ -584,7 +584,7 @@ Public Class TypeDescriptor
         End Get
     End Property
 
-    Private Overloads Function GetMembers(Of T As MemberInfo)(ByVal MemberType As MemberTypes, ByVal bindingAttr As System.Reflection.BindingFlags) As Generic.List(Of T)
+    Private Overloads Function GetMembers(Of T)(ByVal MemberType As MemberTypes, ByVal bindingAttr As System.Reflection.BindingFlags) As Generic.List(Of T)
         Dim result As Generic.List(Of T)
         Dim candidates As Generic.List(Of MemberInfo)
 
@@ -604,7 +604,7 @@ Public Class TypeDescriptor
             If member.MemberType <> MemberType Then Continue For
             If IsMatch(member, bindingAttr) = False Then Continue For
 
-            result.Add(DirectCast(member, T))
+            result.Add(DirectCast(CObj(member), T))
         Next
 
         Return result

@@ -40,7 +40,7 @@ Partial Class Parser
 
         Dim m_Attributes As Attributes
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeParameters As TypeParameters
         Dim m_Inherits As NonArrayTypeName
         Dim m_TypeImplementsClauses As TypeImplementsClauses
@@ -51,7 +51,7 @@ Partial Class Parser
         Helper.Assert(m_DeclaringType IsNot Nothing OrElse TypeOf Parent Is AssemblyDeclaration)
 
         m_Attributes = Attributes
-        m_Modifiers = ParseModifiers(result, Enums.ClassModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ClassModifiers)
 
         tm.AcceptIfNotInternalError(KS.Class) 'ClassDeclaration should not be created if no "Class" is found...
 
@@ -107,7 +107,7 @@ Partial Class Parser
         Dim Modifiers As Modifiers
         Dim m_Signature As SubSignature
 
-        Modifiers = ParseModifiers(result, Enums.TypeModifiers)
+        Modifiers = ParseModifiers(result, ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Delegate)
 
@@ -165,11 +165,11 @@ Partial Class Parser
     Private Function ParseEnumDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As EnumDeclaration
         Dim result As New EnumDeclaration(Parent, [Namespace])
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_QualifiedName As KS = KS.Integer
         Dim m_Members As MemberDeclarations
 
-        m_Modifiers = ParseModifiers(result, Enums.TypeModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Enum)
 
@@ -177,7 +177,7 @@ Partial Class Parser
 
         If tm.Accept(KS.As) Then
             If tm.CurrentToken.Equals(Enums.IntegralTypeNames) Then
-                m_QualifiedName = tm.CurrentToken.AsKeyword.Keyword
+                m_QualifiedName = tm.CurrentToken.Keyword
                 tm.NextToken()
             Else
                 Helper.AddError("Enum type must be integral")
@@ -208,12 +208,12 @@ Partial Class Parser
         Dim result As New InterfaceDeclaration(Parent, [Namespace])
 
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeParameters As TypeParameters
         Dim m_InterfaceBases As InterfaceBases
         Dim m_Members As MemberDeclarations
 
-        m_Modifiers = ParseModifiers(result, Enums.TypeModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Interface)
 
@@ -257,9 +257,9 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
         Dim m_Members As MemberDeclarations
-        Dim m_Name As IdentifierToken = Nothing
+        Dim m_Name As Token = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.TypeModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Module)
 
@@ -291,11 +291,11 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
         Dim m_Members As MemberDeclarations
-        Dim m_Name As IdentifierToken = Nothing
+        Dim m_Name As Token = Nothing
         Dim m_TypeParameters As TypeParameters
         Dim m_Implements As TypeImplementsClauses
 
-        m_Modifiers = ParseModifiers(result, Enums.StructureModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.StructureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Structure)
 

@@ -89,14 +89,14 @@ Public Class FieldDescriptor
     Public Overrides ReadOnly Property Attributes() As System.Reflection.FieldAttributes
         Get
             Dim result As FieldAttributes
-            result = m_Declaration.Modifiers.GetFieldAttributeScope
-            If m_Declaration.Modifiers.Is(KS.Static) Then
+            result = m_Declaration.Modifiers.GetFieldAttributeScope(DirectCast(m_Declaration, BaseObject).FindFirstParent(Of TypeDeclaration))
+            If m_Declaration.Modifiers.Is(ModifierMasks.Static) Then
                 result = result Or FieldAttributes.SpecialName
                 If DirectCast(m_Declaration, BaseObject).FindFirstParent(Of IMethod).IsShared Then
                     result = result Or FieldAttributes.Static
                 End If
             End If
-            If m_Declaration.Modifiers.Is(KS.Shared) OrElse m_Declaration.IsShared Then
+            If m_Declaration.Modifiers.Is(ModifierMasks.Shared) OrElse m_Declaration.IsShared Then
                 result = result Or FieldAttributes.Static
             End If
             If TypeOf m_Declaration Is EnumMemberDeclaration Then
@@ -113,7 +113,7 @@ Public Class FieldDescriptor
                     result = result Or FieldAttributes.Literal
                 End If
             End If
-            If m_Declaration.Modifiers.Is(KS.ReadOnly) Then
+            If m_Declaration.Modifiers.Is(ModifierMasks.ReadOnly) Then
                 result = result Or FieldAttributes.InitOnly
             End If
 

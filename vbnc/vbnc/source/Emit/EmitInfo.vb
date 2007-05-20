@@ -88,7 +88,7 @@ Public Class EmitInfo
 
     ReadOnly Property IsOptionCompareText() As Boolean
         Get
-            Return m_Method.Location.File.IsOptionCompareText
+            Return m_Method.Location.File(Compiler).IsOptionCompareText
         End Get
     End Property
 

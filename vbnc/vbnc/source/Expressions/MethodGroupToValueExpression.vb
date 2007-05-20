@@ -52,7 +52,7 @@ Public Class MethodGroupToValueExpression
             Helper.LOGMETHODRESOLUTION = True
             result = m_MethodGroup.ResolveGroup(New ArgumentList(Me.Parent), Nothing) AndAlso result
             Helper.LOGMETHODRESOLUTION = False
-            Helper.AddError("Could not resolve MethodGroup, Location=" & Me.Parent.Location.ToString)
+            Helper.AddError("Could not resolve MethodGroup, Location=" & Me.Parent.Location.ToString(Compiler))
             Return False
         End If
 

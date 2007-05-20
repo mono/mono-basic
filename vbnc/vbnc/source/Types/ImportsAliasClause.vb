@@ -29,10 +29,10 @@
 Public Class ImportsAliasClause
     Inherits ParsedObject
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_Second As ImportsNamespaceClause
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
             Return m_Identifier
         End Get
@@ -48,7 +48,7 @@ Public Class ImportsAliasClause
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal Second As ImportsNamespaceClause)
+    Sub Init(ByVal Identifier As Token, ByVal Second As ImportsNamespaceClause)
         m_Identifier = Identifier
         m_Second = Second
     End Sub

@@ -136,7 +136,7 @@ Public Class tm
         Do Until reader.Peek.IsEndOfLine
             reader.Next()
         Loop
-        If eatNewLine AndAlso reader.Peek.IsEndOfLine(True) Then
+        If eatNewLine AndAlso reader.Peek.IsEndOfLineOnly Then
             reader.Next()
         End If
     End Sub
@@ -156,21 +156,9 @@ Public Class tm
 
     ReadOnly Property IsCurrentTokenValid() As Boolean
         Get
-            Return Current IsNot Nothing
-            '            Return Compiler.Tokens.IsCurrentTokenValid
+            Return Current.IsSomething
         End Get
     End Property
-
-    'Property iCurrentToken() As LinkedToken
-    '    Get
-    '        'Return Compiler.Tokens.iCurrentToken
-    '        Return Compiler.Tokens.CurrentTokenNode
-    '    End Get
-    '    Set(ByVal Value As LinkedToken)
-    '        'Compiler.Tokens.iCurrentToken = Value
-    '        Compiler.Tokens.CurrentTokenNode = Value
-    '    End Set
-    'End Property
 
     ''' <summary>
     ''' Skips tokens until a newline is found.
@@ -268,7 +256,7 @@ Public Class tm
     ''' <param name="Special"></param>
     ''' <remarks></remarks>
     Sub AcceptIfNotInternalError(ByVal Special As KS)
-        If Not Accept(Special) Then Throw New InternalException("Location: " & CurrentToken.Location.ToString)
+        If Not Accept(Special) Then Throw New InternalException("Location: " & CurrentToken.Location.ToString(Compiler))
     End Sub
 
     Sub AcceptIfNotInternalError(ByVal Identifier As String)
@@ -341,7 +329,7 @@ Public Class tm
     ''' <remarks></remarks>
     Function AcceptNewLine(Optional ByVal GotoNewline As Boolean = False, Optional ByVal EOFIsError As Boolean = True, Optional ByVal ReportError As Boolean = False) As Boolean
         If CurrentToken.IsEndOfLine Then
-            If CurrentToken.IsEndOfLine(True) Then
+            If CurrentToken.IsEndOfLineOnly Then
                 NextToken()
                 Return True
             ElseIf EOFIsError = False Then
@@ -368,7 +356,7 @@ Public Class tm
         Dim result As Boolean = True
         If OnlyColon Then
             result = Accept(KS.Colon)
-            If ReportError AndAlso result = False AndAlso CurrentToken.IsEndOfLine(True) = False Then
+            If ReportError AndAlso result = False AndAlso CurrentToken.IsEndOfLineOnly = False Then
 #If DEBUG Then
                 System.Console.WriteLine("Found: " & CurrentToken.ToString)
 #End If
@@ -376,10 +364,10 @@ Public Class tm
             End If
             Return result
         Else
-            If CurrentToken.IsEndOfLine(True) OrElse CurrentToken() = KS.Colon Then
+            If CurrentToken.IsEndOfLineOnly OrElse CurrentToken() = KS.Colon Then
                 Do
                     NextToken()
-                Loop While CurrentToken.IsEndOfLine(True) OrElse CurrentToken.Equals(KS.Colon)
+                Loop While CurrentToken.IsEndOfLineOnly OrElse CurrentToken.Equals(KS.Colon)
                 Return True
             Else
                 If ReportError Then
@@ -402,9 +390,13 @@ Public Class tm
         End If
     End Function
 
-    Function AcceptIdentifier(ByRef result As IdentifierToken) As Boolean
+    Function AcceptIdentifier(ByRef result As Token) As Boolean
+        Dim tmp As Token = CurrentToken()
         If CurrentToken.IsIdentifier Then
-            result = CurrentToken.AsIdentifier
+            result = CurrentToken()
+            If tmp.IsIdentifier = False Then Throw New InternalException("Not an identifier?????")
+            If CurrentToken.IsIdentifier = False Then Throw New InternalException("Not an identifier???")
+            If result.IsIdentifier = False Then Throw New InternalException("Not an identifier?")
             NextToken()
             Return True
         Else

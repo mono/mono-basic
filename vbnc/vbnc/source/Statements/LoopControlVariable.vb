@@ -26,16 +26,16 @@
 Public Class LoopControlVariable
     Inherits ParsedObject
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_ArrayNameModifier As ArrayNameModifier
     Private m_TypeName As TypeName
     Private m_Expression As Expression
 
     Private m_Declaration As VariableDeclaration
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
-            Return m_identifier
+            Return m_Identifier
         End Get
     End Property
 
@@ -73,7 +73,7 @@ Public Class LoopControlVariable
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal ArrayNameModifier As ArrayNameModifier, ByVal TypeName As TypeName, ByVal Expression As Expression)
+    Sub Init(ByVal Identifier As Token, ByVal ArrayNameModifier As ArrayNameModifier, ByVal TypeName As TypeName, ByVal Expression As Expression)
         m_Identifier = Identifier
         m_ArrayNameModifier = ArrayNameModifier
         m_TypeName = TypeName
@@ -164,7 +164,7 @@ Public Class LoopControlVariable
             'result = m_Identifier.Resolve AndAlso result
             'result = m_ArrayNameModifier.Resolve AndAlso result
             result = m_TypeName.ResolveTypeReferences AndAlso result
-            m_Declaration = New VariableDeclaration(Me, Nothing, New Modifiers(Me), m_Identifier, False, m_TypeName, Nothing, Nothing)
+            m_Declaration = New VariableDeclaration(Me, Nothing, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
             result = m_Declaration.ResolveTypeReferences() AndAlso result
             result = m_Declaration.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
             result = m_Declaration.ResolveCode(info) AndAlso result

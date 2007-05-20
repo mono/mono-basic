@@ -142,7 +142,7 @@ Public Class Attribute
         Dim result As Boolean = True
 
         If m_ResolvedType Is Nothing Then
-            Helper.Assert(m_SimpleTypeName IsNot Nothing, "SimpleTypeName Is Nothing: " & Me.Location.ToString())
+            Helper.Assert(m_SimpleTypeName IsNot Nothing, "SimpleTypeName Is Nothing: " & Me.Location.ToString(Compiler))
             result = m_SimpleTypeName.ResolveTypeReferences(True) AndAlso result
             m_ResolvedType = m_SimpleTypeName.ResolvedType
         End If

@@ -55,15 +55,16 @@ Public Class ConstructorDeclaration
     End Sub
 
     Shadows Sub Init(ByVal Code As CodeBlock)
-        MyBase.Init(New Attributes(Me), New Modifiers(Me), New SubSignature(Me, ConstructorName, New ParameterList(Me)), code)
+        MyBase.Init(New Attributes(Me), New Modifiers(), New SubSignature(Me, ConstructorName, New ParameterList(Me)), Code)
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
 
-        If Modifiers IsNot Nothing AndAlso Modifiers.Is(KS.Shared) Then
-            Signature.Init(New IdentifierToken(Signature.Identifier, SharedConstructorName), Signature.TypeParameters, Signature.Parameters)
+        'If vbnc.Modifiers.IsNothing(Modifiers) = False AndAlso Modifiers.Is(ModifierMasks.Shared) Then
+        If Modifiers.Is(ModifierMasks.Shared) Then
+            Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, SharedConstructorName), Signature.TypeParameters, Signature.Parameters)
         Else
-            Signature.Init(New IdentifierToken(Signature.Identifier, ConstructorName), Signature.TypeParameters, Signature.Parameters)
+            Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, ConstructorName), Signature.TypeParameters, Signature.Parameters)
         End If
 
         MyBase.Init(Attributes, Modifiers, Signature, Block)
@@ -72,7 +73,7 @@ Public Class ConstructorDeclaration
     Shared Function CreateTypeConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
         Dim result As New ConstructorDeclaration(Parent)
 
-        result.Init(New Attributes(result), New Modifiers(result, KS.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
+        result.Init(New Attributes(result), New Modifiers(ModifierMasks.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         If result.ResolveTypeReferences() = False Then
             Helper.ErrorRecoveryNotImplemented()
@@ -84,7 +85,7 @@ Public Class ConstructorDeclaration
     Shared Function CreateDefaultConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
         Dim result As New ConstructorDeclaration(Parent)
 
-        result.Init(New Attributes(result), New Modifiers(result), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
+        result.Init(New Attributes(result), New Modifiers(), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         If result.ResolveTypeReferences() = False Then
             Helper.ErrorRecoveryNotImplemented()
@@ -136,7 +137,7 @@ Public Class ConstructorDeclaration
 
             'LAMESPEC: shared constructors have implicit public access.
             'VBC: shared constructors defaults to private.
-            If Modifiers.ContainsAny(Enums.AccessModifiers) = False AndAlso Me.IsShared Then
+            If Modifiers.IsAny(ModifierMasks.AccessModifiers) = False AndAlso Me.IsShared Then
                 flags = flags Or Reflection.MethodAttributes.Private
             Else
                 flags = flags Or Me.Modifiers.GetMethodAttributeScope
@@ -349,7 +350,7 @@ Public Class ConstructorDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.ConstructorModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.ConstructorModifiers)
             i += 1
         End While
         If tm.PeekToken(i).Equals(KS.Sub) = False Then Return False

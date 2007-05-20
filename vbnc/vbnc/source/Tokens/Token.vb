@@ -17,20 +17,211 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public MustInherit Class Token
-    Inherits BaseObject
+Public Structure Token
+    Private m_TokenObject As Object
+    Private m_Location As Span 'Long
+    Private m_TokenType As TokenType 'Byte
+    Private m_TokenData1 As Byte
 
-    Sub New(ByVal Span As Span, ByVal Compiler As Compiler)
-        MyBase.New(Compiler, Span)
+    ReadOnly Property IsSomething() As Boolean
+        Get
+            Return m_TokenType <> TokenType.None
+        End Get
+    End Property
+
+    ReadOnly Property Name() As String
+        Get
+            Return Identifier
+        End Get
+    End Property
+
+    ReadOnly Property HasTypeCharacter() As Boolean
+        Get
+            Return IsIdentifier() AndAlso TypeCharacter <> TypeCharacters.Characters.None
+        End Get
+    End Property
+
+    Property TypeCharacter() As TypeCharacters.Characters
+        Get
+            Return CType(m_TokenData1, TypeCharacters.Characters)
+        End Get
+        Set(ByVal value As TypeCharacters.Characters)
+            m_TokenData1 = CType(value, LiteralTypeCharacters_Characters)
+        End Set
+    End Property
+
+    Public Overrides Function ToString() As String
+        If Me.IsIdentifier Then
+            Return Me.Identifier
+        Else
+            Return "<Token>"
+        End If
+    End Function
+
+    Shared Function CreateIdentifierToken(ByVal Location As Span, ByVal Identifier As String, ByVal TypeCharacter As TypeCharacters.Characters, ByVal Escaped As Boolean) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Identifier
+        result.m_TokenObject = Identifier
+        result.m_TokenData1 = CType(TypeCharacter, LiteralTypeCharacters_Characters)
+        Return result
+    End Function
+
+    Shared Function CreateIdentifierToken(ByVal CopyFrom As Token, ByVal Name As String) As Token
+        Dim result As New Token(CopyFrom.Location)
+        result.m_TokenType = TokenType.Identifier
+        result.m_TokenObject = Name
+        result.m_TokenData1 = CopyFrom.m_TokenData1
+        Return result
+    End Function
+
+    Shared Function CreateEndOfCodeToken() As Token
+        Dim result As New Token(Span.CommandLineSpan)
+        result.m_TokenType = TokenType.EndOfCode
+        Return result
+    End Function
+
+    Shared Function CreateEndOfLineToken(ByVal Location As Span) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.EndOfLine
+        Return result
+    End Function
+
+    Shared Function CreateEndOfFileToken(ByVal Location As Span) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.EndOfFile
+        Return result
+    End Function
+
+    Shared Function CreateKeywordToken(ByVal Location As Span, ByVal Keyword As KS) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Keyword
+        result.m_TokenData1 = Keyword
+        Return result
+    End Function
+
+    Shared Function CreateDateToken(ByVal Location As Span, ByVal Value As Date) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.DateLiteral
+        result.m_TokenObject = Value
+        Return result
+    End Function
+
+    Shared Function CreateCharToken(ByVal Location As Span, ByVal Value As Char) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.CharLiteral
+        result.m_TokenObject = Value
+        Return result
+    End Function
+
+    Shared Function CreateDecimalToken(ByVal Location As Span, ByVal Value As Decimal, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.DecimalLiteral
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        Return result
+    End Function
+
+    Shared Function CreateSingleToken(ByVal Location As Span, ByVal Value As Single, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.SingleLiteral
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        Return result
+    End Function
+
+    Shared Function CreateDoubleToken(ByVal Location As Span, ByVal Value As Double, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.DoubleLiteral
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        Return result
+    End Function
+
+    Shared Function CreateInt16Token(ByVal Location As Span, ByVal Value As Short, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Int16Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateInt32Token(ByVal Location As Span, ByVal Value As Integer, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Int32Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateInt64Token(ByVal Location As Span, ByVal Value As Long, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Int64Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateUInt16Token(ByVal Location As Span, ByVal Value As UShort, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.UInt16Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateUInt32Token(ByVal Location As Span, ByVal Value As UInteger, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.UInt32Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateUInt64Token(ByVal Location As Span, ByVal Value As ULong, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.UInt64Literal
+        result.m_TokenObject = Value
+        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData2 = base
+        Return result
+    End Function
+
+    Shared Function CreateStringLiteral(ByVal Location As Span, ByVal Value As String) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.StringLiteral
+        result.m_TokenObject = Value
+        Return result
+    End Function
+
+    Shared Function CreateSymbolToken(ByVal Location As Span, ByVal Symbol As KS) As Token
+        Dim result As New Token(Location)
+        result.m_TokenType = TokenType.Symbol
+        result.m_TokenData1 = Symbol
+        Return result
+    End Function
+
+    ReadOnly Property Location() As Span
+        Get
+            Return m_Location
+        End Get
+    End Property
+
+    Sub New(ByVal Span As Span)
+        m_Location = Span
     End Sub
 
     Function IdentiferOrKeywordIdentifier() As String
         If IsKeyword() Then
-            Return AsKeyword.Identifier
+            Return Identifier
         ElseIf IsIdentifier() Then
-            Return AsIdentifier.Identifier
+            Return Identifier
         Else
-            Throw New InternalException(Me)
+            Throw New InternalException()
         End If
     End Function
 
@@ -41,98 +232,124 @@ Public MustInherit Class Token
     ReadOnly Property AsSpecial() As KS
         Get
             If IsKeyword() Then
-                Return AsKeyword.Keyword
+                Return Keyword
             ElseIf IsSymbol() Then
-                Return AsSymbol.Symbol
+                Return Symbol
             Else
-                Throw New InternalException(Me)
+                Throw New InternalException()
             End If
         End Get
     End Property
 
     Function IsKeyword() As Boolean
-        Return TypeOf Me Is KeywordToken
-    End Function
-
-    Function AsKeyword() As KeywordToken
-        If IsKeyword() = False Then Throw New InternalException(Me) 'Helper.Assert(IsKeyword)
-        Return DirectCast(Me, KeywordToken)
+        Return m_TokenType = TokenType.Keyword
     End Function
 
     Function IsSymbol() As Boolean
-        Return TypeOf Me Is SymbolToken
+        Return m_TokenType = TokenType.Symbol
     End Function
 
-    Function AsSymbol() As SymbolToken
-        If IsSymbol() = False Then Throw New InternalException(Me) 'Helper.Assert(IsSymbol)
-        Return DirectCast(Me, SymbolToken)
-    End Function
+    ReadOnly Property Symbol() As KS
+        Get
+            Return CType(m_TokenData1, KS)
+        End Get
+    End Property
+
+    ReadOnly Property Keyword() As KS
+        Get
+            Return CType(m_TokenData1, KS)
+        End Get
+    End Property
 
     Function IsIdentifierOrKeyword() As Boolean
         Return IsIdentifier() OrElse IsKeyword()
     End Function
 
     Function IsIdentifier() As Boolean
-        Return TypeOf Me Is IdentifierToken
+        Return m_TokenType = TokenType.Identifier
     End Function
 
-    Function AsIdentifier() As IdentifierToken
-        If IsIdentifier() = False Then Throw New InternalException(Me) 'Helper.Assert(IsIdentifier)
-        Return DirectCast(Me, IdentifierToken)
-    End Function
+    ReadOnly Property LiteralValue() As Object
+        Get
+            Return m_TokenObject
+        End Get
+    End Property
 
     Function IsLiteral() As Boolean
-        Return TypeOf Me Is LiteralToken
+        Select Case m_TokenType
+            Case TokenType.DateLiteral, TokenType.CharLiteral, TokenType.DecimalLiteral, TokenType.DoubleLiteral, TokenType.Int16Literal, TokenType.Int32Literal, TokenType.Int64Literal, TokenType.SingleLiteral, TokenType.StringLiteral, TokenType.UInt16Literal, TokenType.UInt32Literal, TokenType.UInt64Literal
+                Return True
+            Case Else
+                Return False
+        End Select
     End Function
 
-    Function AsLiteral() As LiteralToken
-        Return DirectCast(Me, LiteralToken)
-    End Function
+    ReadOnly Property IntegralLiteral() As ULong
+        Get
+            Return CULng(m_TokenObject)
+        End Get
+    End Property
 
     Function IsDateLiteral() As Boolean
-        Return TypeOf Me Is DateLiteralToken
+        Return m_TokenType = TokenType.DateLiteral
     End Function
 
-    Function AsDateLiteral() As DateLiteralToken
-        If IsDateLiteral() = False Then Throw New InternalException(Me) ' Helper.Assert(IsDateLiteral)
-        Return DirectCast(Me, DateLiteralToken)
-    End Function
+    ReadOnly Property DateLiteral() As Date
+        Get
+            Return DirectCast(m_TokenObject, Date)
+        End Get
+    End Property
 
     Function IsIntegerLiteral() As Boolean
-        Return TypeOf Me Is IIntegralLiteralToken
-    End Function
-
-    Function AsIntegerLiteral() As IIntegralLiteralToken
-        If IsIntegerLiteral() = False Then Throw New InternalException(Me) ' Helper.Assert(IsIntegerLiteral)
-        Return DirectCast(Me, IIntegralLiteralToken)
+        Select Case m_TokenType
+            Case TokenType.Int16Literal, TokenType.Int32Literal, TokenType.Int64Literal, TokenType.UInt16Literal, TokenType.UInt32Literal, TokenType.UInt64Literal
+                Return True
+            Case Else
+                Return False
+        End Select
     End Function
 
     Function IsCharLiteral() As Boolean
-        Return TypeOf Me Is CharLiteralToken
+        Return m_TokenType = TokenType.CharLiteral
     End Function
 
-    Function AsCharLiteral() As CharLiteralToken
-        If IsCharLiteral() = False Then Throw New InternalException(Me) ' Helper.Assert(IsCharLiteral)
-        Return DirectCast(Me, CharLiteralToken)
-    End Function
+    ReadOnly Property CharLiteral() As Char
+        Get
+            Return DirectCast(m_TokenObject, Char)
+        End Get
+    End Property
 
     Function IsStringLiteral() As Boolean
-        Return TypeOf Me Is StringLiteralToken
+        Return m_TokenType = TokenType.StringLiteral
     End Function
 
-    Function AsStringLiteral() As StringLiteralToken
-        If IsStringLiteral() = False Then Throw New InternalException(Me) ' Helper.Assert(IsStringLiteral)
-        Return DirectCast(Me, StringLiteralToken)
-    End Function
+    ReadOnly Property StringLiteral() As String
+        Get
+            Return DirectCast(m_TokenObject, String)
+        End Get
+    End Property
+
+    ReadOnly Property DecimalLiteral() As Decimal
+        Get
+            Return DirectCast(m_TokenObject, Decimal)
+        End Get
+    End Property
 
     Function IsDecimalLiteral() As Boolean
-        Return TypeOf Me Is DecimalLiteralToken
+        Return m_TokenType = TokenType.DecimalLiteral
     End Function
 
-    Function AsDecimalLiterl() As DecimalLiteralToken
-        If IsDecimalLiteral() = False Then Throw New InternalException(Me) ' Helper.Assert(IsDecimalLiteral)
-        Return DirectCast(Me, DecimalLiteralToken)
-    End Function
+    ReadOnly Property Identifier() As String
+        Get
+            If IsKeyword() Then
+                Return Enums.strSpecial(Keyword)
+            ElseIf IsIdentifier() Then
+                Return DirectCast(m_TokenObject, String)
+            Else
+                Return Nothing
+            End If
+        End Get
+    End Property
 
     ''' <summary>
     ''' Compares this token to any of the specified tokens. 
@@ -141,11 +358,15 @@ Public MustInherit Class Token
     ''' <param name="AnySpecial"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Overridable Overloads Function Equals(ByVal AnySpecial() As KS) As Boolean
+    Public Overloads Function Equals(ByVal AnySpecial() As KS) As Boolean
         For i As Integer = 0 To VB.UBound(AnySpecial)
             If Equals(AnySpecial(i)) = True Then Return True
         Next
         Return False
+    End Function
+
+    Public Overloads Function Equals(ByVal AnySpecial As ModifierMasks) As Boolean
+        Return IsKeyword() AndAlso Modifiers.IsKS(Keyword, AnySpecial)
     End Function
 
     Public Overloads Function Equals(ByVal a As KS, ByVal b As KS) As Boolean
@@ -176,110 +397,99 @@ Public MustInherit Class Token
         Return Equals(a) OrElse Equals(b) OrElse Equals(c) OrElse Equals(d) OrElse Equals(e) OrElse Equals(f) OrElse Equals(g) OrElse Equals(h)
     End Function
 
-    Public Overridable Overloads Function Equals(ByVal Special As KS) As Boolean
-        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Token.Equals(KS) called on type " & Me.GetType.ToString)
-        Return False
+    Public Overloads Function Equals(ByVal Special As KS) As Boolean
+        If m_TokenType = TokenType.Keyword OrElse m_TokenType = TokenType.Symbol Then
+            Return CInt(m_TokenData1) = CInt(Special)
+        Else
+            Return False
+        End If
     End Function
 
-    Public Overridable Overloads Function Equals(ByVal Identifier As String) As Boolean
-        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Token.Equals(String) called on type " & Me.GetType.ToString)
-        Return False
+    Shared Function IsKeyword(ByVal str As String, ByRef Keyword As KS) As Boolean
+        Dim special As KS
+        special = Enums.GetKS(str)
+        If special <> KS.None Then
+            Keyword = special
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    Public Overloads Function Equals(ByVal Identifier As String) As Boolean
+        Return Me.IsIdentifier AndAlso NameResolution.CompareName(Me.Identifier, Identifier)
     End Function
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
         If TypeOf obj Is Token Then
             Return Equals(DirectCast(obj, Token))
         Else
-            Throw New InternalException(Me)
+            Throw New InternalException()
         End If
     End Function
 
     Overloads Function Equals(ByVal obj As Token) As Boolean
         If Me.IsIdentifier AndAlso obj.IsIdentifier Then
-            Return Me.AsIdentifier.Equals(obj.AsIdentifier)
+            Return Me.Equals(obj.Identifier)
         ElseIf Me.IsLiteral AndAlso obj.IsLiteral Then
-            Return Me.AsLiteral.Equals(obj.AsLiteral)
+            Return Me.LiteralValue.Equals(obj.LiteralValue)
+        ElseIf Me.IsKeyword AndAlso obj.IsKeyword Then
+            Return Me.Keyword = obj.Keyword
+        ElseIf Me.IsSymbol AndAlso obj.IsSymbol Then
+            Return Me.Symbol = obj.Symbol
         Else
             Return False
         End If
     End Function
 
-    ''' <summary>
-    ''' Returns true if currenttoken = Public,Private,Friend,Protected or Static.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function IsScopeKeyword() As Boolean
-        Dim keyword As KeywordToken = TryCast(Me, KeywordToken)
-        If keyword IsNot Nothing Then
-            Select Case keyword.Keyword
-                Case KS.Public, KS.Private, KS.Friend, KS.Protected, KS.Static
-                    Return True
-                Case KS.Else
-                    Return False
-            End Select
-        Else
-            Return False
-        End If
-    End Function
+    ReadOnly Property IsEndOfCode() As Boolean
+        Get
+            Return m_TokenType = TokenType.EndOfCode
+        End Get
+    End Property
 
-    Function IsEndOfCode() As Boolean
-        Return TypeOf Me Is EndOfCodeToken
-    End Function
+    ReadOnly Property IsEndOfFile() As Boolean
+        Get
+            Return m_TokenType = TokenType.EndOfFile OrElse m_TokenType = TokenType.EndOfCode
+        End Get
+    End Property
 
-    Function IsEndOfFile() As Boolean
-        Return TypeOf Me Is EndOfFileToken
-    End Function
+    ReadOnly Property IsEndOfLine() As Boolean
+        Get
+            Return m_TokenType = TokenType.EndOfLine OrElse m_TokenType = TokenType.EndOfFile OrElse m_TokenType = TokenType.EndOfCode
+        End Get
+    End Property
+
+    ReadOnly Property IsEndOfLineOnly() As Boolean
+        Get
+            Return m_TokenType = TokenType.EndOfLine
+        End Get
+    End Property
 
     Function IsEndOfStatement() As Boolean
-        Return IsEndOfLine(True) OrElse Equals(KS.Colon)
+        Return IsEndOfLineOnly OrElse Equals(KS.Colon)
     End Function
-
-    Function IsEndOfLine(Optional ByVal onlyEndOfLine As Boolean = False) As Boolean
-        If onlyEndOfLine Then
-            Return TypeOf Me Is EndOfLineToken AndAlso TypeOf Me Is EndOfFileToken = False
-        Else
-            Return TypeOf Me Is EndOfLineToken
-        End If
-    End Function
-
-#If DEBUG Then
-    MustOverride Overloads Sub Dump(ByVal Dumper As IndentedTextWriter)
-    MustOverride Overrides Function ToString() As String
-#End If
-
-    Shared Operator =(ByVal Token As Token, ByVal Identifier As String) As Boolean
-        If Token Is Nothing AndAlso Identifier = "" Then
-            Return True
-        ElseIf Token Is Nothing Then
-            Return False
-        ElseIf Not TypeOf Token Is IdentifierToken Then
-            Return False
-        Else
-            Return DirectCast(Token, IdentifierToken) = Identifier
-        End If
-    End Operator
-
-    Shared Operator <>(ByVal Token As Token, ByVal Identifier As String) As Boolean
-        Return Not Token = Identifier
-    End Operator
 
     Shared Operator =(ByVal Token As Token, ByVal Special As KS) As Boolean
-        If Token Is Nothing Then Return False
-        Return (Token.IsKeyword() AndAlso Token.AsKeyword.Keyword = Special) OrElse _
-               (Token.IsSymbol AndAlso Token.AsSymbol.Symbol = Special)
+        Return Token.Equals(Special)
     End Operator
 
     Shared Operator <>(ByVal Token As Token, ByVal Special As KS) As Boolean
-        Return Not Token = Special
+        Return Not Token.Equals(Special)
     End Operator
 
     ReadOnly Property FriendlyString() As String
         Get
-            Return ToString() & " - " & Location.ToString()
+            Return ToString()
         End Get
     End Property
 
-End Class
+    ReadOnly Property SpecialString() As String
+        Get
+            If TypeOf m_TokenObject Is KS Then Return DirectCast(m_TokenObject, KS).ToString()
+            Return "not a symbol"
+        End Get
+    End Property
+End Structure
 
 

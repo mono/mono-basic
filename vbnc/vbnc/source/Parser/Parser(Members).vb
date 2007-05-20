@@ -51,7 +51,7 @@ Partial Class Parser
         Dim m_Signature As SubSignature
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, Enums.ConstructorModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ConstructorModifiers)
 
         tm.AcceptIfNotInternalError(KS.Sub)
         tm.AcceptIfNotInternalError(KS.[New])
@@ -98,7 +98,7 @@ Partial Class Parser
         Dim m_Get As PropertyGetDeclaration = Nothing
         Dim m_Set As PropertySetDeclaration = Nothing
 
-        m_Modifiers = ParseModifiers(result, Enums.PropertyModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.PropertyModifiers)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
@@ -119,14 +119,14 @@ Partial Class Parser
                 If m_Get IsNot Nothing Then
                     Helper.AddError("Found more than one Get Property.")
                 End If
-                m_Get = ParsePropertyGetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers)
+                m_Get = ParsePropertyGetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Get Is Nothing Then Helper.ErrorRecoveryNotImplemented()
                 m_Attributes = Nothing
             ElseIf PropertySetDeclaration.IsMe(tm) Then
                 If m_Set IsNot Nothing Then
                     Helper.AddError("Found more than one Set Property.")
                 End If
-                m_Set = ParsePropertySetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers)
+                m_Set = ParsePropertySetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Set Is Nothing Then Helper.ErrorRecoveryNotImplemented()
                 m_Attributes = Nothing
             Else
@@ -153,16 +153,16 @@ Partial Class Parser
     '''	"End" "Set" StatementTerminator
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParsePropertySetMember(ByVal Parent As PropertyDeclaration, ByVal Info As ParseAttributableInfo, ByVal ParentSignature As FunctionSignature, ByVal ParentImplements As MemberImplementsClause, ByVal ParentModifiers As Modifiers) As PropertySetDeclaration
+    Private Function ParsePropertySetMember(ByVal Parent As PropertyDeclaration, ByVal Info As ParseAttributableInfo, ByVal ParentSignature As FunctionSignature, ByVal ParentImplements As MemberImplementsClause, ByVal ParentModifiers As ModifierMasks) As PropertySetDeclaration
         Dim result As New PropertySetDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers
         Dim m_ParameterList As New ParameterList(result)
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, Enums.AccessModifiers)
-        If m_Modifiers.Count > 0 Then
-            m_Modifiers.AddModifiers(ParentModifiers, Enums.AccessModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.AccessModifiers)
+        If m_Modifiers.Empty = False Then
+            m_Modifiers.AddModifiers(ParentModifiers And (Not ModifierMasks.AccessModifiers))
         Else
             m_Modifiers.AddModifiers(ParentModifiers)
         End If
@@ -196,15 +196,15 @@ Partial Class Parser
     '''	End  Get  StatementTerminator
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParsePropertyGetMember(ByVal Parent As PropertyDeclaration, ByVal Info As ParseAttributableInfo, ByVal ParentSignature As FunctionSignature, ByVal ParentImplements As MemberImplementsClause, ByVal ParentModifiers As Modifiers) As PropertyGetDeclaration
+    Private Function ParsePropertyGetMember(ByVal Parent As PropertyDeclaration, ByVal Info As ParseAttributableInfo, ByVal ParentSignature As FunctionSignature, ByVal ParentImplements As MemberImplementsClause, ByVal ParentModifiers As ModifierMasks) As PropertyGetDeclaration
         Dim result As New PropertyGetDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, Enums.AccessModifiers)
-        If m_Modifiers.Count > 0 Then
-            m_Modifiers.AddModifiers(ParentModifiers, Enums.AccessModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.AccessModifiers)
+        If m_Modifiers.Empty = False Then
+            m_Modifiers.AddModifiers(ParentModifiers And (Not ModifierMasks.AccessModifiers))
         Else
             m_Modifiers.AddModifiers(ParentModifiers)
         End If
@@ -233,10 +233,10 @@ Partial Class Parser
     ''' <param name="m_ParameterList">Input/Output parameter, must not be nothing on entry.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function ParseSubSignature(ByVal Parent As ParsedObject, ByRef m_Identifier As IdentifierToken, ByRef m_TypeParameters As TypeParameters, ByVal m_ParameterList As ParameterList) As Boolean
+    Private Function ParseSubSignature(ByVal Parent As ParsedObject, ByRef m_Identifier As Token, ByRef m_TypeParameters As TypeParameters, ByVal m_ParameterList As ParameterList) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(m_Identifier Is Nothing)
+        'Helper.Assert(m_Identifier Is Nothing)
         Helper.Assert(m_TypeParameters Is Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
 
@@ -254,7 +254,7 @@ Partial Class Parser
             End If
         End If
 
-        Helper.Assert(m_Identifier IsNot Nothing)
+        'Helper.Assert(m_Identifier IsNot Nothing)
 
         Return result
     End Function
@@ -266,7 +266,7 @@ Partial Class Parser
     Private Function ParseSubSignature(ByVal Parent As ParsedObject) As SubSignature
         Dim result As New SubSignature(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeParameters As TypeParameters = Nothing
         Dim m_ParameterList As New ParameterList(result)
 
@@ -286,7 +286,7 @@ Partial Class Parser
     Private Function ParseFunctionSignature(ByVal Parent As ParsedObject) As FunctionSignature
         Dim result As New FunctionSignature(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeParameters As TypeParameters = Nothing
         Dim m_ParameterList As New ParameterList(result)
         Dim m_ReturnTypeAttributes As New Attributes(result)
@@ -346,7 +346,7 @@ Partial Class Parser
 
         Helper.Assert(TypeOf Parent Is TypeParameterList)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_TypeParameterConstraints As TypeParameterConstraints
         Dim GenericParameterPosition As Integer
 
@@ -409,7 +409,7 @@ Partial Class Parser
         Dim m_TypeName As TypeName = Nothing
 
         If tm.CurrentToken.Equals(KS.[New], KS.Class, KS.Structure) Then
-            m_Special = tm.CurrentToken.AsKeyword.Keyword
+            m_Special = tm.CurrentToken.Keyword
             tm.NextToken()
         Else
             m_TypeName = ParseTypeName(result)
@@ -441,7 +441,7 @@ Partial Class Parser
             ParseAttributes(result, m_Attributes)
         End If
 
-        m_Modifiers = ParseModifiers(result, Enums.ParameterModifiers)
+        m_Modifiers = ParseModifiers(result, ModifierMasks.ParameterModifiers)
 
         m_ParameterIdentifier = ParseParameterIdentifier(result)
         If m_ParameterIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -472,7 +472,7 @@ Partial Class Parser
     Private Function ParseParameterIdentifier(ByVal Parent As Parameter) As ParameterIdentifier
         Dim result As New ParameterIdentifier(Parent)
 
-        Dim m_Identifier As IdentifierToken = Nothing
+        Dim m_Identifier As Token = Nothing
         Dim m_ArrayNameModifier As ArrayNameModifier = Nothing
 
         If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -520,7 +520,7 @@ Partial Class Parser
             Dim stn As SimpleTypeName = m_NonArrayTypeName.AsSimpleTypeName
             Dim qi As QualifiedIdentifier = stn.AsQualifiedIdentifier
             m_1 = m_NonArrayTypeName
-            If qi.Second IsNot Nothing Then
+            If qi.Second.IsSomething Then
                 m_2 = New IdentifierOrKeyword(result, qi.Second)
                 qi.Second = Nothing
             Else

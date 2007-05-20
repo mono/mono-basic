@@ -31,7 +31,7 @@ Public Class SubSignature
     ''' Should never be nothing once initialized.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     ''' <summary>
     ''' The type parameters of the signature.
     ''' Might be nothing.
@@ -53,41 +53,41 @@ Public Class SubSignature
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterInfo())
         MyBase.New(Parent)
-        m_Identifier = New IdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False, Compiler)
+        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
         m_ParameterList = New ParameterList(Me)
         For i As Integer = 0 To Parameters.GetUpperBound(0)
             m_ParameterList.Add(Parameters(i).Name, Parameters(i).ParameterType)
         Next
-        Helper.Assert(m_Identifier IsNot Nothing)
+        'Helper.Assert(m_Identifier IsNot Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList)
         MyBase.New(Parent)
-        m_Identifier = New IdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False, Compiler)
+        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
         m_ParameterList = Parameters
-        Helper.Assert(m_Identifier IsNot Nothing)
+        'Helper.Assert(m_Identifier IsNot Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Type())
         MyBase.New(Parent)
-        m_Identifier = New IdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False, Compiler)
+        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
         m_ParameterList = New ParameterList(Me, Parameters)
-        Helper.Assert(m_Identifier IsNot Nothing)
+        'Helper.Assert(m_Identifier IsNot Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
+    Sub Init(ByVal Identifier As Token, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
         m_ParameterList = ParameterList
-        Helper.Assert(m_Identifier IsNot Nothing)
+        'Helper.Assert(m_Identifier IsNot Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
     End Sub
 
     Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
-        Me.Init(New IdentifierToken(Nothing, Identifier, TypeCharacters.Characters.None, False, Compiler), TypeParameters, ParameterList)
+        Me.Init(Token.CreateIdentifierToken(Nothing, Identifier, TypeCharacters.Characters.None, False), TypeParameters, ParameterList)
     End Sub
 
     Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As SubSignature
@@ -103,7 +103,7 @@ Public Class SubSignature
         If m_ParameterList IsNot Nothing Then ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
     End Sub
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
             Return m_Identifier
         End Get

@@ -21,27 +21,26 @@
 ''' Represents a span of code in a source file.
 ''' </summary>
 ''' <remarks></remarks>
-Public Class Span
-    Private m_Line As Integer
-    Private m_Column As Short
-    'Private m_EndLine As Integer
-    Private m_EndColumn As Short
-    Private m_File As CodeFile
+Public Structure Span
+    Private m_Line As UInteger
+    Private m_Column As Byte
+    Private m_EndColumn As Byte
+    Private m_FileIndex As UShort
 
-    Public Shared ReadOnly CommandLineSpan As Span = New Span(Nothing, -1, -1, -1, -1)
+    Public Shared ReadOnly CommandLineSpan As Span '= New Span(UShort.MaxValue, 0, 0, 0)
 
+    Overloads Function Equals(ByVal Location As Span) As Boolean
+        Return m_Line = Location.m_Line AndAlso m_Column = Location.m_Column AndAlso m_EndColumn = Location.m_EndColumn AndAlso m_FileIndex = Location.m_FileIndex
+    End Function
     ''' <summary>
     ''' The line of the location.
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property Line() As Integer
+    Public ReadOnly Property Line() As UInteger
         Get
             Return m_Line
         End Get
-        Set(ByVal value As Integer)
-            m_Line = value
-        End Set
     End Property
 
     ''' <summary>
@@ -49,13 +48,10 @@ Public Class Span
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property Column() As Short
+    Public ReadOnly Property Column() As Byte
         Get
             Return m_Column
         End Get
-        Set(ByVal value As Short)
-            m_Column = value
-        End Set
     End Property
 
     ''' <summary>
@@ -63,26 +59,40 @@ Public Class Span
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property File() As CodeFile
+    Public ReadOnly Property File(ByVal Compiler As Compiler) As CodeFile
         Get
-            Return m_File
+            If Compiler Is Nothing Then Return Nothing
+            If m_FileIndex = 0 Then Return Nothing
+            If m_FileIndex = UShort.MaxValue Then Return Nothing
+            If m_FileIndex > Compiler.CommandLine.Files.Count Then Return Nothing
+            Return Compiler.CommandLine.Files(m_FileIndex - 1)
         End Get
-        Set(ByVal value As CodeFile)
-            m_File = value
-        End Set
     End Property
 
-    Sub Dump(ByVal Xml As Xml.XmlWriter)
-        Xml.WriteAttributeString("Location", Me.ToString(False))
-    End Sub
+    ReadOnly Property FileIndex() As UShort
+        Get
+            Return m_FileIndex
+        End Get
+    End Property
+
+    ReadOnly Property HasFile() As Boolean
+        Get
+            Return m_FileIndex <> UShort.MaxValue AndAlso m_FileIndex <> 0
+        End Get
+    End Property
 
     ''' <summary>
     ''' The location expressed as a string that the IDE can understand.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    <Obsolete("Use another overload")> _
     Overrides Function ToString() As String
-        Return ToString(False)
+        Return ToString(False, Nothing)
+    End Function
+
+    Overloads Function ToString(ByVal Compiler As Compiler) As String
+        Return ToString(False, Compiler)
     End Function
 
     ''' <summary>
@@ -91,16 +101,16 @@ Public Class Span
     ''' <param name="IncludePath"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Overloads Function ToString(ByVal IncludePath As Boolean) As String
+    Overloads Function ToString(ByVal IncludePath As Boolean, ByVal Compiler As Compiler) As String
         If m_Line < 0 Then
             Return "(in the commandline)"
         End If
 
-        If Not File Is Nothing Then
+        If Not File(Compiler) Is Nothing Then
             If IncludePath Then
-                Return String.Format("{0} ({1},{2})", File.FileName, Line.ToString, Column.ToString)
+                Return String.Format("{0} ({1},{2})", File(Compiler).FileName, Line.ToString, Column.ToString)
             Else
-                Return String.Format("{0} ({1},{2})", File.FileNameToReport, Line.ToString, Column.ToString)
+                Return String.Format("{0} ({1},{2})", File(Compiler).FileNameToReport, Line.ToString, Column.ToString)
             End If
         Else
             Return String.Format("({0},{1})", Line.ToString, Column.ToString)
@@ -109,24 +119,8 @@ Public Class Span
 
     ReadOnly Property AsString() As String
         Get
-            Return ToString()
+            Return ToString(Nothing)
         End Get
-    End Property
-
-    ''' <summary>
-    ''' The end line of the span.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    Public Property EndLine() As Integer
-        Get
-            Return Line
-            'If m_EndLine < Line Then Return Line
-            'Return m_EndLine
-        End Get
-        Set(ByVal value As Integer)
-            'm_EndLine = value
-        End Set
     End Property
 
     ''' <summary>
@@ -134,46 +128,26 @@ Public Class Span
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public Property EndColumn() As Short
+    Public ReadOnly Property EndColumn() As Byte
         Get
-            'If m_EndLine < Line Then
-            '    Return Column
-            'ElseIf m_EndLine = Line AndAlso 
-            If m_EndColumn < Column Then
-                Return Column
-            Else
-                Return m_EndColumn
-            End If
+            Return m_EndColumn + m_Column
         End Get
-        Set(ByVal value As Short)
-            m_EndColumn = value
-        End Set
     End Property
 
     Sub SpanTo(ByVal Location As Span)
         m_EndColumn = Location.m_EndColumn
-        'm_EndLine = Location.m_EndLine
     End Sub
 
-    '''' <summary>
-    '''' Default constructor. Does nothing.
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Public Sub New()
-    '    'Default constructor
-    'End Sub
-
-    Public Sub New(ByVal File As CodeFile, ByVal StartLine As Integer, ByVal StartColumn As Short, Optional ByVal EndLine As Integer = 0, Optional ByVal EndColumn As Short = 0)
-        ' m_EndLine = EndLine
+    Public Sub New(ByVal FileIndex As UShort, ByVal StartLine As UInteger, ByVal StartColumn As Byte, Optional ByVal EndColumn As Byte = 0)
         m_EndColumn = EndColumn
-        m_File = File
+        m_FileIndex = FileIndex + 1US
         m_Line = StartLine
         m_Column = StartColumn
     End Sub
 
     Public Sub New(ByVal FromLocation As Span, ByVal ToLocation As Span)
-        Me.New(FromLocation.File, FromLocation.Line, FromLocation.Column, ToLocation.Line, ToLocation.Column)
-        Helper.Assert(FromLocation.File.Equals(ToLocation.File))
+        Me.New(FromLocation.FileIndex, FromLocation.Line, FromLocation.Column, ToLocation.Column)
+        Helper.Assert(FromLocation.FileIndex = ToLocation.FileIndex)
     End Sub
 
-End Class
+End Structure

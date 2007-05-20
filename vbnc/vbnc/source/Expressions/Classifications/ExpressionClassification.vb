@@ -26,11 +26,24 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class ExpressionClassification
-    Inherits BaseObject
+    'Inherits BaseObject
+    Private m_Parent As ParsedObject
 
     Private m_Classification As Classifications
 
     Private m_ConstantValue As Object
+
+    ReadOnly Property Parent() As ParsedObject
+        Get
+            Return m_Parent
+        End Get
+    End Property
+
+    ReadOnly Property Compiler() As Compiler
+        Get
+            Return m_Parent.Compiler
+        End Get
+    End Property
 
     ''' <summary>
     ''' Base definition returns true if ConstantValue isnot nothing.
@@ -264,15 +277,20 @@ Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.V
     End Property
 
     Protected Sub New(ByVal Classification As Classifications, ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+        m_Parent = Parent 'MyBase.New(Parent)
         m_Classification = Classification
     End Sub
 
-    Shadows ReadOnly Property Parent() As ParsedObject
-        Get
-            Return DirectCast(MyBase.Parent, ParsedObject)
-        End Get
-    End Property
+    Friend Overridable Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "The class " & Me.GetType.ToString & " does not implement GenerateCode()")
+        Helper.NotImplemented()
+    End Function
+
+    'Shadows ReadOnly Property Parent() As ParsedObject
+    '    Get
+    '        Return DirectCast(MyBase.Parent, ParsedObject)
+    '    End Get
+    'End Property
 End Class
 
 

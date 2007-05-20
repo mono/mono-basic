@@ -97,11 +97,16 @@ Public Class DelegateOrObjectCreationExpression
         If m_IsDelegateCreationExpression Then
             result = m_ArgumentList(0).Expression.Classification.AsMethodPointerClassification.GenerateCode(Info) AndAlso result
         ElseIf m_IsValueTypeInitializer Then
-            Dim type As Type = Helper.GetTypeOrTypeBuilder(m_ResolvedType)
-            Dim local As LocalBuilder = Info.ILGen.DeclareLocal(type)
-            Emitter.EmitLoadVariableLocation(Info, local)
-            Emitter.EmitInitObj(Info, type)
-            Emitter.EmitLoadVariable(Info, local)
+            If Info.DesiredType.IsByRef Then
+                Dim type As Type = Helper.GetTypeOrTypeBuilder(m_ResolvedType)
+                Emitter.EmitInitObj(Info, type)
+            Else
+                Dim type As Type = Helper.GetTypeOrTypeBuilder(m_ResolvedType)
+                Dim local As LocalBuilder = Info.ILGen.DeclareLocal(type)
+                Emitter.EmitLoadVariableLocation(Info, local)
+                Emitter.EmitInitObj(Info, type)
+                Emitter.EmitLoadVariable(Info, local)
+            End If
         Else
             Dim ctor As ConstructorInfo
             ctor = m_MethodClassification.ResolvedConstructor
@@ -160,12 +165,12 @@ Public Class DelegateOrObjectCreationExpression
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
                 result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, finalArguments) AndAlso result
                 If result = False Then
-                    Helper.AddError("Delegate problems 3, " & Me.Location.ToString() & ">" & Me.Parent.Location.ToString)
+                    Helper.AddError("Delegate problems 3, " & Me.Location.ToString(Compiler) & ">" & Me.Parent.Location.ToString(Compiler))
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
             Else
-                Helper.AddError("Delegate problems 4, " & Me.Location.ToString())
+                Helper.AddError("Delegate problems 4, " & Me.Location.ToString(Compiler))
             End If
 
             Classification = New ValueClassification(Me, resolvedType)

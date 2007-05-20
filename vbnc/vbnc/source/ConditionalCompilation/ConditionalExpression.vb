@@ -53,24 +53,24 @@ Public Class ConditionalExpression
             Result = Nothing
             Reader.Next()
         ElseIf Reader.Peek.IsLiteral Then
-            Dim tp As TypeCode = Reader.Peek.AsLiteral.LiteralType
+            Dim tp As TypeCode = Type.GetTypeCode(Reader.Peek.LiteralValue.GetType)
             Select Case tp
                 Case TypeCode.String
-                    Result = Reader.Peek.AsStringLiteral.Literal
+                    Result = Reader.Peek.StringLiteral
                 Case TypeCode.Object
                     Throw New InternalException("Shouldn't happen, Nothing is a keyword.")
                 Case TypeCode.Boolean
                     Throw New InternalException("Shouldn't happen, True and False are keywords.")
                 Case TypeCode.DateTime
-                    Result = Reader.Peek.AsDateLiteral.Literal
+                    Result = Reader.Peek.DateLiteral
                 Case Else
-                    Helper.Assert(Compiler.TypeResolution.IsNumericType(Reader.Peek.AsLiteral.LiteralValue.GetType))
-                    Result = CDbl(Reader.Peek.AsLiteral.LiteralValue) 'AsFloatingPointLiteral.Literal
+                    Helper.Assert(Compiler.TypeResolution.IsNumericType(Reader.Peek.LiteralValue.GetType))
+                    Result = CDbl(Reader.Peek.LiteralValue) 'AsFloatingPointLiteral.Literal
             End Select
             'Result = CurrentToken.Value.Literal
             Reader.Next()
         ElseIf Reader.Peek.IsKeyword Then
-            Dim tpType As Type = Compiler.TypeResolution.KeywordToType(Reader.Peek.AsKeyword.Keyword)
+            Dim tpType As Type = Compiler.TypeResolution.KeywordToType(Reader.Peek.Keyword)
             If tpType Is Nothing Then
                 If Reader.Peek.Equals(KS.True) Then
                     Result = True
@@ -93,8 +93,8 @@ Public Class ConditionalExpression
             End If
         ElseIf Reader.Peek.IsIdentifier Then
             'Find the identifier in the list of defines.
-            If CurrentConstants.ContainsKey(Reader.Peek.AsIdentifier.Identifier) Then
-                Result = CurrentConstants.Item(Reader.Peek.AsIdentifier.Identifier).Value
+            If CurrentConstants.ContainsKey(Reader.Peek.Identifier) Then
+                Result = CurrentConstants.Item(Reader.Peek.Identifier).Value
                 Reader.Next()
             Else
                 Result = Nothing
@@ -392,7 +392,7 @@ Public Class ConditionalExpression
         If RuleArithmeticBitshift(LSide) = False Then Return False
 
         While Reader.Peek.Equals(KS.Equals, KS.NotEqual, KS.GT, KS.LT, KS.GE, KS.LE)
-            Dim DoWhat As KS = Reader.Peek.AsSymbol.Symbol
+            Dim DoWhat As KS = Reader.Peek.Symbol
             Reader.Next()
             RuleExpression(RSide)
 

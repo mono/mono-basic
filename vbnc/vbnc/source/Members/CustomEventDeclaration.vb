@@ -41,7 +41,7 @@ Public Class CustomEventDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.EventModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.EventModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.CustomEvent)

@@ -61,11 +61,11 @@ Public Class GotoStatement
         End Get
     End Property
 
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Goto ")
-        m_GotoWhere.Dump(Dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
+    '#If DEBUG Then
+    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
+    '        Dumper.Write("Goto ")
+    '        m_GotoWhere.Dump(Dumper)
+    '        Dumper.WriteLine("")
+    '    End Sub
+    '#End If
 End Class

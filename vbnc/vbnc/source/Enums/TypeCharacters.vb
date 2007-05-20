@@ -23,8 +23,8 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class TypeCharacters
-    Public Enum Characters
-        None = -1
+    Public Enum Characters As Byte
+        None '= -1
         ''' <summary>
         ''' %
         ''' </summary>
@@ -88,7 +88,7 @@ Public Class TypeCharacters
     End Function
 
     Shared Function GetTypeCharacter(ByVal chr As Char) As Characters
-        Return CType(m_Characters.IndexOf(chr), Characters)
+        Return CType(m_Characters.IndexOf(chr) + 1, Characters)
     End Function
 
     Shared Function GetTypeCharacter(ByVal chr As Characters) As String
@@ -100,7 +100,7 @@ Public Class TypeCharacters
     End Function
 
     Shared Function GetDataType(ByVal TypeCharacter As Characters) As KS
-        Return m_DataTypes(TypeCharacter + 1)
+        Return m_DataTypes(TypeCharacter)
     End Function
 
     ''' <summary>

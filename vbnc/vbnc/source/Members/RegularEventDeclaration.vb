@@ -53,7 +53,7 @@ Public Class RegularEventDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.EventModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.EventModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Event)
@@ -142,7 +142,7 @@ Public Class RegularEventDeclaration
             m_Type = New TypeName(Me, EventType)
         ElseIf m_Parameters IsNot Nothing Then
             m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
-            m_ImplicitEventDelegate.Init(Nothing, New Modifiers(m_ImplicitEventDelegate, Me.Modifiers.ModifiersAsArray), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            m_ImplicitEventDelegate.Init(Nothing, New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
             If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented()
 
             EventType = m_ImplicitEventDelegate.TypeDescriptor
@@ -158,8 +158,8 @@ Public Class RegularEventDeclaration
         If DeclaringType.IsInterface = False Then
             Dim eventVariableModifiers As Modifiers
             m_Variable = New VariableDeclaration(DeclaringType)
-            eventVariableModifiers = New Modifiers(m_Variable, KS.Private)
-            If Me.IsShared Then eventVariableModifiers.AddModifier(KS.Shared)
+            eventVariableModifiers = New Modifiers(ModifierMasks.Private)
+            If Me.IsShared Then eventVariableModifiers.AddModifiers(ModifierMasks.Shared)
             If m_ImplicitEventDelegate IsNot Nothing Then
                 m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.TypeDescriptor)
             Else

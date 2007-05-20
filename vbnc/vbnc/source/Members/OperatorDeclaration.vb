@@ -57,7 +57,7 @@ Public Class OperatorDeclaration
 
         If [Operator].IsIdentifier Then
             Dim opname As String
-            opname = [Operator].AsIdentifier.Name
+            opname = [Operator].Name
             If NameResolution.CompareName(opname, "IsTrue") Then
                 name = "op_True"
             ElseIf NameResolution.CompareName(opname, "IsFalse") Then
@@ -173,7 +173,7 @@ Public Class OperatorDeclaration
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function IsOverloadableUnaryOperator(ByVal token As Token) As Boolean
-        Return token = KS.Add OrElse token = KS.Minus OrElse token = KS.Not OrElse token = "IsTrue" OrElse token = "IsFalse"
+        Return token = KS.Add OrElse token = KS.Minus OrElse token = KS.Not OrElse token.Equals("IsTrue") OrElse token.Equals("IsFalse")
     End Function
 
     Shared Function IsOverloadableOperator(ByVal token As Token) As Boolean
@@ -182,7 +182,7 @@ Public Class OperatorDeclaration
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.OperatorModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.OperatorModifiers)
             i += 1
         End While
         If tm.PeekToken(i).Equals(KS.Operator) = False Then Return False

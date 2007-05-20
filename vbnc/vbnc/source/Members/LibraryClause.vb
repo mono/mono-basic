@@ -24,18 +24,18 @@
 Public Class LibraryClause
     Inherits ParsedObject
 
-    Private m_StringLiteral As StringLiteralToken
+    Private m_StringLiteral As Token
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal StringLiteral As StringLiteralToken)
+    Sub New(ByVal Parent As ParsedObject, ByVal StringLiteral As Token)
         MyBase.New(Parent)
         m_StringLiteral = StringLiteral
     End Sub
 
-    Sub Init(ByVal StringLiteral As StringLiteralToken)
+    Sub Init(ByVal StringLiteral As Token)
         m_StringLiteral = StringLiteral
     End Sub
 
@@ -43,7 +43,7 @@ Public Class LibraryClause
         Return tm.CurrentToken = KS.Lib
     End Function
 
-    ReadOnly Property StringLiteral() As StringLiteralToken
+    ReadOnly Property StringLiteral() As Token
         Get
             Return m_StringLiteral
         End Get

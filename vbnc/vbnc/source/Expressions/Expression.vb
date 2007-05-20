@@ -174,6 +174,8 @@ Public MustInherit Class Expression
         If Me.IsConstant Then
             If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Nothing) Then
                 Emitter.EmitLoadValue(Info, Me.ConstantValue)
+            ElseIf Info.DesiredType IsNot Nothing AndAlso Info.DesiredType.IsByRef Then
+                Emitter.EmitLoadValueAddress(Info, Me.ConstantValue)
             Else
                 Emitter.EmitLoadValue(Info.Clone(Me.ExpressionType), Me.ConstantValue)
             End If
@@ -315,6 +317,8 @@ Public MustInherit Class Expression
     Function GetObjectReference() As Expression
         Dim result As Expression
         If TypeOf Me Is GetRefExpression Then
+            Return Me
+        ElseIf TypeOf Me Is InstanceExpression Then
             Return Me
         ElseIf ExpressionType.IsValueType Then
             If TypeOf Me Is DeRefExpression Then

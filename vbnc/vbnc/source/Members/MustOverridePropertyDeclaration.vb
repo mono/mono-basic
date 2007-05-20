@@ -32,7 +32,7 @@ Public Class MustOverridePropertyDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.MustOverridePropertyModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.MustOverridePropertyModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Property)

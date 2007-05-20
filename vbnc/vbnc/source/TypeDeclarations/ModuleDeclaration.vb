@@ -57,6 +57,10 @@ Public Class ModuleDeclaration
     Public Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
+#If ENABLECECIL Then
+        MyBase.CecilBaseType = Compiler.CecilTypeCache.System_Object
+#End If
+
         MyBase.BaseType = Compiler.TypeCache.System_Object
         result = MyBase.ResolveType AndAlso result
 
@@ -67,7 +71,7 @@ Public Class ModuleDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.TypeModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.TypeModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Module)
@@ -91,7 +95,7 @@ Public Class ModuleDeclaration
 
         If DefaultSharedConstructor Is Nothing AndAlso (Me.HasSharedConstantFields OrElse Me.HasSharedFieldsWithInitializers) Then
             DefaultSharedConstructor = New ConstructorDeclaration(Me)
-            DefaultSharedConstructor.Init(Nothing, New Modifiers(DefaultSharedConstructor, KS.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
+            DefaultSharedConstructor.Init(Nothing, New Modifiers(ModifierMasks.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
             result = DefaultSharedConstructor.ResolveTypeReferences AndAlso result
             Members.Add(DefaultSharedConstructor)
             BeforeFieldInit = True

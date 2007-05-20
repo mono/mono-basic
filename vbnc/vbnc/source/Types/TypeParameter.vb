@@ -25,7 +25,7 @@ Public Class TypeParameter
     Inherits ParsedObject
     Implements INameable
 
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_TypeParameterConstraints As TypeParameterConstraints
     Private m_GenericParameterPosition As Integer
     Private m_GenericParameterConstraints() As Type
@@ -36,7 +36,7 @@ Public Class TypeParameter
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As IdentifierToken, ByVal TypeParameterConstraints As TypeParameterConstraints, ByVal GenericParameterPosition As Integer)
+    Sub Init(ByVal Identifier As Token, ByVal TypeParameterConstraints As TypeParameterConstraints, ByVal GenericParameterPosition As Integer)
         m_Identifier = Identifier
         m_TypeParameterConstraints = TypeParameterConstraints
         m_GenericParameterPosition = GenericParameterPosition
@@ -68,9 +68,9 @@ Public Class TypeParameter
         End Get
     End Property
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
-            Return m_identifier
+            Return m_Identifier
         End Get
     End Property
 

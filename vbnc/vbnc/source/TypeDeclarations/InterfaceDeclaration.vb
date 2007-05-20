@@ -34,7 +34,7 @@ Public Class InterfaceDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As IdentifierToken, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters)
         m_InterfaceBases = InterfaceBases
     End Sub
@@ -71,7 +71,7 @@ Public Class InterfaceDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.TypeModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.TypeModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Interface)

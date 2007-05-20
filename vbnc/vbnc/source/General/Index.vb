@@ -45,11 +45,15 @@ Public Class Index
     Shadows Sub Add(ByVal Base As INameable)
         Dim idxList As IndexList
         'Does name exist already?
-        If m_lstCollections.ContainsKey(Base.Name) Then
-            idxList = DirectCast(m_lstCollections.Item(Base.Name), IndexList)
+        Dim name As String = Base.Name
+
+        If name Is Nothing Then Throw New InternalException("Got nothing for base type = " & CObj(Base).GetType().FullName)
+
+        If m_lstCollections.ContainsKey(name) Then
+            idxList = DirectCast(m_lstCollections.Item(name), IndexList)
         Else 'If not, create a new indexlist
             idxList = New IndexList()
-            idxList.Name = Base.Name
+            idxList.Name = name
             m_lstCollections.Add(idxList.Name, idxList)
         End If
         'Add the value

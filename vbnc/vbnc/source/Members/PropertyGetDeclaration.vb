@@ -67,14 +67,14 @@ Public Class PropertyGetDeclaration
         End If
         name = "get_" & PropertySignature.Name
 
-        mySignature.Init(New IdentifierToken(PropertySignature.Identifier, name), typeParams, params, retTypeAttributes, typename, PropertySignature.Location)
+        mySignature.Init(Token.CreateIdentifierToken(PropertySignature.Identifier, name), typeParams, params, retTypeAttributes, typename, PropertySignature.Location)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.AccessModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.AccessModifiers)
             i += 1
         End While
         Return tm.PeekToken(i) = KS.Get

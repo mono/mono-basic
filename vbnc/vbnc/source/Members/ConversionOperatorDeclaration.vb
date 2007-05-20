@@ -41,9 +41,9 @@ Public Class ConversionOperatorDeclaration
 
         parameters.Add(New Parameter(parameters, Operand.Name, Operand.TypeName))
 
-        If Modifiers.Is(KS.Widening) Then
+        If Modifiers.Is(ModifierMasks.Widening) Then
             mySignature.Init("op_Implicit", Nothing, parameters, ReturnTypeAttributes, TypeName, Me.Location)
-        ElseIf Modifiers.Is(KS.Narrowing) Then
+        ElseIf Modifiers.Is(ModifierMasks.Narrowing) Then
             mySignature.Init("op_Explicit", Nothing, parameters, ReturnTypeAttributes, TypeName, Me.Location)
         Else
             Helper.AddError()
@@ -79,7 +79,7 @@ Public Class ConversionOperatorDeclaration
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.ConversionOperatorModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.ConversionOperatorModifiers)
             i += 1
         End While
         If tm.PeekToken(i).Equals(KS.Operator) = False Then Return False

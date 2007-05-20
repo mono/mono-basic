@@ -40,7 +40,7 @@ Public Class ImportsClause
     End Sub
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return m_Clause.ResolveCode(INfo)
+        Return m_Clause.ResolveCode(Info)
     End Function
 
     ReadOnly Property IsAliasClause() As Boolean

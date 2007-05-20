@@ -77,7 +77,7 @@ Public Class VariableClassification
 
                     Dim fD As FieldDescriptor = TryCast(Me.FieldInfo, FieldDescriptor)
                     If fD IsNot Nothing Then
-                        If fD.Declaration.Modifiers.ContainsAny(KS.Const) Then Return True
+                        If fD.Declaration.Modifiers.Is(ModifierMasks.Const) Then Return True
                         If Helper.IsEnum(Compiler, fD.DeclaringType) Then Return True
                         Return False
                     End If
@@ -203,7 +203,11 @@ Public Class VariableClassification
         Helper.Assert(Info.IsRHS AndAlso Info.RHSExpression Is Nothing OrElse Info.IsLHS AndAlso Info.RHSExpression IsNot Nothing)
 
         If m_InstanceExpression IsNot Nothing Then
-            result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, m_InstanceExpression.ExpressionType)) AndAlso result
+            Dim exp As Type = m_InstanceExpression.ExpressionType
+            If exp.IsValueType AndAlso exp.IsByRef = False Then
+                exp = exp.MakeByRefType
+            End If
+            result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, exp)) AndAlso result
         End If
 
         If FieldInfo IsNot Nothing Then
@@ -238,6 +242,7 @@ Public Class VariableClassification
             End If
         ElseIf ParameterInfo IsNot Nothing Then
             Dim isByRef As Boolean = ParameterInfo.ParameterType.IsByRef
+            Dim isByRefStructure As Boolean = isByRef AndAlso ParameterInfo.ParameterType.GetElementType.IsValueType
             Helper.Assert(m_InstanceExpression Is Nothing)
             If Info.IsRHS Then
                 If isByRef Then
@@ -247,7 +252,10 @@ Public Class VariableClassification
                 End If
             Else
                 Dim rInfo As EmitInfo
-                If isByRef Then
+                If isByRefStructure Then
+                    Emitter.EmitLoadVariable(Info.Clone(ParameterInfo.ParameterType), ParameterInfo)
+                    rInfo = Info.Clone(True, False, ParameterInfo.ParameterType.GetElementType)
+                ElseIf isByRef Then
                     Emitter.EmitLoadVariableLocation(Info, ParameterInfo)
                     rInfo = Info.Clone(True, False, ParameterInfo.ParameterType.GetElementType)
                 Else
@@ -261,40 +269,44 @@ Public Class VariableClassification
                 If isByRef = False Then
                     Emitter.EmitConversion(Info.RHSExpression.ExpressionType, ParameterInfo.ParameterType, Info)
                 End If
-                Emitter.EmitStoreVariable(Info, ParameterInfo)
+                If isByRefStructure Then
+                    Emitter.EmitStoreObject(Info, ParameterInfo.ParameterType.GetElementType)
+                Else
+                    Emitter.EmitStoreVariable(Info, ParameterInfo)
+                End If
             End If
         ElseIf Me.m_Variable IsNot Nothing Then
-            If Info.IsRHS Then
-                Helper.NotImplemented()
-            Else
-                Dim rInfo As EmitInfo = Info.Clone(True, False, m_Variable.VariableType)
+                If Info.IsRHS Then
+                    Helper.NotImplemented()
+                Else
+                    Dim rInfo As EmitInfo = Info.Clone(True, False, m_Variable.VariableType)
 
-                Helper.Assert(Info.RHSExpression IsNot Nothing)
-                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
+                    Helper.Assert(Info.RHSExpression IsNot Nothing)
+                    Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
+                    result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
-                Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
-                Helper.NotImplemented()
-            End If
+                    Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
+                    Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
+                    Helper.NotImplemented()
+                End If
         ElseIf m_ArrayVariable IsNot Nothing Then
-            If Info.IsRHS Then
-                result = Me.GenerateCodeAsValue(Info) AndAlso result
-            Else
-                result = Helper.EmitStoreArrayElement(Info, m_ArrayVariable, m_Arguments) AndAlso result
+                If Info.IsRHS Then
+                    result = Me.GenerateCodeAsValue(Info) AndAlso result
+                Else
+                    result = Helper.EmitStoreArrayElement(Info, m_ArrayVariable, m_Arguments) AndAlso result
 
-            End If
+                End If
         ElseIf m_Method IsNot Nothing Then
-            If Info.IsRHS Then
-                Emitter.EmitLoadVariable(Info, m_Method.DefaultReturnVariable)
-            Else
-                Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
-                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
-                Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
-            End If
+                If Info.IsRHS Then
+                    Emitter.EmitLoadVariable(Info, m_Method.DefaultReturnVariable)
+                Else
+                    Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
+                    Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
+                    result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
+                    Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
+                End If
         Else
-            Throw New InternalException(Me)
+                Throw New InternalException(Me)
         End If
 
         Return result

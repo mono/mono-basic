@@ -18,12 +18,6 @@
 ' 
 
 Partial Public Class Compiler
-    Inherits BaseObject
-
-    Sub New()
-        MyBase.new(Nothing)
-    End Sub
-
     ''' <summary>
     ''' The sequence of the compiler:
     ''' </summary>

@@ -41,7 +41,7 @@ Public Class ClassDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As IdentifierToken, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters, TypeImplementsClauses)
         m_Inherits = [Inherits]
     End Sub
@@ -72,9 +72,9 @@ Public Class ClassDeclaration
         Get
             Dim result As TypeAttributes = MyBase.TypeAttributes
 
-            If Me.Modifiers.Is(KS.MustInherit) Then
+            If Me.Modifiers.Is(ModifierMasks.MustInherit) Then
                 result = result Or Reflection.TypeAttributes.Abstract
-            ElseIf Me.Modifiers.Is(KS.NotInheritable) Then
+            ElseIf Me.Modifiers.Is(ModifierMasks.NotInheritable) Then
                 result = result Or Reflection.TypeAttributes.Sealed
             End If
 
@@ -93,9 +93,6 @@ Public Class ClassDeclaration
             BaseType = Compiler.TypeCache.System_Object
 #If DEBUGREFLECTION Then
             Helper.DebugReflection_AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
-#End If
-#If ENABLECECIL Then
-            CecilBaseType = Compiler.CecilTypeCache.System_Object
 #End If
         End If
 
@@ -249,7 +246,7 @@ Public Class ClassDeclaration
 
             Dim field As New VariableDeclaration(Me)
             Dim prop As New PropertyDeclaration(Me)
-            Dim modifiers As New Modifiers(field, KS.Public)
+            Dim modifiers As New Modifiers(ModifierMasks.Public)
 
             field.Init(Nothing, modifiers, fieldName, type.TypeDescriptor)
             prop.Init(Nothing, modifiers, propertyName, type.TypeDescriptor)
@@ -271,8 +268,8 @@ Public Class ClassDeclaration
             Dim get_1_right_instance_exp_typeargs_1 As New TypeName(get_1_right_instance_exp_typeargs)
             Dim get_1_right_arg1 As New SimpleNameExpression(get_1_right)
             Dim get_1_right_arglist As New ArgumentList(get_1_right, get_1_right_arg1)
-            Dim get_1_right_field_token As New IdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False, Compiler)
-            Dim get_1_right_method_token As New IdentifierToken(attrib.Location, createInstanceMethodName, TypeCharacters.Characters.None, False, Compiler)
+            Dim get_1_right_field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
+            Dim get_1_right_method_token As Token = Token.CreateIdentifierToken(attrib.Location, createInstanceMethodName, TypeCharacters.Characters.None, False)
 
             get_1_left.Init(get_1_right_field_token, Nothing)
 
@@ -292,8 +289,8 @@ Public Class ClassDeclaration
             getter.Code.AddStatement(get_2)
 
             Dim set_if1 As New IfStatement(setter.Code)
-            Dim value_token As New IdentifierToken(attrib.Location, "Value", TypeCharacters.Characters.None, False, Compiler)
-            Dim field_token As New IdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False, Compiler)
+            Dim value_token As Token = Token.CreateIdentifierToken(attrib.Location, "Value", TypeCharacters.Characters.None, False)
+            Dim field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
             Dim set_if1_condition_left As New SimpleNameExpression(set_if1)
             Dim set_if1_condition_right As New SimpleNameExpression(set_if1)
             Dim set_if1_condition As New Is_IsNotExpression(set_if1, set_if1_condition_left, set_if1_condition_right, KS.IsNot)
@@ -313,8 +310,8 @@ Public Class ClassDeclaration
             Dim set_dispose_invocation_instance_exp_typeargs_1 As New TypeName(set_dispose_invocation_instance_exp_typeargs)
             Dim set_dispose_invocation_arg1 As New SimpleNameExpression(set_dispose_invocation)
             Dim set_dispose_invocation_arglist As New ArgumentList(set_dispose_invocation, set_dispose_invocation_arg1)
-            Dim set_dispose_invocation_field_token As New IdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False, Compiler)
-            Dim set_dispose_invocation_method_token As New IdentifierToken(attrib.Location, disposeInstanceMethodName, TypeCharacters.Characters.None, False, Compiler)
+            Dim set_dispose_invocation_field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
+            Dim set_dispose_invocation_method_token As Token = Token.CreateIdentifierToken(attrib.Location, disposeInstanceMethodName, TypeCharacters.Characters.None, False)
 
             set_throw_creation.Init(Compiler.TypeCache.System_ArgumentException, set_throw_args)
             set_throw.Init(set_throw_creation)
@@ -360,7 +357,7 @@ Public Class ClassDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.ClassModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.ClassModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Class)

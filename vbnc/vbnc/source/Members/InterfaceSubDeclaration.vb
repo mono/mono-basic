@@ -31,7 +31,7 @@ Public Class InterfaceSubDeclaration
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.InterfaceProcedureModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.InterfaceProcedureModifiers)
             i += 1
         End While
         Return tm.PeekToken(i).Equals(KS.Sub)

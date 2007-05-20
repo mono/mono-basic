@@ -56,7 +56,7 @@ Public Class FunctionSignature
         MyBase.Location = Location
     End Sub
 
-    Shadows Sub Init(ByVal Identifier As IdentifierToken, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Location As Span)
+    Shadows Sub Init(ByVal Identifier As Token, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Location As Span)
         MyBase.Init(Identifier, TypeParameters, ParameterList)
 
         m_ReturnTypeAttributes = ReturnTypeAttributes
@@ -120,7 +120,7 @@ Public Class FunctionSignature
             ElseIf Identifier.HasTypeCharacter Then
                 m_ReturnType = TypeCharacters.TypeCharacterToType(Compiler, Identifier.TypeCharacter)
             Else
-                If Me.Location.File.IsOptionStrictOn Then
+                If Me.Location.File(Compiler).IsOptionStrictOn Then
                     Helper.AddError("Function return type must be specified.")
                 Else
                     Helper.AddWarning("Function return type must be specified.")

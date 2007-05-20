@@ -1,3 +1,43 @@
+2007-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Interfaces/IIntegralLiteralToken.vb, Interfaces/ILiteralToken.vb,
+	  Enums/TypeCharactersEnumString.vb,
+	  Enums/BuiltInDataTypeEnumStringAttribute.vb,
+	  Members/ConstantMemberDeclaration.vb,
+	  Members/ConstructorMember.MemberConstructorInfo.vb,
+	  Tokens/DecimalLiteralToken.vb, Tokens/IntegralLiteralToken.vb,
+	  Tokens/IdentifierToken.vb, Tokens/StringLiteralToken.vb,
+	  Tokens/KeywordToken.vb, Tokens/EndOfCodeToken.vb,
+	  Tokens/FloatingPointLiteralToken.vb, Tokens/DateLiteralToken.vb,
+	  Tokens/CharLiteralToken.vb, Tokens/EndOfFileToken.vb,
+	  Tokens/LiteralToken.vb, Tokens/EndOfLineToken.vb, Tokens/SymbolToken.vb,
+	  Tokens/CommandLineSpan.vb, Types/MemberImplementsClauses.vb: Removed, no
+	  longer necessary.
+	* Enums/ModifierMasks.vb, Enums/TokenType.vb: Added.
+	* Members/Modifiers.vb, Tokens/Token.vb, Tokens/Span.vb: Changed to a
+	  structure.
+	* The rest: Required changes due to changing types from class to structure.
+
+2007-05-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/Modifiers.vb, Tokens/Token.vb, Tokens/Span.vb: Changed to a
+	  structure.
+	* Enums/ModifierMasks.vb, Enums/TokenType.vb: Added.
+	* Tokens/IdentifierToken.vb, Tokens/IntegralLiteralToken.vb,
+	  Tokens/KeywordToken.vb, Tokens/LiteralToken.vb,
+	  Tokens/DateLiteralToken.vb, Tokens/StringLiteralToken.vb,
+	  Tokens/SymbolToken.vb, Tokens/FloatingPointLiteralToken.vb,
+	  Tokens/EndOfLineToken.vb, Interfaces/ILiteralToken.vb,
+	  Members/ConstantMemberDeclaration.vb, Tokens/CharLiteralToken.vb,
+	  Tokens/CommandLineSpan.vb,
+	  Members/ConstructorMember.MemberConstructorInfo.vb,
+	  Tokens/DecimalLiteralToken.vb, Tokens/EndOfCodeToken.vb,
+	  Tokens/EndOfFileToken.vb, Interfaces/IIntegralLiteralToken.vb,
+	  Enums/TypeCharactersEnumString.vb,
+	  Enums/BuiltInDataTypeEnumStringAttribute.vb,
+	  Types/MemberImplementsClauses.vb: Deleted, not needed anymore.
+	* The rest: Changes required by changing types from class to structure.
+
 2007-05-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Statements/AddOrRemoveHandlerStatement.vb: Small fix for using

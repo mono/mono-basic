@@ -46,7 +46,7 @@ Public Class PropertyDescriptor
 
     Overridable ReadOnly Property IsDefault() As Boolean
         Get
-            Return m_Declaration.Modifiers.ContainsAny(KS.Default)
+            Return m_Declaration.Modifiers.Is(ModifierMasks.Default)
         End Get
     End Property
 

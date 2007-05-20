@@ -27,7 +27,7 @@ Public Class ExternalSubDeclaration
     Inherits SubDeclaration
 
     Private m_CharsetModifier As KS
-    Private m_Identifier As IdentifierToken
+    Private m_Identifier As Token
     Private m_LibraryClause As LibraryClause
     Private m_AliasClause As AliasClause
 
@@ -35,7 +35,7 @@ Public Class ExternalSubDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As IdentifierToken, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Token, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
         MyBase.Init(Attributes, Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
@@ -56,9 +56,9 @@ Public Class ExternalSubDeclaration
         End Get
     End Property
 
-    ReadOnly Property Identifier() As IdentifierToken
+    ReadOnly Property Identifier() As Token
         Get
-            Return m_identifier
+            Return m_Identifier
         End Get
     End Property
 
@@ -76,11 +76,11 @@ Public Class ExternalSubDeclaration
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.ExternalMethodModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.ExternalMethodModifiers)
             i += 1
         End While
         If tm.PeekToken(i) <> KS.Declare Then Return False
-        If tm.PeekToken(i + 1).Equals(Enums.CharSetModifiers) Then i += 1
+        If tm.PeekToken(i + 1).Equals(ModifierMasks.CharSetModifiers) Then i += 1
         Return tm.PeekToken(i + 1) = KS.Sub AndAlso tm.PeekToken(i + 2).IsIdentifier
     End Function
 

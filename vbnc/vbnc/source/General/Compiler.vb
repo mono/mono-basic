@@ -26,7 +26,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class Compiler
-    'Implements IDisposable
+    Inherits BaseObject
 
     ''' <summary>
     ''' The filename of the resulting assembly.
@@ -119,6 +119,10 @@ Public Class Compiler
     Private m_NameResolver As NameResolution
 
     Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
+
+    Sub New()
+        MyBase.New(Nothing)
+    End Sub
 
     Public Sub VerifyConsistency(ByVal result As Boolean, Optional ByVal Location As String = "")
         If Report.Errors = 0 AndAlso result = False Then

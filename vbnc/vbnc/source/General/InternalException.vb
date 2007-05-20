@@ -32,6 +32,11 @@ Public Class InternalException
         End Get
     End Property
 
+    Sub New()
+        m_Message = "There has been an internal error in the compiler."
+        StopOnInternalException()
+    End Sub
+
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal Location As Span)
         MyBase.new()
@@ -46,8 +51,30 @@ Public Class InternalException
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal Obj As IBaseObject)
         MyBase.new()
-        If Obj IsNot Nothing AndAlso CType(Obj, BaseObject).HasLocation Then
+        If Obj IsNot Nothing Then
             m_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
+        Else
+            m_Message = "There has been an internal error in the compiler."
+        End If
+        StopOnInternalException()
+    End Sub
+
+    <Diagnostics.DebuggerHidden()> _
+    Sub New(ByVal Obj As Token)
+        MyBase.new()
+        If Obj.IsSomething Then
+            m_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
+        Else
+            m_Message = "There has been an internal error in the compiler."
+        End If
+        StopOnInternalException()
+    End Sub
+
+    <Diagnostics.DebuggerHidden()> _
+    Sub New(ByVal Obj As ExpressionClassification)
+        MyBase.new()
+        If Obj IsNot Nothing Then
+            m_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Parent.Location.ToString(Obj.Parent.Compiler)
         Else
             m_Message = "There has been an internal error in the compiler."
         End If
@@ -75,7 +102,7 @@ StopOnInternalException()
     Sub New(ByVal Obj As BaseObject, ByVal strMsg As String)
         MyBase.new()
         m_Message = "There has been an internal error in the compiler: '" & strMsg & "'"
-        If Obj IsNot Nothing AndAlso Obj.HasLocation Then
+        If Obj IsNot Nothing Then
             m_Message &= " caused by the line: " & Obj.Location.AsString
         End If
 StopOnInternalException()

@@ -100,7 +100,7 @@ Public Class ParameterDescriptor
     Overridable ReadOnly Property IsParamArray() As Boolean
         Get
             If m_Parameter IsNot Nothing Then
-                Return m_Parameter.Modifiers.ContainsAny(KS.ParamArray)
+                Return m_Parameter.Modifiers.Is(ModifierMasks.ParamArray)
             ElseIf m_Type IsNot Nothing AndAlso m_Type.IsArray = False Then
                 Return False
             Else
@@ -113,7 +113,7 @@ Public Class ParameterDescriptor
         Get
             Dim result As ParameterAttributes
             If m_Parameter IsNot Nothing Then
-                If m_Parameter.Modifiers.ContainsAny(KS.Optional, KS.ParamArray) Then
+                If m_Parameter.Modifiers.IsAny(ModifierMasks.Optional Or ModifierMasks.ParamArray) Then
                     result = result Or ParameterAttributes.Optional
                 End If
             Else

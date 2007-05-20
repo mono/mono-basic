@@ -202,6 +202,8 @@ Public Class MemberAccessExpression
 
         Dim Name As String = m_Second.Name
 
+        Helper.Assert(Name IsNot Nothing AndAlso Name <> "")
+
         If m_First IsNot Nothing Then
             result = m_First.ResolveExpression(Info) AndAlso result
         Else
@@ -312,7 +314,7 @@ Public Class MemberAccessExpression
         '** If I identifies an enumeration member, then the result is the value of that enumeration member.
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
         If m_First.Classification.IsTypeClassification Then
-            If m_Second.IsKeyword AndAlso m_Second.AsKeyword.Equals(KS.[New]) Then
+            If m_Second.IsKeyword AndAlso m_Second.Token.Equals(KS.[New]) Then
                 '** If I is the keyword New, then a compile-time error occurs.
                 Helper.AddError()
             End If
@@ -365,7 +367,7 @@ Public Class MemberAccessExpression
                     End If
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
 
-                    If fld.IsStatic AndAlso CBool(fld.Attributes And FieldAttributes.InitOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) = False) Then
+                    If fld.IsStatic AndAlso CBool(fld.Attributes And FieldAttributes.InitOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                         Classification = New ValueClassification(Me, fld, Nothing)
                         Return True
                     Else
@@ -378,7 +380,7 @@ Public Class MemberAccessExpression
                 If Helper.IsEventDeclaration(first) Then
                     Dim red As EventDeclaration = TryCast(first, EventDeclaration)
                     Dim red2 As EventInfo = TryCast(first, EventInfo)
-                    If red IsNot Nothing AndAlso red.Modifiers.Is(KS.Shared) Then
+                    If red IsNot Nothing AndAlso red.Modifiers.Is(ModifierMasks.Shared) Then
                         Classification = New EventAccessClassification(Me, red.EventDescriptor, Nothing)
                         Return True
                     ElseIf red2 IsNot Nothing AndAlso red2.GetAddMethod(True).IsStatic Then
@@ -402,9 +404,9 @@ Public Class MemberAccessExpression
                 End If
 
                 '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-                Helper.AddError("Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString)
+                Helper.AddError("Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString(Compiler))
             Else
-                Helper.AddError("Could not resolve name '" & Name & "'" & "," & Me.Location.ToString)
+                Helper.AddError("Could not resolve name '" & Name & "'" & "," & Me.Location.ToString(Compiler))
             End If
         End If
 
@@ -455,7 +457,7 @@ Public Class MemberAccessExpression
             '** If I is the keyword New and E is an instance expression (Me, MyBase, or MyClass), then the result is 
             '   a method group representing the instance constructors of the type of E with an associated 
             '   instance expression of E and no type argument list. Otherwise, a compile-time error occurs.
-            If m_Second.IsKeyword AndAlso m_Second.AsKeyword.Equals(KS.[New]) Then
+            If m_Second.IsKeyword AndAlso m_Second.Token.Equals(KS.[New]) Then
                 If TypeOf m_First Is InstanceExpression Then
                     Classification = New MethodGroupClassification(Me, m_First, Nothing, Helper.GetInstanceConstructors(T))
                     Return True
@@ -510,7 +512,7 @@ Public Class MemberAccessExpression
                 If var IsNot Nothing Then
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
 
-                    If var.Modifiers.Is(KS.ReadOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) <> var.Modifiers.Is(KS.Shared)) Then
+                    If var.Modifiers.Is(ModifierMasks.ReadOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> var.Modifiers.Is(ModifierMasks.Shared)) Then
                         Classification = New ValueClassification(Me, var)
                         Return True
                     ElseIf T.IsClass Then
@@ -531,7 +533,7 @@ Public Class MemberAccessExpression
                     End If
                 ElseIf fld IsNot Nothing Then
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
-                    If fld.IsInitOnly AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(KS.Shared) <> fld.IsStatic) Then
+                    If fld.IsInitOnly AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> fld.IsStatic) Then
                         If fld.IsStatic Then
                             Classification = New ValueClassification(Me, fld, Nothing)
                         Else
@@ -637,7 +639,7 @@ Public Class MemberAccessExpression
             End If
         End If
 
-        Helper.AddError("Could not resolve name '" & Name & "' Location: " & Me.Location.ToString)
+        Helper.AddError("Could not resolve name '" & Name & "' Location: " & Me.Location.ToString(Compiler))
 
         Return False
     End Function

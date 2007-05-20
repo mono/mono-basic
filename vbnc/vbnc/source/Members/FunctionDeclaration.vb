@@ -39,13 +39,13 @@ Public Class FunctionDeclaration
 
     Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As MethodAttributes, ByVal ParameterTypes As Type(), ByVal ReturnType As Type, ByVal Location As Span)
         MyBase.New(Parent)
-        MyBase.Init(Nothing, New Modifiers(Me), New FunctionSignature(Me, Name, New ParameterList(Me, ParameterTypes), ReturnType, Location), CType(Nothing, MemberImplementsClause), Nothing)
+        MyBase.Init(Nothing, New Modifiers(), New FunctionSignature(Me, Name, New ParameterList(Me, ParameterTypes), ReturnType, Location), CType(Nothing, MemberImplementsClause), Nothing)
         MyBase.Attributes = MethodAttributes
     End Sub
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
-        While tm.PeekToken(i).Equals(Enums.MustOverrideProcedureModifiers)
+        While tm.PeekToken(i).Equals(ModifierMasks.MustOverrideProcedureModifiers)
             i += 1
         End While
         Return tm.PeekToken(i) = KS.Function

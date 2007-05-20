@@ -96,29 +96,29 @@ Public Class MethodDescriptor
 
             result = m_Declaration.Modifiers.GetMethodAttributeScope
 
-            If m_Declaration.Modifiers IsNot Nothing Then
-                If m_Declaration.IsShared Then
-                    result = result Or MethodAttributes.Static
-                End If
-                If m_Declaration.Modifiers.Is(KS.MustOverride) Then
-                    If m_Declaration.Modifiers.Is(KS.Overrides) = False Then
-                        result = result Or MethodAttributes.NewSlot
-                    End If
-                    result = result Or MethodAttributes.Abstract Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
-                End If
-                If m_Declaration.Modifiers.Is(KS.NotOverridable) Then
-                    result = result Or MethodAttributes.Final
-                End If
-                If m_Declaration.Modifiers.Is(KS.Overridable) Then
-                    result = result Or MethodAttributes.NewSlot Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
-                End If
-                If m_Declaration.Modifiers.Is(KS.Overrides) Then
-                    result = result Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
-                End If
-                If m_Declaration.Modifiers.Is(KS.Overloads) Then
-                    result = result Or MethodAttributes.HideBySig
-                End If
+            'If Modifiers.IsNothing(m_Declaration.Modifiers) = False Then
+            If m_Declaration.IsShared Then
+                result = result Or MethodAttributes.Static
             End If
+            If m_Declaration.Modifiers.Is(ModifierMasks.MustOverride) Then
+                If m_Declaration.Modifiers.Is(ModifierMasks.Overrides) = False Then
+                    result = result Or MethodAttributes.NewSlot
+                End If
+                result = result Or MethodAttributes.Abstract Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+            End If
+            If m_Declaration.Modifiers.Is(ModifierMasks.NotOverridable) Then
+                result = result Or MethodAttributes.Final
+            End If
+            If m_Declaration.Modifiers.Is(ModifierMasks.Overridable) Then
+                result = result Or MethodAttributes.NewSlot Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+            End If
+            If m_Declaration.Modifiers.Is(ModifierMasks.Overrides) Then
+                result = result Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+            End If
+            If m_Declaration.Modifiers.Is(ModifierMasks.Overloads) Then
+                result = result Or MethodAttributes.HideBySig
+            End If
+            'End If
 
             If TypeOf m_Declaration.Parent Is PropertyDeclaration Then
                 result = result Or MethodAttributes.SpecialName
@@ -127,7 +127,7 @@ Public Class MethodDescriptor
             If m_Declaration.HandlesOrImplements IsNot Nothing Then
                 If m_Declaration.HandlesOrImplements.ImplementsClause IsNot Nothing Then
                     result = result Or MethodAttributes.Virtual Or MethodAttributes.NewSlot Or MethodAttributes.CheckAccessOnOverride
-                    If m_Declaration.Modifiers.Is(KS.Overridable) = False AndAlso m_Declaration.Modifiers.Is(KS.MustOverride) = False Then
+                    If m_Declaration.Modifiers.Is(ModifierMasks.Overridable) = False AndAlso m_Declaration.Modifiers.Is(ModifierMasks.MustOverride) = False Then
                         result = result Or MethodAttributes.Final
                     End If
                 End If
