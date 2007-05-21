@@ -49,27 +49,19 @@ Namespace Microsoft.VisualBasic.Logging
         End Sub
 
         Protected Friend Overridable Sub InitializeWithDefaultsSinceNoConfigExists()
-#If mono_not_yet Then
             m_Source.Listeners.Add(New FileLogTraceListener("FileLog"))
             m_Source.Switch.Level = SourceLevels.Information
-#Else
-            throw new NotImplementedException
-#End If
         End Sub
-#If mono_not_yet Then
+
         Private Shared Function GetIDOfType(ByVal severity As TraceEventType) As Integer
             Return m_IDs(CInt(System.Math.Log(CInt(severity), 2)))
         End Function
-#End If
+
         Public Sub WriteEntry(ByVal message As String)
-#If mono_not_yet Then
             WriteEntry(message, TraceEventType.Information, GetIDOfType(TraceEventType.Information))
-#Else
-            throw new NotImplementedException
-#End If
         End Sub
 
-#If mono_not_yet Then
+
         Public Sub WriteEntry(ByVal message As String, ByVal severity As TraceEventType)
             WriteEntry(message, severity, GetIDOfType(severity))
         End Sub
@@ -84,16 +76,11 @@ Namespace Microsoft.VisualBasic.Logging
 #Const TRACE = TRACEDEFAULT
 
         End Sub
-#End If
+
         Public Sub WriteException(ByVal ex As Exception)
-#If mono_not_yet Then
             WriteException(ex, TraceEventType.Error, String.Empty, GetIDOfType(TraceEventType.Error))
-#Else
-            Throw New NotImplementedException
-#End If
         End Sub
 
-#If mono_not_yet Then
         Public Sub WriteException(ByVal ex As Exception, ByVal severity As TraceEventType, ByVal additionalInfo As String)
             WriteException(ex, severity, additionalInfo, GetIDOfType(severity))
         End Sub
@@ -108,21 +95,19 @@ Namespace Microsoft.VisualBasic.Logging
             End If
             WriteEntry(msg, severity, id)
         End Sub
-#End If
+
         Public ReadOnly Property DefaultFileLogWriter() As FileLogTraceListener
             Get
                 Return TryCast(m_Source.Listeners("FileLog"), FileLogTraceListener)
             End Get
         End Property
 
-#If mono_not_yet Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Public ReadOnly Property TraceSource() As TraceSource
             Get
                 Return m_Source
             End Get
         End Property
-#End If
     End Class
 End Namespace
 #End If
