@@ -111,6 +111,9 @@ Public MustInherit Class ConversionExpression
         If m_Expression.IsResolved = False Then
             result = m_Expression.ResolveExpression(Info) AndAlso result
         End If
+
+        If result = False Then Return result
+
         result = Helper.VerifyValueClassification(m_Expression, Info) AndAlso result
         Classification = New ValueClassification(Me)
 

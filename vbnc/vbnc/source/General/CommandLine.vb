@@ -86,6 +86,8 @@ Imports Microsoft.VisualBasic
 ''' </summary>
 Public Class CommandLine
 
+    Private Shared PATTERNCHARS As Char() = New Char() {"*"c, "?"c}
+
     ''' <summary>
     ''' There can be many response files, including response files called
     ''' from a response file. Keep a list of them all to know when a
@@ -822,7 +824,7 @@ Public Class CommandLine
             Compiler.Report.WriteLine("IO.File.Exists(" & Filename & ") => " & IO.File.Exists(Filename).ToString)
             Compiler.Report.WriteLine("IO.File.Exists(" & IO.Path.GetFullPath(Filename) & ") >= " & IO.File.Exists(IO.Path.GetFullPath(Filename)).ToString)
 #End If
-            Compiler.Report.ShowMessage(Messages.VBNC2005, Filename)
+            Compiler.Report.ShowMessage(Messages.VBNC2001, Filename)
             Return False
         End If
 
@@ -1031,7 +1033,7 @@ Public Class CommandLine
             Case "keyfile"
                 Dim paths() As String
                 paths = Me.GetFullPaths(strValue)
-                If paths.Length = 1 Then
+                If paths IsNot Nothing AndAlso paths.Length = 1 Then
                     m_strKeyFile = paths(0)
                 Else
                     Helper.AddError("""")
@@ -1082,7 +1084,16 @@ Public Class CommandLine
 
         Dim strFile As String
         Dim strFiles As String()
+
         strFiles = GetFullPaths(File)
+
+        If strFiles Is Nothing OrElse strFiles.Length = 0 Then
+            If IsPattern(File) = False Then
+                result = Compiler.Report.SaveMessage(Messages.VBNC2001, File) AndAlso result
+            End If
+            Return result
+        End If
+
         For Each strFile In strFiles
             m_lstFileNames.Add(New CodeFile(strFile, System.IO.Path.GetDirectoryName(File), Me.Compiler))
         Next
@@ -1167,8 +1178,6 @@ Public Class CommandLine
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function GetFullPaths(ByVal FileName As String) As String()
-        'Console.WriteLine("GetFullPath: " & FileName & ", SecondaryPath=" & SecondaryPath)
-        Dim result As String()
         Dim strPath As String = System.IO.Path.GetDirectoryName(FileName)
         Dim strFileName As String
 
@@ -1184,19 +1193,22 @@ Public Class CommandLine
         End If
         tmpPath = IO.Path.GetFullPath(strPath)
 
-        If IO.Directory.Exists(tmpPath) = False Then
-            'Compiler.Report.SaveMessage(Messages.VBNC2005, IO.Path.Combine(tmpPath, strFileName))
-            result = New String() {}
+        If IO.Directory.Exists(tmpPath) = False Then Return Nothing
+
+        If IsPattern(FileName) Then
+            Return IO.Directory.GetFiles(tmpPath, strFileName)
         Else
-            strPath = tmpPath
-            Dim strFiles() As String = IO.Directory.GetFiles(strPath, strFileName)
-            If strFiles Is Nothing OrElse strFiles.Length = 0 Then
-                Compiler.Report.SaveMessage(Messages.VBNC2005, strFileName)
-                result = New String() {}
+            Dim file As String = IO.Path.Combine(tmpPath, strFileName)
+            If IO.File.Exists(file) Then
+                Return New String() {file}
+            Else
+                Return Nothing
             End If
-            result = strFiles
         End If
-        Return result
+    End Function
+
+    Shared Function IsPattern(ByVal Filename As String) As Boolean
+        Return Filename.IndexOfAny(PATTERNCHARS) >= 0
     End Function
 
     ''' <summary>

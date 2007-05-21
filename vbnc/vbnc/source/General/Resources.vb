@@ -94,6 +94,11 @@ Public Class Resources
                 Return False
         End Select
 
+        If files Is Nothing OrElse files.Length = 0 Then
+            Compiler.Report.SaveMessage(Messages.VBNC2001, strItems(0))
+            Return False
+        End If
+
         For Each file As String In files
             Add(New Resource(file, identifier, isPublic))
         Next

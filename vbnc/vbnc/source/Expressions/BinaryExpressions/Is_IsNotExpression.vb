@@ -35,11 +35,11 @@ Public Class Is_IsNotExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        If m_LeftExpression.ExpressionType.IsGenericParameter Then
+        If result AndAlso m_LeftExpression.ExpressionType.IsGenericParameter Then
             m_LeftExpression = New BoxExpression(Me, m_LeftExpression, m_LeftExpression.ExpressionType)
             m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If
-        If m_RightExpression.ExpressionType.IsGenericParameter Then
+        If result AndAlso m_RightExpression.ExpressionType.IsGenericParameter Then
             m_RightExpression = New BoxExpression(Me, m_RightExpression, m_RightExpression.ExpressionType)
             m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If

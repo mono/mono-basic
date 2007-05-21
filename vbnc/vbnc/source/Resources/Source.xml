@@ -7,8 +7,8 @@
 
 -->
 <Messages xmlns="Source.xsd">
-	<Message id="2005" level="Error">
-		<Comment>Shows up as BC2001 when compiling.</Comment>
+	<Message id="2001" level="Error">
+		<Comment>ND</Comment>
 		<VBNCValue>file not found: {0}</VBNCValue>
 		<VBValue>file '%1!ls!' could not be found</VBValue>
 	</Message>

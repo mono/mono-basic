@@ -241,11 +241,13 @@ Public Class Report
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function ShowSavedMessages() As Boolean
-        ShowSavedMessages = m_SavedMessages.Count > 0
+        Dim result As Boolean
+        result = m_SavedMessages.Count = 0
         For Each msg As Message In m_SavedMessages
             ShowMessage(False, msg) 'Compiler.Report.WriteLine(str)
         Next
         m_SavedMessages.Clear()
+        Return result
     End Function
 
     ''' <summary>
@@ -315,44 +317,25 @@ Public Class Report
     End Function
 
     ''' <summary>
-    ''' Saves the multiline message with the specified parameters.
-    ''' Tries to look up the current location in the token manager.
-    ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub SaveMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String)
-        If Compiler.tm.IsCurrentTokenValid Then
-            ShowMessage(True, New Message(Compiler, Message, Parameters, Compiler.tm.CurrentToken.Location))
-        Else
-            ShowMessage(True, New Message(Compiler, Message, Parameters, Nothing))
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Saves the multiline message with the specified location and parameters.
-    ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub SaveMessage(ByVal Message() As Messages, ByVal Location As Span, ByVal ParamArray Parameters()() As String)
-        ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
-    End Sub
-
-    ''' <summary>
     ''' Saves the message with the specified location and parameters.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Sub SaveMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String)
-        ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
-    End Sub
+    Private Function SaveMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String) As Boolean
+        Return ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
+    End Function
 
     ''' <summary>
     ''' Saves the message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Sub SaveMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String)
+    Function SaveMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            SaveMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
+            Return SaveMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
         Else
-            SaveMessage(Message, Nothing, Parameters)
+            Return SaveMessage(Message, Nothing, Parameters)
         End If
-    End Sub
+    End Function
 
     ''' <summary>
     ''' Shows the specified message. Can optionally save it (not show it)

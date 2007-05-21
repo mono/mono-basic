@@ -467,8 +467,14 @@ Public Class MemberAccessExpression
             End If
 
             Dim members As Generic.List(Of MemberInfo)
+            Dim member As MemberCacheEntry
 
-            members = Compiler.TypeManager.GetCache(T).LookupFlattened(Name).Members
+            member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name)
+            If member Is Nothing Then
+                Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+            End If
+
+            members = member.Members
             Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
             withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
             If withTypeArgs IsNot Nothing Then
@@ -480,7 +486,7 @@ Public Class MemberAccessExpression
                 result = Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
                 If result = False Then Return result
             End If
-            
+
             If members.Count > 0 Then
                 Dim first As Object = members(0)
                 '** If I identifies one or more methods, then the result is a method group with the associated type 

@@ -51,7 +51,7 @@ Public Class ReturnStatement
 
         If m_Expression IsNot Nothing Then
             result = m_Expression.ResolveExpression(info) AndAlso result
-            If m_Expression.Classification.IsValueClassification = False Then
+            If result AndAlso m_Expression.Classification.IsValueClassification = False Then
                 m_Expression = m_Expression.ReclassifyToValueExpression
                 result = m_Expression.ResolveExpression(Info) AndAlso result
             End If

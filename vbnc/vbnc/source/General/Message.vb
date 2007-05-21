@@ -179,13 +179,13 @@ Public Class Message
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
 
         'Get the location string
-        'If Location IsNot Nothing Then
-        strLocation = Location.ToString(Compiler)
-        result = MESSAGEFORMATWITHLOCATION
-        'Else
-        'strLocation = ""
-        'result = MESSAGEFORMAT
-        'End If
+        If Location.HasFile Then
+            strLocation = Location.ToString(Compiler)
+            result = MESSAGEFORMATWITHLOCATION
+        Else
+            strLocation = ""
+            result = MESSAGEFORMAT
+        End If
 
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)

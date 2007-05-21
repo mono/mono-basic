@@ -27,7 +27,7 @@ Public Enum Messages
     ''' VB   = "file '%1!ls!' could not be found"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Error)> VBNC2005 = 2005
+    <Message(MessageLevel.Error)> VBNC2001 = 2001
 
     ''' <summary>
     ''' VBNC = "Option '{0}' requires ':{1}'"

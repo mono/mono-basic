@@ -469,6 +469,10 @@ Public Class Compiler
             'Show logo, unless asked not to
             If CommandLine.NoLogo = False Then ShowLogo()
 
+            If Report.ShowSavedMessages = False Then
+                Return 1
+            End If
+
             'Set the culture to en-us to enable correct parsing of numbers, dates, etc.
             Threading.Thread.CurrentThread.CurrentCulture = Globalization.CultureInfo.GetCultureInfo("en-us")
 

@@ -75,18 +75,6 @@ Public Class IdentifierOrKeyword
         End Get
     End Property
 
-    'ReadOnly Property AsIdentifier() As IdentifierToken
-    '    Get
-    '        Return DirectCast(m_Token, IdentifierToken)
-    '    End Get
-    'End Property
-
-    'ReadOnly Property AsKeyword() As KeywordToken
-    '    Get
-    '        Return DirectCast(m_Token, KeywordToken)
-    '    End Get
-    'End Property
-
     ReadOnly Property Token() As Token
         Get
             Return m_Token

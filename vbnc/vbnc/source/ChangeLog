@@ -1,3 +1,21 @@
+2007-05-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/Conversions/ConversionExpression.vb,
+	  Expressions/MemberAccessExpression.vb,
+	  Expressions/BinaryExpressions/Is_IsNotExpression.vb,
+	  Statements/ReturnStatement.vb: Short-circuit resolution.
+	* Tokens/IdentifierOrKeyword.vb: Remove comment.
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb:
+	  Update.
+	* General/Resources.vb: Add error handling.
+	* General/Report.vb: Remove a few unused methods and make SaveMessage
+	  return a boolean indicating whether the message is an warning or
+	  not.
+	* General/Compiler.vb: Show saved messages during commandline parsing.
+	* General/CommandLine.vb: GetFullPaths: don't show any errors here.
+	  Don't use Directory.GetFiles unless it's a pattern. AddFile: show
+	  error if no file was found and it's not a file pattern.
+
 2007-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Interfaces/IIntegralLiteralToken.vb, Interfaces/ILiteralToken.vb,
