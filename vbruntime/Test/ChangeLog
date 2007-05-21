@@ -1,3 +1,8 @@
+2007-05-21  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Remove NotWorking and TargetJvmNotWorking from a few unit tests that
+	  actually work now.
+
 2007-05-17  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Microsoft.VisualBasic/FinancialTests.cs: Added scenarios where period

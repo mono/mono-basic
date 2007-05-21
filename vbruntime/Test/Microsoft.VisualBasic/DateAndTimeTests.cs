@@ -142,7 +142,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		
-		[Category("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_DateInterval_1()
 		{
@@ -158,7 +157,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(DateTime.Parse("12/5/2005 00:00:00"),DateAndTime.DateAdd(DateInterval.Year, 2, DateTime.Parse("12/5/03")));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_String_1()
 		{
@@ -174,7 +172,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(DateTime.Parse("12/5/2005 00:00:00"),DateAndTime.DateAdd("yyyy", 2, DateTime.Parse("12/5/03")));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_DateInterval_2()
 		{
@@ -190,7 +187,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(DateTime.Parse("12/5/2001 00:00:00"),DateAndTime.DateAdd(DateInterval.Year, -2, DateTime.Parse("12/5/03")));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_String_2()
 		{
@@ -206,7 +202,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(DateTime.Parse("12/5/2001 00:00:00"),DateAndTime.DateAdd("yyyy", -2, DateTime.Parse("12/5/03")));
 		}
 		
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_DateInterval_3()
 		{
@@ -222,7 +217,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(DateTime.Parse("12/5/2003 00:00:00"),DateAndTime.DateAdd(DateInterval.Year, 0, DateTime.Parse("12/5/03")));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateAdd_String_3()
 		{
@@ -310,7 +304,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual (1L, WY, "#DD06");
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateDiff_DateInterval_1()
 		{
@@ -325,7 +318,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,DateAndTime.DateDiff(DateInterval.Year, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System ,FirstWeekOfYear.System));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateDiff_String_1()
 		{
@@ -340,7 +332,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,DateAndTime.DateDiff("yyyy", DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System ,FirstWeekOfYear.System));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateDiff_FirstDayOfWeek_1()
 		{
@@ -415,7 +406,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,DateAndTime.DateDiff(DateInterval.Year, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.Saturday     ,FirstWeekOfYear.System));
 		}
 		
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateDiff_FirstWeekOfYear_1()
 		{
@@ -450,7 +440,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,DateAndTime.DateDiff(DateInterval.Year, DateTime.Parse("12/5/03"),DateTime.Parse("12/1/05"),FirstDayOfWeek.System ,FirstWeekOfYear.FirstFullWeek   ));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void DateDiff_DateInterval_WeekOfYear()
 		{
@@ -734,8 +723,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: Add a test for setting the date string too
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
+		[Category("NotWorking")]
 		public void DateString_1()
 		{
 			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
@@ -822,7 +811,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(jan1.Day, DateAndTime.Day(jan1),"#D01");
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void Day_1()
 		{
@@ -1068,8 +1056,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: add a test case for setting time of day
 		}
 		
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
+		[Category("NotWorking")]
 		public void TimeOfDay_1()
 		{
 			DateAndTime.TimeOfDay = DateTime.Parse("12/2/03 23:34:45");
@@ -1148,8 +1136,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: add a test case for setting TimeString
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
+		[Category("NotWorking")]
 		public void TimeString_1()
 		{
 			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
@@ -1247,8 +1235,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: Add a test for setting Today
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
+		[Category("NotWorking")]
 		public void Today_1()
 		{
 			Assert.AreEqual(new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0,0),DateAndTime.Today);
@@ -1268,7 +1256,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual((int)jan1.DayOfWeek + 1, DateAndTime.Weekday(jan1, FirstDayOfWeek.System));
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void Weekday_1()
 		{
@@ -1491,7 +1478,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(jan1.Year, DateAndTime.Year(jan1),"#Y01");
 		}
 
-		[Category ("TargetJvmNotWorking")]//DateTime Parse Bug
 		[Test]
 		public void Year_1()
 		{

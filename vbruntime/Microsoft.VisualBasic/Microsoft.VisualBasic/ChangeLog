@@ -1,3 +1,7 @@
+2007-05-21  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DateAndTime.vb: Fix DateDiff of DateInterval.WeekOfYear
+
 2007-05-17  Eyal Alaluf <eyala@mainsoft.com>
 
 	* Financial.vb: Fix calculations. The biggest issue was non integral

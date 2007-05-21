@@ -32,7 +32,7 @@ Imports System
 Imports System.IO
 Imports System.Collections
 Imports Microsoft.VisualBasic
-<Category("Broken"), TestFixture()> _
+<TestFixture()> _
 Public Class ErrObjectTests
     <SetUp()> _
     Public Sub GetReady()

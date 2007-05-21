@@ -138,7 +138,6 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			Assert.IsNull (destination[2], "EmptyThird");
 		}
 
-		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void TestCopyArrayBiDimensionalShrinking() 
 		{
@@ -154,7 +153,6 @@ namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 			Assert.AreEqual (source[1,0], destination[1,0], "Third");
 		}
 
-		[Category ("TargetJvmNotWorking")]
 		[Test]
 		public void TestCopyArrayBiDimensionalExpanding() 
 		{

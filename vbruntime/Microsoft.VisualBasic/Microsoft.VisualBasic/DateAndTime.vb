@@ -221,7 +221,7 @@ Namespace Microsoft.VisualBasic
             Dim YearWeeks As Integer
             Dim WeekRule As CalendarWeekRule = CalendarWeekRule.FirstDay
             Dim DayRule As DayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek
-            Dim CurCalendar As Calendar = CultureInfo.CurrentCulture.Calendar
+			Dim WeekDiff as Long
 
             Select Case Interval
                 Case DateInterval.Year
@@ -233,15 +233,19 @@ Namespace Microsoft.VisualBasic
                     YearMonths = (Date2.Year - Date1.Year) * 12
                     Return Date2.Month - Date1.Month + YearMonths
                 Case DateInterval.WeekOfYear
-                    YearWeeks = (Date2.Year - Date1.Year) * 53
+                    WeekDiff = Convert.ToInt64(Date2.Subtract(Date1).Days \ 7)
                     DayRule = GetDayRule(StartOfWeek, DayRule)
-                    WeekRule = GetWeekRule(StartOfYear, WeekRule)
-                    If (CurCalendar Is Nothing) Then
-                        Throw New NotImplementedException("Looks like CultureInfo.CurrentCulture.Calendar is still returning null")
+                    if (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek < DayRule)
+                        return WeekDiff + 1
+                    Else if (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek > Date2.DayOfWeek)
+                        return WeekDiff + 1
+                    Else if (Date1.DayOfWeek >= DayRule And Date2.DayOfWeek < DayRule)
+                        return WeekDiff
+                    Else if (Date2.DayOfWeek < Date1.DayOfWeek)
+                        return WeekDiff + 1
+                    Else
+                        return WeekDiff
                     End If
-                    Return CurCalendar.GetWeekOfYear(Date2, WeekRule, DayRule) - _
-                     CurCalendar.GetWeekOfYear(Date1, WeekRule, DayRule) + _
-                                       YearWeeks
                 Case DateInterval.Weekday
                     Return Convert.ToInt64(((Date2.Subtract(Date1)).Days \ 7))
                 Case DateInterval.DayOfYear, _
