@@ -4,9 +4,22 @@ Class StructureMembers1
     Private Shared result As Integer
     Private Shared hole As Object
 
+    Class Tmp
+	Sub New (S As S)
+	End Sub
+    End Class
+
     Shared Sub Report(ByVal Msg As String)
         Console.WriteLine(Msg)
         result += 1
+    End Sub
+
+    Shared Sub Method1(ByRef S As S)
+        Dim S2 As S
+        S = S2
+    End Sub
+    Shared Sub Method2(ByRef S As S)
+        S = New S
     End Sub
 
     Shared Sub Dummy()
@@ -83,17 +96,41 @@ Class StructureMembers1
         Public D As D1
         Public E As E1
 
+        Sub New(ByVal I As Integer)
+            Int = I
+        End Sub
+
+        Sub M ()
+	    Dim e As New Tmp (Me)
+        End Sub
+
         Public Overrides Function ToString() As String
             Return ""
         End Function
 
         Public Sub SubMethod()
-
+            Me.int = 2
         End Sub
 
+        Public Sub A(ByVal Var As Integer)
+            A(Me.Int)
+            A(Int)
+        End Sub
+
+        Function B() As Boolean
+            If Me.P(int) Then Return True
+            Return P(Int)
+            Return P(Me.Int)
+        End Function
         Public Function FunctionMethod() As Object
             Return "abc"
         End Function
+
+        ReadOnly Property P(ByVal Index As Integer) As Boolean
+            Get
+                Return False
+            End Get
+        End Property
     End Structure
 
 
