@@ -118,6 +118,9 @@ Public Class CodeFile
 
     ReadOnly Property SymbolDocument() As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
         Get
+            If m_SymbolDocument Is Nothing AndAlso Compiler.SymbolWriter IsNot Nothing Then
+                m_SymbolDocument = Compiler.SymbolWriter.DefineDocument(Me.FileName, Nothing, Nothing, Nothing)
+            End If
             Return m_SymbolDocument
         End Get
     End Property
@@ -149,10 +152,6 @@ Public Class CodeFile
         m_OptionStrict = OptionStrict
         m_OptionExplicit = OptionExplicit
         m_Imports = [Imports]
-
-        If Compiler.SymbolWriter IsNot Nothing Then
-            m_SymbolDocument = Compiler.SymbolWriter.DefineDocument(Me.FileName, Nothing, Nothing, Nothing)
-        End If
     End Sub
 
     ''' <summary>

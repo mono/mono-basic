@@ -196,8 +196,8 @@ Public Class Report
         result = m_Resources.GetObject(ErrorCode.ToString)
 
         If result Is Nothing Then
-            Helper.Stop()
-            Return ""
+            Console.WriteLine("Could not find the error message corresponding with the error code: " & ErrorCode.ToString)
+            Return ErrorCode.ToString
         Else
             Return result.ToString
         End If
