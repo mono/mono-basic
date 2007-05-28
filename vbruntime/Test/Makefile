@@ -34,8 +34,15 @@ CSCOMPILER=gmcs
 CSDEFINES=-define:NET_1_0,NET_1_1,NET_2_0
 endif
 
+ifeq ($(PLATFORM), win32)
+WINTEST=-Make.cmd $(1_1) && Make.cmd $(2_0)
+else
+WINTEST=-echo Linux environment.
+endif
+
 init:
 	cp bin/nunit-console$(NUNIT_VERSION).exe.config bin/nunit-console.exe.config
+	$(WINTEST)
 
 2005VB_test_VB.dll.sources: 2005VB_test_VB.vbproj 
 	MONO_PATH=$(MONO_VB_PATH) mono ../../tools/extract-source/extract-source.exe -s:2005VB_test_VB.vbproj -d:2005VB_test_VB.dll.sources -m:l
