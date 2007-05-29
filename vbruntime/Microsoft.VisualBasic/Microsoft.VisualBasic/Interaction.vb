@@ -52,6 +52,8 @@ Namespace Microsoft.VisualBasic
             'TODO: OS Specific
             ' Removed Throw exception, as it does not really harm that the beep does not work.
         End Sub
+
+        <MonoLimitation("CallType.Let options is not supported.")> _
         Public Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
             Select Case UseCallType
                 Case CallType.Get
