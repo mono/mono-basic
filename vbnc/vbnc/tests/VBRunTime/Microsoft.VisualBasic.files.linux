@@ -100,6 +100,9 @@
 ../../../../vbruntime/Microsoft.VisualBasic.MyServices/RegistryProxy.jvm.vb
 ../../../../vbruntime/Microsoft.VisualBasic.MyServices/RegistryProxy.vb
 ../../../../vbruntime/Microsoft.VisualBasic.MyServices/SpecialDirectoriesProxy.vb
+../../../../vbruntime/Microsoft.VisualBasic.OSSpecific/LinuxDriver.vb
+../../../../vbruntime/Microsoft.VisualBasic.OSSpecific/OSDriver.vb
+../../../../vbruntime/Microsoft.VisualBasic.OSSpecific/Win32Driver.vb
 ../../../../vbruntime/Microsoft.VisualBasic/AppWinStyle.vb
 ../../../../vbruntime/Microsoft.VisualBasic/CallType.vb
 ../../../../vbruntime/Microsoft.VisualBasic/Collection.vb

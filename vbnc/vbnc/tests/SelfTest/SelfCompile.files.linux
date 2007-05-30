@@ -25,7 +25,6 @@
 ../../source/Emit/EmitInfo.vb
 ../../source/Emit/EmitStack.vb
 ../../source/Emit/Emitter.DecimalFields.vb
-../../source/Enums/BuiltInDataTypeEnumStringAttribute.vb
 ../../source/Enums/BuiltInDataTypes.vb
 ../../source/Enums/Constants.vb
 ../../source/Enums/EnumStringAttribute.vb
@@ -33,9 +32,10 @@
 ../../source/Enums/KS.vb
 ../../source/Enums/KSEnumStringAttribute.vb
 ../../source/Enums/LiteralTypeCharacters.vb
+../../source/Enums/ModifierMasks.vb
 ../../source/Enums/Operators.vb
+../../source/Enums/TokenType.vb
 ../../source/Enums/TypeCharacters.vb
-../../source/Enums/TypeCharactersEnumString.vb
 ../../source/Expressions/AddressOfExpression.vb
 ../../source/Expressions/Argument.vb
 ../../source/Expressions/ArgumentList.vb
@@ -84,7 +84,6 @@
 ../../source/Infos/ExpressionResolveInfo.vb
 ../../source/Interfaces/IHasImplicitMembers.vb
 ../../source/Interfaces/IHasImplicitTypes.vb
-../../source/Interfaces/IIntegralLiteralToken.vb
 ../../source/Interfaces/ITokenReader.vb
 ../../source/Members/EventHandlerDeclaration.vb
 ../../source/Members/EventDeclaration.vb
@@ -118,7 +117,6 @@
 ../../source/Interfaces/IDefinableType.vb
 ../../source/Interfaces/IEmittable.vb
 ../../source/Interfaces/IEventMemberDeclaration.vb
-../../source/Interfaces/ILiteralToken.vb
 ../../source/Interfaces/IDefinableMember.vb
 ../../source/Interfaces/IMember.vb
 ../../source/Interfaces/IMethod.vb
@@ -260,7 +258,6 @@
 ../../source/Statements/UsingStatement.vb
 ../../source/Statements/WhileStatement.vb
 ../../source/Statements/WithStatement.vb
-../../source/Tokens/CommandLineSpan.vb
 ../../source/Types/ArrayTypeName.vb
 ../../source/Types/BuiltInTypeName.vb
 ../../source/Types/Constraint.vb
@@ -386,20 +383,7 @@
 ../../source/General/Report.vb
 ../../source/General/Scanner.vb
 ../../source/Testing/Testing.vb
-../../source/Tokens/CharLiteralToken.vb
-../../source/Tokens/DateLiteralToken.vb
-../../source/Tokens/DecimalLiteralToken.vb
-../../source/Tokens/EndOfCodeToken.vb
-../../source/Tokens/EndOfFileToken.vb
-../../source/Tokens/EndOfLineToken.vb
-../../source/Tokens/FloatingPointLiteralToken.vb
-../../source/Tokens/IdentifierToken.vb
-../../source/Tokens/IntegralLiteralToken.vb
-../../source/Tokens/KeywordToken.vb
-../../source/Tokens/LiteralToken.vb
 ../../source/Tokens/Span.vb
-../../source/Tokens/StringLiteralToken.vb
-../../source/Tokens/SymbolToken.vb
 ../../source/Tokens/Token.vb
 ../../source/TypeDeclarations/AssemblyDeclaration.vb
 ../../source/Types/AttributeBaseType.vb

@@ -11,3 +11,4 @@
 /res:vbnc.vbnc.rsp
 /out:vbnc.exe
 /t:exe
+/define:_MYTYPE=\"Empty\"
