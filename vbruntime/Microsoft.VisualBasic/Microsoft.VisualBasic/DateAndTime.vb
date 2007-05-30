@@ -52,39 +52,19 @@ Namespace Microsoft.VisualBasic
                      DateTimeFormatInfo.CurrentInfo, _
                      DateTimeStyles.None)
 
-                    Today = dtToday
+                    OSSpecific.OSDriver.Driver.SetDate(dtToday)
                 Catch e As FormatException
                     Throw New InvalidCastException(String.Format("Cast from string {0} to type 'Date' is not valid.", Value))
                 End Try
             End Set
         End Property
-#If TARGET_JVM = False Then
-        <DllImport("libc", EntryPoint:="stime", _
-           SetLastError:=True, CharSet:=CharSet.Unicode, _
-           ExactSpelling:=True, _
-           CallingConvention:=CallingConvention.StdCall)> _
-        Friend Function stime(ByVal t As Integer) As Integer
-            ' Leave function empty - DllImport attribute forwards calls to stime to
-            ' stime in libc.dll
-        End Function
-#End If
 
         Public Property Today() As System.DateTime
             Get
                 Return DateTime.Today
             End Get
             Set(ByVal Value As System.DateTime)
-                Dim Now As System.DateTime = DateTime.Now
-                Dim NewDate As System.DateTime = New DateTime(Value.Year, Value.Month, Value.Day, _
-                                                Now.Hour, Now.Minute, Now.Second, Now.Millisecond)
-                Dim secondsTimeSpan As System.TimeSpan = NewDate.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0))
-                Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
-
-#If TARGET_JVM = False And disabled Then
-                If (stime(seconds) = -1) Then
-                    Throw New UnauthorizedAccessException("The caller is not the super-user.")
-                End If
-#End If
+                OSSpecific.OSDriver.Driver.SetDate(Value)
             End Set
         End Property
 
@@ -112,18 +92,7 @@ Namespace Microsoft.VisualBasic
                  TSpan.Milliseconds)
             End Get
             Set(ByVal Value As System.DateTime)
-                Today = DateTime.Now
-                Dim NewTime As System.DateTime = New DateTime(Today.Year, Today.Month, Today.Day, _
-                                                         Value.Hour, Value.Minute, Value.Second)
-
-                Dim secondsTimeSpan As TimeSpan = NewTime.ToUniversalTime().Subtract(New DateTime(1970, 1, 1, 0, 0, 0, 0))
-                Dim seconds As Integer = CType(secondsTimeSpan.TotalSeconds, Integer)
-
-#If TARGET_JVM = False And disabled Then
-                If (stime(seconds) = -1) Then
-                    Throw New UnauthorizedAccessException("The caller is not the super-user.")
-                End If
-#End If
+                OSSpecific.OSDriver.Driver.SetTime(Value)
             End Set
         End Property
 
@@ -132,14 +101,14 @@ Namespace Microsoft.VisualBasic
                 Return DateTime.Now.ToString("HH:mm:ss")
             End Get
             Set(ByVal Value As String)
-                Dim formats() As String = {"HH:mm:ss", "H:mm:ss", "h:mm:ss", "hh:mm:ss", "H:mm:ss tt", "h:mm:ss t", "hh:mm", "hh:mm tt", "h:mm", "h:mm tt", "h:m", "h:m tt"}
+                Dim formats() As String = {"hh:mm:ss tt", "H:mm:ss tt", "HH:mm:ss", "H:mm:ss", "h:mm:ss", "hh:mm:ss", "hh:mm", "hh:mm tt", "h:mm", "h:mm tt", "h:m", "h:m tt"}
 
                 Try
                     Dim dtToday As DateTime = DateTime.ParseExact(Value, formats, _
                      DateTimeFormatInfo.CurrentInfo, _
                      DateTimeStyles.None)
 
-                    TimeOfDay = dtToday
+                    OSSpecific.OSDriver.Driver.SetTime(dtToday)
                 Catch e As FormatException
                     Throw New InvalidCastException(String.Format("Cast from string {0} to type '{1}' is not valid.", Value, "Date"))
                 End Try
@@ -149,24 +118,27 @@ Namespace Microsoft.VisualBasic
         ' Methods
         Public Function DateAdd(ByVal Interval As DateInterval, _
         ByVal Number As Double, ByVal DateValue As System.DateTime) As System.DateTime
+            Dim value As Integer
+
+            value = CInt(Conversion.Fix(Number))
 
             Select Case Interval
                 Case DateInterval.Year
-                    Return DateValue.AddYears(CType(Number, Integer))
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddYears(DateValue, value)
                 Case DateInterval.Quarter
-                    Return DateValue.AddMonths(CType((Number * 3), Integer))
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddMonths(DateValue, value * 3)
                 Case DateInterval.Month
-                    Return DateValue.AddMonths(CType(Number, Integer))
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddMonths(DateValue, value)
                 Case DateInterval.WeekOfYear
-                    Return DateValue.AddDays(Number * 7)
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddDays(DateValue, value * 7)
                 Case DateInterval.Day, DateInterval.DayOfYear, DateInterval.Weekday
-                    Return DateValue.AddDays(Number)
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddDays(DateValue, value)
                 Case DateInterval.Hour
-                    Return DateValue.AddHours(Number)
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddHours(DateValue, value)
                 Case DateInterval.Minute
-                    Return DateValue.AddMinutes(Number)
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddMinutes(DateValue, value)
                 Case DateInterval.Second
-                    Return DateValue.AddSeconds(Number)
+                    Return Threading.Thread.CurrentThread.CurrentCulture.Calendar.AddSeconds(DateValue, value)
                 Case Else
                     Throw New ArgumentException
             End Select
@@ -498,7 +470,7 @@ Namespace Microsoft.VisualBasic
                 Dim d As DateTime = DateTime.Parse(StringDate, _
                 System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat, DateTimeStyles.NoCurrentDateDefault)
 
-                Return d.Subtract(d.TimeOfDay)
+                Return d.Date
             Catch exception As FormatException
                 Throw New InvalidCastException(String.Format("Cast from string {0} to type '{1}' is not valid.", StringDate, "Date"))
             End Try

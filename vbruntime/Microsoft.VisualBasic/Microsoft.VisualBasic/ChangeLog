@@ -1,3 +1,14 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateAndTime.vb: Move OS-specific code to the OS drivers (date/time
+	  setters). Fix DateAdd to use the current culture.
+	* Information.vb: Speed up IsNumeric and make it equal to
+	  Versioned.IsNumeric (except where it's supposed to be different).
+	* Strings.vb: Speed up Filter, and provide an implementation for Asc
+	  for non-ascii code pages.
+	* Collection.vb: On any profile below 2.0 the IList.Item setter is
+	  broken, so break it.
+
 2007-05-21  Eyal Alaluf <eyala@mainsoft.com>
 
 	* DateAndTime.vb: Fix DateDiff of DateInterval.WeekOfYear

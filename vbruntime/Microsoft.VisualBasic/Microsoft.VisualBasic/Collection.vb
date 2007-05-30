@@ -60,6 +60,10 @@ Namespace Microsoft.VisualBasic
         Private m_KeysCount As Integer = Integer.MinValue
         Friend Modified As Boolean = False
 
+#If NET_VER < 2.0 Then
+        Private m_Broken As Boolean
+#End If
+
         Private Class ColEnumerator
             Implements IEnumerator
 
@@ -235,6 +239,9 @@ Namespace Microsoft.VisualBasic
 
         Private Property IList_Item(ByVal index As Integer) As Object Implements System.Collections.IList.Item
             Get
+#If NET_VER < 2.0 Then
+                If m_Broken Then Throw New InvalidCastException ()
+#End If
                 If index < 0 AndAlso Count > 0 Then
                     'Oh man this behaviour is weird...
                     index = 0
@@ -248,7 +255,9 @@ Namespace Microsoft.VisualBasic
 
             End Get
             Set(ByVal Value As Object)
-
+#If NET_VER < 2.0 Then
+                m_Broken = True
+#End If
                 If index < 0 AndAlso Count > 0 Then
                     'Oh man this behaviour is weird...
                     index = 0

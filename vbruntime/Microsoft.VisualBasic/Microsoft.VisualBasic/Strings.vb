@@ -77,8 +77,12 @@ Namespace Microsoft.VisualBasic
         End Sub
 
         Public Function Asc(ByVal c As Char) As Integer
-            'FIXME : provide an implementation for non-ASCII chars
-            Return Convert.ToInt32(c)
+            Dim enc As System.Text.Encoding
+            enc = System.Text.Encoding.GetEncoding(Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage)
+
+            Dim bytes() As Byte
+            bytes = enc.GetBytes(New Char() {c})
+            Return bytes(0)
         End Function
 
         Public Function AscW(ByVal c As Char) As Integer
@@ -145,7 +149,7 @@ Namespace Microsoft.VisualBasic
 
         Public Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
                         <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
-            Dim Temp(Source.Length) As String
+            Dim Temp(Source.Length-1) As String
 
             If Compare = CompareMethod.Text Then
                 Match = Match.ToLower
@@ -161,20 +165,15 @@ Namespace Microsoft.VisualBasic
 
                 Dim comparisonResult As Boolean = (s.IndexOf(Match) >= 0)
 
-                If (comparisonResult And Include) Or (Not comparisonResult And Not Include) Then
+                If comparisonResult = Include Then
                     Temp(j) = CStr(Source(i))
                     j = j + 1
                 End If
             Next
 
-            Dim Res(j - 1) As String
-            For i As Integer = 0 To j - 1
-                Res(i) = Temp(i)
-            Next
-            ' FIXME : use redim
-            'ReDim Preserve Temp(j - 1)
+            ReDim Preserve Temp(j - 1)
 
-            Return Res
+            Return Temp
         End Function
 
         Public Function Filter(ByVal Source() As String, ByVal Match As String, Optional ByVal Include As Boolean = True, _
@@ -219,9 +218,11 @@ Namespace Microsoft.VisualBasic
             If Not PredefinedStyle Is Nothing Then
                 Return String.Format(PredefinedStyle.ToString(), Expression)
             End If
-
-            Return String.Format("{0:" + Style + "}", Expression)
-
+            If Style = "" Then
+                Return String.Format("{0}", Expression)
+            Else
+                Return String.Format("{0:" + Style + "}", Expression)
+            End If
         End Function
 
 

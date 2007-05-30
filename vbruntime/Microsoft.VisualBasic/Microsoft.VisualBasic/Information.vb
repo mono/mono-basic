@@ -96,20 +96,22 @@ Namespace Microsoft.VisualBasic
         End Function
         Public Function IsNumeric(ByVal Expression As Object) As Boolean
 
-            If (Expression Is Nothing) Or (TypeOf Expression Is Date) Then Return False
+            If Expression Is Nothing Then Return False
 
-            If (TypeOf Expression Is Short) Or (TypeOf Expression Is Integer) Or (TypeOf Expression Is Long) _
-                Or (TypeOf Expression Is Decimal) Or (TypeOf Expression Is Single) Or (TypeOf Expression Is Double) _
-                Or (TypeOf Expression Is Boolean) Or (TypeOf Expression Is Byte) Then Return True
-
-            Try
-                If TypeOf Expression Is String Then
-                    Convert.ToDouble(Expression)
+            Select Case Type.GetTypeCode(Expression.GetType)
+                Case TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.Double, TypeCode.Single, TypeCode.Decimal, TypeCode.Boolean
                     Return True
-                End If
-            Catch ex As Exception
-                Return False
-            End Try
+                Case TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.SByte
+                    Return False
+                Case TypeCode.DateTime
+                    Return False
+                Case TypeCode.String
+                    Return Double.TryParse(DirectCast(Expression, String), 0)
+                Case TypeCode.Char
+                    Return Double.TryParse(DirectCast(Expression, Char), 0)
+                Case Else
+                    Return False
+            End Select
 
             Return False
         End Function
