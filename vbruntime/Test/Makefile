@@ -53,7 +53,7 @@ init:
 	MONO_PATH=$(MONO_VB_PATH) mono ../../tools/extract-source/extract-source.exe -s:2005VB_test_CS.csproj -d:2005VB_test_CS.dll.sources.win -m:w
 
 test-first:
-	cd ../Microsoft.VisualBasic && make && cp ../../class/lib/vbnc/Microsoft.VisualBasic.dll ../Test/bin
+	cd ../Microsoft.VisualBasic && make && cp ../../class/lib/vbnc/Microsoft.VisualBasic.dll* ../Test/bin
 
 test-cs: test-first 2005VB_test_CS.dll.sources
 	$(CSCOMPILER) "-out:bin/2005VB_test_CS.dll" @2005VB_test_CS.dll.rsp @2005VB_test_CS.dll.sources -lib:bin $(CSDEFINES)
@@ -69,10 +69,10 @@ clean-local:
 	-rm -fR bin/data
 	
 run-test-cs: test-cs
-	cd bin && mono --debug nunit-console.exe 2005VB_test_CS.dll /labels
+	mono --debug bin/nunit-console.exe bin/2005VB_test_CS.dll /exclude:NotWorking /labels
 
 run-test-vb: test-vb
-	cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll /labels
+	cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll /labels /exclude:NotWorking
 
 run-test-local: run-test-cs run-test-vb
 	
