@@ -164,6 +164,10 @@ Public Class ExternalProcessExecutor
         Next
     End Sub
 
+    Private Sub OutputReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
+        m_StdOut &= e.Data & vbNewLine
+    End Sub
+
     Public Function RunProcess() As Boolean
         Dim process As New Process
         Try
@@ -223,7 +227,9 @@ Public Class ExternalProcessExecutor
             Catch
             End Try
 
-            m_StdOut = process.StandardOutput.ReadToEnd
+            AddHandler process.OutputDataReceived, AddressOf OutputReader
+            process.BeginOutputReadLine()
+
             m_TimedOut = Not process.WaitForExit(m_TimeOut)
             If m_TimedOut Then
                 process.Kill()
@@ -232,6 +238,8 @@ Public Class ExternalProcessExecutor
             m_Stats = New TestStatistics(process)
 
             process.Close()
+            process.CancelOutputRead()
+            RemoveHandler process.OutputDataReceived, AddressOf OutputReader
 
             If m_UseTemporaryExecutable Then
                 Try
