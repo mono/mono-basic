@@ -1,0 +1,4 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LinuxDriver.vb, OSDriver.vb, Win32Driver.vb, ChangeLog: Added.
+
