@@ -238,8 +238,8 @@ Public Class ExternalProcessExecutor
             m_Stats = New TestStatistics(process)
 
             process.Close()
-            process.CancelOutputRead()
-            RemoveHandler process.OutputDataReceived, AddressOf OutputReader
+            'process.CancelOutputRead()
+            'RemoveHandler process.OutputDataReceived, AddressOf OutputReader
 
             If m_UseTemporaryExecutable Then
                 Try
@@ -252,7 +252,7 @@ Public Class ExternalProcessExecutor
             End If
         Catch ex As Exception
             m_ExitCode = Integer.MinValue
-            m_StdOut = "Exception while executing process: " & Environment.NewLine & ex.Message
+            m_StdOut = "Exception while executing process: " & Environment.NewLine & ex.Message & Environment.NewLine & ex.StackTrace
         Finally
             If process IsNot Nothing Then process.Dispose()
         End Try
