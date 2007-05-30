@@ -56,7 +56,7 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 			ex = new MalformedLineException ("msg", new Exception ("InnerException"));
 			Assert.AreEqual (0, ex.LineNumber, "C1");
 #if !TARGET_JVM
-			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException\r\n   --- End of inner exception stack trace --- Line Number:0", ex.ToString (), "C2");
+			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException" + System.Environment.NewLine + "   --- End of inner exception stack trace --- Line Number:0", ex.ToString (), "C2");
 #endif
 
 			ex = new MalformedLineException ("msg", 52);
@@ -68,7 +68,7 @@ namespace MonoTests.Microsoft_VisualBasic.FileIO
 			ex = new MalformedLineException ("msg", 53, new Exception("InnerException"));
 			Assert.AreEqual (53, ex.LineNumber, "E1");
 			#if !TARGET_JVM
-			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException\r\n   --- End of inner exception stack trace --- Line Number:53", ex.ToString (), "E2");
+			Assert.AreEqual ("Microsoft.VisualBasic.FileIO.MalformedLineException: msg ---> System.Exception: InnerException" + System.Environment.NewLine + "   --- End of inner exception stack trace --- Line Number:53", ex.ToString (), "E2");
 #endif
 
 			ex = new MalformedLineException ();
