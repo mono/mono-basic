@@ -1629,7 +1629,7 @@ Partial Public Class Emitter
     Shared Sub EmitLoadValueAddress(ByVal Info As EmitInfo, ByVal Value As Object)
         Helper.Assert(Info.DesiredType.IsByRef)
         EmitLoadValue(Info.Clone(Info.DesiredType.GetElementType), Value)
-        Dim local As LocalBuilder = Info.ILGen.DeclareLocal(Info.DesiredType.GetElementType)
+        Dim local As LocalBuilder = Info.ILGen.DeclareLocal(Helper.GetTypeOrTypeBuilder(Info.DesiredType.GetElementType))
         EmitStoreVariable(Info, local)
         EmitLoadVariableLocation(Info, local)
     End Sub

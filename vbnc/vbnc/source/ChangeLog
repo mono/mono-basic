@@ -1,5 +1,9 @@
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/Emitter.vb: Small crasher fix.
+
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Descriptors/ParameterDescriptor.vb: Implement RawDefaultValue.
 	* General/Helper.vb: Only use Missing.Value for missing optional
 	  default value if the default value is actually missing
