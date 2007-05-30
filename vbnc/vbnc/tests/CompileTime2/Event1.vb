@@ -1,5 +1,5 @@
 Class Event1
-	Event E()
+    Shared Event E()
 	Shared Function Main () As Integer
 		If EEvent Is Nothing Then 
 			Return 0
