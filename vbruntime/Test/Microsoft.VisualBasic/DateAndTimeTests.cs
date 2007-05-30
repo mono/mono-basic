@@ -79,6 +79,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd() 
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy Mono: #?");
+		
 			DateTime dtNow = DateTime.Now;
 
 			Assert.AreEqual( dtNow.AddYears(1), DateAndTime.DateAdd(DateInterval.Year, 1, dtNow), "#DA01");
@@ -135,7 +138,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			catch (Exception e) 
 			{
 				caughtException = true;
-				Assert.AreEqual(e.GetType(), typeof(Exception),"#DA23");
+				Assert.AreEqual (typeof (Exception), e.GetType (), "#DA23");
 			}
 
 			// Assert.AreEqual("#DA24", caughtException, true);
@@ -145,6 +148,8 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd_DateInterval_1()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy Mono: #?");
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd(DateInterval.Day, 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd(DateInterval.DayOfYear, 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/5/2003 02:00:00"),DateAndTime.DateAdd(DateInterval.Hour, 2, DateTime.Parse("12/5/03")));
@@ -160,6 +165,8 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd_String_1()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy Mono: #?");
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd("d", 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd("y", 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/5/2003 02:00:00"),DateAndTime.DateAdd("h", 2, DateTime.Parse("12/5/03")));
@@ -724,26 +731,36 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void DateString_1()
 		{
-			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+			DateTime now = DateTime.Now;
+			try {
+				Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
 
-			DateAndTime.DateString = "9-5-2003";
-			Assert.AreEqual("09-05-2003",DateAndTime.DateString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+				DateAndTime.DateString = "9-5-2003";
+				Assert.AreEqual("09-05-2003",DateAndTime.DateString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
 
-			DateAndTime.DateString = "9-5-03";
-			Assert.AreEqual("09-05-2003",DateAndTime.DateString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+				DateAndTime.DateString = "9-5-03";
+				Assert.AreEqual("09-05-2003",DateAndTime.DateString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
 
-			DateAndTime.DateString = "9/5/2003";
-			Assert.AreEqual("09-05-2003",DateAndTime.DateString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+				DateAndTime.DateString = "9/5/2003";
+				Assert.AreEqual("09-05-2003",DateAndTime.DateString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
 
-			DateAndTime.DateString = "9/5/03";
-			Assert.AreEqual("09-05-2003",DateAndTime.DateString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+				DateAndTime.DateString = "9/5/03";
+				Assert.AreEqual("09-05-2003",DateAndTime.DateString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"MM-dd-yyyy"),DateAndTime.DateString);
+			} catch (System.UnauthorizedAccessException exception) {
+				Assert.Ignore (exception.Message);			
+			} finally {
+				try {
+					DateAndTime.Today = now;
+					DateAndTime.TimeOfDay = now;
+				} catch {
+				}
+			}			
 		}
 
 		[Test]
@@ -780,6 +797,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateValue_1()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81535");
+				
 			Assert.AreEqual(DateTime.Parse("12/30/1991"),DateAndTime.DateValue("12/30/1991"));
 			Assert.AreEqual(DateTime.Parse("12/30/1991"),DateAndTime.DateValue("12/30/91"));
 			Assert.AreEqual(DateTime.Parse("12/30/1991"),DateAndTime.DateValue("December 30, 1991"));
@@ -1057,12 +1077,24 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 		
 		[Test]
-		[Category("NotWorking")]
 		public void TimeOfDay_1()
 		{
-			DateAndTime.TimeOfDay = DateTime.Parse("12/2/03 23:34:45");
+			DateTime dt = DateAndTime.TimeOfDay;
+			try {
+				DateAndTime.TimeOfDay = DateTime.Parse("12/2/03 23:34:45");
 
-			Assert.AreEqual(DateTime.Parse("1/1/0001 23:34:45"),DateAndTime.TimeOfDay);
+				DateTime d1 = DateTime.Parse ("1/1/0001 23:34:45");
+				DateTime d2 = DateAndTime.TimeOfDay;
+				Assert.IsTrue(Math.Abs((d1 - d2).TotalMilliseconds) < 50);
+			} catch (System.UnauthorizedAccessException exception) {
+				Assert.Ignore (exception.Message);
+			} finally {
+				try {
+					DateAndTime.TimeOfDay = dt;
+				}
+				catch {
+				}
+			}
 		}
 
 		#endregion
@@ -1137,38 +1169,48 @@ namespace MonoTests.Microsoft_VisualBasic
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void TimeString_1()
 		{
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+			string dt = DateAndTime.TimeString;
+			try {
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "11:23:44";
-			Assert.AreEqual("11:23:44",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "11:23:44";
+				Assert.AreEqual("11:23:44",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "15:23:44";
-			Assert.AreEqual("15:23:44",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "15:23:44";
+				Assert.AreEqual("15:23:44",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "1:23:44";
-			Assert.AreEqual("01:23:44",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "1:23:44";
+				Assert.AreEqual("01:23:44",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "11:23:44 am";
-			Assert.AreEqual("11:23:44",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "11:23:44 am";
+				Assert.AreEqual("11:23:44",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "11:23:44 pm";
-			Assert.AreEqual("23:23:44",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "11:23:44 pm";
+				Assert.AreEqual("23:23:44",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "11:23";
-			Assert.AreEqual("11:23:00",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "11:23";
+				Assert.AreEqual("11:23:00",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
 
-			DateAndTime.TimeString = "1:3";
-			Assert.AreEqual("01:03:00",DateAndTime.TimeString);
-			Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+				DateAndTime.TimeString = "1:3";
+				Assert.AreEqual("01:03:00",DateAndTime.TimeString);
+				Assert.AreEqual(Strings.Format(DateTime.Now,"HH:mm:ss"),DateAndTime.TimeString);
+			} catch (UnauthorizedAccessException exception) {
+				Assert.Ignore (exception.Message);
+			} finally {
+				try {
+					DateAndTime.TimeString = dt;
+				} catch {
+				}
+			}
+			
 		}
 
 		[Test]

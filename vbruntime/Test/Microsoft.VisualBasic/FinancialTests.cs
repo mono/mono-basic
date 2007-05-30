@@ -505,6 +505,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		
 #else
 		[Test]
+		[Category ("NotWorking")]//Not Implemented
 		public void IRR_1()
 		{
 			double[] values = new double[] {-50000, 20000, 20000, 20000, 10000};
@@ -578,7 +579,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			d = Financial.MIRR (ref arr, 5, 5);
 			Assert.AreEqual(2.02366041666348, d, 0.00001, "#MIRR02");
 		}
-		
+
 		[Test]
 		public void MIRR_1()
 		{
@@ -638,6 +639,7 @@ namespace MonoTests.Microsoft_VisualBasic
 			Financial.MIRR(ref values, 0.1, 0.12);
 		}
 
+		[Category ("NotWorking")]
 		[Category ("TargetJvmNotWorking")]
 		[Test]
 		[ExpectedException(typeof(DivideByZeroException))]

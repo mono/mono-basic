@@ -244,7 +244,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void IsNumeric_1()
 		{
-
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81777");
+	
 			object tmpobj1 = "43";
 			object tmpobj2 = "343 TEST";
 			Assert.AreEqual(false,Information.IsNumeric("20 werwer"));

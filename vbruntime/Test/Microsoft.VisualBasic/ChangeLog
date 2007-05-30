@@ -1,3 +1,15 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Helper.cs: Add OnMono/OnMS
+	* StringsTest.cs, InformationTests.cs: Ignore tests that fail due to
+	  bugs elsewhere in mono for the moment.
+	* DateAndTimeTests.cs: Ignore tests that fail due to bugs elsewhere in
+	  mono for the moment. DateString_1, TimeOfDay_1, TimeString_1: Make
+	  sure we reset the date/time to what it was before the test and
+	  ignore it if a SecurityException occurs (root permissions required
+	  on Linux).
+	* FinancialTests.cs: Mark a few more tests as NotWorking.
+
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CollectionTests.cs: Added a few more asserts.

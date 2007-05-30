@@ -12,6 +12,18 @@ namespace MonoTests.Microsoft_VisualBasic
 		{
 			Console.WriteLine ("\r\nUsing runtime in: " + typeof (Microsoft.VisualBasic.Strings).Assembly.Location);
 		}
+		
+		public static bool OnMono {
+			get {
+				return Type.GetType ("Mono.Runtime") != null;
+			}
+		}
+		
+		public static bool OnMS {
+			get {
+				return !OnMono;
+			}
+		}
 
 #if NET_2_0
 

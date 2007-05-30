@@ -631,7 +631,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void FormatDateTime_LongDate()
 		{
-            
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81535");
+				
 			Assert.AreEqual("Wednesday, December 30, 1215",Strings.FormatDateTime(DateTime.Parse("12/30/1215"),DateFormat.LongDate));
 			Assert.AreEqual("Saturday, September 11, 2038",Strings.FormatDateTime(DateTime.Parse("9/11/2038"),DateFormat.LongDate));
 			Assert.AreEqual("Friday, October 09, 1001",Strings.FormatDateTime(DateTime.Parse("10/9/1001"),DateFormat.LongDate));
@@ -658,6 +660,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void FormatDateTime_ShortDate()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81535");
+				
 			Assert.AreEqual("12/30/1215",Strings.FormatDateTime(DateTime.Parse("12/30/1215"),DateFormat.ShortDate));
 			Assert.AreEqual("9/11/2038",Strings.FormatDateTime(DateTime.Parse("9/11/2038"),DateFormat.ShortDate));
 			Assert.AreEqual("10/9/1001",Strings.FormatDateTime(DateTime.Parse("10/9/1001"),DateFormat.ShortDate));
@@ -684,6 +689,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void FormatDateTime_LongTime()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81535");
+				
             DateTime tmptime = new DateTime(1, 10, 1);
             DateTime tmptime1 = new DateTime(1, 10, 1,1,1,1);
             DateTime tmptime2 = new DateTime(1, 10, 1,3,23,45);
@@ -716,6 +724,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void FormatDateTime_ShortTime()
 		{
+			if (Helper.OnMono)
+				Assert.Ignore ("Buggy mono: #81535");
+		
 			Assert.AreEqual("00:00",Strings.FormatDateTime(DateTime.Parse("12/30/1215"),DateFormat.ShortTime));
 			Assert.AreEqual("00:00",Strings.FormatDateTime(DateTime.Parse("9/11/2038"),DateFormat.ShortTime));
 			Assert.AreEqual("00:00",Strings.FormatDateTime(DateTime.Parse("10/9/1001"),DateFormat.ShortTime));
