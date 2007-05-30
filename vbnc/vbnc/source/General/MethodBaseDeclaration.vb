@@ -154,6 +154,8 @@ Public MustInherit Class MethodBaseDeclaration
         Get
             Dim result As Boolean
 
+            If TypeOf Me Is ExternalSubDeclaration Then Return False
+
             result = CBool(m_MethodAttributes.Value And Reflection.MethodAttributes.Abstract) = False AndAlso CBool(m_MethodImplAttributes.Value And Reflection.MethodImplAttributes.Runtime) = False
 
             If result Then

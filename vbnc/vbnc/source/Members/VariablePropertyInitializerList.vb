@@ -27,6 +27,14 @@
 Public Class VariablePropertyInitializerList
     Inherits BaseList(Of VariablePropertyInitializer)
 
+    Overloads Sub Add(ByVal Name As String, ByVal Value As Object)
+        Dim var As New VariablePropertyInitializer(Me)
+        Dim exp As New AttributeArgumentExpression(var)
+        exp.Init(New ConstantExpression(var, Value, Value.GetType))
+        var.Init(Name, exp)
+        Add(var)
+    End Sub
+
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return VariablePropertyInitializer.IsMe(tm)
     End Function

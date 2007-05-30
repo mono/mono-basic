@@ -1345,27 +1345,7 @@ Partial Public Class Emitter
         EmitNewArr(Info, ElementType)
     End Sub
 
-    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Boolean)
-        If I Then
-            EmitLoadI4Value(Info, -1, Info.Compiler.TypeCache.System_Boolean)
-        Else
-            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.System_Boolean)
-        End If
-    End Sub
-
-    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger)
-        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.System_UInt32)
-    End Sub
-
-    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger, ByVal TypeToPushOnStack As Type)
-        TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
-        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), TypeToPushOnStack)
-    End Sub
-
-    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Integer)
-        EmitLoadI4Value(Info, I, Info.Compiler.TypeCache.System_Int32)
-    End Sub
-
+  
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As ULong, ByVal TypeToPushOnStack As Type)
         TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
         EmitLoadI8Value(Info, BitConverter.ToInt64(BitConverter.GetBytes(I), 0), TypeToPushOnStack)
@@ -1402,12 +1382,6 @@ Partial Public Class Emitter
         Info.Stack.Push(Info.Compiler.TypeCache.System_Single)
     End Sub
 
-    Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single, ByVal TypeToPushOnStack As Type)
-        TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
-        Info.ILGen.Emit(OpCodes.Ldc_R4, I)
-        Info.Stack.Push(TypeToPushOnStack)
-    End Sub
-
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Integer, ByVal TypeToPushOnStack As Type)
         TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
         Select Case I
@@ -1438,6 +1412,32 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Ldc_I4, I)
         End Select
         Info.Stack.Push(TypeToPushOnStack)
+    End Sub
+    Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single, ByVal TypeToPushOnStack As Type)
+        TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
+        Info.ILGen.Emit(OpCodes.Ldc_R4, I)
+        Info.Stack.Push(TypeToPushOnStack)
+    End Sub
+
+    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Boolean)
+        If I Then
+            EmitLoadI4Value(Info, -1, Info.Compiler.TypeCache.System_Boolean)
+        Else
+            EmitLoadI4Value(Info, 0, Info.Compiler.TypeCache.System_Boolean)
+        End If
+    End Sub
+
+    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger)
+        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), Info.Compiler.TypeCache.System_UInt32)
+    End Sub
+
+    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As UInteger, ByVal TypeToPushOnStack As Type)
+        TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(TypeToPushOnStack)
+        EmitLoadI4Value(Info, BitConverter.ToInt32(BitConverter.GetBytes(I), 0), TypeToPushOnStack)
+    End Sub
+
+    Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Integer)
+        EmitLoadI4Value(Info, I, Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     ''' <summary>

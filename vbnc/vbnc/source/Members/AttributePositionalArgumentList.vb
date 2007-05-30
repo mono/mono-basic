@@ -32,6 +32,12 @@ Public Class AttributePositionalArgumentList
         MyBase.New(Parent)
     End Sub
 
+    Overloads Sub Add(ByVal Constant As Object)
+        Dim exp As New AttributeArgumentExpression(Me)
+        exp.Init(New ConstantExpression(exp, Constant, Constant.GetType))
+        Add(exp)
+    End Sub
+
     Shared Function CanBeMe(ByVal tm As tm) As Boolean
         Return AttributeArgumentExpression.CanBeMe(tm)
     End Function

@@ -60,12 +60,18 @@ Public Class AttributeArguments
 
     ReadOnly Property PositionalArgumentList() As AttributePositionalArgumentList
         Get
+            If m_AttributePositionalArgumentList Is Nothing Then
+                m_AttributePositionalArgumentList = New AttributePositionalArgumentList(Me)
+            End If
             Return m_AttributePositionalArgumentList
         End Get
     End Property
 
     ReadOnly Property VariablePropertyInitializerList() As VariablePropertyInitializerList
         Get
+            If m_VariablePropertyInitializerList Is Nothing Then
+                m_VariablePropertyInitializerList = New VariablePropertyInitializerList(Me)
+            End If
             Return m_VariablePropertyInitializerList
         End Get
     End Property

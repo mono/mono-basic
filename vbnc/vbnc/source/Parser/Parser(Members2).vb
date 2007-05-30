@@ -508,7 +508,7 @@ Partial Class Parser
         Dim result As New ExternalSubDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers = Nothing
-        Dim m_CharsetModifier As KS = Nothing
+        Dim m_CharsetModifier As KS
         Dim m_Identifier As Token = Nothing
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
@@ -523,9 +523,13 @@ Partial Class Parser
             tm.NextToken()
         End If
 
-        tm.AcceptIfNotInternalError(KS.Function)
+        tm.AcceptIfNotInternalError(KS.Sub)
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.CurrentToken.IsIdentifier = False Then
+            Helper.ErrorRecoveryNotImplemented()
+        End If
+        m_Identifier = tm.CurrentToken
+        tm.NextToken()
 
         m_LibraryClause = ParseLibraryClause(result)
         If m_LibraryClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -536,8 +540,9 @@ Partial Class Parser
         End If
 
         If tm.Accept(KS.LParenthesis) Then
+            m_ParameterList = New ParameterList(result)
             If tm.Accept(KS.RParenthesis) = False Then
-                If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), result) = False Then
+                If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), m_ParameterList) = False Then
                     Helper.ErrorRecoveryNotImplemented()
                 End If
 
@@ -583,7 +588,11 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Function)
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.CurrentToken.IsIdentifier = False Then
+            Helper.ErrorRecoveryNotImplemented()
+        End If
+        m_Identifier = tm.CurrentToken
+        tm.NextToken()
 
         m_LibraryClause = ParseLibraryClause(result)
         If m_LibraryClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -593,8 +602,9 @@ Partial Class Parser
             If m_AliasClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         End If
         If tm.Accept(KS.LParenthesis) Then
+            m_ParameterList = New ParameterList(result)
             If tm.Accept(KS.RParenthesis) = False Then
-                If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), result) = False Then
+                If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), m_ParameterList) = False Then
                     Helper.ErrorRecoveryNotImplemented()
                 End If
 
@@ -652,6 +662,7 @@ Partial Class Parser
 
         If tm.CurrentToken.IsStringLiteral Then
             m_StringLiteral = tm.CurrentToken
+            tm.NextToken()
         Else
             Helper.NotImplemented() 'TODO: Adderror
             m_StringLiteral = Nothing

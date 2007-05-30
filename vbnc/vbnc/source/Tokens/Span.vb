@@ -146,7 +146,7 @@ Public Structure Span
     End Sub
 
     Public Sub New(ByVal FromLocation As Span, ByVal ToLocation As Span)
-        Me.New(FromLocation.FileIndex, FromLocation.Line, FromLocation.Column, ToLocation.Column)
+        Me.New(FromLocation.FileIndex - 1US, FromLocation.Line, FromLocation.Column, ToLocation.Column)
         Helper.Assert(FromLocation.FileIndex = ToLocation.FileIndex)
     End Sub
 

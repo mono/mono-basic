@@ -31,6 +31,7 @@ Public Class ExternalSubDeclaration
     Private m_LibraryClause As LibraryClause
     Private m_AliasClause As AliasClause
 
+
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
     End Sub
@@ -83,5 +84,31 @@ Public Class ExternalSubDeclaration
         If tm.PeekToken(i + 1).Equals(ModifierMasks.CharSetModifiers) Then i += 1
         Return tm.PeekToken(i + 1) = KS.Sub AndAlso tm.PeekToken(i + 2).IsIdentifier
     End Function
+
+    Public Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveMember(Info) AndAlso result
+
+        Dim attrib As New Attribute(Me)
+        attrib.ResolvedType = Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute
+        attrib.AttributeArguments.PositionalArgumentList.Add(m_LibraryClause.StringLiteral.StringLiteral)
+        attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", Name)
+        attrib.AttributeArguments.VariablePropertyInitializerList.Add("SetLastError", True)
+        Select Case m_CharsetModifier
+            Case KS.Auto
+                attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Auto)
+            Case KS.Unicode
+                attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Unicode)
+            Case KS.Ansi
+                attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Ansi)
+            Case Else
+                Throw New InternalException
+        End Select
+        Me.CustomAttributes.Add(attrib)
+
+        Return result
+    End Function
+
 
 End Class

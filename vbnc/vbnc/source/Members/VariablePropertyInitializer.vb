@@ -25,6 +25,7 @@
 Public Class VariablePropertyInitializer
     Inherits ParsedObject
 
+    Private m_Identifier As String
     Private m_IdentifierOrKeyword As IdentifierOrKeyword
     Private m_AttributeArgumentExpression As AttributeArgumentExpression
 
@@ -36,9 +37,12 @@ Public Class VariablePropertyInitializer
         Return result
     End Function
 
-    ReadOnly Property IdentifierOrKeyword() As IdentifierOrKeyword
+    ReadOnly Property Identifier() As String
         Get
-            Return m_IdentifierOrKeyword
+            If m_Identifier IsNot Nothing Then
+                Return m_Identifier
+            End If
+            Return m_IdentifierOrKeyword.Identifier
         End Get
     End Property
 
@@ -50,6 +54,11 @@ Public Class VariablePropertyInitializer
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
+    End Sub
+
+    Sub Init(ByVal Identifier As String, ByVal AttributeArgumentExpression As AttributeArgumentExpression)
+        m_Identifier = Identifier
+        m_AttributeArgumentExpression = AttributeArgumentExpression
     End Sub
 
     Sub Init(ByVal IdentifierOrKeyword As IdentifierOrKeyword, ByVal AttributeArgumentExpression As AttributeArgumentExpression)

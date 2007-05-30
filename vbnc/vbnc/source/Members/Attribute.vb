@@ -80,14 +80,20 @@ Public Class Attribute
         End Get
     End Property
 
-    ReadOnly Property ResolvedType() As Type
+    Property ResolvedType() As Type
         Get
             Return m_ResolvedType
         End Get
+        Set(ByVal value As Type)
+            m_ResolvedType = value
+        End Set
     End Property
 
     ReadOnly Property AttributeArguments() As AttributeArguments
         Get
+            If m_AttributeArguments Is Nothing Then
+                m_AttributeArguments = New AttributeArguments(Me)
+            End If
             Return m_AttributeArguments
         End Get
     End Property
@@ -183,7 +189,7 @@ Public Class Attribute
                     Dim member As MemberInfo
                     Dim members As Generic.List(Of MemberInfo)
 
-                    name = item.IdentifierOrKeyword.Identifier
+                    name = item.Identifier
                     members = cache.LookupFlattenedMembers(name)
                     members = Helper.FilterExternalInaccessible(Info.Compiler, members)
                     If members.Count <> 1 Then
