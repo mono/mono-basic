@@ -1,1 +1,1 @@
-/target:winexe 
+/target:winexe /r:System.Windows.Forms.dll
