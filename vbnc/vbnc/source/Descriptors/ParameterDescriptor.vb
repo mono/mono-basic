@@ -255,9 +255,10 @@ Public Class ParameterDescriptor
 
     Public Overrides ReadOnly Property RawDefaultValue() As Object
         Get
-            Dim result As Object = MyBase.RawDefaultValue
+            Dim result As Object
+            result = DefaultValue
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Return result
         End Get
     End Property
     Public Overrides Function ToString() As String
