@@ -36,6 +36,7 @@ Namespace Microsoft.VisualBasic.FileIO
         Inherits Exception
 
         Private m_LineNumber As Long
+        Private m_AnyMessage As Boolean
 
         Public Sub New()
             MyBase.New()
@@ -43,6 +44,7 @@ Namespace Microsoft.VisualBasic.FileIO
 
         Public Sub New(ByVal message As String)
             MyBase.New(message)
+            m_AnyMessage = message <> String.Empty
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
@@ -53,16 +55,19 @@ Namespace Microsoft.VisualBasic.FileIO
 
         Public Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
+            m_AnyMessage = message <> String.Empty
         End Sub
 
         Public Sub New(ByVal message As String, ByVal lineNumber As Long)
             MyBase.New(message)
             m_LineNumber = lineNumber
+            m_AnyMessage = message <> String.Empty
         End Sub
 
         Public Sub New(ByVal message As String, ByVal lineNumber As Long, ByVal innerException As Exception)
             MyBase.New(message, innerException)
             m_LineNumber = lineNumber
+            m_AnyMessage = message <> String.Empty
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced), SecurityPermission(SecurityAction.Demand, SerializationFormatter:=True)> _
@@ -72,7 +77,24 @@ Namespace Microsoft.VisualBasic.FileIO
         End Sub
 
         Public Overrides Function ToString() As String
-            Return MyBase.ToString & " Line Number:" & m_LineNumber.ToString()
+            Dim msg As String
+
+            msg = "Microsoft.VisualBasic.FileIO.MalformedLineException: "
+
+            If m_AnyMessage Then
+                msg &= MyBase.Message
+            Else
+                msg &= "Exception of type 'Microsoft.VisualBasic.FileIO.MalformedLineException' was thrown."
+            End If
+
+            If MyBase.InnerException IsNot Nothing Then
+                msg &= " ---> " & MyBase.InnerException.ToString & Environment.NewLine
+                msg &= MyBase.InnerException.StackTrace & "   --- End of inner exception stack trace ---"
+            End If
+
+            msg = msg & " Line Number:" & m_LineNumber.ToString
+
+            Return msg
         End Function
 
         <EditorBrowsable(EditorBrowsableState.Always)> _

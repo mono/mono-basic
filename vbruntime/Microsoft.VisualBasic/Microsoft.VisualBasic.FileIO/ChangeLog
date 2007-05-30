@@ -1,3 +1,8 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MalformedLineException.vb: Don't rely on Exception's ToString
+	  handling, do it all ourselves.
+
 2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* FileSystemOperationUI.vb:
