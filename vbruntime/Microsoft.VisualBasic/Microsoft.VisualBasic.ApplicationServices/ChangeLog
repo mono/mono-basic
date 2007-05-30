@@ -1,3 +1,7 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	
+
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* WindowsFormsApplicationBase.vb: Corcompare work and removed

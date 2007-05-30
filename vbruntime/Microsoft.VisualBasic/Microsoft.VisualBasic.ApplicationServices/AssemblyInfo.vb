@@ -30,6 +30,7 @@
 #If NET_2_0 Then
 Imports System.Reflection
 Imports System.Collections.ObjectModel
+Imports System.Collections.Generic
 
 Namespace Microsoft.VisualBasic.ApplicationServices
     Public Class AssemblyInfo
