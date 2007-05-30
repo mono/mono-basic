@@ -1,3 +1,10 @@
+2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win,
+	  Microsoft.VisualBasic.dll.sources: Update.
+	* strings.resources: Updated.
+	* Makefile: Added install-binary target.
+
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Microsoft.VisualBasic.FileIO/SpecialDirectories.vb: Fix weird paths

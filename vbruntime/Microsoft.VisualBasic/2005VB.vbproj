@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -32,6 +32,12 @@
     <OptionStrict>True</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <OutputPath>../bin/</OutputPath>
+    <RootNamespace>
+    </RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CompilerResponseFile>2005VB.rsp</CompilerResponseFile>
@@ -50,18 +56,35 @@
     <OptionExplicit>True</OptionExplicit>
     <OptionStrict>True</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <OutputPath>../bin/</OutputPath>
+    <RootNamespace>
+    </RootNamespace>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
     <RootNamespace>dummy_root</RootNamespace>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <OutputPath>../bin/</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>INDEVENV=true,NET_2_0=true,NET_VER=2.0</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <OptionExplicit>True</OptionExplicit>
+    <OptionStrict>True</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
@@ -181,6 +204,9 @@
     <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxy.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxy.vb" />
     <Compile Include="Microsoft.VisualBasic.MyServices\SpecialDirectoriesProxy.vb" />
+    <Compile Include="Microsoft.VisualBasic.OSSpecific\LinuxDriver.vb" />
+    <Compile Include="Microsoft.VisualBasic.OSSpecific\OSDriver.vb" />
+    <Compile Include="Microsoft.VisualBasic.OSSpecific\Win32Driver.vb" />
     <Compile Include="Microsoft.VisualBasic\AppWinStyle.vb" />
     <Compile Include="Microsoft.VisualBasic\CallType.vb" />
     <Compile Include="Microsoft.VisualBasic\Collection.vb" />

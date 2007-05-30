@@ -100,6 +100,9 @@ Microsoft.VisualBasic.MyServices\FileSystemProxy.vb
 Microsoft.VisualBasic.MyServices\RegistryProxy.jvm.vb
 Microsoft.VisualBasic.MyServices\RegistryProxy.vb
 Microsoft.VisualBasic.MyServices\SpecialDirectoriesProxy.vb
+Microsoft.VisualBasic.OSSpecific\LinuxDriver.vb
+Microsoft.VisualBasic.OSSpecific\OSDriver.vb
+Microsoft.VisualBasic.OSSpecific\Win32Driver.vb
 Microsoft.VisualBasic\AppWinStyle.vb
 Microsoft.VisualBasic\CallType.vb
 Microsoft.VisualBasic\Collection.vb
