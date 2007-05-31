@@ -1,3 +1,8 @@
+2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* StringsTest.cs: Use unicode escape sequences for a few characters.
+	* DateAndTimeTests.cs: Update ignore message with bug-number.
+
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Helper.cs: Add OnMono/OnMS

@@ -101,8 +101,8 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			Assert.AreEqual(6548,Strings.AscW("\u1994"));
 			Assert.AreEqual(22118,Strings.AscW("\u5666"));
-			Assert.AreEqual(32768,Strings.AscW("耀"));
-			Assert.AreEqual(32770,Strings.AscW("耂"));
+			Assert.AreEqual(32768,Strings.AscW("\u8000"));
+			Assert.AreEqual(32770,Strings.AscW("\u8002"));
 		}
 
 		[Test]
