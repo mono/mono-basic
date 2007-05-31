@@ -40,9 +40,13 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 		[Test]
 		public void TestGetValue ()
 		{
-			Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
-			object value = registry.GetValue ("HKEY_CLASSES_ROOT", ".txt", "a");
-			Assert.AreEqual ("a", value, "#01");
+			try {
+				Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
+				object value = registry.GetValue ("HKEY_CLASSES_ROOT", ".txt", "a");
+				Assert.AreEqual ("a", value, "#01");
+			} catch (System.Security.SecurityException ex) {
+				Assert.Ignore (ex.Message);
+			}
 		}
 
 #if !TARGET_JVM
@@ -50,39 +54,47 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 		[Test]
 		public void TestSetValue ()
 		{
-			Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
-			string name = ".someweirdthing";
-			string keyname = "HKEY_CLASSES_ROOT\\" + name;
-			string valuename = ".name";
-			registry.SetValue (keyname, valuename, "a");
-			object value = registry.GetValue (keyname, valuename, "b");
-			Assert.AreEqual ("a", value, "#01");
-			registry.SetValue (keyname, valuename, "c");
-			value = registry.GetValue (keyname, valuename, "c");
-			Assert.AreEqual ("c", value, "#02");
-			
-			registry.ClassesRoot.DeleteSubKey(name);
+			try {
+				Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
+				string name = ".someweirdthing";
+				string keyname = "HKEY_CLASSES_ROOT\\" + name;
+				string valuename = ".name";
+				registry.SetValue (keyname, valuename, "a");
+				object value = registry.GetValue (keyname, valuename, "b");
+				Assert.AreEqual ("a", value, "#01");
+				registry.SetValue (keyname, valuename, "c");
+				value = registry.GetValue (keyname, valuename, "c");
+				Assert.AreEqual ("c", value, "#02");
+				
+				registry.ClassesRoot.DeleteSubKey(name);
+			} catch (System.Security.SecurityException ex) {
+				Assert.Ignore (ex.Message);
+			}
 		}
 
 		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestSetValue2 ()
 		{
-			Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
-			string name = ".someweirdthing";
-			string keyname = "HKEY_CLASSES_ROOT\\" + name;
-			string valuename = ".name";
-			registry.SetValue (keyname, valuename, 1);
-			object value = registry.GetValue (keyname, valuename, 2);
-			Assert.AreEqual (1, value, "#01");
-			registry.SetValue (keyname, valuename, 3, Microsoft.Win32.RegistryValueKind.DWord);
-			value = registry.GetValue (keyname, valuename, 3);
-			Assert.AreEqual (3, value, "#02");
-			
-			registry.ClassesRoot.DeleteSubKey(name);
+			try {	        
+				Microsoft.VisualBasic.MyServices.RegistryProxy registry = getProxy ();
+				string name = ".someweirdthing";
+				string keyname = "HKEY_CLASSES_ROOT\\" + name;
+				string valuename = ".name";
+				registry.SetValue (keyname, valuename, 1);
+				object value = registry.GetValue (keyname, valuename, 2);
+				Assert.AreEqual (1, value, "#01");
+				registry.SetValue (keyname, valuename, 3, Microsoft.Win32.RegistryValueKind.DWord);
+				value = registry.GetValue (keyname, valuename, 3);
+				Assert.AreEqual (3, value, "#02");
+				
+				registry.ClassesRoot.DeleteSubKey(name);
+			} catch (System.Security.SecurityException ex) {
+				Assert.Ignore (ex.Message);
+			}
 		}
 
-        [Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
+		[Category ("TargetJvmNotSupported")]//ServerComputer.Registry Pproperty
 		[Test]
 		public void TestGlobalKeys ()
 		{
@@ -112,7 +124,7 @@ namespace MonoTests.Microsoft_VisualBasic.MyServices
 			
 		}
 #endif
-        Microsoft.VisualBasic.MyServices.RegistryProxy getProxy ()
+		Microsoft.VisualBasic.MyServices.RegistryProxy getProxy ()
 		{
 			return (new Microsoft.VisualBasic.Devices.Computer()).Registry;
 		}
