@@ -27,12 +27,18 @@
 '
 
 Namespace Microsoft.VisualBasic.OSSpecific
+#If TARGET_JVM = False Then
     Friend MustInherit Class OSDriver
+#Else
+    Friend Class OSDriver
+#End If
+    
         Private Shared m_Driver As OSDriver
 
         Shared ReadOnly Property Driver() As OSDriver
             Get
-                If m_Driver Is Nothing Then
+#If TARGET_JVM = False Then
+		If m_Driver Is Nothing Then
                     Select Case CInt(System.Environment.OSVersion.Platform)
                         Case PlatformID.Win32NT, PlatformID.Win32S, PlatformID.Win32Windows, PlatformID.WinCE
                             m_Driver = New Win32Driver()
@@ -42,6 +48,9 @@ Namespace Microsoft.VisualBasic.OSSpecific
                             Throw New ApplicationException(String.Format("The OS '{0}' is not supported.", System.Environment.OSVersion.ToString()))
                     End Select
                 End If
+#Else
+		m_Driver = New OSDriver()
+#End If		
                 Return m_Driver
             End Get
         End Property

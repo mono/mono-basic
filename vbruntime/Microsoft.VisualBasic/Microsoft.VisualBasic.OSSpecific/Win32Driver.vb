@@ -26,6 +26,8 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
+#If TARGET_JVM = False Then
+
 Imports System.Runtime.InteropServices
 
 
@@ -79,3 +81,4 @@ Namespace Microsoft.VisualBasic.OSSpecific
 
     End Class
 End Namespace
+#End If

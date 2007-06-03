@@ -114,8 +114,10 @@ Namespace Microsoft.VisualBasic.Logging
             End If
         End Sub
 
+#If TARGET_JVM = False Then            
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal message As String)
-            If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
+
+	    If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
 
             Dim builder As New System.Text.StringBuilder()
             builder.Append(source)
@@ -159,6 +161,7 @@ Namespace Microsoft.VisualBasic.Logging
             End If
             WriteLine(builder.ToString)
         End Sub
+#End If
 
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal format As String, ByVal ParamArray args As Object())
             If args Is Nothing Then
