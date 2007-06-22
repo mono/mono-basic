@@ -35,6 +35,16 @@ Public Class MemberAccessExpression
 
     Private m_WithStatement As WithStatement
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            If m_First IsNot Nothing Then
+                Return m_First.AsString & "." & m_Second.Identifier
+            Else
+                Return "." & m_Second.Identifier
+            End If
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             Return Classification.IsConstant

@@ -43,7 +43,7 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -74,11 +74,11 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -99,11 +99,11 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <NoWarn>42004,42026</NoWarn>
@@ -128,14 +128,14 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
     <DebugSymbols>True</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <WarningLevel>1</WarningLevel>
@@ -165,8 +165,8 @@
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -175,7 +175,7 @@
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <RootNamespace>vbnc</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <Optimize>True</Optimize>
@@ -185,8 +185,8 @@
     <WarningLevel>1</WarningLevel>
     <NoWarn>
     </NoWarn>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Self Compile|AnyCPU' ">
     <NoWarn>
@@ -195,7 +195,7 @@
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc_ms</AssemblyName>
-    <OutputPath>./</OutputPath>
+    <OutputPath>.</OutputPath>
     <DebugSymbols>True</DebugSymbols>
     <RootNamespace>vbnc_ms</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
@@ -204,8 +204,8 @@
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RuntimeTests|AnyCPU' ">
     <NoWarn>
@@ -214,7 +214,7 @@
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc_ms</AssemblyName>
-    <OutputPath>./</OutputPath>
+    <OutputPath>.</OutputPath>
     <DebugSymbols>True</DebugSymbols>
     <RootNamespace>vbnc_ms</RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
@@ -223,8 +223,8 @@
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
     <Import Include="System" />
@@ -822,7 +822,7 @@
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperFile Include="Microsoft.Net.Framework.2.0">

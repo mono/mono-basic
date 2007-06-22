@@ -92,11 +92,12 @@ Public Class EventMemberSpecifier
             'add AddHandler/RemoveHandler to withevents variable's property
             Dim sne As SimpleNameExpression
             sne = TryCast(m_First, SimpleNameExpression)
+            'Console.WriteLine(Me.Location.ToString(Compiler))
             Helper.Assert(sne IsNot Nothing)
-
             Dim propD As PropertyDescriptor
             Helper.Assert(sne.Classification.IsPropertyGroupClassification)
             Helper.Assert(sne.Classification.AsPropertyGroup.IsResolved)
+            Helper.Assert(sne.Classification.AsPropertyGroup.ResolvedProperty IsNot Nothing)
 
             propD = TryCast(sne.Classification.AsPropertyGroup.ResolvedProperty, PropertyDescriptor)
             Helper.Assert(propD IsNot Nothing)

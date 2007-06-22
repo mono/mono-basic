@@ -6784,4 +6784,11 @@ Public Enum Messages
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC90023 = 90023
 
+    ''' <summary>
+    ''' VBNC = "{0}"
+    ''' VB   = "(no corresponding VB error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC99999 = 99999
+
 End Enum

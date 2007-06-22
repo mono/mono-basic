@@ -1,3 +1,16 @@
+2007-06-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/MemberAccessExpression.vb,
+	  Expressions/SimpleNameExpression.vb,
+	  Members/EventMemberSpecifier.vb: Debug info.
+	* vbnc.vbproj, General/AssemblyInfo.vb: Update.
+	* Parser/Parser.vb: Show a real warning.
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Add
+	  a generic warning.
+	* General/Message.vb: Fix message string generation (wasn't including
+	  filename).
+	* General/TypeConverter.vb: Duh.
+
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Emit/Emitter.vb: Small crasher fix.

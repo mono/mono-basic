@@ -145,7 +145,7 @@ Partial Public Class Parser
         If tm.Accept(KS.On) Then
             m_Off = False
         ElseIf tm.Accept("Off") Then
-            Console.WriteLine("Warning (" & tm.CurrentToken.Location.File(Compiler).FileName & "): Option Strict Off will probably fail.")
+            Compiler.Report.ShowMessage(Messages.VBNC99999, tm.PeekToken(-1).Location, "Option Strict Off will probably fail.")
             m_Off = True
         End If
 

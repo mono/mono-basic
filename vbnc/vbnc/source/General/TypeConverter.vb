@@ -1511,6 +1511,7 @@ Public Enum KS
     RealDivision
     IntDivision
     ShiftRight
+    ShiftLeft
     ConcatAssign '		L"&="
     AddAssign 'L"+="
     MinusAssign 'L"-="

@@ -4837,4 +4837,9 @@
 		<VBNCValue>There is no comparison possible between '{0}' and '{1}'.</VBNCValue>
 		<VBValue>(no corresponding VB error)</VBValue>
 	</Message>
+  <Message id="99999" level="Error">
+    <Comment>Whatever you wish :)</Comment>
+    <VBNCValue>{0}</VBNCValue>
+    <VBValue>(no corresponding VB error)</VBValue>
+  </Message>
 </Messages>

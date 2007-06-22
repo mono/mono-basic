@@ -101,6 +101,7 @@ Public Class Message
     ''' <param name="Message"></param>
     ''' <remarks></remarks>
     Sub New(ByVal Compiler As Compiler, ByVal Message As Messages, ByVal Location As Span)
+        Me.m_Compiler = Compiler
         Me.m_Message = New Messages() {Message}
         Me.m_Location = Location
         Me.m_Parameters = New String()() {}
@@ -110,6 +111,7 @@ Public Class Message
     ''' Create a new message with the specified data.
     ''' </summary>
     Sub New(ByVal Compiler As Compiler, ByVal Message As Messages(), ByVal Parameters()() As String, ByVal Location As Span)
+        Me.m_Compiler = Compiler
         Me.m_Message = Message
         Me.m_Location = Location
         Me.m_Parameters = Parameters
@@ -119,6 +121,7 @@ Public Class Message
     ''' Create a new message with the specified data.
     ''' </summary>
     Sub New(ByVal Compiler As Compiler, ByVal Message As Messages, ByVal Parameters() As String, ByVal Location As Span)
+        Me.m_Compiler = Compiler
         Me.m_Message = New Messages() {Message}
         Me.m_Location = Location
         If Parameters Is Nothing Then
@@ -194,23 +197,4 @@ Public Class Message
 
         Return result
     End Function
-
-    '#If DEBUG Then
-    '    ''' <summary>
-    '    ''' Dump this message to an xmlwriter.
-    '    ''' </summary>
-    '    ''' <param name="xml"></param>
-    '    ''' <remarks></remarks>
-    '    Sub Dump(ByVal xml As Xml.XmlWriter)
-    '        xml.WriteStartElement("Message")
-    '        xml.WriteAttributeString("Level", Level.ToString)
-    '        'If Location IsNot Nothing Then 
-    '        Location.Dump(xml)
-    '        'End If
-    '        For i As Integer = 0 To m_Message.GetUpperBound(0)
-    '            xml.WriteString(Me.ToString)
-    '        Next
-    '        xml.WriteEndElement()
-    '    End Sub
-    '#End If
 End Class

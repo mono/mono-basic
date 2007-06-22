@@ -42,6 +42,16 @@ Public Class SimpleNameExpression
         m_TypeArgumentList = TypeArgumentList
     End Sub
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            If m_TypeArgumentList Is Nothing Then
+                Return m_Identifier.Identifier
+            Else
+                Return m_Identifier.Identifier & "(Of <type arguments>)"
+            End If
+        End Get
+    End Property
+
     Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New SimpleNameExpression(NewParent)
