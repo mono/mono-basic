@@ -93,7 +93,12 @@ Namespace Microsoft.VisualBasic.ApplicationServices
             End Get
         End Property
 
+#If TARGET_JVM Then
+        <MonoNotSupported("GH limitation")> _
         Public ReadOnly Property LoadedAssemblies() As ReadOnlyCollection(Of Assembly)
+#Else
+        Public ReadOnly Property LoadedAssemblies() As ReadOnlyCollection(Of Assembly)
+#End If
             Get
                 Return New ReadOnlyCollection(Of Assembly)(AppDomain.CurrentDomain.GetAssemblies())
             End Get
