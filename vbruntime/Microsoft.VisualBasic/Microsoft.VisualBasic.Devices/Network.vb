@@ -124,14 +124,18 @@ Namespace Microsoft.VisualBasic.Devices
             DownloadFile(address, destinationFileName, credentials, showUI, connectionTimeout, overwrite, onUserCancel)
         End Sub
 
+        <MonoNotSupported("")> _
         Public Function Ping(ByVal hostNameOrAddress As String) As Boolean
             Return Ping(hostNameOrAddress, 500)
         End Function
 
+        <MonoNotSupported("")> _
         Public Function Ping(ByVal address As Uri) As Boolean
             Return Ping(address.Host, 500)
         End Function
 
+        ' Not supported, since uses unsupported System.Net.NetworkInformation.Ping.Send()
+        <MonoNotSupported("")> _
         Public Function Ping(ByVal hostNameOrAddress As String, ByVal timeout As Integer) As Boolean
             If IsAvailable = False Then
                 Throw New InvalidOperationException("Network not available.")
@@ -146,6 +150,7 @@ Namespace Microsoft.VisualBasic.Devices
             Return result.Status = IPStatus.Success
         End Function
 
+        <MonoNotSupported("")> _
         Public Function Ping(ByVal address As Uri, ByVal timeout As Integer) As Boolean
             Return Ping(address.Host, timeout)
         End Function
