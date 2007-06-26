@@ -41,13 +41,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         ' ProjectData singelton
         Private Shared Inst As ProjectData = Nothing
+#If TARGET_JVM Then
+        private Shared m_projectErrorSlot as LocalDataStoreSlot = System.Threading.Thread.AllocateDataSlot()
+#Else
         '
         ' ThreadStatic Indicates that the value of a static field is unique for each thread.
         ' Although there is one ProjectData, every thread which set get VB errors must have its own ErrObject
         <ThreadStatic()> _
         Friend Shared m_projectError As ErrObject
-#If TARGET_JVM Then
-        private Shared m_projectErrorSlot as LocalDataStoreSlot = System.Threading.Thread.AllocateDataSlot()
 #End If
 
         Friend ReadOnly Property ProjectError() As ErrObject
