@@ -20,7 +20,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <AdditionalClassPath>
     </AdditionalClassPath>
-    <jarserver>ip2</jarserver>
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
@@ -56,7 +55,7 @@
     <SkipValidation>false</SkipValidation>
     <KeepIntermediate>false</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
-    <DefineConstants>JAVA=true</DefineConstants>
+    <DefineConstants>TARGET_JVM=True,JAVA=True,NET_2_0=True,_MYTYPE="Empty",INDEVENV=true,NET_VER=2.0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <DebugSymbols>true</DebugSymbols>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -73,7 +72,9 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="J2SE.Helpers">
+         <HintPath>..\..\lib\J2SE.Helpers.dll</HintPath>
+    </Reference> 
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -82,7 +83,7 @@
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-JarPath-j2se-helpers="..\..\lib\J2SE.Helpers.jar" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>

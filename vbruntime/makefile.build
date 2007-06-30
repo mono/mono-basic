@@ -1,5 +1,5 @@
 <project name="vbruntime" default="all">
-<property name="ghroot"  value="${project::get-base-directory()}\..\..\..\..\.."/>
+<property name="ghroot"  value="${project::get-base-directory()}\..\..\..\.."/>
   <!--Allways at the beginning-->
   <include buildfile="${ghroot}\vsbuild\properties.xml" />
 
