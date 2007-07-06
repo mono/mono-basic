@@ -655,7 +655,7 @@ Public Class MemberAccessExpression
             End If
         End If
 
-        Helper.AddError("Could not resolve name '" & Name & "' Location: " & Me.Location.ToString(Compiler))
+        Compiler.Report.ShowMessage(Messages.VBNC30456, Location, Name, m_First.AsString)
 
         Return False
     End Function
