@@ -21,7 +21,7 @@ DISTFILES = \
 	source/Resources/Errors.resx \
 	source/vbnc.rsp
 
-#all-local: vbnc.Errors.resources vbnc.exe.sources
+all-local: vbnc.Errors.resources vbnc.exe.sources
 
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
@@ -42,9 +42,16 @@ uninstall-extras:
 	rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc.rsp
 
 install-binary: default
-	cp ../../class/lib/vbnc/* ../../class/lib/bootstrap
+	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
 
 boot-from-ms:
 	cd tests/SelfTest/ && boot.sh && rerun.sh
 	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
+	
+test-thorough:
+	cd tests/SelfTest/ && rerun.sh && rerun.sh && rerun.sh
+	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
+	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll ../class/lib/bootstrap/
+	cd ../../ && make clean && make install
+	
 	
