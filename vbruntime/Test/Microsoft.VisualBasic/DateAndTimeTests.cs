@@ -730,8 +730,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: Add a test for setting the date string too
 		}
 
-#if !TARGET_JVM
         //DateAndTime.DateString property is read-only under TARGET_JVM
+        [Category("TargetJvmNotWorking")]
 		[Test]
 		public void DateString_1()
 		{
@@ -764,7 +764,6 @@ namespace MonoTests.Microsoft_VisualBasic
 				}
 			}			
 		}
-#endif
 
 		[Test]
 		[ExpectedException(typeof(InvalidCastException))]
@@ -1079,8 +1078,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: add a test case for setting time of day
 		}
 		
-#if !TARGET_JVM
         //DateAndTime.TimeOfDay property is read-only under TARGET_JVM
+        [Category("TargetJvmNotWorking")]
 		[Test]
 		public void TimeOfDay_1()
 		{
@@ -1101,7 +1100,7 @@ namespace MonoTests.Microsoft_VisualBasic
 				}
 			}
 		}
-#endif
+
 		#endregion
 
 		#region TimeSerial Tests
@@ -1173,8 +1172,8 @@ namespace MonoTests.Microsoft_VisualBasic
 			// TODO: add a test case for setting TimeString
 		}
 
-#if !TARGET_JVM
         //DateAndTime.TimeString property is read-only under TARGET_JVM
+        [Category("TargetJvmNotWorking")]
 		[Test]
 		public void TimeString_1()
 		{
@@ -1218,7 +1217,6 @@ namespace MonoTests.Microsoft_VisualBasic
 				}
 			}			
 		}
-#endif
 
 		[Test]
 		[ExpectedException(typeof(InvalidCastException))]
