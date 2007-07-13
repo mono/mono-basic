@@ -115,6 +115,9 @@ Public Class TypeManager
         End If
     End Function
 
+    Function ContainsCache(ByVal Type As Type) As Boolean
+        Return MemberCache.ContainsKey(Type)
+    End Function
     ''' <summary>
     ''' All the referenced assemblies
     ''' </summary>
@@ -385,7 +388,7 @@ Public Class TypeManager
         types.Add(Type)
         If m_TypesByFullName.TryGetValue(fullname, types) = False Then
             types = New Generic.List(Of Type)
-            m_TypesByFullName(name) = types
+            m_TypesByFullName(fullname) = types
         End If
         types.Add(Type)
     End Sub

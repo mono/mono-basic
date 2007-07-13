@@ -304,7 +304,7 @@
 	</Message>
 	<Message id="30057" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Too many arguments provided to '{0}'.</VBNCValue>
 		<VBValue>Too many arguments to '|1'.</VBValue>
 	</Message>
 	<Message id="30058" level="Error">
@@ -1704,7 +1704,7 @@
 	</Message>
 	<Message id="30516" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Overload resolution failed because no '{0}' is accessible with the specified arguments.</VBNCValue>
+		<VBNCValue>Overload resolution failed because no '{0}' is accessible with the specified number of arguments.</VBNCValue>
 		<VBValue>Overload resolution failed because no accessible '|1' accepts this number of arguments.</VBValue>
 	</Message>
 	<Message id="30517" level="Error">
@@ -2379,7 +2379,7 @@
 	</Message>
 	<Message id="30691" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{1}.{0}' is a type and cannot be used as an expression.</VBNCValue>
 		<VBValue>'|1' is a type in '|2' and cannot be used as an expression.</VBValue>
 	</Message>
 	<Message id="30694" level="Error">

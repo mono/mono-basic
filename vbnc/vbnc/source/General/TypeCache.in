@@ -32,6 +32,7 @@
 '
 	
 type mscorlib "System.Boolean"
+array System_Boolean
 type mscorlib "System.Byte"
 array System_Byte
 type mscorlib "System.Char"
@@ -67,6 +68,7 @@ type mscorlib "System.IDisposable"
 method System_IDisposable "Dispose"
 type mscorlib "System.RuntimeTypeHandle"
 type mscorlib "System.Type"
+array System_Type
 method System_Type "GetTypeFromHandle" System_RuntimeTypeHandle
 type mscorlib "System.Void"
 type mscorlib "System.Exception"
@@ -192,7 +194,15 @@ field MS_VB_CS_StaticLocalInitFlag "State"
 ctor MS_VB_CS_StaticLocalInitFlag
 
 vbtype "Microsoft.VisualBasic.CompilerServices.IncompleteInitialization"
+vbtype "Microsoft.VisualBasic.CompilerServices.NewLateBinding"
+vbtype "Microsoft.VisualBasic.CompilerServices.LateBinding"
 ctor MS_VB_CS_IncompleteInitialization
+
+method MS_VB_CS_NewLateBinding "LateGet" System_Object System_Type System_String System_Object_Array System_String_Array System_Type_Array System_Boolean_Array
+method MS_VB_CS_NewLateBinding "LateSet" System_Object System_Type System_String System_Object_Array System_String_Array System_Type_Array
+method MS_VB_CS_NewLateBinding "LateIndexGet" System_Object System_Object_Array System_String_Array 
+method MS_VB_CS_NewLateBinding "LateIndexSet" System_Object System_Object_Array System_String_Array 
+method MS_VB_CS_NewLateBinding "LateCall" System_Object System_Type System_String System_Object_Array System_String_Array System_Type_Array System_Boolean_Array System_Boolean
 
 method MS_VB_CS_ProjectData "EndApp"
 method MS_VB_CS_ProjectData "CreateProjectError" System_Int32 

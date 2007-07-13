@@ -1,3 +1,36 @@
+2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/MemberAccessExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb,
+	  Expressions/Classifications/LateBoundAccessClassification.vb,
+	  Expressions/Classifications/PropertyAccessClassification.vb,
+	  Statements/CallStatement.vb,
+	  Statements/AssignStatements/AssignmentStatement.vb,
+	  Members/ConstructorDeclaration.vb, Parser/Parser.vb,
+	  Parser/Parser(Expressions).vb,
+	  TypeDeclarations/AssemblyDeclaration.vb, General/Scanner.vb,
+	  General/TypeCache.vb, General/TypeManager.vb,
+	  General/MemberCache.vb, General/TypeCache.in, Infos/ResolveInfo.vb:
+	  Start implementing late binding.
+	* Expressions/Expression.vb: Implement default instances and late
+	  binding.
+	* Expressions/Classifications/MethodGroupClassification.vb,
+	  Expressions/Classifications/PropertyGroupClassification.vb,
+	  Members/MethodResolver.vb: Add a ShowErrors to the method
+	  resolution to replay resolution, showing errors.
+	* Expressions/Classifications/ExpressionClassification.vb,
+	  Expressions/Classifications/TypeClassification.vb,
+	  Expressions/Classifications/ValueClassification.vb,
+	  TypeDeclarations/ClassDeclaration.vb: Implement default instances.
+	* vbnc.vbproj: Update.
+	* Descriptors/TypeDescriptor.vb: Always use Helper.CompareType instead
+	  of Type.Equals
+	* Resources/Source.xml, Resources/Errors.resx: A few more messages.
+	* General/Helper.vb: Start implementing late binding and delete some
+	  dead code.
+	* General/MyGenerator.vb: Fix line endings.
+	* General/Messages.vb: Add a few messages.
+
 2007-07-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/MemberAccessExpression.vb: Add error message.

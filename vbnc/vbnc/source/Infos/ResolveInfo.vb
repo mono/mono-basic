@@ -18,8 +18,11 @@
 ' 
 
 Public Class ResolveInfo
-    Public SkipFunctionReturnVariable As Boolean
-    Public CanFail As Boolean
+    Private m_Bits As New Collections.BitArray(32)
+    Private Const c_SkipFunctionReturnVariable As Integer = 0
+    Private Const c_CanFail As Integer = 1
+    Private Const c_CanBeLateCall As Integer = 2
+
     Public Compiler As Compiler
 
     Private Shared DefaultInfo As ResolveInfo
@@ -37,4 +40,31 @@ Public Class ResolveInfo
         Me.CanFail = CanFail
         Me.Compiler = Compiler
     End Sub
+
+    Public Property CanBeLateCall() As Boolean
+        Get
+            Return m_Bits(c_CanBeLateCall)
+        End Get
+        Set(ByVal value As Boolean)
+            m_Bits(c_CanBeLateCall) = value
+        End Set
+    End Property
+
+    Public Property SkipFunctionReturnVariable() As Boolean
+        Get
+            Return m_Bits(c_SkipFunctionReturnVariable)
+        End Get
+        Set(ByVal value As Boolean)
+            m_Bits(c_SkipFunctionReturnVariable) = value
+        End Set
+    End Property
+
+    Public Property CanFail() As Boolean
+        Get
+            Return m_Bits(c_CanFail)
+        End Get
+        Set(ByVal value As Boolean)
+            m_Bits(c_CanFail) = value
+        End Set
+    End Property
 End Class

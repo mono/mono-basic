@@ -67,7 +67,7 @@ Public Class PropertyGroupClassification
         Dim resolvedGroup As New Generic.List(Of MemberInfo)
         Dim inputGroup As New Generic.List(Of MemberInfo)(m_Members.ToArray)
 
-        result = Helper.ResolveGroup(Me.Parent, inputGroup, resolvedGroup, SourceParameters, Nothing, Nothing)
+        result = Helper.ResolveGroup(Me.Parent, inputGroup, resolvedGroup, SourceParameters, Nothing, Nothing, False)
 
         If result Then
             m_ResolvedProperty = TryCast(resolvedGroup(0), PropertyInfo)

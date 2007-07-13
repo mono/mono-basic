@@ -190,8 +190,8 @@ Public Class MyGenerator
         Code.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""8.0.0.0"")> _")
         Code.AppendLine("    Friend Class MyApplication")
         Code.Append("        Inherits ") : Code.AppendLine(baseClass)
-        Code.AppendLine("        Public Sub New()")
-        Code.AppendLine("        End Sub")
+        'Code.AppendLine("        Public Sub New()")
+        'Code.AppendLine("        End Sub")
         If Compiler.CommandLine.Target = CommandLine.Targets.Winexe AndAlso Compiler.CommandLine.Main = String.Empty AndAlso baseClass = "Global.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase" Then
             Code.AppendLine("        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Advanced)> _")
             Code.AppendLine("        <Global.System.Diagnostics.DebuggerHidden()> _")

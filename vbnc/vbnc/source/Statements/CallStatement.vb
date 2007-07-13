@@ -61,6 +61,12 @@ Public Class CallStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
+        If m_Target.Classification.IsLateBoundClassification Then
+            result = m_Target.GenerateCode(Info) AndAlso result
+
+            Return result
+        End If
+
         Helper.Assert(m_Target.Classification.IsValueClassification OrElse m_Target.Classification.IsVoidClassification)
 
         If IsExcluded() Then Return result

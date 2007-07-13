@@ -94,8 +94,11 @@ Public Class AssignmentStatement
             result = RSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
             'RSide.Classification = RSide.Classification.ReclassifyToValue
         Else
-            Helper.AddError("Right hand side expression must be classifiable as a value.")
+            Helper.ShowClassificationError(Compiler, RSide.Location, RSide.Classification, "expression")
+            result = False
         End If
+
+        If result = False Then Return result
 
         If LSide.Classification.IsVariableClassification OrElse LSide.Classification.IsPropertyAccessClassification Then
             'do nothing
@@ -107,8 +110,11 @@ Public Class AssignmentStatement
                 Return result
             End If
         Else
-            Helper.AddError("Left hand side expression must be classifiable as a variable or a property access.")
+            Helper.ShowClassificationError(Compiler, LSide.Location, LSide.Classification, "expression")
+            result = False
         End If
+
+        If result = False Then Return result
 
         If m_LSide.ExpressionType.IsGenericType AndAlso Helper.CompareType(Compiler.TypeCache.System_Nullable1, m_LSide.ExpressionType.GetGenericTypeDefinition) Then
             Dim lTypeArg As Type()

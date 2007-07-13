@@ -1199,6 +1199,15 @@ Public Class Scanner
         NextFile()
     End Sub
 
+    Public Sub New(ByVal Compiler As Compiler, ByVal Code As String)
+        m_Compiler = Compiler
+        m_Files = New Generic.Queue(Of CodeFile)()
+        Dim cf As New CodeFile("<Internal>", "", Compiler, Code)
+        m_Files.Enqueue(cf)
+        Compiler.CommandLine.Files.Add(cf)
+        NextFile()
+    End Sub
+
     Private Sub NextFile()
         m_TotalLineCount += m_CurrentLine
         'm_TotalCharCount += m_Code.Length

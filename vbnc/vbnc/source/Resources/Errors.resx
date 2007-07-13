@@ -91,7 +91,7 @@
   <data name="30051"><value>CHANGEME</value></data>
   <data name="30052"><value>CHANGEME</value></data>
   <data name="30053"><value>CHANGEME</value></data>
-  <data name="30057"><value>CHANGEME</value></data>
+  <data name="30057"><value>Too many arguments provided to '{0}'.</value></data>
   <data name="30058"><value>CHANGEME</value></data>
   <data name="30059"><value>The expression is not a constant expression.</value></data>
   <data name="30060"><value>Cannot convert from '{0}' to '{1}' in a constant expression.</value></data>
@@ -371,7 +371,7 @@
   <data name="30508"><value>CHANGEME</value></data>
   <data name="30509"><value>CHANGEME</value></data>
   <data name="30512"><value>CHANGEME</value></data>
-  <data name="30516"><value>Overload resolution failed because no '{0}' is accessible with the specified arguments.</value></data>
+  <data name="30516"><value>Overload resolution failed because no '{0}' is accessible with the specified number of arguments.</value></data>
   <data name="30517"><value>CHANGEME</value></data>
   <data name="30518"><value>CHANGEME</value></data>
   <data name="30519"><value>CHANGEME</value></data>
@@ -506,7 +506,7 @@
   <data name="30688"><value>CHANGEME</value></data>
   <data name="30689"><value>CHANGEME</value></data>
   <data name="30690"><value>CHANGEME</value></data>
-  <data name="30691"><value>CHANGEME</value></data>
+  <data name="30691"><value>'{1}.{0}' is a type and cannot be used as an expression.</value></data>
   <data name="30694"><value>CHANGEME</value></data>
   <data name="30695"><value>CHANGEME</value></data>
   <data name="30696"><value>CHANGEME</value></data>

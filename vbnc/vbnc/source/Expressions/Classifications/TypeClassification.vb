@@ -28,6 +28,47 @@ Public Class TypeClassification
 
     Private m_Type As Type 'Descriptor
     Private m_TypeParameter As TypeParameter
+    Private m_Group As MyGroupData
+
+    ReadOnly Property MyGroup() As MyGroupData
+        Get
+            If Not CanBeExpression() Then Return Nothing
+            Return m_Group
+        End Get
+    End Property
+
+    ReadOnly Property Expression() As Expression
+        Get
+
+            If Not CanBeExpression() Then Return Nothing
+            If m_Group Is Nothing Then Return Nothing
+            Return m_Group.DefaultInstanceAlias
+        End Get
+    End Property
+
+    ReadOnly Property CanBeExpression() As Boolean
+        Get
+            Dim result As Boolean = False
+
+            If m_Group IsNot Nothing Then Return m_Group.DefaultInstanceAlias IsNot Nothing
+
+            If Compiler.Assembly.GroupedClasses Is Nothing Then Return False
+
+            If m_Type Is Nothing Then Return False
+
+            For Each data As MyGroupData In Compiler.Assembly.GroupedClasses
+                If data.DefaultInstanceAlias Is Nothing Then Continue For
+                If data.TypeToCollect Is Nothing Then Continue For
+                If Helper.CompareType(data.TypeToCollect, m_Type.BaseType) = False Then Continue For
+
+                m_Group = data
+
+                Return True
+            Next
+
+            Return False
+        End Get
+    End Property
 
     ReadOnly Property IsTypeParameter() As Boolean
         Get

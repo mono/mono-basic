@@ -27,9 +27,7 @@ Public Class MethodResolver
     Private m_Parent As ParsedObject
 
     Private m_Candidates As Generic.List(Of MemberCandidate)
-#If DEBUG Then
     Private m_InitialCandidates As MemberCandidate()
-#End If
     Private m_Name As String
     Private m_Arguments As ArgumentList
     Private m_TypeArguments As TypeArgumentList
@@ -38,6 +36,16 @@ Public Class MethodResolver
     Private m_ArgumentsTypesAsString As String
 
     Private m_ResolvedCandidate As MemberCandidate
+    Private m_ShowErrors As Boolean
+
+    Property ShowErrors() As Boolean
+        Get
+            Return m_ShowErrors
+        End Get
+        Set(ByVal value As Boolean)
+            m_ShowErrors = value
+        End Set
+    End Property
 
     ReadOnly Property Candidates() As Generic.List(Of MemberCandidate)
         Get
@@ -72,19 +80,15 @@ Public Class MethodResolver
         End Get
     End Property
 
-    'Sub Restart()
-    '    m_Candidates = New Generic.List(Of MemberCandidate)(m_InitialCandidates)
-    'End Sub
-
     Sub Init(ByVal InitialGroup As Generic.List(Of MemberInfo), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList)
         m_Candidates = New Generic.List(Of MemberCandidate)(InitialGroup.Count)
         For i As Integer = 0 To InitialGroup.Count - 1
             Dim member As MemberInfo = InitialGroup(i)
             m_Candidates.Add(New MemberCandidate(Me, member))
         Next
-#If DEBUG Then
+
         m_InitialCandidates = m_Candidates.ToArray()
-#End If
+
         m_Arguments = Arguments
         m_TypeArguments = TypeArguments
         m_Caller = Parent.FindTypeParent()
@@ -148,24 +152,47 @@ Public Class MethodResolver
     Private Function ResolveInternal() As Boolean
         Log("There are " & CandidatesLeft & " candidates left.")
 
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No candidates: " & Parent.Location.ToString(Compiler))
+        End If
+
         RemoveInaccessible()
         Log("After removing inaccessible candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No accessible: " & Parent.Location.ToString(Compiler))
+        End If
 
         ExpandParamArrays()
         Log("After expanding paramarrays, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Throw New InternalException("Expanding paramarrays resulted in fewer candidates: " & Parent.Location.ToString(Compiler))
+        End If
 
         RemoveInapplicable()
         Log("After removing inapplicable candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            If m_InitialCandidates.Length = 1 Then
+                Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
+            Else
+                Compiler.Report.ShowMessage(Messages.VBNC30516, Parent.Location, MethodName)
+            End If
+        End If
 
         If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
 
         RemoveNarrowingExceptObject()
         Log("After removing narrowing (except object) candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No non-narrowing (except object): " & Parent.Location.ToString(Compiler))
+        End If
 
         If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
 
         RemoveNarrowing()
         Log("After removing narrowing candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No non-narrowing: " & Parent.Location.ToString(Compiler))
+        End If
 
         If CandidatesLeft = 1 Then
             Return True
@@ -175,6 +202,9 @@ Public Class MethodResolver
 
         SelectMostApplicable()
         Log("After selecting the most applicable candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No most applicable: " & Parent.Location.ToString(Compiler))
+        End If
 
         Return CandidatesLeft = 1
     End Function
@@ -370,6 +400,10 @@ Public Class MemberCandidate
     Private m_TypesInInvokedOrder As Type()
 
     Private m_IsParamArray As Boolean
+
+    Public Overrides Function ToString() As String
+        Return Helper.ToString(m_Parent.Compiler, m_Member)
+    End Function
 
     Sub New(ByVal Parent As MethodResolver, ByVal Member As MemberInfo)
         m_Parent = Parent

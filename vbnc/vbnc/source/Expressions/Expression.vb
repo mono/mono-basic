@@ -368,7 +368,7 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.EventAccess
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.LateBoundAccess
-                Throw New InternalException(Me)
+                Return New LateBoundAccessToPropertyAccessExpression(Me, Me.Classification.AsLateBoundAccess)
             Case ExpressionClassification.Classifications.MethodGroup
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.MethodPointer
@@ -419,8 +419,7 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.PropertyGroup
                 result = New PropertyGroupToValueExpression(Me, Me.Classification.AsPropertyGroup)
             Case ExpressionClassification.Classifications.LateBoundAccess
-                Helper.NotImplemented()
-                Throw New InternalException(Me)
+                result = New LateBoundAccessToValueExpression(Me, Me.Classification.AsLateBoundAccess)
             Case ExpressionClassification.Classifications.MethodPointer
                 Throw New InternalException(Me, "Use the other overload.")
             Case ExpressionClassification.Classifications.EventAccess
@@ -428,7 +427,7 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.Void
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Type
-                Throw New InternalException(Me)
+                Return m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias.ReclassifyToValueExpression
             Case ExpressionClassification.Classifications.Namespace
                 Throw New InternalException(Me)
             Case Else

@@ -1115,7 +1115,7 @@ Partial Class Parser
         Return result
     End Function
 
-    Private Function ParseExpression(ByVal Parent As ParsedObject) As Expression
+    Public Function ParseExpression(ByVal Parent As ParsedObject) As Expression
         Dim result As Expression = Nothing
 
         result = ParseOr_OrElse_Xor(New ExpressionParseInfo(Parent))

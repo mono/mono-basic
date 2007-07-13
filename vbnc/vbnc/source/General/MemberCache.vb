@@ -229,6 +229,10 @@ Public Class MemberCache
         End If
     End Function
 
+    Sub ResetFlattenedCacheInsensitive()
+        m_FlattenedCacheInsensitive = Nothing
+    End Sub
+
     ''' <summary>
     ''' This function returns the members list in the cache, or nothing
     ''' </summary>

@@ -68,7 +68,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>GENERATOR,DEVGENERATOR,ENABLECECIL=false,DEBUGREFLECTION=false</DefineConstants>
+    <DefineConstants>GENERATOR,DEVGENERATOR,ENABLECECIL=FALSE,DEBUGREFLECTION=false</DefineConstants>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
@@ -299,9 +299,12 @@
     <Compile Include="Expressions\Classifications\VoidClassification.vb" />
     <Compile Include="Expressions\ClassModifiers.vb" />
     <Compile Include="Expressions\CompilerGeneratedExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToPropertyAccessExpression.vb" />
     <Compile Include="Expressions\DelegateOrObjectCreationExpression.vb" />
     <Compile Include="Expressions\DeRefExpression.vb" />
     <Compile Include="Expressions\GetRefExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToValueExpression.vb" />
     <Compile Include="Expressions\LoadFieldExpression.vb" />
     <Compile Include="Expressions\MethodGroupToValueExpression.vb" />
     <Compile Include="Expressions\MethodPointerToValueExpression.vb" />
@@ -319,6 +322,7 @@
     </Compile>
     <Compile Include="General\MethodBaseDeclaration.vb" />
     <Compile Include="General\MyGenerator.vb" />
+    <Compile Include="General\MyGroupData.vb" />
     <Compile Include="General\NamespaceDictionary.vb" />
     <Compile Include="General\NothingType.vb" />
     <Compile Include="General\TypeDictionary.vb" />
@@ -837,6 +841,12 @@
       <ProductName>.NET Framework 2.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
   </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">

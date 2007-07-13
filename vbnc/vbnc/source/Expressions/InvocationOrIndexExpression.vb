@@ -180,6 +180,8 @@ Public Class InvocationOrIndexExpression
                 Else
                     result = Classification.GenerateCode(Info) AndAlso result
                 End If
+            Case ExpressionClassification.Classifications.LateBoundAccess
+                result = LateBoundAccessToExpression.EmitLateCall(Info, Classification.AsLateBoundAccess) AndAlso result
             Case Else
                 Throw New InternalException(Me)
         End Select
@@ -239,7 +241,13 @@ Public Class InvocationOrIndexExpression
             End If
         Next
 
+        If result = False Then Return result
+
         Select Case m_Expression.Classification.Classification
+            Case ExpressionClassification.Classifications.LateBoundAccess
+                Dim lae As LateBoundAccessClassification = m_Expression.Classification.AsLateBoundAccess
+                lae.Arguments = m_ArgumentList
+                Classification = lae
             Case ExpressionClassification.Classifications.MethodGroup
                 'This is an invocation expression.
                 result = ResolveMethodInvocation() AndAlso result
@@ -282,6 +290,8 @@ Public Class InvocationOrIndexExpression
                 Helper.AddError("Some error...")
         End Select
 
+        If result = False Then Return result
+
         If m_ExpressionType Is Nothing Then
             m_ExpressionType = Classification.GetType(True)
         End If
@@ -306,7 +316,7 @@ Public Class InvocationOrIndexExpression
             result = propGroup.ResolveGroup(m_ArgumentList)
             Classification = propGroup
         ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Object) Then
-            Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing)
+            Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing, Nothing)
             Classification = lbaClass
         Else
             result = False
@@ -447,6 +457,9 @@ Public Class InvocationOrIndexExpression
             result = mgc.ResolveGroup(m_ArgumentList, finalArguments)
             If result Then
                 m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+            Else
+                mgc.ResolveGroup(m_ArgumentList, finalArguments, , True)
+                Return False
             End If
         End If
         Helper.StopIfDebugging(result = False)

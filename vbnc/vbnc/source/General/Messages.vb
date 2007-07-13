@@ -436,7 +436,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30053 = 30053
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Too many arguments provided to '{0}'."
     ''' VB   = "Too many arguments to '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2396,7 +2396,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30512 = 30512
 
     ''' <summary>
-    ''' VBNC = "Overload resolution failed because no '{0}' is accessible with the specified arguments."
+    ''' VBNC = "Overload resolution failed because no '{0}' is accessible with the specified number of arguments."
     ''' VB   = "Overload resolution failed because no accessible '|1' accepts this number of arguments."
     ''' </summary>
     ''' <remarks></remarks>
@@ -3341,7 +3341,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30690 = 30690
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{1}.{0}' is a type and cannot be used as an expression."
     ''' VB   = "'|1' is a type in '|2' and cannot be used as an expression."
     ''' </summary>
     ''' <remarks></remarks>

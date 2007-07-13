@@ -31,7 +31,29 @@ Public Class LateBoundAccessClassification
 
     Private m_InstanceExpression As Expression
     Private m_TypeArguments As TypeArgumentList
+    Private m_Name As String
+    Private m_Arguments As ArgumentList
 
+    Public Overrides ReadOnly Property IsConstant() As Boolean
+        Get
+            Return False
+        End Get
+    End Property
+
+    Property Arguments() As ArgumentList
+        Get
+            Return m_Arguments
+        End Get
+        Set(ByVal value As ArgumentList)
+            m_Arguments = value
+        End Set
+    End Property
+
+    ReadOnly Property Name() As String
+        Get
+            Return m_Name
+        End Get
+    End Property
 
     ReadOnly Property InstanceExpression() As Expression
         Get
@@ -58,7 +80,10 @@ Public Class LateBoundAccessClassification
     ''' <param name="InstanceExpression">May be Nothing</param>
     ''' <param name="TypeArguments">May be Nothing</param>
     ''' <remarks></remarks>
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Name As String)
         MyBase.New(Classifications.LateBoundAccess, Parent)
+        m_InstanceExpression = InstanceExpression
+        m_Name = Name
+        m_TypeArguments = TypeArguments
     End Sub
 End Class

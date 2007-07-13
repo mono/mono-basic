@@ -367,7 +367,7 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <param name="SourceParameters"></param>
     ''' <remarks></remarks>
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument), Optional ByVal TypeArguments As TypeArgumentList = Nothing) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument), Optional ByVal TypeArguments As TypeArgumentList = Nothing, Optional ByVal ShowErrors As Boolean = False) As Boolean
         Dim result As Boolean = True
 
         If SourceParameters Is Nothing Then Throw New InternalException("SourceParameters is nothing.")
@@ -378,7 +378,7 @@ Public Class MethodGroupClassification
 
         Dim resolvedGroup As New Generic.List(Of MemberInfo)
 
-        result = Helper.ResolveGroup(Me.Parent, m_Group, resolvedGroup, SourceParameters, TypeArguments, FinalSourceArguments) AndAlso result
+        result = Helper.ResolveGroup(Me.Parent, m_Group, resolvedGroup, SourceParameters, TypeArguments, FinalSourceArguments, ShowErrors) AndAlso result
 
         If result Then
             m_Group = resolvedGroup

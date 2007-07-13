@@ -206,6 +206,8 @@ Public Class ConstructorDeclaration
 
         result = MyBase.ResolveCode(Info) AndAlso result
 
+        If result = False Then Return result
+
         If Me.IsShared = False AndAlso Me.HasMethodBody AndAlso Me.HasExplicitCtorCall = False Then
             CreateDefaultCtorCall()
         ElseIf Code IsNot Nothing AndAlso Me.HasExplicitCtorCall Then

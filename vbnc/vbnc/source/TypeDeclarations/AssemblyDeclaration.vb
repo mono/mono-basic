@@ -65,6 +65,17 @@ Public Class AssemblyDeclaration
     ''' <remarks></remarks>
     Private m_Types() As TypeDescriptor
 
+    Private m_GroupedClasses As Generic.List(Of MyGroupData)
+
+    Property GroupedClasses() As Generic.List(Of MyGroupData)
+        Get
+            Return m_GroupedClasses
+        End Get
+        Set(ByVal value As Generic.List(Of MyGroupData))
+            m_GroupedClasses = value
+        End Set
+    End Property
+
     ReadOnly Property TypeDeclarations() As TypeDeclaration()
         Get
             Return m_TypeDeclarations

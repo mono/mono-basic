@@ -877,8 +877,8 @@ Public Class TypeDescriptor
         If o Is Me Then
             result = True
         ElseIf TypeOf o Is TypeDescriptor Then
-            If o.IsByRef AndAlso Me.IsByRef Then Return Me.GetElementType.Equals(o.GetElementType)
-            If o.IsArray AndAlso Me.IsArray Then Return Me.GetElementType.Equals(o.GetElementType)
+            If o.IsByRef AndAlso Me.IsByRef Then Return Helper.CompareType(Me.GetElementType, o.GetElementType)
+            If o.IsArray AndAlso Me.IsArray Then Return Helper.CompareType(Me.GetElementType, o.GetElementType)
 
             If o.IsGenericType AndAlso Me.IsGenericType AndAlso o.IsGenericTypeDefinition = False AndAlso Me.IsGenericTypeDefinition = False AndAlso o.IsGenericParameter = False AndAlso Me.IsGenericParameter = False Then
                 Dim oTypes As Type() = o.GetGenericArguments

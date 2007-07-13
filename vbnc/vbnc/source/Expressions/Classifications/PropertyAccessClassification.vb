@@ -31,6 +31,7 @@ Imports System.Reflection
 Public Class PropertyAccessClassification
     Inherits ExpressionClassification
 
+    Private m_LateBoundExpression As LateBoundAccessToPropertyAccessExpression
     Private m_InstanceExpression As Expression
     Private m_Parameters As ArgumentList
 
@@ -62,6 +63,8 @@ Public Class PropertyAccessClassification
         Dim result As Boolean = True
         Dim method As MethodInfo
 
+        If m_LateBoundExpression IsNot Nothing Then Return m_LateBoundExpression.GenerateCode(Info)
+
         Dim rside As EmitInfo
         rside = Info.Clone(True)
 
@@ -70,6 +73,8 @@ Public Class PropertyAccessClassification
             m_Property = m_Classification.ResolvedProperty
             m_Parameters = m_Classification.Parameters
         End If
+
+        Helper.Assert(m_Property IsNot Nothing)
 
         If Info.IsLHS Then
             method = m_Property.GetSetMethod(True)
@@ -172,5 +177,10 @@ Public Class PropertyAccessClassification
         MyBase.New(Classifications.PropertyAccess, Classification.Parent)
         m_Classification = Classification
 
+    End Sub
+
+    Sub New(ByVal Expression As LateBoundAccessToPropertyAccessExpression)
+        MyBase.New(Classifications.PropertyAccess, Expression.Parent)
+        m_LateBoundExpression = Expression
     End Sub
 End Class

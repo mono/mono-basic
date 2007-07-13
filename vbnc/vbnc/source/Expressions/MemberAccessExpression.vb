@@ -250,8 +250,7 @@ Public Class MemberAccessExpression
                 Classification = New NamespaceClassification(Me, Compiler.TypeManager.Namespaces(Name))
                 Return True
             Else
-                Helper.AddError()
-                Return False
+                Return Compiler.Report.ShowMessage(Messages.VBNC30456, Location, Name, "<Default>") AndAlso result
             End If
         End If
 
@@ -481,6 +480,11 @@ Public Class MemberAccessExpression
 
             member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name)
             If member Is Nothing Then
+                If Me.File.IsOptionStrictOn = False AndAlso Helper.CompareType(T, Compiler.TypeCache.System_Object) Then
+                    Classification = New LateBoundAccessClassification(Me, m_First, Nothing, Name)
+                    Return True
+                End If
+
                 Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
             End If
 

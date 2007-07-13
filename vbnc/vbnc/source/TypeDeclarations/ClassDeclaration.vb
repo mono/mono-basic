@@ -167,6 +167,7 @@ Public Class ClassDeclaration
 
         attrib = attribs(0)
 
+        Dim groupData As New MyGroupData
         Dim typeToCollect As String
         Dim createInstanceMethodName As String
         Dim disposeInstanceMethodName As String
@@ -202,9 +203,6 @@ Public Class ClassDeclaration
         If createInstanceMethodName = String.Empty Then Return result
         If disposeInstanceMethodName = String.Empty Then Return result
 
-        If Members.ContainsName(createInstanceMethodName) = False Then Return result
-        If Members.ContainsName(disposeInstanceMethodName) = False Then Return result
-
         Dim collectType As Type
         Dim foundTypes As Generic.List(Of Type)
         foundTypes = Compiler.TypeManager.GetType(typeToCollect, False)
@@ -212,6 +210,74 @@ Public Class ClassDeclaration
             Return result
         End If
         collectType = foundTypes(0)
+        groupData.TypeToCollect = collectType
+
+        For Each mi As MethodDeclaration In Members.GetSpecificMembers(Of MethodDeclaration)()
+            If mi.IsShared AndAlso NameResolution.CompareName(createInstanceMethodName, mi.Name) Then
+                If mi.Signature.Parameters.Count <> 1 Then Continue For
+                If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
+                If mi.Signature.ReturnType Is Nothing Then Continue For
+
+                Dim T As TypeParameter = mi.Signature.TypeParameters.Parameters(0)
+                If T.TypeParameterConstraints Is Nothing Then Continue For
+
+                Dim constraints As ConstraintList = T.TypeParameterConstraints.Constraints
+                If constraints.Count <> 2 Then Continue For
+
+                If Not (constraints(0).Special = KS.[New] OrElse constraints(1).Special = KS.[New]) Then Continue For
+
+                Dim tn As TypeName
+                tn = constraints(0).TypeName
+                If tn Is Nothing Then tn = constraints(1).TypeName
+                If tn Is Nothing Then Continue For
+                If Not Helper.CompareType(tn.ResolvedType, groupData.TypeToCollect) Then Continue For
+
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.TypeDescriptor) = False Then Continue For
+                If Helper.CompareType(mi.Signature.ReturnType, T.TypeDescriptor) = False Then Continue For
+
+
+                If groupData.CreateInstanceMethod IsNot Nothing Then Continue For
+                groupData.CreateInstanceMethod = mi.MethodDescriptor
+            ElseIf mi.IsShared = False AndAlso NameResolution.CompareName(disposeInstanceMethodName, mi.Name) Then
+                If mi.Signature.Parameters.Count <> 1 Then Continue For
+                If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
+                If mi.Signature.ReturnType IsNot Nothing Then Continue For
+
+                Dim T As TypeParameter = mi.Signature.TypeParameters.Parameters(0)
+                If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
+                If Not Helper.CompareType(T.TypeParameterConstraints.Constraints(0).TypeName.ResolvedType, groupData.TypeToCollect) Then Continue For
+
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.TypeDescriptor.MakeByRefType) = False Then Continue For
+
+                If groupData.DisposeInstanceMethod IsNot Nothing Then Continue For
+                groupData.DisposeInstanceMethod = mi.MethodDescriptor
+            End If
+            If groupData.DisposeInstanceMethod IsNot Nothing AndAlso groupData.CreateInstanceMethod IsNot Nothing Then Exit For
+        Next
+
+        If groupData.CreateInstanceMethod Is Nothing Then Return result
+        If groupData.DisposeInstanceMethod Is Nothing Then Return result
+
+        If Compiler.Assembly.GroupedClasses Is Nothing Then Compiler.Assembly.GroupedClasses = New Generic.List(Of MyGroupData)
+        Compiler.Assembly.GroupedClasses.Add(groupData)
+
+        'Parse the alias
+        If defaultInstanceAlias <> String.Empty Then
+            Dim scanner As New Scanner(Compiler, defaultInstanceAlias)
+            Dim parser As New Parser(Compiler, scanner)
+            Dim alias_exp As Expression
+            'TODO: We'll show parser errors here in the compiler if there are any errors
+            alias_exp = parser.ParseExpression(Me)
+
+            If alias_exp IsNot Nothing Then
+                Dim alias_result As Boolean
+                alias_result = alias_exp.ResolveExpression(New ResolveInfo(Compiler))
+                If alias_result Then
+                    groupData.DefaultInstanceAlias = alias_exp
+                End If
+            End If
+        End If
+
 
         'Find all non-generic types that inherit from the type to collect
         Dim typesCollected As New Generic.List(Of TypeDeclaration)
@@ -341,6 +407,15 @@ Public Class ClassDeclaration
 
             Members.Add(field)
             Members.Add(prop)
+
+            If Compiler.TypeManager.ContainsCache(Me.TypeDescriptor) Then
+                Dim cache As MemberCache = Compiler.TypeManager.GetCache(Me.TypeDescriptor)
+                cache.Cache.Add(New MemberCacheEntry(field.FieldDescriptor))
+                cache.Cache.Add(New MemberCacheEntry(prop.MemberDescriptor))
+                cache.FlattenedCache.Add(New MemberCacheEntry(field.FieldDescriptor))
+                cache.FlattenedCache.Add(New MemberCacheEntry(prop.MemberDescriptor))
+                cache.ResetFlattenedCacheInsensitive()
+            End If
         Next
 
         Return result

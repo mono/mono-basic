@@ -550,6 +550,7 @@ End Class
 
 Partial Public Class TypeCache
     Public System_Boolean As System.Type
+    Public System_Boolean_Array As System.Type
     Public System_Byte As System.Type
     Public System_Byte_Array As System.Type
     Public System_Char As System.Type
@@ -585,6 +586,7 @@ Partial Public Class TypeCache
     Public System_IDisposable__Dispose As System.Reflection.MethodInfo
     Public System_RuntimeTypeHandle As System.Type
     Public System_Type As System.Type
+    Public System_Type_Array As System.Type
     Public System_Type__GetTypeFromHandle_RuntimeTypeHandle As System.Reflection.MethodInfo
     Public System_Void As System.Type
     Public System_Exception As System.Type
@@ -700,7 +702,14 @@ Partial Public Class TypeCache
     Public MS_VB_CS_StaticLocalInitFlag__State As System.Reflection.FieldInfo
     Public MS_VB_CS_StaticLocalInitFlag__ctor As System.Reflection.ConstructorInfo
     Public MS_VB_CS_IncompleteInitialization As System.Type
+    Public MS_VB_CS_NewLateBinding As System.Type
+    Public MS_VB_CS_LateBinding As System.Type
     Public MS_VB_CS_IncompleteInitialization__ctor As System.Reflection.ConstructorInfo
+    Public MS_VB_CS_NewLateBinding__LateGet_Object_Type_String_Array_Array_Array_Array As System.Reflection.MethodInfo
+    Public MS_VB_CS_NewLateBinding__LateSet_Object_Type_String_Array_Array_Array As System.Reflection.MethodInfo
+    Public MS_VB_CS_NewLateBinding__LateIndexGet_Object_Array_Array As System.Reflection.MethodInfo
+    Public MS_VB_CS_NewLateBinding__LateIndexSet_Object_Array_Array As System.Reflection.MethodInfo
+    Public MS_VB_CS_NewLateBinding__LateCall_Object_Type_String_Array_Array_Array_Array_Boolean As System.Reflection.MethodInfo
     Public MS_VB_CS_ProjectData__EndApp As System.Reflection.MethodInfo
     Public MS_VB_CS_ProjectData__CreateProjectError_Int32 As System.Reflection.MethodInfo
     Public MS_VB_CS_ProjectData__ClearProjectError As System.Reflection.MethodInfo
@@ -787,6 +796,7 @@ Partial Public Class TypeCache
 
     Protected Overrides Sub InitInternal()
         System_Boolean = [GetType](mscorlib, "System.Boolean")
+        System_Boolean_Array = GetArrayType(System_Boolean)
         System_Byte = [GetType](mscorlib, "System.Byte")
         System_Byte_Array = GetArrayType(System_Byte)
         System_Char = [GetType](mscorlib, "System.Char")
@@ -822,6 +832,7 @@ Partial Public Class TypeCache
         System_IDisposable__Dispose = GetMethod(System_IDisposable, "Dispose")
         System_RuntimeTypeHandle = [GetType](mscorlib, "System.RuntimeTypeHandle")
         System_Type = [GetType](mscorlib, "System.Type")
+        System_Type_Array = GetArrayType(System_Type)
         System_Type__GetTypeFromHandle_RuntimeTypeHandle = GetMethod(System_Type, "GetTypeFromHandle", System_RuntimeTypeHandle)
         System_Void = [GetType](mscorlib, "System.Void")
         System_Exception = [GetType](mscorlib, "System.Exception")
@@ -928,6 +939,8 @@ Partial Public Class TypeCache
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
         MS_VB_CS_StaticLocalInitFlag = GetVBType("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag")
         MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
+        MS_VB_CS_NewLateBinding = GetVBType("Microsoft.VisualBasic.CompilerServices.NewLateBinding")
+        MS_VB_CS_LateBinding = GetVBType("Microsoft.VisualBasic.CompilerServices.LateBinding")
     End Sub
 
     Public Overrides Sub InitInternalVBMembers()
@@ -944,6 +957,11 @@ Partial Public Class TypeCache
         MS_VB_CS_StaticLocalInitFlag__State = GetField(MS_VB_CS_StaticLocalInitFlag, "State")
         MS_VB_CS_StaticLocalInitFlag__ctor = GetConstructor(MS_VB_CS_StaticLocalInitFlag)
         MS_VB_CS_IncompleteInitialization__ctor = GetConstructor(MS_VB_CS_IncompleteInitialization)
+        MS_VB_CS_NewLateBinding__LateGet_Object_Type_String_Array_Array_Array_Array = GetMethod(MS_VB_CS_NewLateBinding, "LateGet", System_Object, System_Type, System_String, System_Object_Array, System_String_Array, System_Type_Array, System_Boolean_Array)
+        MS_VB_CS_NewLateBinding__LateSet_Object_Type_String_Array_Array_Array = GetMethod(MS_VB_CS_NewLateBinding, "LateSet", System_Object, System_Type, System_String, System_Object_Array, System_String_Array, System_Type_Array)
+        MS_VB_CS_NewLateBinding__LateIndexGet_Object_Array_Array = GetMethod(MS_VB_CS_NewLateBinding, "LateIndexGet", System_Object, System_Object_Array, System_String_Array)
+        MS_VB_CS_NewLateBinding__LateIndexSet_Object_Array_Array = GetMethod(MS_VB_CS_NewLateBinding, "LateIndexSet", System_Object, System_Object_Array, System_String_Array)
+        MS_VB_CS_NewLateBinding__LateCall_Object_Type_String_Array_Array_Array_Array_Boolean = GetMethod(MS_VB_CS_NewLateBinding, "LateCall", System_Object, System_Type, System_String, System_Object_Array, System_String_Array, System_Type_Array, System_Boolean_Array, System_Boolean)
         MS_VB_CS_ProjectData__EndApp = GetMethod(MS_VB_CS_ProjectData, "EndApp")
         MS_VB_CS_ProjectData__CreateProjectError_Int32 = GetMethod(MS_VB_CS_ProjectData, "CreateProjectError", System_Int32)
         MS_VB_CS_ProjectData__ClearProjectError = GetMethod(MS_VB_CS_ProjectData, "ClearProjectError")
@@ -1030,6 +1048,8 @@ Partial Public Class TypeCache
     End Sub
 
 End Class
+
+
 
 #If ENABLECECIL Then
 Partial Public Class CecilTypeCache

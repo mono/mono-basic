@@ -45,6 +45,13 @@ Partial Public Class Parser
         Helper.Assert(tm IsNot Nothing)
     End Sub
 
+    Public Sub New(ByVal Compiler As Compiler, ByVal TokenReader As ITokenReader)
+        m_Compiler = Compiler
+        tm = New tm(Compiler, TokenReader)
+        tm.NextToken()
+        Helper.Assert(tm IsNot Nothing)
+    End Sub
+
     Public Function Parse(ByVal RootNamespace As String) As AssemblyDeclaration
         Dim result As AssemblyDeclaration
 

@@ -179,6 +179,12 @@ Public Class ValueClassification
         'Helper.Assert(m_Type IsNot Nothing)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal Value As Expression)
+        Me.New(DirectCast(Parent, ParsedObject))
+        m_Type = Value.ExpressionType
+        m_Value = Value
+        'Helper.Assert(m_Type IsNot Nothing)
+    End Sub
     Sub New(ByVal ParentAndValue As Expression, ByVal ExpressionType As Type)
         Me.New(DirectCast(ParentAndValue, ParsedObject))
         m_Type = ExpressionType
