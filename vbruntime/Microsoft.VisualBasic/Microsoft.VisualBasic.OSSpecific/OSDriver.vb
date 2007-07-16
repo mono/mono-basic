@@ -26,6 +26,8 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
+Imports System
+
 Namespace Microsoft.VisualBasic.OSSpecific
 #If TARGET_JVM = False Then
     Friend MustInherit Class OSDriver

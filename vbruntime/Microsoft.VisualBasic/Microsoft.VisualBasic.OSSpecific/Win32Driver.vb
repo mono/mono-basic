@@ -29,7 +29,7 @@
 #If TARGET_JVM = False Then
 
 Imports System.Runtime.InteropServices
-
+Imports System
 
 Namespace Microsoft.VisualBasic.OSSpecific
     Friend Class Win32Driver
