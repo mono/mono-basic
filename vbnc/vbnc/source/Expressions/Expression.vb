@@ -80,6 +80,14 @@ Public MustInherit Class Expression
     ''' <remarks></remarks>
     Private m_Classification As ExpressionClassification
 
+#If DEBUG Then
+    ReadOnly Property Where() As String
+        Get
+            Return Location.ToString(Compiler)
+        End Get
+    End Property
+#End If
+
     ''' <summary>
     ''' First finds a code block, then finds the specified type in the code block.
     ''' </summary>

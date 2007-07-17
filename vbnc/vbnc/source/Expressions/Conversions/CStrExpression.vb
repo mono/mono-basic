@@ -91,6 +91,8 @@ Public Class CStrExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'No conversion necessary
                     Info.Stack.SwitchHead(Info.Compiler.TypeCache.Nothing, Info.Compiler.TypeCache.System_String)
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
+                    Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_String__ctor_Array)
                 Else
                     result = CTypeExpression.GenerateUserDefinedConversionCode(Info, Expression, Info.Compiler.TypeCache.System_String) AndAlso result
                 End If

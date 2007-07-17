@@ -63,6 +63,16 @@ Public MustInherit Class TypeCacheBase
 #End If
 
         IO.File.WriteAllText(path & "TypeCache.Generated.vb", all.ToString)
+
+        IO.File.Copy(IO.Path.Combine(path, "TypeCache.vb"), IO.Path.Combine(path, "TypeCache.vb.old"), True)
+
+        Dim oldContents As String = IO.File.ReadAllText(IO.Path.Combine(path, "TypeCache.vb"))
+        Dim iStart As Integer = oldContents.IndexOf("'START" & " SRE") + ("'START " & "SRE").Length + 2
+        Dim iEnd As Integer = oldContents.IndexOf("'END SRE", iStart) - 2
+        oldContents = oldContents.Remove(iStart, iEnd - iStart)
+        oldContents = oldContents.Insert(iStart, all.ToString())
+        IO.File.WriteAllText(IO.Path.Combine(path, "TypeCache.vb"), oldContents)
+        System.Diagnostics.Debug.WriteLine("Written TypeCache.vb, saved to TypeCache.vb.old")
     End Sub
 
     Shared Function Generate(ByVal Lines As String(), ByVal Cecil As Boolean) As String
@@ -548,12 +558,32 @@ Public Class CecilTypeCache
 End Class
 #End If
 
-Partial Public Class TypeCache
+'START SRE
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
+Public Partial Class TypeCache
     Public System_Boolean As System.Type
     Public System_Boolean_Array As System.Type
     Public System_Byte As System.Type
     Public System_Byte_Array As System.Type
     Public System_Char As System.Type
+    Public System_Char_Array As System.Type
     Public System_DateTime As System.Type
     Public System_Decimal As System.Type
     Public System_Double As System.Type
@@ -566,6 +596,7 @@ Partial Public Class TypeCache
     Public System_String As System.Type
     Public System_String_ByRef As System.Type
     Public System_String_Array As System.Type
+    Public System_String__ctor_Array As System.Reflection.ConstructorInfo
     Public System_SByte As System.Type
     Public System_UInt16 As System.Type
     Public System_UInt32 As System.Type
@@ -591,6 +622,7 @@ Partial Public Class TypeCache
     Public System_Void As System.Type
     Public System_Exception As System.Type
     Public System_Array As System.Type
+    Public System_DBNull As System.Type
     Public System_Array__SetValue As System.Reflection.MethodInfo
     Public System_Array__GetValue As System.Reflection.MethodInfo
     Public System_Array__CreateInstance As System.Reflection.MethodInfo
@@ -757,6 +789,8 @@ Partial Public Class TypeCache
     Public MS_VB_CS_Conversions__ToString_Double As System.Reflection.MethodInfo
     Public MS_VB_CS_Conversions__ToString_Object As System.Reflection.MethodInfo
     Public MS_VB_CS_Conversions__ToGenericParameter_Object As System.Reflection.MethodInfo
+    Public MS_VB_CS_Conversions__ChangeType_Object_Type As System.Reflection.MethodInfo
+    Public MS_VB_CS_Conversions__ToCharArrayRankOne_String As System.Reflection.MethodInfo
     Public MS_VB_CS_LikeOperator__LikeString_String_String_CompareMethod As System.Reflection.MethodInfo
     Public MS_VB_CS_LikeOperator__LikeObject_Object_Object_CompareMethod As System.Reflection.MethodInfo
     Public MS_VB_CS_StringType__MidStmtStr_String_Int32_Int32_String As System.Reflection.MethodInfo
@@ -794,12 +828,13 @@ Partial Public Class TypeCache
     Public MS_VB_CS_Operators__CompareObjectLess_Object_Object_Boolean As System.Reflection.MethodInfo
     Public MS_VB_CS_Operators__CompareObjectLessEqual_Object_Object_Boolean As System.Reflection.MethodInfo
 
-    Protected Overrides Sub InitInternal()
+    Protected Overrides Sub InitInternal ()
         System_Boolean = [GetType](mscorlib, "System.Boolean")
         System_Boolean_Array = GetArrayType(System_Boolean)
         System_Byte = [GetType](mscorlib, "System.Byte")
         System_Byte_Array = GetArrayType(System_Byte)
         System_Char = [GetType](mscorlib, "System.Char")
+        System_Char_Array = GetArrayType(System_Char)
         System_DateTime = [GetType](mscorlib, "System.DateTime")
         System_Decimal = [GetType](mscorlib, "System.Decimal")
         System_Double = [GetType](mscorlib, "System.Double")
@@ -812,6 +847,7 @@ Partial Public Class TypeCache
         System_String = [GetType](mscorlib, "System.String")
         System_String_ByRef = GetByRefType(System_String)
         System_String_Array = GetArrayType(System_String)
+        System_String__ctor_Array = GetConstructor(System_String, System_Char_Array)
         System_SByte = [GetType](mscorlib, "System.SByte")
         System_UInt16 = [GetType](mscorlib, "System.UInt16")
         System_UInt32 = [GetType](mscorlib, "System.UInt32")
@@ -837,6 +873,7 @@ Partial Public Class TypeCache
         System_Void = [GetType](mscorlib, "System.Void")
         System_Exception = [GetType](mscorlib, "System.Exception")
         System_Array = [GetType](mscorlib, "System.Array")
+        System_DBNull = [GetType](mscorlib, "System.DBNull")
         System_Array__SetValue = GetMethod(System_Array, "SetValue", System_Object, System_Int32_Array)
         System_Array__GetValue = GetMethod(System_Array, "GetValue", System_Int32_Array)
         System_Array__CreateInstance = GetMethod(System_Array, "CreateInstance", System_Type, System_Int32_Array)
@@ -1009,6 +1046,8 @@ Partial Public Class TypeCache
         MS_VB_CS_Conversions__ToString_Double = GetMethod(MS_VB_CS_Conversions, "ToString", System_Double)
         MS_VB_CS_Conversions__ToString_Object = GetMethod(MS_VB_CS_Conversions, "ToString", System_Object)
         MS_VB_CS_Conversions__ToGenericParameter_Object = GetMethod(MS_VB_CS_Conversions, "ToGenericParameter", System_Object)
+        MS_VB_CS_Conversions__ChangeType_Object_Type = GetMethod(MS_VB_CS_Conversions, "ChangeType", System_Object, System_Type)
+        MS_VB_CS_Conversions__ToCharArrayRankOne_String = GetMethod(MS_VB_CS_Conversions, "ToCharArrayRankOne", System_String)
         MS_VB_CS_LikeOperator__LikeString_String_String_CompareMethod = GetMethod(MS_VB_CS_LikeOperator, "LikeString", System_String, System_String, MS_VB_CompareMethod)
         MS_VB_CS_LikeOperator__LikeObject_Object_Object_CompareMethod = GetMethod(MS_VB_CS_LikeOperator, "LikeObject", System_Object, System_Object, MS_VB_CompareMethod)
         MS_VB_CS_StringType__MidStmtStr_String_Int32_Int32_String = GetMethod(MS_VB_CS_StringType, "MidStmtStr", System_String_ByRef, System_Int32, System_Int32, System_String)
@@ -1049,6 +1088,8 @@ Partial Public Class TypeCache
 
 End Class
 
+
+'END SRE
 
 
 #If ENABLECECIL Then

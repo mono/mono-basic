@@ -33,6 +33,7 @@ Public Class DictionaryAccessExpression
 
     Private m_DefaultProperty As PropertyInfo
     Private m_WithStatement As WithStatement
+    Private m_IsLateBound As Boolean
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
@@ -54,6 +55,7 @@ Public Class DictionaryAccessExpression
     
     Overrides ReadOnly Property ExpressionType() As Type
         Get
+            If m_IsLateBound Then Return Compiler.TypeCache.System_Object
             Return m_DefaultProperty.PropertyType
         End Get
     End Property
@@ -61,18 +63,31 @@ Public Class DictionaryAccessExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        If m_FirstPart IsNot Nothing Then
-            result = m_FirstPart.GenerateCode(Info) AndAlso result
+        If m_IsLateBound Then
+            Dim ie As Expression
+            Dim lbaC As LateBoundAccessClassification
+            If m_FirstPart Is Nothing Then
+                ie = New LoadLocalExpression(Me, m_WithStatement.WithVariable)
+            Else
+                ie = m_FirstPart
+            End If
+            lbaC = New LateBoundAccessClassification(Me, ie, Nothing, Nothing)
+            lbaC.Arguments = New ArgumentList(Me, New ConstantExpression(Me, m_SecondPart.Identifier, Compiler.TypeCache.System_String))
+            result = LateBoundAccessToExpression.EmitLateIndexGet(Info, lbaC) AndAlso result
         Else
-            Emitter.EmitLoadVariable(Info, m_WithStatement.WithVariable)
-        End If
-        Emitter.EmitLoadValue(Info, m_SecondPart.Identifier)
-        If Info.IsRHS Then
-            Emitter.EmitCallOrCallVirt(Info, m_DefaultProperty.GetGetMethod)
-        ElseIf Info.IsLHS Then
-            Helper.NotImplemented()
-        Else
-            Throw New InternalException(Me)
+            If m_FirstPart IsNot Nothing Then
+                result = m_FirstPart.GenerateCode(Info) AndAlso result
+            Else
+                Emitter.EmitLoadVariable(Info, m_WithStatement.WithVariable)
+            End If
+            Emitter.EmitLoadValue(Info, m_SecondPart.Identifier)
+            If Info.IsRHS Then
+                Emitter.EmitCallOrCallVirt(Info, m_DefaultProperty.GetGetMethod)
+            ElseIf Info.IsLHS Then
+                Helper.NotImplemented()
+            Else
+                Throw New InternalException(Me)
+            End If
         End If
 
         Return result
@@ -90,6 +105,15 @@ Public Class DictionaryAccessExpression
             firsttp = m_WithStatement.WithVariableExpression.ExpressionType
         End If
 
+        If Helper.CompareType(Compiler.TypeCache.System_Object, firsttp) Then
+            If Location.File(Compiler).IsOptionStrictOn Then
+                Helper.AddError()
+                Return False
+            End If
+            m_IsLateBound = True
+            Classification = New ValueClassification(Me, Compiler.TypeCache.System_Object)
+            Return True
+        End If
 
         Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, True)
         If attr.Length = 1 Then

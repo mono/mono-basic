@@ -46,12 +46,12 @@ Public Class PropertyGroupToPropertyAccessExpression
         Helper.Assert(m_PropertyGroup IsNot Nothing, "m_PropertyGroup Is Nothing")
 
         If m_PropertyGroup.IsResolved = False OrElse m_PropertyGroup.ResolvedProperty Is Nothing Then
-            result = m_PropertyGroup.ResolveGroup(New ArgumentList(Me)) AndAlso result
+            result = m_PropertyGroup.ResolveGroup(New ArgumentList(Me), Nothing) AndAlso result
 
             If result = False Then
                 Compiler.Report.WriteLine("Property group resolution failed (unrecoverably), showing log")
                 Helper.LOGMETHODRESOLUTION = True
-                m_PropertyGroup.ResolveGroup(New ArgumentList(Me))
+                m_PropertyGroup.ResolveGroup(New ArgumentList(Me), Nothing)
                 Helper.AddError("Failed to resolve property group: " & Me.Location.AsString)
             End If
         End If

@@ -85,7 +85,10 @@ Public Class InvocationOrIndexExpression
             If m_ArgumentList.Count <> 1 Then Return False
             If m_Expression.Classification.IsMethodGroupClassification Then
                 Dim param As Object
-                Dim mi As MethodInfo = m_Expression.Classification.AsMethodGroupClassification.ResolvedMethodInfo
+                Dim mgc As MethodGroupClassification = m_Expression.Classification.AsMethodGroupClassification
+                If mgc.IsLateBound Then Return False
+
+                Dim mi As MethodInfo = mgc.ResolvedMethodInfo
 
                 If mi Is Nothing Then Return False
                 If Not (m_ArgumentList(0).Expression IsNot Nothing AndAlso m_ArgumentList(0).Expression.IsConstant) Then Return False
@@ -138,53 +141,57 @@ Public Class InvocationOrIndexExpression
             Return True
         End If
 
-        Select Case m_Expression.Classification.Classification
-            Case ExpressionClassification.Classifications.MethodGroup
-                With m_Expression.Classification.AsMethodGroupClassification
-                    result = Helper.EmitArgumentsAndCallOrCallVirt(Info, .InstanceExpression, m_ArgumentList, .ResolvedMethod)
-                End With
-            Case ExpressionClassification.Classifications.Value
-                If Info.IsRHS Then
-                    If Me.Classification.IsVariableClassification Then
-                        result = Me.Classification.GenerateCode(Info) AndAlso result
+        If Classification.IsLateBoundClassification Then
+            result = LateBoundAccessToExpression.EmitLateCall(Info, Classification.AsLateBoundAccess) AndAlso result
+        Else
+            Select Case m_Expression.Classification.Classification
+                Case ExpressionClassification.Classifications.MethodGroup
+                    With m_Expression.Classification.AsMethodGroupClassification
+                        result = Helper.EmitArgumentsAndCallOrCallVirt(Info, .InstanceExpression, m_ArgumentList, .ResolvedMethod)
+                    End With
+                Case ExpressionClassification.Classifications.Value
+                    If Info.IsRHS Then
+                        If Me.Classification.IsVariableClassification Then
+                            result = Me.Classification.GenerateCode(Info) AndAlso result
+                        Else
+                            result = m_Expression.GenerateCode(Info) AndAlso result
+                        End If
                     Else
-                        result = m_Expression.GenerateCode(Info) AndAlso result
+                        Helper.NotImplemented()
                     End If
-                Else
-                    Helper.NotImplemented()
-                End If
-            Case ExpressionClassification.Classifications.PropertyAccess
-                If Info.IsRHS Then
-                    If Me.Classification.IsVariableClassification Then
-                        result = Me.Classification.GenerateCode(Info) AndAlso result
+                Case ExpressionClassification.Classifications.PropertyAccess
+                    If Info.IsRHS Then
+                        If Me.Classification.IsVariableClassification Then
+                            result = Me.Classification.GenerateCode(Info) AndAlso result
+                        Else
+                            result = m_Expression.GenerateCode(Info) AndAlso result
+                        End If
                     Else
-                        result = m_Expression.GenerateCode(Info) AndAlso result
+                        Helper.NotImplemented()
                     End If
-                Else
-                    Helper.NotImplemented()
-                End If
-            Case ExpressionClassification.Classifications.PropertyGroup
-                'Helper.NotImplemented()
-                Dim pgC As PropertyGroupClassification
-                pgC = m_Expression.Classification.AsPropertyGroup
-                result = pgC.GenerateCodeAsValue(Info) AndAlso result
-            Case ExpressionClassification.Classifications.Variable
-                If Info.IsRHS Then
-                    If Classification.IsValueClassification Then
-                        result = Classification.AsValueClassification.GenerateCode(Info) AndAlso result
-                    ElseIf Classification.IsPropertyGroupClassification Then
-                        result = Classification.AsPropertyGroup.GenerateCodeAsValue(Info) AndAlso result
+                Case ExpressionClassification.Classifications.PropertyGroup
+                    'Helper.NotImplemented()
+                    Dim pgC As PropertyGroupClassification
+                    pgC = m_Expression.Classification.AsPropertyGroup
+                    result = pgC.GenerateCodeAsValue(Info) AndAlso result
+                Case ExpressionClassification.Classifications.Variable
+                    If Info.IsRHS Then
+                        If Classification.IsValueClassification Then
+                            result = Classification.AsValueClassification.GenerateCode(Info) AndAlso result
+                        ElseIf Classification.IsPropertyGroupClassification Then
+                            result = Classification.AsPropertyGroup.GenerateCodeAsValue(Info) AndAlso result
+                        Else
+                            result = Classification.AsVariableClassification.GenerateCodeAsValue(Info) AndAlso result
+                        End If
                     Else
-                        result = Classification.AsVariableClassification.GenerateCodeAsValue(Info) AndAlso result
+                        result = Classification.GenerateCode(Info) AndAlso result
                     End If
-                Else
-                    result = Classification.GenerateCode(Info) AndAlso result
-                End If
-            Case ExpressionClassification.Classifications.LateBoundAccess
-                result = LateBoundAccessToExpression.EmitLateCall(Info, Classification.AsLateBoundAccess) AndAlso result
-            Case Else
-                Throw New InternalException(Me)
-        End Select
+                Case ExpressionClassification.Classifications.LateBoundAccess
+                    result = LateBoundAccessToExpression.EmitLateCall(Info, Classification.AsLateBoundAccess) AndAlso result
+                Case Else
+                    Throw New InternalException(Me)
+            End Select
+        End If
 
         Return result
     End Function
@@ -313,10 +320,15 @@ Public Class InvocationOrIndexExpression
             result = ResolveDelegateInvocation(Compiler, VariableType)
         ElseIf Helper.HasDefaultProperty(Compiler, VariableType, defaultProperties) Then
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
-            result = propGroup.ResolveGroup(m_ArgumentList)
+            Dim finalArguments As Generic.List(Of Argument) = Nothing
+            result = propGroup.ResolveGroup(m_ArgumentList, finalarguments)
+            If result Then
+                m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, propGroup.ResolvedProperty)
+            End If
             Classification = propGroup
         ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Object) Then
             Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing, Nothing)
+            lbaClass.Arguments = m_ArgumentList
             Classification = lbaClass
         Else
             result = False
@@ -331,8 +343,6 @@ Public Class InvocationOrIndexExpression
 
         Helper.Assert(ArrayType.IsArray)
 
-        Dim argtypes As Generic.List(Of Type)
-
         If m_ArgumentList.HasNamedArguments Then
             Helper.AddError("Array invocation cannot have named arguments.")
             Return False
@@ -343,11 +353,21 @@ Public Class InvocationOrIndexExpression
             Return False
         End If
 
-        argtypes = m_ArgumentList.GetTypes
-        For Each argtype As Type In argtypes
+        Dim isStrictOn As Boolean = Location.File(Compiler).IsOptionStrictOn
+
+        For i As Integer = 0 To m_ArgumentList.Count - 1
+            Dim arg As Argument = m_ArgumentList(i)
+            Dim argtype As Type = arg.Expression.ExpressionType
+
             If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argtype, Compiler.TypeCache.System_Int32) = False Then
-                Helper.AddError("Array argument must be implicitly convertible to Integer.")
-                Return False
+                If isStrictOn Then
+                    Helper.AddError("Array argument must be implicitly convertible to Integer.")
+                    Return False
+                End If
+                Dim exp As Expression
+                exp = Helper.CreateTypeConversion(Me, m_ArgumentList(i).Expression, Compiler.TypeCache.System_Int32, result)
+                If result = False Then Return result
+                m_ArgumentList(i).Expression = exp
             End If
         Next
 
@@ -393,8 +413,9 @@ Public Class InvocationOrIndexExpression
     Private Function ResolvePropertyGroupInvocation() As Boolean
         Dim result As Boolean = True
 
+        Dim finalArguments As Generic.List(Of Argument) = Nothing
         Dim tmpResult As Boolean
-        tmpResult = m_Expression.Classification.AsPropertyGroup.ResolveGroup(m_ArgumentList)
+        tmpResult = m_Expression.Classification.AsPropertyGroup.ResolveGroup(m_ArgumentList, finalArguments)
 
         If tmpResult = False Then
             tmpResult = ResolveReclassifyToValueThenIndex()
@@ -402,6 +423,8 @@ Public Class InvocationOrIndexExpression
             Helper.StopIfDebugging(tmpResult = False)
 
             Return tmpResult
+        Else
+            result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_Expression.Classification.AsPropertyGroup.ResolvedProperty) AndAlso result
         End If
 
         Classification = New PropertyAccessClassification(m_Expression.Classification.AsPropertyGroup)
@@ -456,15 +479,23 @@ Public Class InvocationOrIndexExpression
             Dim finalArguments As Generic.List(Of Argument) = Nothing
             result = mgc.ResolveGroup(m_ArgumentList, finalArguments)
             If result Then
-                m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+                If mgc.IsLateBound = False Then
+                    m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+                End If
             Else
                 mgc.ResolveGroup(m_ArgumentList, finalArguments, , True)
                 Return False
             End If
         End If
+
         Helper.StopIfDebugging(result = False)
 
-        If mgc.ResolvedMethodInfo IsNot Nothing Then
+        If mgc.IsLateBound Then
+            Dim lba As LateBoundAccessClassification = New LateBoundAccessClassification(Me, mgc.InstanceExpression, Nothing, mgc.Resolver.MethodName)
+            lba.LateBoundType = mgc.Resolver.MethodDeclaringType
+            lba.Arguments = m_ArgumentList
+            Classification = lba
+        ElseIf mgc.ResolvedMethodInfo IsNot Nothing Then
             Dim methodInfo As MethodInfo = mgc.ResolvedMethodInfo
 
             If Compiler.CommandLine.NoVBRuntimeRef AndAlso methodInfo.DeclaringType.Module Is Compiler.ModuleBuilder AndAlso methodInfo.IsStatic AndAlso Helper.CompareNameOrdinal(methodInfo.Name, "AscW") Then

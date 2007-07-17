@@ -20,6 +20,26 @@
 Public Class ConcatExpression
     Inherits BinaryExpression
 
+    Protected Overrides Function ResolveExpressions(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressions(Info) AndAlso result
+
+        If result = False Then Return result
+
+        Dim l, r As Boolean
+        l = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
+        r = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
+        If l AndAlso r = False Then 'DBNull & whatever
+            m_LeftExpression = New NothingConstantExpression(Me)
+            result = m_LeftExpression.ResolveExpression(Info) AndAlso result
+        ElseIf l = False AndAlso r Then 'whatever & DBNull
+            m_RightExpression = New NothingConstantExpression(Me)
+            result = m_RightExpression.ResolveExpression(Info) AndAlso result
+        End If
+
+        Return result
+    End Function
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

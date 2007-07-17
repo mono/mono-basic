@@ -1,3 +1,50 @@
+2007-07-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/PropertyGroupToPropertyAccessExpression.vb,
+	  Expressions/PropertyGroupToValueExpression.vb,
+	  Expressions/MemberAccessExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb: Implement late bound
+	  handling.
+	* Expressions/ArgumentList.vb: Implement replacement and verification
+	  of property parameters.
+	* Expressions/Conversions/CStrExpression.vb,
+	  Expressions/Conversions/CTypeExpression.vb: Char() and Strings are
+	  convertible between eachother.
+	* Expressions/CompilerGeneratedExpression.vb: Add a
+	  LoadElementExpression.
+	* Expressions/SimpleNameExpression.vb: Implement Option Explicit Off.
+	* Expressions/BinaryExpressions/BinaryAddExpression.vb,
+	  Expressions/BinaryExpressions/ConcatExpression.vb: String
+	  concatenation is allowed for DBNull values, if only 1 of the
+	  operands is a DBNull value.
+	* Expressions/BinaryExpressions/BinaryExpression.vb: Fix a few error
+	  messages to include location.
+	* Expressions/LateBoundAccessToExpression.vb: Fix eol.
+	* Expressions/DictionaryAccessExpression.vb: Implement late bound case.
+	* Expressions/Classifications/MethodGroupClassification.vb,
+	  Expressions/Classifications/PropertyGroupClassification.vb: Save
+	  the resolver, it knows if the method group is a late bound group or
+	  not.
+	* Expressions/Classifications/LateBoundAccessClassification.vb: Add a
+	  LateBoundType.
+	* Members/MethodResolver.vb: Add a few errors, remove dead code, handle
+	  late binding.
+	* Members/Parameter.vb: Add a ConstantValue property that has the
+	  correct constant type.
+	* Members/VariableInitializer.vb: Don't resolve expressions twice.
+	* Emit/Emitter.vb: Add missing case.
+	* Descriptors/MethodDescriptor.vb: Methods marked as 'Overrides' are
+	  not NewSlot methods, nor Final methods.
+	* Descriptors/ParameterDescriptor.vb: Don't believe
+	  Parameter.ConstantExpression, might have wrong type. Use the
+	  resolved constant value.
+	* Descriptors/PropertyDescriptor.vb: Implement CanRead/Write.
+	* Resources/Source.xml, Resources/Errors.resx, General/TypeCache.vb:
+	  Updated.
+	* General/Helper.vb: Tabs.
+	* General/TypeCache.in: More types and methods.
+	* General/Messages.vb: More messages.
+
 2007-07-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/MemberAccessExpression.vb,

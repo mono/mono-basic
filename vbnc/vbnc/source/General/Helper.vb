@@ -1268,7 +1268,13 @@ Public Class Helper
             If needsConstrained AndAlso derefExp IsNot Nothing Then
                 result = derefExp.Expression.GenerateCode(Info.Clone(True, False, derefExp.Expression.ExpressionType)) AndAlso result
             Else
-                result = InstanceExpression.GenerateCode(ieInfo) AndAlso result
+                Dim getRef As GetRefExpression = TryCast(InstanceExpression, GetRefExpression)
+                If getRef IsNot Nothing AndAlso getRef.Expression.ExpressionType.IsValueType AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) 
+                    result = getRef.Expression.GenerateCode(ieInfo) AndAlso result
+                    Emitter.EmitBox(Info, getRef.Expression.ExpressionType)
+                Else
+                    result = InstanceExpression.GenerateCode(ieInfo) AndAlso result
+                End If
 
                 If needsConstrained Then
                     constrainedLocal = Emitter.DeclareLocal(Info, InstanceExpression.ExpressionType)
@@ -2375,30 +2381,30 @@ Public Class Helper
             '  Return TypeAttributes.NotPublic
             'End If
         Else
-        'If vbnc.Modifiers.IsNothing(Modifiers) = False Then
-        If Modifiers.Is(ModifierMasks.Public) Then
-            Return Reflection.TypeAttributes.NestedPublic
-        ElseIf Modifiers.Is(ModifierMasks.Friend) Then
-            If Modifiers.Is(ModifierMasks.Protected) Then
-                Return Reflection.TypeAttributes.NestedFamORAssem
-                '0Return Reflection.TypeAttributes.NotPublic
-                'Return Reflection.TypeAttributes.VisibilityMask
-            Else
-                Return Reflection.TypeAttributes.NestedAssembly
+            'If vbnc.Modifiers.IsNothing(Modifiers) = False Then
+            If Modifiers.Is(ModifierMasks.Public) Then
+                Return Reflection.TypeAttributes.NestedPublic
+            ElseIf Modifiers.Is(ModifierMasks.Friend) Then
+                If Modifiers.Is(ModifierMasks.Protected) Then
+                    Return Reflection.TypeAttributes.NestedFamORAssem
+                    '0Return Reflection.TypeAttributes.NotPublic
+                    'Return Reflection.TypeAttributes.VisibilityMask
+                Else
+                    Return Reflection.TypeAttributes.NestedAssembly
+                    'Return Reflection.TypeAttributes.NotPublic
+                End If
+            ElseIf Modifiers.Is(ModifierMasks.Protected) Then
+                Return Reflection.TypeAttributes.NestedFamily
                 'Return Reflection.TypeAttributes.NotPublic
+            ElseIf Modifiers.Is(ModifierMasks.Private) Then
+                Return Reflection.TypeAttributes.NestedPrivate
+            Else
+                'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Default scope set to public...")
+                Return Reflection.TypeAttributes.NestedPublic
             End If
-        ElseIf Modifiers.Is(ModifierMasks.Protected) Then
-            Return Reflection.TypeAttributes.NestedFamily
-            'Return Reflection.TypeAttributes.NotPublic
-        ElseIf Modifiers.Is(ModifierMasks.Private) Then
-            Return Reflection.TypeAttributes.NestedPrivate
-        Else
-            'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Default scope set to public...")
-            Return Reflection.TypeAttributes.NestedPublic
-        End If
-        ' Else
-        'Return Reflection.TypeAttributes.NestedPublic
-        'End If
+            ' Else
+            'Return Reflection.TypeAttributes.NestedPublic
+            'End If
         End If
     End Function
 
@@ -3192,6 +3198,24 @@ Public Class Helper
         End If
     End Function
 
+    Shared Function GetMethodAccessibilityString(ByVal Attributes As MethodAttributes) As String
+        Attributes = Attributes Or MethodAttributes.MemberAccessMask
+        Select Case Attributes
+            Case MethodAttributes.Public
+                Return "Public"
+            Case MethodAttributes.Private
+                Return "Private"
+            Case MethodAttributes.FamANDAssem, MethodAttributes.FamORAssem
+                Return "Protected Friend"
+            Case MethodAttributes.Family
+                Return "Protected"
+            Case MethodAttributes.Assembly
+                Return "Friend"
+            Case Else
+                Return "Public"
+        End Select
+    End Function
+
     Shared Function GetMethodAttributes(ByVal Member As MemberInfo) As MethodAttributes
         Select Case Member.MemberType
             Case MemberTypes.Method
@@ -3373,22 +3397,6 @@ Public Class Helper
             Helper.Stop()
             Throw New NotImplementedException
         End If
-    End Function
-
-    Shared Function ResolveGroup(ByVal Parent As ParsedObject, ByVal InputGroup As Generic.List(Of MemberInfo), ByVal ResolvedGroup As Generic.List(Of MemberInfo), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList, ByRef OutputArguments As Generic.List(Of Argument), ByVal ShowErrors As Boolean) As Boolean
-        Dim result As Boolean = True
-
-        Dim methodResolver As New MethodResolver(Parent)
-        methodResolver.ShowErrors = ShowErrors
-        methodResolver.Init(InputGroup, Arguments, TypeArguments)
-        result = methodResolver.Resolve AndAlso result
-
-        If result Then
-            OutputArguments = methodResolver.ResolvedCandidate.ExactArguments
-            ResolvedGroup.Add(methodResolver.ResolvedMember)
-        End If
-
-        Return result
     End Function
 
     ''' <summary>

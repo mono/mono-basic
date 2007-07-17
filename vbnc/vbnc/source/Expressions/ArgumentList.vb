@@ -50,22 +50,36 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Sub test(ByVal ParamArray v() As Integer)
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As Generic.List(Of Argument), ByVal Method As PropertyInfo) As Boolean
+        Dim result As Boolean = True
 
-    End Sub
+        ReplaceArguments(NewArguments)
+        result = VerifyArguments(Method) AndAlso result
+
+        Return result
+    End Function
+
+    Function VerifyArguments(ByVal Method As PropertyInfo) As Boolean
+        Dim parameters As ParameterInfo()
+        parameters = Helper.GetParameters(Compiler, Method)
+        Return VerifyArguments(parameters)
+    End Function
+
+    Function VerifyArguments(ByVal Method As MethodBase) As Boolean
+        Dim parameters As ParameterInfo()
+        parameters = Helper.GetParameters(Compiler, Method)
+        Return VerifyArguments(parameters)
+    End Function
 
     ''' <summary>
     ''' This function only verifies the expression type of the argument,
     ''' it does not expand paramarray arguments nor optional arguments
     ''' </summary>
-    ''' <param name="Method"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function VerifyArguments(ByVal Method As MethodBase) As Boolean
+    Function VerifyArguments(ByVal parameters() As ParameterInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim parameters As ParameterInfo()
-        parameters = Helper.GetParameters(Compiler, Method)
 #If EXTENDEDDEBUG Then
         Compiler.Report.WriteLine(Me.Location.ToString & ": VerifyArguments: " & Method.DeclaringType.FullName & "::" & Helper.ToString(Compiler, Method))
 #End If

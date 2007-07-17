@@ -839,7 +839,7 @@
 	</Message>
 	<Message id="30209" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>An 'As' clause is required if Option Strict is in effect.</VBNCValue>
 		<VBValue>Option Strict On requires all variable declarations to have an 'As' clause.</VBValue>
 	</Message>
 	<Message id="30210" level="Error">
@@ -1349,7 +1349,7 @@
 	</Message>
 	<Message id="30390" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}.{1}' is not accessible because it is '{2}'.</VBNCValue>
 		<VBValue>'|1.|2' is not accessible in this context because it is '|3'.</VBValue>
 	</Message>
 	<Message id="30392" level="Error">
@@ -1699,7 +1699,7 @@
 	</Message>
 	<Message id="30512" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Option Strict On does not allow implicit conversions from '{0}' to '{1}'.</VBNCValue>
 		<VBValue>Option Strict On disallows implicit conversions from '|1' to '|2'.</VBValue>
 	</Message>
 	<Message id="30516" level="Error">
@@ -1709,7 +1709,7 @@
 	</Message>
 	<Message id="30517" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Overload resolution failed because no '{0}' is accessible.</VBNCValue>
 		<VBValue>Overload resolution failed because no '|1' is accessible.</VBValue>
 	</Message>
 	<Message id="30518" level="Error">

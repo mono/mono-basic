@@ -2031,6 +2031,8 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Ldind_Ref)
             Case TypeCode.Boolean
                 Info.ILGen.Emit(OpCodes.Ldind_I1)
+            Case TypeCode.Decimal
+                Info.ILGen.Emit(OpCodes.Ldobj, Info.Compiler.TypeCache.System_Decimal)
             Case Else
                 Helper.NotImplemented()
         End Select

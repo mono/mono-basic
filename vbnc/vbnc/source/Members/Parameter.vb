@@ -91,9 +91,15 @@ Public Class Parameter
         Return result
     End Function
 
-    ReadOnly Property ConstantExpression() As Expression
+    ReadOnly Property HasConstantValue() As Boolean
         Get
-            Return m_ConstantExpression
+            Return m_ConstantExpression IsNot Nothing
+        End Get
+    End Property
+
+    ReadOnly Property ConstantValue() As Object
+        Get
+            Return m_ConstantValue
         End Get
     End Property
 

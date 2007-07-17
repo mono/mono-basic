@@ -21,6 +21,7 @@ Public Class CTypeExpression
 
     Private m_DestinationType As TypeName
     Private m_ResolvedDestinationType As Type
+    Private m_IsStringToCharArray As Boolean
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
@@ -50,6 +51,12 @@ Public Class CTypeExpression
         MyBase.Init(Expression)
         m_DestinationType = DestinationType
     End Sub
+
+    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Type)
+        MyBase.Init(Expression)
+        m_ResolvedDestinationType = DestinationType
+    End Sub
+
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
@@ -123,8 +130,21 @@ Public Class CTypeExpression
         Return result
     End Function
 
+    Private Function EmitStringToCharArray(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = Expression.GenerateCode(Info.Clone(Compiler.TypeCache.System_String)) AndAlso result
+        Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToCharArrayRankOne_String)
+
+        Return result
+    End Function
+
     Private Function GenerateCTypeCode(ByVal Info As EmitInfo, ByVal DestinationType As Type, ByVal SourceType As Type) As Boolean
         Dim result As Boolean = True
+
+        If m_IsStringToCharArray Then
+            Return EmitStringToCharArray(Info) AndAlso result
+        End If
 
         result = Expression.Classification.GenerateCode(Info.Clone(DestinationType)) AndAlso result
 
@@ -302,6 +322,12 @@ Public Class CTypeExpression
             Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Object) Then
                     result = CObjExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                ElseIf Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Char_Array) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) Then
+                    If Location.File(Compiler).IsOptionStrictOn Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Location, Expression.ExpressionType.FullName, Me.ExpressionType.FullName)
+                    Else
+                        m_IsStringToCharArray = True
+                    End If
                 Else
                     'Helper.NotImplementedYet("") Anything to do here?
                 End If

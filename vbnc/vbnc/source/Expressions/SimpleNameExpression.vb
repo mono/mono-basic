@@ -507,6 +507,26 @@ Public Class SimpleNameExpression
         '   more than one standard module, a compile-time error occurs.
         If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name) Then Return True
 
+        If Location.File(Compiler).IsOptionExplicitOn = False Then
+            Dim parent_method As MethodBaseDeclaration
+            parent_method = Me.FindFirstParent(Of MethodBaseDeclaration)()
+
+            If method IsNot Nothing Then
+                Dim varD As VariableDeclaration
+                Dim varType As Type
+                If m_Identifier.HasTypeCharacter Then
+                    varType = TypeCharacters.TypeCharacterToType(Compiler, m_Identifier.TypeCharacter)
+                Else
+                    varType = Compiler.TypeCache.System_Object
+                End If
+                varD = New VariableDeclaration(parent_method.Code, Nothing, Nothing, m_Identifier, False, Nothing, Nothing, Nothing)
+                varD.Init(Nothing, Nothing, m_Identifier.Identifier, varType)
+                parent_method.Code.AddVariable(varD)
+                Me.Classification = New VariableClassification(Me, varD)
+                Return True
+            End If
+        End If
+
         '* Otherwise, the name given by the identifier is undefined and a compile-time error occurs.
         Compiler.Report.ShowMessage(Messages.VBNC30451, Me.Location, Name)
 

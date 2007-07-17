@@ -71,6 +71,32 @@ Public Class LoadLocalExpression
     End Function
 End Class
 
+Public Class LoadElementExpression
+    Inherits CompilerGeneratedExpression
+
+    Private m_Local As LocalBuilder
+    Private m_Index As Integer
+
+    Sub New(ByVal Parent As ParsedObject, ByVal Local As LocalBuilder, ByVal Index As Integer)
+        MyBase.New(Parent, Nothing, Local.LocalType)
+        MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
+        m_Local = Local
+        m_Index = Index
+    End Sub
+
+    Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+
+        Helper.Assert(Info.IsRHS)
+
+        Emitter.EmitLoadVariable(Info, m_Local)
+        Emitter.EmitLoadI4Value(Info, m_Index)
+        Emitter.EmitLoadElement(Info, m_Local.LocalType)
+
+        Return result
+    End Function
+End Class
+
 Public Class ValueOnStackExpression
     Inherits CompilerGeneratedExpression
 

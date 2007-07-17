@@ -102,16 +102,18 @@ Public Class PropertyDescriptor
     Public Overrides ReadOnly Property CanRead() As Boolean
         Get
             Dim result As Boolean
+            result = Not m_Declaration.Modifiers.Is(ModifierMasks.WriteOnly)
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Return result
         End Get
     End Property
 
     Public Overrides ReadOnly Property CanWrite() As Boolean
         Get
             Dim result As Boolean
+            result = Not m_Declaration.Modifiers.Is(ModifierMasks.ReadOnly)
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Return result
         End Get
     End Property
 

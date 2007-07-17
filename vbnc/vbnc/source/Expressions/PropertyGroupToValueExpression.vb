@@ -44,7 +44,7 @@ Public Class PropertyGroupToValueExpression
         Dim result As Boolean = True
 
         If m_PropertyGroup.IsResolved = False OrElse m_PropertyGroup.ResolvedProperty Is Nothing Then
-            result = m_PropertyGroup.ResolveGroup(New ArgumentList(Me)) AndAlso result
+            result = m_PropertyGroup.ResolveGroup(New ArgumentList(Me), Nothing) AndAlso result
         End If
 
         If result = False Then

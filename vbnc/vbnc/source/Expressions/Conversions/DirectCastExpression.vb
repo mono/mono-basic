@@ -27,6 +27,10 @@ Public Class DirectCastExpression
         MyBase.Init(Expression, DestinationType)
     End Sub
 
+    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Type)
+        MyBase.Init(Expression, DestinationType)
+    End Sub
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

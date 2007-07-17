@@ -64,8 +64,10 @@ Public Class VariableInitializer
 
         Dim initExp As Expression = TryCast(m_Initializer, Expression)
         If initExp IsNot Nothing Then
-            initExp = initExp.ReclassifyToValueExpression
-            result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            If initExp.Classification.IsValueClassification = False Then
+                initExp = initExp.ReclassifyToValueExpression
+                result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            End If
             If expInfo IsNot Nothing Then
                 initExp = Helper.CreateTypeConversion(Me, initExp, expInfo.LHSType, result)
             Else

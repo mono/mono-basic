@@ -33,6 +33,7 @@ Public Class LateBoundAccessClassification
     Private m_TypeArguments As TypeArgumentList
     Private m_Name As String
     Private m_Arguments As ArgumentList
+    Private m_LateBoundType As Type
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
@@ -67,6 +68,15 @@ Public Class LateBoundAccessClassification
         End Get
     End Property
 
+    Property LateBoundType() As Type
+        Get
+            Return m_LateBoundType
+        End Get
+        Set(ByVal value As Type)
+            m_LateBoundType = value
+        End Set
+    End Property
+
     ReadOnly Property Type() As Type
         Get
             Return Compiler.TypeCache.System_Object
@@ -85,5 +95,6 @@ Public Class LateBoundAccessClassification
         m_InstanceExpression = InstanceExpression
         m_Name = Name
         m_TypeArguments = TypeArguments
+
     End Sub
 End Class

@@ -20,6 +20,30 @@
 Public Class BinaryAddExpression
     Inherits BinaryExpression
 
+    Protected Overrides Function ResolveExpressions(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.ResolveExpressions(Info) AndAlso result
+
+        If result = False Then Return result
+
+        Dim l, lS, r, rS As Boolean
+        l = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
+        r = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
+        If l = False Then lS = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_String)
+        If r = False Then rS = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_String)
+
+        If (l AndAlso rS) Then 'DBNull + String
+            m_LeftExpression = New NothingConstantExpression(Me)
+            result = m_LeftExpression.ResolveExpression(Info) AndAlso result
+        ElseIf (lS AndAlso r) Then 'String + DBNull
+            m_RightExpression = New NothingConstantExpression(Me)
+            result = m_RightExpression.ResolveExpression(Info) AndAlso result
+        End If
+
+        Return result
+    End Function
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

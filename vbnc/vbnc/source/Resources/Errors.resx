@@ -198,7 +198,7 @@
   <data name="30206"><value>'Option' must be followed by 'Explicit', 'Strict' or 'Compare'.</value></data>
   <data name="30207"><value>'Option Compare' must be followed by 'Text' or 'Binary'.</value></data>
   <data name="30208"><value>CHANGEME</value></data>
-  <data name="30209"><value>CHANGEME</value></data>
+  <data name="30209"><value>An 'As' clause is required if Option Strict is in effect.</value></data>
   <data name="30210"><value>This function or property requires a return type because 'Option Strict' is in effect.</value></data>
   <data name="30213"><value>CHANGEME</value></data>
   <data name="30215"><value>Expected 'Sub' or 'Function'</value></data>
@@ -300,7 +300,7 @@
   <data name="30385"><value>CHANGEME</value></data>
   <data name="30387"><value>The class '{0}' must define a constructor since no default constructor can be created.</value></data>
   <data name="30389"><value>CHANGEME</value></data>
-  <data name="30390"><value>CHANGEME</value></data>
+  <data name="30390"><value>'{0}.{1}' is not accessible because it is '{2}'.</value></data>
   <data name="30392"><value>CHANGEME</value></data>
   <data name="30393"><value>This 'Exit Try' statement is not contained within a 'Try' statement.</value></data>
   <data name="30395"><value>CHANGEME</value></data>
@@ -370,9 +370,9 @@
   <data name="30507"><value>CHANGEME</value></data>
   <data name="30508"><value>CHANGEME</value></data>
   <data name="30509"><value>CHANGEME</value></data>
-  <data name="30512"><value>CHANGEME</value></data>
+  <data name="30512"><value>Option Strict On does not allow implicit conversions from '{0}' to '{1}'.</value></data>
   <data name="30516"><value>Overload resolution failed because no '{0}' is accessible with the specified number of arguments.</value></data>
-  <data name="30517"><value>CHANGEME</value></data>
+  <data name="30517"><value>Overload resolution failed because no '{0}' is accessible.</value></data>
   <data name="30518"><value>CHANGEME</value></data>
   <data name="30519"><value>CHANGEME</value></data>
   <data name="30520"><value>CHANGEME</value></data>

@@ -36,6 +36,7 @@ Public Class PropertyGroupClassification
 
     Private m_ResolvedProperty As PropertyInfo
     Private m_Resolved As Boolean
+    Private m_Resolver As MethodResolver
 
     ReadOnly Property Parameters() As ArgumentList
         Get
@@ -49,7 +50,7 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument)) As Boolean
         Dim result As Boolean = True
         Dim destinationParameterTypes()() As Type
         Dim destinationParameters()() As ParameterInfo
@@ -67,7 +68,20 @@ Public Class PropertyGroupClassification
         Dim resolvedGroup As New Generic.List(Of MemberInfo)
         Dim inputGroup As New Generic.List(Of MemberInfo)(m_Members.ToArray)
 
-        result = Helper.ResolveGroup(Me.Parent, inputGroup, resolvedGroup, SourceParameters, Nothing, Nothing, False)
+
+        If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
+        m_Resolver.ShowErrors = False
+        m_Resolver.Init(inputGroup, SourceParameters, Nothing)
+        result = m_Resolver.Resolve AndAlso result
+
+        If result Then
+            If m_Resolver.IsLateBound = False Then
+                FinalSourceArguments = m_Resolver.ResolvedCandidate.ExactArguments
+                resolvedGroup.Add(m_Resolver.ResolvedMember)
+            End If
+        End If
+
+        'result = Helper.ResolveGroup(Me.Parent, inputGroup, resolvedGroup, SourceParameters, Nothing, Nothing, False)
 
         If result Then
             m_ResolvedProperty = TryCast(resolvedGroup(0), PropertyInfo)

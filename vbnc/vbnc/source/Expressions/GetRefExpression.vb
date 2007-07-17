@@ -27,6 +27,12 @@ Public Class GetRefExpression
     Private m_Expression As Expression
     Private m_ExpressionType As Type
 
+    ReadOnly Property Expression() As Expression
+        Get
+            Return m_Expression
+        End Get
+    End Property
+
     ''' <summary>
     ''' Automatically resolved.
     ''' </summary>

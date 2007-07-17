@@ -128,8 +128,8 @@ Public Class ParameterDescriptor
         Get
             Dim result As Object = DBNull.Value
             If m_Parameter IsNot Nothing Then
-                If m_Parameter.ConstantExpression IsNot Nothing Then
-                    result = m_Parameter.ConstantExpression.ConstantValue
+                If m_Parameter.HasConstantValue Then
+                    result = m_Parameter.ConstantValue
                 ElseIf Me.IsParamArray Then
                     result = Nothing
                 Else

@@ -36,9 +36,17 @@ Public Class LateBoundAccessToPropertyAccessExpression
         Dim result As Boolean = True
 
         If Info.IsLHS Then
-            result = EmitLateSet(Info) AndAlso result
+            If LateBoundAccess.Name Is Nothing Then
+                result = EmitLateindexSet(Info) AndAlso result
+            Else
+                result = EmitLateSet(Info) AndAlso result
+            End If
         Else
-            result = EmitLateGet(Info) AndAlso result
+            If LateBoundAccess.Name Is Nothing Then
+                result = EmitLateIndexGet(Info) AndAlso result
+            Else
+                result = EmitLateGet(Info) AndAlso result
+            End If
         End If
 
         Return result

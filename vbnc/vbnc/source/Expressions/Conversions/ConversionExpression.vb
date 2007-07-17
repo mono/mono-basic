@@ -60,7 +60,19 @@ Public MustInherit Class ConversionExpression
             Case TypeCode.UInt64
                 Return New CULngExpression(Parent, fromExpr)
             Case Else
-                Return New CTypeExpression(Parent, fromExpr, DestinationType)
+                If DestinationType.IsByRef AndAlso fromExpr.ExpressionType.IsByRef = False Then
+                    Dim elementType As Type = DestinationType.GetElementType
+                    Dim result As Boolean = True
+                    Dim tmp As Expression
+                    tmp = GetTypeConversion(Parent, fromExpr, elementType)
+                    result = tmp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
+                    tmp = New GetRefExpression(Parent, tmp)
+                    result = tmp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
+                    If result = False Then Throw New InternalException
+                    Return tmp
+                Else
+                    Return New CTypeExpression(Parent, fromExpr, DestinationType)
+                End If
         End Select
     End Function
 

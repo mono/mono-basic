@@ -37,6 +37,14 @@ Public Class MethodResolver
 
     Private m_ResolvedCandidate As MemberCandidate
     Private m_ShowErrors As Boolean
+    Private m_Resolved As Boolean
+    Private m_IsLateBound As Boolean
+
+    ReadOnly Property IsLateBound() As Boolean
+        Get
+            Return m_IsLateBound
+        End Get
+    End Property
 
     Property ShowErrors() As Boolean
         Get
@@ -77,6 +85,12 @@ Public Class MethodResolver
     ReadOnly Property MethodName() As String
         Get
             Return m_Name
+        End Get
+    End Property
+
+    ReadOnly Property MethodDeclaringType() As Type
+        Get
+            Return m_InitialCandidates(0).Member.DeclaringType
         End Get
     End Property
 
@@ -130,27 +144,37 @@ Public Class MethodResolver
     Public Function Resolve() As Boolean
         Dim result As Boolean = True
 
+        If m_Resolved AndAlso ShowErrors = False Then Helper.StopIfDebugging()
+
         Log("")
         Log("Resolving method {0} with arguments {1}", ArgumentsTypesAsString)
 
         result = ResolveInternal()
 
         If result Then
-            Helper.Assert(CandidatesLeft = 1)
-            For Each member As MemberCandidate In m_Candidates
-                If member IsNot Nothing Then
-                    m_ResolvedCandidate = member
-                    m_ResolvedCandidate.SelectOutputArguments()
-                    Exit For
-                End If
-            Next
+            Helper.Assert(CandidatesLeft = 1 OrElse IsLateBound)
+            If IsLateBound Then
+                m_ResolvedCandidate = Nothing
+            Else
+                For Each member As MemberCandidate In m_Candidates
+                    If member IsNot Nothing Then
+                        m_ResolvedCandidate = member
+                        m_ResolvedCandidate.SelectOutputArguments()
+                        Exit For
+                    End If
+                Next
+            End If
         End If
+
+        m_Resolved = True
 
         Return result
     End Function
 
     Private Function ResolveInternal() As Boolean
         Log("There are " & CandidatesLeft & " candidates left.")
+
+        m_IsLateBound = False
 
         If ShowErrors AndAlso CandidatesLeft = 0 Then
             Helper.AddError("No candidates: " & Parent.Location.ToString(Compiler))
@@ -159,7 +183,11 @@ Public Class MethodResolver
         RemoveInaccessible()
         Log("After removing inaccessible candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No accessible: " & Parent.Location.ToString(Compiler))
+            If m_InitialCandidates.Length = 1 Then
+                Return Compiler.Report.ShowMessage(Messages.VBNC30390, Parent.Location, m_InitialCandidates(0).Member.DeclaringType.Name, m_InitialCandidates(0).Member.Name, Helper.GetMethodAccessibilityString(Helper.GetMethodAttributes(m_InitialCandidates(0).Member)))
+            Else
+                Return Compiler.Report.ShowMessage(Messages.VBNC30517, Parent.Location, m_InitialCandidates(0).Member.Name)
+            End If
         End If
 
         ExpandParamArrays()
@@ -172,9 +200,9 @@ Public Class MethodResolver
         Log("After removing inapplicable candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft = 0 Then
             If m_InitialCandidates.Length = 1 Then
-                Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
+                Return Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
             Else
-                Compiler.Report.ShowMessage(Messages.VBNC30516, Parent.Location, MethodName)
+                Return Compiler.Report.ShowMessage(Messages.VBNC30516, Parent.Location, MethodName)
             End If
         End If
 
@@ -190,14 +218,17 @@ Public Class MethodResolver
 
         RemoveNarrowing()
         Log("After removing narrowing candidates, there are " & CandidatesLeft & " candidates left.")
-        If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No non-narrowing: " & Parent.Location.ToString(Compiler))
-        End If
-
         If CandidatesLeft = 1 Then
             Return True
         ElseIf CandidatesLeft = 0 Then
-            Helper.NotImplementedYet("Reclassify to late-bound method access.")
+            If Caller.Location.File(Compiler).IsOptionStrictOn = False Then
+                m_IsLateBound = True
+                Return True
+            End If
+        End If
+
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError("No non-narrowing: " & Parent.Location.ToString(Compiler))
         End If
 
         SelectMostApplicable()
@@ -230,7 +261,7 @@ Public Class MethodResolver
 
             If candidate Is Nothing Then Continue For
 
-            candidate.ExpandParamArray
+            candidate.ExpandParamArray()
         Next
     End Sub
 
@@ -515,13 +546,6 @@ Public Class MemberCandidate
                 Return True
             End If
         Next
-
-        'If ExceptObject = False Then
-        '    If InputParameters.Length = 0 Then
-        '        m_ExactArguments2 = ExactArguments(0)
-        '    End If
-        '    Helper.Assert(m_ExactArguments2 IsNot Nothing)
-        'End If
 
         Return False
     End Function
@@ -817,36 +841,6 @@ Public Class MemberCandidate
     End Function
 
     Sub SelectOutputArguments()
-        'If ExactArguments2 Is Nothing Then
-        '    Dim params() As ParameterInfo
-        '    params = InputParameters
-        '    Dim useParamArray As Boolean
-
-        '    If params.Length > 0 Then
-        '        Dim param As ParameterInfo = params(params.Length - 1)
-        '        If Helper.IsParamArrayParameter(Compiler, param) Then
-        '            If Arguments.Count <> params.Length Then
-        '                useParamArray = True
-        '            ElseIf TypeOf Arguments.Arguments(params.Length - 1).Expression Is NothingConstantExpression = False Then
-        '                Dim convertible As Integer
-        '                Dim lastIndex As Integer = params.Length - 1
-        '                convertible = Helper.IsConvertible(Compiler, ExactArguments(0)(lastIndex), ExactArguments(1)(lastIndex), param)
-        '                If convertible = 1 Then
-        '                    useParamArray = True
-        '                End If
-        '            End If
-        '        End If
-        '    End If
-
-        '    If useParamArray Then
-        '        m_OutputArguments = ExactArguments(1)
-        '    Else
-        '        m_OutputArguments = ExactArguments(0)
-        '    End If
-        'Else
-        '    m_OutputArguments = ExactArguments2
-        'End If
-
         If IsParamArrayCandidate Then
             Dim ace As ArrayCreationExpression
             ace = ParamArrayExpression ' TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)

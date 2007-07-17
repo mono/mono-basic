@@ -132,6 +132,16 @@ Public Class MemberAccessExpression
                         Helper.NotImplemented()
                     End If
                 End With
+            Case ExpressionClassification.Classifications.LateBoundAccess
+                If Info.IsLHS Then
+                    If Info.RHSExpression Is Nothing Then
+                        LateBoundAccessToExpression.EmitLateCall(Info, Me.Classification.AsLateBoundAccess)
+                    Else
+                        Helper.NotImplemented()
+                    End If
+                Else
+                    Helper.NotImplemented()
+                End If
             Case Else
                 Helper.NotImplemented()
         End Select

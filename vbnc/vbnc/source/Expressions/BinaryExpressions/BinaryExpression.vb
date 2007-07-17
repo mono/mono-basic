@@ -112,11 +112,8 @@ Public MustInherit Class BinaryExpression
         End Get
     End Property
 
-    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+    Protected Overridable Function ResolveExpressions(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
-        Dim operandType As TypeCode
-        Dim rightOperandType As TypeCode
-        Dim leftOperandType As TypeCode
 
         result = m_LeftExpression.ResolveExpression(Info) AndAlso result
         result = m_RightExpression.ResolveExpression(Info) AndAlso result
@@ -130,7 +127,18 @@ Public MustInherit Class BinaryExpression
         If m_RightExpression.Classification.IsValueClassification = False Then
             result = Helper.VerifyValueClassification(m_RightExpression, Info) AndAlso result
         End If
+        Return result
+    End Function
 
+    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+        Dim operandType As TypeCode
+        Dim rightOperandType As TypeCode
+        Dim leftOperandType As TypeCode
+
+        result = ResolveExpressions(Info) AndAlso result
+
+        If result = False Then Return False
 
         If Helper.CompareType(m_LeftExpression.ExpressionType, m_RightExpression.ExpressionType) = False Then
             If Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.Nothing) Then
@@ -151,14 +159,14 @@ Public MustInherit Class BinaryExpression
             If DoOperatorOverloading() = False Then
                 If (Me.Keyword = KS.ShiftLeft OrElse Me.Keyword = KS.ShiftRight) AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.System_Char) = False AndAlso Helper.CompareType(Me.LeftType, Compiler.TypeCache.System_DateTime) = False Then
                     If Helper.CompareType(Me.RightType, Compiler.TypeCache.System_Char) Then
-                        Compiler.Report.ShowMessage(Messages.VBNC32006, Me.LeftType.Name)
+                        Compiler.Report.ShowMessage(Messages.VBNC32006, Location, Me.LeftType.Name)
                     ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.System_DateTime) Then
-                        Compiler.Report.ShowMessage(Messages.VBNC30311, Me.LeftType.Name, Me.RightType.Name)
+                        Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Me.LeftType.Name, Me.RightType.Name)
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                        Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
                     End If
                 Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30452, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                    Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
                 End If
                 result = False
             End If

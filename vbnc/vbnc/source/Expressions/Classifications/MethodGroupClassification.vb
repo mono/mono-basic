@@ -61,6 +61,7 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <remarks></remarks>
     Private m_Resolved As Boolean
+    Private m_Resolver As MethodResolver
 
 #If DEBUG Then
 
@@ -246,7 +247,14 @@ Public Class MethodGroupClassification
     ReadOnly Property ResolvedMethod() As MethodBase
         Get
             If SuccessfullyResolved = False Then Throw New InternalException(Me)
-            Return CType(m_Group(0), MethodBase)
+            If m_Group.Count = 0 Then Return Nothing
+            Return DirectCast(m_Group(0), MethodBase)
+        End Get
+    End Property
+
+    ReadOnly Property Resolver() As MethodResolver
+        Get
+            Return m_Resolver
         End Get
     End Property
 
@@ -258,7 +266,7 @@ Public Class MethodGroupClassification
     ''' <remarks></remarks>
     ReadOnly Property SuccessfullyResolved() As Boolean
         Get
-            Return m_Resolved AndAlso m_Group.Count = 1
+            Return m_Resolved AndAlso (m_Group.Count = 1 OrElse m_Resolver.IsLateBound)
         End Get
     End Property
 
@@ -362,6 +370,12 @@ Public Class MethodGroupClassification
         Return result
     End Function
 
+    ReadOnly Property IsLateBound() As Boolean
+        Get
+            Return m_Resolver IsNot Nothing AndAlso m_Resolved AndAlso m_Resolver.IsLateBound
+        End Get
+    End Property
+
     ''' <summary>
     ''' Resolve this group with the specified parameters.
     ''' </summary>
@@ -378,12 +392,24 @@ Public Class MethodGroupClassification
 
         Dim resolvedGroup As New Generic.List(Of MemberInfo)
 
-        result = Helper.ResolveGroup(Me.Parent, m_Group, resolvedGroup, SourceParameters, TypeArguments, FinalSourceArguments, ShowErrors) AndAlso result
+        If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
+        m_Resolver.ShowErrors = ShowErrors
+        m_Resolver.Init(m_Group, SourceParameters, TypeArguments)
+        result = m_Resolver.Resolve AndAlso result
+
+        If result Then
+            If m_Resolver.IsLateBound = False Then
+                FinalSourceArguments = m_Resolver.ResolvedCandidate.ExactArguments
+                resolvedGroup.Add(m_Resolver.ResolvedMember)
+            End If
+        End If
+
+        'result = Helper.ResolveGroup(Me.Parent, m_Group, resolvedGroup, SourceParameters, TypeArguments, FinalSourceArguments, ShowErrors) AndAlso result
 
         If result Then
             m_Group = resolvedGroup
             m_Resolved = True
-            If ResolvedMethod.IsStatic Then
+            If IsLateBound = False AndAlso ResolvedMethod.IsStatic Then
                 'Helper.StopIfDebugging(m_InstanceExpression IsNot Nothing AndAlso TypeOf m_InstanceExpression Is MeExpression = False)
                 m_InstanceExpression = Nothing
             End If

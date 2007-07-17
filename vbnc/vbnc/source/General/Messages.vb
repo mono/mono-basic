@@ -1185,7 +1185,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30208 = 30208
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "An 'As' clause is required if Option Strict is in effect."
     ''' VB   = "Option Strict On requires all variable declarations to have an 'As' clause."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1899,7 +1899,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30389 = 30389
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}.{1}' is not accessible because it is '{2}'."
     ''' VB   = "'|1.|2' is not accessible in this context because it is '|3'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2389,7 +2389,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30509 = 30509
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Option Strict On does not allow implicit conversions from '{0}' to '{1}'."
     ''' VB   = "Option Strict On disallows implicit conversions from '|1' to '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2403,7 +2403,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30516 = 30516
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Overload resolution failed because no '{0}' is accessible."
     ''' VB   = "Overload resolution failed because no '|1' is accessible."
     ''' </summary>
     ''' <remarks></remarks>

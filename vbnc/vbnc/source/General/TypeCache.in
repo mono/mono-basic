@@ -36,6 +36,7 @@ array System_Boolean
 type mscorlib "System.Byte"
 array System_Byte
 type mscorlib "System.Char"
+array System_Char
 type mscorlib "System.DateTime"
 type mscorlib "System.Decimal"
 type mscorlib "System.Double"
@@ -48,6 +49,7 @@ type mscorlib "System.Single"
 type mscorlib "System.String"
 byref System_String
 array System_String
+ctor System_String System_Char_Array
 type mscorlib "System.SByte"
 type mscorlib "System.UInt16"
 type mscorlib "System.UInt32"
@@ -73,6 +75,7 @@ method System_Type "GetTypeFromHandle" System_RuntimeTypeHandle
 type mscorlib "System.Void"
 type mscorlib "System.Exception"
 type mscorlib "System.Array"
+type mscorlib "System.DBNull"
 method2 System_Array "SetValue" System_Object System_Int32_Array
 method2 System_Array "GetValue" System_Int32_Array
 method2 System_Array "CreateInstance" System_Type System_Int32_Array
@@ -252,6 +255,8 @@ method MS_VB_CS_Conversions "ToString" System_Single
 method MS_VB_CS_Conversions "ToString" System_Double 
 method MS_VB_CS_Conversions "ToString" System_Object 
 method MS_VB_CS_Conversions "ToGenericParameter" System_Object 
+method MS_VB_CS_Conversions "ChangeType" System_Object System_Type
+method MS_VB_CS_Conversions "ToCharArrayRankOne" System_String
 
 method MS_VB_CS_LikeOperator "LikeString" System_String System_String MS_VB_CompareMethod   
 method MS_VB_CS_LikeOperator "LikeObject" System_Object System_Object MS_VB_CompareMethod   

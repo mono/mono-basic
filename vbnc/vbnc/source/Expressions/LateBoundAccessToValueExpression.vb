@@ -35,7 +35,12 @@ Public Class LateBoundAccessToValueExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = EmitLateGet(Info) AndAlso result
+        If Me.LateBoundAccess.Name Is Nothing Then
+            result = EmitLateIndexGet(Info) AndAlso result
+        Else
+            result = EmitLateGet(Info) AndAlso result
+        End If
+
 
         Return result
     End Function

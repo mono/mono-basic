@@ -126,8 +126,11 @@ Public Class MethodDescriptor
 
             If m_Declaration.HandlesOrImplements IsNot Nothing Then
                 If m_Declaration.HandlesOrImplements.ImplementsClause IsNot Nothing Then
-                    result = result Or MethodAttributes.Virtual Or MethodAttributes.NewSlot Or MethodAttributes.CheckAccessOnOverride
-                    If m_Declaration.Modifiers.Is(ModifierMasks.Overridable) = False AndAlso m_Declaration.Modifiers.Is(ModifierMasks.MustOverride) = False Then
+                    result = result Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+                    If m_Declaration.Modifiers.Is(ModifierMasks.Overrides) = False Then
+                        result = result Or MethodAttributes.NewSlot
+                    End If
+                    If m_Declaration.Modifiers.Is(ModifierMasks.Overridable) = False AndAlso m_Declaration.Modifiers.Is(ModifierMasks.MustOverride) = False AndAlso m_Declaration.Modifiers.Is(ModifierMasks.Overrides) = False Then
                         result = result Or MethodAttributes.Final
                     End If
                 End If
