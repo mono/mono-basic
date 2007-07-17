@@ -1,3 +1,7 @@
+2007-07-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* All: More tests, general updates, svn property fixes, etc.
+
 2007-05-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Make sure the runtime is built as weel before running the tests.

@@ -57,9 +57,12 @@
 ../../source/Expressions/Classifications/VoidClassification.vb
 ../../source/Expressions/ClassModifiers.vb
 ../../source/Expressions/CompilerGeneratedExpression.vb
+../../source/Expressions/LateBoundAccessToExpression.vb
+../../source/Expressions/LateBoundAccessToPropertyAccessExpression.vb
 ../../source/Expressions/DelegateOrObjectCreationExpression.vb
 ../../source/Expressions/DeRefExpression.vb
 ../../source/Expressions/GetRefExpression.vb
+../../source/Expressions/LateBoundAccessToValueExpression.vb
 ../../source/Expressions/LoadFieldExpression.vb
 ../../source/Expressions/MethodGroupToValueExpression.vb
 ../../source/Expressions/MethodPointerToValueExpression.vb
@@ -76,6 +79,7 @@
 ../../source/General/MemberCache.vb
 ../../source/General/MethodBaseDeclaration.vb
 ../../source/General/MyGenerator.vb
+../../source/General/MyGroupData.vb
 ../../source/General/NamespaceDictionary.vb
 ../../source/General/NothingType.vb
 ../../source/General/TypeDictionary.vb

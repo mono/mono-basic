@@ -1,5 +1,7 @@
 REM CompilerOptions: /r:Override_dll.dll
 
+Option Strict Off
+
 Imports System
 Imports NSOverride
 
@@ -32,6 +34,6 @@ Class D
 End Class
 
 Module M
-    Function main()
+    Function main() As Integer
     End Function
 End Module

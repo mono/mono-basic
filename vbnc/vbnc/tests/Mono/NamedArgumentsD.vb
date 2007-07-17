@@ -29,7 +29,8 @@ Module M
             err += "#A3 binding not proper. Expected '10' but got '" & a & "'" & vbCrLf
         End If
         If (err <> "") Then
-            Throw New System.Exception(err)
+            Console.WriteLine(err)
+            Return 1
         End If
 
     End Function

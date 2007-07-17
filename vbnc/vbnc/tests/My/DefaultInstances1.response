@@ -1,0 +1,4 @@
+-rootnamespace:WindowsApplication1
+-define:_MYTYPE=\"WindowsForms\"
+-r:System.Windows.Forms.dll
+-target:library
