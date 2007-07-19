@@ -18,10 +18,10 @@
 ' 
 
 Public Structure Token
-    Private m_TokenObject As Object
     Private m_Location As Span 'Long
     Private m_TokenType As TokenType 'Byte
     Private m_TokenData1 As Byte
+    Private m_TokenObject As Object
 
     ReadOnly Property IsSomething() As Boolean
         Get

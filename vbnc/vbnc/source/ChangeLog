@@ -1,3 +1,7 @@
+2007-07-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Tokens/Token.vb: Workaround bug #82137 for s390/s390x.
+
 2007-07-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/PropertyGroupToPropertyAccessExpression.vb,
