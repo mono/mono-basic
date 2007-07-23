@@ -507,7 +507,7 @@ Public Class SimpleNameExpression
         '   more than one standard module, a compile-time error occurs.
         If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name) Then Return True
 
-        If Location.File(Compiler).IsOptionExplicitOn = False Then
+        If Location.File(Compiler).IsOptionExplicitOn = False AndAlso Info.CanBeImplicitSimpleName Then
             Dim parent_method As MethodBaseDeclaration
             parent_method = Me.FindFirstParent(Of MethodBaseDeclaration)()
 

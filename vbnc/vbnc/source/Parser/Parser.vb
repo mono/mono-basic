@@ -429,7 +429,7 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If iLastToken.IsSomething = tm.CurrentToken.IsSomething AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
+            If Token.IsSomething(iLastToken) = Token.IsSomething(tm.CurrentToken) AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
                 Throw New InternalException("Recursive problems, could not get past token: " & tm.CurrentToken.ToString() & " with location: " & tm.CurrentToken.Location.ToString(Compiler))
             End If
         Loop
@@ -1206,7 +1206,7 @@ Partial Public Class Parser
         End If
 
         While tm.Accept(KS.Dot)
-            If m_Second.IsSomething Then m_First = New QualifiedIdentifier(Parent, m_First, m_Second)
+            If Token.IsSomething(m_Second) Then m_First = New QualifiedIdentifier(Parent, m_First, m_Second)
             If tm.CurrentToken.IsIdentifierOrKeyword Then
                 m_Second = tm.CurrentToken
                 tm.NextToken()

@@ -62,7 +62,7 @@ Public Class InternalException
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal Obj As Token)
         MyBase.new()
-        If Obj.IsSomething Then
+        If Token.IsSomething(Obj) Then
             m_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
         Else
             m_Message = "There has been an internal error in the compiler."

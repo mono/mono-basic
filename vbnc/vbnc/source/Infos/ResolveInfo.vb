@@ -22,6 +22,7 @@ Public Class ResolveInfo
     Private Const c_SkipFunctionReturnVariable As Integer = 0
     Private Const c_CanFail As Integer = 1
     Private Const c_CanBeLateCall As Integer = 2
+    Private Const c_CanBeImplicitSimpleName As Integer = 3
 
     Public Compiler As Compiler
 
@@ -35,11 +36,21 @@ Public Class ResolveInfo
         Return DefaultInfo
     End Function
 
-    Sub New(ByVal Compiler As Compiler, Optional ByVal SkipFunctionReturnVariable As Boolean = False, Optional ByVal CanFail As Boolean = False)
+    Sub New(ByVal Compiler As Compiler, Optional ByVal SkipFunctionReturnVariable As Boolean = False, Optional ByVal CanFail As Boolean = False, Optional ByVal CanBeImplicitSimpleName As Boolean = True)
         Me.SkipFunctionReturnVariable = SkipFunctionReturnVariable
         Me.CanFail = CanFail
+        Me.CanBeImplicitSimpleName = CanBeImplicitSimpleName
         Me.Compiler = Compiler
     End Sub
+
+    Public Property CanBeImplicitSimpleName() As Boolean
+        Get
+            Return m_Bits(c_CanBeImplicitSimpleName)
+        End Get
+        Set(ByVal value As Boolean)
+            m_Bits(c_CanBeImplicitSimpleName) = value
+        End Set
+    End Property
 
     Public Property CanBeLateCall() As Boolean
         Get

@@ -156,7 +156,7 @@ Public Class tm
 
     ReadOnly Property IsCurrentTokenValid() As Boolean
         Get
-            Return Current.IsSomething
+            Return Token.IsSomething(Current)
         End Get
     End Property
 

@@ -283,7 +283,20 @@ Public Class TypeManager
         Dim result As Boolean = True
         result = LoadReferencedAssemblies() AndAlso result
         If result = False Then Return result
-        If Compiler.CommandLine.NoVBRuntimeRef = False Then
+
+
+        Dim loadVB As Boolean
+        loadVB = Compiler.CommandLine.NoVBRuntimeRef = False
+        If Not loadVB Then
+            For Each ass As Assembly In Assemblies
+                If NameResolution.CompareNameOrdinal(ass.GetName().Name, "Microsoft.VisualBasic") Then
+                    loadVB = True
+                    Exit For
+                End If
+            Next
+        End If
+
+        If loadVB Then
             Compiler.TypeCache.InitInternalVB()
 #If ENABLECECIL Then
             Compiler.CecilTypeCache.InitInternalVB()

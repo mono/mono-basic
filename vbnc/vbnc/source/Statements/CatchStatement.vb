@@ -144,7 +144,7 @@ Public Class CatchStatement
         ElseIf m_When Is Nothing Then
             m_ExceptionType = Compiler.TypeCache.System_Exception
         End If
-        If m_Variable.IsSomething Then
+        If Token.IsSomething(m_Variable) Then
             m_VariableDeclaration = New VariableDeclaration(Me, Nothing, m_Variable, False, m_TypeName, Nothing, Nothing)
             result = m_VariableDeclaration.ResolveTypeReferences AndAlso result
             CodeBlock.Variables.Add(m_VariableDeclaration)

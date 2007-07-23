@@ -1099,7 +1099,7 @@ Public Class Scanner
                         NextChar()
                     End If
             End Select
-        Loop While Result.IsSomething = False
+        Loop While Token.IsSomething(Result) = False
 
         If Result.IsEndOfLine = False Then
             m_TokensSeenOnLine += 1
@@ -1234,7 +1234,7 @@ Public Class Scanner
     Private Function NextExactToken() As Token
         Dim result As Token
 
-        If m_PeekedExact.IsSomething Then
+        If Token.IsSomething(m_PeekedExact) Then
             result = m_PeekedExact
             m_PeekedExact = Nothing
             Return result
@@ -1244,7 +1244,7 @@ Public Class Scanner
     End Function
 
     Private Function PeekExactToken() As Token
-        If m_PeekedExact.IsSomething = False Then
+        If Token.IsSomething(m_PeekedExact) = False Then
             m_PeekedExact = NextExactToken()
         End If
 
@@ -1254,7 +1254,7 @@ Public Class Scanner
     Public Function [Next]() As Token Implements ITokenReader.Next
         Dim result As Token
 
-        If m_Peeked.IsSomething Then
+        If Token.IsSomething(m_Peeked) Then
             m_Current = m_Peeked
             m_Peeked = Nothing
             Return m_Current
@@ -1279,7 +1279,7 @@ Public Class Scanner
         End If
 
         If result.IsEndOfFile() Then
-            If m_Current.IsSomething AndAlso Not m_Current.IsEndOfLineOnly Then
+            If Token.IsSomething(m_Current) AndAlso Not m_Current.IsEndOfLineOnly Then
                 m_Peeked = result
                 result = Token.CreateEndOfLineToken(m_Peeked.Location)
             End If
@@ -1294,7 +1294,7 @@ Public Class Scanner
     End Function
 
     Public Function Peek() As Token Implements ITokenReader.Peek
-        If m_Peeked.IsSomething Then Return m_Peeked
+        If Token.IsSomething(m_Peeked) Then Return m_Peeked
         m_Peeked = [Next]()
         Return m_Peeked
     End Function

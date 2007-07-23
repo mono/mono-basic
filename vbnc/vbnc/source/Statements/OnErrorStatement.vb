@@ -99,7 +99,7 @@ Public Class OnErrorStatement
             Helper.AddError("No structured exception handling in the same method.")
         End If
 
-        If m_Label.IsSomething Then
+        If Token.IsSomething(m_Label) Then
             block = Me.FindFirstParent(Of CodeBlock)()
             m_ResolvedLabel = block.FindLabel(m_Label)
             Compiler.Helper.AddCheck("Label must exist.")

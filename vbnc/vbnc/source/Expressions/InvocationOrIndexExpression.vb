@@ -216,7 +216,7 @@ Public Class InvocationOrIndexExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_Expression.ResolveExpression(New ResolveInfo(Info.Compiler, True)) AndAlso result
+        result = m_Expression.ResolveExpression(New ResolveInfo(Info.Compiler, True, , False)) AndAlso result
         If result = False Then Return False
         If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
 

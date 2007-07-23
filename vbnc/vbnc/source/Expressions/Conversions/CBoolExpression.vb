@@ -92,6 +92,8 @@ Public Class CBoolExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
+        If result = False Then Return result
+
         result = Validate(Info, Expression.ExpressionType) AndAlso result
 
         Return result

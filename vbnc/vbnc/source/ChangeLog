@@ -1,3 +1,23 @@
+2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/Conversions/CBoolExpression.vb,
+	  Expressions/SimpleNameExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb,
+	  Statements/CatchStatement.vb, Statements/OnErrorStatement.vb,
+	  Parser/Parser.vb, Parser/Parser(Members).vb,
+	  ConditionalCompilation/ConditionalCompilation.vb,
+	  Names/QualifiedIdentifier.vb, Types/TypeNameResolutionInfo.vb,
+	  General/Scanner.vb, General/InternalException.vb,
+	  General/AssemblyInfo.vb, Types/TokenManager.vb: Use
+	  Token.IsSomething helper method.
+	* Tokens/Token.vb: Changed Token from structure to class again
+	  (temporary s390/x workaround). Added a IsSomething helper method
+	  that's the only other place this hack will be removed once the
+	  issue is fixed.
+	* General/TypeManager.vb: Load vbruntime if it has been referenced.
+	* Infos/ResolveInfo.vb: Add a CanBeImplicitSimpleName to allow for
+	  Option Explicit Off.
+
 2007-07-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Tokens/Token.vb: Workaround bug #82137 for s390/s390x.

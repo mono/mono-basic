@@ -189,7 +189,7 @@ Public Class QualifiedIdentifier
                 Else
                     Throw New InternalException(Me)
                 End If
-                If m_Second.IsSomething Then
+                If Token.IsSomething(m_Second) Then
                     m_Name = m_Name & "." & m_Second.ToString
                 End If
             End If

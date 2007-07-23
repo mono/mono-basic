@@ -282,7 +282,7 @@ Public Class ConditionalCompiler
     Public Function [Next]() As Token Implements ITokenReader.Next
         Dim result As Token
 
-        If m_Peeked.IsSomething Then
+        If Token.IsSomething(m_Peeked) Then
             m_Current = m_Peeked
             m_Peeked = Nothing
             Return m_Current
@@ -349,7 +349,7 @@ Public Class ConditionalCompiler
     End Function
 
     Public Function Peek() As Token Implements ITokenReader.Peek
-        If m_Peeked.IsSomething Then Return m_Peeked
+        If Token.IsSomething(m_Peeked) Then Return m_Peeked
         m_Peeked = [Next]()
         Return m_Peeked
     End Function

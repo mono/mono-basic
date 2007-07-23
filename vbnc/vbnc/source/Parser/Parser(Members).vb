@@ -520,7 +520,7 @@ Partial Class Parser
             Dim stn As SimpleTypeName = m_NonArrayTypeName.AsSimpleTypeName
             Dim qi As QualifiedIdentifier = stn.AsQualifiedIdentifier
             m_1 = m_NonArrayTypeName
-            If qi.Second.IsSomething Then
+            If Token.IsSomething(qi.Second) Then
                 m_2 = New IdentifierOrKeyword(result, qi.Second)
                 qi.Second = Nothing
             Else

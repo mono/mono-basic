@@ -160,7 +160,7 @@ Public Class TypeNameResolutionInfo
 
         If qi IsNot Nothing Then
             If qi.IsFirstQualifiedIdentifier Then
-                If qi.Second.IsSomething Then
+                If Token.IsSomething(qi.Second) Then
                     tmp = New TypeNameResolutionInfo(qi.FirstAsQualifiedIdentifier, FromWhere, 0)
                 Else
                     tmp = New TypeNameResolutionInfo(qi.FirstAsQualifiedIdentifier, FromWhere, Me.TypeArgumentCount)
@@ -172,7 +172,7 @@ Public Class TypeNameResolutionInfo
                 tmp = New TypeNameResolutionInfo(qi.FirstAsGlobal, FromWhere)
                 'Helper.Assert(qi.Second IsNot Nothing)
             ElseIf qi.IsFirstIdentifier Then
-                If qi.Second.IsSomething = False Then
+                If Token.IsSomething(qi.Second) = False Then
                     tmp = New TypeNameResolutionInfo(qi.FirstAsIdentifier, FromWhere, Me.TypeArgumentCount)
                     tmp.IsAttributeTypeName = Me.IsAttributeTypeName
                 Else
@@ -186,7 +186,7 @@ Public Class TypeNameResolutionInfo
             result = tmp.Resolve AndAlso result
             If result = False Then Return result
 
-            If qi.Second.IsSomething = False Then
+            If Token.IsSomething(qi.Second) = False Then
                 Me.m_FoundObjects = tmp.m_FoundObjects
             Else
                 If Me.IsAttributeTypeName Then
