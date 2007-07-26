@@ -1,5 +1,15 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/MethodGroupToValueExpression.vb: Show errors if method
+	  resolution failed.
+	* Expressions/Classifications/VariableClassification.vb: This is just
+	  getting worse...
+	* Members/VariableInitializer.vb: Bail out resolution.
+	* Emit/Emitter.vb: Emit correct StoreIndirect instruction for value
+	  types.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/Conversions/CTypeExpression.vb: Handle a few more cases
 	  of conversion.
 	* Expressions/Classifications/VariableClassification.vb: Simplify

@@ -68,6 +68,9 @@ Public Class VariableInitializer
                 initExp = initExp.ReclassifyToValueExpression
                 result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
             End If
+
+            If result = False Then Return result
+
             If expInfo IsNot Nothing Then
                 initExp = Helper.CreateTypeConversion(Me, initExp, expInfo.LHSType, result)
             Else

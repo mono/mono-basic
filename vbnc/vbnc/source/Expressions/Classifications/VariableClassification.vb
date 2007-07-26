@@ -264,11 +264,17 @@ Public Class VariableClassification
             Else
                 Dim rInfo As EmitInfo
                 Dim rhs As Expression = Info.RHSExpression
+                Dim paramConsumed As Boolean
 
                 If isByRefStructure Then
                     Emitter.EmitLoadVariable(Info.Clone(paramType), ParameterInfo)
-                    rInfo = Info.Clone(True, False, paramElementType)
                     If TypeOf rhs Is GetRefExpression Then rhs = DirectCast(rhs, GetRefExpression).Expression
+                    paramConsumed = TypeOf rhs Is NewExpression
+                    If paramConsumed Then
+                        rInfo = Info.Clone(True, False, paramType)
+                    Else
+                        rInfo = Info.Clone(True, False, paramElementType)
+                    End If
                 ElseIf isByRef Then
                     Emitter.EmitLoadVariableLocation(Info, ParameterInfo)
                     rInfo = Info.Clone(True, False, paramElementType)
@@ -280,13 +286,15 @@ Public Class VariableClassification
                 Helper.Assert(rhs.Classification.IsValueClassification)
                 result = rhs.Classification.GenerateCode(rInfo) AndAlso result
 
-                If isByRef = False Then
-                    Emitter.EmitConversion(rhs.ExpressionType, paramType, Info)
-                End If
-                If isByRefStructure Then
-                    Emitter.EmitStoreIndirect(Info, paramType)
-                Else
-                    Emitter.EmitStoreVariable(Info, ParameterInfo)
+                If Not paramConsumed Then
+                    If isByRef = False Then
+                        Emitter.EmitConversion(rhs.ExpressionType, paramType, Info)
+                    End If
+                    If isByRefStructure Then
+                        Emitter.EmitStoreIndirect(Info, paramType)
+                    Else
+                        Emitter.EmitStoreVariable(Info, ParameterInfo)
+                    End If
                 End If
             End If
         ElseIf Me.m_Variable IsNot Nothing Then

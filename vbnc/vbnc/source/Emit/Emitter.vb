@@ -2160,7 +2160,11 @@ Partial Public Class Emitter
             Case TypeCode.DateTime, TypeCode.Decimal
                 Info.ILGen.Emit(OpCodes.Stobj, elementtype)
             Case TypeCode.Object
-                Info.ILGen.Emit(OpCodes.Stind_Ref)
+                If elementtype.IsValueType Then
+                    Info.ILGen.Emit(OpCodes.Stobj, elementtype)
+                Else
+                    Info.ILGen.Emit(OpCodes.Stind_Ref)
+                End If
             Case Else
                 Helper.NotImplemented()
         End Select
