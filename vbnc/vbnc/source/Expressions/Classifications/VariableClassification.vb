@@ -241,9 +241,20 @@ Public Class VariableClassification
                 Emitter.EmitStoreVariable(Info, LocalBuilder)
             End If
         ElseIf ParameterInfo IsNot Nothing Then
-            Dim isByRef As Boolean = ParameterInfo.ParameterType.IsByRef
-            Dim isByRefStructure As Boolean = isByRef AndAlso ParameterInfo.ParameterType.GetElementType.IsValueType
+            Dim isByRef As Boolean
+            Dim isByRefStructure As Boolean
+            Dim paramType As Type
+            Dim paramElementType As Type = Nothing
+
+            paramType = ParameterInfo.ParameterType
+            isByRef = paramType.IsByRef
+            If isByRef Then
+                paramElementType = paramType.GetElementType
+                isByRefStructure = paramElementType.IsValueType
+            End If
+
             Helper.Assert(m_InstanceExpression Is Nothing)
+
             If Info.IsRHS Then
                 If isByRef Then
                     Helper.NotImplemented()
@@ -252,25 +263,28 @@ Public Class VariableClassification
                 End If
             Else
                 Dim rInfo As EmitInfo
+                Dim rhs As Expression = Info.RHSExpression
+
                 If isByRefStructure Then
-                    Emitter.EmitLoadVariable(Info.Clone(ParameterInfo.ParameterType), ParameterInfo)
-                    rInfo = Info.Clone(True, False, ParameterInfo.ParameterType.GetElementType)
+                    Emitter.EmitLoadVariable(Info.Clone(paramType), ParameterInfo)
+                    rInfo = Info.Clone(True, False, paramElementType)
+                    If TypeOf rhs Is GetRefExpression Then rhs = DirectCast(rhs, GetRefExpression).Expression
                 ElseIf isByRef Then
                     Emitter.EmitLoadVariableLocation(Info, ParameterInfo)
-                    rInfo = Info.Clone(True, False, ParameterInfo.ParameterType.GetElementType)
+                    rInfo = Info.Clone(True, False, paramElementType)
                 Else
-                    rInfo = Info.Clone(True, False, ParameterInfo.ParameterType)
+                    rInfo = Info.Clone(True, False, paramType)
                 End If
 
-                Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
-                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
+                Helper.Assert(rhs IsNot Nothing, "RHSExpression Is Nothing!")
+                Helper.Assert(rhs.Classification.IsValueClassification)
+                result = rhs.Classification.GenerateCode(rInfo) AndAlso result
 
                 If isByRef = False Then
-                    Emitter.EmitConversion(Info.RHSExpression.ExpressionType, ParameterInfo.ParameterType, Info)
+                    Emitter.EmitConversion(rhs.ExpressionType, paramType, Info)
                 End If
                 If isByRefStructure Then
-                    Emitter.EmitStoreObject(Info, ParameterInfo.ParameterType.GetElementType)
+                    Emitter.EmitStoreIndirect(Info, paramType)
                 Else
                     Emitter.EmitStoreVariable(Info, ParameterInfo)
                 End If

@@ -176,6 +176,10 @@ Public Class CTypeExpression
             If DestinationType.IsInterface Then
                 If Helper.DoesTypeImplementInterface(Compiler, SourceType, DestinationType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                ElseIf Helper.CompareType(SourceType, Compiler.TypeCache.System_Object_Array) Then
+                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                ElseIf DestinationType.IsArray AndAlso Helper.DoesTypeImplementInterface(Compiler, SourceType.GetElementType, DestinationType.GetElementType) Then
+                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
                     result = False

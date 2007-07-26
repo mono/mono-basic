@@ -1,3 +1,10 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/Conversions/CTypeExpression.vb: Handle a few more cases
+	  of conversion.
+	* Expressions/Classifications/VariableClassification.vb: Simplify
+	  emission of byref parameters, and fix a few tests.
+
 2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/Conversions/CBoolExpression.vb,
