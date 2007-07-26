@@ -792,7 +792,7 @@ Class frmMain
             strTestFile &= """" & str & """" & vbNewLine
         Next
 
-        IO.File.WriteAllText("..\..\vbnc\bin\debug.rsp", strTestFile)
+        IO.File.WriteAllText(IO.Path.Combine(IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "..\..\vbnc\bin\debug.rsp"), strTestFile)
 
     End Sub
 

@@ -1,5 +1,11 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Test.vb: GetOldResults: if OutputPath doesn't exist, create it.
+	* frmMain.vb: Fix path, don't rely on current directory.
+	* rt.vbproj: Flush.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Test.vb: Added References, update ParseResponseFile to get References
 	  as well (only references with some kind of path are added). For AC
 	  and PEVerify verifications add the references to their dependent

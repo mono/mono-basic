@@ -130,6 +130,10 @@ Public Class Test
         Dim result As New Generic.List(Of OldResult)
         Dim allfiles() As String
 
+        If IO.Directory.Exists(Me.OutputPath) = False Then
+            IO.Directory.CreateDirectory(Me.OutputPath)
+        End If
+
         If m_FileCache.ContainsKey(Me.OutputPath) = False OrElse (Date.Now - m_FileCacheTime).TotalMinutes > 1 Then
             allfiles = IO.Directory.GetFiles(Me.OutputPath, "*.testresult")
             m_FileCache(Me.OutputPath) = allfiles
