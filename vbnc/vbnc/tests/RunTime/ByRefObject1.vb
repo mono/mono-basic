@@ -5,7 +5,7 @@ Module ByRefObject1
 
         testvalue = "Something"
         Tester(testvalue)
-        result = testvalue = Nothing
+        result = testvalue Is Nothing
 
         If result = False Then
             System.Console.WriteLine("FAIL ByRefObject1")

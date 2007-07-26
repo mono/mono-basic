@@ -4,7 +4,7 @@ Module ArrayObjectElements1
         Dim testvalue(15) As Object
 
         testvalue(15) = Nothing
-        result = testvalue(15) = Nothing
+        result = testvalue(15) Is Nothing
 
         If result = False Then
             System.Console.WriteLine("FAIL ArrayObjectElements1")
