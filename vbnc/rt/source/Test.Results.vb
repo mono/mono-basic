@@ -39,5 +39,10 @@ Partial Class Test
         ''' </summary>
         ''' <remarks></remarks>
         Success
+        ''' <summary>
+        ''' The test was skipped (doesn't apply for the current platform for instance)
+        ''' </summary>
+        ''' <remarks></remarks>
+        Skipped
     End Enum
 End Class

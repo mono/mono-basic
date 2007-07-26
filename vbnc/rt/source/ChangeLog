@@ -1,3 +1,11 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VerificationBase.vb, Test.vb, frmMain.vb, ExternalProcessExecutor.vb:
+	  Minor fixes.
+	* Helper.vb: eol-fix.
+	* rt.vbproj: Update.
+	* Test.Results.vb: Added a Skipped test result.
+
 2007-04-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ExternalProcessExecutor.vb: Handle exceptions while executing process instead of crashing.

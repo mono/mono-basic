@@ -1210,6 +1210,8 @@ Class frmMain
         Static thread As Threading.Thread
         Static sync As New Object
 
+        Return
+
         SyncLock sync
             If thread Is Nothing Then
                 thread = New Threading.Thread(New Threading.ThreadStart(AddressOf LoadOldResults))

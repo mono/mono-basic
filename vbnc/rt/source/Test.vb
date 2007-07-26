@@ -85,6 +85,7 @@ Public Class Test
     Public DefaultOutputPath As String = "testoutput" & System.IO.Path.DirectorySeparatorChar
 
     Private m_Target As String
+    Private m_TargetLocation As String
     Private m_TargetExtension As String
     Private m_NoConfig As Boolean
 
@@ -103,6 +104,8 @@ Public Class Test
     Private m_Compiler As String
     Private m_AC As String
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
+    Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
+    Private Shared m_FileCacheTime As Date = Date.MinValue
 
     Property AC() As String
         Get
@@ -124,10 +127,24 @@ Public Class Test
 
     Function GetOldResults() As Generic.List(Of OldResult)
         Dim result As New Generic.List(Of OldResult)
+        Dim allfiles() As String
 
-        Dim files() As String = {}
+        If m_FileCache.ContainsKey(Me.OutputPath) = False OrElse (Date.Now - m_FileCacheTime).TotalMinutes > 1 Then
+            allfiles = IO.Directory.GetFiles(Me.OutputPath, "*.testresult")
+            m_FileCache(Me.OutputPath) = allfiles
+            m_FileCacheTime = Date.Now
+        Else
+            allfiles = m_FileCache(Me.OutputPath)
+        End If
+
+        Dim files As New Generic.List(Of String)
         Try
-            'files = IO.Directory.GetFiles(Me.OutputPath, Me.Name & ".*.testresult")
+            Dim start As String = IO.Path.DirectorySeparatorChar & Me.Name & ".("
+            For i As Integer = 0 To allfiles.Length - 1
+                If allfiles(i).Contains(start) Then
+                    files.Add(allfiles(i))
+                End If
+            Next
         Catch io As IO.IOException
 
         End Try
@@ -359,6 +376,12 @@ Public Class Test
         End Get
     End Property
 
+    ReadOnly Property Skipped() As Boolean
+        Get
+            Return m_Result = Results.Skipped
+        End Get
+    End Property
+
     ''' <summary>
     ''' THe result of the test.
     ''' </summary>
@@ -389,10 +412,12 @@ Public Class Test
     End Property
 
     Function GetOutputAssembly() As String
+        If m_TargetLocation IsNot Nothing Then Return m_TargetLocation
         Return IO.Path.Combine(Me.OutputPath, Name & "." & m_TargetExtension)
     End Function
 
     Function GetOutputVBCAssembly() As String
+        If m_TargetLocation IsNot Nothing Then Return Nothing
         Return IO.Path.Combine(Me.OutputPath, Name & "_vbc." & m_TargetExtension)
     End Function
 
@@ -422,30 +447,6 @@ Public Class Test
     End Function
 
     ''' <summary>
-    ''' Returns a commandline to execute this test. Does not include the compiler executable.
-    ''' Arguments are quoted, ready to execute.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function GetTestCommandLine(Optional ByVal ForVBC As Boolean = False) As String
-        Dim result As New System.Text.StringBuilder
-
-        Initialize()
-
-        result.Append(" "c)
-        For Each str As String In GetTestCommandLineArguments(ForVBC)
-            If str.Contains(" "c) Then
-                result.Append("""" & str & """")
-            Else
-                result.Append(str)
-            End If
-            result.Append(" "c)
-        Next
-
-        Return result.ToString
-    End Function
-
-    ''' <summary>
     ''' Returns the commandline arguments to execute this test. Does not include the compiler executable.
     ''' Arguments are not quoted!
     ''' </summary>
@@ -461,11 +462,12 @@ Public Class Test
         Dim outputFilename, outputPath As String
         If ForVBC Then
             outputFilename = GetOutputVBCAssembly()
+            If outputFilename Is Nothing Then Return New String() {}
         Else
             outputFilename = GetOutputAssembly()
         End If
         outputPath = IO.Path.GetDirectoryName(outputFilename)
-        If IO.Directory.Exists(outputPath) = False Then
+        If outputPath <> "" AndAlso IO.Directory.Exists(outputPath) = False Then
             IO.Directory.CreateDirectory(outputPath)
         End If
         result.Add(String.Format(OutArgument, outputFilename))
@@ -512,7 +514,6 @@ Public Class Test
 
     Sub Initialize()
         Dim rsp As String
-        Dim contents As String
 
         rsp = IO.Path.Combine(m_BasePath, Name) & ".response"
         If IO.File.Exists(rsp) Then m_ResponseFile = rsp Else m_ResponseFile = ""
@@ -524,22 +525,39 @@ Public Class Test
         'Find the target of the test (exe, winexe, library, module)
         m_Target = "exe" 'default target.
         If m_RspFile <> "" Then
-            contents = IO.File.ReadAllText(m_RspFile)
-            m_Target = GetTarget(contents, m_Target)
-            m_NoConfig = IsNoConfig(contents)
+            ParseResponseFile(m_RspFile)
         Else
             If m_DefaultRspFile <> "" Then
-                contents = IO.File.ReadAllText(m_DefaultRspFile)
-                m_Target = GetTarget(contents, m_Target)
-                m_NoConfig = IsNoConfig(contents) OrElse m_NoConfig
+                ParseResponseFile(m_DefaultRspFile)
             End If
             If m_ResponseFile <> "" Then
-                contents = IO.File.ReadAllText(m_ResponseFile)
-                m_Target = GetTarget(contents, m_Target)
-                m_NoConfig = IsNoConfig(contents) OrElse m_NoConfig
+                ParseResponseFile(m_ResponseFile)
             End If
         End If
         m_TargetExtension = GetTargetExtension(m_Target)
+    End Sub
+
+    Sub ParseResponseFile(ByVal Filename As String)
+        Dim contents As String()
+
+        If IO.File.Exists(Filename) = False Then Return
+
+        contents = IO.File.ReadAllLines(Filename)
+
+        For Each line As String In contents
+            If line.StartsWith("@") Then
+                ParseResponseFile(line.Substring(1))
+            ElseIf line.StartsWith("-out:") OrElse line.StartsWith("/out:") Then
+                m_TargetLocation = line.Substring(5)
+                m_TargetLocation = IO.Path.GetFullPath(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), m_TargetLocation))
+            ElseIf line.Contains("/noconfig") OrElse line.Contains("-noconfig") Then
+                m_NoConfig = True
+            ElseIf line.Contains("-t:") OrElse line.Contains("/t:") Then
+                m_Target = GetTarget(line, m_Target)
+            ElseIf line.Contains("-target:") OrElse line.Contains("/target:") Then
+                m_Target = GetTarget(line, m_Target)
+            End If
+        Next
     End Sub
 
     ReadOnly Property IsDirty() As Boolean
@@ -583,6 +601,7 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property IsSourceDirty() As Boolean
         Get
+            If Me.GetOutputVBCAssembly Is Nothing Then Return False
             If IO.File.Exists(Me.GetOutputVBCAssembly) = False Then
                 Return True
             ElseIf IO.File.GetLastWriteTime(Me.GetOutputVBCAssembly) < LastSourceWrite Then
@@ -652,7 +671,7 @@ Public Class Test
         If Me.Parent IsNot Nothing Then
             vbccompiler = Me.Parent.VBCPath
         End If
-        If vbccompiler <> String.Empty Then
+        If vbccompiler <> String.Empty AndAlso vbccmdline.Length > 0 Then
             vbc = New ExternalProcessVerification(Me, vbccompiler, Join(vbccmdline, " "))
             vbc.Process.WorkingDirectory = m_BasePath
             vbc.Name = "VBC Compile (verifies that the test itself is correct)"
@@ -679,7 +698,7 @@ Public Class Test
         m_Verifications.Add(m_Compilation)
 
         If m_IsNegativeTest = False Then
-            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False Then
+            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputVBCAssembly))
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
@@ -689,7 +708,7 @@ Public Class Test
 
             Dim ac As String
             ac = GetACPath
-            If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) Then
+            If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, GetACPath, "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"))
                 m_Verifications(m_Verifications.Count - 1).Name = "Assembly Comparison Verification"
             End If
@@ -780,6 +799,14 @@ Public Class Test
         End Try
     End Sub
 
+    Function SkipTest() As Boolean
+        If Helper.IsOnWindows Then
+            Return Name.EndsWith(".Linux", StringComparison.OrdinalIgnoreCase)
+        Else
+            Return Name.EndsWith(".Windows", StringComparison.OrdinalIgnoreCase)
+        End If
+    End Function
+
     Sub DoTest()
         If CreateVerifications() = False Then
             Return
@@ -789,12 +816,17 @@ Public Class Test
 
         Dim StartTime, EndTime As Date
         StartTime = Date.Now
-        For Each v As VerificationBase In m_Verifications
-            If v.Verify = False Then
-                m_Result = Results.Failed
-                Exit For
-            End If
-        Next
+        If SkipTest() Then
+            m_Result = Results.Skipped
+        Else
+            For i As Integer = 0 To m_Verifications.Count - 1
+                Dim v As VerificationBase = m_Verifications(i)
+                If v.Verify = False Then
+                    m_Result = Results.Failed
+                    Exit For
+                End If
+            Next
+        End If
         EndTime = Date.Now
         m_TestDuration = EndTime - StartTime
         m_LastRun = StartTime

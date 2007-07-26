@@ -109,6 +109,7 @@ Public MustInherit Class VerificationBase
 
     Public Function Verify() As Boolean
         m_Result = RunVerification()
+        m_Run = True
         Return m_Result
     End Function
 End Class

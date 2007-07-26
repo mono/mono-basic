@@ -25,6 +25,10 @@ Public Class Helper
         Return Path.Replace("\", System.IO.Path.DirectorySeparatorChar)
     End Function
 
+    Shared Function IsOnWindows() As Boolean
+        Return Environment.OSVersion.Platform <> PlatformID.Unix AndAlso Environment.OSVersion.Platform <> 128
+    End Function
+
     Shared Function IsOnMono() As Boolean
         Return GetType(Integer).GetType.Name = "MonoType"
     End Function

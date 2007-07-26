@@ -157,6 +157,7 @@ Public Class ExternalProcessExecutor
         Debug.Assert(Arguments.Length = Values.Length)
         For i As Integer = 0 To Arguments.Length - 1
             Dim value As String = Values(i)
+            If value Is Nothing Then Continue For
             If value.StartsWith("""") = False AndAlso value.EndsWith("""") = False AndAlso value.IndexOf(" "c) >= 0 Then
                 value = """" & value & """"
             End If
