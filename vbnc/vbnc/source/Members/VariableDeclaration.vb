@@ -434,6 +434,10 @@ Public Class VariableDeclaration
         If m_VariableInitializer IsNot Nothing Then
             EmitThisIfNecessary(Info)
             result = m_VariableInitializer.GenerateCode(Info.Clone(True, False, varType)) AndAlso result
+
+            If m_VariableInitializer.InitializerExpression IsNot Nothing AndAlso Helper.CompareType(varType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(m_VariableInitializer.ExpressionType, Compiler.TypeCache.System_Object) Then
+                Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
+            End If
             EmitStore(Info)
         ElseIf m_IsNew Then
             Helper.Assert(m_NewExpression IsNot Nothing)

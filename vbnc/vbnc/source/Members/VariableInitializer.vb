@@ -29,7 +29,7 @@ Public Class VariableInitializer
 
     ReadOnly Property Initializer() As ParsedObject
         Get
-            Return m_initializer
+            Return m_Initializer
         End Get
     End Property
 
@@ -45,6 +45,23 @@ Public Class VariableInitializer
         m_Initializer = Initializer
         Helper.StopIfDebugging(m_Initializer Is Nothing)
     End Sub
+
+    ReadOnly Property InitializerExpression() As Expression
+        Get
+            Return TryCast(m_Initializer, Expression)
+        End Get
+    End Property
+
+    ReadOnly Property ExpressionType() As Type
+        Get
+            Dim exp As Expression = InitializerExpression
+            If exp IsNot Nothing Then
+                Return exp.ExpressionType
+            Else
+                Return Nothing
+            End If
+        End Get
+    End Property
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True

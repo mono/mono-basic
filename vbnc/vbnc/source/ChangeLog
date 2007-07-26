@@ -1,5 +1,12 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/Classifications/VariableClassification.vb,
+	  Members/VariableDeclaration.vb: Emit RuntimeHelpers.GetObjectValue
+	  before assignment of values with System.Object type.
+	* Members/VariableInitializer.vb: Added some helper functions.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/SimpleNameExpression.vb: Treat a constant local variable
 	  as a value classification.
 	* Expressions/LateBoundAccessToExpression.vb: Implement late binding

@@ -237,7 +237,12 @@ Public Class VariableClassification
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification OrElse Info.RHSExpression.Classification.CanBeValueClassification)
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(info.RHSExpression.ExpressionType, LocalBuilder.LocalType, Info)
+                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, LocalBuilder.LocalType, Info)
+
+                If Helper.CompareType(LocalBuilder.LocalType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
+                End If
+
                 Emitter.EmitStoreVariable(Info, LocalBuilder)
             End If
         ElseIf ParameterInfo IsNot Nothing Then
@@ -298,37 +303,42 @@ Public Class VariableClassification
                 End If
             End If
         ElseIf Me.m_Variable IsNot Nothing Then
-                If Info.IsRHS Then
-                    Helper.NotImplemented()
-                Else
-                    Dim rInfo As EmitInfo = Info.Clone(True, False, m_Variable.VariableType)
+            If Info.IsRHS Then
+                Helper.NotImplemented()
+            Else
+                Dim rInfo As EmitInfo = Info.Clone(True, False, m_Variable.VariableType)
 
-                    Helper.Assert(Info.RHSExpression IsNot Nothing)
-                    Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                    result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
+                Helper.Assert(Info.RHSExpression IsNot Nothing)
+                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
+                result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                    Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
-                    Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
-                    Helper.NotImplemented()
+                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
+
+                If Helper.CompareType(m_Variable.LocalBuilder.LocalType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 End If
+
+                Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
+                Helper.NotImplemented()
+            End If
         ElseIf m_ArrayVariable IsNot Nothing Then
-                If Info.IsRHS Then
-                    result = Me.GenerateCodeAsValue(Info) AndAlso result
-                Else
-                    result = Helper.EmitStoreArrayElement(Info, m_ArrayVariable, m_Arguments) AndAlso result
+            If Info.IsRHS Then
+                result = Me.GenerateCodeAsValue(Info) AndAlso result
+            Else
+                result = Helper.EmitStoreArrayElement(Info, m_ArrayVariable, m_Arguments) AndAlso result
 
-                End If
+            End If
         ElseIf m_Method IsNot Nothing Then
-                If Info.IsRHS Then
-                    Emitter.EmitLoadVariable(Info, m_Method.DefaultReturnVariable)
-                Else
-                    Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
-                    Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                    result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
-                    Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
-                End If
+            If Info.IsRHS Then
+                Emitter.EmitLoadVariable(Info, m_Method.DefaultReturnVariable)
+            Else
+                Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
+                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
+                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
+                Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
+            End If
         Else
-                Throw New InternalException(Me)
+            Throw New InternalException(Me)
         End If
 
         Return result
