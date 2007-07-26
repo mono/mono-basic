@@ -1,0 +1,7 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Startup.vb: Do some more advanced command line parsing to support
+	  Search.
+	* ac.vbproj: Added a Search property, contains extra directories that
+	  are to be searched for referenced assemblies.
+

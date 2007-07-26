@@ -33,6 +33,18 @@ Public Class AssemblyComparer
     Private m_SkipMyTypes As Boolean = True
     Private m_SkipDiagnosticAttributes As Boolean = True
 
+    Private m_Search As Generic.List(Of String)
+    Private m_Loaded As Dictionary(Of String, Assembly)
+
+    Property Search() As Generic.List(Of String)
+        Get
+            Return m_Search
+        End Get
+        Set(ByVal value As Generic.List(Of String))
+            m_Search = value
+        End Set
+    End Property
+
     Sub New(ByVal File1 As String, ByVal File2 As String)
         m_File1 = File1
         m_File2 = File2
@@ -69,7 +81,51 @@ Public Class AssemblyComparer
     End Property
 
     Function ReflectionOnlyAssemblyResolve(ByVal sender As Object, ByVal e As ResolveEventArgs) As Assembly
-        Return Assembly.ReflectionOnlyLoad(e.Name)
+        If m_Loaded IsNot Nothing AndAlso m_Loaded.ContainsKey(e.Name) Then
+            Return m_Loaded(e.Name)
+        End If
+
+        Dim result As Assembly = Nothing
+
+        If Search IsNot Nothing Then
+            Dim assname As New AssemblyName(e.Name)
+            Dim displayname As String = assname.Name
+            Dim extensions As String() = New String() {".exe", ".dll", ".EXE", ".DLL"}
+
+            For Each str As String In Search
+                Dim file As String
+                Dim found As Boolean = False
+
+                file = IO.Path.GetFullPath(IO.Path.Combine(str, displayname))
+                found = IO.File.Exists(file)
+                Console.WriteLine("Probing: {0} = {1}", file, found)
+
+                If Not found Then
+                    For Each ext As String In extensions
+                        file = IO.Path.GetFullPath(IO.Path.Combine(str, displayname & ext))
+                        found = IO.File.Exists(file)
+                        Console.WriteLine("Probing: {0} = {1}", file, found)
+                        If found Then Exit For
+                    Next
+                End If
+
+                If found Then
+                    Console.WriteLine("Loading {0} from path: {1}", e.Name, file)
+                    result = Assembly.ReflectionOnlyLoadFrom(file)
+                    Exit For
+                End If
+            Next
+        End If
+
+        If result Is Nothing Then
+            result = Assembly.ReflectionOnlyLoad(e.Name)
+        End If
+
+        If result IsNot Nothing Then
+            If m_Loaded Is Nothing Then m_Loaded = New Dictionary(Of String, Assembly)
+            m_Loaded.Add(e.Name, result)
+        End If
+        Return result
     End Function
 
     Function Compare() As Boolean

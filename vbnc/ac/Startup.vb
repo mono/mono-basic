@@ -24,7 +24,7 @@ Module Startup
         Console.WriteLine(Logo)
         Debug.WriteLine(Logo)
 
-        If Arguments.Length <> 2 Then
+        If Arguments.Length < 2 Then
             Console.WriteLine("2 arguments must be specified.")
             Debug.WriteLine("2 arguments must be specified.")
             Return -1
@@ -32,19 +32,49 @@ Module Startup
 
 #If DEBUG Then
         If Diagnostics.Debugger.IsAttached Then
-            Dim path As String = "..\..\vbnc\tests\"
-            path &= "CompileTime2\test output\"
-            path &= "StaticVariable2"
+            Dim path As String = IO.Path.GetFullPath("..\..\vbnc\tests\")
+            Dim chdir As String
+            path &= "NUnitTests\testoutput\"
+            chdir = IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(path))
+            path &= "ArrayCreation1"
             Arguments(0) = path
             Arguments(1) = path
-            Arguments(0) &= ".exe"
-            Arguments(1) &= "_vbc.exe"
+            Arguments(0) &= ".dll"
+            Arguments(1) &= "_vbc.dll"
+            ReDim Preserve Arguments(2)
+            Arguments(2) = "-search:..\..\..\..\vbruntime\Test\bin\"
+            Environment.CurrentDirectory = chdir
         End If
 #End If
 
+        Console.WriteLine("Current directory: " & Environment.CurrentDirectory)
+
+        Dim assemblySearchPaths As New Generic.List(Of String)
         Dim ac As AssemblyComparer
         Try
-            ac = New AssemblyComparer(Arguments(0), Arguments(1))
+            Dim args As New Generic.List(Of String)
+            For Each str As String In Arguments
+                If Not (str.StartsWith("-"c) OrElse str.StartsWith("/"c)) Then
+                    args.Add(str)
+                    Continue For
+                End If
+
+                Dim i As Integer = str.IndexOfAny(New Char() {"="c, ":"c})
+                If i > 0 Then
+                    Dim name, value As String
+                    name = str.Substring(1, i - 1)
+                    value = str.Substring(i + 1)
+                    If String.Equals("search", name, StringComparison.OrdinalIgnoreCase) Then
+                        assemblySearchPaths.Add(IO.Path.GetFullPath(value))
+                        Continue For
+                    End If
+                End If
+
+                Console.WriteLine("Expected -search:dir, got " & str)
+                Return 1
+            Next
+            ac = New AssemblyComparer(args(0), args(1))
+            ac.Search = assemblySearchPaths
             ac.Compare()
             Console.WriteLine(Join(ac.Errors.ToArray, vbNewLine))
             Debug.WriteLine(Join(ac.Errors.ToArray, vbNewLine))
@@ -68,10 +98,12 @@ Module Startup
         Get
             Dim result As New System.Text.StringBuilder
             Dim FileVersion As Diagnostics.FileVersionInfo = Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            Dim assembly_version As String = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString()
+
 #If DEBUG Then
-            result.AppendLine(FileVersion.ProductName & " version " & FileVersion.FileVersion & " (last write time: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss") & ")")
+            result.AppendLine(FileVersion.ProductName & " version " & assembly_version & " (last write time: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss") & ")")
 #Else
-            result.AppendLine(FileVersion.ProductName & " version " & FileVersion.FileVersion)
+            result.AppendLine(FileVersion.ProductName & " version " & assembly_version)
 #End If
             result.AppendLine(FileVersion.LegalCopyright)
             result.AppendLine()
