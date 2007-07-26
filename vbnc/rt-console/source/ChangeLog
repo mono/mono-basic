@@ -1,3 +1,8 @@
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MainModule.vb: Add a few more commandline options to print the status
+	  of the tests that have been executed at least once.
+
 2007-04-06  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MainModule.vb: Set the current directory to where the test is.

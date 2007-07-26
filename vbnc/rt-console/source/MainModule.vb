@@ -181,8 +181,31 @@ Class rt_console
     Private m_PEVerify As String
     Private m_Recursive As Boolean = True
     Private m_VBC As String
-
+    Private m_Verbosity As String = "All"
+    Private m_PrintStatus As Boolean
+    Private m_PrintStatusSkip As String
     Private m_Counters() As Integer
+
+
+    <Argument("A colon-delimited list of states to skip when printing statuses.")> _
+    Property PrintStatusSkip() As String
+        Get
+            Return m_PrintStatusSkip
+        End Get
+        Set(ByVal value As String)
+            m_PrintStatusSkip = value
+        End Set
+    End Property
+    
+    <Argument("Show the current status of all the files.")> _
+    Property PrintStatus() As Boolean
+        Get
+            Return m_PrintStatus
+        End Get
+        Set(ByVal value As Boolean)
+            m_PrintStatus = value
+        End Set
+    End Property
 
     <Argument("Show all output from the test if failed.")> _
     Property FailedOutput() As Boolean
@@ -211,6 +234,16 @@ Class rt_console
         End Get
         Set(ByVal value As String)
             m_VBC = value
+        End Set
+    End Property
+
+    <Argument("The amount of output when a test fails: [All|Failed|None], All: all verifications are printed, Failed: only the failed verification, None: guess what!")> _
+    Property Verbosity() As String
+        Get
+            Return m_Verbosity
+        End Get
+        Set(ByVal value As String)
+            m_Verbosity = value
         End Set
     End Property
 
@@ -328,9 +361,13 @@ Class rt_console
         Dim tests As Tests
         Dim result As Boolean = True
 
-        Console.Write("Loading directory " & Directory & "... ")
+        If m_PrintStatus = False Then
+            Console.Write("Loading directory " & Directory & "... ")
+        End If
         tests = New Tests(Directory, m_Compiler, m_VBC, False)
-        Console.WriteLine(tests.Count & " tests found.")
+        If m_PrintStatus = False Then
+            Console.WriteLine(tests.Count & " tests found.")
+        End If
         For Each test As Test In tests
             result = RunTest(test) AndAlso result
         Next
@@ -354,25 +391,75 @@ Class rt_console
         Return RunTest(t)
     End Function
 
+    Function ShowStatus(ByVal t As Test) As Boolean
+        Dim status As String
+
+        t.LoadOldResults()
+
+		status = t.OldResult.ToString ()
+		
+		m_Counters(t.OldResult) += 1
+
+		If m_PrintStatusSkip IsNot Nothing AndAlso m_PrintStatusSkip.Contains (status) Then Return True
+		
+		SetColor (t.OldResult)
+        Console.Write("{0,-10} ", status & ":")
+        Console.ResetColor()
+        Console.WriteLine(IO.Path.Combine(IO.Path.GetDirectoryName(t.Files(0).Substring(m_BasePath.Length)), t.Name))
+
+        Return True
+    End Function
+
+	Sub SetColor (ByVal result As Test.Results)
+		Select Case result
+            Case Test.Results.Failed
+                Console.ForegroundColor = ConsoleColor.Red
+            Case Test.Results.NotRun
+                Console.ForegroundColor = ConsoleColor.White
+            Case Test.Results.Regressed
+                Console.ForegroundColor = ConsoleColor.DarkRed
+            Case Test.Results.Skipped
+                Console.ForegroundColor = ConsoleColor.Gray
+            Case Test.Results.Success
+                Console.ForegroundColor = ConsoleColor.Green
+            Case Else
+                Console.ForegroundColor = ConsoleColor.White
+        End Select
+	End Sub
+
     Function RunTest(ByVal t As Test) As Boolean
         t.Compiler = Compiler
+
+        If m_PrintStatus Then Return ShowStatus(t)
+
         Console.Write("Running " & t.Name & "... ")
         t.DoTest()
 
+        
+		SetColor (t.Result)
         Console.WriteLine(t.Result.ToString)
+        Console.ResetColor()
 
         m_Counters(t.Result) += 1
 
-        If t.Result = Test.Results.Success Then
+        If t.Result = Test.Results.Success OrElse t.Result = Test.Results.Skipped OrElse t.Result = Test.Results.NotRun Then
             Return True
-        Else
+        ElseIf t.Result = Test.Results.Failed OrElse t.Result = Test.Results.Regressed Then
             If m_FailedOutput Then
+                Dim vAll, vFailed As Boolean
+                vAll = String.Compare(Verbosity, "All", True) = 0
+                vFailed = String.Compare(Verbosity, "Failed", True) = 0
                 For Each v As VerificationBase In t.Verifications
-                    Console.WriteLine("Verification " & v.Name & " " & IIf(v.Result, "Success", "Failed").ToString())
-                    Console.WriteLine(v.DescriptiveMessage)
+                    If vAll OrElse (vFailed AndAlso v.Result = False AndAlso v.Run = True) Then
+                        'Console.WriteLine(New String(">"c, Console.BufferWidth))
+                        Console.WriteLine(v.DescriptiveMessage)
+                        'Console.WriteLine(New String("<"c, Console.BufferWidth))
+                    End If
                 Next
             End If
             Return False
+        Else
+            Return True
         End If
     End Function
 End Class
