@@ -1,5 +1,16 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Test.vb: Added References, update ParseResponseFile to get References
+	  as well (only references with some kind of path are added). For AC
+	  and PEVerify verifications add the references to their dependent
+	  files.
+	* Helper.vb: Fix line endings and add ParseLine (copied from vbnc).
+	* ExternalProcessExecutor.vb: Added DependentFiles, they are copied to
+	  the working directory before executing the program, then deleted
+	  again.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* VerificationBase.vb, Test.vb, frmMain.vb, ExternalProcessExecutor.vb:
 	  Minor fixes.
 	* Helper.vb: eol-fix.

@@ -34,6 +34,13 @@ Public Class ExternalProcessExecutor
 
     Private m_LastWriteDate As Date
     Private m_Version As FileVersionInfo
+    Private m_DependentFiles As New Generic.List(Of String)
+
+    ReadOnly Property DependentFiles() As Generic.List(Of String)
+        Get
+            Return m_DependentFiles
+        End Get
+    End Property
 
     ReadOnly Property FileVersion() As FileVersionInfo
         Get
@@ -171,6 +178,8 @@ Public Class ExternalProcessExecutor
 
     Public Function RunProcess() As Boolean
         Dim process As New Process
+        Dim filesToDelete As New Generic.List(Of String)
+
         Try
             If Helper.IsOnMono Then
                 process.StartInfo.FileName = "mono"
@@ -219,6 +228,19 @@ Public Class ExternalProcessExecutor
                 process.StartInfo.FileName = tmpsourcefile
             End If
 
+            For Each file As String In m_DependentFiles
+                If IO.File.Exists(file) Then
+                    Dim destination As String
+                    destination = IO.Path.GetFullPath(IO.Path.Combine(process.StartInfo.WorkingDirectory, IO.Path.GetFileName(file)))
+                    If IO.File.Exists(destination) = False Then
+                        IO.File.Copy(file, destination)
+                        filesToDelete.Add(destination)
+                    End If
+                Else
+                    Console.WriteLine("Could not copy the dependent file: " & file)
+                End If
+            Next
+
             'Console.WriteLine("Executing: FileName={0}, Arguments={1}", process.StartInfo.FileName, process.StartInfo.Arguments)
 
             process.Start()
@@ -256,6 +278,14 @@ Public Class ExternalProcessExecutor
             m_StdOut = "Exception while executing process: " & Environment.NewLine & ex.Message & Environment.NewLine & ex.StackTrace
         Finally
             If process IsNot Nothing Then process.Dispose()
+            If filesToDelete IsNot Nothing Then
+                For Each file As String In filesToDelete
+                    Try
+                        IO.File.Delete(file)
+                    Catch 'Ignore any errors whatsoever
+                    End Try
+                Next
+            End If
         End Try
         Return True
     End Function

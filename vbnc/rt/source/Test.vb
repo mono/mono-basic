@@ -88,6 +88,7 @@ Public Class Test
     Private m_TargetLocation As String
     Private m_TargetExtension As String
     Private m_NoConfig As Boolean
+    private m_References as New Generic.List(of String)
 
     Private m_LastRun As Date
 
@@ -545,18 +546,45 @@ Public Class Test
         contents = IO.File.ReadAllLines(Filename)
 
         For Each line As String In contents
-            If line.StartsWith("@") Then
-                ParseResponseFile(line.Substring(1))
-            ElseIf line.StartsWith("-out:") OrElse line.StartsWith("/out:") Then
-                m_TargetLocation = line.Substring(5)
-                m_TargetLocation = IO.Path.GetFullPath(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), m_TargetLocation))
-            ElseIf line.Contains("/noconfig") OrElse line.Contains("-noconfig") Then
-                m_NoConfig = True
-            ElseIf line.Contains("-t:") OrElse line.Contains("/t:") Then
-                m_Target = GetTarget(line, m_Target)
-            ElseIf line.Contains("-target:") OrElse line.Contains("/target:") Then
-                m_Target = GetTarget(line, m_Target)
-            End If
+            For Each arg As String In Helper.ParseLine(line)
+                If arg.StartsWith("@") Then
+                    ParseResponseFile(line.Substring(1))
+                    Continue For
+                ElseIf Not (line.StartsWith("-"c) OrElse line.StartsWith("/"c)) Then
+                    Continue For
+                End If
+
+                Dim name, value As String
+                Dim iStart As Integer
+
+                iStart = arg.IndexOfAny(New Char() {":"c, "="c})
+
+                If iStart >= 0 Then
+                    name = arg.Substring(1, iStart - 1)
+                    value = arg.Substring(iStart + 1)
+                Else
+                    name = arg.Substring(1)
+                    value = arg.Substring(1)
+                End If
+
+                Select Case name.ToUpperInvariant()
+                    Case "OUT"
+                        m_TargetLocation = value
+                        m_TargetLocation = IO.Path.GetFullPath(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), m_TargetLocation))
+                    Case "R", "REFERENCE"
+                        If value.IndexOfAny(New Char() {":"c, "/"c, "\"c, ":"c}) >= 0 Then
+                            Dim ref As String
+                            ref = IO.Path.GetFullPath(value)
+                            If m_References.Contains(ref) = False Then
+                                m_References.Add(ref)
+                            End If
+                        End If
+                    Case "TARGET", "T"
+                        m_Target = GetTarget(arg, m_Target)
+                    Case "NOCONFIG"
+                        m_NoConfig = True
+                End Select
+            Next
         Next
     End Sub
 
@@ -709,15 +737,22 @@ Public Class Test
             Dim ac As String
             ac = GetACPath
             If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
-                m_Verifications.Add(New ExternalProcessVerification(Me, GetACPath, "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"))
-                m_Verifications(m_Verifications.Count - 1).Name = "Assembly Comparison Verification"
+                Dim cmdLine As String = "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"
+                Dim acV As New ExternalProcessVerification(Me, GetACPath, cmdLine)
+                acV.Name = "Assembly Comparison Verification"
+                acV.Process.DependentFiles.AddRange(m_References)
+                acV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
+                m_Verifications.Add(acV)
             End If
 
             Dim peverify As String
             peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
             If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
-                m_Verifications.Add(New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo"))
-                m_Verifications(m_Verifications.Count - 1).Name = "Type Safety and Security Verification"
+                Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
+                peV.Name = "Type Safety and Security Verification"
+                peV.Process.DependentFiles.AddRange(m_References)
+                peV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
+                m_Verifications.Add(peV)
             End If
 
             If Me.m_Target = "exe" Then
@@ -808,6 +843,7 @@ Public Class Test
     End Function
 
     Sub DoTest()
+        Environment.CurrentDirectory = BasePath
         If CreateVerifications() = False Then
             Return
         End If
