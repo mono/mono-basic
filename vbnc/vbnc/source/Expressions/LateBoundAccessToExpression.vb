@@ -92,6 +92,8 @@ Public MustInherit Class LateBoundAccessToExpression
         Dim elementCount As Integer
         Dim args As ArgumentList
 
+        Dim namedCount As Integer
+
         args = LateBoundAccess.Arguments
         If args IsNot Nothing Then argCount = args.Count
 
@@ -107,6 +109,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
         For i As Integer = 0 To argCount - 1
             Dim arg As Argument = args.Arguments(i)
+            If TypeOf arg Is NamedArgument Then namedCount += 1
             Emitter.EmitLoadVariable(Info, arguments)
             Emitter.EmitLoadI4Value(Info, i)
             If arg.Expression Is Nothing Then
@@ -131,6 +134,32 @@ Public MustInherit Class LateBoundAccessToExpression
         End If
 
         Emitter.EmitLoadVariable(Info, arguments)
+
+        If namedCount > 0 Then
+            Dim namedArguments As LocalBuilder
+            namedArguments = Emitter.DeclareLocal(Info, Info.Compiler.TypeCache.System_String_Array)
+            Emitter.EmitLoadI4Value(Info, namedCount)
+            Emitter.EmitNewArr(Info, Info.Compiler.TypeCache.System_String)
+            Emitter.EmitStoreVariable(Info, namedArguments)
+
+            Dim iNamed As Integer
+            For i As Integer = 0 To argCount - 1
+                Dim arg As NamedArgument = TryCast(args.Arguments(i), NamedArgument)
+                If arg Is Nothing Then Continue For
+
+                Emitter.EmitLoadVariable(Info, namedArguments)
+                Emitter.EmitLoadI4Value(Info, iNamed)
+                Emitter.EmitLoadValue(Info, arg.Name)
+                Emitter.EmitStoreElement(Info, Info.Compiler.TypeCache.System_String, Info.Compiler.TypeCache.System_String_Array)
+
+                iNamed += 1
+            Next
+
+            Emitter.EmitLoadVariable(Info, namedArguments)
+        Else
+            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        End If
+
 
         Return result
     End Function
@@ -277,10 +306,8 @@ Public MustInherit Class LateBoundAccessToExpression
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)
 
         '4 - The arguments
-        EmitArguments(Info, LateBoundAccess, arguments)
-
         '5 - ArgumentNames
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        EmitArguments(Info, LateBoundAccess, arguments)
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then
@@ -310,10 +337,8 @@ Public MustInherit Class LateBoundAccessToExpression
         result = LateBoundAccess.InstanceExpression.GenerateCode(Info) AndAlso result
 
         '2 - The arguments
-        EmitArguments(Info, LateBoundAccess, arguments)
-
         '5 - ArgumentNames
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        EmitArguments(Info, LateBoundAccess, arguments)
 
         Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_NewLateBinding__LateIndexGet_Object_Array_Array)
         Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
@@ -337,10 +362,8 @@ Public MustInherit Class LateBoundAccessToExpression
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)
 
         '4 - The arguments
-        EmitArguments(Info, LateBoundAccess, arguments)
-
         '5 - ArgumentNames
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        EmitArguments(Info, LateBoundAccess, arguments)
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then
@@ -364,10 +387,8 @@ Public MustInherit Class LateBoundAccessToExpression
         result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
 
         '2 - The arguments
-        EmitArguments(Info, LateBoundAccess, arguments)
-
         '3 - ArgumentNames
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        EmitArguments(Info, LateBoundAccess, arguments)
 
         Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_NewLateBinding__LateIndexSet_Object_Array_Array)
 
@@ -400,10 +421,8 @@ Public MustInherit Class LateBoundAccessToExpression
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)
 
         '4 - The arguments
-        EmitArguments(Info, LateBoundAccess, arguments)
-
         '5 - ArgumentNames
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+        EmitArguments(Info, LateBoundAccess, arguments)
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then

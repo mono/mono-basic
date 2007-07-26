@@ -296,6 +296,8 @@ Public Class SimpleNameExpression
                 varDecl = DirectCast(var, VariableDeclaration)
                 If varDecl.Modifiers.Is(ModifierMasks.Static) AndAlso varDecl.DeclaringMethod.IsShared = False Then
                     Classification = New VariableClassification(Me, varDecl, CreateMeExpression)
+                ElseIf varDecl.Modifiers.Is(ModifierMasks.Const) Then
+                    Classification = New ValueClassification(Me, varDecl)
                 Else
                     Classification = New VariableClassification(Me, varDecl)
                 End If

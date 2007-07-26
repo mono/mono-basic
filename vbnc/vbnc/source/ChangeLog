@@ -1,5 +1,12 @@
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/SimpleNameExpression.vb: Treat a constant local variable
+	  as a value classification.
+	* Expressions/LateBoundAccessToExpression.vb: Implement late binding
+	  with named arguments.
+
+2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/MethodGroupToValueExpression.vb: Show errors if method
 	  resolution failed.
 	* Expressions/Classifications/VariableClassification.vb: This is just
