@@ -1,3 +1,9 @@
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* rt.vbproj: Update.
+	* frmMain.vb, frmMain.Designer.vb: Added a context menu entry to create
+	  an error test from a failed test.
+
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: GetOldResults: if OutputPath doesn't exist, create it.

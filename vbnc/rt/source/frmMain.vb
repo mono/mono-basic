@@ -426,7 +426,7 @@ Class frmMain
     Private Sub UpdateUI(ByVal test As Test, Optional ByVal UpdateSummary As Boolean = True)
         If test Is Nothing Then UpdateUI()
         If Me.InvokeRequired Then
-            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUI), New Object () {test, UpdateSummary})
+            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUI), New Object() {test, UpdateSummary})
         Else
             If Me.Disposing OrElse Me.IsDisposed Then StopIfDebugging() : Return
 
@@ -476,7 +476,7 @@ Class frmMain
     ''' <remarks></remarks>
     Private Sub UpdateUITestRunning(ByVal test As Test, Optional ByVal UpdateSummary As Boolean = True)
         If Me.InvokeRequired Then
-            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUITestRunning), new Object() {test, UpdateSummary})
+            Me.BeginInvoke(New UpdateUIDelegate(AddressOf UpdateUITestRunning), New Object() {test, UpdateSummary})
         Else
             If Me.IsDisposed Then StopIfDebugging() : Return
             Dim item As ListViewItem = TryCast(test.Tag, ListViewItem)
@@ -1323,6 +1323,80 @@ Class frmMain
     Private Sub frmMain_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
             chkContinuous.Checked = My.Settings.ContinuousTest
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
+        End Try
+    End Sub
+
+    Private Sub MakeErrorTestToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MakeErrorTestToolStripMenuItem.Click
+        Try
+            Dim tests As Generic.List(Of Test), test As Test
+            tests = GetSelectedTests()
+
+            If tests.Count <> 1 Then
+                Throw New ApplicationException("Select one and only one test.")
+            End If
+
+            test = tests(0)
+
+            test.DoTest()
+
+            If test.Run = False Then
+                Throw New ApplicationException("The test has not been executed!")
+            ElseIf test.Result <> rt.Test.Results.Failed AndAlso test.Result <> rt.Test.Results.Regressed Then
+                Throw New ApplicationException("The test didn't fail!")
+            ElseIf test.Files.Count <> 1 Then
+                Throw New ApplicationException("The test has more than one file!")
+            End If
+
+            Dim output As String
+            Dim errnumber As String
+            Dim source As String = test.Files(0)
+            Dim iStart, iEnd As Integer
+            Dim vStart As String = ": error BC"
+            Dim vEnd As String = ":"
+            output = test.FailedVerification.DescriptiveMessage
+            iStart = output.IndexOf(vStart)
+            iEnd = output.IndexOf(vEnd, iStart + vStart.Length)
+            errnumber = output.Substring(iStart + vStart.Length, iEnd - iStart - vEnd.Length - vStart.Length + 1)
+
+            If output.IndexOf(vStart, iEnd) > 0 Then
+                Throw New ApplicationException("The test has more than one error message.")
+            End If
+
+            Dim errdir As String
+            errdir = IO.Path.Combine(IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(source)), "Errors")
+
+            If IO.Directory.Exists(errdir) = False Then
+                Throw New ApplicationException("Couldn't find an errors directory (tried: " & errdir & ")!")
+            End If
+
+            Dim destination As String
+            Dim counter As Integer
+            Dim name As String
+            name = errnumber
+            destination = IO.Path.Combine(errdir, name & ".vb")
+            Do While IO.File.Exists(destination)
+                counter += 1
+                name = errnumber & "-" & counter
+                destination = IO.Path.Combine(errdir, name & ".vb")
+            Loop
+
+            Dim rspsource As String = Nothing, rspdestination As String = Nothing
+            If test.ResponseFile <> String.Empty Then
+                rspsource = test.ResponseFile
+                rspdestination = IO.Path.Combine(errdir, name & ".response")
+            End If
+
+            IO.File.Copy(source, destination, False)
+            If rspsource <> String.Empty Then
+                IO.File.Copy(rspsource, rspdestination, False)
+            End If
+
+            MsgBox("Created test " & name, MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
+
+        Catch ex As ApplicationException
+            MsgBox(ex.Message, MsgBoxStyle.Exclamation)
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
         End Try
