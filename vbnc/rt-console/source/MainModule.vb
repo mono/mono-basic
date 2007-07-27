@@ -3,6 +3,16 @@ Imports System.Reflection
 Module MainModule
 
     Function Main(ByVal args() As String) As Integer
+        Try
+            Return Execute(args)
+        Catch ex As Exception
+            Console.WriteLine(ex.Message)
+            Console.WriteLine(ex.StackTrace)
+            Return 1
+        End Try
+    End Function
+
+    Function Execute(ByVal args() As String) As Integer
         Dim Type As Type
         Dim rt As New rt_console
         Dim Properties As PropertyInfo()
@@ -55,7 +65,7 @@ Module MainModule
                 value = argument.Substring(splitter + 1)
             Else
                 name = argument
-                value = Nothing
+                value = String.Empty
             End If
 
             Select Case name.ToUpperInvariant
@@ -71,7 +81,7 @@ Module MainModule
 
                     If prop.PropertyType Is GetType(Boolean) Then
                         Select Case value.ToUpperInvariant
-                            Case "Y", "YES", "+", "ON", "TRUE"
+                            Case "Y", "YES", "+", "ON", "TRUE", ""
                                 objValue = True
                             Case "N", "NO", "-", "OFF", "FALSE"
                                 objValue = False

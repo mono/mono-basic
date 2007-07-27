@@ -1,3 +1,8 @@
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* source/MainModule.vb: Surround it all in a try-catch.
+	* rt-console.vbproj: Update.
+
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.
