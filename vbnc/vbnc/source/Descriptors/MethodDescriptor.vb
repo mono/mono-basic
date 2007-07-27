@@ -124,6 +124,10 @@ Public Class MethodDescriptor
                 result = result Or MethodAttributes.SpecialName
             End If
 
+            If TypeOf m_Declaration Is ExternalSubDeclaration Then
+                result = result Or MethodAttributes.Static
+            End If
+
             If m_Declaration.HandlesOrImplements IsNot Nothing Then
                 If m_Declaration.HandlesOrImplements.ImplementsClause IsNot Nothing Then
                     result = result Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride

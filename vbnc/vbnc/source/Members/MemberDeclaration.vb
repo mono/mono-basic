@@ -61,6 +61,10 @@ Public MustInherit Class MemberDeclaration
         Helper.Assert(m_DeclaringType IsNot Nothing)
     End Sub
 
+    Protected Sub AddModifier(ByVal Modifier As KS)
+        m_Modifiers.AddModifier(Modifier)
+    End Sub
+
     Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String)
         m_CustomAttributes = CustomAttributes
         If m_CustomAttributes IsNot Nothing Then m_CustomAttributes.SetParent(Me)

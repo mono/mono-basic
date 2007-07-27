@@ -31,13 +31,13 @@ Public Class ExternalSubDeclaration
     Private m_LibraryClause As LibraryClause
     Private m_AliasClause As AliasClause
 
-
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Token, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
         MyBase.Init(Attributes, Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
+        MyBase.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause
@@ -46,11 +46,19 @@ Public Class ExternalSubDeclaration
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal Signature As SubSignature)
         MyBase.Init(Attributes, Modifiers, Signature, Nothing)
+        MyBase.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause
         m_AliasClause = AliasClause
     End Sub
+
+    Public Overrides ReadOnly Property IsShared() As Boolean
+        Get
+            Return True
+        End Get
+    End Property
+
     ReadOnly Property CharsetModifier() As KS
         Get
             Return m_Charsetmodifier

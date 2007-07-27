@@ -1,5 +1,10 @@
 2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Members/ExternalSubDeclaration.vb, Members/MemberDeclaration.vb,
+	  Descriptors/MethodDescriptor.vb: Declare methods are always Shared.
+
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Statements/ForStatement.vb: Rework, simplify and implement some
 	  missing cases.
 	* General/Helper.vb: Implement property copy-back for method calls with
