@@ -5,7 +5,7 @@ RuntimeType_1 = GetType(Object)
 RuntimeType_1 = GetType(Object)
 Dim AssemblyName_1 As System.Reflection.AssemblyName
 AssemblyName_1 = New System.Reflection.AssemblyName
-AssemblyName_1.Name = "TypeParameter1
+AssemblyName_1.Name = "TypeParameter1"
 Dim AssemblyBuilder_1 As System.Reflection.Emit.AssemblyBuilder
 AssemblyBuilder_1 = System.AppDomain.CurrentDomain.DefineDynamicAssembly(AssemblyName_1, System.Reflection.Emit.AssemblyBuilderAccess.Save, "Z:\mono\head\mono-basic\vbnc\vbnc\tests\Unfixable\testoutput")
 Dim ModuleBuilder_1 As System.Reflection.Emit.ModuleBuilder
