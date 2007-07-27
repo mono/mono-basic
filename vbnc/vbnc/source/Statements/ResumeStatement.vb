@@ -46,7 +46,7 @@ Public Class ResumeStatement
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
 
         'Test if the code is in an exception handler
-        Emitter.EmitLoadVariable(Info, block.IsInUnstructuredHandler)
+        Emitter.EmitLoadVariable(Info, block.VB_ResumeTarget)
         Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfTrue(Info, ResumeOK)
 
@@ -57,14 +57,14 @@ Public Class ResumeStatement
 
         Info.ILGen.MarkLabel(ResumeOK)
         'Load the instruction switch index
-        Emitter.EmitLoadVariable(Info, block.CurrentInstruction)
+        Emitter.EmitLoadVariable(Info, block.VB_CurrentInstruction)
         'Increment the instruction pointer if it is a Resume Next statement
         If m_IsResumeNext Then
             Emitter.EmitLoadI4Value(Info, 1)
             Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
         End If
         'If everything is ok, jump to the instruction switch (adding one to the instruction if necessary)
-        Emitter.EmitLeave(Info, block.UnstructuredSwitchHandler)
+        Emitter.EmitLeave(Info, block.UnstructuredResumeHandler)
 
         Return result
     End Function

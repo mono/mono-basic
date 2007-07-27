@@ -69,21 +69,21 @@ Public Class OnErrorStatement
             '•	On Error GoTo 0 resets the most recent exception-handler location to Nothing.
             Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             Emitter.EmitLoadI4Value(Info, 0)
-            Emitter.EmitStoreVariable(Info, parent.UnstructuredExceptionHandlerVariable)
+            Emitter.EmitStoreVariable(Info, parent.VB_ActiveHandler)
         ElseIf m_IsResumeNext Then
             Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             '•	On Error Resume Next, establishes the Resume Next behavior as the most recent exception-handler location.
-            Emitter.EmitLoadI4Value(Info, 1) 'Load the index of the switch table, 1 = resume next handler.
-            Emitter.EmitStoreVariable(Info, parent.UnstructuredExceptionHandlerVariable)
+            Emitter.EmitLoadI4Value(Info, parent.UnstructuredExceptionHandlers.IndexOf(parent.UnstructuredResumeNextHandler)) 'Load the index of the switch table, 1 = resume next handler.
+            Emitter.EmitStoreVariable(Info, parent.VB_ActiveHandler)
         Else
             Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             Dim index As Integer
-            If parent.UnstructuredExceptionLabels.Contains(m_ResolvedLabel.LabelBuilder) = False Then
-                parent.UnstructuredExceptionLabels.Add(m_ResolvedLabel.LabelBuilder)
+            If parent.UnstructuredExceptionHandlers.Contains(m_ResolvedLabel.LabelBuilder) = False Then
+                parent.UnstructuredExceptionHandlers.Add(m_ResolvedLabel.LabelBuilder)
             End If
-            index = parent.UnstructuredExceptionLabels.IndexOf(m_ResolvedLabel.LabelBuilder)
+            index = parent.UnstructuredExceptionHandlers.IndexOf(m_ResolvedLabel.LabelBuilder)
             Emitter.EmitLoadI4Value(Info, index)
-            Emitter.EmitStoreVariable(Info, parent.UnstructuredExceptionHandlerVariable)
+            Emitter.EmitStoreVariable(Info, parent.VB_ActiveHandler)
         End If
 
         Return result

@@ -1,5 +1,11 @@
 2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Statements/OnErrorStatement.vb, Statements/ResumeStatement.vb,
+	  Code/CodeBlock.vb: Make the unstructured exception handling even
+	  worse.
+
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/ExternalSubDeclaration.vb, Members/MemberDeclaration.vb,
 	  Descriptors/MethodDescriptor.vb: Declare methods are always Shared.
 

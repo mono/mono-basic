@@ -57,16 +57,17 @@ Public Class CodeBlock
     ''' This is the variable informing which handler should handle an exception.
     ''' </summary>
     ''' <remarks></remarks>
-    Public UnstructuredExceptionHandlerVariable As LocalBuilder
+    Public VB_ActiveHandler As LocalBuilder
+    Public VB_ActiveHandlerLabel As Label
     ''' <summary>
     ''' A value is stored here to check if the running code is in the unstructured handler
     ''' 0: not in the handler
     ''' -1: in the handler.
     ''' </summary>
     ''' <remarks></remarks>
-    Public IsInUnstructuredHandler As LocalBuilder
-    Public UnstructuredExceptionHandler As Label
-    Public UnstructuredSwitchHandler As Label
+    Public VB_ResumeTarget As LocalBuilder
+    Public UnstructuredResumeNextHandler As Label
+    Public UnstructuredResumeHandler As Label
     ''' <summary>
     ''' The end of the switch. The code here jumps to the end of the method.
     ''' </summary>
@@ -82,7 +83,8 @@ Public Class CodeBlock
     ''' The index into the jump table of the current instruction.
     ''' </summary>
     ''' <remarks></remarks>
-    Public CurrentInstruction As LocalBuilder
+    Public VB_CurrentInstruction As LocalBuilder
+    Public UnstructuredExceptionHandlers As Generic.List(Of Label)
     Public UnstructuredExceptionLabels As Generic.List(Of Label)
     Public EndMethodLabel As Label
 
@@ -248,22 +250,29 @@ Public Class CodeBlock
 
         EndMethodLabel = Info.ILGen.DefineLabel
         m_InternalExceptionLocation = Info.ILGen.DefineLabel
-        UnstructuredExceptionHandler = Info.ILGen.DefineLabel
-        UnstructuredSwitchHandler = Info.ILGen.DefineLabel
+        UnstructuredResumeNextHandler = Info.ILGen.DefineLabel
+        UnstructuredResumeHandler = Info.ILGen.DefineLabel
         UnstructuredSwitchHandlerEnd = Info.ILGen.DefineLabel
 
-        UnstructuredExceptionHandlerVariable = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
-        IsInUnstructuredHandler = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
+        VB_ActiveHandler = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Int32, "VB$ActiveHandler")
+        VB_ActiveHandlerLabel = Emitter.DefineLabel(Info)
+        VB_ResumeTarget = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Int32, "VB$ResumeTarget")
 
         EndUnstructuredExceptionHandler = Info.ILGen.BeginExceptionBlock()
         UnstructuredExceptionLabels = New Generic.List(Of Label)
+        UnstructuredExceptionHandlers = New Generic.List(Of Label)
+
+        'Handler 0
+        UnstructuredExceptionHandlers.Add(m_InternalExceptionLocation)
+        UnstructuredExceptionHandlers.Add(UnstructuredResumeNextHandler)
+        UnstructuredExceptionHandlers.Add(UnstructuredResumeHandler)
 
         'At entry to the method, the exception-handler location and the exception are both set to Nothing. 
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
 
         UnstructuredExceptionLabels.Add(UnstructuredSwitchHandlerEnd) 'index 0
         If Me.HasResume Then
-            Me.CurrentInstruction = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Int32)
+            VB_CurrentInstruction = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Int32, "VB$CurrentStatement")
             ResumeNextExceptionHandler = Info.ILGen.DefineLabel
 
             UnstructuredExceptionLabels.Add(ResumeNextExceptionHandler) 'index 1
@@ -273,6 +282,18 @@ Public Class CodeBlock
 
         Return result
     End Function
+
+    'Private Sub DumpUnstructuredVars(ByVal Info As EmitInfo, Optional ByVal text As String = "")
+
+    '    Emitter.EmitLoadValue(Info, text & "VB_ActiveHandler: {0}, VB_ResumeTarget: {1}, VB_CurrentInstruction: {2}")
+    '    Emitter.EmitLoadVariable(Info, VB_ActiveHandler)
+    '    Emitter.EmitBox(Info, GetType(Integer))
+    '    Emitter.EmitLoadVariable(Info, VB_ResumeTarget)
+    '    Emitter.EmitBox(Info, GetType(Integer))
+    '    Emitter.EmitLoadVariable(Info, VB_CurrentInstruction)
+    '    Emitter.EmitBox(Info, GetType(Integer))
+    '    Emitter.EmitCall(Info, GetType(System.Console).GetMethod("WriteLine", New Type() {GetType(String), GetType(Object), GetType(Object), GetType(Object)}))
+    'End Sub
 
     Private Function GenerateUnstructuredEnd(ByVal Method As IMethod, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
@@ -293,26 +314,47 @@ Public Class CodeBlock
             'Increment the instruction pointer index with one, then jump to the switch
             Info.ILGen.MarkLabel(ResumeNextExceptionHandler)
             Emitter.EmitLoadI4Value(Info, -1)
-            Emitter.EmitStoreVariable(Info, IsInUnstructuredHandler)
-            Emitter.EmitLoadVariable(Info, CurrentInstruction)
+            Emitter.EmitStoreVariable(Info, VB_ResumeTarget)
+            Emitter.EmitLoadVariable(Info, VB_CurrentInstruction)
             Emitter.EmitLoadI4Value(Info, 1)
             Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
             Emitter.EmitStoreVariable(Info, tmpVar)
-            Emitter.EmitLeave(Info, UnstructuredSwitchHandler)
+            Emitter.EmitLeave(Info, UnstructuredResumeHandler)
         End If
 
         'Emit the actual handler 
-        Info.ILGen.MarkLabel(UnstructuredExceptionHandler)
+        Info.ILGen.MarkLabel(UnstructuredResumeNextHandler)
         Emitter.EmitLoadI4Value(Info, -1)
-        Emitter.EmitStoreVariable(Info, IsInUnstructuredHandler)
-        Emitter.EmitLoadVariable(Info, UnstructuredExceptionHandlerVariable)
+        Emitter.EmitStoreVariable(Info, VB_ActiveHandler)
+        Emitter.EmitLoadVariable(Info, VB_ResumeTarget)
         Emitter.EmitStoreVariable(Info, tmpVar)
-        Info.ILGen.MarkLabel(UnstructuredSwitchHandler)
+        Info.ILGen.MarkLabel(UnstructuredResumeHandler)
+        Emitter.EmitLoadI4Value(Info, 0)
+        Emitter.EmitStoreVariable(Info, VB_ResumeTarget)
         Emitter.EmitLoadVariable(Info, tmpVar)
         Emitter.EmitSwitch(Info, UnstructuredExceptionLabels.ToArray)
 
         Info.ILGen.MarkLabel(UnstructuredSwitchHandlerEnd)
         Emitter.EmitLeave(Info, EndMethodLabel)
+
+        'Emit the handler selector
+        Dim handlers() As Label = UnstructuredExceptionHandlers.ToArray
+        Dim endHandlers As Label = Emitter.DefineLabel(Info)
+        Dim removedLabel As Label = handlers(0)
+        handlers(0) = endHandlers
+        Emitter.MarkLabel(Info, VB_ActiveHandlerLabel)
+
+        'DumpUnstructuredVars(Info, "HandlerSelector - ")
+
+        If VB_CurrentInstruction IsNot Nothing Then
+            Emitter.EmitLoadVariable(Info, VB_CurrentInstruction)
+            Emitter.EmitStoreVariable(Info, VB_ResumeTarget)
+        End If
+        Emitter.EmitLoadVariable(Info, VB_ActiveHandler)
+        Emitter.EmitSwitch(Info, handlers)
+        Emitter.EmitLeave(Info, EndMethodLabel)
+        Emitter.MarkLabel(Info, endHandlers)
+        Emitter.EmitLeave(Info, removedLabel)
 
         'Catch the exception
 
@@ -325,14 +367,14 @@ Public Class CodeBlock
         Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Exception))
         Emitter.EmitGT_Un(Info, Compiler.TypeCache.System_Exception) 'TypeOf ... Is System.Exception
 
-        Emitter.EmitLoadVariable(Info, Me.UnstructuredExceptionHandlerVariable)
+        Emitter.EmitLoadVariable(Info, Me.VB_ActiveHandler)
         Emitter.EmitLoadI4Value(Info, 0)
         Emitter.EmitGT(Info, Compiler.TypeCache.System_Int32) 'if a handler is registered.
         Emitter.EmitAnd(Info, Compiler.TypeCache.System_Boolean)
 
-        Emitter.EmitLoadVariable(Info, Me.IsInUnstructuredHandler)
+        Emitter.EmitLoadVariable(Info, Me.VB_ResumeTarget)
         Emitter.EmitLoadI4Value(Info, 0)
-        Emitter.EmitGT(Info, Compiler.TypeCache.System_Int32) 'if code is in a unstructured handler or not
+        Emitter.EmitEquals(Info, Compiler.TypeCache.System_Int32) 'if code is in a unstructured handler or not
         Emitter.EmitAnd(Info, Compiler.TypeCache.System_Boolean)
 
         Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
@@ -342,7 +384,7 @@ Public Class CodeBlock
         Info.Stack.Push(Compiler.TypeCache.System_Object)
         Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__SetProjectError_Exception)
-        Emitter.EmitLeave(Info, UnstructuredExceptionHandler)
+        Emitter.EmitLeave(Info, VB_ActiveHandlerLabel)
 
         Info.ILGen.EndExceptionBlock()
 
@@ -355,7 +397,7 @@ Public Class CodeBlock
         Info.ILGen.MarkLabel(EndMethodLabel)
 
         Dim veryMethodEnd As Label = Info.ILGen.DefineLabel
-        Emitter.EmitLoadVariable(Info.Clone(True, False, Compiler.TypeCache.System_Boolean), IsInUnstructuredHandler)
+        Emitter.EmitLoadVariable(Info.Clone(True, False, Compiler.TypeCache.System_Boolean), VB_ResumeTarget)
         Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfFalse(Info, veryMethodEnd)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
@@ -463,7 +505,7 @@ Public Class CodeBlock
             index = UpmostBlock.UnstructuredExceptionLabels.IndexOf(lbl)
             Info.ILGen.MarkLabel(lbl)
             Emitter.EmitLoadI4Value(Info, index)
-            Emitter.EmitStoreVariable(Info, UpmostBlock.CurrentInstruction)
+            Emitter.EmitStoreVariable(Info, UpmostBlock.VB_CurrentInstruction)
         End If
         Return result
     End Function
