@@ -47,6 +47,39 @@ Public Class ForStatement
     Private m_NextIteration As Label
     Private m_LoopType As Type
 
+    Private m_IsLateBound As Boolean
+    Private m_IsDecimal As Boolean
+
+    Private Class LoopCounterData
+        Public Type As LoopCounterTypes
+        Public Variable As Object
+        Public InstanceExpression As Expression
+
+        ReadOnly Property FieldInfo() As FieldInfo
+            Get
+                Return DirectCast(Variable, FieldInfo)
+            End Get
+        End Property
+
+        ReadOnly Property LocalBuilder() As LocalBuilder
+            Get
+                Return DirectCast(Variable, LocalBuilder)
+            End Get
+        End Property
+
+        Sub New(ByVal Variable As Object, ByVal Type As LoopCounterTypes, Optional ByVal InstanceExpression As Expression = Nothing)
+            Me.Type = Type
+            Me.Variable = Variable
+            Me.InstanceExpression = InstanceExpression
+        End Sub
+    End Class
+
+    Private Enum LoopCounterTypes
+        Local
+        Field
+        Array
+    End Enum
+
     ReadOnly Property LoopStepExpression() As Expression
         Get
             Return m_LoopStepExpression
@@ -111,93 +144,6 @@ Public Class ForStatement
         End Get
     End Property
 
-    ''' <summary>
-    ''' Emit code for 
-    ''' Dim i As Integer
-    ''' For i = 0 ...
-    ''' </summary>
-    ''' <param name="Info"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function GenerateOtherVariableCode(ByVal Info As EmitInfo) As Boolean
-        Dim result As Boolean = True
-
-        Dim conditionLabel As Label
-        Dim startlabel As Label
-        Dim loopexp As Expression
-        Dim loopClass As VariableClassification
-        Dim loadInfo, storeInfo As EmitInfo
-        Dim maxvar As LocalBuilder
-        Dim stepvar As LocalBuilder = Nothing
-
-        startlabel = Info.ILGen.DefineLabel
-        conditionLabel = Info.ILGen.DefineLabel
-        EndLabel = Info.ILGen.DefineLabel
-        m_NextIteration = Info.ILGen.DefineLabel
-
-        loopexp = m_LoopControlVariable.Expression
-        loopClass = loopexp.Classification.AsVariableClassification
-
-        loadInfo = Info.Clone(True, False, m_LoopType)
-        storeInfo = Info.Clone(False, False, m_LoopType)
-
-        maxvar = Emitter.DeclareLocal(Info, m_LoopType, "maxvar$" & Me.ObjectID.ToString)
-        stepvar = Emitter.DeclareLocal(Info, m_LoopType, "stepvar$" & Me.ObjectID.ToString)
-
-        'Load the initial expression
-        'result = m_LoopStartExpression.GenerateCode(loadInfo) AndAlso result
-        result = loopClass.GenerateCode(Info.Clone(m_LoopStartExpression)) AndAlso result
-        'Emitter.EmitStoreVariable(Info, loopClass)
-
-        'Load the max expression
-        result = m_LoopEndExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, maxvar)
-
-        result = m_LoopStepExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, stepvar)
-
-        'Jump to the comparison
-        Emitter.EmitBranch(Info, conditionLabel)
-
-        Info.ILGen.MarkLabel(startlabel)
-
-        result = CodeBlock.GenerateCode(Info) AndAlso result
-
-        'This is the start of the next iteration
-        Info.ILGen.MarkLabel(m_NextIteration)
-
-        Dim addexp As New BinaryAddExpression(Me, loopexp, New LoadLocalExpression(Me, stepvar))
-        result = addexp.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
-        'result = addexp.GenerateCode(Info.Clone) AndAlso result
-
-        ''Load the current loop value
-        'result = loopClass.GenerateCodeAsValue(loadInfo) AndAlso result
-
-        ''Load the value to add
-        'Emitter.EmitLoadVariable(Info, stepvar)
-
-        ''Add them up
-        'Emitter.EmitAdd(Info, m_LoopType)
-
-        'Store the result into the loop var
-        result = loopClass.GenerateCode(Info.Clone(addexp)) AndAlso result
-        'Emitter.EmitStoreVariable(Info, loopClass)
-
-        Info.ILGen.MarkLabel(conditionLabel)
-        'Load the current value
-        result = loopexp.GenerateCode(loadInfo) AndAlso result
-
-        'Load the max value
-        Emitter.EmitLoadVariable(Info, maxvar)
-
-        'Compare the values
-        EmitComparison(Info, startlabel, stepvar)
-
-        Info.ILGen.MarkLabel(EndLabel)
-
-        Return result
-    End Function
-
     Private Function IsNegativeStep() As Boolean
         Dim constant As Object
 
@@ -226,6 +172,67 @@ Public Class ForStatement
         Return m_LoopStepExpression.IsConstant
     End Function
 
+    Private Function EmitLoadAddressCounter(ByVal Info As EmitInfo, ByVal Data As LoopCounterData) As Boolean
+        Dim result As Boolean = True
+        Select Case Data.Type
+            Case LoopCounterTypes.Array
+                Helper.NotImplemented()
+            Case LoopCounterTypes.Field
+                If Data.InstanceExpression IsNot Nothing Then
+                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+                End If
+                Emitter.EmitLoadVariableLocation(Info, Data.FieldInfo)
+            Case LoopCounterTypes.Local
+                Emitter.EmitLoadVariableLocation(Info, Data.LocalBuilder)
+            Case Else
+                Throw New InternalException("Unknown LoopCounterType: " & Data.Type.ToString())
+        End Select
+        Return result
+    End Function
+
+    Private Function EmitLoadCounter(ByVal Info As EmitInfo, ByVal Data As LoopCounterData) As Boolean
+        Dim result As Boolean = True
+        Select Case Data.Type
+            Case LoopCounterTypes.Array
+                Helper.NotImplemented()
+            Case LoopCounterTypes.Field
+                If Data.InstanceExpression IsNot Nothing Then
+                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+                End If
+                Emitter.EmitLoadVariable(Info, Data.FieldInfo)
+            Case LoopCounterTypes.Local
+                Emitter.EmitLoadVariable(Info, Data.LocalBuilder)
+            Case Else
+                Throw New InternalException("Unknown LoopCounterType: " & Data.Type.ToString())
+        End Select
+        Return result
+    End Function
+
+    Private Function EmitStoreCounterInstanceExpression(ByVal Info As EmitInfo, ByVal Data As LoopCounterData) As Boolean
+        Dim result As Boolean = True
+
+        If Data.InstanceExpression IsNot Nothing Then
+            result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Private Function EmitStoreCounter(ByVal Info As EmitInfo, ByVal Data As LoopCounterData) As Boolean
+        Dim result As Boolean = True
+        Select Case Data.Type
+            Case LoopCounterTypes.Array
+                Helper.NotImplemented()
+            Case LoopCounterTypes.Field
+                Emitter.EmitStoreField(Info, Data.FieldInfo)
+            Case LoopCounterTypes.Local
+                Emitter.EmitStoreVariable(Info, Data.LocalBuilder)
+            Case Else
+                Throw New InternalException("Unknown LoopCounterType: " & Data.Type.ToString())
+        End Select
+        Return result
+    End Function
+
     ''' <summary>
     ''' Emit code for
     ''' For i As Integer = 0 ...
@@ -233,14 +240,16 @@ Public Class ForStatement
     ''' <param name="Info"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GenerateDeclaredVariableCode(ByVal Info As EmitInfo) As Boolean
+    Private Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
         Dim conditionLabel As Label
         Dim startlabel As Label
-        Dim maxvar As LocalBuilder
-        Dim loopvar As LocalBuilder
-        Dim stepvar As LocalBuilder = Nothing
+        Dim loopCounter As LoopCounterData
+        Dim loopMax As LocalBuilder
+        Dim loopStart As LocalBuilder
+        Dim loopStep As LocalBuilder
+        Dim loopLateBoundObject As LocalBuilder = Nothing
         Dim loadInfo As EmitInfo
 
         conditionLabel = Info.ILGen.DefineLabel
@@ -251,25 +260,60 @@ Public Class ForStatement
         loadInfo = Info.Clone(True, False, m_LoopType)
 
         'Create the localbuilder
-        result = m_LoopControlVariable.GenerateCode(Info) AndAlso result
+        If m_LoopControlVariable.IsVariableDeclaration Then
+            result = m_LoopControlVariable.GenerateCode(Info) AndAlso result
+            loopCounter = New LoopCounterData(m_LoopControlVariable.GetVariableDeclaration.LocalBuilder, LoopCounterTypes.Local)
+        Else
+            Dim varClass As VariableClassification
+            varClass = m_LoopControlVariable.Expression.Classification.AsVariableClassification
+            If varClass.LocalBuilder IsNot Nothing Then
+                loopCounter = New LoopCounterData(varClass.LocalBuilder, LoopCounterTypes.Local)
+            ElseIf varClass.FieldInfo IsNot Nothing Then
+                loopCounter = New LoopCounterData(varClass.FieldInfo, LoopCounterTypes.Field, varClass.InstanceExpression)
+            Else
+                Throw New InternalException()
+            End If
+        End If
 
-        loopvar = m_LoopControlVariable.GetVariableDeclaration.LocalBuilder
-        maxvar = Emitter.DeclareLocal(Info, m_LoopType, "maxvar$" & Me.ObjectID.ToString)
-        stepvar = Emitter.DeclareLocal(Info, m_LoopType, "stepvar$" & Me.ObjectID.ToString)
+        loopMax = Emitter.DeclareLocal(Info, m_LoopType, "maxvar$" & Me.ObjectID.ToString)
+        loopStep = Emitter.DeclareLocal(Info, m_LoopType, "stepvar$" & Me.ObjectID.ToString)
+        loopStart = Emitter.DeclareLocal(Info, m_LoopType, "startvar$" & Me.ObjectID.ToString)
+        If m_IsLateBound Then
+            loopLateBoundObject = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Object, "loopobj$" & Me.ObjectID.ToString)
+        End If
 
         'Load the initial expression
         result = m_LoopStartExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, loopvar)
+        Emitter.EmitStoreVariable(Info, loopStart)
+
+        'Store the initial expression in the counter
+        EmitStoreCounterInstanceExpression(Info, loopCounter)
+        Emitter.EmitLoadVariable(Info, loopStart)
+        EmitStoreCounter(Info, loopCounter)
 
         'Load the max expression
         result = m_LoopEndExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, maxvar)
+        Emitter.EmitStoreVariable(Info, loopMax)
 
+        'Load the step expression
         result = m_LoopStepExpression.GenerateCode(loadInfo) AndAlso result
-        Emitter.EmitStoreVariable(Info, stepvar)
+        Emitter.EmitStoreVariable(Info, loopStep)
 
         'Jump to the comparison
-        Emitter.EmitBranch(Info, conditionLabel)
+        If m_IsLateBound Then
+            EmitLoadCounter(Info, loopCounter)
+            'Emitter.EmitLoadVariable(Info, loopCounter)
+            Emitter.EmitLoadVariable(Info, loopStart)
+            Emitter.EmitLoadVariable(Info, loopMax)
+            Emitter.EmitLoadVariable(Info, loopStep)
+            Emitter.EmitLoadVariableLocation(Info, loopLateBoundObject)
+            EmitLoadAddressCounter(Info, loopCounter)
+            'Emitter.EmitLoadVariableLocation(Info, loopCounter)
+            Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ObjectFlowControl_ForLoopControl__ForLoopInitObj_Object_Object_Object_Object_Object_Object)
+            Emitter.EmitBranchIfFalse(Info, EndLabel)
+        Else
+            Emitter.EmitBranch(Info, conditionLabel)
+        End If
 
         'Emit the contained code.
         Info.ILGen.MarkLabel(startlabel)
@@ -278,75 +322,94 @@ Public Class ForStatement
         'This is the start of the next iteration
         Info.ILGen.MarkLabel(m_NextIteration)
 
-        'Load the current loop value
-        Emitter.EmitLoadVariable(Info, loopvar)
+        If m_IsLateBound Then
+            EmitLoadCounter(Info, loopCounter)
+            'Emitter.EmitLoadVariable(Info, loopCounter)
+            Emitter.EmitLoadVariable(Info, loopLateBoundObject)
+            EmitLoadAddressCounter(Info, loopCounter)
+            'Emitter.EmitLoadVariableLocation(Info, loopCounter)
+            Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckObj_Object_Object_Object)
+            Emitter.EmitBranchIfTrue(Info, startlabel)
+        ElseIf m_IsDecimal Then
+            EmitStoreCounterInstanceExpression(Info, loopCounter)
+            EmitLoadCounter(Info, loopCounter) 'Emitter.EmitLoadVariable(Info, loopCounter)
+            Emitter.EmitLoadVariable(Info, loopStep)
+            Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Decimal__Add_Decimal_Decimal)
+            EmitStoreCounter(Info, loopCounter)
 
-        'Load the value to add
-        Emitter.EmitLoadVariable(Info, stepvar)
+            'Do the comparison
+            Info.ILGen.MarkLabel(conditionLabel)
 
-        'Add them up
-        Emitter.EmitAdd(Info, m_LoopType)
+            'Load the current value
+            EmitLoadCounter(Info, loopCounter)
+            'Emitter.EmitLoadVariable(Info, loopCounter)
 
-        'Store the result into the loop var
-        Emitter.EmitStoreVariable(Info, loopvar)
+            'Load the max value
+            Emitter.EmitLoadVariable(Info, loopMax)
 
-        'Do the comparison
-        Info.ILGen.MarkLabel(conditionLabel)
+            'Load the step value
+            Emitter.EmitLoadVariable(Info, loopStep)
 
-        'Load the current value
-        Emitter.EmitLoadVariable(Info, loopvar)
+            'Compare the values
+            Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckDec_Decimal_Decimal_Decimal)
+            Emitter.EmitBranchIfTrue(Info, startlabel)
+        Else
+            EmitStoreCounterInstanceExpression(Info, loopCounter)
+            EmitLoadCounter(Info, loopCounter) 'Emitter.EmitLoadVariable(Info, loopCounter)
+            Emitter.EmitLoadVariable(Info, loopStep)
+            Emitter.EmitAdd(Info, m_LoopType)
+            EmitStoreCounter(Info, loopCounter) 'Emitter.EmitStoreVariable(Info, loopCounter)
 
-        'Load the max value
-        Emitter.EmitLoadVariable(Info, maxvar)
+            'Do the comparison
+            Info.ILGen.MarkLabel(conditionLabel)
 
-        'Compare the values
-        EmitComparison(Info, startlabel, stepvar)
+            'Load the current value
+            EmitLoadCounter(Info, loopCounter) 'Emitter.EmitLoadVariable(Info, loopCounter)
+
+            'Load the max value
+            Emitter.EmitLoadVariable(Info, loopMax)
+
+            'Compare the values
+            If IsKnownStep() Then
+                If IsPositiveStep() Then
+                    Emitter.EmitLE(Info, m_LoopType)
+                    Emitter.EmitBranchIfTrue(Info, startlabel)
+                ElseIf IsNegativeStep() Then
+                    Emitter.EmitGE(Info, m_LoopType)
+                    Emitter.EmitBranchIfTrue(Info, startlabel)
+                Else
+                    Helper.AddError("Infinite loop")
+                End If
+            Else
+                Dim negativeLabel As Label
+                Dim endCheck As Label
+
+                negativeLabel = Emitter.DefineLabel(Info)
+                endCheck = Emitter.DefineLabel(Info)
+
+                Emitter.EmitLoadVariable(Info, loopStep)
+                Emitter.EmitLoadValue(Info.Clone(True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
+                Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
+                Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
+                Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
+                Emitter.EmitLE(Info, m_LoopType) 'Positive check
+                Emitter.EmitBranch(Info, endCheck)
+                Emitter.MarkLabel(Info, negativeLabel)
+                Emitter.EmitGE(Info, m_LoopType) 'Negative check
+                Emitter.MarkLabel(Info, endCheck)
+                Emitter.EmitBranchIfTrue(Info, startlabel)
+            End If
+        End If
 
         Info.ILGen.MarkLabel(EndLabel)
 
         Return result
     End Function
 
-    Private Sub EmitComparison(ByVal Info As EmitInfo, ByVal startLabel As Label, ByVal stepvar As LocalBuilder)
-        If IsKnownStep() Then
-            If IsPositiveStep() Then
-                Emitter.EmitLE(Info, m_LoopType)
-                Emitter.EmitBranchIfTrue(Info, startlabel)
-            ElseIf IsNegativeStep() Then
-                Emitter.EmitGE(Info, m_LoopType)
-                Emitter.EmitBranchIfTrue(Info, startlabel)
-            Else
-                Helper.AddError("Infinite loop")
-            End If
-        Else
-            Dim negativeLabel As Label
-            Dim endCheck As Label
-
-            negativeLabel = Emitter.DefineLabel(info)
-            endCheck = Emitter.DefineLabel(Info)
-
-            Emitter.EmitLoadVariable(Info, stepvar)
-            Emitter.EmitLoadValue(Info.Clone(True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
-            Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
-            Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
-            Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
-            Emitter.EmitLE(Info, m_LoopType) 'Positive check
-            Emitter.EmitBranch(Info, endCheck)
-            Emitter.MarkLabel(Info, negativeLabel)
-            Emitter.EmitGE(Info, m_LoopType) 'Negative check
-            Emitter.MarkLabel(info, endCheck)
-            Emitter.EmitBranchIfTrue(Info, startlabel)
-        End If
-    End Sub
-
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        If m_LoopControlVariable.IsVariableDeclaration Then
-            result = GenerateDeclaredVariableCode(Info) AndAlso result
-        Else
-            result = GenerateOtherVariableCode(Info) AndAlso result
-        End If
+        result = GenerateCodeInternal(Info) AndAlso result
 
         Return result
     End Function
@@ -360,7 +423,7 @@ Public Class ForStatement
 
         If m_LoopControlVariable.Expression IsNot Nothing Then
             If m_LoopControlVariable.Expression.Classification.IsVariableClassification = False Then
-                Helper.AddError("In the case of an expression, the expression must be classified as a variable.")
+                Return Helper.ShowClassificationError(Compiler, Me.Location, m_LoopControlVariable.Expression.Classification, "Variable")
             End If
         End If
 
@@ -383,8 +446,27 @@ Public Class ForStatement
 
         result = CodeBlock.ResolveCode(Info) AndAlso result
 
+        If result = False Then Return result
+
+        Select Case Type.GetTypeCode(m_LoopType)
+            Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
+                result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
+            Case TypeCode.Decimal
+                m_IsLateBound = False
+                m_IsDecimal = True
+            Case TypeCode.Byte, TypeCode.Double, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.Single, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                m_IsLateBound = False
+            Case TypeCode.Object
+                m_IsLateBound = True
+
+                Compiler.Helper.AddCheck("The loop control variable of a For statement must be of a primitive numeric type (...), Object, or a type T that has the following operators: (...)")
+
+            Case Else
+                result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
+        End Select
+
+
         Compiler.Helper.AddCheck("Check that loop variable has not been used in another for statement.")
-        Compiler.Helper.AddCheck("The loop control variable of a For statement must be of a primitive numeric type (Byte, SByte, UShort, Short, UInteger, Integer, ULong, Long, Decimal, Single, Double), Object, or a type T that has the following operators: (...)")
         Compiler.Helper.AddCheck("The bound and step expressions must be implicitly convertible to the type of the loop control. ")
         Compiler.Helper.AddCheck("If a variable matches a For loop that is not the most nested loop at that point, a compile-time error results")
         Compiler.Helper.AddCheck("It is not valid to branch into a For loop from outside the loop.")

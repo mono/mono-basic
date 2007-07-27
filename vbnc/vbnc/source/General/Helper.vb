@@ -1269,7 +1269,7 @@ Public Class Helper
                 result = derefExp.Expression.GenerateCode(Info.Clone(True, False, derefExp.Expression.ExpressionType)) AndAlso result
             Else
                 Dim getRef As GetRefExpression = TryCast(InstanceExpression, GetRefExpression)
-                If getRef IsNot Nothing AndAlso getRef.Expression.ExpressionType.IsValueType AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) 
+                If getRef IsNot Nothing AndAlso getRef.Expression.ExpressionType.IsValueType AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) Then
                     result = getRef.Expression.GenerateCode(ieInfo) AndAlso result
                     Emitter.EmitBox(Info, getRef.Expression.ExpressionType)
                 Else
@@ -1285,9 +1285,44 @@ Public Class Helper
 
         End If
 
+        Dim copyBacksA As Generic.List(Of LocalBuilder) = Nothing
+        Dim copyBacksB As Generic.List(Of Expression) = Nothing
+
         If Arguments IsNot Nothing Then
             Dim methodParameters() As ParameterInfo
             methodParameters = Helper.GetParameters(Info.Compiler, Method)
+
+            For i As Integer = 0 To methodParameters.Length - 1
+                Dim arg As Argument
+                Dim exp As Expression
+                Dim local As LocalBuilder
+
+                If methodParameters(i).ParameterType.IsByRef = False Then Continue For
+
+                arg = Arguments.Arguments(i)
+                exp = arg.Expression
+
+                If exp Is Nothing Then Continue For
+                If exp.Classification Is Nothing Then Continue For
+                If exp.Classification.IsPropertyAccessClassification = False Then Continue For
+
+                If copyBacksA Is Nothing Then
+                    copyBacksA = New Generic.List(Of LocalBuilder)
+                    copyBacksB = New Generic.List(Of Expression)
+                End If
+                local = Emitter.DeclareLocal(Info, methodParameters(i).ParameterType.GetElementType)
+                copyBacksA.Add(local)
+                If exp.Classification.AsPropertyAccess.Property.CanWrite = False Then
+                    copyBacksB.Add(Nothing)
+                Else
+                    copyBacksB.Add(exp)
+                End If
+
+                result = arg.GenerateCode(Info, methodParameters(i)) AndAlso result
+                Emitter.EmitStoreVariable(Info, local)
+                arg.Expression = New LoadLocalExpression(arg, local)
+            Next
+
             result = Arguments.GenerateCode(Info, methodParameters) AndAlso result
         End If
 
@@ -1297,6 +1332,17 @@ Public Class Helper
             Emitter.EmitCall(Info, Method)
         Else
             Emitter.EmitCallOrCallVirt(Info, Method)
+        End If
+
+        If copyBacksA IsNot Nothing Then
+            For i As Integer = 0 To copyBacksA.Count - 1
+                Dim local As LocalBuilder = copyBacksA(i)
+                Dim exp As Expression = copyBacksB(i)
+
+                If exp Is Nothing Then Continue For
+
+                result = exp.GenerateCode(Info.Clone(New LoadLocalExpression(exp, local))) AndAlso result
+            Next
         End If
 
         If constrainedLocal IsNot Nothing Then
@@ -3565,6 +3611,7 @@ Public Class Helper
         Return CType(CInt(tp1) << TypeCombinations.SHIFT Or CInt(tp2), TypeCombinations)
     End Function
 
+
     Shared Function ShowClassificationError(ByVal Compiler As Compiler, ByVal Location As Span, ByVal ActualClassification As ExpressionClassification, ByVal Expected As String) As Boolean
         Select Case ActualClassification.Classification
             Case ExpressionClassification.Classifications.Type
@@ -3573,5 +3620,6 @@ Public Class Helper
             Case Else
                 Helper.AddError("Expected " & Expected & " got " & ActualClassification.Classification.ToString())
         End Select
+        Return False
     End Function
 End Class

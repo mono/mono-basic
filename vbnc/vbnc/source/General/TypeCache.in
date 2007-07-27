@@ -44,6 +44,7 @@ type mscorlib "System.Int32"
 type mscorlib "System.Int64"
 type mscorlib "System.Object"
 array System_Object
+byref System_Object
 type mscorlib "System.Int16"
 type mscorlib "System.Single"
 type mscorlib "System.String"
@@ -188,6 +189,7 @@ method2 MS_VB_CS_Versioned "CallByName" System_Object System_String MS_VB_CallTy
 vbtype "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute"
 vbtype "Microsoft.VisualBasic.CompilerServices.Operators"
 vbtype "Microsoft.VisualBasic.CompilerServices.ObjectFlowControl"
+vbtype "Microsoft.VisualBasic.CompilerServices.ObjectFlowControl+ForLoopControl"
 vbtype "Microsoft.VisualBasic.CompilerServices.Utils"
 vbtype "Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute"
 vbtype "Microsoft.VisualBasic.CompilerServices.OptionTextAttribute"
@@ -263,7 +265,12 @@ method MS_VB_CS_LikeOperator "LikeObject" System_Object System_Object MS_VB_Comp
 
 method MS_VB_CS_StringType "MidStmtStr" System_String_ByRef System_Int32 System_Int32 System_String  
 
-method MS_VB_CS_ObjectFlowControl "CheckForSyncLockOnValueType" System_Object 
+method MS_VB_CS_ObjectFlowControl "CheckForSyncLockOnValueType" System_Object
+method MS_VB_CS_ObjectFlowControl_ForLoopControl "ForLoopInitObj"  System_Object System_Object System_Object System_Object System_Object_ByRef System_Object_ByRef  
+method MS_VB_CS_ObjectFlowControl_ForLoopControl "ForNextCheckDec" System_Decimal System_Decimal System_Decimal
+method MS_VB_CS_ObjectFlowControl_ForLoopControl "ForNextCheckObj" System_Object System_Object System_Object_ByRef  
+method MS_VB_CS_ObjectFlowControl_ForLoopControl "ForNextCheckR4" System_Single System_Single System_Single 
+method MS_VB_CS_ObjectFlowControl_ForLoopControl "ForNextCheckR8" System_Double System_Double System_Double 
 
 method MS_VB_CS_Utils "CopyArray" System_Array System_Array
 

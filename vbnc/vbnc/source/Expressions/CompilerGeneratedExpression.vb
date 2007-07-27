@@ -62,7 +62,11 @@ Public Class LoadLocalExpression
         Dim result As Boolean = True
 
         If Info.IsRHS Then
-            Emitter.EmitLoadVariable(Info, m_Local)
+            If Info.DesiredType.IsByRef Then
+                Emitter.EmitLoadVariableLocation(Info, m_Local)
+            Else
+                Emitter.EmitLoadVariable(Info, m_Local)
+            End If
         Else
             Emitter.EmitStoreVariable(Info, m_Local)
         End If

@@ -1,3 +1,12 @@
+2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Statements/ForStatement.vb: Rework, simplify and implement some
+	  missing cases.
+	* General/Helper.vb: Implement property copy-back for method calls with
+	  byref property arguments.
+	* General/TypeCache.vb, General/TypeCache.in: Added ForLoopControl
+	  members.
+
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/Classifications/VariableClassification.vb,

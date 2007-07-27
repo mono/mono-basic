@@ -591,6 +591,7 @@ Public Partial Class TypeCache
     Public System_Int64 As System.Type
     Public System_Object As System.Type
     Public System_Object_Array As System.Type
+    Public System_Object_ByRef As System.Type
     Public System_Int16 As System.Type
     Public System_Single As System.Type
     Public System_String As System.Type
@@ -727,6 +728,7 @@ Public Partial Class TypeCache
     Public MS_VB_CS_StandardModuleAttribute As System.Type
     Public MS_VB_CS_Operators As System.Type
     Public MS_VB_CS_ObjectFlowControl As System.Type
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl As System.Type
     Public MS_VB_CS_Utils As System.Type
     Public MS_VB_CS_OptionCompareAttribute As System.Type
     Public MS_VB_CS_OptionTextAttribute As System.Type
@@ -795,6 +797,11 @@ Public Partial Class TypeCache
     Public MS_VB_CS_LikeOperator__LikeObject_Object_Object_CompareMethod As System.Reflection.MethodInfo
     Public MS_VB_CS_StringType__MidStmtStr_String_Int32_Int32_String As System.Reflection.MethodInfo
     Public MS_VB_CS_ObjectFlowControl__CheckForSyncLockOnValueType_Object As System.Reflection.MethodInfo
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl__ForLoopInitObj_Object_Object_Object_Object_Object_Object As System.Reflection.MethodInfo
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckDec_Decimal_Decimal_Decimal As System.Reflection.MethodInfo
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckObj_Object_Object_Object As System.Reflection.MethodInfo
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckR4_Single_Single_Single As System.Reflection.MethodInfo
+    Public MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckR8_Double_Double_Double As System.Reflection.MethodInfo
     Public MS_VB_CS_Utils__CopyArray_Array_Array As System.Reflection.MethodInfo
     Public MS_VB_CS_Operators__ConditionalCompareObjectEqual_Object_Object_Boolean As System.Reflection.MethodInfo
     Public MS_VB_CS_Operators__ConditionalCompareObjectNotEqual_Object_Object_Boolean As System.Reflection.MethodInfo
@@ -842,6 +849,7 @@ Public Partial Class TypeCache
         System_Int64 = [GetType](mscorlib, "System.Int64")
         System_Object = [GetType](mscorlib, "System.Object")
         System_Object_Array = GetArrayType(System_Object)
+        System_Object_ByRef = GetByRefType(System_Object)
         System_Int16 = [GetType](mscorlib, "System.Int16")
         System_Single = [GetType](mscorlib, "System.Single")
         System_String = [GetType](mscorlib, "System.String")
@@ -971,6 +979,7 @@ Public Partial Class TypeCache
         MS_VB_CS_StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
         MS_VB_CS_Operators = GetVBType("Microsoft.VisualBasic.CompilerServices.Operators")
         MS_VB_CS_ObjectFlowControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl")
+        MS_VB_CS_ObjectFlowControl_ForLoopControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl+ForLoopControl")
         MS_VB_CS_Utils = GetVBType("Microsoft.VisualBasic.CompilerServices.Utils")
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
@@ -1052,6 +1061,11 @@ Public Partial Class TypeCache
         MS_VB_CS_LikeOperator__LikeObject_Object_Object_CompareMethod = GetMethod(MS_VB_CS_LikeOperator, "LikeObject", System_Object, System_Object, MS_VB_CompareMethod)
         MS_VB_CS_StringType__MidStmtStr_String_Int32_Int32_String = GetMethod(MS_VB_CS_StringType, "MidStmtStr", System_String_ByRef, System_Int32, System_Int32, System_String)
         MS_VB_CS_ObjectFlowControl__CheckForSyncLockOnValueType_Object = GetMethod(MS_VB_CS_ObjectFlowControl, "CheckForSyncLockOnValueType", System_Object)
+        MS_VB_CS_ObjectFlowControl_ForLoopControl__ForLoopInitObj_Object_Object_Object_Object_Object_Object = GetMethod(MS_VB_CS_ObjectFlowControl_ForLoopControl, "ForLoopInitObj", System_Object, System_Object, System_Object, System_Object, System_Object_ByRef, System_Object_ByRef)
+        MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckDec_Decimal_Decimal_Decimal = GetMethod(MS_VB_CS_ObjectFlowControl_ForLoopControl, "ForNextCheckDec", System_Decimal, System_Decimal, System_Decimal)
+        MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckObj_Object_Object_Object = GetMethod(MS_VB_CS_ObjectFlowControl_ForLoopControl, "ForNextCheckObj", System_Object, System_Object, System_Object_ByRef)
+        MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckR4_Single_Single_Single = GetMethod(MS_VB_CS_ObjectFlowControl_ForLoopControl, "ForNextCheckR4", System_Single, System_Single, System_Single)
+        MS_VB_CS_ObjectFlowControl_ForLoopControl__ForNextCheckR8_Double_Double_Double = GetMethod(MS_VB_CS_ObjectFlowControl_ForLoopControl, "ForNextCheckR8", System_Double, System_Double, System_Double)
         MS_VB_CS_Utils__CopyArray_Array_Array = GetMethod(MS_VB_CS_Utils, "CopyArray", System_Array, System_Array)
         MS_VB_CS_Operators__ConditionalCompareObjectEqual_Object_Object_Boolean = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectEqual", System_Object, System_Object, System_Boolean)
         MS_VB_CS_Operators__ConditionalCompareObjectNotEqual_Object_Object_Boolean = GetMethod(MS_VB_CS_Operators, "ConditionalCompareObjectNotEqual", System_Object, System_Object, System_Boolean)
