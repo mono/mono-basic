@@ -129,19 +129,14 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(dtNow.AddSeconds(10), DateAndTime.DateAdd(DateInterval.Second, 10, dtNow),"#DA21");
 			Assert.AreEqual(dtNow.AddSeconds(-10), DateAndTime.DateAdd("s", -10, dtNow),"#DA22");
 
-			caughtException = false;
-
 			try 
 			{
 				DateAndTime.DateAdd(DateInterval.Year, int.MinValue, dtNow);
 			}
 			catch (Exception e) 
 			{
-				caughtException = true;
-				Assert.AreEqual (typeof (Exception), e.GetType (), "#DA23");
+                Assert.AreEqual(typeof(ArgumentOutOfRangeException), e.GetType(), "#DA23");
 			}
-
-			// Assert.AreEqual("#DA24", caughtException, true);
 		}
 
 		
