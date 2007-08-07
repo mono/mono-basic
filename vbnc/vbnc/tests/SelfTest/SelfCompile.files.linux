@@ -72,6 +72,7 @@
 ../../source/Expressions/PropertyGroupToPropertyAccessExpression.vb
 ../../source/Expressions/PropertyGroupToValueExpression.vb
 ../../source/Expressions/SimpleExpression.vb
+../../source/Expressions/VariableExpression.vb
 ../../source/Expressions/VariableToValueExpression.vb
 ../../source/General/Dumper.vb
 ../../source/General/DumperXML.vb
@@ -367,7 +368,6 @@
 ../../source/Expressions/UnaryExpressions/UnaryPlusExpression.vb
 ../../source/Expressions/UnaryExpressions/UnaryExpression.vb
 ../../source/General/AssemblyInfo.vb
-../../source/General/NameResolution.vb
 ../../source/General/TypeCache.vb
 ../../source/Members/MemberParameter.vb
 ../../source/Members/MemberParameters.vb

@@ -17,16 +17,16 @@ Module M
         Dim a As Integer = 1
         Dim err As String = ""
         o.fun(a, a)
-        If a <> 9 Then
-            err += "#A1 binding not proper. Expected '9' but got '" & a & "'" & vbCrLf
+        If a <> 10 Then
+            err += "#A1 binding not proper. Expected '10' but got '" & a & "'" & vbCrLf
         End If
         o.fun(i:=a, j:=a)
-        If a <> 9 Then
-            err += "#A2 binding not proper. Expected '9' but got '" & a & "'" & vbCrLf
+        If a <> 10 Then
+            err += "#A2 binding not proper. Expected '10' but got '" & a & "'" & vbCrLf
         End If
         o.fun(j:=a, i:=a)
-        If a <> 10 Then
-            err += "#A3 binding not proper. Expected '10' but got '" & a & "'" & vbCrLf
+        If a <> 9 Then
+            err += "#A3 binding not proper. Expected '9' but got '" & a & "'" & vbCrLf
         End If
         If (err <> "") Then
             Console.WriteLine(err)

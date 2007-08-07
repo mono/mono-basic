@@ -1,3 +1,4 @@
+#DONTEXECUTE#
 /debug:full
 /r:System.dll
 /r:Microsoft.VisualBasic.dll
