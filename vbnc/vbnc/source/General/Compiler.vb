@@ -751,7 +751,7 @@ EndOfCompilation:
             Dim result As New System.Text.StringBuilder
 
             result.AppendLine("")
-            result.AppendLine("            Visual Basic .NET Compiler Options          ")
+            result.AppendLine("            Visual Basic Compiler Options          ")
             result.AppendLine("")
             result.AppendLine("                       >>> Output file options >>>")
             result.AppendLine("/out:<filename>        Sets the file name of the output executable or library.")

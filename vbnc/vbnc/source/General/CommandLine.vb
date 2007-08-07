@@ -28,6 +28,8 @@ Imports Microsoft.VisualBasic
 '/target:winexe          Create a Windows application.
 '/target:library         Create a library assembly.
 '/target:module          Create a module that can be added to an assembly.
+'/doc[+|-]               Generates XML documentation file.
+'/doc:<file>             Generates XML documentation file to <file>.
 
 '                        - INPUT FILES -
 '/addmodule:<file>       Reference metadata from the specified module.
@@ -36,8 +38,10 @@ Imports Microsoft.VisualBasic
 
 '                        - RESOURCES -
 '/linkresource:<resinfo> Links the specified file as an external assembly resource. resinfo:<file>[,<name>[,public|private]] (Short form: /linkres)
+'/nowin32manifest        The default manifest should not be embedded in the manifest section of the output PE.
 '/resource:<resinfo>     Adds the specified file as an embedded assembly resource. resinfo:<file>[,<name>[,public|private]] (Short form: /res)
 '/win32icon:<file>       Specifies a Win32 icon file (.ico) for the default Win32 resources.
+'/win32manifest:<file>   The provided file is embedded in the manifest section of the output PE.
 '/win32resource:<file>   Specifies a Win32 resource file (.res).
 
 '                        - CODE GENERATION -
@@ -49,19 +53,24 @@ Imports Microsoft.VisualBasic
 
 '                        - ERRORS AND WARNINGS -
 '/nowarn                 Disable warnings.
+'/nowarn:<number_list>   Disable a list of individual warnings.
 '/warnaserror[+|-]       Treat warnings as errors.
+'/warnaserror[+|-]:<number_list> Treat a list of warnings as errors.
 
 '                        - LANGUAGE -
 '/define:<symbol_list>   Declare global conditional compilation symbol(s). symbol_list:name=value,... (Short form: /d)
 '/imports:<import_list>  Declare global Imports for namespaces in referenced metadata files. import_list:namespace,...
 '/optionexplicit[+|-]    Require explicit declaration of variables.
+'/optioninfer[+|-]       Allow type inference of variables.
 '/optionstrict[+|-]      Enforce strict language semantics.
+'/optionstrict:custom    Warn when strict language semantics are not respected.
 '/rootnamespace:<string> Specifies the root Namespace for all type declarations.
 '/optioncompare:binary   Specifies binary-style string comparisons. This is the default.
 '/optioncompare:text     Specifies text-style string comparisons.
 
 '                        - MISCELLANEOUS -
 '/help                   Display this usage message. (Short form: /?)
+'/noconfig               Do not auto-include VBC.RSP file.
 '/nologo                 Do not display compiler copyright banner.
 '/quiet                  Quiet output mode.
 '/verbose                Display verbose messages.
@@ -71,14 +80,20 @@ Imports Microsoft.VisualBasic
 '/bugreport:<file>       Create bug report file.
 '/codepage:<number>      Specifies the codepage to use when opening source files.
 '/delaysign[+|-]         Delay-sign the assembly using only the public portion of the strong name key.
+'/errorreport:<string>   Specifies how to handle internal compiler errors; must be prompt, send, none or queue (default).
 '/keycontainer:<string>  Specifies a strong name key container.
 '/keyfile:<file>         Specifies a strong name key file.
 '/libpath:<path_list>    List of directories to search for metadata references. (Semi-colon delimited.)
 '/main:<class>           Specifies the Public Class or Module that contains Sub Main. It can also be a Public Class that inherits from System.Windows.Forms.Form. (Short form: /m)
 '/netcf                  Target the .NET Compact Framework.
+'/nostdlib               Do not reference standard libraries (system.dll and VBC.RSP file).
+'/platform:<string>      Limit which platforms this code can run on; must be x86, x64, Itanium or anycpu (default).
 '/sdkpath:<path>         Location of the .NET Framework SDK directory (mscorlib.dll).
 '/utf8output[+|-]        Emit compiler output in UTF8 character encoding.
-' @<file>                 Insert command-line settings from a text file.
+'@<file>                 Insert command-line settings from a text file.
+'/vbruntime[+|-]         Compile with/without the default Visual Basic runtime.
+'/vbruntime:<file>       Compile with the alternate Visual Basic runtime in <file>.g:
+
 
 
 ''' <summary>
