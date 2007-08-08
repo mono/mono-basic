@@ -195,7 +195,17 @@ Class rt_console
     Private m_PrintStatus As Boolean
     Private m_PrintStatusSkip As String
     Private m_Counters() As Integer
+    Private m_Skip As String = "Unfixable"
 
+    <Argument("A colon-delimited list of directories to skip.")> _
+    Property Skip() As String
+        Get
+            Return m_Skip
+        End Get
+        Set(ByVal value As String)
+            m_Skip = value
+        End Set
+    End Property
 
     <Argument("A colon-delimited list of states to skip when printing statuses.")> _
     Property PrintStatusSkip() As String
@@ -206,7 +216,7 @@ Class rt_console
             m_PrintStatusSkip = value
         End Set
     End Property
-    
+
     <Argument("Show the current status of all the files.")> _
     Property PrintStatus() As Boolean
         Get
@@ -307,7 +317,7 @@ Class rt_console
         End Set
     End Property
 
-    Sub ValidateArguments()
+    Private Sub ValidateArguments()
         If m_Compiler = String.Empty Then
             m_Compiler = "vbnc"
         Else
@@ -318,7 +328,7 @@ Class rt_console
         End If
     End Sub
 
-    Sub ShowSummary(ByVal Duration As TimeSpan)
+    Private Sub ShowSummary(ByVal Duration As TimeSpan)
         Console.WriteLine("Summary:")
         Dim total As Integer
         For i As Integer = 0 To UBound(m_Counters)
@@ -339,7 +349,7 @@ Class rt_console
         ReDim m_Counters([Enum].GetValues(GetType(Test.Results)).Length - 1)
 
         m_BasePath = IO.Path.GetFullPath(m_BasePath)
-
+        Test.DirectoriesToSkip = m_Skip.Split(";"c)
 
         If CBool(IO.File.GetAttributes(m_BasePath) And IO.FileAttributes.Directory) Then
             If IO.Path.GetDirectoryName(m_BasePath) <> Environment.CurrentDirectory Then
@@ -356,7 +366,7 @@ Class rt_console
         End If
     End Function
 
-    Function RunDirectory() As Boolean
+    Private Function RunDirectory() As Boolean
         Dim result As Boolean = True
         Dim start As Date = Date.Now
 
@@ -367,7 +377,7 @@ Class rt_console
         Return result
     End Function
 
-    Function RunDirectory(ByVal Directory As String) As Boolean
+    Private Function RunDirectory(ByVal Directory As String) As Boolean
         Dim tests As Tests
         Dim result As Boolean = True
 
@@ -392,27 +402,26 @@ Class rt_console
     End Function
 
 
-    Function RunFile() As Boolean
+    Private Function RunFile() As Boolean
         Dim t As Test
-
 
         t = New Test(m_BasePath, Nothing)
 
         Return RunTest(t)
     End Function
 
-    Function ShowStatus(ByVal t As Test) As Boolean
+    Private Function ShowStatus(ByVal t As Test) As Boolean
         Dim status As String
 
         t.LoadOldResults()
 
-		status = t.OldResult.ToString ()
-		
-		m_Counters(t.OldResult) += 1
+        status = t.OldResult.ToString()
 
-		If m_PrintStatusSkip IsNot Nothing AndAlso m_PrintStatusSkip.Contains (status) Then Return True
-		
-		SetColor (t.OldResult)
+        m_Counters(t.OldResult) += 1
+
+        If m_PrintStatusSkip IsNot Nothing AndAlso m_PrintStatusSkip.Contains(status) Then Return True
+
+        SetColor(t.OldResult)
         Console.Write("{0,-10} ", status & ":")
         Console.ResetColor()
         Console.WriteLine(IO.Path.Combine(IO.Path.GetDirectoryName(t.Files(0).Substring(m_BasePath.Length)), t.Name))
@@ -420,8 +429,8 @@ Class rt_console
         Return True
     End Function
 
-	Sub SetColor (ByVal result As Test.Results)
-		Select Case result
+    Private Sub SetColor(ByVal result As Test.Results)
+        Select Case result
             Case Test.Results.Failed
                 Console.ForegroundColor = ConsoleColor.Red
             Case Test.Results.NotRun
@@ -435,18 +444,16 @@ Class rt_console
             Case Else
                 Console.ForegroundColor = ConsoleColor.White
         End Select
-	End Sub
+    End Sub
 
-    Function RunTest(ByVal t As Test) As Boolean
+    Private Function RunTest(ByVal t As Test) As Boolean
         t.Compiler = Compiler
 
         If m_PrintStatus Then Return ShowStatus(t)
-
         Console.Write("Running " & t.Name & "... ")
         t.DoTest()
 
-        
-		SetColor (t.Result)
+        SetColor(t.Result)
         Console.WriteLine(t.Result.ToString)
         Console.ResetColor()
 

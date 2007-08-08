@@ -1,3 +1,8 @@
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MainModule.vb: Added a Skip argument, used to skip directories of tests
+	  (default is to skip tests in Unfixable\)
+
 2007-07-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MainModule.vb: Add a few more commandline options to print the status
