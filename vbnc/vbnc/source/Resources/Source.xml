@@ -1524,7 +1524,7 @@
 	</Message>
 	<Message id="30455" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Argument not specified for parameter '{0}' of '{1}'.</VBNCValue>
 		<VBValue>Argument not specified for parameter '|1' of '|2'.</VBValue>
 	</Message>
 	<Message id="30456" level="Error">
@@ -1584,7 +1584,7 @@
 	</Message>
 	<Message id="30471" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Only arrays and methods can have argument lists.</VBNCValue>
 		<VBValue>Expression is not an array or a method, and cannot have an argument list.</VBValue>
 	</Message>
 	<Message id="30474" level="Error">

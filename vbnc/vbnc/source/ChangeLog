@@ -1,3 +1,7 @@
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Resources/Errors.resx, Resources/Source.xml: Added more messages.
+
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Compiler.vb: The .NET suffix isn't used anymore for VB.

@@ -335,7 +335,7 @@
   <data name="30451"><value>Could not resolve the name '{0}'</value></data>
   <data name="30452"><value>Operator '{0}' is not defined for the types '{1}' and '{2}'.</value></data>
   <data name="30454"><value>CHANGEME</value></data>
-  <data name="30455"><value>CHANGEME</value></data>
+  <data name="30455"><value>Argument not specified for parameter '{0}' of '{1}'.</value></data>
   <data name="30456"><value>'{0}' is not a member of '{1}'.</value></data>
   <data name="30458"><value>CHANGEME</value></data>
   <data name="30460"><value>CHANGEME</value></data>
@@ -347,7 +347,7 @@
   <data name="30468"><value>CHANGEME</value></data>
   <data name="30469"><value>CHANGEME</value></data>
   <data name="30470"><value>CHANGEME</value></data>
-  <data name="30471"><value>CHANGEME</value></data>
+  <data name="30471"><value>Only arrays and methods can have argument lists.</value></data>
   <data name="30474"><value>CHANGEME</value></data>
   <data name="30476"><value>CHANGEME</value></data>
   <data name="30479"><value>A structure can't have a shared constructor with parameters.</value></data>
