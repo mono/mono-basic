@@ -21,7 +21,7 @@ Public Class NamespaceDictionary
     Inherits Generic.Dictionary(Of String, TypeDictionary)
 
     Sub New()
-        MyBase.new(NameResolution.StringComparer)
+        MyBase.new(Helper.StringComparer)
     End Sub
 
     Sub AddType(ByVal Type As Type)
@@ -74,7 +74,7 @@ Public Class CecilNamespaceDictionary
     Inherits Generic.Dictionary(Of String, CecilTypeDictionary)
 
     Sub New()
-        MyBase.new(NameResolution.StringComparer)
+        MyBase.new(Helper.StringComparer)
     End Sub
 
     Sub AddType(ByVal Type As Mono.Cecil.TypeDefinition)

@@ -724,7 +724,7 @@ Public Class TypeDescriptor
         End If
 
         If SearchedName IsNot Nothing Then
-            If NameResolution.CompareName(Type.Name, SearchedName, Not CBool(bindingAttr And BindingFlags.IgnoreCase)) = False Then Return False
+            If Helper.CompareName(Type.Name, SearchedName, Not CBool(bindingAttr And BindingFlags.IgnoreCase)) = False Then Return False
         End If
 
         Return True
@@ -742,7 +742,7 @@ Public Class TypeDescriptor
         tmp.AddRange(Me.GetMembers(bindingAttr))
 
         For Each p As MemberInfo In tmp
-            If p.MemberType = MemberTypes.Property AndAlso NameResolution.CompareName(p.Name, name) Then
+            If p.MemberType = MemberTypes.Property AndAlso Helper.CompareName(p.Name, name) Then
                 Helper.Assert(result Is Nothing)
                 result = DirectCast(p, PropertyInfo)
             End If
@@ -849,13 +849,13 @@ Public Class TypeDescriptor
         If o Is Me Then
             result = True
         Else
-            result = MyBase.Equals(o)
+            result = Helper.CompareType(TryCast(o, Type), Me)
         End If
         DumpMethodInfo(result)
         Return result
     End Function
 
-    Public Overloads Function Equals(ByVal o As Type) As Boolean
+    Public Overridable Overloads Function Equals(ByVal o As Type) As Boolean
         Dim result As Boolean
         Dim tmp As TypeDescriptor = Me
         Dim MeName As String
@@ -885,25 +885,25 @@ Public Class TypeDescriptor
                 Dim meTypes As Type() = Me.GetGenericArguments()
 
                 If Helper.CompareType(o.GetGenericTypeDefinition, Me.GetGenericTypeDefinition) = False Then
-                    Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                    Helper.Assert(Helper.CompareName(oName, MeName) = False)
                     Return False
                 End If
 
                 If oTypes.Length <> meTypes.Length Then
-                    Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                    Helper.Assert(Helper.CompareName(oName, MeName) = False)
                     Return False
                 End If
                 For i As Integer = 0 To oTypes.Length - 1
                     If Helper.CompareType(oTypes(i), meTypes(i)) = False Then
-                        Helper.Assert(NameResolution.CompareName(oName, MeName) = False)
+                        Helper.Assert(Helper.CompareName(oName, MeName) = False)
                         Return False
                     End If
                 Next
-                Helper.Assert(NameResolution.CompareName(oName, MeName))
+                Helper.Assert(Helper.CompareName(oName, MeName))
                 Return True
             End If
 
-            result = NameResolution.CompareName(oName, MeName)
+            result = Helper.CompareName(oName, MeName)
 #If DEBUG Then
             If result Then
                 Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Found two equal types by name: " & oName)
@@ -1122,7 +1122,7 @@ Public Class TypeDescriptor
         End If
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good is any type comparison would fail.
-        Static cache As New Generic.Dictionary(Of String, Type)(NameResolution.StringComparer)
+        Static cache As New Generic.Dictionary(Of String, Type)(Helper.StringComparer)
         If cache.ContainsKey(result.FullName) Then
             result = cache.Item(result.FullName)
         Else

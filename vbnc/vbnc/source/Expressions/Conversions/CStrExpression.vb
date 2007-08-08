@@ -86,7 +86,9 @@ Public Class CStrExpression
             Case TypeCode.Single
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Single)
             Case TypeCode.Object
-                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
+                    Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_String__ctor_Array)
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'No conversion necessary

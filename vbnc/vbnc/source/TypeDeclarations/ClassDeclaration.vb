@@ -36,6 +36,7 @@ Public Class ClassDeclaration
     Implements IHasImplicitMembers
 
     Private m_Inherits As NonArrayTypeName
+    Private m_CreatedImplicitMembers As Boolean
 
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
         MyBase.New(Parent, [Namespace])
@@ -53,9 +54,21 @@ Public Class ClassDeclaration
     End Property
 
 
+    Function CreateBaseImplicitMembers() As Boolean
+        Dim tD As TypeDescriptor
+        Dim cD As ClassDeclaration
+
+        tD = TryCast(Me.BaseType, TypeDescriptor)
+        If tD Is Nothing Then Return True
+
+        cd = TryCast(tD.Declaration, ClassDeclaration)
+        If cD Is Nothing Then Return True
+
+        Return cD.CreateImplicitMembers
+    End Function
+
     ''' <summary>
-    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any). 
-    ''' If no constructor found, returns nothing.
+    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).          ''' If no constructor found, returns nothing.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
@@ -117,6 +130,13 @@ Public Class ClassDeclaration
 
     Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
         Dim result As Boolean = True
+
+        If m_CreatedImplicitMembers Then Return True
+
+        result = CreateBaseImplicitMembers() AndAlso result
+
+        If result = False Then Return result
+
         'If a type contains no instance constructor declarations, a default constructor 
         'is automatically provided. The default constructor simply invokes the 
         'parameterless constructor of the direct base type. If the direct 
@@ -129,15 +149,13 @@ Public Class ClassDeclaration
 
             If baseDefaultCtor IsNot Nothing Then
                 If baseDefaultCtor.IsPrivate Then
-                    Helper.AddError("No default constructor can be created because base class has no accessible default constructor.")
-                    result = False
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
                 Else
                     DefaultInstanceConstructor = ConstructorDeclaration.CreateDefaultConstructor(Me)
                     Members.Add(DefaultInstanceConstructor)
                 End If
             Else
-                Helper.AddError("No default constructor can be created because base class has no default constructor.")
-                result = False
+                result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
             End If
         End If
 
@@ -148,6 +166,8 @@ Public Class ClassDeclaration
         End If
 
         result = CreateMyGroupMembers() AndAlso result
+
+        m_CreatedImplicitMembers = True
 
         Return result
     End Function
@@ -213,7 +233,7 @@ Public Class ClassDeclaration
         groupData.TypeToCollect = collectType
 
         For Each mi As MethodDeclaration In Members.GetSpecificMembers(Of MethodDeclaration)()
-            If mi.IsShared AndAlso NameResolution.CompareName(createInstanceMethodName, mi.Name) Then
+            If mi.IsShared AndAlso Helper.CompareName(createInstanceMethodName, mi.Name) Then
                 If mi.Signature.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.ReturnType Is Nothing Then Continue For
@@ -238,7 +258,7 @@ Public Class ClassDeclaration
 
                 If groupData.CreateInstanceMethod IsNot Nothing Then Continue For
                 groupData.CreateInstanceMethod = mi.MethodDescriptor
-            ElseIf mi.IsShared = False AndAlso NameResolution.CompareName(disposeInstanceMethodName, mi.Name) Then
+            ElseIf mi.IsShared = False AndAlso Helper.CompareName(disposeInstanceMethodName, mi.Name) Then
                 If mi.Signature.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.ReturnType IsNot Nothing Then Continue For
@@ -281,8 +301,8 @@ Public Class ClassDeclaration
 
         'Find all non-generic types that inherit from the type to collect
         Dim typesCollected As New Generic.List(Of TypeDeclaration)
-        Dim namesUsed As New Generic.Dictionary(Of String, Object)(NameResolution.StringComparer)
-        Dim namesClashed As New Generic.Dictionary(Of String, Object)(NameResolution.StringComparer)
+        Dim namesUsed As New Generic.Dictionary(Of String, Object)(Helper.StringComparer)
+        Dim namesClashed As New Generic.Dictionary(Of String, Object)(Helper.StringComparer)
         For Each type As TypeDeclaration In Compiler.theAss.Types
             Dim classType As ClassDeclaration = TryCast(type, ClassDeclaration)
 

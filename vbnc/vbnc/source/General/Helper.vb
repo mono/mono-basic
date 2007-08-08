@@ -28,6 +28,10 @@
 ''' <remarks></remarks>
 Public Class Helper
     Private m_Compiler As Compiler
+    
+    Public Shared StringComparer As System.StringComparer = System.StringComparer.OrdinalIgnoreCase
+    Public Shared StringComparison As StringComparison = StringComparison.OrdinalIgnoreCase
+
     Private Shared m_SharedCompilers As New Generic.List(Of Compiler)
 
     Public Shared LOGMETHODRESOLUTION As Boolean = False
@@ -170,22 +174,88 @@ Public Class Helper
     End Function
 #End If
 
-    '#If DEBUG Then
-    '    Shared Sub RunRT()
-    '        Dim path As String = "rt\bin\rt.exe"
-    '        Dim parent As String = VB.CurDir
-    '        Do Until parent.Length <= 3
-    '            Dim filename As String = IO.Path.Combine(parent, path)
-    '            If IO.File.Exists(filename) Then
-    '                Diagnostics.Process.Start(filename)
-    '                Return
-    '            End If
+#Region "Helper"
 
-    '            parent = IO.Path.GetDirectoryName(parent)
-    '        Loop
-    '        System.Windows.Forms.MessageBox.Show("rt.exe not found.")
-    '    End Sub
-    '#End If
+    'Constant methods.
+    'Private Shared m_Asc_Char As MethodInfo ', if the constant string is not empty
+    'Private Shared m_Asc_String As MethodInfo ', if the constant string is not empty
+    'Private Shared m_AscW_Char As MethodInfo ', if the constant string is not empty
+    'Private Shared m_AscW_String As MethodInfo ', if the constant string is not empty
+    'Private Shared m_Chr_Integer As MethodInfo ', if the constant value is between 0 and 128
+    'Private Shared m_ChrW_Integer As MethodInfo
+    'Private Shared m_AllConstantFunctions As ArrayList
+
+    'A constant expression is an expression whose value can be fully evaluated at compile time. The type of a constant expression can be Byte, Short, Integer, Long, Char, Single, Double, Decimal, Boolean, String, or any enumeration type. The following constructs are permitted in constant expressions: 
+    'Literals (including Nothing).
+    'References to constant type members or constant locals.
+    'References to members of enumeration types.
+    'Parenthesized subexpressions.
+    'Coercion expressions, provided the target type is one of the types listed above. Coercions to and from String are an exception to this rule and not allowed because String conversions are always done in the current culture of the execution environment at run time.
+    'The +, - and Not unary operators.
+    'The +, -, *, ^, Mod, /, \, <<, >>, &, And, Or, Xor, AndAlso, OrElse, =, <, >, <>, <=, and => binary operators, provided each operand is of a type listed above.
+    'The following run-time functions: 
+    'Microsoft.VisualBasic.Strings.ChrW
+    'Microsoft.VisualBasic.Strings.Chr, if the constant value is between 0 and 128
+    'Microsoft.VisualBasic.Strings.AscW, if the constant string is not empty
+    'Microsoft.VisualBasic.Strings.Asc, if the constant string is not empty
+
+    'Constant expressions of an integral type (Long, Integer, Short, Byte) can be implicitly converted to a narrower integral type, and constant expressions of type Double can be implicitly converted to Single, provided the value of the constant expression is within the range of the destination type. These narrowing conversions are allowed regardless of whether permissive or strict semantics are being used.
+
+    Private Shared Function IsMethod(ByVal m1 As MethodInfo, ByVal Name As String, ByVal ParameterType As Type, ByVal ReturnType As Type) As Boolean
+        If m1.IsGenericMethod Then Return False
+        If m1.IsGenericMethodDefinition Then Return False
+
+        If CompareNameOrdinal(m1.Name, Name) = False Then Return False
+
+        If Helper.CompareType(m1.ReturnType, ReturnType) = False Then Return False
+
+        Dim p1 As ParameterInfo()
+        p1 = m1.GetParameters()
+        If p1.Length <> 1 Then Return False
+
+        If Helper.CompareType(p1(0).ParameterType, ParameterType) = False Then Return False
+
+        Return True
+    End Function
+
+    Public Function IsConstantMethod(ByVal Method As MethodInfo, ByVal Parameter As Object, ByRef Result As Object) As Boolean
+        If Method.MemberType <> MemberTypes.Method Then Return False
+        If Not CompareNameOrdinal(Method.DeclaringType.Namespace, "Microsoft.VisualBasic") Then Return False
+        If Not CompareNameOrdinal(Method.DeclaringType.Name, "Strings") Then Return False
+
+#If EXTENDEDDEBUG Then
+        Compiler.Report.WriteLine("IsConstantMethod: " & Method.Name & ", parameter=" & Parameter.ToString & ", parameter.gettype=" & Parameter.GetType.Name)
+#End If
+        Dim isConstant As Boolean
+        If IsMethod(Method, "Chr", Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Char) Then
+            If TypeOf Parameter Is Integer = False Then Return False
+            Dim intParam As Integer = CInt(Parameter)
+            'CHECK: Documentation says <= 128, vbc says < 128.
+            isConstant = intParam >= 0 AndAlso intParam < 128
+            If isConstant Then Result = Microsoft.VisualBasic.Strings.Chr(intParam)
+        ElseIf IsMethod(Method, "ChrW", Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Char) Then
+            Helper.Assert(TypeOf Parameter Is Integer)
+            isConstant = True
+            Result = Microsoft.VisualBasic.Strings.ChrW(CInt(Parameter))
+        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32) Then
+            isConstant = TypeOf Parameter Is Char
+            If isConstant Then Result = Microsoft.VisualBasic.Asc(CChar(Parameter))
+        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32) Then
+            isConstant = TypeOf Parameter Is Char
+            If isConstant Then Result = Microsoft.VisualBasic.AscW(CChar(Parameter))
+        ElseIf IsMethod(Method, "Asc", Compiler.TypeCache.System_String, Compiler.TypeCache.System_Int32) Then
+            isConstant = TypeOf Parameter Is String AndAlso CStr(Parameter) <> ""
+            If isConstant Then Result = Microsoft.VisualBasic.Asc(CStr(Parameter))
+        ElseIf IsMethod(Method, "AscW", Compiler.TypeCache.System_String, Compiler.TypeCache.System_Int32) Then
+            isConstant = TypeOf Parameter Is String AndAlso CStr(Parameter) <> ""
+            If isConstant Then Result = Microsoft.VisualBasic.AscW(CStr(Parameter))
+        Else
+            Return False
+        End If
+
+        Return isConstant
+    End Function
+#End Region
 
     Shared Function FilterCustomAttributes(ByVal attributeType As Type, ByVal Inherit As Boolean, ByVal i As IAttributableDeclaration) As Object()
         Dim result As New Generic.List(Of Object)
@@ -340,7 +410,7 @@ Public Class Helper
     ''' <param name="method"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Diagnostics.Conditional("DEBUG")> Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal method As MethodInfo) As Type()
+    Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal method As MethodInfo) As Type()
         Dim result As Type()
         Dim builder As MethodBuilder = TryCast(method, MethodBuilder)
         If builder IsNot Nothing Then
@@ -363,7 +433,7 @@ Public Class Helper
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Diagnostics.Conditional("DEBUG")> Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal ctor As ConstructorInfo) As Type()
+    Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal ctor As ConstructorInfo) As Type()
         Dim result As Type()
         Dim builder As ConstructorBuilder = TryCast(ctor, ConstructorBuilder)
         If builder IsNot Nothing Then
@@ -433,49 +503,10 @@ Public Class Helper
     ''' <param name="Value2"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function NameCompare(ByVal Value1 As String, ByVal Value2 As String) As Boolean
-        Helper.Assert(Value1 IsNot Nothing)
-        Helper.Assert(Value2 IsNot Nothing)
-        Return String.Compare(Value1, Value2, StringComparison.OrdinalIgnoreCase) = 0
-    End Function
-
-    ''' <summary>
-    ''' Compares two names.
-    ''' </summary>
-    ''' <param name="Value1"></param>
-    ''' <param name="Value2"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function NameCompare(ByVal Value1 As String, ByVal Value2 As String, ByVal Ordinal As Boolean) As Boolean
-        If Ordinal Then
-            Return NameCompareOrdinal(Value1, Value2)
-        Else
-            Return NameCompare(Value1, Value2)
-        End If
-    End Function
-
-    ''' <summary>
-    ''' Compares two names.
-    ''' </summary>
-    ''' <param name="Value1"></param>
-    ''' <param name="Value2"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function NameCompareOrdinal(ByVal Value1 As String, ByVal Value2 As String) As Boolean
-        Helper.Assert(Value1 IsNot Nothing)
-        Helper.Assert(Value2 IsNot Nothing)
-        Return String.CompareOrdinal(Value1, Value2) = 0
-    End Function
-
-    ''' <summary>
-    ''' Compares two vb-names (case-insensitive)
-    ''' </summary>
-    ''' <param name="Value1"></param>
-    ''' <param name="Value2"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
     Shared Function CompareName(ByVal Value1 As String, ByVal Value2 As String) As Boolean
-        Return NameCompare(Value1, Value2)
+        Helper.Assert(Value1 IsNot Nothing)
+        Helper.Assert(Value2 IsNot Nothing)
+        Return String.Equals(Value1, Value2, StringComparison.OrdinalIgnoreCase)
     End Function
 
     Shared Function CompareNameStart(ByVal Whole As String, ByVal Start As String) As Boolean
@@ -490,7 +521,11 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function CompareName(ByVal Value1 As String, ByVal Value2 As String, ByVal Ordinal As Boolean) As Boolean
-        Return NameCompare(Value1, Value2, Ordinal)
+        If Ordinal Then
+            Return CompareNameOrdinal(Value1, Value2)
+        Else
+            Return CompareName(Value1, Value2)
+        End If
     End Function
 
     ''' <summary>
@@ -501,7 +536,9 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function CompareNameOrdinal(ByVal Value1 As String, ByVal Value2 As String) As Boolean
-        Return NameCompare(Value1, Value2)
+        Helper.Assert(Value1 IsNot Nothing)
+        Helper.Assert(Value2 IsNot Nothing)
+        Return String.Equals(Value1, Value2, System.StringComparison.Ordinal)
     End Function
 
     Shared Function GetTypeCode(ByVal Compiler As Compiler, ByVal Type As Type) As TypeCode
@@ -519,6 +556,23 @@ Public Class Helper
 
     Shared Function IsFieldDeclaration(ByVal first As Object) As Boolean
         Return TypeOf first Is VariableDeclaration OrElse TypeOf first Is FieldInfo
+    End Function
+
+    ''' <summary>
+    ''' Intrinsic type: all basic types and System.Object.
+    ''' </summary>
+    ''' <param name="Compiler"></param>
+    ''' <param name="Type"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Shared Function IsIntrinsicType(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
+        Dim tC As TypeCode = GetTypeCode(Compiler, Type)
+
+        If tC = TypeCode.Object Then
+            Return Helper.CompareType(Type, Compiler.TypeCache.System_Object)
+        Else
+            Return True
+        End If
     End Function
 
     Shared Function IsInterface(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
@@ -649,7 +703,7 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function IsProtectedOrAssem(ByVal Member As MemberInfo) As Boolean
+    Shared Function IsProtectedFriend(ByVal Member As MemberInfo) As Boolean
         Helper.Assert(Member IsNot Nothing)
         Select Case Member.MemberType
             Case MemberTypes.Constructor
@@ -678,20 +732,129 @@ Public Class Helper
         End Select
     End Function
 
+    Shared Function IsProtectedOrProtectedFriend(ByVal Member As MemberInfo) As Boolean
+        Helper.Assert(Member IsNot Nothing)
+        Select Case Member.MemberType
+            Case MemberTypes.Constructor
+                Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
+                Return ctor.IsFamily OrElse ctor.IsFamilyOrAssembly
+            Case MemberTypes.Event
+                Dim eventM As EventInfo = DirectCast(Member, EventInfo)
+                Dim access As MethodAttributes = Helper.GetEventAccess(eventM)
+                Return access = MethodAttributes.Family OrElse access = MethodAttributes.FamORAssem
+            Case MemberTypes.Field
+                Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
+                Return fieldI.IsFamily OrElse fieldI.IsFamilyOrAssembly
+            Case MemberTypes.NestedType
+                Dim type As Type = DirectCast(Member, Type)
+                Return type.IsNestedFamily OrElse type.IsNestedFamORAssem
+            Case MemberTypes.Method
+                Dim method As MethodInfo = DirectCast(Member, MethodInfo)
+                Return method.IsFamily OrElse method.IsFamilyOrAssembly
+            Case MemberTypes.Property
+                Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
+                Dim access As MethodAttributes = Helper.GetPropertyAccess(propM)
+                Return access = MethodAttributes.Family OrElse access = MethodAttributes.FamORAssem
+            Case MemberTypes.TypeInfo
+                Dim tp As Type = DirectCast(Member, Type)
+                Return tp.IsNotPublic OrElse tp.IsNested AndAlso (tp.IsNestedFamily OrElse tp.IsNestedFamORAssem)
+            Case Else
+                Throw New InternalException("")
+        End Select
+    End Function
+
+    Shared Function IsFriendOrProtectedFriend(ByVal Member As MemberInfo) As Boolean
+        Helper.Assert(Member IsNot Nothing)
+        Select Case Member.MemberType
+            Case MemberTypes.Constructor
+                Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
+                Return ctor.IsAssembly OrElse ctor.IsFamilyOrAssembly
+            Case MemberTypes.Event
+                Dim eventM As EventInfo = DirectCast(Member, EventInfo)
+                Dim access As MethodAttributes = Helper.GetEventAccess(eventM)
+                Return access = MethodAttributes.Assembly OrElse access = MethodAttributes.FamORAssem
+            Case MemberTypes.Field
+                Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
+                Return fieldI.IsAssembly OrElse fieldI.IsFamilyOrAssembly
+            Case MemberTypes.NestedType
+                Dim type As Type = DirectCast(Member, Type)
+                Return type.IsNestedAssembly OrElse type.IsNestedFamORAssem
+            Case MemberTypes.Method
+                Dim method As MethodInfo = DirectCast(Member, MethodInfo)
+                Return method.IsAssembly OrElse method.IsFamilyOrAssembly
+            Case MemberTypes.Property
+                Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
+                Dim access As MethodAttributes = Helper.GetPropertyAccess(propM)
+                Return access = MethodAttributes.Assembly OrElse access = MethodAttributes.FamORAssem
+            Case MemberTypes.TypeInfo
+                Dim tp As Type = DirectCast(Member, Type)
+                Return tp.IsNotPublic OrElse tp.IsNested AndAlso (tp.IsNestedAssembly OrElse tp.IsNestedFamORAssem)
+            Case Else
+                Throw New InternalException("")
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' Checks if the member is Protected (not Protected Friend)
+    ''' </summary>
+    ''' <param name="Member"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Shared Function IsProtected(ByVal Member As MemberInfo) As Boolean
+        Helper.Assert(Member IsNot Nothing)
+        Select Case Member.MemberType
+            Case MemberTypes.Constructor
+                Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
+                Return ctor.IsFamily
+            Case MemberTypes.Event
+                Dim eventM As EventInfo = DirectCast(Member, EventInfo)
+                Dim access As MethodAttributes = Helper.GetEventAccess(eventM)
+                Return access = MethodAttributes.Family
+            Case MemberTypes.Field
+                Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
+                Return fieldI.IsFamily
+            Case MemberTypes.NestedType
+                Dim type As Type = DirectCast(Member, Type)
+                Return type.IsNestedFamily
+            Case MemberTypes.Method
+                Dim method As MethodInfo = DirectCast(Member, MethodInfo)
+                Return method.IsFamily
+            Case MemberTypes.Property
+                Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
+                Dim access As MethodAttributes = Helper.GetPropertyAccess(propM)
+                Return access = MethodAttributes.Family
+            Case MemberTypes.TypeInfo
+                Dim tp As Type = DirectCast(Member, Type)
+                Return tp.IsNotPublic OrElse tp.IsNested AndAlso (tp.IsNestedFamily)
+            Case Else
+                Throw New InternalException("")
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' Checks if the member is Friend (not Protected Friend)
+    ''' </summary>
+    ''' <param name="Member"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Shared Function IsFriend(ByVal Member As MemberInfo) As Boolean
         Helper.Assert(Member IsNot Nothing)
         Select Case Member.MemberType
             Case MemberTypes.Constructor
-                Return DirectCast(Member, ConstructorInfo).IsAssembly
+                Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
+                Return ctor.IsAssembly
             Case MemberTypes.Event
                 Dim eventM As EventInfo = DirectCast(Member, EventInfo)
                 Return CBool(Helper.GetEventAccess(eventM) = MethodAttributes.Assembly)
             Case MemberTypes.Field
-                Return DirectCast(Member, FieldInfo).IsAssembly
+                Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
+                Return fieldI.IsAssembly
             Case MemberTypes.NestedType
-                Return DirectCast(Member, Type).IsNestedAssembly
+                Dim type As Type = DirectCast(Member, Type)
+                Return type.IsNestedAssembly
             Case MemberTypes.Method
-                Return DirectCast(Member, MethodInfo).IsAssembly
+                Dim method As MethodInfo = DirectCast(Member, MethodInfo)
+                Return method.IsAssembly
             Case MemberTypes.Property
                 Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
                 Return Helper.GetPropertyAccess(propM) = MethodAttributes.Assembly
@@ -782,7 +945,7 @@ Public Class Helper
         Dim result As New Generic.List(Of MemberInfo)
         Helper.AssertNotNothing(members)
         For Each member As MemberInfo In members
-            If NameResolution.CompareName(member.Name, Name) Then result.Add(member)
+            If Helper.CompareName(member.Name, Name) Then result.Add(member)
         Next
         Return result
     End Function
@@ -791,7 +954,7 @@ Public Class Helper
         Dim result As New Generic.List(Of PropertyInfo)
         Helper.AssertNotNothing(members)
         For Each member As PropertyInfo In members
-            If NameResolution.CompareName(member.Name, Name) Then result.Add(member)
+            If Helper.CompareName(member.Name, Name) Then result.Add(member)
         Next
         Return result
     End Function
@@ -799,7 +962,7 @@ Public Class Helper
     Shared Function FilterByName2(ByVal Members As Generic.List(Of MemberInfo), ByVal Name As String) As Generic.List(Of MemberInfo)
         Dim result As New Generic.List(Of MemberInfo)
         For Each member As MemberInfo In Members
-            If NameResolution.CompareName(member.Name, Name) Then result.Add(member)
+            If Helper.CompareName(member.Name, Name) Then result.Add(member)
         Next
         Return result
     End Function
@@ -815,7 +978,7 @@ Public Class Helper
             Else
                 Helper.NotImplemented()
             End If
-            If NameResolution.CompareName(Name, tmpname) Then result.Add(obj)
+            If Helper.CompareName(Name, tmpname) Then result.Add(obj)
         Next
 
         Return result
@@ -825,7 +988,7 @@ Public Class Helper
         Dim result As New Generic.List(Of Type)
         Dim tmpname As String = ""
         For Each obj As Type In collection
-            If NameResolution.CompareName(Name, obj.Name) Then result.Add(obj)
+            If Helper.CompareName(Name, obj.Name) Then result.Add(obj)
         Next
 
         Return result
@@ -833,20 +996,20 @@ Public Class Helper
 
     Shared Sub FilterByName(ByVal collection As Generic.List(Of Type), ByVal Name As String, ByVal result As Generic.List(Of MemberInfo))
         For Each obj As Type In collection
-            If NameResolution.NameCompare(Name, obj.Name) Then result.Add(obj)
+            If Helper.CompareName(Name, obj.Name) Then result.Add(obj)
         Next
     End Sub
 
     Shared Sub FilterByName(ByVal collection As TypeDictionary, ByVal Name As String, ByVal result As Generic.List(Of MemberInfo))
         For Each obj As Type In collection.Values
-            If NameResolution.NameCompare(Name, obj.Name) Then result.Add(obj)
+            If Helper.CompareName(Name, obj.Name) Then result.Add(obj)
         Next
     End Sub
 
     Shared Function FilterByName(ByVal Types As TypeList, ByVal Name As String) As TypeList
         Dim result As New TypeList
         For Each obj As Type In Types
-            If NameResolution.CompareName(Name, obj.Name) Then result.Add(obj)
+            If Helper.CompareName(Name, obj.Name) Then result.Add(obj)
         Next
         Return result
     End Function
@@ -1030,7 +1193,7 @@ Public Class Helper
     Shared Function FilterByName(ByVal lst As Generic.List(Of TypeDescriptor), ByVal Name As String) As Generic.List(Of TypeDescriptor)
         Dim result As New Generic.List(Of TypeDescriptor)
         For Each t As TypeDescriptor In lst
-            If NameResolution.CompareName(t.Name, Name) Then result.Add(t)
+            If Helper.CompareName(t.Name, Name) Then result.Add(t)
         Next
         Return result
     End Function
@@ -1349,6 +1512,14 @@ Public Class Helper
             Emitter.FreeLocal(constrainedLocal)
         End If
 
+        If Info.DesiredType IsNot Nothing AndAlso Info.DesiredType.IsByRef Then
+            Dim tmp As LocalBuilder
+            tmp = Emitter.DeclareLocal(Info, Info.DesiredType.GetElementType)
+            Emitter.EmitStoreVariable(Info, tmp)
+            Emitter.EmitLoadVariableLocation(Info, tmp)
+            Emitter.FreeLocal(tmp)
+        End If
+
         Return result
     End Function
 
@@ -1573,7 +1744,7 @@ Public Class Helper
 
         If OpenType.IsGenericParameter Then
             For i As Integer = 0 To TypeParameters.Length - 1
-                If NameResolution.CompareName(TypeParameters(i).Name, OpenType.Name) Then
+                If Helper.CompareName(TypeParameters(i).Name, OpenType.Name) Then
                     result = TypeArguments(i)
                     Exit For
                 End If
@@ -1587,7 +1758,7 @@ Public Class Helper
 
             For i As Integer = 0 To typeParams.Length - 1
                 For j As Integer = 0 To TypeParameters.Length - 1
-                    If NameResolution.CompareName(typeParams(i).Name, TypeParameters(j).Name) Then
+                    If Helper.CompareName(typeParams(i).Name, TypeParameters(j).Name) Then
                         typeArgs.Add(TypeArguments(j))
                         Exit For
                     End If
@@ -1689,7 +1860,7 @@ Public Class Helper
             For Each member As MemberInfo In members
                 If member.MemberType = MemberTypes.Method Then
                     Dim method As MethodInfo = DirectCast(member, MethodInfo)
-                    If method.IsSpecialName AndAlso NameResolution.NameCompare(method.Name, testName) AndAlso method.IsStatic Then
+                    If method.IsSpecialName AndAlso Helper.CompareName(method.Name, testName) AndAlso method.IsStatic Then
                         result.Add(method)
                     End If
                 End If
@@ -1773,7 +1944,7 @@ Public Class Helper
         End If
 
         If IsPublic(Member) Then Return True
-        If IsProtectedOrAssem(Member) Then Return True
+        If IsProtectedFriend(Member) Then Return True
         If IsPrivate(Member) Then Return False
         If IsFriend(Member) Then Return False
 
@@ -1919,7 +2090,8 @@ Public Class Helper
         'If the member is private, the member is not accessible
         '(to be accessible the types must be equal or the caller type must
         'be a nested type of the called type, cases already covered).
-        If isPrivate Then Return False
+        'Catch: Enum members of public enums can apparently be private.
+        If isPrivate Then Return CalledType.IsEnum
 
         If isFriend AndAlso isProtected Then
             'Friend and Protected
@@ -2819,6 +2991,38 @@ Public Class Helper
         End If
     End Function
 
+    Shared Function GetMostEncompassedTypes(ByVal Compiler As Compiler, ByVal Types() As TypeCode) As TypeCode()
+        Dim result As Generic.List(Of TypeCode)
+
+        If Types Is Nothing Then Return Nothing
+        If Types.Length <= 1 Then Return Types
+
+        result = New Generic.List(Of TypeCode)(Types)
+
+        If result.Count <= 1 Then Return result.ToArray
+
+        Dim didSomething As Boolean = False
+        Do
+            didSomething = False
+            For i As Integer = result.Count - 2 To 0 Step -1
+                If IsFirstEncompassingSecond(Compiler, result(i), result(i + 1)) Then
+                    result.RemoveAt(i)
+                    didSomething = True
+                ElseIf IsFirstEncompassingSecond(Compiler, result(i + 1), result(i)) Then
+                    result.RemoveAt(i + 1)
+                    didSomething = True
+                End If
+            Next
+        Loop While didSomething
+
+        Return result.ToArray
+    End Function
+
+    Shared Function IsFirstEncompassingSecond(ByVal Compiler As Compiler, ByVal First As TypeCode, ByVal Second As TypeCode) As Boolean
+        If First = Second Then Return False
+        Return Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, Second, First)
+    End Function
+
     Shared Function IsNullableType(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
         If Type.IsValueType = False Then Return False
         If CompareType(Type, Compiler.TypeCache.System_Nullable1) Then Return True
@@ -2965,6 +3169,7 @@ Public Class Helper
 
     Shared Function CompareType(ByVal t1 As Type, ByVal t2 As Type) As Boolean
         If t1 Is Nothing AndAlso t2 Is Nothing Then Return True
+        If t1 Is Nothing Xor t2 Is Nothing Then Return False
 
         Dim td1, td2 As TypeDescriptor
         td1 = TryCast(t1, TypeDescriptor)
@@ -2992,7 +3197,9 @@ Public Class Helper
                 End If
             ElseIf TypeOf td1 Is TypeParameterDescriptor Then
                 'td2 is not a typeparameterdescriptor
-                Return False
+                Dim tdp1 As TypeParameterDescriptor = DirectCast(td1, TypeParameterDescriptor)
+
+                Return tdp1.Equals(t2)
             ElseIf td1.IsArray <> t2.IsArray Then
                 Return False
             ElseIf td1.IsByRef AndAlso t2.IsByRef Then
@@ -3077,6 +3284,63 @@ Public Class Helper
         Next
 
         Return "{" & result & "}"
+    End Function
+
+    Overloads Shared Function ToString(ByVal Accessibility As FieldAttributes) As String
+        Select Case Accessibility
+            Case FieldAttributes.FamANDAssem
+                Return "Protected Friend"
+            Case FieldAttributes.FamORAssem
+                Return "Protected Friend"
+            Case FieldAttributes.Family
+                Return "Protected"
+            Case FieldAttributes.Assembly
+                Return "Friend"
+            Case FieldAttributes.Public
+                Return "Public"
+            Case FieldAttributes.Private
+                Return "Private"
+            Case Else
+                Return "<unknown>"
+        End Select
+    End Function
+
+    Overloads Shared Function ToString(ByVal Accessibility As MethodAttributes) As String
+        Select Case Accessibility
+            Case MethodAttributes.FamANDAssem
+                Return "Protected Friend"
+            Case MethodAttributes.FamORAssem
+                Return "Protected Friend"
+            Case MethodAttributes.Family
+                Return "Protected"
+            Case MethodAttributes.Assembly
+                Return "Friend"
+            Case MethodAttributes.Public
+                Return "Public"
+            Case MethodAttributes.Private
+                Return "Private"
+            Case Else
+                Return "<unknown>"
+        End Select
+    End Function
+
+    Overloads Shared Function ToString(ByVal Accessibility As TypeAttributes) As String
+        Select Case Accessibility
+            Case TypeAttributes.NestedFamANDAssem
+                Return "Protected Friend"
+            Case TypeAttributes.NestedFamORAssem
+                Return "Protected Friend"
+            Case TypeAttributes.NestedFamANDAssem
+                Return "Protected"
+            Case TypeAttributes.NestedAssembly, TypeAttributes.NotPublic
+                Return "Friend"
+            Case TypeAttributes.NestedPublic, TypeAttributes.Public
+                Return "Public"
+            Case TypeAttributes.NestedPrivate
+                Return "Private"
+            Case Else
+                Return "<unknown>"
+        End Select
     End Function
 
     Overloads Shared Function ToString(ByVal Compiler As Compiler, ByVal Member As MemberInfo) As String
@@ -3245,7 +3509,7 @@ Public Class Helper
     End Function
 
     Shared Function GetMethodAccessibilityString(ByVal Attributes As MethodAttributes) As String
-        Attributes = Attributes Or MethodAttributes.MemberAccessMask
+        Attributes = Attributes And MethodAttributes.MemberAccessMask
         Select Case Attributes
             Case MethodAttributes.Public
                 Return "Public"
@@ -3270,6 +3534,58 @@ Public Class Helper
                 Return GetPropertyAttributes(DirectCast(Member, PropertyInfo))
             Case Else
                 Throw New InternalException("")
+        End Select
+    End Function
+
+    Shared Function GetVisibility(ByVal Compiler As Compiler, ByVal CallerType As Type, ByVal CalledType As Type) As MemberVisibility
+        Helper.Assert(CallerType IsNot Nothing)
+        Helper.Assert(CalledType IsNot Nothing)
+        Helper.Assert(Compiler.Assembly.IsDefinedHere(CallerType))
+
+        If Helper.CompareType(CallerType, CalledType) Then Return MemberVisibility.All
+
+        If Compiler.Assembly.IsDefinedHere(CalledType) Then
+            If Helper.IsNested(CalledType, CallerType) Then
+                Return MemberVisibility.All
+            ElseIf Helper.IsSubclassOf(CalledType, CallerType) Then
+                Return MemberVisibility.PublicProtectedFriend
+            Else
+                Return MemberVisibility.PublicFriend
+            End If
+        Else
+            If Helper.IsSubclassOf(CalledType, CallerType) Then
+                Return MemberVisibility.PublicProtected
+            Else
+                Return MemberVisibility.Public
+            End If
+        End If
+    End Function
+
+    Shared Function GetVisibilityString(ByVal Member As MemberInfo) As String
+        Select Case Member.MemberType
+            Case MemberTypes.Constructor
+                Dim info As ConstructorInfo = DirectCast(Member, ConstructorInfo)
+                Return ToString(info.Attributes)
+            Case MemberTypes.Event
+                Dim info As EventInfo = DirectCast(Member, EventInfo)
+                Return ToString(Helper.GetEventAccess(info))
+            Case MemberTypes.Field
+                Dim info As FieldInfo = DirectCast(Member, FieldInfo)
+                Return ToString(info.Attributes)
+            Case MemberTypes.Method
+                Dim info As MethodInfo = DirectCast(Member, MethodInfo)
+                Return ToString(info.Attributes)
+            Case MemberTypes.NestedType
+                Dim info As Type = DirectCast(Member, Type)
+                Return ToString(info.Attributes)
+            Case MemberTypes.Property
+                Dim info As PropertyInfo = DirectCast(Member, PropertyInfo)
+                Return ToString(Helper.GetPropertyAccess(info))
+            Case MemberTypes.TypeInfo
+                Dim info As Type = DirectCast(Member, Type)
+                Return ToString(info.Attributes)
+            Case Else
+                Throw New InternalException
         End Select
     End Function
 

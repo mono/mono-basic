@@ -58,9 +58,9 @@ Public Class OperatorDeclaration
         If [Operator].IsIdentifier Then
             Dim opname As String
             opname = [Operator].Name
-            If NameResolution.CompareName(opname, "IsTrue") Then
+            If Helper.CompareName(opname, "IsTrue") Then
                 name = "op_True"
-            ElseIf NameResolution.CompareName(opname, "IsFalse") Then
+            ElseIf Helper.CompareName(opname, "IsFalse") Then
                 name = "op_False"
             Else
                 Throw New InternalException(Me)

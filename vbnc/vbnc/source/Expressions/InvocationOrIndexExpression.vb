@@ -331,8 +331,7 @@ Public Class InvocationOrIndexExpression
             lbaClass.Arguments = m_ArgumentList
             Classification = lbaClass
         Else
-            result = False
-            Helper.NotImplemented()
+            result = Compiler.Report.ShowMessage(Messages.VBNC30471, Location) AndAlso result
         End If
 
         Return result

@@ -23,7 +23,7 @@ Public Class ConditionalConstants
     Inherits Generic.Dictionary(Of String, ConditionalConstant)
 
     Public Sub New()
-        MyBase.New(NameResolution.StringComparer)
+        MyBase.New(Helper.StringComparer)
     End Sub
 
     Public Sub New(ByVal CopyFrom As ConditionalConstants)

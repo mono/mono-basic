@@ -1,5 +1,85 @@
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/ArgumentList.vb: If a byref parameter's expression doesn't
+	  match the parameters's type, create a temporary value (of the correct
+	  type), and store/restore the value there.
+	* Expressions/MeExpression.vb,
+	  Expressions/PropertyGroupToValueExpression.vb,
+	  Expressions/MyBaseExpression.vb, Expressions/MyClassExpression.vb:
+	  Implemented AsString.
+	* Expressions/Conversions/CStrExpression.vb,
+	  Expressions/BinaryExpressions/ConcatExpression.vb: Implement Char() to
+	  String conversion.
+	* Expressions/CompilerGeneratedExpression.vb: Emit RHSExpression if
+	  necessary.
+	* Expressions/MemberAccessExpression.vb: Resolve: Lookup the member
+	  according to what the current type can actually see. Implement a few
+	  error messages if no members are found. Don't allow access to an private
+	  field from outside the class.
+	* Expressions/SimpleNameExpression.vb, Enums/Enums.vb,
+	  Members/NamedBaseList.vb, Members/MemberDeclarations.vb,
+	  Members/OperatorDeclaration.vb, Parser/Parser.vb,
+	  Descriptors/ArrayTypeDescriptor.vb, Descriptors/TypeDescriptor.vb,
+	  Descriptors/GenericPropertyDescriptor.vb,
+	  ConditionalCompilation/ConditionalConstants.vb, Tokens/Token.vb,
+	  Types/ImportsClauses.vb, Types/TypeNameResolutionInfo.vb,
+	  TypeDeclarations/PartialTypeDeclaration.vb,
+	  TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb, General/Helper.vb,
+	  General/Namespaces.vb, General/Namespace.vb, General/TypeCache.vb,
+	  General/Index.vb, General/Compiler.vb, General/TypeManager.vb,
+	  General/Defines.vb, General/NamespaceDictionary.vb, General/Define.vb,
+	  General/TypeDictionary.vb: Moved StringComparer from NameResolution to
+	  Helper.
+	* Expressions/BinaryExpressions/BinarySubExpression.vb,
+	  Expressions/BinaryExpressions/MultExpression.vb: API fix.
+	* Expressions/BinaryExpressions/BinaryExpression.vb: Implement Char() <->
+	  String conversion.
+	* Expressions/InvocationOrIndexExpression.vb: Implement 30471.
+	* Expressions/VariableExpression.vb: Added.
+	* Expressions/Classifications/VariableClassification.vb: Move some code to
+	  VariableExpression.
+	* Statements/CallStatement.vb: Set the parent of the target to the
+	  statement.
+	* Statements/AssignStatements/AssignmentStatement.vb: Set parent of the
+	  sides to the statement.
+	* Statements/AssignStatements/CompoundAssignmentStatement.vb: If the
+	  compound assignment is an indexed statement, store the indices in
+	  temporary variables to avoid executing their expressions twice.
+	* Statements/AddOrRemoveHandlerStatement.vb: Only generate the event code if
+	  the handler isn't shared.
+	* vbnc.vbproj, General/AssemblyInfo.vb: Updated.
+	* Members/MethodResolver.vb: Distinguish between 30057 and 30455. Minor
+	  array index fix for named argument.
+	* Members/Modifiers.vb: An enum field is public.
+	* Members/VariableDeclaration.vb: Move resolution of the identifier's array
+	  modifiers to ResolveTypeReferences.
+	* Parser/ParsedObject.vb: Remove redundant Conditional attributes.
+	* Descriptors/GenericTypeDescriptor.vb: GetGenericTypeDefinition: never
+	  return nothing.
+	* Descriptors/MethodDescriptor.vb, Descriptors/EventDescriptor.vb,
+	  Descriptors/FieldDescriptor.vb, Descriptors/ConstructorDescriptor.vb:
+	  Implement Equals.
+	* Descriptors/TypeParameterDescriptor.vb: Moved StringComparer from
+	  NameResolution to Helper and implement Equals.
+	* Code/CodeBlock.vb: Added AddStatement(After|Before), used to insert
+	  statements at will.
+	* TypeDeclarations/ClassDeclaration.vb: When getting the base class' default
+	  constructor, make sure the base class' implicit members have been
+	  created. Moved StringComparer from NameResolution to Helper.
+	* General/Report.vb: Remove unused function.
+	* General/TypeResolution.vb: Added
+	  GetIntrinsicTypesImplicitlyConvertibleFrom: does exactly what the name
+	  says it should do.
+	* General/TypeConverter.vb: Added a *DefinedTypes which describes for which
+	  types an operator is defined.
+	* General/MemberCache.vb: Redo member cache: we now cache all members
+	  according to the visibility required to see them.
+	* General/NameResolution.vb: Deleted.
+	* General/Messages.vb: Implemented two more messages.
+
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/Errors.resx, Resources/Source.xml: Added more messages.
 
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 

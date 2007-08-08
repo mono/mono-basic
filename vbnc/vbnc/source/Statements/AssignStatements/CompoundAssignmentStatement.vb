@@ -28,13 +28,61 @@ Public MustInherit Class CompoundAssignmentStatement
         MyBase.new(Parent)
     End Sub
 
+    Private Function CheckIndexedStatement(ByVal Info As ResolveInfo, ByVal InvocationExpression As InvocationOrIndexExpression) As Boolean
+        Dim result As Boolean = True
+
+        If InvocationExpression Is Nothing Then Return result
+
+        If InvocationExpression.Classification.IsVariableClassification AndAlso InvocationExpression.Expression.ExpressionType.IsArray Then
+            result = ResolveIndexedStatement(Info, InvocationExpression) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Private Function ResolveIndexedStatement(ByVal Info As ResolveInfo, ByVal InvocationExpression As InvocationOrIndexExpression) As Boolean
+        Dim result As Boolean = True
+        Dim block As CodeBlock = Me.FindFirstParent(Of CodeBlock)()
+
+        For i As Integer = 0 To InvocationExpression.ArgumentList.Count - 1
+            Dim arg As Argument = InvocationExpression.ArgumentList(i)
+            Dim exp As Expression = arg.Expression
+            Dim newExp As VariableExpression
+            Dim varDecl As VariableDeclaration
+            Dim stmt As AssignmentStatement
+
+            varDecl = New VariableDeclaration(arg)
+            varDecl.Init(Nothing, Nothing, "VB$tmp", exp.ExpressionType)
+            block.AddVariable(varDecl)
+
+            newExp = New VariableExpression(arg, varDecl)
+
+            stmt = New AssignmentStatement(Me.Parent)
+            stmt.Init(newExp, exp)
+            block.AddStatementBefore(stmt, Me)
+
+            arg.Expression = newExp
+        Next
+
+        If InvocationExpression.Classification.IsVariableClassification Then
+            result = CheckIndexedStatement(Info, TryCast(InvocationExpression.Classification.AsVariableClassification.ArrayVariable, InvocationOrIndexExpression)) AndAlso result
+        End If
+
+        Return result
+    End Function
+
     Public NotOverridable Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
         result = MyBase.ResolveStatement(Info) AndAlso result
+
+        If result = False Then Return result
+
+        result = CheckIndexedStatement(Info, TryCast(LSide, InvocationOrIndexExpression)) AndAlso result
+
         m_CompoundExpression = ResolveStatement(LSide, RSide)
 
-        result = m_CompoundExpression.ResolveExpression(info) AndAlso result
+        result = m_CompoundExpression.ResolveExpression(Info) AndAlso result
 
         m_CompoundExpression = Helper.CreateTypeConversion(Me, m_CompoundExpression, LSide.ExpressionType, result)
 

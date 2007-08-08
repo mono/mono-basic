@@ -51,7 +51,7 @@ Public Class LoadLocalExpression
     Inherits CompilerGeneratedExpression
 
     Private m_Local As LocalBuilder
-
+    
     Sub New(ByVal Parent As ParsedObject, ByVal Local As LocalBuilder)
         MyBase.New(Parent, Nothing, Local.LocalType)
         MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
@@ -61,6 +61,8 @@ Public Class LoadLocalExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
+        Helper.Assert(m_Local IsNot Nothing)
+
         If Info.IsRHS Then
             If Info.DesiredType.IsByRef Then
                 Emitter.EmitLoadVariableLocation(Info, m_Local)
@@ -68,6 +70,9 @@ Public Class LoadLocalExpression
                 Emitter.EmitLoadVariable(Info, m_Local)
             End If
         Else
+            If Info.RHSExpression IsNot Nothing Then
+                result = Info.RHSExpression.GenerateCode(Info.Clone(True, , m_Local.LocalType)) AndAlso result
+            End If
             Emitter.EmitStoreVariable(Info, m_Local)
         End If
 

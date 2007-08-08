@@ -200,8 +200,10 @@ Public Class ConstructorDescriptor
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
         Dim result As Boolean
-        Helper.NotImplemented()
+
+        result = obj Is Me
         DumpMethodInfo(result)
+
         Return result
     End Function
 

@@ -272,7 +272,7 @@ Public Class ArrayTypeDescriptor
             m_ArrayType = tmp.MakeArrayType(m_Ranks)
         End If
         Compiler.TypeManager.RegisterReflectionType(m_ArrayType, Me)
-        'Helper.Assert(NameResolution.CompareName(Me.FullName, m_ArrayType.FullName))
+        'Helper.Assert(Helper.CompareName(Me.FullName, m_ArrayType.FullName))
     End Sub
 
     Public Overrides ReadOnly Property TypeInReflection() As System.Type

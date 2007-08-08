@@ -23,6 +23,12 @@ Public Class PropertyGroupToValueExpression
     Private m_PropertyGroup As PropertyGroupClassification
     Private m_ExpressionType As Type
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return m_PropertyGroup.InstanceExpression.AsString & "." & m_PropertyGroup.Group(0).Name
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             Return m_PropertyGroup.IsConstant

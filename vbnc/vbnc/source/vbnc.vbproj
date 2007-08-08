@@ -314,6 +314,7 @@
     <Compile Include="Expressions\PropertyGroupToPropertyAccessExpression.vb" />
     <Compile Include="Expressions\PropertyGroupToValueExpression.vb" />
     <Compile Include="Expressions\SimpleExpression.vb" />
+    <Compile Include="Expressions\VariableExpression.vb" />
     <Compile Include="Expressions\VariableToValueExpression.vb" />
     <Compile Include="General\Dumper.vb" />
     <Compile Include="General\DumperXML.vb" />
@@ -732,7 +733,6 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="app.config" />
-    <Compile Include="General\NameResolution.vb" />
     <Compile Include="General\TypeCache.vb" />
     <Compile Include="Members\MemberParameter.vb" />
     <Compile Include="Members\MemberParameters.vb" />

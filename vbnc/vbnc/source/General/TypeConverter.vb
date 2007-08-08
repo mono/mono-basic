@@ -39,6 +39,7 @@ Public Class TypeConverter
     '17= - 17             -
     '18= S String         S
 
+    Public Shared LikeDefinedTypes As String = "S"
     Public Shared LikeResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBBBBBBBBBBBBBB-B" & _
@@ -59,7 +60,6 @@ Public Class TypeConverter
             "XBXDDDDDDDDDDDDDD-D" & _
             "-------------------" & _
             "XBXDDDDDDDDDDDDDD-D"
-
     Public Shared LikeOperandType As String = "" & _
                 "XXXXXXXXXXXXXXXXX-X" & _
                 "XBXBBBBBBBBBBBBBB-B" & _
@@ -82,7 +82,7 @@ Public Class TypeConverter
                 "XBXSSSSSSSSSSSSSS-S"
 
     Public Shared ConcatResultType As String = LikeOperandType
-
+    Public Shared ConcatDefinedTypes As String = "S"
     Public Shared ConcatOperandType As String = LikeOperandType
 
     Public Shared ModResultType As String = "" & _
@@ -105,6 +105,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
+    Public Shared ModDefinedTypes As String = "FGHIJKLMNOP"
 
     Public Shared IntDivResultTypes As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -126,6 +127,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXLXLLLLLLLLLLLX-L"
+    Public Shared IntDivDefinedTypes As String = "FGHIJKLM"
 
     Public Shared RealDivResultTypes As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -147,6 +149,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
+    Public Shared RealDivDefinedTypes As String = "NOP"
 
     Public Shared AddResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -168,6 +171,7 @@ Public Class TypeConverter
             "XBXXXXXXXXXXXXXXX-S" & _
             "-------------------" & _
             "XBXOSOOOOOOOOOOOS-S"
+    Public Shared AddDefinedTypes As String = "FGHIJKLMNOPS"
 
     Public Shared SubResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -189,8 +193,10 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
+    Public Shared SubDefinedTypes As String = "FGHIJKLMNOP"
 
     Public Shared MultResultType As String = SubResultType
+    Public Shared MultDefinedTypes As String = "FGHIJKLMNOP"
 
     Public Shared ShortcircuitResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -212,6 +218,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXDXDDDDDDDDDDDX-D"
+    Public Shared ShortcircuitDefinedTypes As String = "D"
 
     Public Shared LogicalOperatorResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -233,8 +240,9 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXDXLLLLLLLLLLLX-L"
+    Public Shared LogicalDefinedTypes As String = "DFGHIJKLM"
 
-    Public Shared BinaryOperandTypes As String = _
+    Public Shared RelationalOperandTypes As String = _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBBBBBBBBBBBBBB-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
@@ -254,6 +262,7 @@ Public Class TypeConverter
             "XBXXXXXXXXXXXXXXQ-Q" & _
             "-------------------" & _
             "XBXDSOOOOOOOOOOOQ-S"
+    Public Shared RelationalDefinedTypes As String = "DEFGHIJKLMNOPQS"
 
 
     Public Shared ExponentResultTypes As String = _
@@ -276,15 +285,18 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
+    Public Shared ExponentDefinedTypes As String = "O"
 
     Public Shared NotOperatorResultType As String = "XBXDXFGHIJKLMLLLX-L"
+    Public Shared NotDefinedTypes As String = "DFGHIJKLM"
 
     Public Shared UnaryPlusResultType As String = "XBXFXFGHIJKLMNOPX-O"
+    Public Shared UnaryPlusDefinedTypes As String = "FGHIJKLMNOP"
 
     Public Shared UnaryMinusResultType As String = "XBXFXFHHJJLLPNOPX-O"
+    Public Shared UnaryMinusDefinedTypes As String = "FHJLNOP"
 
-    Public Shared ShiftResultType2 As String = "XBXFXFGHIJKLMLLLX-L"
-
+    Public Shared ShiftDefinedTypes As String = "FGHIJKLM"
     Public Shared ShiftResultType As String = _
  "XXXXXXXXXXXXXXXXX-X" & _
  "XBXFXFGHIJKLMLLLX-L" & _
@@ -393,27 +405,27 @@ Public Class TypeConverter
     End Function
 
     Shared Function GetEqualsOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetLTOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetGTOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetLEOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetGEOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetNotEqualsOperandType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        Return GetResultType(op1, op2, BinaryOperandTypes)
+        Return GetResultType(op1, op2, RelationalOperandTypes)
     End Function
 
     Shared Function GetShiftResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
@@ -611,7 +623,108 @@ Public Class TypeConverter
         End Select
     End Function
 
-    Shared Function GetBinaryOperandType(ByVal op As KS, ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
+#If GENERATOR = False OrElse DEVGENERATOR Then
+    Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Type, ByVal op2 As Type) As TypeCode
+        Dim result As TypeCode
+
+        result = GetBinaryOperandType(op, Helper.GetTypeCode(Compiler, op1), Helper.GetTypeCode(Compiler, op2))
+
+        If result = TypeCode.Object Then
+            Dim isIntrinsic1, isIntrinsic2 As Boolean
+            Dim conv1, conv2 As TypeCode()
+            Dim defs As String
+
+            isIntrinsic1 = Helper.IsIntrinsicType(Compiler, op1)
+            isIntrinsic2 = Helper.IsIntrinsicType(Compiler, op2)
+
+            If isIntrinsic1 = isIntrinsic2 Then Return result
+
+            defs = GetBinaryOperandDefinedTypes(op)
+
+            Dim conversions As New Generic.List(Of TypeCode)
+            If isIntrinsic1 = False Then
+                conv1 = TypeResolution.GetIntrinsicTypesImplicitlyConvertibleFrom(Compiler, op1)
+                If conv1 IsNot Nothing Then
+                    For i As Integer = 0 To conv1.Length - 1
+                        Dim chr As Char = GetCharOfTypeCode(conv1(i))
+                        If defs.IndexOf(chr) >= 0 Then conversions.Add(conv1(i))
+                    Next
+                    If conversions.Count = 1 Then
+                        result = GetBinaryOperandType(op, conversions(0), Helper.GetTypeCode(Compiler, op2))
+                    End If
+                End If
+            End If
+            If isIntrinsic2 = False Then
+                conv2 = TypeResolution.GetIntrinsicTypesImplicitlyConvertibleFrom(Compiler, op2)
+                If conv2 IsNot Nothing Then
+                    For i As Integer = 0 To conv2.Length - 1
+                        Dim chr As Char = GetCharOfTypeCode(conv2(i))
+                        If defs.IndexOf(chr) >= 0 Then conversions.Add(conv2(i))
+                    Next
+                    If conversions.Count = 1 Then
+                        result = GetBinaryOperandType(op, Helper.GetTypeCode(Compiler, op1), conversions(0))
+                    End If
+                End If
+            End If
+
+        End If
+
+        Return result
+    End Function
+#End If
+
+    Shared Function GetBinaryOperandDefinedTypes(ByVal op As KS) As String
+        Select Case op
+            Case KS.And
+                Return LogicalDefinedTypes
+            Case KS.AndAlso
+                Return ShortcircuitDefinedTypes
+            Case KS.Or
+                Return LogicalDefinedTypes
+            Case KS.OrElse
+                Return ShortcircuitDefinedTypes
+            Case KS.Xor
+                Return LogicalDefinedTypes
+            Case KS.Add
+                Return AddDefinedTypes
+            Case KS.Minus
+                Return SubDefinedTypes
+            Case KS.Mult
+                Return MultDefinedTypes
+            Case KS.RealDivision
+                Return RealDivDefinedTypes
+            Case KS.IntDivision
+                Return IntDivDefinedTypes
+            Case KS.Power
+                Return ExponentDefinedTypes
+            Case KS.Concat
+                Return ConcatDefinedTypes
+            Case KS.GE
+                Return RelationalDefinedTypes
+            Case KS.GT
+                Return RelationalDefinedTypes
+            Case KS.LE
+                Return RelationalDefinedTypes
+            Case KS.LT
+                Return RelationalDefinedTypes
+            Case KS.Equals
+                Return RelationalDefinedTypes
+            Case KS.NotEqual
+                Return RelationalDefinedTypes
+            Case KS.ShiftLeft, KS.ShiftRight
+                Return ShiftDefinedTypes
+            Case KS.Mod
+                Return ModDefinedTypes
+            Case KS.Like
+                Return LikeDefinedTypes
+            Case KS.Is, KS.IsNot
+                Return String.Empty
+            Case Else
+                Throw New NotImplementedException()
+        End Select
+    End Function
+
+    Private Shared Function GetBinaryOperandType(ByVal op As KS, ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
         Select Case op
             Case KS.And
                 Return GetAndResultType(op1, op2)
@@ -672,8 +785,16 @@ Public Class TypeConverter
         If chr = "X"c Then
             Return Nothing
         Else
-            Return CType(Microsoft.VisualBasic.Asc(chr) - Microsoft.VisualBasic.Asc("A"), TypeCode)
+            Return GetTypeCodeOfChar(chr)
         End If
+    End Function
+
+    Private Shared Function GetTypeCodeOfChar(ByVal chr As Char) As TypeCode
+        Return CType(Microsoft.VisualBasic.Asc(chr) - Microsoft.VisualBasic.Asc("A"c), TypeCode)
+    End Function
+
+    Private Shared Function GetCharOfTypeCode(ByVal code As TypeCode) As Char
+        Return Microsoft.VisualBasic.Chr(code + Microsoft.VisualBasic.Asc("A"c))
     End Function
 
     Private Shared Function GetResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode, ByVal array As String) As TypeCode

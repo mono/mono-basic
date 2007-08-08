@@ -281,8 +281,9 @@ Public Class MethodDescriptor
             result = False
         End If
         DumpMethodInfo(result)
-        Return MyBase.Equals(obj)
+        Return result
     End Function
+
     Public Overrides Function GetGenericArguments() As System.Type()
         Dim result As Type()
 

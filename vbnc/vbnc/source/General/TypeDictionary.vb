@@ -23,7 +23,7 @@ Public Class TypeDictionary
     Public Shared ReadOnly EmptyDictionary As New TypeDictionary()
 
     Sub New()
-        MyBase.new(NameResolution.StringComparer)
+        MyBase.new(Helper.StringComparer)
     End Sub
 
     Shadows Sub Add(ByVal Type As Type)
@@ -79,7 +79,7 @@ Public Class CecilTypeDictionary
     Public Shared ReadOnly EmptyDictionary As New CecilTypeDictionary()
 
     Sub New()
-        MyBase.new(NameResolution.StringComparer)
+        MyBase.new(Helper.StringComparer)
     End Sub
 
     Shadows Sub Add(ByVal Type As Mono.Cecil.TypeDefinition)

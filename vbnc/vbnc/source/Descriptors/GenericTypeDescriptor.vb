@@ -299,6 +299,7 @@ Public Class GenericTypeDescriptor
 
         If result.IsGenericTypeDefinition = False Then
             result = result.GetGenericTypeDefinition
+            If result Is Nothing Then result = m_OpenType
         End If
 
         DumpMethodInfo(result)

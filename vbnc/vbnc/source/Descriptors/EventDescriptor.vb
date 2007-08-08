@@ -120,8 +120,12 @@ Public Class EventDescriptor
     End Property
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
-        Helper.NotImplemented() : Return MyBase.Equals(obj)
+        Dim result As Boolean
+        result = obj Is Me
+        DumpMethodInfo(result)
+        Return result
     End Function
+
     Public Overrides Function GetHashCode() As Integer
         Helper.NotImplemented() : Return MyBase.GetHashCode()
     End Function

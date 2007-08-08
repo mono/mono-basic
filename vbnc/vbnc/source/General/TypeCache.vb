@@ -258,7 +258,7 @@ Public MustInherit Class TypeCacheBase
             Dim members As MethodInfo()
             members = tD.GetMethods(BindingFlags.Public Or BindingFlags.Static Or BindingFlags.Instance Or BindingFlags.ExactBinding Or BindingFlags.NonPublic)
             For i As Integer = 0 To members.Length - 1
-                If NameResolution.CompareNameOrdinal(members(i).Name, Name) Then
+                If Helper.CompareNameOrdinal(members(i).Name, Name) Then
                     Helper.Assert(result Is Nothing)
                     result = members(i)
                 End If
@@ -296,7 +296,7 @@ Public MustInherit Class TypeCacheBase
         If Type Is Nothing Then Return Nothing
         Dim result As Mono.Cecil.TypeDefinition = Nothing
         For Each item As Mono.Cecil.TypeDefinition In Type.NestedTypes
-            If NameResolution.CompareNameOrdinal(item.Name, Name) Then
+            If Helper.CompareNameOrdinal(item.Name, Name) Then
                 result = item
                 Exit For
             End If
@@ -350,7 +350,7 @@ Public MustInherit Class TypeCacheBase
         End If
 
         If Name.StartsWith(".") Then
-            result = Type.Constructors.GetConstructor(NameResolution.CompareNameOrdinal(Name, ".cctor"), Types)
+            result = Type.Constructors.GetConstructor(Helper.CompareNameOrdinal(Name, ".cctor"), Types)
         Else
             result = Type.Methods.GetMethod(Name, Types)
         End If

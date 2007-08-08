@@ -50,7 +50,7 @@ Public MustInherit Class ParsedObject
     End Sub
 
     ReadOnly Property CodeResolved() As Boolean
-        <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Get
+        <Diagnostics.DebuggerHidden()> Get
 #If DEBUG Then
 
             Return m_CodeResolved IsNot Nothing
@@ -59,7 +59,7 @@ Public MustInherit Class ParsedObject
     End Property
 
     ReadOnly Property TypeReferencesResolved() As Boolean
-        <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Get
+        <Diagnostics.DebuggerHidden()> Get
 #If DEBUG Then
 
             Return m_TypeReferencesResolved IsNot Nothing

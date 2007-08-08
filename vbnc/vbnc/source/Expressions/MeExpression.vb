@@ -24,6 +24,12 @@
 Public Class MeExpression
     Inherits InstanceExpression
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return "Me"
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub

@@ -419,7 +419,7 @@ Public Class Token
     End Function
 
     Public Overloads Function Equals(ByVal Identifier As String) As Boolean
-        Return Me.IsIdentifier AndAlso NameResolution.CompareName(Me.Identifier, Identifier)
+        Return Me.IsIdentifier AndAlso Helper.CompareName(Me.Identifier, Identifier)
     End Function
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean

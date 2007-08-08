@@ -19,12 +19,49 @@
 
 Imports System.Collections.Generic
 
+Public Enum MemberVisibility
+    ''' <summary>
+    ''' Type references another type in another assembly
+    ''' </summary>
+    ''' <remarks></remarks>
+    [Public] = 1 'MethodAttributes.Public
+    [Private] = 2 'MethodAttributes.Private
+    [Friend] = 4 'MethodAttributes.Assembly
+    [Protected] = 8 'MethodAttributes.Family
+    ''' <summary>
+    ''' Type inherits from another type in another assembly.
+    ''' </summary>
+    ''' <remarks></remarks>
+    PublicProtected = [Public] Or [Protected]
+    ''' <summary>
+    ''' Type inherits from another type in the same assembly
+    ''' </summary>
+    ''' <remarks></remarks>
+    PublicProtectedFriend = [Public] Or [Protected] Or [Friend]
+    ''' <summary>
+    ''' Type references another type in the same assembly
+    ''' </summary>
+    ''' <remarks></remarks>
+    PublicFriend = [Public] Or [Friend]
+    ''' <summary>
+    ''' Both types are the same.
+    ''' </summary>
+    ''' <remarks></remarks>
+    All = [Public] Or [Friend] Or [Protected] Or [Private]
+End Enum
+
 Public Class MemberCache
     Private m_Compiler As Compiler
     Private m_Cache As New MemberCacheEntries
     Private m_CacheInsensitive As MemberCacheEntries
     Private m_FlattenedCache As MemberCacheEntries
     Private m_FlattenedCacheInsensitive As MemberCacheEntries
+
+    Private m_Cache2 As New MemberVisibilityEntries
+    Private m_CacheInsensitive2 As MemberVisibilityEntries
+    Private m_FlattenedCache2 As MemberVisibilityEntries
+    Private m_FlattenedCacheInsensitive2 As MemberVisibilityEntries
+
     Private m_Type As Type
     Private m_Base As MemberCache
 
@@ -54,6 +91,12 @@ Public Class MemberCache
         End Get
     End Property
 
+    ReadOnly Property FlattenedCache2() As MemberVisibilityEntries
+        Get
+            Return m_FlattenedCache2
+        End Get
+    End Property
+
     Sub Load()
         Dim members() As MemberInfo
 
@@ -61,12 +104,65 @@ Public Class MemberCache
         'If m_Type.Name = "ParameterList" Then Helper.StopIfDebugging()
         members = m_Type.GetMembers(BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.DeclaredOnly)
 
+        Dim allEntries As MemberCacheEntries = m_Cache
+        Dim publicEntries As New MemberCacheEntries()
+        Dim publicFriendEntries As New MemberCacheEntries
+        Dim publicProtectedEntries As New MemberCacheEntries
+        Dim publicProtectedFriendEntries As New MemberCacheEntries
+
+        Dim isDefinedHere As Boolean = Compiler.Assembly.IsDefinedHere(m_Type)
+
+        Dim addTo(MemberVisibility.All) As Boolean
+        Dim caches(addTo.Length - 1) As MemberCacheEntries
+
+        caches(MemberVisibility.All) = allEntries
+        caches(MemberVisibility.Public) = publicEntries
+        caches(MemberVisibility.PublicFriend) = publicfriendEntries
+        caches(MemberVisibility.PublicProtectedFriend) = publicprotectedfriendEntries
+        caches(MemberVisibility.PublicProtected) = publicprotectedEntries
+
+        m_Cache2.Add(MemberVisibility.All, allEntries)
+        m_Cache2.Add(MemberVisibility.PublicProtectedFriend, publicProtectedFriendEntries)
+        m_Cache2.Add(MemberVisibility.PublicProtected, publicProtectedEntries)
+        m_Cache2.Add(MemberVisibility.PublicFriend, publicFriendEntries)
+        m_Cache2.Add(MemberVisibility.Public, publicEntries)
+
         For Each member As MemberInfo In members
-            If m_Cache.ContainsKey(member.Name) = False Then
-                m_Cache.Add(New MemberCacheEntry(member))
-            Else
-                m_Cache(member.Name).Members.Add(member)
+            Dim isPublic, isFriend, isProtected, isPrivate As Boolean
+
+            isPublic = Helper.IsPublic(member)
+            isPrivate = Helper.IsPrivate(member)
+            isFriend = Helper.IsFriendOrProtectedFriend(member)
+            isProtected = Helper.IsProtectedOrProtectedFriend(member)
+
+            If isDefinedHere = False AndAlso isPublic = False AndAlso isProtected = False Then
+                'Don't load private and friend members in other assemblies.
+                Continue For
             End If
+
+            addTo(MemberVisibility.All) = True
+            addTo(MemberVisibility.PublicFriend) = isPublic OrElse isFriend
+            addTo(MemberVisibility.PublicProtected) = isPublic OrElse isProtected
+            addTo(MemberVisibility.PublicProtectedFriend) = isPublic OrElse isProtected OrElse isFriend
+            addTo(MemberVisibility.Public) = isPublic
+
+            For i As Integer = 0 To addTo.Length - 1
+                If addTo(i) Then
+                    Dim entries As MemberCacheEntries
+                    Dim cache As MemberCacheEntry = Nothing
+                    entries = caches(i)
+                    If entries.TryGetValue(member.Name, cache) Then
+                        cache.Members.Add(member)
+                    Else
+                        entries.Add(New MemberCacheEntry(member))
+                    End If
+                End If
+            Next
+            'If m_Cache.ContainsKey(member.Name) = False Then
+            '    m_Cache.Add(New MemberCacheEntry(member))
+            'Else
+            '    m_Cache(member.Name).Members.Add(member)
+            'End If
         Next
     End Sub
 
@@ -87,6 +183,7 @@ Public Class MemberCache
                 FlattenWith(m_Compiler.TypeManager.GetCache(Compiler.TypeCache.System_Object))
             Else
                 m_FlattenedCache = m_Cache
+                m_FlattenedCache2 = m_Cache2
             End If
 
             Return
@@ -94,6 +191,7 @@ Public Class MemberCache
 
         If base.FlattenedCache Is Nothing Then
             m_FlattenedCache = m_Cache
+            m_FlattenedCache2 = m_Cache2
             Return
         End If
 
@@ -104,18 +202,92 @@ Public Class MemberCache
         If m_FlattenedCache Is Nothing Then
             m_FlattenedCache = New MemberCacheEntries(m_Cache)
         End If
-        For Each cache As MemberCacheEntry In MemberCache.FlattenedCache.Values
-            For i As Integer = 0 To cache.Members.Count - 1
-                Dim member As MemberInfo = cache.Members(i)
-                If Not IsHidden(member) Then
-                    If m_FlattenedCache.ContainsKey(cache.Name) = False Then
-                        m_FlattenedCache.Add(New MemberCacheEntry(member))
-                    ElseIf m_FlattenedCache(cache.Name).Members.Contains(member) = False Then
-                        m_FlattenedCache(cache.Name).Members.Add(member)
+
+        Dim allEntries As MemberCacheEntries = m_FlattenedCache
+        Dim publicEntries As MemberCacheEntries
+        Dim publicFriendEntries As MemberCacheEntries
+        Dim publicProtectedEntries As MemberCacheEntries
+        Dim publicProtectedFriendEntries As MemberCacheEntries
+
+        If m_FlattenedCache2 Is Nothing Then
+            m_FlattenedCache2 = New MemberVisibilityEntries()
+            publicEntries = New MemberCacheEntries(m_Cache2(MemberVisibility.Public))
+            publicFriendEntries = New MemberCacheEntries(m_Cache2(MemberVisibility.PublicFriend))
+            publicProtectedEntries = New MemberCacheEntries(m_Cache2(MemberVisibility.PublicProtected))
+            publicProtectedFriendEntries = New MemberCacheEntries(m_Cache2(MemberVisibility.PublicProtectedFriend))
+
+            m_FlattenedCache2.Add(MemberVisibility.All, allEntries)
+            m_FlattenedCache2.Add(MemberVisibility.PublicProtectedFriend, publicProtectedFriendEntries)
+            m_FlattenedCache2.Add(MemberVisibility.PublicProtected, publicProtectedEntries)
+            m_FlattenedCache2.Add(MemberVisibility.PublicFriend, publicFriendEntries)
+            m_FlattenedCache2.Add(MemberVisibility.Public, publicEntries)
+        Else
+            publicEntries = m_FlattenedCache2(MemberVisibility.Public)
+            publicFriendEntries = m_FlattenedCache2(MemberVisibility.PublicFriend)
+            publicProtectedEntries = m_FlattenedCache2(MemberVisibility.PublicProtected)
+            publicProtectedFriendEntries = m_FlattenedCache2(MemberVisibility.PublicProtectedFriend)
+        End If
+
+        Dim isFriendAccessible As Boolean = Compiler.Assembly.IsDefinedHere(m_Type)
+
+        Dim addTo(MemberVisibility.All) As Boolean
+        Dim caches(addTo.Length - 1) As MemberCacheEntries
+
+        caches(MemberVisibility.All) = allEntries
+        caches(MemberVisibility.Public) = publicEntries
+        caches(MemberVisibility.PublicFriend) = publicFriendEntries
+        caches(MemberVisibility.PublicProtectedFriend) = publicProtectedFriendEntries
+        caches(MemberVisibility.PublicProtected) = publicProtectedEntries
+
+        For Each entry As KeyValuePair(Of MemberVisibility, MemberCacheEntries) In MemberCache.FlattenedCache2
+            For Each cache As MemberCacheEntry In entry.Value.Values
+                For i As Integer = 0 To cache.Members.Count - 1
+                    Dim member As MemberInfo = cache.Members(i)
+                    If Not IsHidden(member, entry.Key) Then
+                        Helper.StopIfDebugging(member.Name = "Equals" AndAlso m_Type.Name = "KS")
+                        Dim isPublic, isFriend, isProtected, isPrivate As Boolean
+                        isPublic = Helper.IsPublic(member)
+                        isPrivate = Helper.IsPrivate(member)
+                        isFriend = Helper.IsFriendOrProtectedFriend(member)
+                        isProtected = Helper.IsProtectedOrProtectedFriend(member)
+                        addTo(MemberVisibility.All) = True
+                        addTo(MemberVisibility.PublicFriend) = isPublic OrElse isFriend
+                        addTo(MemberVisibility.PublicProtected) = isPublic OrElse isProtected
+                        addTo(MemberVisibility.PublicProtectedFriend) = isPublic OrElse isProtected OrElse isFriend
+                        addTo(MemberVisibility.Public) = isPublic
+
+                        For j As Integer = 0 To addTo.Length - 1
+                            If addTo(j) = False Then Continue For
+                            Dim entries As MemberCacheEntries = caches(j)
+                            If entries.ContainsKey(cache.Name) = False Then
+                                entries.Add(New MemberCacheEntry(member))
+                            ElseIf entries(cache.Name).Members.Contains(member) = False Then
+                                entries(cache.Name).Members.Add(member)
+                            End If
+                        Next
+                        'If m_FlattenedCache.ContainsKey(cache.Name) = False Then
+                        '    m_FlattenedCache.Add(New MemberCacheEntry(member))
+                        'ElseIf m_FlattenedCache(cache.Name).Members.Contains(member) = False Then
+                        '    m_FlattenedCache(cache.Name).Members.Add(member)
+                        'End If
                     End If
-                End If
+                Next
             Next
         Next
+
+
+        'For Each cache As MemberCacheEntry In MemberCache.FlattenedCache.Values
+        '    For i As Integer = 0 To cache.Members.Count - 1
+        '        Dim member As MemberInfo = cache.Members(i)
+        '        If Not IsHidden(member) Then
+        '            If m_FlattenedCache.ContainsKey(cache.Name) = False Then
+        '                m_FlattenedCache.Add(New MemberCacheEntry(member))
+        '            ElseIf m_FlattenedCache(cache.Name).Members.Contains(member) = False Then
+        '                m_FlattenedCache(cache.Name).Members.Add(member)
+        '            End If
+        '        End If
+        '    Next
+        'Next
     End Sub
 
     Private Sub Log(ByVal Msg As String)
@@ -127,11 +299,11 @@ Public Class MemberCache
         Compiler.Report.WriteLine(Msg)
     End Sub
 
-    Function IsHidden(ByVal baseMember As MemberInfo) As Boolean
+    Private Function IsHidden(ByVal baseMember As MemberInfo, ByVal Visibility As MemberVisibility) As Boolean
         Dim current As MemberCacheEntry
         Dim memberParameterTypes As Type() = Nothing
 
-        current = Lookup(baseMember.Name)
+        current = Lookup(baseMember.Name, Visibility)
 
         If current Is Nothing Then
 #If DEBUG Then
@@ -210,9 +382,48 @@ Public Class MemberCache
     ''' <param name="Name"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    Function LookupFlattened(ByVal Name As String, ByVal From As Type) As MemberCacheEntry
+        Return LookupFlattened(Name, Helper.GetVisibility(Compiler, From, m_Type))
+    End Function
+
+    Function LookupFlattened(ByVal Name As String, ByVal Visibility As MemberVisibility) As MemberCacheEntry
+        If m_FlattenedCacheInsensitive2 Is Nothing Then
+            m_FlattenedCacheInsensitive2 = New MemberVisibilityEntries()
+
+            For Each item As KeyValuePair(Of MemberVisibility, MemberCacheEntries) In m_FlattenedCache2
+                Dim cacheinsensitive As New MemberCacheEntries(item.Value.Count, Helper.StringComparer)
+                m_FlattenedCacheInsensitive2.Add(item.Key, cacheinsensitive)
+                For Each item2 As KeyValuePair(Of String, MemberCacheEntry) In item.Value
+                    Dim current As MemberCacheEntry = Nothing
+                    If cacheinsensitive.TryGetValue(item2.Key, current) = False Then
+                        current = New MemberCacheEntry(item2.Key)
+                        cacheinsensitive.Add(current)
+                    End If
+                    current.Members.AddRange(item2.Value.Members)
+                Next
+            Next
+        End If
+
+        Dim entries As MemberCacheEntries = Nothing
+        Dim value As MemberCacheEntry = Nothing
+        If m_FlattenedCacheInsensitive2.TryGetValue(Visibility, entries) Then
+            If entries.TryGetValue(Name, value) Then
+                Return value
+            End If
+        End If
+
+        Return Nothing
+    End Function
+    ''' <summary>
+    ''' Looks up the name in the flattened cache.
+    ''' Looks case-insensitively
+    ''' </summary>
+    ''' <param name="Name"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Function LookupFlattened(ByVal Name As String) As MemberCacheEntry
         If m_FlattenedCacheInsensitive Is Nothing Then
-            m_FlattenedCacheInsensitive = New MemberCacheEntries(m_FlattenedCache.Count, NameResolution.StringComparer)
+            m_FlattenedCacheInsensitive = New MemberCacheEntries(m_FlattenedCache.Count, Helper.StringComparer)
             For Each item As KeyValuePair(Of String, MemberCacheEntry) In m_FlattenedCache
                 Dim current As MemberCacheEntry = Nothing
                 If m_FlattenedCacheInsensitive.TryGetValue(item.Key, current) = False Then
@@ -258,7 +469,7 @@ Public Class MemberCache
         Dim tmp As MemberCacheEntry
         tmp = LookupFlattened(Name)
         If tmp IsNot Nothing Then
-            result.AddRange(tmp.members)
+            result.AddRange(tmp.Members)
         End If
         Return result
     End Function
@@ -272,7 +483,7 @@ Public Class MemberCache
     ''' <remarks></remarks>
     Function Lookup(ByVal Name As String) As MemberCacheEntry
         If m_CacheInsensitive Is Nothing Then
-            m_CacheInsensitive = New MemberCacheEntries(NameResolution.StringComparer)
+            m_CacheInsensitive = New MemberCacheEntries(Helper.StringComparer)
             For Each item As KeyValuePair(Of String, MemberCacheEntry) In m_Cache
                 Dim current As MemberCacheEntry
                 If m_CacheInsensitive.ContainsKey(item.Key) = False Then
@@ -291,6 +502,51 @@ Public Class MemberCache
         End If
     End Function
 
+    ''' <summary>
+    ''' Looks up the name in the cache.
+    ''' Looks case-insensitively
+    ''' </summary>
+    ''' <param name="Name"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function Lookup(ByVal Name As String, ByVal Visibility As MemberVisibility) As MemberCacheEntry
+        If m_CacheInsensitive2 Is Nothing Then
+            m_CacheInsensitive2 = New MemberVisibilityEntries()
+            For Each item2 As KeyValuePair(Of MemberVisibility, MemberCacheEntries) In m_Cache2
+                Dim cache As New MemberCacheEntries(Helper.StringComparer)
+                m_CacheInsensitive2.Add(item2.Key, cache)
+
+                For Each item As KeyValuePair(Of String, MemberCacheEntry) In item2.Value
+                    Dim current As MemberCacheEntry
+                    If cache.ContainsKey(item.Key) = False Then
+                        current = New MemberCacheEntry(item.Key)
+                        cache.Add(current)
+                    Else
+                        current = cache(item.Key)
+                    End If
+                    current.Members.AddRange(item.Value.Members)
+                Next
+            Next
+        End If
+
+        Dim result As MemberCacheEntry = Nothing
+        If m_CacheInsensitive2(Visibility).TryGetValue(Name, result) Then
+            Return result
+        Else
+            Return Nothing
+        End If
+
+        'If m_CacheInsensitive.ContainsKey(Name) Then
+        '    Return m_CacheInsensitive(Name)
+        'Else
+        '    Return Nothing
+        'End If
+    End Function
+
+End Class
+
+Public Class MemberVisibilityEntries
+    Inherits Generic.Dictionary(Of MemberVisibility, MemberCacheEntries)
 
 End Class
 

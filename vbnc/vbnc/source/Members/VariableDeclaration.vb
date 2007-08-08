@@ -48,7 +48,7 @@ Public Class VariableDeclaration
     Private m_WithEventsRedirect As PropertyDeclaration
     Private m_HandledEvents As New Generic.List(Of EventInfo)
 
-    Sub New(ByVal Parent As TypeDeclaration)
+    Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
@@ -238,6 +238,20 @@ Public Class VariableDeclaration
             End If
         End If
 
+        If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.HasArrayNameModifier Then
+            If m_FieldType.IsArray Then
+                Helper.AddError("Cannot specify array modifier on both type name and on variable name.")
+            Else
+                If m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
+                    m_FieldType = m_VariableIdentifier.ArrayNameModifier.AsArraySizeInitializationModifier.CreateArrayType(m_FieldType)
+                ElseIf m_VariableIdentifier.ArrayNameModifier.IsArrayTypeModifiers Then
+                    m_FieldType = m_VariableIdentifier.ArrayNameModifier.AsArrayTypeModifiers.CreateArrayType(m_FieldType)
+                Else
+                    Throw New InternalException(Me)
+                End If
+            End If
+        End If
+
         If m_NewExpression IsNot Nothing Then result = m_NewExpression.ResolveTypeReferences AndAlso result
 
         Helper.Assert(m_FieldType IsNot Nothing)
@@ -261,20 +275,6 @@ Public Class VariableDeclaration
 
         If m_NewExpression IsNot Nothing Then
             result = m_NewExpression.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
-        End If
-
-        If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.HasArrayNameModifier Then
-            If m_FieldType.IsArray Then
-                Helper.AddError("Cannot specify array modifier on both type name and on variable name.")
-            Else
-                If m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
-                    m_FieldType = m_VariableIdentifier.ArrayNameModifier.AsArraySizeInitializationModifier.CreateArrayType(m_FieldType)
-                ElseIf m_VariableIdentifier.ArrayNameModifier.IsArrayTypeModifiers Then
-                    m_FieldType = m_VariableIdentifier.ArrayNameModifier.AsArrayTypeModifiers.CreateArrayType(m_FieldType)
-                Else
-                    Throw New InternalException(Me)
-                End If
-            End If
         End If
 
         If m_VariableInitializer IsNot Nothing Then
@@ -446,7 +446,7 @@ Public Class VariableDeclaration
             EmitStore(Info)
         End If
 
-        If m_VariableIdentifier.ArrayNameModifier IsNot Nothing AndAlso m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
+        If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.ArrayNameModifier IsNot Nothing AndAlso m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
             EmitThisIfNecessary(Info)
             ArrayCreationExpression.EmitArrayCreation(Me, Info, varType, m_VariableIdentifier.ArrayNameModifier.AsArraySizeInitializationModifier)
             EmitStore(Info)

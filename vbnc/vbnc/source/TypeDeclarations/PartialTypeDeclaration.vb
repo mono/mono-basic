@@ -112,7 +112,7 @@ Public MustInherit Class PartialTypeDeclaration
     End Property
 
     Public Sub AddPartialDeclaration(ByVal Declaration As PartialTypeDeclaration)
-        Helper.Assert(NameResolution.CompareName(Me.Name, Declaration.Name) AndAlso NameResolution.CompareName(Me.Namespace, Declaration.Namespace))
+        Helper.Assert(Helper.CompareName(Me.Name, Declaration.Name) AndAlso Helper.CompareName(Me.Namespace, Declaration.Namespace))
 
         If Declaration.GetType IsNot Me.GetType Then
             Helper.AddError("Cannot mix partial class declarations with partial structure declarations")

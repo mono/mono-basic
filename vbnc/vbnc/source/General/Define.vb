@@ -100,13 +100,13 @@ Public Class Define
             Return
         End If
 
-        If NameResolution.CompareName(m_Value, "Nothing") Then
+        If Helper.CompareName(m_Value, "Nothing") Then
             m_ObjectValue = Nothing
             Return
-        ElseIf NameResolution.CompareName(m_Value, "True") Then
+        ElseIf Helper.CompareName(m_Value, "True") Then
             m_ObjectValue = True
             Return
-        ElseIf NameResolution.CompareName(m_Value, "False") Then
+        ElseIf Helper.CompareName(m_Value, "False") Then
             m_ObjectValue = False
             Return
         End If

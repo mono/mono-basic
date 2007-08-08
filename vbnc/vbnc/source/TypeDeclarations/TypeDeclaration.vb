@@ -462,7 +462,7 @@ Public MustInherit Class TypeDeclaration
             If Helper.CompareType(att.AttributeType, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute) Then
                 Dim tmpName As String
                 tmpName = TryCast(att.GetArgument(0), String)
-                If tmpName IsNot Nothing AndAlso NameResolution.CompareNameOrdinal(Name, tmpName) = False Then
+                If tmpName IsNot Nothing AndAlso Helper.CompareNameOrdinal(Name, tmpName) = False Then
                     Compiler.Report.ShowMessage(Messages.VBNC32304, Location, Me.FullName, tmpName, Name)
                     Return False
                 End If

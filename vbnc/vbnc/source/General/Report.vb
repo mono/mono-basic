@@ -296,19 +296,6 @@ Public Class Report
     End Function
 
     ''' <summary>
-    ''' Shows the multiline message with the specified parameters.
-    ''' Tries to look up the current location in the token manager.
-    ''' </summary>
-    <Diagnostics.DebuggerHidden()> _
-    Public Function ShowMessage(ByVal Message() As Messages, ByVal ParamArray Parameters()() As String) As Boolean
-        If Compiler.tm.IsCurrentTokenValid Then
-            Return ShowMessage(False, New Message(Compiler, Message, Parameters, Compiler.tm.CurrentToken.Location))
-        Else
-            Return ShowMessage(False, New Message(Compiler, Message, Parameters, Nothing))
-        End If
-    End Function
-
-    ''' <summary>
     ''' Shows the multiline message with the specified location and parameters.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _

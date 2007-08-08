@@ -1166,7 +1166,7 @@ Partial Public Class Parser
         If first.Contains("."c) Then
             m_First = ParseQualifiedIdentifier(result, first)
             If m_First Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-        ElseIf first.Length > 7 AndAlso NameResolution.CompareName(first.Substring(1, 7), "Global.") Then
+        ElseIf first.Length > 7 AndAlso Helper.CompareName(first.Substring(1, 7), "Global.") Then
             m_First = New GlobalExpression(result)
         Else
             Dim i As Token = Token.CreateIdentifierToken(Parent.Location, first, TypeCharacters.Characters.None, False)

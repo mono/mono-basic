@@ -78,7 +78,7 @@ Public Class MemberDeclarations
                 Return
             End If
 
-            If NameResolution.CompareName(mainDeclaration.Namespace, ptd.Namespace) Then
+            If Helper.CompareName(mainDeclaration.Namespace, ptd.Namespace) Then
                 mainDeclaration.AddPartialDeclaration(ptd)
                 Return
             End If
@@ -109,7 +109,7 @@ Public Class MemberDeclarations
 
         methods = GetSpecificMembers(Of MethodDeclaration)()
         For Each method As MethodDeclaration In methods
-            If NameResolution.CompareName(method.Name, Name) Then
+            If Helper.CompareName(method.Name, Name) Then
                 If Helper.CompareTypes(method.Signature.Parameters.ToTypeArray, types) Then
                     result = New MethodDescriptor(method)
                     Exit For

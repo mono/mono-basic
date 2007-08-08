@@ -44,7 +44,7 @@ Public Class SimpleNameExpression
 
     Public Overrides ReadOnly Property AsString() As String
         Get
-            If m_TypeArgumentList Is Nothing Then
+            If m_TypeArgumentList Is Nothing OrElse m_TypeArgumentList.Count = 0 Then
                 Return m_Identifier.Identifier
             Else
                 Return m_Identifier.Identifier & "(Of <type arguments>)"
@@ -337,7 +337,7 @@ Public Class SimpleNameExpression
         '  or an AddressOf expression, then no match occurs and resolution continues.
         If method IsNot Nothing Then
             If method.HasReturnValue AndAlso Info.SkipFunctionReturnVariable = False Then
-                If NameResolution.CompareName(method.Name, Name) Then
+                If Helper.CompareName(method.Name, Name) Then
                     'The expression is classified as a variable if it is a local variable, static variable (...)
                     Classification = New VariableClassification(Me, method)
                     Return True

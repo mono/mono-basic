@@ -22,7 +22,7 @@ Imports System.Reflection
 
 Public Class Index
     Private m_Parent As ParsedObject
-    Private m_lstCollections As New Generic.Dictionary(Of String, IndexList)(NameResolution.StringComparer)
+    Private m_lstCollections As New Generic.Dictionary(Of String, IndexList)(Helper.StringComparer)
 
     Public Sub New(ByVal Parent As ParsedObject)
         m_Parent = Parent

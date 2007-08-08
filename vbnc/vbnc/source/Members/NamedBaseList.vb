@@ -47,7 +47,7 @@ Public MustInherit Class NamedBaseList(Of T)
         Get
             For Each tp As T In Me
                 Dim t As INameable = CType(CObj(tp), INameable)
-                If NameResolution.CompareName(t.Name, Name) Then
+                If Helper.CompareName(t.Name, Name) Then
                     Return tp
                 End If
             Next

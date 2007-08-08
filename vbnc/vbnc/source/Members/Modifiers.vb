@@ -137,6 +137,8 @@ Public Structure Modifiers
             Else
                 Return FieldAttributes.Private
             End If
+        ElseIf TypeOf TypeDeclaration Is EnumDeclaration Then
+            Return FieldAttributes.Public
         Else
             Return FieldAttributes.Private
         End If

@@ -28,6 +28,7 @@ Public Class CallStatement
 
     Sub Init(ByVal Target As Expression)
         m_Target = Target
+        m_Target.Parent = Me
     End Sub
 
     ReadOnly Property Target() As Expression

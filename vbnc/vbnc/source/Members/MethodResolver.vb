@@ -144,7 +144,7 @@ Public Class MethodResolver
     Public Function Resolve() As Boolean
         Dim result As Boolean = True
 
-        If m_Resolved AndAlso ShowErrors = False Then Helper.StopIfDebugging()
+        'If m_Resolved AndAlso ShowErrors = False Then Helper.StopIfDebugging()
 
         Log("")
         Log("Resolving method {0} with arguments {1}", ArgumentsTypesAsString)
@@ -200,7 +200,19 @@ Public Class MethodResolver
         Log("After removing inapplicable candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft = 0 Then
             If m_InitialCandidates.Length = 1 Then
-                Return Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
+                Dim argsGiven, argsRequired As Integer
+                Dim params() As ParameterInfo
+                params = Helper.GetParameters(Compiler, m_InitialCandidates(0).Member)
+                argsRequired = params.Length
+                argsGiven = m_Arguments.Length
+                If argsGiven >= argsRequired Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
+                Else
+                    For i As Integer = argsGiven To argsRequired - 1
+                        Compiler.Report.ShowMessage(Messages.VBNC30455, Parent.Location, params(i).Name, m_InitialCandidates(0).ToString())
+                    Next
+                    Return False
+                End If
             Else
                 Return Compiler.Report.ShowMessage(Messages.VBNC30516, Parent.Location, MethodName)
             End If
@@ -709,23 +721,24 @@ Public Class MemberCandidate
             Dim matched As Boolean = False
             For j As Integer = 0 To inputParametersCount - 1
                 'Next, match each named argument to a parameter with the given name. 
-                If NameResolution.CompareName(InputParameters(i).Name, namedArgument.Name) Then
-                    If matchedParameters.Contains(InputParameters(i)) Then
+                Dim inputParam As ParameterInfo = InputParameters(j)
+                If Helper.CompareName(inputParam.Name, namedArgument.Name) Then
+                    If matchedParameters.Contains(inputParam) Then
                         'If one of the named arguments (...) matches an argument already matched with 
                         'another positional or named argument, the method is not applicable
                         'LogResolutionMessage(Parent.Compiler, "N/A: 5")
                         Return False
-                    ElseIf Helper.IsParamArrayParameter(Parent.Compiler, InputParameters(i)) Then
+                    ElseIf Helper.IsParamArrayParameter(Parent.Compiler, inputParam) Then
                         'If one of the named arguments (...) matches a paramarray parameter, 
                         '(...) the method is not applicable.
                         'LogResolutionMessage(Parent.Compiler, "N/A: 6")
                         Return False
                     Else
-                        matchedParameters.Add(InputParameters(i))
+                        matchedParameters.Add(inputParam)
                         exactArguments(j) = Arguments(i)
 
                         Helper.Assert(m_TypesInInvokedOrder(j) Is Nothing)
-                        m_TypesInInvokedOrder(j) = InputParameters(i).ParameterType
+                        m_TypesInInvokedOrder(j) = inputParam.ParameterType
                         matched = True
                         Exit For
                     End If

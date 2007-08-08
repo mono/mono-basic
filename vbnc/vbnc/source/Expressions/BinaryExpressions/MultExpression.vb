@@ -79,7 +79,7 @@ Public Class MultExpression
                 crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 Dim csmallest As TypeCode
-                csmallest = TypeConverter.GetBinaryOperandType(Me.Keyword, clvalue, crvalue)
+                csmallest = TypeConverter.GetBinaryOperandType(Compiler, Me.Keyword, tlvalue, trvalue)
 
                 Select Case csmallest
                     Case TypeCode.Byte

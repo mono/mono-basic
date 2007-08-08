@@ -95,9 +95,9 @@ Public Class [Namespace]
         If str.Length <= m_Name.Length Then
             If m_Global AndAlso IsGlobal(str) Then
                 str = RemoveGlobal(str)
-                Return NameResolution.CompareName(str, m_Name.Substring(0, str.Length))
+                Return Helper.CompareName(str, m_Name.Substring(0, str.Length))
             Else
-                Return NameResolution.CompareName(str, m_Name.Substring(0, str.Length))
+                Return Helper.CompareName(str, m_Name.Substring(0, str.Length))
             End If
         Else
             Return False
@@ -106,8 +106,8 @@ Public Class [Namespace]
 
     Overloads Function Equals(ByVal A As String, ByVal B As String) As Boolean
         If A.Length + B.Length + 1 <> m_Name.Length Then Return False
-        If m_Name.StartsWith(A, NameResolution.StringComparison) = False Then Return False
-        If m_Name.EndsWith(B, NameResolution.StringComparison) = False Then Return False
+        If m_Name.StartsWith(A, Helper.StringComparison) = False Then Return False
+        If m_Name.EndsWith(B, Helper.StringComparison) = False Then Return False
         Return m_Name(A.Length) = "."c
     End Function
 
@@ -116,10 +116,10 @@ Public Class [Namespace]
             If Me.Global = False Then
                 Return False
             Else
-                Return NameResolution.CompareName(RemoveGlobal(str), Me.Name)
+                Return Helper.CompareName(RemoveGlobal(str), Me.Name)
             End If
         Else
-            Return NameResolution.CompareName(str, Me.Name)
+            Return Helper.CompareName(str, Me.Name)
         End If
     End Function
 
@@ -135,13 +135,13 @@ Public Class [Namespace]
         If IsGlobal(ns) Then
             Return ns.Substring(7)
         Else
-            Helper.Assert(ns.StartsWith("Global.", NameResolution.StringComparison) = False)
+            Helper.Assert(ns.StartsWith("Global.", Helper.StringComparison) = False)
             Return ns
         End If
     End Function
 
     Shared Function IsGlobal(ByVal ns As String) As Boolean
-        Return ns.Length > 7 AndAlso NameResolution.CompareNameStart(ns, "Global.")
+        Return ns.Length > 7 AndAlso Helper.CompareNameStart(ns, "Global.")
     End Function
 
 End Class

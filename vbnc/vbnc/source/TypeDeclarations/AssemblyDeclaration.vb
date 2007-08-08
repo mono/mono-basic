@@ -836,7 +836,7 @@ Public Class AssemblyDeclaration
 
     Function FindType(ByVal FullName As String) As TypeDeclaration
         For Each type As TypeDeclaration In Me.Types
-            If NameResolution.CompareName(type.FullName, FullName) Then Return type
+            If Helper.CompareName(type.FullName, FullName) Then Return type
         Next
         Return Nothing
     End Function

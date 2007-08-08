@@ -132,6 +132,16 @@ Public Class CodeBlock
         MyBase.New(Parent)
     End Sub
 
+    Sub AddStatementAfter(ByVal Statement As Statement, ByVal After As Statement)
+        m_Statements.Insert(m_Statements.IndexOf(After) + 1, Statement)
+        m_Sequence.Insert(m_Sequence.IndexOf(After) + 1, Statement)
+    End Sub
+
+    Sub AddStatementBefore(ByVal Statement As Statement, ByVal Before As Statement)
+        m_Statements.Insert(m_Statements.IndexOf(Before), Statement)
+        m_Sequence.Insert(m_Sequence.IndexOf(Before), Statement)
+    End Sub
+
     Sub AddStatement(ByVal Statement As Statement)
         m_Statements.Add(Statement)
         m_Sequence.Add(Statement)
@@ -585,10 +595,19 @@ Public Class CodeBlock
             'Helper.Assert(result = (Compiler.Report.Errors = 0))
         Next
 
-        For Each obj As Statement In m_Statements
+        'We may add statements as we go.
+        Dim counter As Integer = 0
+        Dim count As Integer = m_Statements.Count
+        While counter < m_Statements.Count
+            Dim obj As Statement = m_Statements(counter)
             result = obj.ResolveStatement(Info) AndAlso result
-            'Helper.Assert(result = (Compiler.Report.Errors = 0))
-        Next
+            If count <> m_Statements.Count Then
+            	'A statement has been added somewhere.
+            	'Find the correct index of the current statement.
+                counter = m_Statements.IndexOf(obj)
+            End If
+            counter += 1
+        End While
 
         Return result
     End Function

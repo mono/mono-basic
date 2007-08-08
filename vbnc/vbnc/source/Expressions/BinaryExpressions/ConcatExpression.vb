@@ -27,7 +27,7 @@ Public Class ConcatExpression
 
         If result = False Then Return result
 
-        Dim l, r As Boolean
+        Dim l, r, other As Boolean
         l = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
         r = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
         If l AndAlso r = False Then 'DBNull & whatever
@@ -36,6 +36,22 @@ Public Class ConcatExpression
         ElseIf l = False AndAlso r Then 'whatever & DBNull
             m_RightExpression = New NothingConstantExpression(Me)
             result = m_RightExpression.ResolveExpression(Info) AndAlso result
+        Else
+            other = True
+        End If
+
+        If l = False Then
+            If Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_Char_Array) Then
+                m_LeftExpression = New CStrExpression(Me, m_LeftExpression)
+                result = m_LeftExpression.ResolveExpression(Info) AndAlso result
+            End If
+        End If
+
+        If r = False Then
+            If Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_Char_Array) Then
+                m_RightExpression = New CStrExpression(Me, m_RightExpression)
+                result = m_RightExpression.ResolveExpression(Info) AndAlso result
+            End If
         End If
 
         Return result

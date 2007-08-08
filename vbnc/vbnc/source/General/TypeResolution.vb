@@ -32,6 +32,26 @@ Public Class TypeResolution
 
     Public Shared Conversion As TypeConversionInfo(,)
 
+    Private Shared m_ImplicitlyConvertedIntrinsicTypes As New Generic.Dictionary(Of Type, TypeCode())
+
+    Shared Function GetIntrinsicTypesImplicitlyConvertibleFrom(ByVal Compiler As Compiler, ByVal Type As Type) As TypeCode()
+        Dim result As TypeCode() = Nothing
+
+        If m_ImplicitlyConvertedIntrinsicTypes.TryGetValue(Type, result) Then
+            Return result
+        End If
+
+        If Helper.CompareType(Type, Compiler.TypeCache.System_Char_Array) Then
+            result = New TypeCode() {TypeCode.String}
+        End If
+
+        If result IsNot Nothing Then
+            m_ImplicitlyConvertedIntrinsicTypes.Add(Type, result)
+        End If
+
+        Return result
+    End Function
+
     Shared Sub New()
         Dim highest As Integer
 
@@ -416,11 +436,32 @@ Public Class TypeResolution
         ElseIf Helper.IsEnum(Compiler, ToType) AndAlso Helper.IsEnum(Compiler, FromType) Then
             Return Helper.CompareType(ToType, FromType)
         Else
-            Dim result As Boolean
-            result = Conversion(tpFrom, tpTo).Conversion = ConversionType.Implicit
-            'Helper.Assert(result = ToType.IsAssignableFrom(FromType) )
-            Return result
+            Return IsImplicitlyConvertible(Compiler, tpFrom, tpTo)
         End If
+    End Function
+
+    Function IsImplicitlyConvertible(ByVal Compiler As Compiler, ByVal tpFrom As TypeCode, ByVal tpTo As TypeCode) As Boolean
+        Dim result As Boolean
+        result = Conversion(tpFrom, tpTo).Conversion = ConversionType.Implicit
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' If explicitly or implicitly convertible.
+    ''' </summary>
+    ''' <param name="Compiler"></param>
+    ''' <param name="tpFrom"></param>
+    ''' <param name="tpTo"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsExplicitlyConvertible(ByVal Compiler As Compiler, ByVal tpFrom As TypeCode, ByVal tpTo As TypeCode) As Boolean
+        Dim result As Boolean
+        Dim ct As ConversionType
+
+        ct = Conversion(tpFrom, tpTo).Conversion
+        result = ct = ConversionType.Implicit OrElse ct = ConversionType.Explicit
+
+        Return result
     End Function
 
     Function IsNumericType(ByVal Type As Type) As Boolean

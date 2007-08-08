@@ -108,7 +108,11 @@ Public MustInherit Class BinaryExpression
 
     ReadOnly Property OperandTypeCode() As TypeCode
         Get
-            Return TypeConverter.GetBinaryOperandType(Me.Keyword, LeftTypeCode, RightTypeCode)
+            Dim result As TypeCode
+
+            result = TypeConverter.GetBinaryOperandType(Compiler, Me.Keyword, LeftType, RightType)
+
+            Return result
         End Get
     End Property
 
@@ -181,6 +185,7 @@ Public MustInherit Class BinaryExpression
             'Do overload resolution on the set of operators to be considered.
             Dim isLeftIntrinsic As Boolean = Me.LeftTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.LeftType)
             Dim isRightIntrinsic As Boolean = Me.RightTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.RightType)
+            Dim doOpOverloading As Boolean = False
 
             If isLeftIntrinsic AndAlso isRightIntrinsic OrElse IsOverloadable = False Then
                 Dim destinationType As Type
@@ -195,9 +200,33 @@ Public MustInherit Class BinaryExpression
                     m_RightExpression = Helper.CreateTypeConversion(Me, m_RightExpression, destinationType, result)
                 End If
                 Classification = New ValueClassification(Me)
-                'ElseIf isLeftIntrinsic Xor isRightIntrinsic Then
-                '    Helper.NotImplemented()
+            ElseIf isRightIntrinsic = False AndAlso isLeftIntrinsic = True Then
+                Dim convertsTo As TypeCode() = TypeResolution.GetIntrinsicTypesImplicitlyConvertibleFrom(Compiler, RightType)
+                convertsTo = Helper.GetMostEncompassedTypes(Compiler, convertsTo)
+
+                If convertsTo IsNot Nothing AndAlso convertsTo.Length = 1 Then
+                    m_RightExpression = Helper.CreateTypeConversion(Me, m_RightExpression, Compiler.TypeResolution.TypeCodeToType(convertsTo(0)), result)
+                    m_ExpressionType = Compiler.TypeResolution.TypeCodeToType(TypeConverter.GetBinaryResultType(Keyword, LeftTypeCode, RightTypeCode))
+                    Classification = New ValueClassification(Me)
+                Else
+                    doOpOverloading = True
+                End If
+            ElseIf isRightIntrinsic = True AndAlso isLeftIntrinsic = False Then
+                Dim convertsTo As TypeCode() = TypeResolution.GetIntrinsicTypesImplicitlyConvertibleFrom(Compiler, LeftType)
+                convertsTo = Helper.GetMostEncompassedTypes(Compiler, convertsTo)
+
+                If convertsTo IsNot Nothing AndAlso convertsTo.Length = 1 Then
+                    m_LeftExpression = Helper.CreateTypeConversion(Me, m_LeftExpression, Compiler.TypeResolution.TypeCodeToType(convertsTo(0)), result)
+                    m_ExpressionType = Compiler.TypeResolution.TypeCodeToType(TypeConverter.GetBinaryResultType(Keyword, LeftTypeCode, RightTypeCode))
+                    Classification = New ValueClassification(Me)
+                Else
+                    doOpOverloading = True
+                End If
             Else
+                doOpOverloading = True
+            End If
+
+            If doOpOverloading Then
                 result = DoOperatorOverloading() AndAlso result
             End If
         End If

@@ -55,7 +55,7 @@ Public Class Defines
     Default Shadows ReadOnly Property Item(ByVal Name As String) As Define
         Get
             For Each def As Define In Me
-                If NameResolution.CompareName(def.Symbol, Name) Then
+                If Helper.CompareName(def.Symbol, Name) Then
                     Return def
                 End If
             Next

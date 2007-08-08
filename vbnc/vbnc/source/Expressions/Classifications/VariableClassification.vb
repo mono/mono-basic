@@ -228,23 +228,7 @@ Public Class VariableClassification
                 Emitter.EmitStoreField(Info, FieldInfo)
             End If
         ElseIf LocalBuilder IsNot Nothing Then
-            If Info.IsRHS Then
-                Emitter.EmitLoadVariable(Info, LocalBuilder)
-            Else
-                Dim rInfo As EmitInfo = Info.Clone(True, False, LocalBuilder.LocalType)
-
-                Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
-                Helper.Assert(Info.RHSExpression.Classification.IsValueClassification OrElse Info.RHSExpression.Classification.CanBeValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
-
-                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, LocalBuilder.LocalType, Info)
-
-                If Helper.CompareType(LocalBuilder.LocalType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Compiler.TypeCache.System_Object) Then
-                    Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                End If
-
-                Emitter.EmitStoreVariable(Info, LocalBuilder)
-            End If
+            result = VariableExpression.Emit(Info, m_Variable) AndAlso result
         ElseIf ParameterInfo IsNot Nothing Then
             Dim isByRef As Boolean
             Dim isByRefStructure As Boolean

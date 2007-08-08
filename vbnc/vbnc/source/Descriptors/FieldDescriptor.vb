@@ -234,10 +234,15 @@ Public Class FieldDescriptor
         DumpMethodInfo()
         Helper.NotImplemented() ': Return Nothing
     End Sub
+
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
-        DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.Equals(obj)
+        Dim result As Boolean
+
+        result = obj Is Me
+        DumpMethodInfo(result)
+        Return result
     End Function
+
     Public Overrides Function GetHashCode() As Integer
         DumpMethodInfo()
         Helper.NotImplemented() : Return MyBase.GetHashCode()

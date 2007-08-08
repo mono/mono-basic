@@ -145,7 +145,7 @@ Public Class Namespaces
     End Sub
 
     Sub New()
-        m_Hashed = New Generic.Dictionary(Of String, [Namespace])(NameResolution.StringComparer)
+        m_Hashed = New Generic.Dictionary(Of String, [Namespace])(Helper.StringComparer)
     End Sub
 
     ''' <summary>

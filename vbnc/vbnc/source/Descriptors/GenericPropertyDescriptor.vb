@@ -51,7 +51,7 @@ Public Class GenericPropertyDescriptor
             Else
                 Dim memberAttrib As DefaultMemberAttribute
                 memberAttrib = Helper.GetDefaultMemberAttribute(m_OpenProperty.DeclaringType)
-                Return memberAttrib IsNot Nothing AndAlso NameResolution.CompareName(memberAttrib.MemberName, Me.Name)
+                Return memberAttrib IsNot Nothing AndAlso Helper.CompareName(memberAttrib.MemberName, Me.Name)
             End If
         End Get
     End Property

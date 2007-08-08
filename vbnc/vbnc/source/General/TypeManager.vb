@@ -54,8 +54,8 @@ Public Class TypeManager
 
     Private m_TypesByNamespaceAndName As New Generic.Dictionary(Of String, Generic.List(Of MemberInfo))
 
-    Private m_TypesByName As New Generic.Dictionary(Of String, Generic.List(Of Type))(NameResolution.StringComparer)
-    Private m_TypesByFullName As New Generic.Dictionary(Of String, Generic.List(Of Type))(NameResolution.StringComparer)
+    Private m_TypesByName As New Generic.Dictionary(Of String, Generic.List(Of Type))(Helper.StringComparer)
+    Private m_TypesByFullName As New Generic.Dictionary(Of String, Generic.List(Of Type))(Helper.StringComparer)
 
     ''' <summary>
     ''' All the modules indexed by namespace.
@@ -78,7 +78,7 @@ Public Class TypeManager
     Private m_Compiler As Compiler
 
 
-    Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.NameResolution.StringComparer)
+    Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.Helper.StringComparer)
     Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
     Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
 
@@ -88,14 +88,14 @@ Public Class TypeManager
     Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)(New TypeComparer)
 
     Function IsTypeNamed(ByVal Type As Type, ByVal Name As String) As Boolean
-        If TypeOf Type Is TypeDescriptor Then Return NameResolution.CompareName(Type.Name, Name)
+        If TypeOf Type Is TypeDescriptor Then Return Helper.CompareName(Type.Name, Name)
         Dim types As Generic.List(Of Type) = Nothing
         If m_TypesByName.TryGetValue(Name, types) = False Then Return False
         Return types.Contains(Type)
     End Function
 
     Function IsTypeFullnamed(ByVal Type As Type, ByVal FullName As String) As Boolean
-        If TypeOf Type Is TypeDescriptor Then Return NameResolution.CompareName(Type.FullName, FullName)
+        If TypeOf Type Is TypeDescriptor Then Return Helper.CompareName(Type.FullName, FullName)
         Dim types As Generic.List(Of Type) = Nothing
         If m_TypesByFullName.TryGetValue(FullName, types) = False Then Return False
         Return types.Contains(Type)
@@ -289,7 +289,7 @@ Public Class TypeManager
         loadVB = Compiler.CommandLine.NoVBRuntimeRef = False
         If Not loadVB Then
             For Each ass As Assembly In Assemblies
-                If NameResolution.CompareNameOrdinal(ass.GetName().Name, "Microsoft.VisualBasic") Then
+                If Helper.CompareNameOrdinal(ass.GetName().Name, "Microsoft.VisualBasic") Then
                     loadVB = True
                     Exit For
                 End If

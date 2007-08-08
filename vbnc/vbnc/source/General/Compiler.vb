@@ -116,7 +116,6 @@ Public Class Compiler
     Private SequenceTime(CompilerSequence.End) As DateTime
 
     Private m_TypeResolver As TypeResolution
-    Private m_NameResolver As NameResolution
 
     Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
 
@@ -239,9 +238,9 @@ Public Class Compiler
         End Get
     End Property
 
-    Friend ReadOnly Property NameResolver() As NameResolution
+    Friend ReadOnly Property NameResolver() As Helper
         Get
-            Return m_NameResolver
+            Return m_Helper
         End Get
     End Property
 
@@ -510,7 +509,6 @@ Public Class Compiler
             result = m_TypeManager.LoadReferenced AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
-            m_NameResolver = New NameResolution(Me) 'Must be created after referenced assemblies have been loaded
             m_TypeResolver = New TypeResolution(Me)
 
 

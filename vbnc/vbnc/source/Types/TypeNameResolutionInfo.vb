@@ -307,7 +307,7 @@ Public Class TypeNameResolutionInfo
 
                     For Each tp As Type In types.Values
                         If TypeOf tp Is TypeDescriptor Then
-                            If NameResolution.CompareName(tp.Name, genericName) Then
+                            If Helper.CompareName(tp.Name, genericName) Then
                                 m_FoundObjects.Add(tp)
                             End If
                         Else
@@ -336,7 +336,7 @@ Public Class TypeNameResolutionInfo
                 Dim tp As IType = Qualifier.FoundAs(Of IType)()
                 Dim types As Generic.List(Of IType) = tp.Members.GetSpecificMembers(Of IType)()
                 For Each t As IType In types
-                    If NameResolution.CompareName(t.Name, R) Then
+                    If Helper.CompareName(t.Name, R) Then
                         m_FoundObjects.Add(t)
                     End If
                 Next
@@ -622,12 +622,12 @@ Public Class TypeNameResolutionInfo
         'Dim nsDotR As String = ns & dotR
         Do
             If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(ns), TypeArgumentCount) Then Return True
-            If Helper.NameCompare(ns, R) Then
+            If Helper.CompareName(ns, R) Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
                 Return True
             End If
 
-            If ns.Length > R.Length + 1 AndAlso ns.EndsWith(R, NameResolution.StringComparison) AndAlso ns(ns.Length - R.Length - 1) = "."c Then
+            If ns.Length > R.Length + 1 AndAlso ns.EndsWith(R, Helper.StringComparison) AndAlso ns(ns.Length - R.Length - 1) = "."c Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
                 Return True
             End If
@@ -664,7 +664,7 @@ Public Class TypeNameResolutionInfo
         '---------------------------------------------------------------------------------------------------------
         For Each import As ImportsClause In [Imports]
             If import.IsAliasClause Then
-                If NameResolution.CompareName(import.AsAliasClause.Name, R) Then
+                If Helper.CompareName(import.AsAliasClause.Name, R) Then
                     m_FoundObjects.Add(import)
                     Return True
                 End If

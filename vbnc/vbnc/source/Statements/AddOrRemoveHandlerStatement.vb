@@ -104,14 +104,17 @@ Public Class AddOrRemoveHandlerStatement
 
         Dim evt As EventInfo = m_Event.Classification.AsEventAccess.EventInfo
 
-        result = m_Event.Classification.AsEventAccess.GenerateCode(Info) AndAlso result
-        result = m_EventHandler.Classification.GenerateCode(Info.Clone(True, False, m_EventHandler.ExpressionType)) AndAlso result
-
         If IsAddHandler Then
             handler = evt.GetAddMethod()
         Else
             handler = evt.GetRemoveMethod()
         End If
+
+        If handler.IsStatic = False Then
+            result = m_Event.Classification.AsEventAccess.GenerateCode(Info) AndAlso result
+        End If
+        result = m_EventHandler.Classification.GenerateCode(Info.Clone(True, False, m_EventHandler.ExpressionType)) AndAlso result
+
         Helper.Assert(handler IsNot Nothing)
 
         Emitter.EmitCallOrCallVirt(Info, handler)

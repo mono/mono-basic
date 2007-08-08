@@ -24,6 +24,12 @@
 Public Class MyClassExpression
     Inherits InstanceExpression
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return "MyClass"
+        End Get
+    End Property
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

@@ -75,13 +75,13 @@ Public Class ImportsClauses
         For Each cl As ImportsClause In Me
             If cl.IsNamespaceClause Then
                 If Clause.IsNamespaceClause Then
-                    If NameResolution.CompareName(cl.AsNamespaceClause.Name, Clause.AsNamespaceClause.Name) Then
+                    If Helper.CompareName(cl.AsNamespaceClause.Name, Clause.AsNamespaceClause.Name) Then
                         Return True
                     End If
                 End If
             ElseIf cl.IsAliasClause Then
                 If Clause.IsAliasClause Then
-                    If NameResolution.CompareName(cl.AsAliasClause.Name, Clause.AsAliasClause.Name) Then
+                    If Helper.CompareName(cl.AsAliasClause.Name, Clause.AsAliasClause.Name) Then
                         Return True
                     End If
                 End If

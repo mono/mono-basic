@@ -86,7 +86,7 @@ Public Class BinarySubExpression
                 crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 Dim csmallest As TypeCode
-                csmallest = vbnc.TypeConverter.GetBinaryOperandType(Me.Keyword, clvalue, crvalue)
+                csmallest = vbnc.TypeConverter.GetBinaryOperandType(Compiler, Me.Keyword, tlvalue, trvalue)
 
                 Select Case csmallest
                     Case TypeCode.Byte

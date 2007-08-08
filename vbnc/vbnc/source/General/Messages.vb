@@ -2144,7 +2144,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30454 = 30454
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Argument not specified for parameter '{0}' of '{1}'."
     ''' VB   = "Argument not specified for parameter '|1' of '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2228,7 +2228,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30470 = 30470
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Only arrays and methods can have argument lists."
     ''' VB   = "Expression is not an array or a method, and cannot have an argument list."
     ''' </summary>
     ''' <remarks></remarks>

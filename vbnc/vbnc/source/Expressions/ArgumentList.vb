@@ -112,6 +112,29 @@ Public Class ArgumentList
                 End If
             ElseIf par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef AndAlso Helper.CompareType(par.ParameterType.GetElementType, arg.Expression.ExpressionType.GetElementType) Then
                 exp = arg.Expression
+            ElseIf par.ParameterType.IsByRef AndAlso Helper.CompareType(arg.Expression.ExpressionType, par.ParameterType.GetElementType) = False AndAlso (arg.Expression.Classification.IsVariableClassification OrElse arg.Expression.Classification.IsPropertyAccessClassification) Then
+                Dim varTmp As VariableDeclaration
+                Dim assignA, assignB As AssignmentStatement
+                Dim block As CodeBlock = Me.FindFirstParent(Of CodeBlock)()
+                Dim thisStatement As Statement = Me.FindFirstParent(Of Statement)()
+
+                varTmp = New VariableDeclaration(Me.Parent)
+                varTmp.Init(Nothing, Nothing, "VB$tmp", par.ParameterType.GetElementType)
+                result = varTmp.ResolveMember(ResolveInfo.Default(Compiler)) AndAlso result
+
+                assignA = New AssignmentStatement(Me.Parent)
+                assignA.Init(New VariableExpression(assignA, varTmp), arg.Expression)
+                result = assignA.ResolveStatement(ResolveInfo.Default(Compiler)) AndAlso result
+
+                assignB = New AssignmentStatement(Me.Parent)
+                assignB.Init(arg.Expression, New VariableExpression(assignB, varTmp))
+                result = assignB.ResolveStatement(ResolveInfo.Default(Compiler)) AndAlso result
+
+                block.AddVariable(varTmp)
+                block.AddStatementBefore(assignA, thisStatement)
+                block.AddStatementAfter(assignB, thisStatement)
+
+                exp = New GetRefExpression(Me, New VariableExpression(Me, varTmp))
             Else
 #If EXTENDEDDEBUG Then
                 Compiler.Report.WriteLine("VerifyArguments, needs convertion from " & arg.Expression.ExpressionType.FullName & " to " & par.ParameterType.FullName)

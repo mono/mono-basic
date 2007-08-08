@@ -488,14 +488,21 @@ Public Class MemberAccessExpression
             Dim members As Generic.List(Of MemberInfo)
             Dim member As MemberCacheEntry
 
-            member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name)
+            member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, Me.FindFirstParent_IType.TypeDescriptor)
             If member Is Nothing Then
                 If Me.File.IsOptionStrictOn = False AndAlso Helper.CompareType(T, Compiler.TypeCache.System_Object) Then
                     Classification = New LateBoundAccessClassification(Me, m_First, Nothing, Name)
                     Return True
                 End If
 
-                Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+                member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, MemberVisibility.All)
+                If member Is Nothing OrElse member.Members.Count = 0 Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+                ElseIf member.Members.Count = 1 Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30390, Me.Location, Name, T.FullName, Helper.GetVisibilityString(member.Members(0))) AndAlso result
+                Else
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30517, Me.Location, Name) AndAlso result
+                End If
             End If
 
             members = member.Members
@@ -539,6 +546,7 @@ Public Class MemberAccessExpression
                 '   a variable; otherwise the result is a value.
                 Dim var As VariableDeclaration = TryCast(first, VariableDeclaration)
                 Dim fld As FieldInfo = TryCast(first, FieldInfo)
+
                 If var IsNot Nothing Then
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
 
@@ -562,6 +570,10 @@ Public Class MemberAccessExpression
                         Throw New InternalException(Me)
                     End If
                 ElseIf fld IsNot Nothing Then
+                    If Helper.IsAccessible(fld.Attributes, fld.DeclaringType, Me.FindFirstParent_IType.TypeDescriptor) = False Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30390, Location, fld.DeclaringType.FullName, fld.Name, Helper.ToString(fld.Attributes))
+                    End If
+
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
                     If fld.IsInitOnly AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> fld.IsStatic) Then
                         If fld.IsStatic Then

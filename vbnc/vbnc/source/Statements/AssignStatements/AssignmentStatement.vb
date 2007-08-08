@@ -45,6 +45,8 @@ Public Class AssignmentStatement
     Sub Init(ByVal LSide As Expression, ByVal RSide As Expression)
         m_LSide = LSide
         m_RSide = RSide
+        m_LSide.Parent = Me
+        m_RSide.Parent = Me
     End Sub
 
     ReadOnly Property LSide() As Expression

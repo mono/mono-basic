@@ -50,6 +50,26 @@ Public Class TypeParameterDescriptor
         End Get
     End Property
 
+    Public Overrides Function Equals(ByVal o As System.Type) As Boolean
+        If o Is Nothing Then Return False
+
+        If m_TypeParameter.TypeParameterBuilder IsNot Nothing AndAlso m_TypeParameter.TypeParameterBuilder Is o Then Return True
+
+        Dim oD As TypeParameterDescriptor = TryCast(o, TypeParameterDescriptor)
+
+        If oD Is Nothing Then Return False
+        If Helper.CompareNameOrdinal(oD.Name, Name) = False Then Return False
+        If oD.DeclaringMethod Is Nothing Xor DeclaringMethod Is Nothing Then Return False
+        If oD.DeclaringType Is Nothing Xor DeclaringType Is Nothing Then Return False
+        If DeclaringMethod IsNot Nothing Then
+            Return DeclaringMethod Is oD.DeclaringMethod
+        ElseIf DeclaringType IsNot Nothing Then
+            Return Helper.CompareType(DeclaringType, oD.DeclaringType)
+        Else
+            Throw New InternalException
+        End If
+    End Function
+
     Public Overrides Function GetMembers(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.MemberInfo()
         Dim result As MemberInfo() = Nothing
         Dim tmpResult As New Generic.List(Of MemberInfo)
@@ -199,7 +219,7 @@ Public Class TypeParameterDescriptor
         End If
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good is any type comparison would fail.
-        Static cache As New Generic.Dictionary(Of String, Type)(NameResolution.StringComparer)
+        Static cache As New Generic.Dictionary(Of String, Type)(Helper.StringComparer)
         If cache.ContainsKey(result.Name) Then
             result = cache.Item(result.Name)
         Else
