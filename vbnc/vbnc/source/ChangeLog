@@ -1,5 +1,10 @@
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/SimpleNameExpression.vb: Implement imported fields from
+	  modules.
+
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/ArgumentList.vb: If a byref parameter's expression doesn't
 	  match the parameters's type, create a temporary value (of the correct
 	  type), and store/restore the value there.

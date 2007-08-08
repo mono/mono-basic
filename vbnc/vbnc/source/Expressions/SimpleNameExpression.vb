@@ -831,6 +831,10 @@ Public Class SimpleNameExpression
                 Classification = New TypeClassification(Me, impmembers(0))
                 Return True
             End If
+            If Helper.IsFieldDeclaration(impmembers(0)) Then
+                Classification = New ValueClassification(Me, DirectCast(impmembers(0), FieldInfo), Nothing)
+                Return True
+            End If
             Helper.NotImplemented("Found " & impmembers.Count & " impmembers.")
         End If
 
