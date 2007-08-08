@@ -93,6 +93,7 @@ Public Class Test
     Private m_LastRun As Date
 
     Private m_Tag As Object
+    Private m_DontExecute As Boolean
 
     Private m_IsNegativeTest As Boolean
     Private m_NegativeError As Integer
@@ -107,6 +108,7 @@ Public Class Test
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
     Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
     Private Shared m_FileCacheTime As Date = Date.MinValue
+    Public Shared DirectoriesToSkip As String()
 
     Property AC() As String
         Get
@@ -550,6 +552,8 @@ Public Class Test
         contents = IO.File.ReadAllLines(Filename)
 
         For Each line As String In contents
+            If line.Contains("#DONTEXECUTE#") Then m_DontExecute = True
+
             For Each arg As String In Helper.ParseLine(line)
                 If arg.StartsWith("@") Then
                     ParseResponseFile(line.Substring(1))
@@ -730,7 +734,7 @@ Public Class Test
         m_Verifications.Add(m_Compilation)
 
         If m_IsNegativeTest = False Then
-            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso Me.Name.Contains("SelfCompile") = False AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
+            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso m_DontExecute = False AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputVBCAssembly))
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
@@ -759,7 +763,7 @@ Public Class Test
                 m_Verifications.Add(peV)
             End If
 
-            If Me.m_Target = "exe" Then
+            If Me.m_Target = "exe" AndAlso m_DontExecute = False Then
                 Dim executor As String
                 executor = GetExecutor()
                 If executor <> String.Empty AndAlso IO.File.Exists(executor) Then
@@ -839,11 +843,24 @@ Public Class Test
     End Sub
 
     Function SkipTest() As Boolean
+        If SkipTest(directoriestoskip) Then Return True
         If Helper.IsOnWindows Then
             Return Name.EndsWith(".Linux", StringComparison.OrdinalIgnoreCase)
         Else
             Return Name.EndsWith(".Windows", StringComparison.OrdinalIgnoreCase)
         End If
+    End Function
+
+    Private Function SkipTest(ByVal DirectoriesToSkip As String()) As Boolean
+        If DirectoriesToSkip Is Nothing Then Return False
+
+        For i As Integer = 0 To DirectoriesToSkip.Length - 1
+            If m_BasePath.Contains(DirectoriesToSkip(i)) Then
+                Return True
+            End If
+        Next
+
+        Return False
     End Function
 
     Sub DoTest()

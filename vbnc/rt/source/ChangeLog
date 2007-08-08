@@ -1,3 +1,7 @@
+2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Test.vb: Add DirectoriesToSkip and DontExecute variables.
+
 2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* rt.vbproj: Update.
