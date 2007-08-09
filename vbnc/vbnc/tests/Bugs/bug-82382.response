@@ -1,0 +1,2 @@
+-r:System.Drawing.dll,System.Windows.Forms.dll
+-target:library
