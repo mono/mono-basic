@@ -1,5 +1,9 @@
 2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Members/ArrayElementInitializer.vb: An enum is a special value type.
+
+2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/ArrayElementInitializer.vb: Fix variable initialization for
 	  non-primitive value types.
 

@@ -148,7 +148,7 @@ Public Class ArrayElementInitializer
             For j As Integer = 0 To indices.Count - 1
                 Emitter.EmitLoadI4Value(indexInfo, indices(j))
             Next
-            If elementtype.IsValueType AndAlso elementtype.IsPrimitive = False Then
+            If elementtype.IsValueType AndAlso elementtype.IsPrimitive = False AndAlso elementtype.IsEnum = False Then
                 Emitter.EmitLoadElementAddress(Info, elementtype, arraytype)
             End If
             'Get the element expression.
