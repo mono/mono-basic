@@ -44,7 +44,6 @@ Public Class MainForm
     Friend WithEvents CheckBox1 As CheckBox
     <DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.components = New Container
-        Dim resources As ResourceManager = New ResourceManager(GetType(MainForm))
         Me.Button1 = New Button
         Me.Timer1 = New Timer(Me.components)
         Me.RImage1 = New RImage
@@ -63,7 +62,7 @@ Public Class MainForm
         Me.RImage1.BackColor = Color.Transparent
         Me.RImage1.BorderStyle = BorderStyle.FixedSingle
         Me.RImage1.Direction = RImage.DirectionEnum.Clockwise
-        Me.RImage1.Image = CType(resources.GetObject("RImage1.Image"), Image)'Icon.ToBitmap ()
+        Me.RImage1.Image = Icon.ToBitmap ()
         Me.RImage1.Location = New Point(48, 64)
         Me.RImage1.Name = "RImage1"
         Me.RImage1.Rotation = 0
