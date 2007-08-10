@@ -1,3 +1,8 @@
+2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/ArrayElementInitializer.vb: Fix variable initialization for
+	  non-primitive value types.
+
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/SimpleNameExpression.vb: Implement imported fields from
