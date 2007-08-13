@@ -1,3 +1,7 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateAndTimeTests.cs: #81783 has been fixed, enable tests.
+
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* StringsTest.cs: Use unicode escape sequences for a few characters.

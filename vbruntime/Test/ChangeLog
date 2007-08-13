@@ -1,3 +1,8 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 2005VB_test_VB.dll.sources.win: Updated.
+	* Makefile: Don't stop executing tests if the C# tests fail.
+
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Microsoft.VisualBasic.MyServices/RegistryProxyTest.cs: Ignore a few

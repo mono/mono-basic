@@ -1,3 +1,9 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBindingTests2.vb, LateBindingTests3.vb, LateBindingTests4.vb,
+	  LateBindingTests5.vb, LateBindingTests6.vb, LateBindingTests.vb: There's
+	  no longer any mono_not_yet.
+
 2007-05-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* UtilsTest.cs: Don't check exception message.

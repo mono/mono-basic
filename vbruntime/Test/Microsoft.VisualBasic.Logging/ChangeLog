@@ -1,3 +1,8 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LogTest.cs, AspLogTest.cs, FileLogTraceListener.cs: There's no longer any
+	  mono_not_yet.
+
 2007-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* LateBindingsTest*.vb: Ifdef out all tests that contain references to types mono haven't implemented yet.

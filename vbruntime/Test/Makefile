@@ -69,10 +69,10 @@ clean-local:
 	-rm -fR bin/data
 	
 run-test-cs: test-cs
-	mono --debug bin/nunit-console.exe bin/2005VB_test_CS.dll /exclude:NotWorking /labels
+	-cd bin && mono --debug nunit-console.exe 2005VB_test_CS.dll /exclude:NotWorking /labels
 
 run-test-vb: test-vb
-	cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll /labels /exclude:NotWorking
+	-cd bin && mono --debug nunit-console.exe 2005VB_test_VB.dll /exclude:NotWorking /labels 
 
 run-test-local: run-test-cs run-test-vb
 	

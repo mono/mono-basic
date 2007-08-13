@@ -79,8 +79,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd() 
 		{
-			if (Helper.OnMono)
-				Assert.Ignore ("Buggy Mono: #81783");
 		
 			DateTime dtNow = DateTime.Now;
 
@@ -143,8 +141,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd_DateInterval_1()
 		{
-			if (Helper.OnMono)
-				Assert.Ignore ("Buggy Mono: #81783");
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd(DateInterval.Day, 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd(DateInterval.DayOfYear, 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/5/2003 02:00:00"),DateAndTime.DateAdd(DateInterval.Hour, 2, DateTime.Parse("12/5/03")));
@@ -160,8 +156,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void DateAdd_String_1()
 		{
-			if (Helper.OnMono)
-				Assert.Ignore ("Buggy Mono: #81783");
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd("d", 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/7/2003 00:00:00"),DateAndTime.DateAdd("y", 2, DateTime.Parse("12/5/03")));
 			Assert.AreEqual(DateTime.Parse("12/5/2003 02:00:00"),DateAndTime.DateAdd("h", 2, DateTime.Parse("12/5/03")));

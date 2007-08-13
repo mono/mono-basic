@@ -1,9 +1,11 @@
+Microsoft.VisualBasic.CompilerServices\ConversionsTests.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests2.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests3.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests4.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests5.vb
 Microsoft.VisualBasic.CompilerServices\LateBindingTests6.vb
+Microsoft.VisualBasic.CompilerServices\OperatorsTests.vb
 Microsoft.VisualBasic.Devices\ComputerInfoTests.vb
 Microsoft.VisualBasic.Devices\ComputerTests.vb
 Microsoft.VisualBasic.Devices\ClockTests.vb
