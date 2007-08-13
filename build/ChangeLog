@@ -1,3 +1,8 @@
+2007-08-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* library.make: If there's a specific sources file for a profile,
+	just use it, there's no need for more complex support.
+
 2007-03-15  Wade Berrier  <wberrier@novell.com>
 
 	* rules.make: revert to using automake's install-sh (ie: sunos

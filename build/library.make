@@ -11,13 +11,9 @@
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources = $(PROFILE)_$(LIBRARY).sources
+PROFILE_sources = $(LIBRARY).$(PROFILE).sources
 ifeq ($(wildcard $(PROFILE_sources)), $(PROFILE_sources))
-PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
-sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes)
-	@echo Creating the per profile list $@ ...
-	$(topdir)/tools/gensources.sh $(PROFILE_sources) $(PROFILE_excludes) > $@
+sourcefile = $(PROFILE_sources)
 endif
 
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
