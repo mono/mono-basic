@@ -21,7 +21,7 @@
     <AdditionalClassPath>
     </AdditionalClassPath>
     <NoStdLib>true</NoStdLib>
-    <jarserver>ipa</jarserver>
+    <jarserver>ip2</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <CompilerResponseFile>2005VB.JavaEE.rsp</CompilerResponseFile>
@@ -249,7 +249,7 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>"$(DevEnvDir)..\..\SDK\v2.0\Bin\resgen.exe" $(ProjectDir)\strings.txt</PreBuildEvent>
+    <PreBuildEvent>"$(DevEnvDir)\..\..\SDK\v2.0\Bin\resgen.exe" $(ProjectDir)\strings.txt</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="strings.resources" />
