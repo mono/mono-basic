@@ -1,5 +1,12 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Globals.vb, FileSystem.vb, VbStrConv.vb, HideModuleNameAttribute.vb,
+	  Conversion.vb, Strings.vb, Collection.vb, AudioPlayMode.vb,
+	  MyGroupCollectionAttribute.vb: Changed all uses of NET_2_0 to NET_VER >=
+	  2.0, deleted NET_1_0, NET_1_1 and NET_2_0.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Constants.vb, Interaction.vb, Strings.vb: Removed some members for
 	  moonlight.
 

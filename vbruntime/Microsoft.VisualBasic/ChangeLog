@@ -1,5 +1,10 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* vbruntime1.rsp, vbruntime2.rsp: Changed all uses of NET_2_0 to NET_VER >=
+	  2.0, deleted NET_1_0, NET_1_1 and NET_2_0.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* AssemblyInfo.vb, Makefile: Added MOONLIGHT conditional compilation symbol
 	  and started removing non-moonlight stuff from the files.
 	* Microsoft.VisualBasic.dll.moonlight.sources: New profile-specific sources

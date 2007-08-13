@@ -46,14 +46,12 @@ Namespace Microsoft.VisualBasic
 #Else
     Public NotInheritable Class Collection
 #End If
-
         Implements ICollection
         Implements IList
 #If NET_VER >= 2.0 Then
         Implements ISerializable
         Implements IDeserializationCallback
 #End If
-
         ' Declarations
         Private m_Hashtable As Hashtable = New Hashtable
         Private m_HashIndexers As ArrayList = New ArrayList
@@ -229,7 +227,7 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Default Public Overloads ReadOnly Property Item(ByVal index As String) As Object
             Get
                 Return Item(CObj(index))

@@ -1088,7 +1088,7 @@ Namespace Microsoft.VisualBasic
                     Dim carr() As Char = str.ToCharArray()
                     Dim inWord As Boolean = False
                     For i As Integer = 0 To carr.Length - 1
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                         If (Char.IsLetter(carr(i)) Or carr(i) = "'"c Or Char.IsDigit(carr(i))) Then
 #Else
                         If (Char.IsLetter(carr(i)) Or carr(i) = "'"c) Then
@@ -1188,7 +1188,7 @@ Namespace Microsoft.VisualBasic
 
             Return Value.ToUpper()
         End Function
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         <CLSCompliant(False)> _
         Public Function Len(ByVal Expression As SByte) As Integer
             Return GetSize(Expression)

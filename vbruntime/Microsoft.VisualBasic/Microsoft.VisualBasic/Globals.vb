@@ -35,17 +35,17 @@ Namespace Microsoft.VisualBasic
 
         Public ReadOnly Property ScriptEngineBuildVersion() As Integer
             Get
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                 Return 50727
 #Else
-                return 0
+                Return 0
 #End If
             End Get
         End Property
 
         Public ReadOnly Property ScriptEngineMajorVersion() As Integer
             Get
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                 Return 8
 #Else
                 return 7
@@ -55,7 +55,7 @@ Namespace Microsoft.VisualBasic
 
         Public ReadOnly Property ScriptEngineMinorVersion() As Integer
             Get
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                 Return 0
 #Else
                 return 0

@@ -33,7 +33,7 @@
 ' The VB compiler refuses to compile this class because it conflicts with an assembly name
 ' while it tries to compile its internal code (MyInternalTemplate.vb or something like that)
 '
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 Imports System
 Imports System.Globalization
 Imports System.Threading

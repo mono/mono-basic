@@ -198,7 +198,7 @@ Namespace Microsoft.VisualBasic
             If (PathName = "") Then Throw New System.IO.FileNotFoundException("File " + "'" + "'" + " not found.")
 
             Dim InvalidChars() As Char
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
 #Else
             InvalidChars = Path.InvalidPathChars
@@ -330,7 +330,7 @@ Namespace Microsoft.VisualBasic
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim InvalidChars() As Char
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
 #Else
             InvalidChars = Path.InvalidPathChars
@@ -513,7 +513,7 @@ Namespace Microsoft.VisualBasic
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim InvalidChars() As Char
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
 #Else
             InvalidChars = Path.InvalidPathChars

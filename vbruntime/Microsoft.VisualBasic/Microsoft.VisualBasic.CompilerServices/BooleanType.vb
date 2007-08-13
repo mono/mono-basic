@@ -58,7 +58,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return DirectCast(Value, Byte) <> 0
             End If
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
             If TypeOf Value Is SByte Then
                 Return DirectCast(Value, SByte) <> 0
             End If

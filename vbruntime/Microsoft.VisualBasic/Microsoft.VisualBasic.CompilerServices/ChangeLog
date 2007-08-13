@@ -1,3 +1,10 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DoubleType.vb, NewLateBinding.vb, Versioned.vb, ObjectFlowControl.vb,
+	  LikeOperator.vb, Operators.vb, BooleanType.vb, IntegerType.vb, Utils.vb,
+	  IncompleteInitialization.vb, Conversions.vb: Changed all uses of NET_2_0
+	  to NET_VER >= 2.0, deleted NET_1_0, NET_1_1 and NET_2_0.
+
 ﻿2007-05-11  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Operators.vb: Corcompare fixes.

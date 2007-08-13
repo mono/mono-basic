@@ -28,7 +28,7 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 Imports System
 Imports System.Reflection
 Namespace Microsoft.VisualBasic.CompilerServices
@@ -755,7 +755,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End If
                 Return result = CompareResult.Greater Or result = CompareResult.Equal
             Catch ex As Exception
-                Throw New InvalidCastException("Operator '>=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
+                Console.WriteLine("Left: {0}, Right: {1}", Left, Right)
+                Throw New InvalidCastException("Operator '>=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'. (" & CStr(Left) & " >= " & CStr(Right) & ")")
             End Try
         End Function
 

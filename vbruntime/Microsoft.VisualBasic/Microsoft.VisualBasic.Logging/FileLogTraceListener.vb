@@ -25,7 +25,7 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 Imports System.Runtime.InteropServices
 Imports System.Text
 
@@ -114,10 +114,10 @@ Namespace Microsoft.VisualBasic.Logging
             End If
         End Sub
 
-#If TARGET_JVM = False Then            
+#If TARGET_JVM = False Then
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal message As String)
 
-	    If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
+            If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
 
             Dim builder As New System.Text.StringBuilder()
             builder.Append(source)

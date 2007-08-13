@@ -32,7 +32,7 @@ Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.CompilerServices
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
     <System.Serializable()> _
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class IncompleteInitialization : Inherits Exception

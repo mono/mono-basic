@@ -1,3 +1,15 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CantStartSingleInstanceException.vb, ShutdownEventHandler.vb, WebUser.vb,
+	  User.vb, ShutdownMode.vb, WindowsFormsApplicationBase.vb,
+	  BuiltInRoleConverter.vb, UnhandledExceptionEventHandler.vb,
+	  ConsoleApplicationBase.vb, StartupEventArgs.vb, AuthenticationMode.vb,
+	  StartupNextInstanceEventHandler.vb, BuiltInRole.vb,
+	  WindowsFormsApplicationContext.vb, AssemblyInfo.vb, ApplicationBase.vb,
+	  UnhandledExceptionEventArgs.vb, StartupEventHandler.vb,
+	  NoStartupFormException.vb, StartupNextInstanceEventArgs.vb: Changed all
+	  uses of NET_2_0 to NET_VER >= 2.0, deleted NET_1_0, NET_1_1 and NET_2_0.
+
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	

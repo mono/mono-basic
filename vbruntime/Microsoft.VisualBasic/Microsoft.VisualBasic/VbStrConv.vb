@@ -55,7 +55,7 @@ Namespace Microsoft.VisualBasic
         '/ <summary>
         '/ Converts the string to uppercase characters. 
         '/ </summary>
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Uppercase = 1
 #Else
         UpperCase = 1
@@ -64,7 +64,7 @@ Namespace Microsoft.VisualBasic
         '/ <summary>
         '/ Converts the string to lowercase characters. 
         '/ </summary>
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Lowercase = 2
 #Else
         LowerCase = 2

@@ -1,3 +1,13 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* NetworkAvailableEventArgs.vb, ComputerInfo.vb, ServerComputer.jvm.vb,
+	  MyWebClient.vb, Mouse.jvm.vb, ServerComputer.vb, Mouse.vb,
+	  Computer.jvm.vb, Network.vb, MyProgressDialog.vb,
+	  NetworkAvailableEventHandler.vb, Keyboard.jvm.vb, Clock.vb,
+	  Audio.jvm.vb, Computer.vb, Keyboard.vb, Audio.vb, Ports.jvm.vb,
+	  ComputerInfo.jvm.vb, Ports.vb: Changed all uses of NET_2_0 to NET_VER >=
+	  2.0, deleted NET_1_0, NET_1_1 and NET_2_0.
+
 2007-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Network.vb, NetworkAvailableEventHandler.vb: Removed mono_not_yet,

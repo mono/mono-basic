@@ -27,15 +27,15 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
  
-#if NET_2_0
+#If NET_VER >= 2.0 Then
 Imports System
- 
+
 Namespace Microsoft.VisualBasic.ApplicationServices
- 
-	Public Enum AuthenticationMode 
+
+    Public Enum AuthenticationMode
         ApplicationDefined = 1
         Windows = 0
-	End Enum
+    End Enum
 End Namespace
- 
+
 #End If

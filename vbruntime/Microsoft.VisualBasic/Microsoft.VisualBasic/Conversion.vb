@@ -173,7 +173,7 @@ Namespace Microsoft.VisualBasic
                         Else
                             Return Hex(SizeDown(Convert.ToInt64(Number)))
                         End If
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return Hex(Convert.ToSByte(Number))
                     Case TypeCode.UInt16
@@ -315,7 +315,7 @@ Namespace Microsoft.VisualBasic
                         Else
                             Return Oct(SizeDown(Convert.ToInt64(Number)))
                         End If
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return Oct(Convert.ToSByte(Number))
                     Case TypeCode.UInt16
@@ -598,7 +598,7 @@ Namespace Microsoft.VisualBasic
             'FIXME:ArgumentException - Object type expression not convertible to String.
 
         End Function
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         <CLSCompliant(False)> _
         Public Function Hex(ByVal Number As SByte) As String
             Return Convert.ToString(Number, 16).ToUpper
