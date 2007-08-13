@@ -1,3 +1,8 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Constants.vb, Interaction.vb, Strings.vb: Removed some members for
+	  moonlight.
+
 2007-07-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Information.vb: Fix 1.0 build.

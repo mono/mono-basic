@@ -71,6 +71,7 @@ Namespace Microsoft.VisualBasic
         Public Const vbFirstFourDays As FirstWeekOfYear = FirstWeekOfYear.FirstFourDays
         Public Const vbFirstFullWeek As FirstWeekOfYear = FirstWeekOfYear.FirstFullWeek
 
+#If Not MOONLIGHT Then
         Public Const vbUpperCase As VbStrConv = VbStrConv.Uppercase
         Public Const vbLowerCase As VbStrConv = VbStrConv.Lowercase
         Public Const vbProperCase As VbStrConv = VbStrConv.ProperCase
@@ -81,6 +82,7 @@ Namespace Microsoft.VisualBasic
         Public Const vbSimplifiedChinese As VbStrConv = VbStrConv.SimplifiedChinese
         Public Const vbTraditionalChinese As VbStrConv = VbStrConv.TraditionalChinese
         Public Const vbLinguisticCasing As VbStrConv = VbStrConv.LinguisticCasing
+#End If
 
         Public Const vbEmpty As VariantType = VariantType.Empty
         Public Const vbNull As VariantType = VariantType.Null
@@ -100,6 +102,7 @@ Namespace Microsoft.VisualBasic
         Public Const vbUserDefinedType As VariantType = VariantType.UserDefinedType
         Public Const vbArray As VariantType = VariantType.Array
 
+#If Not MOONLIGHT Then
         Public Const vbArchive As FileAttribute = FileAttribute.Archive
         Public Const vbDirectory As FileAttribute = FileAttribute.Directory
         Public Const vbHidden As FileAttribute = FileAttribute.Hidden
@@ -146,6 +149,6 @@ Namespace Microsoft.VisualBasic
         Public Const vbMaximizedFocus As AppWinStyle = AppWinStyle.MaximizedFocus
         Public Const vbNormalNoFocus As AppWinStyle = AppWinStyle.NormalNoFocus
         Public Const vbMinimizedNoFocus As AppWinStyle = AppWinStyle.MinimizedNoFocus
-
+#End If
     End Module
 End Namespace

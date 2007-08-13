@@ -1,3 +1,12 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb, Makefile: Added MOONLIGHT conditional compilation symbol
+	  and started removing non-moonlight stuff from the files.
+	* Microsoft.VisualBasic.dll.moonlight.sources: New profile-specific sources
+	  file, does not contain files that isn't in moonlight at all.
+	* vbruntime-moonlight.rsp: Added, contains moonlight-specific compilation
+	  arguments.
+
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win,

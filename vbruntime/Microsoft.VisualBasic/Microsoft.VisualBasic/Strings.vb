@@ -714,9 +714,11 @@ Namespace Microsoft.VisualBasic
             Return GetSize(Expression)
         End Function
 
+#If Not MOONLIGHT Then
         Public Function Len(ByVal Expression As Object) As Integer
             Return GetSize(Expression)
         End Function
+#End If
 
         Public Function Len(ByVal Expression As Short) As Integer
             Return GetSize(Expression)
@@ -1066,6 +1068,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
+#If Not MOONLIGHT Then
         Public Function StrConv(ByVal str As String, _
                                         ByVal Conversion As VbStrConv, _
                                         Optional ByVal LocaleID As Integer = 0) As String
@@ -1109,6 +1112,7 @@ Namespace Microsoft.VisualBasic
             Throw New NotSupportedException(String.Format("Conversion {0} is not supported yet", Conversion))
 
         End Function
+#End If
 
         Public Function StrDup(ByVal Number As Integer, ByVal Character As Char) As String
             If Character = Nothing Then

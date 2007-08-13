@@ -40,6 +40,7 @@ Imports System.Drawing
 Namespace Microsoft.VisualBasic
     Public Module Interaction
 
+#If Not MOONLIGHT Then
         Public Sub AppActivate(ByVal ProcessId As Integer)
             'TODO: OS Specific
             Throw New NotImplementedException
@@ -53,6 +54,7 @@ Namespace Microsoft.VisualBasic
             ' Removed Throw exception, as it does not really harm that the beep does not work.
         End Sub
 
+#End If
         <MonoLimitation("CallType.Let options is not supported.")> _
         Public Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
             Select Case UseCallType
@@ -67,6 +69,8 @@ Namespace Microsoft.VisualBasic
             End Select
             Return Nothing
         End Function
+
+#If Not MOONLIGHT Then
         Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
             If (Choice.Rank <> 1) Then
@@ -225,11 +229,11 @@ Namespace Microsoft.VisualBasic
             End Sub
 
             Public Function Run() As String
-	        If Me.ShowDialog = Windows.Forms.DialogResult.OK Then
-          	    Return result
-		Else
-		    Return String.Empty
-	        End If
+                If Me.ShowDialog = Windows.Forms.DialogResult.OK Then
+                    Return result
+                Else
+                    Return String.Empty
+                End If
             End Function
 
             Private Sub ok_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -309,16 +313,16 @@ Namespace Microsoft.VisualBasic
             Else
                 strStart = CStr(lStart)
             End If
-            
-            strStop = Cstr([stop])
-            
+
+            strStop = CStr([Stop])
+
             If (strEnd.Length > strStop.Length) Then
-                nSpaces = strEnd.Length 
+                nSpaces = strEnd.Length
             Else
                 nSpaces = strStop.Length
             End If
-	    
-	    If (nSpaces = 1) Then nSpaces = nSpaces + 1
+
+            If (nSpaces = 1) Then nSpaces = nSpaces + 1
 
             Return strStart.PadLeft(nSpaces) + ":" + strEnd.PadLeft(nSpaces)
 
@@ -421,5 +425,6 @@ Namespace Microsoft.VisualBasic
 #End If
 
         End Function
+#End If
     End Module
 End Namespace

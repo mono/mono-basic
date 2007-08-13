@@ -48,9 +48,24 @@ Imports System.Security
 <Assembly: AssemblyCopyright("Copyright © Ximian 2006")> 
 
 <Assembly: NeutralResourcesLanguage("en-US")> 
+#If Not MOONLIGHT Then
 <Assembly: AllowPartiallyTrustedCallers()> 
+#End If
 
 
+#If MOONLIGHT Then
+<Assembly: AssemblyVersion("1.1.20806.0")> 
+<Assembly: AssemblyVersion("8.1.0.0")> 
+<Assembly: ComVisible(True)> 
+<Assembly: CLSCompliant(True)> 
+<Assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default Or DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)> 
+<Assembly: CompilationRelaxations(CompilationRelaxations.NoStringInterning)> 
+<Assembly: RuntimeCompatibility(WrapNonExceptionThrows:=True)> 
+<Assembly: SatelliteContractVersion("2.1.0.0")> 
+<Assembly: AssemblyInformationalVersion("8.0.50727.42")> 
+<Assembly: AssemblyFileVersion("1.1.20806.0")> 
+<Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
+#Else
 #If NET_VER >= 2.0 Then
 <Assembly: AssemblyVersion("8.0.0.0")> 
 <Assembly: ComVisible(True)> 
@@ -70,6 +85,7 @@ Imports System.Security
 <Assembly: ComCompatibleVersion (7, 0, 3300, 0)>
 <Assembly: SatelliteContractVersion ("7.0.5000.0")>
 <Assembly: TypeLibVersion (7, 1)>
+#End If
 #End If
 
 

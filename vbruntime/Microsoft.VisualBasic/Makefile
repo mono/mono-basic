@@ -3,10 +3,14 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualBasic.dll
 
+ifeq ("$(PROFILE)", "moonlight")
+LOCAL_VBNC_FLAGS = @vbruntime-moonlight.rsp $(EXTRA_VBRUNTIME_FLAGS)
+else
 ifeq ("$(FXVERSION)", "1")
 LOCAL_VBNC_FLAGS = @vbruntime1.rsp $(EXTRA_VBRUNTIME_FLAGS)
 else
 LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
+endif
 endif
 
 NO_SIGN_ASSEMBLY = true
