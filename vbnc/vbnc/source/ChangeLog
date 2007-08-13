@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/Emitter.vb: Implement ByRef Char parameter loading.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/GenerateCodeAndResX.sh: Duh. It's 42024, not 42021.
 
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 

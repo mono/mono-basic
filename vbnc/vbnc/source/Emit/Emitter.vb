@@ -2010,7 +2010,7 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Ldind_U1)
             Case TypeCode.SByte
                 Info.ILGen.Emit(OpCodes.Ldind_I1)
-            Case TypeCode.UInt16
+            Case TypeCode.UInt16, TypeCode.Char
                 Info.ILGen.Emit(OpCodes.Ldind_U2)
             Case TypeCode.Int16
                 Info.ILGen.Emit(OpCodes.Ldind_I2)
@@ -2034,7 +2034,7 @@ Partial Public Class Emitter
             Case TypeCode.Decimal
                 Info.ILGen.Emit(OpCodes.Ldobj, Info.Compiler.TypeCache.System_Decimal)
             Case Else
-                Helper.NotImplemented()
+                Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
         End Select
         Info.Stack.Push(elementtype)
     End Sub
