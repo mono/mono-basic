@@ -43,6 +43,14 @@ Public Class ExternalProcessVerification
         m_Process.ExpandCmdLine(New String() {"%OUTPUTASSEMBLY%", "%OUTPUTVBCASSEMBLY%"}, New String() {Test.GetOutputAssembly(), Test.GetOutputVBCAssembly()})
     End Sub
 
+    Private Function StdOutContainsNumber(ByVal Number As Integer) As Boolean
+        Dim str As String
+        str = m_Process.StdOut & ""
+        If str.Contains("BC" & Number.ToString) Then Return True
+        If str.Contains("VBNC" & Number.ToString) Then Return True
+        Return False
+    End Function
+
     Protected Overrides Function RunVerification() As Boolean
         Dim result As Boolean
 
@@ -54,10 +62,23 @@ Public Class ExternalProcessVerification
         End If
 
         If m_Process.TimedOut = False Then
-            If Me.NegativeError = 0 Then
+            If Me.NegativeError = 0 AndAlso Me.Warning = 0 Then
                 If m_Process.ExitCode = 0 Then
                     result = True
                     MyBase.DescriptiveMessage = Name & " succeeded." & vbNewLine
+                Else
+                    result = False
+                    MyBase.DescriptiveMessage = Name & " failed, process exited with exit code " & m_Process.ExitCode.ToString & vbNewLine
+                End If
+            ElseIf Me.Warning <> 0 Then
+                If m_Process.ExitCode = 0 Then
+                    If StdOutContainsNumber(Me.Warning) = False Then
+                        result = False
+                        MyBase.DescriptiveMessage = Name & " succeeded correctly, but didn't give the expected error code." & vbNewLine
+                    Else
+                        result = True
+                        MyBase.DescriptiveMessage = Name & " succeeded." & vbNewLine
+                    End If
                 Else
                     result = False
                     MyBase.DescriptiveMessage = Name & " failed, process exited with exit code " & m_Process.ExitCode.ToString & vbNewLine
@@ -69,7 +90,7 @@ Public Class ExternalProcessVerification
                 ElseIf m_Process.ExitCode = -1 OrElse m_Process.ExitCode = 255 Then
                     result = False
                     MyBase.DescriptiveMessage = Name & " failed spectacularly. " & vbNewLine
-                ElseIf (m_Process.StdOut & "").Contains("BC" & Me.NegativeError.ToString) = False AndAlso (m_Process.StdOut & "").Contains("VBNC" & Me.NegativeError.ToString) = False Then
+                ElseIf StdOutContainsNumber(Me.NegativeError) = False Then
                     result = False
                     MyBase.DescriptiveMessage = Name & " failed correctly, but didn't give the expected error code." & vbNewLine
                 Else

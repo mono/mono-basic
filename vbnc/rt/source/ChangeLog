@@ -1,3 +1,9 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VerificationBase.vb, Test.vb, ExternalProcessVerification.vb,
+	  AssemblyInfo.vb: Implement testing of warnings. The compilation
+	  succeeds, but they still have to print out the correct warning number.
+
 2007-08-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: Add DirectoriesToSkip and DontExecute variables.

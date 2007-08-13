@@ -96,6 +96,7 @@ Public Class Test
     Private m_DontExecute As Boolean
 
     Private m_IsNegativeTest As Boolean
+    Private m_IsWarning As Boolean
     Private m_NegativeError As Integer
     Private m_LoadedOldResults As Boolean
 
@@ -712,6 +713,7 @@ Public Class Test
             vbc.Process.WorkingDirectory = m_BasePath
             vbc.Name = "VBC Compile (verifies that the test itself is correct)"
             If m_IsNegativeTest Then vbc.NegativeError = m_NegativeError
+            If m_IsWarning Then vbc.Warning = m_NegativeError
         End If
 
         compiler = Me.Compiler
@@ -727,6 +729,7 @@ Public Class Test
         m_Compilation.Name = "VBNC Compile"
         'm_Compilation.Process.UseTemporaryExecutable = True
         If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
+        If m_IsWarning Then m_Compilation.Warning = m_NegativeError
 
         m_Verifications.Clear()
 
@@ -960,6 +963,10 @@ Public Class Test
                 End If
             Next
             m_IsNegativeTest = Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_NegativeError)
+            If m_IsNegativeTest AndAlso m_NegativeError >= 40000 AndAlso m_NegativeError < 50000 Then
+                m_IsNegativeTest = False
+                m_IsWarning = True
+            End If
         End If
         m_OutputPath = IO.Path.Combine(m_BasePath, DefaultOutputPath)
     End Sub

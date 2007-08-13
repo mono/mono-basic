@@ -23,9 +23,19 @@ Public MustInherit Class VerificationBase
     Private m_Run As Boolean
     Private m_Test As Test
     Private m_NegativeError As Integer
+    Private m_Warning As Integer
     Private m_DescriptiveMessage As String
 
     Private m_Name As String = "Verification"
+
+    Property Warning() As Integer
+        Get
+            Return m_Warning
+        End Get
+        Set(ByVal value As Integer)
+            m_Warning = value
+        End Set
+    End Property
 
     Property NegativeError() As Integer
         Get
