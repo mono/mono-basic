@@ -34,53 +34,53 @@ Imports NUnit.Framework
 Public Class GlobalsTests
     <Test()> _
     Public Sub ScriptEngineTest()
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("VB", Microsoft.VisualBasic.Globals.ScriptEngine, "#1")
-#ElseIf NET_1_1 Then
-            Assert.AreEqual("VB", Microsoft.VisualBasic.Globals.ScriptEngine, "#1")
-#ElseIf NET_1_0 Then
-            Assert.AreEqual("VB", Microsoft.VisualBasic.Globals.ScriptEngine, "#1")
+#ElseIf NET_VER >= 1.1 Then
+        Assert.AreEqual("VB", Microsoft.VisualBasic.Globals.ScriptEngine, "#1")
+#ElseIf NET_VER >= 1.0 Then
+        Assert.AreEqual("VB", Microsoft.VisualBasic.Globals.ScriptEngine, "#1")
 #Else
-            Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
+        Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
 #End If
     End Sub
 
     <Test()> _
     Public Sub ScriptEngineBuildVersionTest()
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(50727, Microsoft.VisualBasic.Globals.ScriptEngineBuildVersion, "#1")
-#ElseIf NET_1_1 Then
-            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineBuildVersion, "#1")
-#ElseIf NET_1_0 Then
-            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineBuildVersion, "#1")
+#ElseIf NET_VER >= 1.1 Then
+        Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineBuildVersion, "#1")
+#ElseIf NET_VER >= 1.0 Then
+        Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineBuildVersion, "#1")
 #Else
-            Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
+        Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
 #End If
     End Sub
 
     <Test()> _
     Public Sub ScriptEngineMajorVersionTest()
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(8, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
-#ElseIf NET_1_1 Then
-            Assert.AreEqual(7, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
-#ElseIf NET_1_0 Then
-            Assert.AreEqual(7, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
+#ElseIf NET_VER >= 1.1 Then
+        Assert.AreEqual(7, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
+#ElseIf NET_VER >= 1.0 Then
+        Assert.AreEqual(7, Microsoft.VisualBasic.Globals.ScriptEngineMajorVersion, "#1")
 #Else
-            Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
+        Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
 #End If
     End Sub
 
     <Test()> _
     Public Sub ScriptEngineMinorVersionTest()
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
-#ElseIf NET_1_1 Then
-            Assert.AreEqual(10, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
-#ElseIf NET_1_0 Then
-            Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
+#ElseIf NET_VER >= 1.1 Then
+        Assert.AreEqual(10, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
+#ElseIf NET_VER >= 1.0 Then
+        Assert.AreEqual(0, Microsoft.VisualBasic.Globals.ScriptEngineMinorVersion, "#1")
 #Else
-            Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
+        Assert.Fail("A runtime version is necessary, either 1.0, 1.1 or 2.0")
 #End If
     End Sub
 End Class

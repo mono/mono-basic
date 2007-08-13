@@ -1,5 +1,12 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* LateBindingTests2.vb, ConversionsTests.vb: Use NET_VER.
+	* LateBindingTests4.vb, LateBindingTests5.vb, OperatorsTests.vb: Fix code to
+	  build on 1.1.
+	* LateBindingTests.vb: Use NET_VER and fix code to build on 1.1.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* LateBindingTests2.vb, LateBindingTests3.vb, LateBindingTests4.vb,
 	  LateBindingTests5.vb, LateBindingTests6.vb, LateBindingTests.vb: There's
 	  no longer any mono_not_yet.

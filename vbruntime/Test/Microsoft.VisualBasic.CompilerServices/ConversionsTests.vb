@@ -1,3 +1,5 @@
+#If NET_VER >= 2.0 Then
+
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
 Imports NUnit.Framework
@@ -25,3 +27,5 @@ Public Class ConversionsTests
 
     End Sub
 End Class
+
+#End If

@@ -28,9 +28,11 @@ IF %ERRORLEVEL%==1 GOTO ENDOFFILE
 
 
 copy Microsoft.VisualBasic.SIGNED.dll Microsoft.VisualBasic.dll
+CALL :EXECUTEVBTEST
 CALL :EXECUTETEST
 IF NOT "%ERRORLEVEL%"=="0" GOTO ENDOFFILE
 copy Microsoft.VisualBasic.NOTSIGNED.dll Microsoft.VisualBasic.dll
+CALL :EXECUTEVBTEST
 CALL :EXECUTETEST
 rem del Microsoft.VisualBasic.*.dll
 rem del Microsoft.VisualBasic.dll
@@ -75,6 +77,50 @@ GOTO ENDSETNUNITV
 :ENDSETNUNITV
 
 nunit-console.exe 2005VB_test_CS.dll /labels /noshadow /exclude:Slow,NotDotNet,NotWorking
+ECHO %ERRORLEVEL%
+IF NOT "%ERRORLEVEL%"=="0" GOTO ENDOFFILE
+rem del Microsoft.VisualBasic.dll
+
+GOTO ENDOFFILE
+
+:EXECUTEVBTEST
+
+pushd .
+copy Microsoft.VisualBasic.dll bin
+IF "%FXVERSION%"=="2"   (GOTO SETDEFINES2_0)
+IF "%FXVERSION%"=="2_0" (GOTO SETDEFINES2_0)
+IF "%FXVERSION%"=="1_1" (GOTO SETDEFINES1_1)
+IF "%FXVERSION%"=="1"   (GOTO SETDEFINES1_1)
+IF "%FXVERSION%"=="1_0" (GOTO SETDEFINES1_0)
+GOTO ENDSETDEFINES
+:SETDEFINES2_0
+	SET VBDEFINES=-define:NET_VER=2.0 -novbruntimeref
+	GOTO ENDSETDEFINES
+:SETDEFINES1_1
+	SET VBDEFINES=-define:NET_VER=1.1
+	GOTO ENDSETDEFINES
+:SETDEFINES1_0
+	SET VBDEFINES=-define:NET_VER=1_0
+	GOTO ENDSETDEFINES
+:ENDSETDEFINES
+
+%VBC% "-out:bin\2005VB_test_VB.dll" @2005VB_test_VB.dll.rsp @2005VB_test_VB.dll.sources.win  -r:Microsoft.VisualBasic.dll  -libpath:bin %VBDEFINES% -debug -verbose
+
+IF ERRORLEVEL 1 (GOTO ENDOFFILE)
+cd bin
+
+IF "%FXVERSION%"=="2" GOTO SETNUNIT2
+IF "%FXVERSION%"=="2_0" GOTO SETNUNIT2
+GOTO SETNUNIT1
+:SETNUNIT1
+copy nunit-console1.exe.config nunit-console.exe.config
+GOTO ENDSETNUNITV
+:SETNUNIT2
+copy nunit-console2.exe.config nunit-console.exe.config
+GOTO ENDSETNUNITV
+:ENDSETNUNITV
+
+nunit-console.exe 2005VB_test_VB.dll /labels /noshadow /exclude:Slow,NotDotNet,NotWorking
 ECHO %ERRORLEVEL%
 IF NOT "%ERRORLEVEL%"=="0" GOTO ENDOFFILE
 rem del Microsoft.VisualBasic.dll

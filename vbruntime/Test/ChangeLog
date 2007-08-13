@@ -1,5 +1,12 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Make.cmd: Execute VB tests as well.
+	* 2005VB_test_VB.dll.rsp: Define _MYTYPE to avoid compiling the My
+	  namespace.
+	* Makefile: Set NET_VER for VB build.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* 2005VB_test_VB.dll.sources.win: Updated.
 	* Makefile: Don't stop executing tests if the C# tests fail.
 

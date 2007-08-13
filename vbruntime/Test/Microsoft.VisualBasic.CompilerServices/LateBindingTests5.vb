@@ -151,8 +151,7 @@ Public Class LateBindingTests5
         End Function
     End Class
 
-    <Category("TargetJvmNotWorking")> _
-    <Test()> _
+    <Category("TargetJvmNotWorking"), Test()> _
     Public Sub LateBind_MethodDeclarationA()
         Dim o As Object = New C4
         Assert.AreEqual(10, o.A(o.AB()))

@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* AspLogTest.cs: This is still not available on mono.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* LogTest.cs, AspLogTest.cs, FileLogTraceListener.cs: There's no longer any
 	  mono_not_yet.
 

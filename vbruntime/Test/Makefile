@@ -59,7 +59,7 @@ test-cs: test-first 2005VB_test_CS.dll.sources
 	$(CSCOMPILER) "-out:bin/2005VB_test_CS.dll" @2005VB_test_CS.dll.rsp @2005VB_test_CS.dll.sources -lib:bin $(CSDEFINES)
 	
 test-vb: test-first 2005VB_test_VB.dll.sources 
-	$(VBNC) -out:bin/2005VB_test_VB.dll @2005VB_test_VB.dll.rsp @2005VB_test_VB.dll.sources /libpath:bin
+	$(VBNC) -out:bin/2005VB_test_VB.dll @2005VB_test_VB.dll.rsp /d:NET_VER=2.0 @2005VB_test_VB.dll.sources /libpath:bin
 
 test-local: init run-test-cs run-test-vb
 

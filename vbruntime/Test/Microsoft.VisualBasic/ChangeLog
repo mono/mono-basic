@@ -1,5 +1,11 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Helper.vb: Fix code to build on 1.1.
+	* ErrObjectTests.vb: Tests can't be shared.
+	* GlobalsTests.vb, FileSystemTests.vb: Use NET_VER.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DateAndTimeTests.cs: #81783 has been fixed, enable tests.
 
 2007-05-31  Rolf Bjarne Kvinge <RKvinge@novell.com> 

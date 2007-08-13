@@ -37,7 +37,7 @@ Public Class Helper
     <Test(), Category("TargetJvmNotSupported")> _
     Public Sub PrintRuntimePath()
         For Each a As Reflection.Assembly In AppDomain.CurrentDomain.GetAssemblies
-            If a.FullName.Contains("VisualBasic") Then
+            If a.FullName.IndexOf("VisualBasic") >= 0 Then
                 Console.WriteLine("")
                 Console.WriteLine("Using runtime in: " + a.Location)
             End If

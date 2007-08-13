@@ -104,7 +104,7 @@ Public Class ErrObjectTests
     End Sub
 
     <Test()> _
-    Public Shared Sub ErrNumber3()
+    Public Sub ErrNumber3()
         Try
             Err.Raise(vbObjectError - 1) ' vbObjectError=-2147221504
         Catch e As Exception

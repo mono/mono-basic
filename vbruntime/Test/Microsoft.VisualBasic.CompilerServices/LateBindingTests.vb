@@ -44,7 +44,7 @@ Public Class LateBindingTests
     Dim d As Double = 1.0
     Dim si As Single = 1.0
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
     Dim sb As SByte = 1
     Dim us As UShort = 1
     Dim ui As UInteger = 1
@@ -289,7 +289,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
@@ -342,7 +342,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -364,7 +364,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
@@ -417,7 +417,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -447,7 +447,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
 
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
@@ -500,7 +500,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -522,7 +522,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         'Public Function F(ByVal s As SByte) As String
         '    Return "SByte"
         'End Function
@@ -561,8 +561,7 @@ Public Class LateBindingTests
         End Function
     End Class
     'TargetJvmNotWorking - Assert.AreEqual("Short", o.F(sb)) Fail - support for 2.0 sbyte
-    <Category("TargetJvmNotWorking")> _
-    <Test()> _
+    <Category("TargetJvmNotWorking"), Test()> _
     Public Sub LateBind_PrimitiveTypes_220()
         Dim o As Object = New C220
 
@@ -575,7 +574,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("Short", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -597,7 +596,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -649,7 +648,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("Integer", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -671,7 +670,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -723,7 +722,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("Long", o.F(ui))
@@ -745,7 +744,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -797,7 +796,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -819,7 +818,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -858,8 +857,7 @@ Public Class LateBindingTests
         End Function
     End Class
 
-    <Category("TargetJvmNotWorking")> _
-    <Test()> _
+    <Category("TargetJvmNotWorking"), Test()> _
     Public Sub LateBind_PrimitiveTypes_260()
         Dim o As Object = New C260
 
@@ -872,7 +870,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -894,7 +892,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -933,8 +931,7 @@ Public Class LateBindingTests
         End Function
     End Class
 
-    <Category("TargetJvmNotWorking")> _
-    <Test()> _
+    <Category("TargetJvmNotWorking"), Test()> _
     Public Sub LateBind_PrimitiveTypes_270()
         Dim o As Object = New C270
 
@@ -947,7 +944,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -969,7 +966,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1021,7 +1018,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -1053,7 +1050,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1105,7 +1102,7 @@ Public Class LateBindingTests
         'Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -1135,7 +1132,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1187,7 +1184,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Double", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -1209,7 +1206,7 @@ Public Class LateBindingTests
         '    Return "Short"
         'End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1261,7 +1258,7 @@ Public Class LateBindingTests
         'Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("Integer", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
@@ -1299,7 +1296,7 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         'Public Function F(ByVal s As SByte) As String
         '    Return "SByte"
         'End Function
@@ -1351,7 +1348,7 @@ Public Class LateBindingTests
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Double", o.F(si))
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual("Short", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("Long", o.F(ui))

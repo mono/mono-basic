@@ -259,13 +259,13 @@ Public Class LateBindingTests4
         Dim a As Integer = 1
         Dim err As String = ""
         o.F(a, a)
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(10, a)
 #Else
         Assert.AreEqual(9, a)
 #End If
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(10, a)
 #Else
         o.F(i:=a, j:=a)
@@ -273,7 +273,7 @@ Public Class LateBindingTests4
 #End If
 
         o.F(j:=a, i:=a)
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
         Assert.AreEqual(9, a)
 #Else
         Assert.AreEqual(10, a)
@@ -302,7 +302,7 @@ Public Class LateBindingTests4
         End Function
     End Class
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - ArgumentException was thrown when InvalidCastExceptions should be thrown
     <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
@@ -385,7 +385,7 @@ Public Class LateBindingTests4
         o.F(arr:=iarr)
     End Sub
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - MissingMemberException was thrown when InvalidCastExceptions should be thrown
     <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
@@ -419,7 +419,7 @@ Public Class LateBindingTests4
 
 #If TARGET_JVM Then
     <Test(), ExpectedException(GetType(InvalidCastException)),Category("TargetJvmNotWorking")> Public Sub LateBind_NamedParam_12()
-#ElseIf NET_2_0 Then
+#ElseIf NET_VER >= 2.0 Then
     <Test(), ExpectedException(GetType(InvalidCastException))> Public Sub LateBind_NamedParam_12()
 #Else
     <Test()> Public Sub LateBind_NamedParam_12()
@@ -428,7 +428,7 @@ Public Class LateBindingTests4
         Assert.AreEqual("Integer,Integer,ParamArray Integer()", o.F(i:=5, j:=6))
     End Sub
 
-#If NET_2_0 Then
+#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - InvalidCastExceptions should be thrown
     <Category("TargetJvmNotWorking")> _
     <Test(), ExpectedException(GetType(InvalidCastException))> _
