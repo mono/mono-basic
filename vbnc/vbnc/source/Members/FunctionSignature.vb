@@ -123,7 +123,7 @@ Public Class FunctionSignature
                 If Me.Location.File(Compiler).IsOptionStrictOn Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30210, Me.Location) AndAlso result
                 Else
-                    result = Compiler.Report.ShowMessage(Messages.VBNC42021, Me.Location) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC42024, Me.Location) AndAlso result
                 End If
                 m_ReturnType = Compiler.TypeCache.System_Object
             End If

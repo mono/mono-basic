@@ -4612,7 +4612,7 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>'|1.|2' is already implemented by the base class '|3'. Re-implementation of |4 assumed.</VBValue>
 	</Message>
-  <Message id="42021" level="Warning">
+  <Message id="42024" level="Warning">
     <Comment>NC</Comment>
     <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
     <VBValue>Function without an 'As' clause; return type of Object assumed.</VBValue>

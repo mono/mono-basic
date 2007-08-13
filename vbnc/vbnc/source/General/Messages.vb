@@ -6474,7 +6474,7 @@ Public Enum Messages
     ''' VB   = "Function without an 'As' clause; return type of Object assumed."
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC42021 = 42021
+    <Message(MessageLevel.Warning)> VBNC42024 = 42024
 
     ''' <summary>
     ''' VBNC = "CHANGEME"

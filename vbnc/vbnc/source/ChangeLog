@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Resources/GenerateCodeAndResX.sh: Duh. It's 42024, not 42021.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/FunctionSignature.vb: Implemented VBNC30210 and VBNC42021.
 	* ConditionalCompilation/ConditionalExpression.vb: Fix conditional
 	  expression parsing, it was badly wrong.
