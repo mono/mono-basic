@@ -348,8 +348,18 @@ Public Class Compiler
         m_tm = New tm(Me, m_ConditionalCompiler)
         m_Parser = New Parser(Me)
 
-        theAss = Parser.Parse(RootNamespace)
-
+        Try
+            theAss = Parser.Parse(RootNamespace)
+        Catch ex As TooManyErrorsException
+            Throw
+        Catch ex As vbncException
+            Throw
+        Catch ex As Exception
+            If Token.IsSomething(tm.CurrentToken) Then
+                Console.WriteLine("Source code nearby crash location: " & tm.CurrentToken.Location.ToString(Me))
+            End If
+            Throw
+        End Try
         SequenceTime(CompilerSequence.Parsed) = DateTime.Now
 
         VerifyConsistency(result)

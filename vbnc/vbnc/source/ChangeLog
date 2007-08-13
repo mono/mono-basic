@@ -1,3 +1,13 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/FunctionSignature.vb: Implemented VBNC30210 and VBNC42021.
+	* ConditionalCompilation/ConditionalExpression.vb: Fix conditional
+	  expression parsing, it was badly wrong.
+	* General/Compiler.vb: Added better error reporting if crashing while
+	  parsing.
+	* General/Messages.vb, Resources/Errors.resx, Resources/Source.xml: Added
+	  VBNC42021.
+
 2007-08-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Members/ArrayElementInitializer.vb: An enum is a special value type.

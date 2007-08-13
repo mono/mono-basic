@@ -6470,6 +6470,13 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC42015 = 42015
 
     ''' <summary>
+    ''' VBNC = "Function without an 'As' clause; Object return type assumed."
+    ''' VB   = "Function without an 'As' clause; return type of Object assumed."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC42021 = 42021
+
+    ''' <summary>
     ''' VBNC = "CHANGEME"
     ''' VB   = "'Microsoft.VisualBasic.ComClassAttribute' on class '|1' implicitly declares |2 '|3', which conflicts with a member of the same name in |4 '|5'. Use 'Microsoft.VisualBasic.ComClassAttribute(InterfaceShadows:=True)' if you want to hide the name on the base |5."
     ''' </summary>

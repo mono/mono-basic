@@ -112,7 +112,7 @@ Public Class ConditionalExpression
 
         While Reader.Peek.Equals(KS.Power)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleIdentifier(RSide)
 
             Dim op1, op2 As Double
             Dim bErr As Boolean
@@ -169,7 +169,7 @@ Public Class ConditionalExpression
             DoMult = Reader.Peek.Equals(KS.Mult)
             Reader.Next()
 
-            RuleExpression(RSide)
+            RuleUnaryNegation(RSide)
 
             Dim op1, op2 As Double
             Dim bErr As Boolean
@@ -207,7 +207,7 @@ Public Class ConditionalExpression
 
         While Reader.Peek.Equals(KS.IntDivision)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleMultiplicationAndRealDivision(RSide)
 
             Dim op1, op2 As Double
             Dim bErr As Boolean
@@ -241,7 +241,7 @@ Public Class ConditionalExpression
 
         While Reader.Peek.Equals(KS.Mod)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleIntegerDivision(RSide)
 
             Dim op1, op2 As Double
             Dim bErr As Boolean
@@ -274,7 +274,7 @@ Public Class ConditionalExpression
             Dim DoAdd As Boolean
             DoAdd = Reader.Peek.Equals(KS.Add)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleMod(RSide)
 
             Dim bErr As Boolean
             If TypeOf LSide Is String AndAlso TypeOf RSide Is String Then
@@ -327,7 +327,7 @@ Public Class ConditionalExpression
 
         While Reader.Peek.Equals(KS.Concat)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleAdditionSubtractionStringConcat(RSide)
 
             Dim op1, op2 As String
             Dim bErr As Boolean
@@ -355,7 +355,7 @@ Public Class ConditionalExpression
             Dim DoLeft As Boolean
             DoLeft = Reader.Peek.Equals(KS.ShiftLeft)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleStringConcat(RSide)
 
             Dim op1 As Double, op2 As Double
             Dim bErr As Boolean
@@ -394,7 +394,7 @@ Public Class ConditionalExpression
         While Reader.Peek.Equals(KS.Equals, KS.NotEqual, KS.GT, KS.LT, KS.GE, KS.LE)
             Dim DoWhat As KS = Reader.Peek.Symbol
             Reader.Next()
-            RuleExpression(RSide)
+            RuleArithmeticBitshift(RSide)
 
             'Compiler.Report.WriteLine(String.Format("RuleRelational: " & DoWhat.ToString() & ", Left={0}, Right={1}", LSide, RSide) & Reader.Current.Location.ToString())
             Try
@@ -456,7 +456,7 @@ Public Class ConditionalExpression
             Dim DoAlso As Boolean
             DoAlso = Reader.Peek.Equals(KS.AndAlso)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleNot(RSide)
 
             Dim op1 As Boolean, op2 As Boolean
             Dim bErr As Boolean
@@ -491,7 +491,7 @@ Public Class ConditionalExpression
             Dim DoElse As Boolean
             DoElse = Reader.Peek.Equals(KS.OrElse)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleAnd_AndAlso(RSide)
 
             Dim op1 As Boolean, op2 As Boolean
             Dim bErr As Boolean
@@ -524,7 +524,7 @@ Public Class ConditionalExpression
 
         While Reader.Peek.Equals(KS.Xor)
             Reader.Next()
-            RuleExpression(RSide)
+            RuleOr_OrElse(RSide)
 
             Dim op1 As Boolean, op2 As Boolean
             Dim bErr As Boolean

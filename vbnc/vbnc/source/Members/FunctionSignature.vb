@@ -121,9 +121,9 @@ Public Class FunctionSignature
                 m_ReturnType = TypeCharacters.TypeCharacterToType(Compiler, Identifier.TypeCharacter)
             Else
                 If Me.Location.File(Compiler).IsOptionStrictOn Then
-                    Helper.AddError("Function return type must be specified.")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30210, Me.Location) AndAlso result
                 Else
-                    Helper.AddWarning("Function return type must be specified.")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC42021, Me.Location) AndAlso result
                 End If
                 m_ReturnType = Compiler.TypeCache.System_Object
             End If
