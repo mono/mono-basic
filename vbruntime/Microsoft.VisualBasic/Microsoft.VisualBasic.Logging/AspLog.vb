@@ -44,7 +44,7 @@ Namespace Microsoft.VisualBasic.Logging
             TraceSource.Listeners.Add(New System.Web.WebPageTraceListener())
             TraceSource.Switch.Level = SourceLevels.Information
 #Else
-            throw new NotImplementedException
+            Throw New NotImplementedException
 #End If
         End Sub
     End Class

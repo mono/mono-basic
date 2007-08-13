@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* FileSystemOperationUIQuestion.vb: More dependencies are implemented now.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* FileSystemOperationUIQuestion.vb, UICancelOption.vb,
 	  MalformedLineException.vb, SpecialDirectories.vb, SearchOption.vb,
 	  RecycleOption.vb, DeleteDirectoryOption.vb, FileSystemOperationUI.vb,

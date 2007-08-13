@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -28,13 +28,13 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <WarningLevel>4</WarningLevel>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <RootNamespace>
     </RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
@@ -53,12 +53,12 @@
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <RootNamespace>
     </RootNamespace>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
@@ -67,15 +67,15 @@
     <RootNamespace>dummy_root</RootNamespace>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>..\bin</OutputPath>
     <DebugSymbols>True</DebugSymbols>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>INDEVENV=true,NET_2_0=true,NET_VER=2.0</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <OptionExplicit>True</OptionExplicit>
-    <OptionStrict>True</OptionStrict>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

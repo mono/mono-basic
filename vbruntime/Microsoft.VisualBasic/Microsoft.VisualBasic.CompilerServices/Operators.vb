@@ -755,8 +755,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 End If
                 Return result = CompareResult.Greater Or result = CompareResult.Equal
             Catch ex As Exception
-                Console.WriteLine("Left: {0}, Right: {1}", Left, Right)
-                Throw New InvalidCastException("Operator '>=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'. (" & CStr(Left) & " >= " & CStr(Right) & ")")
+                Throw New InvalidCastException("Operator '>=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'. (")
             End Try
         End Function
 

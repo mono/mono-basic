@@ -38,7 +38,7 @@ Namespace Microsoft.VisualBasic.Devices
         Sub New(ByVal Timeout As Integer)
             Me.Timeout = Timeout
         End Sub
-#If mono_not_yet Then
+
         Protected Overrides Function GetWebRequest(ByVal address As System.Uri) As System.Net.WebRequest
             Dim result As WebRequest
 
@@ -47,8 +47,7 @@ Namespace Microsoft.VisualBasic.Devices
 
             Return result
         End Function
-#Else
-#End If
+
     End Class
 End Namespace
 #End If

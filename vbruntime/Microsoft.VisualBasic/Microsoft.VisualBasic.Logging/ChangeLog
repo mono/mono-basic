@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DiskSpaceExhaustedOption.vb, LogFileLocation.vb,
 	  LogFileCreationScheduleOption.vb, Log.vb, AspLog.vb,
 	  FileLogTraceListener.vb: Changed all uses of NET_2_0 to NET_VER >= 2.0,

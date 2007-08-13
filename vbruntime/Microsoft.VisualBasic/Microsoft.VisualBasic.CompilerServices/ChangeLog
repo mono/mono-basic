@@ -1,5 +1,9 @@
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Operators.vb: Remove debug spew.
+
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* DoubleType.vb, NewLateBinding.vb, Versioned.vb, ObjectFlowControl.vb,
 	  LikeOperator.vb, Operators.vb, BooleanType.vb, IntegerType.vb, Utils.vb,
 	  IncompleteInitialization.vb, Conversions.vb: Changed all uses of NET_2_0

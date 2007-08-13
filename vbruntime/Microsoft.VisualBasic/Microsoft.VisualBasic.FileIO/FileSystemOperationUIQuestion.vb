@@ -257,9 +257,7 @@ Namespace Microsoft.VisualBasic.FileIO
             Me.MaximizeBox = False
             Me.MinimizeBox = False
             Me.Name = "FileSystemOperationUIQuestion"
-#If mono_not_yet Then
             Me.ShowIcon = False
-#End If
             Me.ShowInTaskbar = False
             Me.Text = "Confirm file overwrite"
             CType(Me.iconA, System.ComponentModel.ISupportInitialize).EndInit()
