@@ -1,3 +1,7 @@
+2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Errors: More tests.
+
 2007-08-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* All: More tests, general updates, svn property fixes, etc.
