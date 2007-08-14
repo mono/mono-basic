@@ -35,19 +35,20 @@ Imports Microsoft.VisualBasic.CompilerServices
 Namespace Microsoft.VisualBasic
     Public Module FileSystem
 
-	' Dir private members
-	Private m_index As Integer
-        Private m_files As FileInfo()
-        Private m_dirs As DirectoryInfo()
-        Private m_IsFile As Boolean = True
-        Private ResStr As String = ""
-        Private m_len As Integer = 0
-        Private m_IsLastElem As Boolean = Nothing
+        ' Dir private members
+        Private m_Index As Integer
+        Private m_FileSystemInfos As FileSystemInfo()
+        'Private m_files As FileInfo()
+        'Private m_dirs As DirectoryInfo()
+        'Private m_IsFile As Boolean = True
+        'Private ResStr As String = ""
+        'Private m_len As Integer = 0
+        'Private m_IsLastElem As Boolean = Nothing
 
         Public Sub ChDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
 
-            Dim fileinfo As New fileinfo(Path)
+            Dim fileinfo As New FileInfo(Path)
             If (fileinfo.Exists) Then Throw New System.IO.IOException("The Directory name is invalid.")
 
             Dim dirinfo As New DirectoryInfo(Path)
@@ -90,96 +91,78 @@ Namespace Microsoft.VisualBasic
             Return Path.GetFullPath(Convert.ToString(Drive))
         End Function
         Public Function Dir() As String
-            
-            Dim strRes As String
-
-            If (m_files Is Nothing) And (m_Dirs Is Nothing) Then
+            If m_FileSystemInfos Is Nothing Then
                 Throw New System.ArgumentException("'Dir' function must first be called with a 'Pathname' argument.")
-            ElseIf (m_IsLastElem) Then
+            ElseIf m_FileSystemInfos.Length < m_Index Then
                 Throw New System.ArgumentException("'Dir' function must first be called with a 'Pathname' argument.")
-            End If
-
-            If m_index < m_len Then
-                If m_IsFile Then
-                    strRes = m_files(m_index).Name
-                Else
-                    strRes = m_dirs(m_index).Name
-                End If
-                m_index += 1
+            ElseIf m_FileSystemInfos.Length = m_Index Then
+                m_Index += 1
+                Return Nothing
             Else
-                strRes = Nothing
-                m_IsLastElem = True
+                m_Index += 1
+                Return m_FileSystemInfos(m_Index - 1).Name
             End If
-            'If m_index = m_len Then m_IsLastElem = True
-
-            Return strRes
         End Function
+
         Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
             Dim str_parent_dir, str_pattern As String
-            Dim last_ch As Integer
             Dim di As DirectoryInfo
+            Dim dirs As DirectoryInfo()
+            Dim files As FileInfo()
+            Dim result As String
+            Dim length As Integer
 
-            ResetInternal()
+            m_FileSystemInfos = Nothing
+            m_Index = 0
 
-            last_ch = Pathname.LastIndexOf(Path.DirectorySeparatorChar)
-            If (last_ch = -1) Then
-                str_parent_dir = Directory.GetCurrentDirectory()
-            Else
-                str_parent_dir = Pathname.Substring(0, last_ch)
+            If Pathname <> String.Empty Then
+                str_parent_dir = IO.Path.GetDirectoryName(Pathname)
             End If
-            str_pattern = Pathname.Substring(last_ch + 1, Pathname.Length - last_ch - 1)
+
+            If str_parent_dir = String.Empty Then
+                str_parent_dir = Directory.GetCurrentDirectory
+            End If
+            str_pattern = IO.Path.GetFileName(Pathname)
 
             '' dir() doesn`t throw any exception just return ""
             di = New DirectoryInfo(str_parent_dir)
-            If Not di.Exists Then Return ("")
+            If di.Exists = False Then Return String.Empty
 
             If (Attributes And FileAttributes.Directory) <> 0 Then
+                If (str_pattern = String.Empty) Then
+                    dirs = di.GetDirectories()
+                Else
+                    dirs = di.GetDirectories(str_pattern)
+                End If
+            End If
 
-                If (str_pattern = "") Then
-                    m_dirs = di.GetDirectories()
-                Else
-                    m_dirs = di.GetDirectories(str_pattern)
-                End If
-                If m_dirs.Length = 0 Then
-                    ResStr = ""
-                Else
-                    m_IsFile = False
-                    m_len = m_dirs.Length
-                    ResStr = m_dirs(m_index).Name
-                    m_index += 1
-                End If
+            If str_pattern = String.Empty Then
+                files = di.GetFiles()
             Else
-                If (str_pattern = "") Then
-                    m_files = di.GetFiles()
-                Else
-                    m_files = di.GetFiles(str_pattern)
-                End If
-                If m_files.Length = 0 Then
-                    ResStr = ""
-                Else
-                    m_IsFile = True
-                    m_len = m_files.Length
-                    ResStr = m_files(m_index).Name
-                    m_index += 1
-                End If
-            End If
-            If m_index - 1 = m_len Then m_IsLastElem = True
-            If ResStr = "" Then
-                '' reset all static members
-                ResetInternal()
+                files = di.GetFiles(str_pattern)
             End If
 
-            Return ResStr
+            length = files.Length
+            If Not dirs Is Nothing Then length += dirs.Length
+
+            ReDim m_FileSystemInfos(length - 1)
+
+            If Not dirs Is Nothing Then
+                Array.Copy(dirs, m_FileSystemInfos, dirs.Length)
+                Array.Copy(files, 0, m_FileSystemInfos, dirs.Length, files.Length)
+            Else
+                Array.Copy(files, m_FileSystemInfos, files.Length)
+            End If
+
+            If m_FileSystemInfos.Length > 0 Then
+                result = m_FileSystemInfos(0).Name
+                m_Index += 1
+            Else
+                result = String.Empty
+            End If
+
+            Return result
         End Function
-
-        Private Sub ResetInternal()
-            m_dirs = Nothing
-            m_files = Nothing
-            m_index = 0
-            m_len = 0
-            m_IsFile = Nothing
-            m_IsLastElem = False
-        End Sub
 
         Public Function EOF(ByVal FileNumber As Integer) As Boolean
             Throw New NotImplementedException
@@ -478,7 +461,13 @@ Namespace Microsoft.VisualBasic
             ElseIf Not (fiOld.Exists) And (diOld.Exists) Then
                 '' MSDN says IOException on this scenario(as Directory.Move throw), 
                 '' but FileSystem.Rename actually returns ArgumentException
-                If diNew.Exists Then Throw New System.ArgumentException("Procedure call or argument is not valid.")
+                If diNew.Exists Then
+#If NET_VER >= 2.0 Then
+                    Throw New System.IO.IOException("File already exists.")
+#Else
+                    Throw New System.IO.FileNotFoundException("File not found.")
+#End If
+                End If
                 Try
                     Directory.Move(OldPath, NewPath)
                 Catch ex As DirectoryNotFoundException

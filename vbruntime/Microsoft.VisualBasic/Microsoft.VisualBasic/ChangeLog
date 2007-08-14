@@ -1,3 +1,10 @@
+2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateAndTime.vb: Remove warning.
+	* Globals.vb: Minor fix case for 1.1 profile.
+	* FileSystem.vb: Fix Dir to return files and directories if
+	  FileAttributes.Directory is specified + some code cleanup.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Globals.vb, FileSystem.vb, VbStrConv.vb, HideModuleNameAttribute.vb,

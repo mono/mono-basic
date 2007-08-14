@@ -190,7 +190,6 @@ Namespace Microsoft.VisualBasic
 
             Dim YearMonths As Integer
             Dim YearQuarters As Integer
-            Dim YearWeeks As Integer
             Dim WeekRule As CalendarWeekRule = CalendarWeekRule.FirstDay
             Dim DayRule As DayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek
 			Dim WeekDiff as Long

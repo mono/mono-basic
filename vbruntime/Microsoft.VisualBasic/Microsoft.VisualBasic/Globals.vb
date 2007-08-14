@@ -57,6 +57,8 @@ Namespace Microsoft.VisualBasic
             Get
 #If NET_VER >= 2.0 Then
                 Return 0
+#ElseIf NET_VER >= 1.1 Then
+                return 10
 #Else
                 return 0
 #End If
