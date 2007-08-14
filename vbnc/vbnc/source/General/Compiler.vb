@@ -348,8 +348,10 @@ Public Class Compiler
         m_tm = New tm(Me, m_ConditionalCompiler)
         m_Parser = New Parser(Me)
 
+
         Try
-            theAss = Parser.Parse(RootNamespace)
+            theAss = New AssemblyDeclaration(Me)
+            result = Parser.Parse(RootNamespace, theAss) AndAlso result
         Catch ex As TooManyErrorsException
             Throw
         Catch ex As vbncException
@@ -360,6 +362,7 @@ Public Class Compiler
             End If
             Throw
         End Try
+
         SequenceTime(CompilerSequence.Parsed) = DateTime.Now
 
         VerifyConsistency(result)

@@ -3933,6 +3933,13 @@ Public Class Helper
             Case ExpressionClassification.Classifications.Type
                 Dim tp As Type = ActualClassification.AsTypeClassification.Type
                 Return Compiler.Report.ShowMessage(Messages.VBNC30691, Location, tp.Name, tp.Namespace)
+            Case ExpressionClassification.Classifications.Value
+                Dim vC As ValueClassification = ActualClassification.AsValueClassification
+                If vC.IsConstant Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30074, Location)
+                Else
+                    Helper.AddError("Expected " & Expected & " got " & ActualClassification.Classification.ToString())
+                End If
             Case Else
                 Helper.AddError("Expected " & Expected & " got " & ActualClassification.Classification.ToString())
         End Select

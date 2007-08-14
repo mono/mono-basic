@@ -343,7 +343,7 @@ Public Class InvocationOrIndexExpression
         Helper.Assert(ArrayType.IsArray)
 
         If m_ArgumentList.HasNamedArguments Then
-            Helper.AddError("Array invocation cannot have named arguments.")
+            Compiler.Report.ShowMessage(Messages.VBNC30075, tm.CurrentLocation)
             Return False
         End If
 

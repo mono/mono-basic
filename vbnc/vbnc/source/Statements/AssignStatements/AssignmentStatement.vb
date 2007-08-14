@@ -83,6 +83,10 @@ Public Class AssignmentStatement
 
         If result = False Then Return result
 
+        If TypeOf m_LSide Is InstanceExpression Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC30062, Location) AndAlso result
+        End If
+
         If RSide.Classification.IsValueClassification Then
             'do nothing
         ElseIf RSide.Classification.IsMethodPointerClassification Then
@@ -129,6 +133,8 @@ Public Class AssignmentStatement
                 m_RSide = objCreation
             End If
         End If
+
+        If result = False Then Return result
 
         result = CreateTypeConversion() AndAlso result
 

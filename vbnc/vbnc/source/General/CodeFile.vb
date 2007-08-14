@@ -278,6 +278,26 @@ Public Class CodeFile
     End Property
 
     ''' <summary>
+    ''' This function is only used for error reporting, no need to do things fast.
+    ''' </summary>
+    ''' <param name="LineNumber"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function DoesLineEndWithLineContinuation(ByVal LineNumber As UInteger) As Boolean
+        Dim lines() As String
+        Using stream As IO.StreamReader = CodeStream
+            lines = stream.ReadToEnd().Split(New String() {VB.vbCrLf, VB.vbCr, VB.vbLf}, StringSplitOptions.None)
+        End Using
+        If lines.Length < LineNumber Then Return False
+
+        Dim line As String = lines(CInt(LineNumber - 1UI))
+        Do While line.Length > 0 AndAlso Scanner.IsWhiteSpace(line(line.Length - 1))
+            line = line.Substring(0, line.Length - 1)
+        Loop
+        Return line.EndsWith(" _")
+    End Function
+
+    ''' <summary>
     ''' The Filename of the codefile.
     ''' </summary>
     ''' <value></value>

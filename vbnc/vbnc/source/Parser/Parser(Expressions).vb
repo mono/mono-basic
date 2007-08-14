@@ -1069,7 +1069,9 @@ Partial Class Parser
                         breakloop = True
                     End If
                 Else
-                    If tm.AcceptEndOfStatement(False, True) = False Then Helper.ErrorRecoveryNotImplemented()
+                    If tm.AcceptEndOfStatement(False, Compiler.Report.Errors = 0) = False Then
+                        Return result
+                    End If
                 End If
             End If
 

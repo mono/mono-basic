@@ -103,8 +103,6 @@ Public Class PropertyDeclaration
         m_MemberImplementsClause = MemberImplementsClause
 
         Helper.Assert(m_Signature IsNot Nothing)
-        Helper.Assert(m_Get IsNot Nothing = CanRead)
-        Helper.Assert(m_Set IsNot Nothing = CanWrite)
     End Sub
 
     Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal MemberImplementsClause As MemberImplementsClause)

@@ -231,6 +231,39 @@ Public Class Token
         Return IsKeyword() OrElse IsSymbol()
     End Function
 
+    ReadOnly Property AsString() As String
+        Get
+            Select Case m_TokenType
+                Case TokenType.CharLiteral
+                    Return """" & CharLiteral & """c"
+                Case TokenType.DateLiteral
+                    Return "#" & DateLiteral.ToString() & "#"
+                Case TokenType.DecimalLiteral
+                    Return DecimalLiteral.ToString
+                Case TokenType.EndOfCode
+                    Return "END OF CODE"
+                Case TokenType.EndOfFile
+                    Return "END OF FILE"
+                Case TokenType.EndOfLine
+                    Return "END OF LINE"
+                Case TokenType.Identifier
+                    Return Identifier
+                Case TokenType.Int16Literal, TokenType.Int32Literal, TokenType.Int64Literal, TokenType.UInt16Literal, TokenType.UInt32Literal, TokenType.UInt64Literal
+                    Return IntegralLiteral.ToString
+                Case TokenType.Keyword
+                    Return Keyword.ToString()
+                Case TokenType.SingleLiteral, TokenType.DoubleLiteral
+                    Return Me.LiteralValue.ToString
+                Case TokenType.StringLiteral
+                    Return """" & Me.StringLiteral & """"
+                Case TokenType.Symbol
+                    Return IdentiferOrKeywordIdentifier()
+                Case Else
+                    Return "EMPTY TOKEN"
+            End Select
+        End Get
+    End Property
+
     ReadOnly Property AsSpecial() As KS
         Get
             If IsKeyword() Then

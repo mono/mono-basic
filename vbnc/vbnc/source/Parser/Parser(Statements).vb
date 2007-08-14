@@ -1012,7 +1012,11 @@ Partial Public Class Parser
         m_Code = ParseCodeBlock(result, IsOneLiner)
         If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.Next) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.Next) = False Then
+            Compiler.Report.ShowMessage(Messages.VBNC30084, tm.CurrentToken.Location)
+            Return result
+        End If
+
         If tm.CurrentToken.IsEndOfStatement = False Then
             m_NextExpressionList = New ExpressionList(result)
             If ParseList(Of Expression)(m_NextExpressionList, New ParseDelegate_Parent(Of Expression)(AddressOf ParseExpression), result) = False Then

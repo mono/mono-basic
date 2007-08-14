@@ -52,11 +52,12 @@ Partial Public Class Parser
         Helper.Assert(tm IsNot Nothing)
     End Sub
 
-    Public Function Parse(ByVal RootNamespace As String) As AssemblyDeclaration
-        Dim result As AssemblyDeclaration
+    Public Function Parse(ByVal RootNamespace As String, ByVal assembly As AssemblyDeclaration) As Boolean
+        Dim result As Boolean = True
 
-        result = ParseAssemblyDeclaration(RootNamespace)
-        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        result = ParseAssemblyDeclaration(RootNamespace, assembly) AndAlso result
+
+        result = Compiler.Report.Errors = 0 AndAlso result
 
         Return result
     End Function
@@ -389,12 +390,13 @@ Partial Public Class Parser
         Return result
     End Function
 
-    Private Function ParseAssemblyDeclaration(ByVal RootNamespace As String) As AssemblyDeclaration
-        Dim result As New AssemblyDeclaration(m_Compiler)
+    Private Function ParseAssemblyDeclaration(ByVal RootNamespace As String, ByVal assembly As AssemblyDeclaration) As Boolean
+        Dim result As Boolean = True
+        'Dim assembly As New AssemblyDeclaration(m_Compiler)
         Dim iLastToken As Token
 
-        Dim AssemblyAttributes As New Attributes(result)
-        Dim AssemblyTypes As New MemberDeclarations(result)
+        Dim AssemblyAttributes As New Attributes(assembly)
+        Dim AssemblyTypes As New MemberDeclarations(assembly)
 
         tm.NextToken() 'Goto the first token
 
@@ -412,7 +414,7 @@ Partial Public Class Parser
             '[  OptionStatement+  ]
             '[  ImportsStatement+  ]
 
-            If Me.ParseFileHeader(tm.CurrentToken.Location.File(Compiler), result) = False Then
+            If Me.ParseFileHeader(tm.CurrentToken.Location.File(Compiler), assembly) = False Then
                 Helper.ErrorRecoveryNotImplemented()
             End If
             ''	[  AttributesStatement+  ]
@@ -423,18 +425,19 @@ Partial Public Class Parser
             'End If
 
             '	[  NamespaceMemberDeclaration+  ]
-            ParseAssemblyMembers(result, RootNamespace, AssemblyTypes)
+            result = ParseAssemblyMembers(assembly, RootNamespace, AssemblyTypes) AndAlso result
 
             While tm.AcceptNewLine
 
             End While
             tm.AcceptEndOfFile()
             If Token.IsSomething(iLastToken) = Token.IsSomething(tm.CurrentToken) AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
-                Throw New InternalException("Recursive problems, could not get past token: " & tm.CurrentToken.ToString() & " with location: " & tm.CurrentToken.Location.ToString(Compiler))
+                result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentToken.Location) AndAlso result
+                tm.GotoNewline(False)
             End If
         Loop
 
-        result.Init(AssemblyTypes, AssemblyAttributes)
+        assembly.Init(AssemblyTypes, AssemblyAttributes)
 
         Return result
     End Function
@@ -711,7 +714,7 @@ Partial Public Class Parser
 
             Dim typeArity As Integer = 1
             Do While tm.Accept(KS.Comma)
-                typearity += 1
+                typeArity += 1
             Loop
 
             tm.AcceptIfNotError(KS.RParenthesis)
@@ -1435,19 +1438,29 @@ Partial Public Class Parser
         Return result
     End Function
 
-    Private Sub ParseAssemblyMembers(ByVal Parent As AssemblyDeclaration, ByVal RootNamespace As String, ByVal result As MemberDeclarations)
-
+    Private Function ParseAssemblyMembers(ByVal Parent As AssemblyDeclaration, ByVal RootNamespace As String, ByVal declarations As MemberDeclarations) As Boolean
+        Dim result As Boolean = True
         Dim currentNameSpace As String = RootNamespace
         Dim currentNamespaces As New Generic.List(Of QualifiedIdentifier)
 
-        Helper.Assert(result IsNot Nothing)
+        Helper.Assert(declarations IsNot Nothing)
 
         While True
             Dim attributes As Attributes
             attributes = New Attributes(Parent)
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented()
+
                 If tm.AcceptEndOfStatement Then
+                    For Each attrib As Attribute In attributes
+                        If attrib.IsAssembly = False AndAlso attrib.IsModule = False Then
+                            If attrib.Location.File(Compiler).DoesLineEndWithLineContinuation(attrib.Location.Line) Then
+                                result = Compiler.Report.ShowMessage(Messages.VBNC30203, attrib.Location) AndAlso result
+                            Else
+                                result = Compiler.Report.ShowMessage(Messages.VBNC32035, attrib.Location) AndAlso result
+                            End If
+                        End If
+                    Next
                     Parent.Attributes.AddRange(attributes)
                     Continue While
                 End If
@@ -1456,7 +1469,7 @@ Partial Public Class Parser
             Dim newType As TypeDeclaration
             newType = ParseTypeDeclaration(Parent, attributes, currentNameSpace)
             If newType IsNot Nothing Then
-                result.Add(newType)
+                declarations.Add(newType)
             ElseIf tm.Accept(KS.Namespace) Then
                 Dim qi As QualifiedIdentifier
                 qi = ParseQualifiedIdentifier(Parent)
@@ -1491,7 +1504,8 @@ Partial Public Class Parser
                 Exit While
             End If
         End While
-    End Sub
+        Return result
+    End Function
 
 
 End Class

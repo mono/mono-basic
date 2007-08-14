@@ -47,6 +47,12 @@ Public Class tm
         Return Current
     End Function
 
+    ReadOnly Property CurrentLocation() As Span
+        Get
+            Return Current.Location
+        End Get
+    End Property
+
     Function PeekToken(Optional ByVal Jump As Integer = 1) As Token
         Helper.Assert(Jump >= -1)
         If Jump = -1 Then Return m_Previous

@@ -181,6 +181,8 @@ Public Class ConditionalCompiler
     End Sub
 
     Private Sub ParseElseIf()
+        If Not CheckEmtpyStack(Messages.VBNC30014) Then Return
+
         Dim theExpression As New ConditionalExpression(Me)
         Dim expression As Object = Nothing
 
@@ -201,6 +203,8 @@ Public Class ConditionalCompiler
     End Sub
 
     Private Sub ParseElse()
+        If Not CheckEmtpyStack() Then Return
+
         If m_ConditionStack(m_ConditionStack.Count - 1) = 0 Then
             m_ConditionStack(m_ConditionStack.Count - 1) = 1
         ElseIf m_ConditionStack(m_ConditionStack.Count - 1) = 1 Then
@@ -210,9 +214,20 @@ Public Class ConditionalCompiler
     End Sub
 
     Private Sub ParseEndIf()
+        If Not CheckEmtpyStack() Then Return
+
         m_ConditionStack.RemoveAt(m_ConditionStack.Count - 1)
         ParseEndOfLine()
     End Sub
+
+    Private Function CheckEmtpyStack(Optional ByVal Msg As Messages = Messages.VBNC30013) As Boolean
+        If m_ConditionStack.Count > 0 Then Return True
+
+        Compiler.Report.ShowMessage(Msg, m_Reader.Current.Location)
+        vbnc.tm.GotoNewline(m_Reader, True)
+
+        Return False
+    End Function
 #End Region
 
 #Region "Region"

@@ -91,13 +91,25 @@ Public Class ExitStatement
         Select Case m_ExitWhat
             Case KS.Sub
                 m_Container = Me.FindFirstParent(Of IMethod)()
-                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30065, Location)
+                If m_Container Is Nothing Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30065, Location) AndAlso result
+                ElseIf TypeOf m_Container Is SubDeclaration = False OrElse TypeOf m_Container Is FunctionDeclaration = True Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30065, Location) AndAlso result
+                End If
             Case KS.Property
                 m_Container = Me.FindFirstParent(Of IMethod)()
-                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30066, Location)
+                If m_Container Is Nothing Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30066, Location) AndAlso result
+                ElseIf TypeOf m_Container Is PropertyDeclaration = False AndAlso TypeOf m_Container Is PropertyHandlerDeclaration = False Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30066, Location) AndAlso result
+                End If
             Case KS.Function
                 m_Container = Me.FindFirstParent(Of IMethod)()
-                If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30067, Location)
+                If m_Container Is Nothing Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30067, Location) AndAlso result
+                ElseIf TypeOf m_Container Is FunctionDeclaration = False Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30067, Location) AndAlso result
+                End If
             Case KS.Do
                 m_Container = Me.FindFirstParent(Of DoStatement)()
                 If m_Container Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30089, Location)

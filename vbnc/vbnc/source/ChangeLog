@@ -1,3 +1,27 @@
+2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/InvocationOrIndexExpression.vb: Implement VBNC30075.
+	* Statements/ExitStatement.vb: Implement VBNC30065-67.
+	* Statements/AssignStatements/AssignmentStatement.vb: Implement VBNC30062.
+	* Members/PropertyDeclaration.vb: Remove a couple asserts that might fail if
+	  compiling incorrect code.
+	* Parser/Parser.vb: Implement VBNC30203 and VBNC32035. Change some parser
+	  functions to return boolean (success/failure) values.
+	* Parser/Parser(Expressions).vb: Don't show end of statement expected errors
+	  if there have been any other errors.
+	* Parser/Parser(Statements).vb: Implement VBNC30084.
+	* Parser/Parser(Members).vb: Implement VBNC30126, VBNC30125 and VBNC30124.
+	* ConditionalCompilation/ConditionalCompilation.vb: Implement VBNC30013 and
+	  VBNC30014.
+	* Tokens/Token.vb: Add some debug spew.
+	* Types/TokenManager.vb: Added CurrentLocation.
+	* General/CodeFile.vb: Added DoesLineEndWithLineContinuation.
+	* General/Helper.vb: Implement VBNC30074.
+	* General/Scanner.vb: Treat end of file as end of line as well. Implement
+	  VBNC30034. Made a few helper functions public. When reporting VBNC30037,
+	  skip everything up to next newline.
+	* General/Compiler.vb: Update according to parser changes.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Emit/Emitter.vb: Implement ByRef Char parameter loading.

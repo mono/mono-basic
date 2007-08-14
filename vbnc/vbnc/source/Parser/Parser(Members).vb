@@ -141,6 +141,23 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End_Property) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
+        If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
+        End If
+        If m_Modifiers.Is(ModifierMasks.WriteOnly) AndAlso m_Set Is Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC30125, m_Signature.Location)
+        End If
+
+        If m_Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso m_Modifiers.Is(ModifierMasks.WriteOnly) = False Then
+            If m_Get Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30124, m_Signature.Location)
+            End If
+            If m_Set Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30124, m_Signature.Location)
+            End If
+        End If
+
+
         result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Get, m_Set, m_ImplementsClause)
 
         Return result

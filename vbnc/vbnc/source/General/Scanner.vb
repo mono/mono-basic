@@ -113,7 +113,7 @@ Public Class Scanner
         Return IsNewLine(CurrentChar)
     End Function
 
-    Private Function IsNewLine(ByVal chr As Char) As Boolean
+    Public Shared Function IsNewLine(ByVal chr As Char) As Boolean
         Return chr = nlA OrElse chr = nlD OrElse chr = nl2028 OrElse chr = nl2029 OrElse chr = nl0
     End Function
 
@@ -218,7 +218,7 @@ Public Class Scanner
         Return True
     End Function
 
-    Private Function IsWhiteSpace(ByVal chr As Char) As Boolean
+    Shared Function IsWhiteSpace(ByVal chr As Char) As Boolean
         Return chr = nlTab OrElse Char.GetUnicodeCategory(chr) = Globalization.UnicodeCategory.SpaceSeparator
     End Function
 
@@ -268,10 +268,16 @@ Public Class Scanner
             Case nlA, nl2029, nl2028
                 NextChar()
                 IncLine()
+            Case nl0
+                IncLine()
             Case Else
                 Throw New InternalException("Current character is not a new line.")
         End Select
     End Sub
+
+    Public Shared Function IsSingleNewLine(ByVal chr1 As Char, ByVal chr2 As Char) As Boolean
+        Return Not (chr1 = nlD AndAlso chr2 = nlA)
+    End Function
 
     Private Sub EatComment()
         Select Case CurrentChar()
@@ -388,7 +394,7 @@ Public Class Scanner
         Dim id As Token
         id = GetIdentifier(True)
         If CurrentChar() = "]"c = False Then
-            Helper.AddError()
+            Compiler.Report.ShowMessage(Messages.VBNC30034, GetCurrentLocation)
         Else
             NextChar()
         End If
@@ -1096,7 +1102,7 @@ Public Class Scanner
                         End If
                     Else
                         Compiler.Report.ShowMessage(Messages.VBNC30037)
-                        NextChar()
+                        EatLine(False)
                     End If
             End Select
         Loop While Token.IsSomething(Result) = False
