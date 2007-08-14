@@ -35,7 +35,7 @@ CSDEFINES=-define:NET_1_0,NET_1_1,NET_2_0
 endif
 
 ifeq ($(PLATFORM), win32)
-WINTEST=-Make.cmd $(1_1) && Make.cmd $(2_0)
+WINTEST=-cmd /C Make.cmd 1_1; cmd /C Make.cmd 2_0
 else
 WINTEST=-echo Linux environment.
 endif
