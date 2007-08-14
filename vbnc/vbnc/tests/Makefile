@@ -17,11 +17,20 @@ ifndef TEST_COMPILER
 TEST_COMPILER=../../../class/lib/vbnc/vbnc.exe
 endif
 
+ifeq ($(PLATFORM), win32)
+# hack for cygwin, MONO_PATH seems to work only with full paths (Starting with C:/...).
+# so we copy the only dependency to the executable location.
+# this path is relative to ../../rt-console/
+DEPENDENCIES=cp ../../class/lib/vbnc/Microsoft.VisualBasic.* .
+else
+DEPENDENCIES=:
+endif
+
 make-dependencies:
 	-cd ../ && $(MAKE)
 	-cd ../../../vbruntime/Microsoft.VisualBasic/ && $(MAKE)
-	-cd ../../rt-console && $(MAKE) && cd ../../$(thisdir)
-	-cd ../../rt-execute && $(MAKE) && cd ../../$(thisdir)
+	-cd ../../rt-console && $(MAKE) && $(DEPENDENCIES)
+	-cd ../../rt-execute && $(MAKE) 
 	
 
 test-local: make-dependencies
