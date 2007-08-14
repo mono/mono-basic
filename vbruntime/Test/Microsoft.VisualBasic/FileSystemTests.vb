@@ -394,7 +394,7 @@ Public Class FilesSystemTest
 
         '' check attr to file
         Dim test_file As String = "GetAttr_test1.dat"
-        Dim file_attr, req_attr As FileAttribute
+        Dim file_attr As FileAttribute, req_attr As FileAttributes
         Dim fs As FileStream
         req_attr = FileAttributes.Hidden Or FileAttributes.Archive
         fs = File.Create(DATA_DIR + sep_ch + test_file)
@@ -413,7 +413,7 @@ Public Class FilesSystemTest
     Public Sub GetAttr_2()
         '' check attr to directory
         Dim test_dir As String = "GetAttr_Dirtest2"
-        Dim file_attr, req_attr As FileAttribute
+        Dim file_attr As FileAttribute, req_attr As FileAttributes
 
         req_attr = FileAttributes.Hidden Or FileAttributes.Archive Or FileAttributes.Directory
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
@@ -421,7 +421,7 @@ Public Class FilesSystemTest
         File.SetAttributes(DATA_DIR + sep_ch + test_dir, req_attr)
 
         file_attr = FileSystem.GetAttr(DATA_DIR + sep_ch + test_dir)
-        Assert.AreEqual(req_attr, file_attr)
+        Assert.AreEqual(CObj(req_attr), CObj(file_attr))
         Thread.Sleep(60)
         Directory.Delete(DATA_DIR + sep_ch + test_dir)
 
@@ -574,10 +574,10 @@ Public Class FilesSystemTest
     End Sub
 
 #If NET_VER >= 2.0 Then
-    <Test(), ExpectedException(GetType(IOException))> _
+    <Test(), ExpectedException(GetType(IOException), "File already exists.")> _
     Public Sub Rename_3()
 #Else
-    <Test(), ExpectedException(GetType(FileNotFoundException))> _
+    <Test(), ExpectedException(GetType(FileNotFoundException), "File not found.")> _
     Public Sub Rename_3()
 #End If
         Dim test_dir As String = "Rename_test3"
@@ -658,7 +658,7 @@ Public Class FilesSystemTest
 
         '' check attr on file
         Dim test_file As String = "SetAttr_test1.dat"
-        Dim file_attr, req_attr As FileAttribute
+        Dim file_attr As FileAttributes, req_attr As FileAttribute
         Dim fs As FileStream
         req_attr = vbHidden Or vbArchive
         fs = File.Create(DATA_DIR + sep_ch + test_file)
@@ -668,7 +668,7 @@ Public Class FilesSystemTest
 
         file_attr = File.GetAttributes(DATA_DIR + sep_ch + test_file)
 
-        Assert.AreEqual(req_attr, file_attr)
+        Assert.AreEqual(CObj(req_attr), CObj(file_attr))
         Thread.Sleep(60)
         File.Delete(DATA_DIR + sep_ch + test_file)
     End Sub
@@ -678,7 +678,7 @@ Public Class FilesSystemTest
     Public Sub SetAttr_2()
         '' check attr on directory
         Dim test_dir As String = "SetAttr_Dirtest2"
-        Dim file_attr, req_attr As FileAttribute
+        Dim file_attr As FileAttribute, req_attr As FileAttribute
 
         req_attr = vbHidden Or vbArchive
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
@@ -687,7 +687,7 @@ Public Class FilesSystemTest
 
         file_attr = FileSystem.GetAttr(DATA_DIR + sep_ch + test_dir)
 
-        Assert.AreEqual(req_attr Or vbDirectory, file_attr)
+        Assert.AreEqual(CObj(req_attr Or vbDirectory), CObj(file_attr))
         Thread.Sleep(60)
         Directory.Delete(DATA_DIR + sep_ch + test_dir)
 
@@ -948,15 +948,15 @@ Public Class FilesSystemTest
         fs2.Close()
 
         res_dir = FileSystem.Dir(DATA_DIR + sep_ch + "Dir_test_11*", FileAttribute.Directory) '' all files and dirs
-        Assert.AreEqual(test_dir1, res_dir)
+        Assert.AreEqual(test_dir1, res_dir, "1")
         res_dir = FileSystem.Dir()
-        Assert.AreEqual(test_dir2, res_dir)
+        Assert.AreEqual(test_dir2, res_dir, "2")
         res_dir = FileSystem.Dir()
-        Assert.AreEqual(test_dir3, res_dir)
+        Assert.AreEqual(test_dir3, res_dir, "3")
         res_dir = FileSystem.Dir()
-        Assert.AreEqual(test_file1, res_dir)
+        Assert.AreEqual(test_file1, res_dir, "4")
         res_dir = FileSystem.Dir()
-        Assert.AreEqual(test_file2, res_dir)
+        Assert.AreEqual(test_file2, res_dir, "5")
 
     End Sub
 #End Region
