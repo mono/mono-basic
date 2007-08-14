@@ -1,5 +1,9 @@
 2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Tokens/Token.vb: Undo s390 hack.
+
+2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/InvocationOrIndexExpression.vb: Implement VBNC30075.
 	* Statements/ExitStatement.vb: Implement VBNC30065-67.
 	* Statements/AssignStatements/AssignmentStatement.vb: Implement VBNC30062.
