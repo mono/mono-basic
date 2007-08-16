@@ -39,6 +39,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
         Public Shared Function ChangeType(ByVal Expression As Object, ByVal TargetType As Type) As Object
+            If (TargetType.IsInstanceOfType(Expression)) Then
+                Return Expression
+            End If
             Return System.Convert.ChangeType(Expression, TargetType)
         End Function
 
