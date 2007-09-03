@@ -1,3 +1,7 @@
+2007-09-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Network.vb: some features is not supported for TARGET_JVM
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MyWebClient.vb: More dependencies are implemented now.

@@ -137,6 +137,9 @@ Namespace Microsoft.VisualBasic.Devices
         ' Not supported, since uses unsupported System.Net.NetworkInformation.Ping.Send()
         <MonoNotSupported("")> _
         Public Function Ping(ByVal hostNameOrAddress As String, ByVal timeout As Integer) As Boolean
+#If TARGET_JVM = True Then
+			Throw New NotSupportedException()
+#Else
             If IsAvailable = False Then
                 Throw New InvalidOperationException("Network not available.")
             End If
@@ -148,6 +151,7 @@ Namespace Microsoft.VisualBasic.Devices
             result = worker.Send(hostNameOrAddress, timeout)
 
             Return result.Status = IPStatus.Success
+#End If
         End Function
 
         <MonoNotSupported("")> _
@@ -232,7 +236,11 @@ Namespace Microsoft.VisualBasic.Devices
 
         Public ReadOnly Property IsAvailable() As Boolean
             Get
+#If TARGET_JVM = True Then
+				Throw New NotSupportedException()
+#Else
                 Return NetworkInterface.GetIsNetworkAvailable()
+#End If
             End Get
         End Property
     End Class
