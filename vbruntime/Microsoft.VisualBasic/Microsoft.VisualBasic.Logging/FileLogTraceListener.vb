@@ -62,12 +62,19 @@ Namespace Microsoft.VisualBasic.Logging
 #If TARGET_JVM = False Then 'Windows.Forms Not Supported by Grasshopper
             m_BaseFileName = System.IO.Path.GetFileNameWithoutExtension(System.Windows.Forms.Application.ExecutablePath)
             m_CustomLocation = Microsoft.VisualBasic.FileIO.SpecialDirectories.CurrentUserApplicationData
+#Else
+			m_BaseFileName = System.IO.Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.SetupInformation.ApplicationName)
+			m_CustomLocation = AppDomain.CurrentDomain.BaseDirectory			
 #End If
             m_Delimiter = Constants.vbTab
             m_DiskSpaceExhaustedBehaviour = DiskSpaceExhaustedOption.DiscardMessages
             m_Encoding = System.Text.Encoding.UTF8
-            m_IncludeHostName = False
-            m_Location = LogFileLocation.LocalUserApplicationDirectory
+			m_IncludeHostName = False
+#If TARGET_JVM Then
+			m_Location = LogFileLocation.Custom
+#Else
+			m_Location = LogFileLocation.LocalUserApplicationDirectory
+#End If
             m_LogFileCreationSchedule = LogFileCreationScheduleOption.None
             m_MaxFileSize = 5000000
             m_ReserveDiskSpace = 10000000
@@ -114,7 +121,7 @@ Namespace Microsoft.VisualBasic.Logging
             End If
         End Sub
 
-#If TARGET_JVM = False Then
+
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal message As String)
 
             If Me.Filter IsNot Nothing AndAlso Me.Filter.ShouldTrace(eventCache, source, eventType, id, message, Nothing, Nothing, Nothing) = False Then Return
@@ -161,7 +168,7 @@ Namespace Microsoft.VisualBasic.Logging
             End If
             WriteLine(builder.ToString)
         End Sub
-#End If
+
 
         Public Overrides Sub TraceEvent(ByVal eventCache As TraceEventCache, ByVal source As String, ByVal eventType As TraceEventType, ByVal id As Integer, ByVal format As String, ByVal ParamArray args As Object())
             If args Is Nothing Then
@@ -202,7 +209,7 @@ Namespace Microsoft.VisualBasic.Logging
                     Return False
                 End If
             End If
-
+#if Not TARGET_JVM
             If New System.IO.DriveInfo(Me.FullLogFileName(0)).TotalFreeSpace - msgSize < m_ReserveDiskSpace Then
                 If m_DiskSpaceExhaustedBehaviour = DiskSpaceExhaustedOption.ThrowException Then
                     Throw New InvalidOperationException("No more disk space for log file")
@@ -210,6 +217,7 @@ Namespace Microsoft.VisualBasic.Logging
                     Return False
                 End If
             End If
+#End If
 
             Return True
         End Function
@@ -305,7 +313,14 @@ Namespace Microsoft.VisualBasic.Logging
                         path = Microsoft.VisualBasic.FileIO.SpecialDirectories.CurrentUserApplicationData
                 End Select
 #Else
-                path = String.Empty
+				Select Case m_Location                   
+                    Case LogFileLocation.Custom
+                        path = m_CustomLocation
+                    Case LogFileLocation.ExecutableDirectory
+                        path = System.AppDomain.CurrentDomain.BaseDirectory
+                    Case Else
+                        throw new NotSupportedException("LogFileLocation must be one of: Custom, ExecutableDirectory")
+                End Select
 #End If
 
                 file = m_BaseFileName
@@ -339,10 +354,15 @@ Namespace Microsoft.VisualBasic.Logging
             Get
                 Return m_Location
             End Get
-            Set(ByVal value As LogFileLocation)
-                m_Location = value
-            End Set
-        End Property
+			Set(ByVal value As LogFileLocation)
+#If TARGET_JVM Then
+				if (value <> LogFileLocation.Custom And value <> LogFileLocation.ExecutableDirectory) Then
+					Throw New NotSupportedException("LogFileLocation must be one of: Custom, ExecutableDirectory")
+				End If
+#End If
+				m_Location = value
+			End Set
+		End Property
 
         Public Property LogFileCreationSchedule() As LogFileCreationScheduleOption
             Get
