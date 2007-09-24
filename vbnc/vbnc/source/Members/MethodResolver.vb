@@ -249,8 +249,83 @@ Public Class MethodResolver
             Helper.AddError("No most applicable: " & Parent.Location.ToString(Compiler))
         End If
 
+        If CandidatesLeft = 1 Then
+            Return True
+        End If
+
+        SelectLessGeneric()
+        Log("After selecting the less generic candidates, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft <> 1 Then
+            Helper.AddError("No less generic: " & Parent.Location.ToString(Compiler))
+        End If
+
+
         Return CandidatesLeft = 1
     End Function
+
+    Sub SelectLessGeneric()
+        'Find less generic methods
+        'Dim expandedArgumentTypes(m_Candidates.Count - 1)() As Type
+
+        'For i As Integer = 0 To m_Candidates.Count - 1
+        '    If m_Candidates(i) Is Nothing Then Continue For
+
+        '    For j As Integer = i + 1 To m_Candidates.Count - 1
+        '        If m_Candidates(j) Is Nothing Then Continue For
+
+        '        Dim candidateI As MemberCandidate = m_Candidates(i)
+        '        Dim candidateJ As MemberCandidate = m_Candidates(j)
+
+        '        Helper.Assert(candidateI.ExactArguments IsNot Nothing)
+        '        Helper.Assert(candidateJ.ExactArguments IsNot Nothing)
+
+        '        Dim a, b As Boolean
+
+        '        If expandedArgumentTypes(i) Is Nothing Then
+        '            expandedArgumentTypes(i) = candidateI.TypesInInvokedOrder() ' Helper.GetExpandedTypes(Compiler, candidateI.InputParameters, Arguments.Count)
+        '        End If
+        '        If expandedArgumentTypes(j) Is Nothing Then
+        '            expandedArgumentTypes(j) = candidateJ.TypesInInvokedOrder() 'Helper.GetExpandedTypes(Compiler, candidateJ.InputParameters, Arguments.Count)
+        '        End If
+
+        '        a = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(i), expandedArgumentTypes(j))
+        '        b = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(j), expandedArgumentTypes(i))
+
+        '        If a = b Then ' AndAlso b = False Then
+        '            'It is possible for M and N to have the same signature if one or both contains an expanded 
+        '            'paramarray parameter. In that case, the member with the fewest number of arguments matching
+        '            'expanded paramarray parameters is considered more applicable. 
+        '            Dim iParamArgs, jParamArgs As Integer
+
+        '            If candidateI.IsParamArrayCandidate Then
+        '                iParamArgs = candidateI.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
+        '            End If
+        '            If candidateJ.IsParamArrayCandidate Then
+        '                jParamArgs = candidateJ.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
+        '            End If
+        '            If jParamArgs > iParamArgs Then
+        '                a = True : b = False
+        '            ElseIf iParamArgs > jParamArgs Then
+        '                b = True : a = False
+        '            End If
+        '            Helper.Assert(iParamArgs <> jParamArgs OrElse (iParamArgs = 0 AndAlso jParamArgs = 0), MethodName)
+        '        End If
+
+        '        If a Xor b Then
+        '            If a = False Then
+        '                Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
+        '                m_Candidates(i) = Nothing
+        '                Exit For
+        '            Else
+        '                Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
+        '                m_Candidates(j) = Nothing
+        '            End If
+        '        Else
+        '            Log("EQUALLY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", ArgumentsTypesAsString, Helper.ToString(candidateI.DefinedParametersTypes), Helper.ToString(candidateJ.DefinedParametersTypes))
+        '        End If
+        '    Next
+        'Next
+    End Sub
 
     Sub RemoveInaccessible()
         For i As Integer = 0 To m_Candidates.Count - 1

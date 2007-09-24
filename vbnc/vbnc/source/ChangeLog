@@ -1,3 +1,18 @@
+2007-09-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/MethodResolver.vb: Start implementing selection of the less
+	  generic method in method resolution.
+	* Members/VariableInitializer.vb: Resolve addressof variable initializers
+	  correctly (fixes #325338).
+	* Emit/Emitter.vb: Don't use ldflda for static fields, but ldsflda. Fixes
+	  #327596.
+	* General/Helper.vb: ParseLine: correctly parse lines with embedded and
+	  escaped quotes. Fixes #325976. Start implementing selection of the less
+	  generic method in method resolution.
+	* General/MemberCache.vb: Cache interface members correctly (if shadowed in
+	  one hierarchy path, shadowed in all). Fixes #325346. Fix cache
+	  flattening (and #320964).
+
 2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Tokens/Token.vb: Undo s390 hack.

@@ -62,6 +62,8 @@ Public Class MemberCache
     Private m_FlattenedCache2 As MemberVisibilityEntries
     Private m_FlattenedCacheInsensitive2 As MemberVisibilityEntries
 
+    Private m_ShadowedInterfaceMembers As Generic.List(Of MemberInfo)
+
     Private m_Type As Type
     Private m_Base As MemberCache
 
@@ -158,11 +160,6 @@ Public Class MemberCache
                     End If
                 End If
             Next
-            'If m_Cache.ContainsKey(member.Name) = False Then
-            '    m_Cache.Add(New MemberCacheEntry(member))
-            'Else
-            '    m_Cache(member.Name).Members.Add(member)
-            'End If
         Next
     End Sub
 
@@ -171,14 +168,22 @@ Public Class MemberCache
         base = GetBaseCache()
 
         If base Is Nothing Then
-
             If m_Type.IsInterface AndAlso m_Type.IsGenericParameter = False Then
                 Dim ifaces() As Type
-                Dim icache As MemberCache
+                Dim icaches() As MemberCache
+
                 ifaces = m_Type.GetInterfaces()
-                For Each iface As Type In ifaces
-                    icache = m_Compiler.TypeManager.GetCache(iface)
-                    FlattenWith(icache)
+
+                ReDim icaches(ifaces.Length - 1)
+                m_ShadowedInterfaceMembers = New Generic.List(Of MemberInfo)
+
+                For i As Integer = 0 To ifaces.Length - 1
+                    icaches(i) = m_Compiler.TypeManager.GetCache(ifaces(i))
+                    m_ShadowedInterfaceMembers.AddRange(icaches(i).m_ShadowedInterfaceMembers)
+                Next
+
+                For i As Integer = 0 To ifaces.Length - 1
+                    FlattenWith(icaches(i))
                 Next
                 FlattenWith(m_Compiler.TypeManager.GetCache(Compiler.TypeCache.System_Object))
             Else
@@ -243,18 +248,26 @@ Public Class MemberCache
             For Each cache As MemberCacheEntry In entry.Value.Values
                 For i As Integer = 0 To cache.Members.Count - 1
                     Dim member As MemberInfo = cache.Members(i)
-                    If Not IsHidden(member, entry.Key) Then
-                        Helper.StopIfDebugging(member.Name = "Equals" AndAlso m_Type.Name = "KS")
+                    Dim isHidden As Boolean
+                    isHidden = False
+                    If m_ShadowedInterfaceMembers IsNot Nothing AndAlso m_ShadowedInterfaceMembers.Contains(member) Then
+                        isHidden = True
+                    ElseIf Me.IsHidden(member, entry.Key) Then
+                        isHidden = True
+                        If m_ShadowedInterfaceMembers IsNot Nothing Then m_ShadowedInterfaceMembers.Add(member)
+                    End If
+
+                    If Not isHidden Then
                         Dim isPublic, isFriend, isProtected, isPrivate As Boolean
                         isPublic = Helper.IsPublic(member)
                         isPrivate = Helper.IsPrivate(member)
                         isFriend = Helper.IsFriendOrProtectedFriend(member)
                         isProtected = Helper.IsProtectedOrProtectedFriend(member)
-                        addTo(MemberVisibility.All) = True
-                        addTo(MemberVisibility.PublicFriend) = isPublic OrElse isFriend
-                        addTo(MemberVisibility.PublicProtected) = isPublic OrElse isProtected
-                        addTo(MemberVisibility.PublicProtectedFriend) = isPublic OrElse isProtected OrElse isFriend
-                        addTo(MemberVisibility.Public) = isPublic
+                        addTo(MemberVisibility.All) = True AndAlso entry.Key = MemberVisibility.All
+                        addTo(MemberVisibility.PublicFriend) = (isPublic OrElse isFriend) AndAlso entry.Key = MemberVisibility.PublicFriend
+                        addTo(MemberVisibility.PublicProtected) = (isPublic OrElse isProtected) AndAlso entry.Key = MemberVisibility.PublicProtected
+                        addTo(MemberVisibility.PublicProtectedFriend) = (isPublic OrElse isProtected OrElse isFriend) AndAlso entry.Key = MemberVisibility.PublicProtectedFriend
+                        addTo(MemberVisibility.Public) = isPublic AndAlso entry.Key = MemberVisibility.Public
 
                         For j As Integer = 0 To addTo.Length - 1
                             If addTo(j) = False Then Continue For
@@ -265,29 +278,10 @@ Public Class MemberCache
                                 entries(cache.Name).Members.Add(member)
                             End If
                         Next
-                        'If m_FlattenedCache.ContainsKey(cache.Name) = False Then
-                        '    m_FlattenedCache.Add(New MemberCacheEntry(member))
-                        'ElseIf m_FlattenedCache(cache.Name).Members.Contains(member) = False Then
-                        '    m_FlattenedCache(cache.Name).Members.Add(member)
-                        'End If
                     End If
                 Next
             Next
         Next
-
-
-        'For Each cache As MemberCacheEntry In MemberCache.FlattenedCache.Values
-        '    For i As Integer = 0 To cache.Members.Count - 1
-        '        Dim member As MemberInfo = cache.Members(i)
-        '        If Not IsHidden(member) Then
-        '            If m_FlattenedCache.ContainsKey(cache.Name) = False Then
-        '                m_FlattenedCache.Add(New MemberCacheEntry(member))
-        '            ElseIf m_FlattenedCache(cache.Name).Members.Contains(member) = False Then
-        '                m_FlattenedCache(cache.Name).Members.Add(member)
-        '            End If
-        '        End If
-        '    Next
-        'Next
     End Sub
 
     Private Sub Log(ByVal Msg As String)

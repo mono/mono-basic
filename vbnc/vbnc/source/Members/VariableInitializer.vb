@@ -75,14 +75,23 @@ Public Class VariableInitializer
         Dim result As Boolean = True
         Dim expInfo As ExpressionResolveInfo = TryCast(Info, ExpressionResolveInfo)
 
-        result = m_Initializer.ResolveCode(Info)
+        result = m_Initializer.ResolveCode(Info) AndAlso result
 
         If result = False Then Return result
 
         Dim initExp As Expression = TryCast(m_Initializer, Expression)
         If initExp IsNot Nothing Then
             If initExp.Classification.IsValueClassification = False Then
-                initExp = initExp.ReclassifyToValueExpression
+                If initExp.Classification.IsMethodPointerClassification Then
+                    Dim exp As ExpressionResolveInfo = TryCast(Info, ExpressionResolveInfo)
+                    If exp IsNot Nothing AndAlso exp.LHSType IsNot Nothing Then
+                        initExp = initExp.ReclassifyMethodPointerToValueExpression(exp.LHSType)
+                    Else
+                        initExp = initExp.ReclassifyToValueExpression
+                    End If
+                Else
+                    initExp = initExp.ReclassifyToValueExpression
+                End If
                 result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
             End If
 

@@ -2548,6 +2548,7 @@ Public Class Helper
         For i As Integer = 0 To strLine.Length - 1
             If strLine.Chars(i) = "\"c AndAlso i < strLine.Length - 1 AndAlso strLine.Chars(i + 1) = """"c Then
                 builder.Append(""""c)
+                i += 1
             ElseIf strLine.Chars(i) = """"c Then
                 If strLine.Length - 1 >= i + 1 AndAlso strLine.Chars(i + 1) = """"c Then
                     builder.Append(""""c)
@@ -3419,6 +3420,37 @@ Public Class Helper
 
         Return result
     End Function
+
+
+    Shared Function IsFirstLessGeneric(ByVal Compiler As Compiler, ByVal M As MethodBase, ByVal N As MethodBase) As Boolean
+
+    End Function
+
+    Shared Function IsFirstLessGeneric(ByVal Compiler As Compiler, ByVal M As MethodInfo, ByVal N As MethodInfo) As Boolean
+        Dim methodTypeParametersM As Type()
+        Dim methodTypeParametersN As Type()
+
+        'A member M is determined to be less generic than a member N using the following steps:
+
+        methodTypeParametersM = M.GetGenericArguments
+        methodTypeParametersN = N.GetGenericArguments
+
+        '-	If M has fewer method type parameters than N, then M is less generic than N.
+        If methodTypeParametersM.Length < methodTypeParametersN.Length Then
+            Return True
+        ElseIf methodTypeParametersM.Length > methodTypeParametersN.Length Then
+            Return False
+        End If
+
+        '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect
+        '   to type parameters on the method, or Mj is less generic with respect to type parameters on the method,
+        '   and at least one Mj is less generic than Nj, then M is less generic than N.
+
+        '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect
+        '   to type parameters on the type, or Mj is less generic with respect to type parameters on the type, and 
+        '  at least one Mj is less generic than Nj, then M is less generic than N.
+    End Function
+
 
     Shared Function IsFirstMoreApplicable(ByVal Compiler As Compiler, ByVal Arguments As Generic.List(Of Argument), ByVal MTypes As Type(), ByVal NTypes() As Type) As Boolean
         Dim result As Boolean = True

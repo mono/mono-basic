@@ -1888,8 +1888,10 @@ Partial Public Class Emitter
         If Field.IsLiteral Then
             EmitLoadValueAddress(Info, Field.GetValue(Nothing))
         Else
-            Info.ILGen.Emit(OpCodes.Ldflda, emittableField)
-            If Field.IsStatic = False Then
+            If Field.IsStatic Then
+                Info.ILGen.Emit(OpCodes.Ldsflda, emittableField)
+            Else
+                Info.ILGen.Emit(OpCodes.Ldflda, emittableField)
                 Info.Stack.Pop(Field.DeclaringType)
             End If
             Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Field.FieldType))
