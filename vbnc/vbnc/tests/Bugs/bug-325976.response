@@ -1,0 +1,2 @@
+/define:"AString=\"aabb\",BBoolean=True,CString=\"mm nn pp\",DString=\"zz aa\",EBoolean=False,FBooleanAsInt=-1" 
+/target:library
