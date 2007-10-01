@@ -50,8 +50,8 @@ boot-from-ms:
 	
 test-thorough:
 	cd tests/SelfTest/ && rerun.sh && rerun.sh && rerun.sh
-	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
-	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll ../class/lib/bootstrap/
+	cp tests/SelfTest/vbnc.exe* ../../class/lib/bootstrap
+	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll* ../class/lib/bootstrap/
 	cd ../../ && make clean && make install
 	
 	
