@@ -1,5 +1,15 @@
 2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  more messages.
+	* General/Resources.vb, General/CommandLine.vb: Report correct errors for
+	  missing files. Fixes #328101. Minor refactoring as well.
+	* General/Report.vb: Fix comparison.
+	* General/Compiler.vb: If an error occured during commandline parsing, show
+	  the error, not the help.
+
+2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ConditionalCompilation/ConditionalCompilation.vb: Fix #235976, the
 	  conditional constant value is the object value, not the string value
 	  written in the code.

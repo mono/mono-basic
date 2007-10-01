@@ -242,7 +242,7 @@ Public Class Report
     ''' <remarks></remarks>
     Function ShowSavedMessages() As Boolean
         Dim result As Boolean
-        result = m_SavedMessages.Count = 0
+        result = m_SavedMessages.Count <> 0
         For Each msg As Message In m_SavedMessages
             ShowMessage(False, msg) 'Compiler.Report.WriteLine(str)
         Next

@@ -23,11 +23,13 @@ Imports Microsoft.VisualBasic
 ''' A list of resources.
 ''' </summary>
 Public Class Resources
-    Inherits ArrayList
+    Inherits Generic.List(Of Resource)
     ''' <summary>
     ''' The compiling compiler.
     ''' </summary>
     Private m_Compiler As Compiler
+
+    Private m_IsLinkedResources As Boolean
 
     ''' <summary>
     ''' The compiling compiler.
@@ -41,31 +43,16 @@ Public Class Resources
     ''' <summary>
     ''' A new resource list.
     ''' </summary>	
-    Sub New(ByVal Compiler As Compiler)
+    Sub New(ByVal Compiler As Compiler, ByVal LinkedResources As Boolean)
         m_Compiler = Compiler
+        m_IsLinkedResources = LinkedResources
     End Sub
-
-    ''' <summary>
-    ''' Returns the resource at the specified index.
-    ''' </summary>
-    Shadows ReadOnly Property Item(ByVal Index As Integer) As Resource
-        Get
-            Return DirectCast(MyBase.Item(Index), Resource)
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Add a new resource.
-    ''' </summary>
-    Shadows Function Add(ByVal Resource As Resource) As Integer
-        Return MyBase.Add(Resource)
-    End Function
 
     ''' <summary>
     ''' Add a new resource. Parses the string and verifies it.
     ''' If there are any messages, they are saved, not shown.
     ''' </summary>
-    Shadows Function Add(ByVal str As String) As Boolean
+    Overloads Function Add(ByVal str As String) As Boolean
         Dim strItems() As String = Split(str, ",")
         Dim files As String()
         Dim isPublic As Boolean = True
@@ -95,7 +82,11 @@ Public Class Resources
         End Select
 
         If files Is Nothing OrElse files.Length = 0 Then
-            Compiler.Report.SaveMessage(Messages.VBNC2001, strItems(0))
+            If m_IsLinkedResources Then
+                Compiler.Report.SaveMessage(Messages.VBNC30145, String.Format("The file '{0}' does not exist.", strItems(0)))
+            Else
+                Compiler.Report.SaveMessage(Messages.VBNC31027, strItems(0))
+            End If
             Return False
         End If
 

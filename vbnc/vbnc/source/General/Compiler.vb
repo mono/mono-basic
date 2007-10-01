@@ -268,7 +268,12 @@ Public Class Compiler
         'Try
         'Show the help if there was an error parsing commandline
         If m_CommandLine.Parse(CommandLine) = False Then
-            ShowHelp()
+            If m_CommandLine.NoLogo = False Then
+                ShowLogo()
+            End If
+            If Report.ShowSavedMessages() = False Then
+                ShowHelp()
+            End If
             Return 1
         End If
         Return Compile()
@@ -474,6 +479,9 @@ Public Class Compiler
 
             'Show help if asked to
             If CommandLine.Help = True Then
+                If CommandLine.NoLogo = False Then
+                    ShowLogo()
+                End If
                 ShowHelp()
                 Return 0
             End If
@@ -481,7 +489,7 @@ Public Class Compiler
             'Show logo, unless asked not to
             If CommandLine.NoLogo = False Then ShowLogo()
 
-            If Report.ShowSavedMessages = False Then
+            If Report.ShowSavedMessages Then
                 Return 1
             End If
 
@@ -842,7 +850,6 @@ EndOfCompilation:
     ''' </summary>
     ''' <remarks></remarks>
     Sub ShowHelp()
-        ShowLogo()
         Compiler.Report.WriteLine(Help)
     End Sub
 

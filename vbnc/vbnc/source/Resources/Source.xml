@@ -654,7 +654,7 @@
 	</Message>
 	<Message id="30145" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Unable to emit assembly: {0}</VBNCValue>
 		<VBValue>Unable to emit assembly: |0</VBValue>
 	</Message>
 	<Message id="30146" level="Error">
@@ -3074,7 +3074,7 @@
 	</Message>
 	<Message id="31027" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>The file '{0}' does not exist.</VBNCValue>
 		<VBValue>Unable to open file '|1': |0</VBValue>
 	</Message>
 	<Message id="31028" level="Error">

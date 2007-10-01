@@ -770,8 +770,8 @@ Public Class CommandLine
         m_lstImports = New ImportsStatement(Compiler)
         m_lstImports.Init(New ImportsClauses(m_lstImports))
         m_lstFileNames = New CodeFiles(m_Compiler)
-        m_lstResources = New Resources(m_Compiler)
-        m_lstLinkResources = New Resources(m_Compiler)
+        m_lstResources = New Resources(m_Compiler, False)
+        m_lstLinkResources = New Resources(m_Compiler, True)
     End Sub
 
     ''' <summary>

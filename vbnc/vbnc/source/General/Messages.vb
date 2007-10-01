@@ -926,7 +926,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30144 = 30144
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to emit assembly: {0}"
     ''' VB   = "Unable to emit assembly: |0"
     ''' </summary>
     ''' <remarks></remarks>
@@ -4314,7 +4314,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31026 = 31026
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "The file '{0}' does not exist."
     ''' VB   = "Unable to open file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>
