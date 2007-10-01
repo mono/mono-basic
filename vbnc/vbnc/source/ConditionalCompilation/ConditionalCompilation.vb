@@ -119,7 +119,7 @@ Public Class ConditionalCompiler
         'Set the project level defines
         Dim Constant As ConditionalConstant
         For Each def As Define In Compiler.CommandLine.Define
-            Constant = New ConditionalConstant(def.Symbol, def.Value)
+            Constant = New ConditionalConstant(def.Symbol, def.ObjectValue)
             m_ProjectConstants.Add(Constant)
         Next
 

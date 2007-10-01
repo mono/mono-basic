@@ -1,3 +1,10 @@
+2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ConditionalCompilation/ConditionalCompilation.vb: Fix #235976, the
+	  conditional constant value is the object value, not the string value
+	  written in the code.
+	* General/CommandLine.vb: Added comment.
+
 2007-09-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Members/MethodResolver.vb: Start implementing selection of the less

@@ -968,6 +968,7 @@ Public Class CommandLine
                 m_bWarnAsError = False
                 ' - LANGUAGE -
             Case "define", "d"
+                'FIXME: This does not work with commas inside strings.
                 Dim strDefines() As String = Split(strValue, ",")
                 For Each str As String In strDefines
                     If str.Contains("=") = False Then str = str & "=True"
