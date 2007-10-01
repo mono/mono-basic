@@ -236,15 +236,16 @@ Public Class Report
     End Property
 
     ''' <summary>
-    ''' Show the saved messages. Returns true if any messages have been shown.
+    ''' Show the saved messages. Returns true if any error messages have been shown.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function ShowSavedMessages() As Boolean
-        Dim result As Boolean
-        result = m_SavedMessages.Count <> 0
+        Dim result As Boolean = False
+
         For Each msg As Message In m_SavedMessages
             ShowMessage(False, msg) 'Compiler.Report.WriteLine(str)
+            If msg.Level >= MessageLevel.Error Then result = True
         Next
         m_SavedMessages.Clear()
         Return result

@@ -1090,7 +1090,7 @@ Public Class CommandLine
                 End Select
             Case Else
                 'result = False 'OK since this is only a warning.
-                Compiler.Report.SaveMessage(Messages.VBNC2009, strName)
+                result = Compiler.Report.SaveMessage(Messages.VBNC2009, strName) AndAlso result
         End Select
         Return result
     End Function

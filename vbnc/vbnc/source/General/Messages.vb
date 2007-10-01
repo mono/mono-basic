@@ -41,14 +41,14 @@ Public Enum Messages
     ''' VB   = "unable to open response file '%s'"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Error)> VBNC2007 = 2007
+    <Message(MessageLevel.Warning)> VBNC2007 = 2007
 
     ''' <summary>
     ''' VBNC = "the option {0} was not recognized - ignored"
     ''' VB   = "unrecognized option '%1!ls!'; ignored"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Error)> VBNC2009 = 2009
+    <Message(MessageLevel.Warning)> VBNC2009 = 2009
 
     ''' <summary>
     ''' VBNC = "No files to compile! Cannot do anything!"
@@ -6628,174 +6628,174 @@ Public Enum Messages
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90000 = 90000
+    <Message(MessageLevel.Error)> VBNC90000 = 90000
 
     ''' <summary>
     ''' VBNC = "Unexpected end of file."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90001 = 90001
+    <Message(MessageLevel.Error)> VBNC90001 = 90001
 
     ''' <summary>
     ''' VBNC = "'{0}' type character is not valid here."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90002 = 90002
+    <Message(MessageLevel.Error)> VBNC90002 = 90002
 
     ''' <summary>
     ''' VBNC = "End of line found in string constant."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90003 = 90003
+    <Message(MessageLevel.Error)> VBNC90003 = 90003
 
     ''' <summary>
     ''' VBNC = "End of file found in string constant."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90004 = 90004
+    <Message(MessageLevel.Error)> VBNC90004 = 90004
 
     ''' <summary>
     ''' VBNC = "Invalid literal."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90005 = 90005
+    <Message(MessageLevel.Error)> VBNC90005 = 90005
 
     ''' <summary>
     ''' VBNC = "Invalid {0} literal."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90006 = 90006
+    <Message(MessageLevel.Error)> VBNC90006 = 90006
 
     ''' <summary>
     ''' VBNC = "Unexpected token: {0}."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90007 = 90007
+    <Message(MessageLevel.Error)> VBNC90007 = 90007
 
     ''' <summary>
     ''' VBNC = "No more code?"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90008 = 90008
+    <Message(MessageLevel.Error)> VBNC90008 = 90008
 
     ''' <summary>
     ''' VBNC = "Cannot find '{0}'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90009 = 90009
+    <Message(MessageLevel.Error)> VBNC90009 = 90009
 
     ''' <summary>
     ''' VBNC = "Cannot have both '{0}' and '{1}'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90010 = 90010
+    <Message(MessageLevel.Error)> VBNC90010 = 90010
 
     ''' <summary>
     ''' VBNC = "Expected: '{0}'"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90011 = 90011
+    <Message(MessageLevel.Error)> VBNC90011 = 90011
 
     ''' <summary>
     ''' VBNC = "Could not load the assembly: '{0}'"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90012 = 90012
+    <Message(MessageLevel.Error)> VBNC90012 = 90012
 
     ''' <summary>
     ''' VBNC = "Error finding class '{0}' with the Main function, found {1} classes with this name."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90013 = 90013
+    <Message(MessageLevel.Error)> VBNC90013 = 90013
 
     ''' <summary>
     ''' VBNC = "Expected 'While' or 'Until'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90014 = 90014
+    <Message(MessageLevel.Error)> VBNC90014 = 90014
 
     ''' <summary>
     ''' VBNC = "Can't use the modifier '{0}' here."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90015 = 90015
+    <Message(MessageLevel.Error)> VBNC90015 = 90015
 
     ''' <summary>
     ''' VBNC = "Feature not implemented: {0}"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90016 = 90016
+    <Message(MessageLevel.Error)> VBNC90016 = 90016
 
     ''' <summary>
     ''' VBNC = "Invalid define: '{0}'"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90017 = 90017
+    <Message(MessageLevel.Error)> VBNC90017 = 90017
 
     ''' <summary>
     ''' VBNC = "Expected end of line."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90018 = 90018
+    <Message(MessageLevel.Error)> VBNC90018 = 90018
 
     ''' <summary>
     ''' VBNC = "Expected '{0}'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90019 = 90019
+    <Message(MessageLevel.Error)> VBNC90019 = 90019
 
     ''' <summary>
     ''' VBNC = "Expected 'Get' or 'Set'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90020 = 90020
+    <Message(MessageLevel.Error)> VBNC90020 = 90020
 
     ''' <summary>
     ''' VBNC = "Invalid data type: '{0}'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90021 = 90021
+    <Message(MessageLevel.Error)> VBNC90021 = 90021
 
     ''' <summary>
     ''' VBNC = "Unexpected end of file in comment."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90022 = 90022
+    <Message(MessageLevel.Error)> VBNC90022 = 90022
 
     ''' <summary>
     ''' VBNC = "There is no comparison possible between '{0}' and '{1}'."
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC90023 = 90023
+    <Message(MessageLevel.Error)> VBNC90023 = 90023
 
     ''' <summary>
     ''' VBNC = "{0}"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>
-    <Message(MessageLevel.Warning)> VBNC99999 = 99999
+    <Message(MessageLevel.Error)> VBNC99999 = 99999
 
 End Enum

@@ -1,5 +1,12 @@
 2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/CommandLine.vb: Use result correctly.
+	* General/Messages.vb: Message #2009 is a warning, as well as 90000+ are all
+	  errors.
+	* General/Report.vb: Don't quit compiling on saved warnings.
+
+2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/Compiler.vb: Added changes as suggested in #328106.
 
 2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
