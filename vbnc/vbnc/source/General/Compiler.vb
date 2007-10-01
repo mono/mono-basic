@@ -363,7 +363,7 @@ Public Class Compiler
             Throw
         Catch ex As Exception
             If Token.IsSomething(tm.CurrentToken) Then
-                Console.WriteLine("Source code nearby crash location: " & tm.CurrentToken.Location.ToString(Me))
+                Report.ShowMessage(Messages.VBNC99999, tm.CurrentToken.Location, "vbnc crashed nearby this location in the source code.")
             End If
             Throw
         End Try
@@ -721,7 +721,7 @@ EndOfCompilation:
             'Just do nothing.
         End Try
 #Else
-            Compiler.Report.WriteLine("Unexpected error: " & ex.Message & vb.vbNewLine & ex.StackTrace)
+        Compiler.Report.ShowMessage (Messages.VBNC99999, "Unexpected error: " & ex.Message & vb.vbNewLine & ex.StackTrace)
 #End If
     End Sub
 

@@ -1,5 +1,9 @@
 2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/Compiler.vb: Added changes as suggested in #328106.
+
+2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
 	  more messages.
 	* General/Resources.vb, General/CommandLine.vb: Report correct errors for
