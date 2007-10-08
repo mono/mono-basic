@@ -6793,6 +6793,13 @@ Public Enum Messages
 
     ''' <summary>
     ''' VBNC = "{0}"
+    ''' VB   = "(no corresponding VB warning)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC99998 = 99998
+
+    ''' <summary>
+    ''' VBNC = "{0}"
     ''' VB   = "(no corresponding VB error)"
     ''' </summary>
     ''' <remarks></remarks>

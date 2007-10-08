@@ -1,3 +1,10 @@
+2007-10-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Parser/Parser.vb: "Option Strict Off will probably fail" is a warning, not
+	  an error.
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Add a
+	  general warning.
+
 2007-10-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/CommandLine.vb: Use result correctly.

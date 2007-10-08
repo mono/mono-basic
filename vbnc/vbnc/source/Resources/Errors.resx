@@ -999,5 +999,6 @@
   <data name="90021"><value>Invalid data type: '{0}'.</value></data>
   <data name="90022"><value>Unexpected end of file in comment.</value></data>
   <data name="90023"><value>There is no comparison possible between '{0}' and '{1}'.</value></data>
+  <data name="99998"><value>{0}</value></data>
   <data name="99999"><value>{0}</value></data>
   </root>
