@@ -435,7 +435,19 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.Void
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Type
-                Return m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias.ReclassifyToValueExpression
+                Dim exp As MemberAccessExpression
+                Dim mae As MemberAccessExpression = TryCast(Me, MemberAccessExpression)
+                If mae IsNot Nothing Then
+                    exp = New MemberAccessExpression(Me)
+                    exp.Init(m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias, mae.SecondExpression)
+                    If Not exp.ResolveExpression(ResolveInfo.Default(Compiler)) Then
+                        Helper.NotImplemented("Some error message here.")
+                        Return Nothing
+                    End If
+                    Return exp.ReclassifyToValueExpression
+                Else
+                    Return m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias.ReclassifyToValueExpression
+                End If
             Case ExpressionClassification.Classifications.Namespace
                 Throw New InternalException(Me)
             Case Else

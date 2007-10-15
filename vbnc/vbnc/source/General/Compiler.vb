@@ -920,7 +920,7 @@ EndOfCompilation:
 
             If result = False Then Return result
 
-            If lstMethods.Count = 0 AndAlso CommandLine.Target = vbnc.CommandLine.Targets.Winexe AndAlso mainClass IsNot Nothing Then
+            If lstMethods.Count = 0 AndAlso CommandLine.Target = vbnc.CommandLine.Targets.Winexe AndAlso mainClass IsNot Nothing AndAlso vbnc.Helper.IsSubclassOf(TypeCache.System_Windows_Forms_Form, mainClass.TypeBuilder) Then
                 'In this case we need to create our own main method
                 Dim mainBuilder As MethodBuilder
                 Dim formConstructor As ConstructorDeclaration
@@ -929,6 +929,7 @@ EndOfCompilation:
                 formConstructor = mainClass.DefaultInstanceConstructor
 
                 If formConstructor IsNot Nothing Then
+                    'TODO: If the class has a My default instance, use that default instance.
                     mainBuilder = mainClass.TypeBuilder.DefineMethod("Main", MethodAttributes.Public Or MethodAttributes.Static Or MethodAttributes.HideBySig, Nothing, Type.EmptyTypes)
                     ilGen = mainBuilder.GetILGenerator()
                     ilGen.Emit(OpCodes.Newobj, formConstructor.ConstructorBuilder)
@@ -940,10 +941,14 @@ EndOfCompilation:
 
             'Set the entry point of the assembly
             If lstMethods.Count > 1 Then
-                Report.ShowMessage(Messages.VBNC30738, theAss.Name)
+                Dim name As String
+                If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
+                Report.ShowMessage(Messages.VBNC30738, name)
                 Return False
             ElseIf lstMethods.Count = 0 Then
-                Report.ShowMessage(Messages.VBNC30420, theAss.Name)
+                Dim name As String
+                If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
+                Report.ShowMessage(Messages.VBNC30420, name)
                 Return False
             Else
                 Dim entryMethod As MethodBuilder

@@ -428,13 +428,15 @@ Public Class ClassDeclaration
             Members.Add(field)
             Members.Add(prop)
 
+            Me.TypeDescriptor.ClearCache()
+
             If Compiler.TypeManager.ContainsCache(Me.TypeDescriptor) Then
                 Dim cache As MemberCache = Compiler.TypeManager.GetCache(Me.TypeDescriptor)
-                cache.Cache.Add(New MemberCacheEntry(field.FieldDescriptor))
-                cache.Cache.Add(New MemberCacheEntry(prop.MemberDescriptor))
-                cache.FlattenedCache.Add(New MemberCacheEntry(field.FieldDescriptor))
-                cache.FlattenedCache.Add(New MemberCacheEntry(prop.MemberDescriptor))
-                cache.ResetFlattenedCacheInsensitive()
+                'cache.Cache.Add(New MemberCacheEntry(field.FieldDescriptor))
+                'cache.Cache.Add(New MemberCacheEntry(prop.MemberDescriptor))
+                'cache.FlattenedCache.Add(New MemberCacheEntry(field.FieldDescriptor))
+                'cache.FlattenedCache.Add(New MemberCacheEntry(prop.MemberDescriptor))
+                cache.Reload()
             End If
         Next
 

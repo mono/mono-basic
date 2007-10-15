@@ -52,12 +52,12 @@ End Enum
 
 Public Class MemberCache
     Private m_Compiler As Compiler
-    Private m_Cache As New MemberCacheEntries
+    Private m_Cache As MemberCacheEntries
     Private m_CacheInsensitive As MemberCacheEntries
     Private m_FlattenedCache As MemberCacheEntries
     Private m_FlattenedCacheInsensitive As MemberCacheEntries
 
-    Private m_Cache2 As New MemberVisibilityEntries
+    Private m_Cache2 As MemberVisibilityEntries
     Private m_CacheInsensitive2 As MemberVisibilityEntries
     Private m_FlattenedCache2 As MemberVisibilityEntries
     Private m_FlattenedCacheInsensitive2 As MemberVisibilityEntries
@@ -70,9 +70,13 @@ Public Class MemberCache
     Sub New(ByVal Compiler As Compiler, ByVal Type As Type)
         m_Compiler = Compiler
         m_Type = Type
+        Reload()
+        Compiler.TypeManager.MemberCache.Add(Type, Me)
+    End Sub
+
+    Public Sub Reload()
         Load()
         Flatten()
-        Compiler.TypeManager.MemberCache.Add(Type, Me)
     End Sub
 
     ReadOnly Property Compiler() As Compiler
@@ -106,6 +110,16 @@ Public Class MemberCache
         'If m_Type.Name = "ParameterList" Then Helper.StopIfDebugging()
         members = m_Type.GetMembers(BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.DeclaredOnly)
 
+        m_Cache = New MemberCacheEntries()
+        m_Cache2 = New MemberVisibilityEntries()
+
+        m_CacheInsensitive = Nothing
+        m_CacheInsensitive2 = Nothing
+        m_FlattenedCacheInsensitive = Nothing
+        m_FlattenedCacheInsensitive2 = Nothing
+        m_FlattenedCache = Nothing
+        m_FlattenedCache2 = Nothing
+
         Dim allEntries As MemberCacheEntries = m_Cache
         Dim publicEntries As New MemberCacheEntries()
         Dim publicFriendEntries As New MemberCacheEntries
@@ -116,6 +130,7 @@ Public Class MemberCache
 
         Dim addTo(MemberVisibility.All) As Boolean
         Dim caches(addTo.Length - 1) As MemberCacheEntries
+
 
         caches(MemberVisibility.All) = allEntries
         caches(MemberVisibility.Public) = publicEntries
@@ -433,10 +448,6 @@ Public Class MemberCache
             Return Nothing
         End If
     End Function
-
-    Sub ResetFlattenedCacheInsensitive()
-        m_FlattenedCacheInsensitive = Nothing
-    End Sub
 
     ''' <summary>
     ''' This function returns the members list in the cache, or nothing

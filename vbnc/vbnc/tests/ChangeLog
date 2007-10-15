@@ -1,5 +1,10 @@
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Bugs/bug-333403.vb, Bugs/bug-333403.rsp, My/bug-333403.rsp,
+	  My/bug-333403.vb: Added.
+
+2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Bugs/30451-bug-332869.vb: Added.
 
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 

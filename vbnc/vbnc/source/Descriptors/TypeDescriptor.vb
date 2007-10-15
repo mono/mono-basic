@@ -41,6 +41,11 @@ Public Class TypeDescriptor
     Private m_Hashed As New Generic.Dictionary(Of Integer, TypeDescriptor)
 #End If
 
+    Public Sub ClearCache()
+        m_AllMembers = Nothing
+        m_AllDeclaredMembers = Nothing
+    End Sub
+
     ReadOnly Property IsShared() As Boolean Implements IMemberDescriptor.IsShared
         Get
             Return m_Declaration.IsShared

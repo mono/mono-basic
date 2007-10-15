@@ -1,0 +1,15 @@
+/noconfig
+/imports:Microsoft.VisualBasic,System,System.Collections,System.Collections.Generic,System.Data,System.Drawing,System.Diagnostics,System.Windows.Forms
+/nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022
+/optionstrict+
+/rootnamespace:WindowsApplication1
+#/doc:obj/DebugWindowsApplication1.xml
+/define:CONFIG="Debug",DEBUG=-1,TRACE=-1,_MyType=\"WindowsForms\",PLATFORM="AnyCPU"
+/reference:System.Data.dll,System.dll,System.Drawing.dll,System.Windows.Forms.dll,System.Xml.dll
+/main:WindowsApplication1.RightForm
+/debug+
+/debug:full
+#/out:obj/Debug/WindowsApplication1.exe
+#/resource:obj/Debug/WindowsApplication1.Resources.resources
+/target:winexe
+bug-333403.vb
