@@ -3874,7 +3874,7 @@
 	</Message>
 	<Message id="32046" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'New' cannot be used on a type parameter not declared 'As New()'</VBNCValue>
 		<VBValue>'New' cannot be used on a type parameter not declared 'As New()'.</VBValue>
 	</Message>
 	<Message id="32047" level="Error">
@@ -4002,6 +4002,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Constraint type '|1' already specified for this type parameter.</VBValue>
 	</Message>
+  <Message id="32085" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Arguments cannot be passed when calling a type parameter constructor.</VBNCValue>
+    <VBValue>Arguments cannot be passed to a 'New' used on a type parameter.</VBValue>
+  </Message>
   <Message id="32098" level="Error">
     <Comment>NC</Comment>
     <VBNCValue>Type parameters can't be used as a qualifier.</VBNCValue>

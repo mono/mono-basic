@@ -163,7 +163,7 @@ Public Class Helper
     Shared Function ShowDebugFor(ByVal name As String) As Boolean
         Static args As Hashtable
         If args Is Nothing Then
-            args = New Hashtable(StringComparer.OrdinalIgnoreCase)
+            args = New Hashtable(System.StringComparer.OrdinalIgnoreCase)
             Dim env As String = Environment.GetEnvironmentVariable("VBNC_LOG")
             If env Is Nothing Then Return False
             For Each arg As String In env.Split(","c, ":"c, ";"c)

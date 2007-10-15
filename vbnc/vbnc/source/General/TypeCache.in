@@ -80,6 +80,8 @@ type mscorlib "System.DBNull"
 method2 System_Array "SetValue" System_Object System_Int32_Array
 method2 System_Array "GetValue" System_Int32_Array
 method2 System_Array "CreateInstance" System_Type System_Int32_Array
+type mscorlib "System.Activator"
+method System_Activator "CreateInstance"
 type mscorlib "System.ArgumentException"
 type mscorlib "System.Collections.Generic.IList`1"
 type mscorlib "System.Collections.Generic.ICollection`1"

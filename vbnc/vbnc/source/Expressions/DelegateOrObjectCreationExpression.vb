@@ -39,6 +39,7 @@ Public Class DelegateOrObjectCreationExpression
     ''' </summary>
     ''' <remarks></remarks>
     Private m_IsValueTypeInitializer As Boolean
+    Private m_IsGenericConstructor As Boolean
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
@@ -107,6 +108,11 @@ Public Class DelegateOrObjectCreationExpression
                 Emitter.EmitInitObj(Info, type)
                 Emitter.EmitLoadVariable(Info, local)
             End If
+        ElseIf m_IsGenericConstructor Then
+            Dim method As MethodInfo
+            Dim args As Type() = New Type() {Helper.GetTypeOrTypeBuilder(ExpressionType)}
+            method = Compiler.TypeCache.System_Activator__CreateInstance.MakeGenericMethod(args)
+            Emitter.EmitCall(Info, method)
         Else
             Dim ctor As ConstructorInfo
             ctor = m_MethodClassification.ResolvedConstructor
@@ -158,6 +164,14 @@ Public Class DelegateOrObjectCreationExpression
             If resolvedType.IsValueType AndAlso m_ArgumentList.Count = 0 Then
                 'Nothing to resolve. A structure with no parameters can always be created.
                 m_IsValueTypeInitializer = True
+            ElseIf resolvedType.IsGenericParameter Then
+                If m_ArgumentList.Count > 0 Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC32085, Me.Location)
+                End If
+                If (resolvedType.GenericParameterAttributes And GenericParameterAttributes.DefaultConstructorConstraint) = 0 Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC32046, Me.Location)
+                End If
+                m_IsGenericConstructor = True
             ElseIf resolvedType.IsClass OrElse resolvedType.IsValueType Then
                 Dim ctors As ConstructorInfo()
                 Dim finalArguments As Generic.List(Of Argument) = Nothing

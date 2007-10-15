@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -9,7 +9,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>vbnc_ms</AssemblyName>
+    <AssemblyName>vbnc</AssemblyName>
     <AssemblyOriginatorKeyFile>vbnc.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -18,7 +18,7 @@
     <DelaySign>false</DelaySign>
     <OutputType>Exe</OutputType>
     <OptionCompare>Binary</OptionCompare>
-    <RootNamespace>vbnc_ms</RootNamespace>
+    <RootNamespace>vbnc</RootNamespace>
     <StartupObject>vbnc.Main</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -43,15 +43,15 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <IncrementalBuild>true</IncrementalBuild>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -72,13 +72,13 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
@@ -86,9 +86,9 @@
     </DefineConstants>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <DebugSymbols>False</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <IncrementalBuild>false</IncrementalBuild>
-    <Optimize>True</Optimize>
+    <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -97,13 +97,13 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <NoWarn>42004,42026</NoWarn>
@@ -113,9 +113,9 @@
     <DefineConstants>SELF=1</DefineConstants>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <IncrementalBuild>true</IncrementalBuild>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -126,16 +126,16 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <WarningLevel>1</WarningLevel>
@@ -149,7 +149,7 @@
     <DefineConstants>
     </DefineConstants>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -163,23 +163,23 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
@@ -194,13 +194,13 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc_ms</AssemblyName>
-    <OutputPath>.</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
-    <RootNamespace>vbnc_ms</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AssemblyName>vbnc</AssemblyName>
+    <OutputPath>.\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
@@ -213,13 +213,13 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc_ms</AssemblyName>
-    <OutputPath>.</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
-    <RootNamespace>vbnc_ms</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <AssemblyName>vbnc</AssemblyName>
+    <OutputPath>.\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
@@ -823,10 +823,10 @@
     <AppDesigner Include="My Application\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperFile Include="Microsoft.Net.Framework.2.0">
@@ -861,6 +861,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
     <ProjectGuid>{9D92F531-6418-47AA-BBE5-BE458CD46BE8}</ProjectGuid>
+    <RootNamespace>vbnc</RootNamespace>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

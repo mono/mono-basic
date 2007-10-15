@@ -5434,7 +5434,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32045 = 32045
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'New' cannot be used on a type parameter not declared 'As New()'"
     ''' VB   = "'New' cannot be used on a type parameter not declared 'As New()'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5614,6 +5614,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32071 = 32071
+
+    ''' <summary>
+    ''' VBNC = "Arguments cannot be passed when calling a type parameter constructor."
+    ''' VB   = "Arguments cannot be passed to a 'New' used on a type parameter."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32085 = 32085
 
     ''' <summary>
     ''' VBNC = "Type parameters can't be used as a qualifier."

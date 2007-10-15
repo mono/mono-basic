@@ -805,7 +805,7 @@
   <data name="32043"><value>CHANGEME</value></data>
   <data name="32044"><value>CHANGEME</value></data>
   <data name="32045"><value>CHANGEME</value></data>
-  <data name="32046"><value>CHANGEME</value></data>
+  <data name="32046"><value>'New' cannot be used on a type parameter not declared 'As New()'</value></data>
   <data name="32047"><value>CHANGEME</value></data>
   <data name="32048"><value>CHANGEME</value></data>
   <data name="32049"><value>CHANGEME</value></data>
@@ -831,6 +831,7 @@
   <data name="32069"><value>CHANGEME</value></data>
   <data name="32070"><value>CHANGEME</value></data>
   <data name="32071"><value>CHANGEME</value></data>
+  <data name="32085"><value>Arguments cannot be passed when calling a type parameter constructor.</value></data>
   <data name="32098"><value>Type parameters can't be used as a qualifier.</value></data>
   <data name="32200"><value>CHANGEME</value></data>
   <data name="32201"><value>CHANGEME</value></data>

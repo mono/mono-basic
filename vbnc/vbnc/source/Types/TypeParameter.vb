@@ -105,6 +105,20 @@ Public Class TypeParameter
         Return result
     End Function
 
+    ReadOnly Property GenericParameterAttributes() As GenericParameterAttributes
+        Get
+            Dim result As GenericParameterAttributes
+
+            If m_TypeParameterConstraints IsNot Nothing Then
+                For Each constraint As Constraint In m_TypeParameterConstraints.Constraints
+                    result = result Or constraint.SpecialConstraintAttribute
+                Next
+            End If
+
+            Return result
+        End Get
+    End Property
+
     Function DefineParameterConstraints(ByVal TypeParameterBuilder As GenericTypeParameterBuilder) As Boolean
         Dim result As Boolean = True
 
@@ -112,7 +126,7 @@ Public Class TypeParameter
 
         Dim attributes As GenericParameterAttributes
 
-        attributes = GenericParameterAttributes.None
+        attributes = GenericParameterAttributes
 
         If m_TypeParameterConstraints IsNot Nothing Then
             Dim interfaces As New Generic.List(Of Type)
@@ -130,7 +144,6 @@ Public Class TypeParameter
                         End If
                     End If
                 End If
-                attributes = attributes Or constraint.SpecialConstraintAttribute
             Next
             If basetype IsNot Nothing Then
                 basetype = Helper.GetTypeOrTypeBuilder(basetype)
@@ -163,5 +176,5 @@ Public Class TypeParameter
         Return m_GenericParameterConstraints
     End Function
 
-    
+
 End Class

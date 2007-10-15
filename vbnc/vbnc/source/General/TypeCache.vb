@@ -627,6 +627,8 @@ Public Partial Class TypeCache
     Public System_Array__SetValue As System.Reflection.MethodInfo
     Public System_Array__GetValue As System.Reflection.MethodInfo
     Public System_Array__CreateInstance As System.Reflection.MethodInfo
+    Public System_Activator As System.Type
+    Public System_Activator__CreateInstance As System.Reflection.MethodInfo
     Public System_ArgumentException As System.Type
     Public System_Collections_Generic_IList1 As System.Type
     Public System_Collections_Generic_ICollection1 As System.Type
@@ -885,6 +887,8 @@ Public Partial Class TypeCache
         System_Array__SetValue = GetMethod(System_Array, "SetValue", System_Object, System_Int32_Array)
         System_Array__GetValue = GetMethod(System_Array, "GetValue", System_Int32_Array)
         System_Array__CreateInstance = GetMethod(System_Array, "CreateInstance", System_Type, System_Int32_Array)
+        System_Activator = [GetType](mscorlib, "System.Activator")
+        System_Activator__CreateInstance = GetMethod(System_Activator, "CreateInstance")
         System_ArgumentException = [GetType](mscorlib, "System.ArgumentException")
         System_Collections_Generic_IList1 = [GetType](mscorlib, "System.Collections.Generic.IList`1")
         System_Collections_Generic_ICollection1 = [GetType](mscorlib, "System.Collections.Generic.ICollection`1")

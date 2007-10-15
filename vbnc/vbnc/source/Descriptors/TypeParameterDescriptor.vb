@@ -113,7 +113,7 @@ Public Class TypeParameterDescriptor
     Public Overrides ReadOnly Property GenericParameterAttributes() As System.Reflection.GenericParameterAttributes
         Get
             Dim result As GenericParameterAttributes
-            result = m_TypeParameter.TypeParameterBuilder.GenericParameterAttributes
+            result = m_TypeParameter.GenericParameterAttributes
             DumpMethodInfo(result)
             Return result
         End Get

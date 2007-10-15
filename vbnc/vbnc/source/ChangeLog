@@ -1,3 +1,14 @@
+2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/DelegateOrObjectCreationExpression.vb,
+	  Descriptors/TypeParameterDescriptor.vb, Types/TypeParameter.vb,
+	  General/TypeCache.vb, General/TypeCache.in: Implement construction of
+	  generic type parameters (fixes #332868).
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  32046 and 32085.
+	* General/Helper.vb: Fixed warning.
+	* vbnc.vbproj: Flush.
+
 2007-10-08  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Parser/Parser.vb: "Option Strict Off will probably fail" is a warning, not
