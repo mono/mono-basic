@@ -245,7 +245,7 @@ Public Class CommandLine
     ''' <summary>
     ''' /optionexplicit[+|-]    Require explicit declaration of variables.
     ''' </summary>
-    Private m_eOptionExplicit As OptionExplicitTypes = OptionExplicitTypes.Off
+    Private m_eOptionExplicit As OptionExplicitTypes = OptionExplicitTypes.On
 
     ''' <summary>
     ''' /optionstrict[+|-]      Enforce strict language semantics.

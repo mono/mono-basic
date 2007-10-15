@@ -1,5 +1,10 @@
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/CommandLine.vb: If no Option Explicit is specified, default to On.
+	  Fixes #332869.
+
+2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/DelegateOrObjectCreationExpression.vb,
 	  Descriptors/TypeParameterDescriptor.vb, Types/TypeParameter.vb,
 	  General/TypeCache.vb, General/TypeCache.in: Implement construction of
