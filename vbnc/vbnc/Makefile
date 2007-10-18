@@ -1,57 +1,61 @@
-thisdir = vbnc/vbnc
-SUBDIRS = tests
-include ../../build/rules.make
+thisdir := vbnc
+SUBDIRS := vbnc
 
-LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS)
+ac_files =	\
+	"ac/My Project/Resources.Designer.vb"	\
+	"ac/My Project/Settings.settings"	\
+	"ac/My Project/AssemblyInfo.vb"		\
+	"ac/My Project/Settings.Designer.vb"	\
+	"ac/My Project/Application.Designer.vb"	\
+	"ac/My Project/Application.myapp"	\
+	"ac/My Project/Resources.resx"		\
+	ac/License.txt				\
+	ac/ac.vbproj				\
+	ac/Startup.vb				\
+	ac/ac.sln				\
+	ac/AssemblyComparer.vb
 
-PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
-PROGRAM_COMPILE = $(BOOT_COMPILE)
+rt_files = \
+	rt/Makefile \
+	rt/ChangeLog \
+	rt/Readme.txt \
+	rt/rt.exe.sources \
+	$(wildcard rt/source/*)
 
-include ../../build/executable.make
-DISTFILES = \
-	Makefile  		\
-	Readme.txt  		\
-	vbnc.Errors.resources	\
-	vbnc.exe.rsp  		\
-	vbnc.exe.sources  	\
-	vbnc.sln  		\
-	vbnc.vbnc.rsp		\
-	source/vbnc.vbproj	\
-	bin/vbnc.rsp            \
-	source/Resources/Errors.resx \
-	source/vbnc.rsp
+rt_execute_files = \
+	rt-execute/ChangeLog \
+	rt-execute/Makefile \
+	rt-execute/rt-execute.vb \
+	rt-execute/rt-execute.vbproj \
+	rt-execute/rt-execute.exe.sources
 
-all-local: vbnc.Errors.resources vbnc.exe.sources
+rt_console_files = \
+	rt-console/ChangeLog \
+	rt-console/Makefile \
+	rt-console/Readme.txt \
+	rt-console/rt-console.vbproj \
+	rt-console/rt-console.exe.sources \
+	$(wildcard rt-console/source/*)
 
-vbnc.Errors.resources: source/Resources/Errors.resx
-	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
-
-vbnc.vbnc.rsp: source/vbnc.rsp
-	cp source/vbnc.rsp vbnc.vbnc.rsp
-
-vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
-	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r
-
-install-local: install-extras
-install-extras: 
-	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	$(INSTALL_DATA) bin/vbnc.rsp $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-
-uninstall-local: uninstall-extras
-uninstall-extras:
-	rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc.rsp
-
-install-binary: default
-	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
-
-boot-from-ms:
-	cd tests/SelfTest/ && boot.sh && rerun.sh
-	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
 	
-test-thorough:
-	cd tests/SelfTest/ && rerun.sh && rerun.sh && rerun.sh
-	cp tests/SelfTest/vbnc.exe* ../../class/lib/bootstrap
-	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll* ../class/lib/bootstrap/
-	cd ../../ && make clean && make install
-	
-	
+EXTRA_DISTFILES = 			\
+	all.sln				\
+	changelog.txt			\
+	CheckLicense.vbs		\
+	clean.bat			\
+	"License FileHeader.txt"	\
+	License.txt			\
+	progress.txt			\
+	$(ac_files)			
+
+DISTFILES =				\
+	$(rt_files)			\
+	$(rt_execute_files)		\
+	$(rt_console_files)
+
+include ../build/rules.make
+
+clean-local test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
+	@:
+
+dist-local: dist-default

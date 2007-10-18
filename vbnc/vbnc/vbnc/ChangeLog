@@ -1,0 +1,42 @@
+2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.Errors.resources: Updated.
+
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	
+	* vbnc.exe.sources: Updated.
+	* vbnc.vbnc.rsp: Updated.
+
+2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Use PLATFORM_PATH_SEPARATOR so that build succeeds on Windows.
+
+2007-03-15  Wade Berrier  <RKvinge@novell.com> 
+
+	* Makefile: Don't treat vbnc.rsp as a .config file,
+	un/install it as an extra file instead (otherwise, it
+	gets removed on make clean)
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Added source/vbnc.rsp to DISTFILES.
+	* vbnc.Errors.resources: Updated.
+
+2007-03-02  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.Errors.resources: Updated.
+	* Makefile: Added target vbnc.vbnc.rsp.
+
+2007-03-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Updated resources when they changes.
+	* vbnc.Errors.resources: Updated.
+
+
+2007-02-13  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: Use make friendly vars
+
+2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Added the tests directory to be able to run the tests.
