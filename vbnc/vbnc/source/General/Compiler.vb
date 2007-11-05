@@ -872,7 +872,12 @@ EndOfCompilation:
                 Case ".resx"
                     reader = Nothing 'New System.Resources.ResXResourceReader(r.Filename)
                 Case ".resources"
-                    reader = New System.Resources.ResourceReader(r.Filename)
+                    Try
+                        reader = New System.Resources.ResourceReader(r.Filename)
+                    Catch ex As Exception
+                        result = Compiler.Report.ShowMessage(Messages.VBNC31509, r.Filename, ex.Message) AndAlso result
+                        Continue For
+                    End Try
                 Case Else
                     reader = Nothing
             End Select

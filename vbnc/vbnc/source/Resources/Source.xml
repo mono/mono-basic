@@ -3569,7 +3569,7 @@
 	</Message>
 	<Message id="31509" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Unable to open resource file '{0}': {1}</VBNCValue>
 		<VBValue>Unable to open resource file '|1': |0</VBValue>
 	</Message>
 	<Message id="31510" level="Error">

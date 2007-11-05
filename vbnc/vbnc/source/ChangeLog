@@ -1,5 +1,13 @@
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  31509.
+	* General/Compiler.vb: Guard resource reading in a try block, to be able to
+	  display an error instead of a crash.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/LiteralExpression.vb,
 	  Expressions/PropertyGroupToValueExpression.vb,
 	  Expressions/Conversions/ConversionExpression.vb,

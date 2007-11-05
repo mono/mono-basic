@@ -744,7 +744,7 @@
   <data name="31506"><value>CHANGEME</value></data>
   <data name="31507"><value>CHANGEME</value></data>
   <data name="31508"><value>CHANGEME</value></data>
-  <data name="31509"><value>CHANGEME</value></data>
+  <data name="31509"><value>Unable to open resource file '{0}': {1}</value></data>
   <data name="31510"><value>CHANGEME</value></data>
   <data name="31511"><value>CHANGEME</value></data>
   <data name="31512"><value>CHANGEME</value></data>

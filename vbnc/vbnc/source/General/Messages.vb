@@ -5007,7 +5007,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31508 = 31508
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to open resource file '{0}': {1}"
     ''' VB   = "Unable to open resource file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>

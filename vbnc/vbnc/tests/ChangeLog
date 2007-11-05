@@ -1,5 +1,9 @@
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Errors/31509.resources, Errors/31509.response, Errors/31509.vb: Added.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* SelfTest/vbnc.Errors.resources: Updated.
 	* CompileTime/PropertyAccess5.vb, CompileTime/PropertyAccess5.response:
 	  Added.
