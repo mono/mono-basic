@@ -1,5 +1,13 @@
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/AssemblyInfo.vb: Updated.
+	* General/TypeCache.in, General/TypeCache.vb: Added
+	  MS_VB_CS_DesignerGeneratedAttribute.
+	* TypeDeclarations/ClassDeclaration.vb: Implemented automatic invocation of
+	  InitializeComponent. Fixes #333962.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/DelegateOrObjectCreationExpression.vb: Allow for creation of
 	  type parameter with a 'Structure' constraint. Fixes #333961.
 	* Types/ConstraintList.vb: Implemented 32101-32104.

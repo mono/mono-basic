@@ -128,6 +128,63 @@ Public Class ClassDeclaration
         Return result
     End Function
 
+    Private Function AddInitializeComponentCall(ByVal Ctor As ConstructorDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        'If the class has the Microsoft.VisualBasic.CompilerServices.DesignerGeneratedAttribute, we call InitializeComponent.
+        'InitializeComponent must be correctly spelled (case-sensitive), have no parameters (not even optional) and must be private
+        Dim attribs As Generic.List(Of Attribute)
+        attribs = Me.CustomAttributes.FindAttributes(Compiler.TypeCache.MS_VB_CS_DesignerGeneratedAttribute)
+
+        If attribs Is Nothing OrElse attribs.Count = 0 Then Return result
+
+
+        Dim methods As Generic.List(Of INameable)
+
+        methods = Members.Index.Item("InitializeComponent")
+
+        If methods Is Nothing OrElse methods.Count = 0 Then Return result
+
+        For i As Integer = methods.Count - 1 To 0 Step -1
+            Dim subD As SubDeclaration
+            subD = TryCast(methods(i), SubDeclaration)
+            If subD Is Nothing Then
+                methods.RemoveAt(i)
+                Continue For
+            End If
+
+            If subD.Signature.ReturnType IsNot Nothing Then
+                methods.RemoveAt(i)
+                Continue For
+            End If
+
+            If subD.Signature.Parameters.Count <> 0 Then
+                methods.RemoveAt(i)
+                Continue For
+            End If
+
+            If subD.Modifiers.Is(ModifierMasks.Private) = False Then
+                methods.RemoveAt(i)
+                Continue For
+            End If
+        Next
+
+        If methods.Count = 0 Then Return result
+
+        If methods.Count > 1 Then
+            'Huh?
+            Helper.StopIfDebugging(True)
+        Else
+            Dim callStmt As New CallStatement(Me)
+            Dim sExp As New SimpleNameExpression(callStmt)
+            sExp.Init(Token.CreateIdentifierToken(Me.Location, "InitializeComponent", TypeCharacters.Characters.None, False), Nothing)
+            callStmt.Init(sExp)
+            Ctor.Code.AddStatement(callstmt)
+        End If
+        
+        Return result
+    End Function
+
     Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
         Dim result As Boolean = True
 
@@ -153,6 +210,8 @@ Public Class ClassDeclaration
                 Else
                     DefaultInstanceConstructor = ConstructorDeclaration.CreateDefaultConstructor(Me)
                     Members.Add(DefaultInstanceConstructor)
+
+                    result = AddInitializeComponentCall(DefaultInstanceConstructor) AndAlso result
                 End If
             Else
                 result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
