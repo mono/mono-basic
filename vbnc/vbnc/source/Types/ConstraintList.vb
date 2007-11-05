@@ -36,4 +36,40 @@ Public Class ConstraintList
         Next
         Return result
     End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        Dim hasClass, hasStructure, hasNew As Boolean
+
+        For Each constraint As Constraint In Me
+            result = constraint.ResolveTypeReferences AndAlso result
+            Select Case constraint.Special
+                Case KS.None
+                Case KS.Class
+                    If hasClass Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC32101) AndAlso result
+                    End If
+                    hasClass = True
+                Case KS.Structure
+                    If hasStructure Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC32102) AndAlso result
+                    End If
+                    hasStructure = True
+                Case KS.[New]
+                    hasNew = True
+            End Select
+
+        Next
+
+        If hasNew AndAlso hasStructure Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC32103) AndAlso result
+        End If
+
+        If hasStructure AndAlso hasClass Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC32104) AndAlso result
+        End If
+
+        Return result
+    End Function
 End Class

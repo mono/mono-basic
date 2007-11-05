@@ -4012,7 +4012,37 @@
     <VBNCValue>Type parameters can't be used as a qualifier.</VBNCValue>
     <VBValue>Type parameters cannot be used as qualifiers.</VBValue>
   </Message>
-	<Message id="32200" level="Error">
+  <Message id="32101" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>'Class' constraint cannot be specified multiple times for the same type parameter.</VBNCValue>
+    <VBValue>'Class' constraint cannot be specified multiple times for the same type parameter.</VBValue>
+  </Message>
+  <Message id="32102" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>'Structure' constraint cannot be specified multiple times for the same type parameter.</VBNCValue>
+    <VBValue>'Structure' constraint cannot be specified multiple times for the same type parameter.</VBValue>
+    </Message>
+  <Message id="32103" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>'New' constraint and 'Structure' constraint cannot be used at the same time.</VBNCValue>
+    <VBValue>'New' constraint and 'Structure' constraint cannot be combined.</VBValue>
+  </Message>
+  <Message id="32104" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>'Class' constraint and 'Structure' constraint cannot be used at the same time.</VBNCValue>
+    <VBValue>'Class' constraint and 'Structure' constraint cannot be combined.</VBValue>
+  </Message>
+  <Message id="32105" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type argument '{0}' does not satisfy the 'Structure' constraint for type parameter '{1}'</VBNCValue>
+    <VBValue>Type argument '|1' does not satisfy the 'Structure' constraint for type parameter '|2'</VBValue>
+  </Message>
+  <Message id="32106" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type argument '{0}' does not satisfy the 'Class' constraint for type parameter '{1}'</VBNCValue>
+    <VBValue>Type argument '|1' does not satisfy the 'Class' constraint for type parameter '|2'</VBValue>
+  </Message>
+  <Message id="32200" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>'|1' cannot be declared 'Shadows' outside of a class, structure, or interface.</VBValue>

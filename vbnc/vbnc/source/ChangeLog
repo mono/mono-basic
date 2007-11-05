@@ -1,5 +1,14 @@
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/DelegateOrObjectCreationExpression.vb: Allow for creation of
+	  type parameter with a 'Structure' constraint. Fixes #333961.
+	* Types/ConstraintList.vb: Implemented 32101-32104.
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  32101-32106.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
 	  31509.
 	* General/Compiler.vb: Guard resource reading in a try block, to be able to

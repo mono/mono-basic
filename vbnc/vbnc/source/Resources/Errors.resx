@@ -833,6 +833,12 @@
   <data name="32071"><value>CHANGEME</value></data>
   <data name="32085"><value>Arguments cannot be passed when calling a type parameter constructor.</value></data>
   <data name="32098"><value>Type parameters can't be used as a qualifier.</value></data>
+  <data name="32101"><value>'Class' constraint cannot be specified multiple times for the same type parameter.</value></data>
+  <data name="32102"><value>'Structure' constraint cannot be specified multiple times for the same type parameter.</value></data>
+  <data name="32103"><value>'New' constraint and 'Structure' constraint cannot be used at the same time.</value></data>
+  <data name="32104"><value>'Class' constraint and 'Structure' constraint cannot be used at the same time.</value></data>
+  <data name="32105"><value>Type argument '{0}' does not satisfy the 'Structure' constraint for type parameter '{1}'</value></data>
+  <data name="32106"><value>Type argument '{0}' does not satisfy the 'Class' constraint for type parameter '{1}'</value></data>
   <data name="32200"><value>CHANGEME</value></data>
   <data name="32201"><value>CHANGEME</value></data>
   <data name="32203"><value>CHANGEME</value></data>

@@ -168,7 +168,7 @@ Public Class DelegateOrObjectCreationExpression
                 If m_ArgumentList.Count > 0 Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC32085, Me.Location)
                 End If
-                If (resolvedType.GenericParameterAttributes And GenericParameterAttributes.DefaultConstructorConstraint) = 0 Then
+                If (resolvedType.GenericParameterAttributes And GenericParameterAttributes.DefaultConstructorConstraint) = 0 AndAlso (resolvedType.GenericParameterAttributes And GenericParameterAttributes.NotNullableValueTypeConstraint) = 0 Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC32046, Me.Location)
                 End If
                 m_IsGenericConstructor = True
