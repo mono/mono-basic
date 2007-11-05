@@ -64,7 +64,7 @@ Public Class MethodResolver
     ReadOnly Property ArgumentsTypesAsString() As String
         Get
             If m_ArgumentsTypesAsString Is Nothing Then
-                m_ArgumentsTypesAsString = "(" & m_Arguments.AsString & ")"
+                m_ArgumentsTypesAsString = "(" & m_Arguments.ArgumentsTypesAsString & ")"
             End If
             Return m_ArgumentsTypesAsString
         End Get

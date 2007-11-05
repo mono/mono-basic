@@ -191,6 +191,19 @@ Public Class ArgumentList
         End Get
     End Property
 
+    ReadOnly Property ArgumentsTypesAsString() As String
+        Get
+            Dim result As String = ""
+            Dim sep As String = ""
+
+            For Each arg As Argument In m_Arguments
+                result = result & sep & arg.AsTypeString
+                sep = ", "
+            Next
+            Return result
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub

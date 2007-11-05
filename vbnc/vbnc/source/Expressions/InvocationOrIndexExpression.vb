@@ -61,6 +61,12 @@ Public Class InvocationOrIndexExpression
     ''' <remarks></remarks>
     Private m_InvocationMethod As MethodInfo
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return m_Expression.AsString & "(" & m_ArgumentList.AsString & ")"
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
@@ -153,6 +159,8 @@ Public Class InvocationOrIndexExpression
                     If Info.IsRHS Then
                         If Me.Classification.IsVariableClassification Then
                             result = Me.Classification.GenerateCode(Info) AndAlso result
+                        ElseIf Me.Classification.IsPropertyAccessClassification Then
+                            result = Me.Classification.AsPropertyAccess.GenerateCode(Info) AndAlso result
                         Else
                             result = m_Expression.GenerateCode(Info) AndAlso result
                         End If
@@ -180,6 +188,8 @@ Public Class InvocationOrIndexExpression
                             result = Classification.AsValueClassification.GenerateCode(Info) AndAlso result
                         ElseIf Classification.IsPropertyGroupClassification Then
                             result = Classification.AsPropertyGroup.GenerateCodeAsValue(Info) AndAlso result
+                        ElseIf Classification.IsPropertyAccessClassification Then
+                            result = Classification.AsPropertyAccess.GenerateCode(Info) AndAlso result
                         Else
                             result = Classification.AsVariableClassification.GenerateCodeAsValue(Info) AndAlso result
                         End If
@@ -325,7 +335,8 @@ Public Class InvocationOrIndexExpression
             If result Then
                 m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, propGroup.ResolvedProperty)
             End If
-            Classification = propGroup
+            Classification = New PropertyAccessClassification(propGroup)
+            'Classification = propGroup
         ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Object) Then
             Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing, Nothing)
             lbaClass.Arguments = m_ArgumentList

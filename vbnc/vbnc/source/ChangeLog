@@ -1,3 +1,18 @@
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/LiteralExpression.vb,
+	  Expressions/PropertyGroupToValueExpression.vb,
+	  Expressions/Conversions/ConversionExpression.vb,
+	  Expressions/PropertyAccessToValueExpression.vb: Implemented AsString.
+	* Expressions/ArgumentList.vb: Added ArgumentsAsTypeString.
+	* Expressions/Argument.vb: Added AsTypeString.
+	* Expressions/Conversions/CIntExpression.vb, Members/MethodResolver.vb,
+	  General/AssemblyInfo.vb: Updated.
+	* Expressions/InvocationOrIndexExpression.vb: Implemented AsString. Fix
+	  resolution of default properties to resolve to a
+	  PropertyAccessClassification, and emit that correctly.
+	* Types/ImportsNamespaceClause.vb: Don't return true unconditionally.
+
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Compiler.vb: Only create a Main method for a main:x form if x

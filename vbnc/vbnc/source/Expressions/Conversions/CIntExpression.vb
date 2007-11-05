@@ -100,7 +100,7 @@ Public Class CIntExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToInteger_Object)
                 Else
-                    Helper.NotImplemented()
+                    Helper.NotImplemented(expType.FullName & "-" & Expression.Location.ToString (Expression.Compiler))
                 End If
             Case TypeCode.String
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToInteger_String)

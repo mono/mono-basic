@@ -22,6 +22,12 @@ Public MustInherit Class ConversionExpression
 
     Private m_Expression As Expression
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return "CType (" & m_Expression.AsString & ", " & ExpressionType.FullName & ")"
+        End Get
+    End Property
+
     Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Type) As Expression
 
         If Helper.CompareType(fromExpr.ExpressionType, DestinationType) Then

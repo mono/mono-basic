@@ -1,3 +1,8 @@
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.sln, bin/vbnc.rsp: Updated.
+	* tmp/Temp/Scanner1.vb: Fixed eol-style.
+
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.vbnc.rsp: Included more references. Fixes #338073.

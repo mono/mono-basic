@@ -1,3 +1,11 @@
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/vbnc.Errors.resources: Updated.
+	* CompileTime/PropertyAccess5.vb, CompileTime/PropertyAccess5.response:
+	  Added.
+	* 1Declarations/ArrayType8.vb, Errors/30311.vb, Errors/30337.vb: Fixed
+	  eol-style.
+
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-333403.vb, Bugs/bug-333403.rsp, My/bug-333403.rsp,
