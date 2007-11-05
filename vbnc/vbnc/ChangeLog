@@ -1,5 +1,9 @@
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* vbnc.vbnc.rsp: Included more references. Fixes #338073.
+
+2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* vbnc.Errors.resources: Updated.
 
 2007-04-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
