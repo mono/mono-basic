@@ -1,5 +1,13 @@
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* CompileTime/Constraint1.vb, CompileTime2/Constraint1.vb,
+	  CompileTime2/DefaultProperty4.vb, CompileTime2/DefaultProperty5.vb,
+	  CompileTime2/DefaultProperty6.vb, Errors/32101.vb, Errors/32102.vb,
+	  Errors/32103.vb, Errors/32104.vb, Errors/32105.vb, Errors/32106.vb: More
+	  tests.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Errors/31509.resources, Errors/31509.response, Errors/31509.vb: Added.
 
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
