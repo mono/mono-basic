@@ -6,6 +6,24 @@ Imports NUnit.Framework
 Public Class OperatorsTests
 
     <Test()> _
+    Sub TestOperatorsCompareEqual1()
+        Assert.IsTrue(Operators.CompareObjectEqual("True", True, False), """True"" = True")
+        Assert.IsTrue(Operators.CompareObjectEqual(True, "True", False), "True = ""True""")
+        Assert.IsTrue(Operators.CompareObjectEqual("False", False, False), """False"" = False")
+        Assert.IsTrue(Operators.CompareObjectEqual(False, "False", False), "False = ""False""")
+
+        Assert.IsFalse(Operators.CompareObjectEqual("True", False, False), """True"" = False")
+        Assert.IsFalse(Operators.CompareObjectEqual(False, "True", False), "False = ""True""")
+        Assert.IsFalse(Operators.CompareObjectEqual("False", True, False), """False"" = True")
+        Assert.IsFalse(Operators.CompareObjectEqual(True, "False", False), "True = ""False""")
+    End Sub
+
+    <Test(), ExpectedException(GetType(InvalidCastException))> _
+    Sub TestOperatorsCompareEqual2()
+        Assert.IsTrue(Operators.CompareObjectEqual("Truez", True, False), """Truez"" = True")
+    End Sub
+
+    <Test()> _
     Sub TestOperatorsConcatenate1()
         Dim o1, o2, o3 As Object
         o1 = "a"
@@ -3038,7 +3056,7 @@ Public Class OperatorsTests
             Assert.Fail()
         Catch ex As InvalidCastException
         End Try
-        
+
     End Sub
 
 End Class
