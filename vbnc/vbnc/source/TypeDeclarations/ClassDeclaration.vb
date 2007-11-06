@@ -138,7 +138,6 @@ Public Class ClassDeclaration
 
         If attribs Is Nothing OrElse attribs.Count = 0 Then Return result
 
-
         Dim methods As Generic.List(Of INameable)
 
         methods = Members.Index.Item("InitializeComponent")
@@ -179,9 +178,9 @@ Public Class ClassDeclaration
             Dim sExp As New SimpleNameExpression(callStmt)
             sExp.Init(Token.CreateIdentifierToken(Me.Location, "InitializeComponent", TypeCharacters.Characters.None, False), Nothing)
             callStmt.Init(sExp)
-            Ctor.Code.AddStatement(callstmt)
+            Ctor.Code.AddStatement(callStmt)
         End If
-        
+
         Return result
     End Function
 

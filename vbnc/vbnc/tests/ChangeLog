@@ -1,5 +1,9 @@
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Bugs/bug-333962.vb: Added.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Bugs/30180-bug-325340.vb: Implemented 30180. Fixes #325340.
 
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 

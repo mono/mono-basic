@@ -129,6 +129,7 @@ Public MustInherit Class PartialTypeDeclaration
         Declaration.m_PartialDeclarations = m_PartialDeclarations
 
         Members.Declarations.AddRange(Declaration.Members.Declarations)
+        CustomAttributes.AddRange(Declaration.CustomAttributes)
         Declaration.Members = Members
 
         For Each member As IMember In Members
