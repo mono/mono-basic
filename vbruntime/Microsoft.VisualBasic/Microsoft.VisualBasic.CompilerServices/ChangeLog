@@ -1,3 +1,7 @@
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Operators.vb: Fix CompareEqual with String<->Boolean. Fixes 328099.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Operators.vb: Remove debug spew.
