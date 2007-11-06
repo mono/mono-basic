@@ -1,5 +1,11 @@
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Parser/Parser.vb, Resources/Source.xml, Resources/Errors.resx,
+	  General/Messages.vb: Implemented 30180. Fixes #325340.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/NewExpression.vb, Expressions/OperatorExpression.vb,
 	  Expressions/PropertyGroupToPropertyAccessExpression.vb,
 	  Expressions/NamespaceExpression.vb, Expressions/ArgumentList.vb,

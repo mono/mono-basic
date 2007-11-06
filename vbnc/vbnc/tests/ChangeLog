@@ -1,5 +1,9 @@
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Bugs/30180-bug-325340.vb: Implemented 30180. Fixes #325340.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* SelfTest/vbnc.Errors.resources: Remove all uses of Helper.NotImplemented,
 	  Helper.NotImplementedYet and Helper.AddError. Replaced with reported
 	  warnings/errors.

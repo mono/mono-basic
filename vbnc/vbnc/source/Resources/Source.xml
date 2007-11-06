@@ -719,7 +719,7 @@
 	</Message>
 	<Message id="30180" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Keyword does not name a type.</VBNCValue>
 		<VBValue>Keyword does not name a type.</VBValue>
 	</Message>
 	<Message id="30181" level="Error">

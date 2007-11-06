@@ -1017,7 +1017,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30179 = 30179
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Keyword does not name a type."
     ''' VB   = "Keyword does not name a type."
     ''' </summary>
     ''' <remarks></remarks>

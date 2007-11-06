@@ -1137,6 +1137,10 @@ Partial Public Class Parser
             Dim m_QualifiedIdentifier As QualifiedIdentifier
 
             If QualifiedIdentifier.CanBeQualifiedIdentifier(tm) = False Then
+                If tm.CurrentToken.IsKeyword Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30180, tm.CurrentLocation)
+                    tm.NextToken()
+                End If
                 Return Nothing
             End If
 
