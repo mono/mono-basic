@@ -53,7 +53,7 @@ Public Class ExpressionClassification
     ''' <remarks></remarks>
     Overridable ReadOnly Property IsConstant() As Boolean
         Get
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
             Return m_ConstantValue IsNot Nothing
         End Get
     End Property
@@ -235,7 +235,8 @@ Public Class ExpressionClassification
                 Case Classifications.Void, Classifications.Namespace
                     Return False
                 Case Else
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
+                    Return False
             End Select
         End Get
     End Property
@@ -252,7 +253,8 @@ Classifications.LateBoundAccess, Classifications.MethodGroup, _
 Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.Void, Classifications.Type, Classifications.Namespace
                     Return False
                 Case Else
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
+                    Return False
             End Select
         End Get
     End Property
@@ -287,8 +289,7 @@ Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.V
     End Sub
 
     Friend Overridable Function GenerateCode(ByVal Info As EmitInfo) As Boolean
-        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "The class " & Me.GetType.ToString & " does not implement GenerateCode()")
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
     End Function
 
     'Shadows ReadOnly Property Parent() As ParsedObject

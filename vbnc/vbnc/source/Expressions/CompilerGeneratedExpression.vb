@@ -71,7 +71,7 @@ Public Class LoadLocalExpression
             End If
         Else
             If Info.RHSExpression IsNot Nothing Then
-                result = Info.RHSExpression.GenerateCode(Info.Clone(True, , m_Local.LocalType)) AndAlso result
+                result = Info.RHSExpression.GenerateCode(Info.Clone(Me, True, , m_Local.LocalType)) AndAlso result
             End If
             Emitter.EmitStoreVariable(Info, m_Local)
         End If

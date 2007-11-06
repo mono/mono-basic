@@ -230,10 +230,10 @@ Public Class Parameter
         If Me.Modifiers.Is(ModifierMasks.Optional) Then
             m_ParameterAttributes = Reflection.ParameterAttributes.Optional
             If m_ConstantExpression Is Nothing Then
-                Helper.AddError("Optional parameters must have a constant expression.")
+                Helper.AddError(Me, "Optional parameters must have a constant expression.")
                 result = False
             ElseIf m_ConstantExpression.IsConstant = False Then
-                Helper.AddError("Optional expressions must be constant.")
+                Helper.AddError(Me, "Optional expressions must be constant.")
                 result = False
             Else
                 m_ConstantValue = m_ConstantExpression.ConstantValue
@@ -244,7 +244,7 @@ Public Class Parameter
             End If
         Else
             If m_ConstantExpression IsNot Nothing Then
-                Helper.AddError("Non-optional parameters cannot have constant expressions.")
+                Helper.AddError(Me, "Non-optional parameters cannot have constant expressions.")
                 result = False
             End If
         End If
@@ -267,7 +267,7 @@ Public Class Parameter
                 m_ParameterType = m_TypeName.ResolvedType
                 If m_ParameterIdentifier.ArrayNameModifier IsNot Nothing Then
                     If m_TypeName.IsArrayTypeName Then
-                        Helper.AddError()
+                        Helper.AddError(Me)
                     Else
                         m_ParameterType = m_ParameterIdentifier.ArrayNameModifier.CreateArrayType(m_ParameterType)
                     End If
@@ -276,7 +276,7 @@ Public Class Parameter
                 m_ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
             Else
                 If Me.Location.File(Compiler).IsOptionStrictOn Then
-                    Helper.AddError("Parameter type must be specified.")
+                    Helper.AddError(Me, "Parameter type must be specified.")
                 Else
                     Helper.AddWarning("Parameter type should be specified.")
                 End If

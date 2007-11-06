@@ -33,7 +33,7 @@ Public Class UnaryNotExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim expInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
         result = Expression.GenerateCode(expInfo) AndAlso result
 
         Select Case Me.OperandTypeCode

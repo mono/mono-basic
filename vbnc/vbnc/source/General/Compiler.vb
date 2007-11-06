@@ -970,7 +970,6 @@ EndOfCompilation:
             End If
 
         Catch ex As Exception
-            vbnc.Helper.NotImplementedYet(ex.Message)
             Throw
         End Try
 

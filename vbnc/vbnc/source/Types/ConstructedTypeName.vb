@@ -101,14 +101,14 @@ Public Class ConstructedTypeName
             ElseIf nri.FoundIs(Of Type)() Then
                 m_OpenResolvedType = nri.FoundAsType
             Else
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
             Dim GenericArguments() As Type
             GenericArguments = m_TypeArgumentList.AsTypeArray
             m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, GenericArguments)
             m_ResolvedType = m_ClosedResolvedType
         Else
-            Helper.AddError()
+            Helper.AddError(Me)
         End If
 
         Return result

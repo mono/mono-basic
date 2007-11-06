@@ -159,7 +159,8 @@ Public Class ByRefTypeDescriptor
             ElseIf m_ElementType IsNot Nothing Then
                 result = m_ElementType.FullName & "&"
             Else
-                Helper.NotImplemented() : result = "&"
+                Compiler.Report.ShowMessage(Messages.VBNC30747, Me.m_ElementTypeDescriptor.Declaration.Location)
+                result = "&"
             End If
             MyBase.DumpMethodInfo(result)
             Return result
@@ -180,7 +181,8 @@ Public Class ByRefTypeDescriptor
             ElseIf m_ElementType IsNot Nothing Then
                 result = m_ElementType.Name & "&"
             Else
-                Helper.NotImplemented() : result = "&"
+                Compiler.Report.ShowMessage(Messages.VBNC30747, Me.m_ElementTypeDescriptor.Declaration.Location)
+                result = "&"
             End If
             MyBase.DumpMethodInfo(result)
             Return result

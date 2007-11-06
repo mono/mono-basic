@@ -177,7 +177,7 @@ Public Class MethodResolver
         m_IsLateBound = False
 
         If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No candidates: " & Parent.Location.ToString(Compiler))
+            Helper.AddError(Me.m_Parent, "No candidates: " & Parent.Location.ToString(Compiler))
         End If
 
         RemoveInaccessible()
@@ -223,7 +223,7 @@ Public Class MethodResolver
         RemoveNarrowingExceptObject()
         Log("After removing narrowing (except object) candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No non-narrowing (except object): " & Parent.Location.ToString(Compiler))
+            Helper.AddError(Me.m_Parent, "No non-narrowing (except object): " & Parent.Location.ToString(Compiler))
         End If
 
         If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
@@ -240,13 +240,13 @@ Public Class MethodResolver
         End If
 
         If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No non-narrowing: " & Parent.Location.ToString(Compiler))
+            Helper.AddError(Me.m_Parent, "No non-narrowing: " & Parent.Location.ToString(Compiler))
         End If
 
         SelectMostApplicable()
         Log("After selecting the most applicable candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError("No most applicable: " & Parent.Location.ToString(Compiler))
+            Helper.AddError(Me.m_Parent, "No most applicable: " & Parent.Location.ToString(Compiler))
         End If
 
         If CandidatesLeft = 1 Then
@@ -256,7 +256,7 @@ Public Class MethodResolver
         SelectLessGeneric()
         Log("After selecting the less generic candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft <> 1 Then
-            Helper.AddError("No less generic: " & Parent.Location.ToString(Compiler))
+            Helper.AddError(Me.m_Parent, "No less generic: " & Parent.Location.ToString(Compiler))
         End If
 
 
@@ -422,8 +422,8 @@ Public Class MethodResolver
                     expandedArgumentTypes(j) = candidateJ.TypesInInvokedOrder() 'Helper.GetExpandedTypes(Compiler, candidateJ.InputParameters, Arguments.Count)
                 End If
 
-                a = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(i), expandedArgumentTypes(j))
-                b = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(j), expandedArgumentTypes(i))
+                a = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, expandedArgumentTypes(i), expandedArgumentTypes(j))
+                b = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, expandedArgumentTypes(j), expandedArgumentTypes(i))
 
                 If a = b Then ' AndAlso b = False Then
                     'It is possible for M and N to have the same signature if one or both contains an expanded 
@@ -520,7 +520,7 @@ Public Class MemberCandidate
     Private m_IsParamArray As Boolean
 
     Public Overrides Function ToString() As String
-        Return Helper.ToString(m_Parent.Compiler, m_Member)
+        Return Helper.ToString(m_Parent.Parent, m_Member)
     End Function
 
     Sub New(ByVal Parent As MethodResolver, ByVal Member As MemberInfo)
@@ -627,7 +627,7 @@ Public Class MemberCandidate
 
             Dim IsConvertible As Boolean
             'IsConvertible = Helper.IsConvertible(Compiler, arg, param)
-            IsConvertible = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, arg.Expression.ExpressionType, param.ParameterType)
+            IsConvertible = Compiler.TypeResolution.IsImplicitlyConvertible(arg, arg.Expression.ExpressionType, param.ParameterType)
 
             If IsConvertible = False Then
                 Return True
@@ -880,7 +880,7 @@ Public Class MemberCandidate
         If genericTypeArgumentCount > 0 AndAlso (TypeArguments Is Nothing OrElse TypeArguments.List.Count = 0) Then
             'If the Then type argument list is empty, type inferencing is used to try and infer 
             'the type argument list.
-            Helper.NotImplementedYet("Type argument inference")
+            'Helper.NotImplementedYet("Type argument inference")
         ElseIf TypeArguments IsNot Nothing AndAlso TypeArguments.List.Count > 0 Then
             'If the two lists do not have the same number of elements, the method is not applicable
             If TypeArguments.List.Count <> genericTypeArgumentCount Then
@@ -888,7 +888,8 @@ Public Class MemberCandidate
                 Return False
             End If
 
-            Helper.NotImplemented("Type argument matching")
+            Return m_Parent.Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Parent.Location)
+            'Helper.NotImplemented("Type argument matching")
         End If
 
         m_ExactArguments = exactArguments

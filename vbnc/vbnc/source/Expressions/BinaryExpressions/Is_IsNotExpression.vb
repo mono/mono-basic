@@ -72,7 +72,7 @@ Public Class Is_IsNotExpression
 
         If desiredType IsNot Nothing Then
             If desiredType.IsByRef Then desiredType = desiredType.GetElementType
-            Info = Info.Clone(True, False, desiredType)
+            Info = Info.Clone(Me, True, False, desiredType)
         End If
 
         result = m_LeftExpression.GenerateCode(Info) AndAlso result

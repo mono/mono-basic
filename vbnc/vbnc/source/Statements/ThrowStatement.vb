@@ -46,7 +46,7 @@ Public Class ThrowStatement
         If m_Exception Is Nothing Then
             Info.ILGen.Emit(OpCodes.Rethrow)
         Else
-            result = m_Exception.GenerateCode(Info.Clone(True, False, m_Exception.ExpressionType)) AndAlso result
+            result = m_Exception.GenerateCode(Info.Clone(Me, True, False, m_Exception.ExpressionType)) AndAlso result
             Emitter.EmitThrow(Info)
         End If
 

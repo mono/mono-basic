@@ -165,7 +165,9 @@ Public Class FieldDescriptor
     Public Overrides ReadOnly Property FieldHandle() As System.RuntimeFieldHandle
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return Nothing
+
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -180,13 +182,14 @@ Public Class FieldDescriptor
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         Return result
     End Function
 
@@ -207,12 +210,14 @@ Public Class FieldDescriptor
             Return cd.ConstantValue
         End If
 
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides ReadOnly Property Name() As String
@@ -232,7 +237,7 @@ Public Class FieldDescriptor
 
     Public Overloads Overrides Sub SetValue(ByVal obj As Object, ByVal value As Object, ByVal invokeAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal culture As System.Globalization.CultureInfo)
         DumpMethodInfo()
-        Helper.NotImplemented() ': Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
     End Sub
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
@@ -245,7 +250,8 @@ Public Class FieldDescriptor
 
     Public Overrides Function GetHashCode() As Integer
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetHashCode()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetHashCode()
     End Function
     Public Overrides Function GetOptionalCustomModifiers() As System.Type()
         DumpMethodInfo(Type.EmptyTypes)
@@ -253,7 +259,8 @@ Public Class FieldDescriptor
     End Function
     Public Overrides Function GetRawConstantValue() As Object
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetRawConstantValue()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetRawConstantValue()
     End Function
     Public Overrides Function GetRequiredCustomModifiers() As System.Type()
         DumpMethodInfo(Type.EmptyTypes)
@@ -273,13 +280,15 @@ Public Class FieldDescriptor
     Public Overrides ReadOnly Property MetadataToken() As Integer
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return MyBase.MetadataToken
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.MetadataToken
         End Get
     End Property
     Public Overrides ReadOnly Property [Module]() As System.Reflection.Module
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return MyBase.[Module]
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.[Module]
         End Get
     End Property
     Public Overrides Function ToString() As String

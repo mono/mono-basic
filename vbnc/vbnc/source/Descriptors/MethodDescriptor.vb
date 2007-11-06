@@ -172,12 +172,14 @@ Public Class MethodDescriptor
 
     Public Overrides Function GetBaseDefinition() As System.Reflection.MethodInfo
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
@@ -192,7 +194,8 @@ Public Class MethodDescriptor
 
     Public Overrides Function GetMethodImplementationFlags() As System.Reflection.MethodImplAttributes
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides Function GetParameters() As System.Reflection.ParameterInfo()
@@ -203,18 +206,21 @@ Public Class MethodDescriptor
 
     Public Overloads Overrides Function Invoke(ByVal obj As Object, ByVal invokeAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal parameters() As Object, ByVal culture As System.Globalization.CultureInfo) As Object
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides ReadOnly Property MethodHandle() As System.RuntimeMethodHandle
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -237,7 +243,8 @@ Public Class MethodDescriptor
     Public Overrides ReadOnly Property ReturnTypeCustomAttributes() As System.Reflection.ICustomAttributeProvider
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -265,7 +272,7 @@ Public Class MethodDescriptor
     Public Overrides ReadOnly Property ContainsGenericParameters() As Boolean
         Get
             Dim result As Boolean
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             result = MyBase.ContainsGenericParameters
             DumpMethodInfo(result)
             Return result
@@ -298,7 +305,8 @@ Public Class MethodDescriptor
     End Function
     Public Overrides Function GetGenericMethodDefinition() As System.Reflection.MethodInfo
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetGenericMethodDefinition()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetGenericMethodDefinition()
     End Function
 
     Public Overrides Function GetHashCode() As Integer
@@ -312,7 +320,8 @@ Public Class MethodDescriptor
 
     Public Overrides Function GetMethodBody() As System.Reflection.MethodBody
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetMethodBody()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetMethodBody()
     End Function
 
     Public Overrides ReadOnly Property IsGenericMethod() As Boolean
@@ -362,13 +371,15 @@ Public Class MethodDescriptor
     Public Overrides ReadOnly Property MetadataToken() As Integer
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return MyBase.MetadataToken
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.MetadataToken
         End Get
     End Property
     Public Overrides ReadOnly Property [Module]() As System.Reflection.Module
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return MyBase.[Module]
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.[Module]
         End Get
     End Property
     Public Overrides ReadOnly Property ReturnParameter() As System.Reflection.ParameterInfo

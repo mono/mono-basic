@@ -68,13 +68,13 @@ Public Class MemberDeclarations
 
             items = Me.Index.Item(Item.Name)
             If items Is Nothing OrElse items.Count <> 1 Then
-                Helper.AddError()
+                Helper.AddError(Parent)
                 Return
             End If
 
             mainDeclaration = TryCast(items(0), PartialTypeDeclaration)
             If mainDeclaration Is Nothing Then
-                Helper.AddError()
+                Helper.AddError(Parent)
                 Return
             End If
 

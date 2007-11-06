@@ -90,9 +90,9 @@ Public Class GenericTypeDescriptor
                     result(i) = Helper.ApplyTypeArguments(Me.Parent, result(i), m_TypeParameters, m_TypeArguments)
                     'result(i) = Compiler.TypeManager.MakeGenericType(Me.Parent, result(i), m_TypeArguments)
                 ElseIf result(i).IsGenericTypeDefinition Then
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
                 ElseIf result(i).IsGenericParameter Then
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
                 End If
             Next
 

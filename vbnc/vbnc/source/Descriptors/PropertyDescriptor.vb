@@ -130,19 +130,22 @@ Public Class PropertyDescriptor
     Public Overloads Overrides Function GetAccessors(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo()
         Dim result As MethodInfo() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overloads Overrides Function GetGetMethod(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo
@@ -175,13 +178,15 @@ Public Class PropertyDescriptor
     Public Overloads Overrides Function GetValue(ByVal obj As Object, ByVal invokeAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal index() As Object, ByVal culture As System.Globalization.CultureInfo) As Object
         Dim result As Object = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
         Dim result As Boolean
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides ReadOnly Property Name() As String
@@ -204,13 +209,14 @@ Public Class PropertyDescriptor
         Get
             Dim result As Type = Nothing
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return result
         End Get
     End Property
 
     Public Overloads Overrides Sub SetValue(ByVal obj As Object, ByVal value As Object, ByVal invokeAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal index() As Object, ByVal culture As System.Globalization.CultureInfo)
         DumpMethodInfo()
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
     End Sub
 
     Public Overrides Function Equals(ByVal obj As Object) As Boolean
@@ -234,25 +240,29 @@ Public Class PropertyDescriptor
     Public Overrides Function GetOptionalCustomModifiers() As System.Type()
         Dim result As Type() = MyBase.GetOptionalCustomModifiers
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides Function GetRawConstantValue() As Object
         Dim result As Object = MyBase.GetRawConstantValue
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides Function GetRequiredCustomModifiers() As System.Type()
         Dim result As Type() = MyBase.GetRequiredCustomModifiers
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides Function GetValue(ByVal obj As Object, ByVal index() As Object) As Object
         Dim result As Object = MyBase.GetValue(obj, index)
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return result
     End Function
 
     Public Overrides ReadOnly Property MemberType() As System.Reflection.MemberTypes
@@ -267,7 +277,8 @@ Public Class PropertyDescriptor
         Get
             Dim result As Integer = MyBase.MetadataToken
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return result
         End Get
     End Property
 
@@ -275,7 +286,8 @@ Public Class PropertyDescriptor
         Get
             Dim result As System.Reflection.Module = MyBase.Module
             DumpMethodInfo(result)
-            Helper.NotImplemented() : Return result
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return result
         End Get
     End Property
 
@@ -297,6 +309,6 @@ Public Class PropertyDescriptor
     Public Overrides Sub SetValue(ByVal obj As Object, ByVal value As Object, ByVal index() As Object)
         'MyBase.SetValue(obj, value, index)
         DumpMethodInfo()
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
     End Sub
 End Class

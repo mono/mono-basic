@@ -101,7 +101,7 @@ Public Class LoopControlVariable
         Helper.Assert(Info.RHSExpression IsNot Nothing)
         If m_Declaration IsNot Nothing Then
             Helper.Assert(m_Declaration.LocalBuilder IsNot Nothing)
-            result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Declaration.LocalBuilder.LocalType)) AndAlso result
+            result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(Me, True, False, m_Declaration.LocalBuilder.LocalType)) AndAlso result
             Emitter.EmitStoreVariable(Info, m_Declaration.LocalBuilder)
         Else
             result = m_Expression.GenerateCode(Info) AndAlso result
@@ -121,7 +121,7 @@ Public Class LoopControlVariable
             Helper.Assert(m_Declaration.LocalBuilder IsNot Nothing)
             Emitter.EmitLoadVariable(Info, m_Declaration.LocalBuilder)
         Else
-            result = m_Expression.GenerateCode(Info.Clone(True, False)) AndAlso result
+            result = m_Expression.GenerateCode(Info.Clone(Me, True, False)) AndAlso result
         End If
         Return result
     End Function

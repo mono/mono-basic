@@ -112,8 +112,8 @@ Public Class ArrayElementInitializer
         Dim arraytype As Type = Info.DesiredType
         Dim elementtype As Type = arraytype.GetElementType
         Dim tmpvar As LocalBuilder = Info.ILGen.DeclareLocal(Helper.GetTypeOrTypeBuilder(arraytype))
-        Dim elementInfo As EmitInfo = Info.Clone(True, False, elementtype)
-        Dim indexInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.System_Int32)
+        Dim elementInfo As EmitInfo = Info.Clone(Me, True, False, elementtype)
+        Dim indexInfo As EmitInfo = Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)
 
         'Create the array.
         ArrayCreationExpression.EmitArrayCreation(Info, arraytype, m_Elements)

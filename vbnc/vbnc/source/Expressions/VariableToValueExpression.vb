@@ -65,20 +65,20 @@ Public Class VariableToValueExpression
             If exp.IsValueType AndAlso exp.IsByRef = False Then
                 exp = exp.MakeByRefType
             End If
-            result = m_Variable.InstanceExpression.GenerateCode(Info.Clone(exp)) AndAlso result
+            result = m_Variable.InstanceExpression.GenerateCode(Info.Clone(Me, exp)) AndAlso result
         End If
 
         If m_Variable.FieldInfo IsNot Nothing Then
             If Info.IsRHS Then
                 Emitter.EmitLoadVariable(Info, m_Variable.FieldInfo)
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             End If
         ElseIf m_Variable.LocalBuilder IsNot Nothing Then
             If Info.IsRHS Then
                 Emitter.EmitLoadVariable(Info, m_Variable.LocalBuilder)
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             End If
         ElseIf m_Variable.ParameterInfo IsNot Nothing Then
             Helper.Assert(m_Variable.InstanceExpression Is Nothing)
@@ -88,7 +88,7 @@ Public Class VariableToValueExpression
                     Emitter.EmitLoadIndirect(Info, m_Variable.ParameterInfo.ParameterType)
                 End If
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         End If
         ElseIf m_Variable.ArrayVariable IsNot Nothing Then
             result = Helper.EmitLoadArrayElement(Info, m_Variable.ArrayVariable, m_Variable.Arguments) AndAlso result

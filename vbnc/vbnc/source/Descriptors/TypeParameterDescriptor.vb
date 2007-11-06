@@ -204,7 +204,7 @@ Public Class TypeParameterDescriptor
     End Property
 
     Protected Overrides Function GetAttributeFlagsImpl() As System.Reflection.TypeAttributes
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         Return TypeAttributes.AnsiClass
         Throw New NotSupportedException
         Return TypeAttributes.AnsiClass
@@ -215,7 +215,7 @@ Public Class TypeParameterDescriptor
         If m_TypeParameter IsNot Nothing Then
             result = New ArrayTypeDescriptor(Me, rank)
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good is any type comparison would fail.
@@ -332,7 +332,7 @@ Public Class TypeParameterDescriptor
         If dtpb IsNot Nothing Then
             result = dtpb Is m_TypeParameter.TypeParameterBuilder
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
 
         DumpMethodInfo(result)

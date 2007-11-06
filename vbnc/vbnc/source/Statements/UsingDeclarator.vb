@@ -105,10 +105,10 @@ Public Class UsingDeclarator
         Dim result As Boolean = True
 
         If m_IsVariableDeclaration Then
-            result = m_VariableDeclaration.GenerateCode(Info.Clone(True, False, UsingVariableType)) AndAlso result
+            result = m_VariableDeclaration.GenerateCode(Info.Clone(Me, True, False, UsingVariableType)) AndAlso result
             UsingVariable = m_VariableDeclaration.LocalBuilder
         Else
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If
 
         Return result
@@ -138,7 +138,7 @@ Public Class UsingDeclarator
                 result = grp.ResolveGroup(m_ArgumentList, Nothing) AndAlso result
                 m_Constructor = grp.ResolvedConstructor
                 If m_Constructor Is Nothing Then
-                    Helper.AddError()
+                    result = Helper.AddError(Me) AndAlso result
                 End If
             End If
         ElseIf m_VariableInitializer IsNot Nothing Then
@@ -148,7 +148,7 @@ Public Class UsingDeclarator
             Helper.Assert(m_ArgumentList Is Nothing)
             'Helper.Assert(m_Identifier IsNot Nothing)
             m_IsVariableDeclaration = False
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If
 
         If m_VariableInitializer IsNot Nothing Then

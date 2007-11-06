@@ -48,7 +48,7 @@ Public MustInherit Class LateBoundAccessToExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
 
         Return result
     End Function
@@ -115,7 +115,7 @@ Public MustInherit Class LateBoundAccessToExpression
             If arg.Expression Is Nothing Then
                 Emitter.EmitLoadVariable(Info, Info.Compiler.TypeCache.System_Reflection_Missing__Value)
             Else
-                result = arg.GenerateCode(Info.Clone(True, False, arg.Expression.ExpressionType)) AndAlso result
+                result = arg.GenerateCode(Info.Clone(Info.Context, True, False, arg.Expression.ExpressionType)) AndAlso result
                 If arg.Expression.ExpressionType.IsValueType Then
                     Emitter.EmitBox(Info, arg.Expression.ExpressionType)
                 End If
@@ -126,7 +126,7 @@ Public MustInherit Class LateBoundAccessToExpression
         If elementCount <> argCount Then
             Emitter.EmitLoadVariable(Info, arguments)
             Emitter.EmitLoadI4Value(Info, elementCount - 1)
-            result = Info.RHSExpression.GenerateCode(Info.Clone(True, False, Info.RHSExpression.ExpressionType)) AndAlso result
+            result = Info.RHSExpression.GenerateCode(Info.Clone(Info.Context, True, False, Info.RHSExpression.ExpressionType)) AndAlso result
             If Info.RHSExpression.ExpressionType.IsValueType Then
                 Emitter.EmitBox(Info, Info.RHSExpression.ExpressionType)
             End If
@@ -157,7 +157,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
             Emitter.EmitLoadVariable(Info, namedArguments)
         Else
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_String_Array))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_String_Array))
         End If
 
 
@@ -180,7 +180,7 @@ Public MustInherit Class LateBoundAccessToExpression
         args = LateBoundAccess.Arguments
 
         If args Is Nothing OrElse args.Count = 0 Then
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Boolean_Array))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Boolean_Array))
         Else
             copyBackHints = New Boolean(args.Count - 1) {}
             copyBacks = Emitter.DeclareLocal(Info, Info.Compiler.TypeCache.System_Boolean_Array)
@@ -222,7 +222,7 @@ Public MustInherit Class LateBoundAccessToExpression
                         Case ExpressionClassification.Classifications.PropertyAccess
                             copyBack = exp.Classification.AsPropertyAccess.ResolvedProperty.CanWrite
                         Case Else
-                            Helper.NotImplemented()
+                            Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, LateBoundAccess.Parent.Location)
                     End Select
                 End If
                 copyBackHints(i) = copyBack
@@ -281,7 +281,7 @@ Public MustInherit Class LateBoundAccessToExpression
             convExp.Init(vosExp, exp.ExpressionType)
             result = convExp.GenerateCode(Info) AndAlso result
             Emitter.EmitStoreVariable(Info, tmpVar)
-            result = exp.GenerateCode(Info.Clone(New LoadLocalExpression(exp, tmpVar))) AndAlso result
+            result = exp.GenerateCode(Info.Clone(Info.Context, New LoadLocalExpression(exp, tmpVar))) AndAlso result
 
             Emitter.MarkLabel(Info, branch)
         Next
@@ -300,7 +300,7 @@ Public MustInherit Class LateBoundAccessToExpression
         result = LateBoundAccess.InstanceExpression.GenerateCode(Info) AndAlso result
 
         '2 - Type ??? - haven't found an example where this isn't nothing yet
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type))
+        Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
 
         '3 - The member name
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)
@@ -311,9 +311,9 @@ Public MustInherit Class LateBoundAccessToExpression
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then
-            Helper.NotImplemented("LateGet with type arguments.")
+            Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, LateBoundAccess.Parent.Location)
         Else
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type_Array))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type_Array))
         End If
 
         '7 - CopyBack
@@ -353,10 +353,10 @@ Public MustInherit Class LateBoundAccessToExpression
         'We need to emit a call to LateSet
 
         '1 - the instance expression
-        result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
+        result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(Info.Context, True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
 
         '2 - Type ??? - haven't found an example where this isn't nothing yet
-        Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type))
+        Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
 
         '3 - The member name
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)
@@ -367,9 +367,9 @@ Public MustInherit Class LateBoundAccessToExpression
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then
-            Helper.NotImplemented("LateSet with type arguments.")
+            Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, LateBoundAccess.Parent.Location)
         Else
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type_Array))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type_Array))
         End If
 
         Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_NewLateBinding__LateSet_Object_Type_String_Array_Array_Array)
@@ -384,7 +384,7 @@ Public MustInherit Class LateBoundAccessToExpression
         'We need to emit a call to LateIndexSet
 
         '1 - the instance expression
-        result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
+        result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(Info.Context, True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
 
         '2 - The arguments
         '3 - ArgumentNames
@@ -404,14 +404,14 @@ Public MustInherit Class LateBoundAccessToExpression
 
         '1 - the instance expression
         If LateBoundAccess.InstanceExpression IsNot Nothing Then
-            result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
+            result = LateBoundAccess.InstanceExpression.GenerateCode(Info.Clone(Info.Context, True, False, LateBoundAccess.InstanceExpression.ExpressionType)) AndAlso result
         Else
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Object))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Object))
         End If
 
         '2 - Type
         If LateBoundAccess.LateBoundType Is Nothing Then
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
         Else
             Emitter.EmitLoadToken(Info, LateBoundAccess.LateBoundType)
             Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
@@ -426,9 +426,9 @@ Public MustInherit Class LateBoundAccessToExpression
 
         '6 - TypeArguments
         If LateBoundAccess.TypeArguments IsNot Nothing Then
-            Helper.NotImplemented("LateCall with type arguments.")
+            Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, LateBoundAccess.Parent.Location)
         Else
-            Emitter.EmitLoadNull(Info.Clone(Info.Compiler.TypeCache.System_Type_Array))
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type_Array))
         End If
 
         '7 - CopyBack

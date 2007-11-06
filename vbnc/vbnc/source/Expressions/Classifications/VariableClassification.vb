@@ -152,20 +152,20 @@ Public Class VariableClassification
             If Info.IsRHS Then
                 Emitter.EmitLoadVariable(Info, FieldInfo)
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         ElseIf LocalBuilder IsNot Nothing Then
             If Info.IsRHS Then
                 Emitter.EmitLoadVariable(Info, LocalBuilder)
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         ElseIf ParameterInfo IsNot Nothing Then
             Helper.Assert(m_InstanceExpression Is Nothing)
             If Info.IsRHS Then
                 Emitter.EmitLoadVariable(Info, ParameterInfo)
             Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         ElseIf m_ArrayVariable IsNot Nothing Then
             result = Helper.EmitLoadArrayElement(Info, m_ArrayVariable, m_Arguments) AndAlso result
@@ -207,7 +207,7 @@ Public Class VariableClassification
             If exp.IsValueType AndAlso exp.IsByRef = False Then
                 exp = exp.MakeByRefType
             End If
-            result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, exp)) AndAlso result
+            result = m_InstanceExpression.GenerateCode(Info.Clone(Parent, True, False, exp)) AndAlso result
         End If
 
         If FieldInfo IsNot Nothing Then
@@ -218,13 +218,13 @@ Public Class VariableClassification
                     Emitter.EmitLoadVariable(Info, FieldInfo)
                 End If
             Else
-                Dim rInfo As EmitInfo = Info.Clone(True, False, FieldInfo.FieldType)
+                Dim rInfo As EmitInfo = Info.Clone(Parent, True, False, FieldInfo.FieldType)
 
                 Helper.Assert(Info.RHSExpression IsNot Nothing)
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
                 result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, FieldInfo.FieldType, Info.Clone(Info.RHSExpression.ExpressionType))
+                Emitter.EmitConversion(Info.RHSExpression.ExpressionType, FieldInfo.FieldType, Info.Clone(Parent, Info.RHSExpression.ExpressionType))
                 Emitter.EmitStoreField(Info, FieldInfo)
             End If
         ElseIf LocalBuilder IsNot Nothing Then
@@ -246,7 +246,7 @@ Public Class VariableClassification
 
             If Info.IsRHS Then
                 If isByRef Then
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                 Else
                     Emitter.EmitLoadVariable(Info, ParameterInfo)
                 End If
@@ -256,19 +256,19 @@ Public Class VariableClassification
                 Dim paramConsumed As Boolean
 
                 If isByRefStructure Then
-                    Emitter.EmitLoadVariable(Info.Clone(paramType), ParameterInfo)
+                    Emitter.EmitLoadVariable(Info.Clone(Parent, paramType), ParameterInfo)
                     If TypeOf rhs Is GetRefExpression Then rhs = DirectCast(rhs, GetRefExpression).Expression
                     paramConsumed = TypeOf rhs Is NewExpression
                     If paramConsumed Then
-                        rInfo = Info.Clone(True, False, paramType)
+                        rInfo = Info.Clone(Parent, True, False, paramType)
                     Else
-                        rInfo = Info.Clone(True, False, paramElementType)
+                        rInfo = Info.Clone(Parent, True, False, paramElementType)
                     End If
                 ElseIf isByRef Then
                     Emitter.EmitLoadVariableLocation(Info, ParameterInfo)
-                    rInfo = Info.Clone(True, False, paramElementType)
+                    rInfo = Info.Clone(Parent, True, False, paramElementType)
                 Else
-                    rInfo = Info.Clone(True, False, paramType)
+                    rInfo = Info.Clone(Parent, True, False, paramType)
                 End If
 
                 Helper.Assert(rhs IsNot Nothing, "RHSExpression Is Nothing!")
@@ -288,9 +288,9 @@ Public Class VariableClassification
             End If
         ElseIf Me.m_Variable IsNot Nothing Then
             If Info.IsRHS Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             Else
-                Dim rInfo As EmitInfo = Info.Clone(True, False, m_Variable.VariableType)
+                Dim rInfo As EmitInfo = Info.Clone(Parent, True, False, m_Variable.VariableType)
 
                 Helper.Assert(Info.RHSExpression IsNot Nothing)
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
@@ -303,7 +303,7 @@ Public Class VariableClassification
                 End If
 
                 Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         ElseIf m_ArrayVariable IsNot Nothing Then
             If Info.IsRHS Then
@@ -318,7 +318,7 @@ Public Class VariableClassification
             Else
                 Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
+                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(parent, True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
                 Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
             End If
         Else

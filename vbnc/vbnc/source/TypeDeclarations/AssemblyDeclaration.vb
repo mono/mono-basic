@@ -611,7 +611,7 @@ Public Class AssemblyDeclaration
 #End If
 
         If IO.File.Exists(filename) = False Then
-            Helper.AddError("Can't find keyfile: " & filename)
+            Helper.AddError(Me, "Can't find keyfile: " & filename)
             Return False
         End If
 
@@ -682,7 +682,7 @@ Public Class AssemblyDeclaration
                 result.KeyPair = New StrongNameKeyPair(blob)
             End If
         Catch ex As Exception
-            Helper.AddError("Invalid key file: " & KeyFile & ", got error: " & ex.Message)
+            Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
         End Try
 
     End Function

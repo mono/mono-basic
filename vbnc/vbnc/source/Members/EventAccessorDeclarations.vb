@@ -48,7 +48,7 @@ Public Class EventAccessorDeclarations
         End Get
         Private Set(ByVal value As CustomEventHandlerDeclaration)
             If m_Handlers(0) IsNot Nothing Then
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
             m_Handlers(0) = value
         End Set
@@ -60,7 +60,7 @@ Public Class EventAccessorDeclarations
         End Get
         Private Set(ByVal value As CustomEventHandlerDeclaration)
             If m_Handlers(1) IsNot Nothing Then
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
             m_Handlers(1) = value
         End Set
@@ -72,7 +72,7 @@ Public Class EventAccessorDeclarations
         End Get
         Private Set(ByVal value As CustomEventHandlerDeclaration)
             If m_Handlers(2) IsNot Nothing Then
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
             m_Handlers(2) = value
         End Set

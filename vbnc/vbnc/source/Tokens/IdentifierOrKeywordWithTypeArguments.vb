@@ -53,14 +53,14 @@ Public Class IdentifierOrKeywordWithTypeArguments
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
 
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
 
     End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return tm.Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
 
         Return result
     End Function
@@ -68,7 +68,7 @@ Public Class IdentifierOrKeywordWithTypeArguments
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
 
         Return result
     End Function

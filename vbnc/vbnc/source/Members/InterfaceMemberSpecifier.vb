@@ -100,7 +100,7 @@ Public Class InterfaceMemberSpecifier
         'End If
         m_ResolvedMember = MethodGroupClassification.ResolveInterfaceGroup(lst, Me.FindFirstParent(Of IMember))
         If m_ResolvedMember Is Nothing Then
-            Helper.AddError("Implemented method has not the same signature as the interface method")
+            Helper.AddError(Me, "Implemented method has not the same signature as the interface method")
         End If
 
         Return result

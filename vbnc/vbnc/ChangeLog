@@ -1,3 +1,9 @@
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.Errors.resources: Remove all uses of Helper.NotImplemented,
+	  Helper.NotImplementedYet and Helper.AddError. Replaced with reported
+	  warnings/errors.
+
 2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.Errors.resources: Updated.

@@ -59,7 +59,8 @@ Public Class PropertySetDeclaration
         Dim valueName As String = "value"
         If SetParameters IsNot Nothing AndAlso SetParameters.Count > 0 Then
             If SetParameters.Count > 1 Then
-                Helper.AddError()
+                Helper.AddError(Me)
+                Return
             End If
             valueName = SetParameters(0).Name
         End If

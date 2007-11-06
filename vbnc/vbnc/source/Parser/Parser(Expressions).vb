@@ -476,7 +476,9 @@ Partial Class Parser
         m_Expression = ParseExpression(result)
         If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.NotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+        End If
 
         result.init(m_Expression)
 
@@ -1103,7 +1105,7 @@ Partial Class Parser
     <Obsolete()> Private Function ParseExpression() As Expression
         Dim result As Expression = Nothing
 
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
         '        result = ParseOr_OrElse_Xor(Info)
 
         Return result
@@ -1546,7 +1548,7 @@ Partial Class Parser
         ElseIf tm.Accept(KS.IsNot) Then
             m_Is = False
         Else
-            Helper.NotImplemented() 'TODO: compiler.Report.ShowMessage  Messages.VBNC30001
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
             Return Nothing
         End If
 

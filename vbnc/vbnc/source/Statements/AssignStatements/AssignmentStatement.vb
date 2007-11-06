@@ -67,7 +67,7 @@ Public Class AssignmentStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim lInfo As EmitInfo = Info.Clone(RSide)
+        Dim lInfo As EmitInfo = Info.Clone(Me, RSide)
 
         Helper.Assert(LSide.Classification.IsVariableClassification OrElse LSide.Classification.IsPropertyAccessClassification)
         result = LSide.Classification.GenerateCode(lInfo) AndAlso result
@@ -112,7 +112,7 @@ Public Class AssignmentStatement
             m_LSide = LSide.ReclassifyToPropertyAccessExpression
             result = LSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
             If result = False Then
-                Helper.AddError()
+                result = Helper.AddError(Me) AndAlso result
                 Return result
             End If
         Else

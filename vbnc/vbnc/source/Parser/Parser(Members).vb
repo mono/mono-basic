@@ -117,14 +117,14 @@ Partial Class Parser
             m_Attributes = ParseAttributes(result)
             If PropertyGetDeclaration.IsMe(tm) Then
                 If m_Get IsNot Nothing Then
-                    Helper.AddError("Found more than one Get Property.")
+                    Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Get Property.")
                 End If
                 m_Get = ParsePropertyGetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Get Is Nothing Then Helper.ErrorRecoveryNotImplemented()
                 m_Attributes = Nothing
             ElseIf PropertySetDeclaration.IsMe(tm) Then
                 If m_Set IsNot Nothing Then
-                    Helper.AddError("Found more than one Set Property.")
+                    Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Set Property.")
                 End If
                 m_Set = ParsePropertySetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Set Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -132,7 +132,7 @@ Partial Class Parser
             Else
                 If m_Attributes IsNot Nothing AndAlso m_Attributes.Count > 0 Then
                     'Hanging attributes.
-                    Helper.NotImplemented() 'Some error
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
                 End If
                 Exit Do
             End If
@@ -541,10 +541,10 @@ Partial Class Parser
                 m_2 = New IdentifierOrKeyword(result, qi.Second)
                 qi.Second = Nothing
             Else
-                Helper.AddError()
+                Helper.AddError(Compiler, tm.CurrentLocation)
             End If
         Else
-            Helper.AddError()
+            Helper.AddError(Compiler, tm.CurrentLocation)
         End If
 
         result.Init(m_1, m_2)

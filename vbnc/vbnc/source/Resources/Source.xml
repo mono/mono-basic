@@ -2624,7 +2624,7 @@
 	</Message>
 	<Message id="30747" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Internal compiler error.</VBNCValue>
 		<VBValue>Internal compiler error.</VBValue>
 	</Message>
 	<Message id="30748" level="Error">
@@ -4877,6 +4877,11 @@
 		<VBNCValue>There is no comparison possible between '{0}' and '{1}'.</VBNCValue>
 		<VBValue>(no corresponding VB error)</VBValue>
 	</Message>
+  <Message id="99997" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>You've encountered something in the compiler which is not implemented. Please file a bug (see instructions here: http://mono-project.com/Bugs)</VBNCValue>
+    <VBValue>(no corresponding VB warning)</VBValue>
+  </Message>
   <Message id="99998" level="Warning">
     <Comment>Whatever you wish :)</Comment>
     <VBNCValue>{0}</VBNCValue>

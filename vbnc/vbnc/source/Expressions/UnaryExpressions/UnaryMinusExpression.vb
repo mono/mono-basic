@@ -31,7 +31,7 @@ Public Class UnaryMinusExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim expInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
 
         Select Case OperandTypeCode
             Case TypeCode.Decimal

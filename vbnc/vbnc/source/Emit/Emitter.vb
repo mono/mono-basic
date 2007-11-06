@@ -507,7 +507,7 @@ Partial Public Class Emitter
         ElseIf FromType.BaseType.IsEnum AndAlso Helper.CompareType(ToType, Info.Compiler.TypeCache.System_Enum) Then
 
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
     End Sub
 
@@ -763,7 +763,7 @@ Partial Public Class Emitter
                     '               End If
                     If Helper.CompareType(tmpTo, tmpFrom) Then
                         converted = True
-                    ElseIf Helper.IsAssignable(Info.Compiler, tmpFrom, tmpTo) Then
+                    ElseIf Helper.IsAssignable(Info.Context, tmpFrom, tmpTo) Then
                         converted = True
                     Else
                         converted = True
@@ -853,7 +853,7 @@ Partial Public Class Emitter
             Case TypeCombinations.Object_Int32
                 'Narrowing conversion
                 If Info.IsExplicitConversion = False Then
-                    Helper.AddError()
+                    Helper.AddError(Info.Context)
                 Else
                     Emitter.EmitUnbox(Info, Info.Compiler.TypeCache.System_Int32)
                     Emitter.EmitLdobj(Info, Info.Compiler.TypeCache.System_Int32)
@@ -1113,8 +1113,7 @@ Partial Public Class Emitter
             Case MemberTypes.Method
                 EmitCallVirt(Info, DirectCast(Method, MethodInfo))
             Case Else
-                Helper.NotImplemented()
-                Throw New InternalException("")
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
     End Sub
 
@@ -1222,7 +1221,7 @@ Partial Public Class Emitter
                     Info.ILGen.Emit(OpCodes.Ldelem_Ref)
                 End If
             Case Else
-                Helper.NotImplemented()
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
         Info.Stack.Push(ElementType)
     End Sub
@@ -1256,7 +1255,7 @@ Partial Public Class Emitter
             Case TypeCode.String
                 Info.ILGen.Emit(OpCodes.Ldelem_Ref)
             Case Else
-                Helper.NotImplemented()
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
         Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.Stack.Pop(ElementType.MakeArrayType)
@@ -1341,7 +1340,7 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub CreateArray(ByVal Info As EmitInfo, ByVal ElementType As Type, ByVal Elements As Integer)
         ElementType = Helper.GetTypeOrTypeBuilder(ElementType)
-        EmitLoadValue(Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32), Elements)
+        EmitLoadValue(Info.Clone(Info.Context, True, False, Info.Compiler.TypeCache.System_Int32), Elements)
         EmitNewArr(Info, ElementType)
     End Sub
 
@@ -1487,7 +1486,7 @@ Partial Public Class Emitter
                 EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
                 Return True
         End Select
-        Helper.NotImplemented()
+        Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
     End Function
 
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Long) As Boolean
@@ -1497,7 +1496,7 @@ Partial Public Class Emitter
             Return EmitLoadValue(Info, CInt(Value))
         End If
 
-        Dim tmp As EmitInfo = Info.Clone(CType(Nothing, TypeDescriptor))
+        Dim tmp As EmitInfo = Info.Clone(Info.Context, CType(Nothing, TypeDescriptor))
 
         Select Case DesiredTypeCode
             Case TypeCode.Single
@@ -1539,7 +1538,7 @@ Partial Public Class Emitter
                 EmitLoadI8Value(Info, Value)
                 Return True
         End Select
-        Helper.NotImplemented()
+        Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         Return False
     End Function
 
@@ -1556,7 +1555,7 @@ Partial Public Class Emitter
             End If
         End If
 
-        Dim tmp As EmitInfo = Info.Clone(CType(Nothing, TypeDescriptor))
+        Dim tmp As EmitInfo = Info.Clone(Info.Context, CType(Nothing, TypeDescriptor))
 
         Select Case DesiredTypeCode
             Case TypeCode.Single
@@ -1628,7 +1627,7 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub EmitLoadValueAddress(ByVal Info As EmitInfo, ByVal Value As Object)
         Helper.Assert(Info.DesiredType.IsByRef)
-        EmitLoadValue(Info.Clone(Info.DesiredType.GetElementType), Value)
+        EmitLoadValue(Info.Clone(Info.Context, Info.DesiredType.GetElementType), Value)
         Dim local As LocalBuilder = Info.ILGen.DeclareLocal(Helper.GetTypeOrTypeBuilder(Info.DesiredType.GetElementType))
         EmitStoreVariable(Info, local)
         EmitLoadVariableLocation(Info, local)
@@ -1782,13 +1781,13 @@ Partial Public Class Emitter
                     Info.ILGen.Emit(OpCodes.Ldnull)
                     Info.Stack.Push(Info.DesiredType)
                 Case Else
-                    Helper.NotImplemented()
+                    Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
             End Select
         ElseIf Helper.CompareType(Info.DesiredType, Info.Compiler.TypeCache.System_Enum) Then
             Info.ILGen.Emit(OpCodes.Ldnull)
             Info.Stack.Push(Info.DesiredType)
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
     End Sub
 
@@ -1798,7 +1797,7 @@ Partial Public Class Emitter
     ''' <param name="Info"></param>
     ''' <remarks></remarks>
     Shared Sub EmitLoadDateValue(ByVal Info As EmitInfo, ByVal DateValue As Date)
-        Dim emitLong As EmitInfo = Info.Clone(Info.Compiler.TypeCache.System_Int64)
+        Dim emitLong As EmitInfo = Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Int64)
         EmitLoadI8Value(emitLong, DateValue.Ticks)
         Info.Stack.Pop(Info.Compiler.TypeCache.System_Int64)
         Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_DateTime__ctor_Int64)
@@ -1862,7 +1861,7 @@ Partial Public Class Emitter
             Helper.Assert(Variable.InstanceExpression Is Nothing)
             EmitLoadParameterAddress(Info, Variable.ParameterInfo)
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
     End Sub
     Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As VariableClassification)
@@ -1873,7 +1872,7 @@ Partial Public Class Emitter
         ElseIf Variable.ParameterInfo IsNot Nothing Then
             EmitLoadVariable(Info, Variable.ParameterInfo)
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
     End Sub
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Variable As LocalBuilder)
@@ -1909,7 +1908,7 @@ Partial Public Class Emitter
         If Variable.ParameterType.IsByRef Then
             EmitLoadParameter(Info, Variable)
         Else
-            Info.ILGen.Emit(OpCodes.Ldarga, GetParameterPosition(Variable))
+            Info.ILGen.Emit(OpCodes.Ldarga, GetParameterPosition(Info, Variable))
         End If
     End Sub
 
@@ -1920,7 +1919,7 @@ Partial Public Class Emitter
     ''' <param name="Parameter"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function GetParameterPosition(ByVal Parameter As ParameterInfo) As Integer
+    Shared Function GetParameterPosition(ByVal Info As EmitInfo, ByVal Parameter As ParameterInfo) As Integer
         Dim position As Integer = Parameter.Position - 1
         Dim member As MemberInfo = Parameter.Member
         Dim methodmember As MethodInfo = TryCast(member, MethodInfo)
@@ -1934,7 +1933,7 @@ Partial Public Class Emitter
                 position += 1
             End If
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
             'do nothing
         End If
         Return position
@@ -1948,7 +1947,7 @@ Partial Public Class Emitter
     ''' <param name="Parameter"></param>
     ''' <remarks></remarks>
     Shared Sub EmitLoadParameter(ByVal Info As EmitInfo, ByVal Parameter As ParameterInfo)
-        Dim position As Integer = GetParameterPosition(Parameter)
+        Dim position As Integer = GetParameterPosition(Info, Parameter)
         Select Case position
             Case 0
                 Info.ILGen.Emit(OpCodes.Ldarg_0)
@@ -1974,7 +1973,7 @@ Partial Public Class Emitter
     ''' <param name="Parameter"></param>
     ''' <remarks></remarks>
     Shared Sub EmitLoadParameterAddress(ByVal Info As EmitInfo, ByVal Parameter As ParameterInfo)
-        Dim position As Integer = GetParameterPosition(Parameter)
+        Dim position As Integer = GetParameterPosition(Info, Parameter)
         If position <= 255 Then
             Info.ILGen.Emit(OpCodes.Ldarga_S, CByte(position))
         Else
@@ -2021,7 +2020,7 @@ Partial Public Class Emitter
             Case TypeCode.Int32
                 Info.ILGen.Emit(OpCodes.Ldind_I4)
             Case TypeCode.UInt64
-                Helper.NotImplemented()
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
                 Info.ILGen.Emit(OpCodes.Ldind_I8)
             Case TypeCode.Int64
                 Info.ILGen.Emit(OpCodes.Ldind_I8)
@@ -2036,7 +2035,8 @@ Partial Public Class Emitter
             Case TypeCode.Decimal
                 Info.ILGen.Emit(OpCodes.Ldobj, Info.Compiler.TypeCache.System_Decimal)
             Case Else
-                Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
+                'Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
         End Select
         Info.Stack.Push(elementtype)
     End Sub
@@ -2110,7 +2110,7 @@ Partial Public Class Emitter
         Field = Helper.GetFieldOrFieldBuilder(Variable)
         If Variable.IsStatic Then
             If Variable.IsLiteral Then
-                Emitter.EmitLoadValue(Info.Clone(True, False, Variable.FieldType), Variable.GetValue(Nothing))
+                Emitter.EmitLoadValue(Info.Clone(Info.Context, True, False, Variable.FieldType), Variable.GetValue(Nothing))
             Else
                 Info.ILGen.Emit(OpCodes.Ldsfld, Field)
                 Info.Stack.Push(Variable.FieldType)
@@ -2135,7 +2135,7 @@ Partial Public Class Emitter
         ElseIf Variable.ParameterInfo IsNot Nothing Then
             EmitStoreVariable(Info, Variable.ParameterInfo)
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
     End Sub
 
@@ -2168,12 +2168,12 @@ Partial Public Class Emitter
                     Info.ILGen.Emit(OpCodes.Stind_Ref)
                 End If
             Case Else
-                Helper.NotImplemented()
+                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
     End Sub
 
     Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As ParameterInfo)
-        Dim position As Integer = GetParameterPosition(Variable)
+        Dim position As Integer = GetParameterPosition(Info, Variable)
         If Variable.ParameterType.IsByRef Then
             If Variable.ParameterType.GetElementType.IsGenericParameter Then
                 EmitStoreObject(Info, Variable.ParameterType.GetElementType)

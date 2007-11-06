@@ -54,7 +54,7 @@ Public Class NewExpression
     End Function
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean

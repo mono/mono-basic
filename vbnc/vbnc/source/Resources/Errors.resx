@@ -555,7 +555,7 @@
   <data name="30742"><value>CHANGEME</value></data>
   <data name="30743"><value>CHANGEME</value></data>
   <data name="30744"><value>CHANGEME</value></data>
-  <data name="30747"><value>CHANGEME</value></data>
+  <data name="30747"><value>Internal compiler error.</value></data>
   <data name="30748"><value>Cannot convert '{0}' to '{1}'.</value></data>
   <data name="30749"><value>CHANGEME</value></data>
   <data name="30750"><value>CHANGEME</value></data>
@@ -1006,6 +1006,7 @@
   <data name="90021"><value>Invalid data type: '{0}'.</value></data>
   <data name="90022"><value>Unexpected end of file in comment.</value></data>
   <data name="90023"><value>There is no comparison possible between '{0}' and '{1}'.</value></data>
+  <data name="99997"><value>You've encountered something in the compiler which is not implemented. Please file a bug (see instructions here: http://mono-project.com/Bugs)</value></data>
   <data name="99998"><value>{0}</value></data>
   <data name="99999"><value>{0}</value></data>
   </root>

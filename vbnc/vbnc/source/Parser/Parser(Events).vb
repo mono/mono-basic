@@ -54,7 +54,7 @@ Partial Class Parser
                 End Select
             Else
                 If attributes IsNot Nothing AndAlso attributes.Count > 0 Then
-                    Helper.AddError()
+                    Helper.AddError(Compiler, tm.CurrentLocation)
                 End If
                 Exit Do
             End If

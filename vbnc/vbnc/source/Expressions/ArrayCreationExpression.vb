@@ -101,13 +101,13 @@ Public Class ArrayCreationExpression
                 exp = New BinaryAddExpression(Parent, asim.BoundList.Expressions(i), litexp)
 
                 If exp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) = False Then Throw New InternalException(Parent)
-                If exp.GenerateCode(Info.Clone(True)) = False Then Throw New InternalException(parent)
+                If exp.GenerateCode(Info.Clone(Parent, True)) = False Then Throw New InternalException(Parent)
 
                 Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.System_Int32, Info)
             Next
             EmitArrayConstructor(Info, ArrayType, Ranks)
         Else
-            Helper.NotImplemented()
+            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         End If
     End Sub
 
@@ -197,13 +197,13 @@ Public Class ArrayCreationExpression
         If vi.IsRegularInitializer Then
             Emitter.EmitLoadVariable(Info, ArrayVariable)
             For i As Integer = 0 To Indices.Count - 1
-                Emitter.EmitLoadValue(Info.Clone(True, False, Compiler.TypeCache.System_Int32), Indices(i))
+                Emitter.EmitLoadValue(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32), Indices(i))
             Next
             If elementType.IsValueType AndAlso elementType.IsPrimitive = False AndAlso elementType.IsEnum = False Then
                 Emitter.EmitLoadElementAddress(Info, elementType, ArrayType)
             End If
 
-            result = vi.AsRegularInitializer.GenerateCode(Info.Clone(True, False, elementType)) AndAlso result
+            result = vi.AsRegularInitializer.GenerateCode(Info.Clone(Me, True, False, elementType)) AndAlso result
             If CurrentDepth = 1 Then
                 Emitter.EmitStoreElement(Info, elementType, ArrayType)
             Else

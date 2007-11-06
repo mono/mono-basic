@@ -103,7 +103,7 @@ Public Class ConditionalCompiler
         End Get
     End Property
 
-    Sub New(ByVal Parent As IBaseObject, ByVal Reader As ITokenReader)
+    Sub New(ByVal Parent As BaseObject, ByVal Reader As ITokenReader)
         MyBase.New(Parent)
         m_Reader = Reader
         LoadProjectConstants()
@@ -236,7 +236,7 @@ Public Class ConditionalCompiler
 
         current = m_Reader.Next
         If Not current.IsStringLiteral Then
-            Helper.AddError("Expected string literal")
+            Helper.AddError(Me, "Expected string literal")
             vbnc.tm.GotoNewline(m_Reader, True)
             Return
         End If
@@ -283,7 +283,7 @@ Public Class ConditionalCompiler
         Dim current As Token
         current = m_Reader.Next
         If Not current.IsEndOfLine() Then
-            Helper.AddError("Expected end of line")
+            Helper.AddError(Me, "Expected end of line")
             vbnc.tm.GotoNewline(m_Reader, True)
         End If
     End Sub
@@ -343,7 +343,7 @@ Public Class ConditionalCompiler
                     Case KS.ConditionalEndRegion
                         ParseEndRegion()
                     Case KS.ConditionalEnd
-                        Helper.AddError("'End' what?")
+                        Helper.AddError(Me, "'End' what?")
                         Continue Do
                     Case Else
                         If IfdOut Then

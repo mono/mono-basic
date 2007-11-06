@@ -107,7 +107,7 @@ Public Class MemberImplementsClause
                 ElseIf Method.Name.StartsWith("set_") Then
                     methodI = propertyI.GetSetMethod(True)
                 Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
                 End If
                 methodI = Helper.GetMethodOrMethodBuilder(methodI)
             End If

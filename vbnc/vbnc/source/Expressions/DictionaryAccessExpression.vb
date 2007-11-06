@@ -84,7 +84,7 @@ Public Class DictionaryAccessExpression
             If Info.IsRHS Then
                 Emitter.EmitCallOrCallVirt(Info, m_DefaultProperty.GetGetMethod)
             ElseIf Info.IsLHS Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Else
                 Throw New InternalException(Me)
             End If
@@ -107,7 +107,7 @@ Public Class DictionaryAccessExpression
 
         If Helper.CompareType(Compiler.TypeCache.System_Object, firsttp) Then
             If Location.File(Compiler).IsOptionStrictOn Then
-                Helper.AddError()
+                Helper.AddError(Me)
                 Return False
             End If
             m_IsLateBound = True
@@ -123,12 +123,12 @@ Public Class DictionaryAccessExpression
             If m_DefaultProperty IsNot Nothing Then
                 Classification = New ValueClassification(Me, m_DefaultProperty.PropertyType)
             Else
-                Helper.AddError()
+                result = Helper.AddError(Me) AndAlso result
             End If
         ElseIf attr.Length > 1 Then
-            Helper.NotImplemented("Attr.Length = " & attr.Length)
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Else
-            Helper.NotImplemented("Attr.Length = " & attr.Length & ", firsttp.GetType = " & firsttp.GetType.Name)
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If
 
         Return result
@@ -143,7 +143,7 @@ Public Class DictionaryAccessExpression
     End Function
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
 

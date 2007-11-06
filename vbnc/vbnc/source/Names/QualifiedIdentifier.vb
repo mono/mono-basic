@@ -90,15 +90,15 @@ Public Class QualifiedIdentifier
             ElseIf nri.FoundIs(Of TypeParameter)() Then
                 resolvedType = nri.FoundAsType 'New TypeParameterDescriptor(nri.FoundAs(Of TypeParameter)())
             Else
-                Helper.AddError("Could not resolve: '" & Name & "'")
                 resolvedType = Nothing
+                Return Helper.AddError(Me, "Could not resolve: '" & Name & "'")
             End If
         ElseIf nri.FoundObjects.Count > 1 Then
-            Helper.AddError("Could not resolve (>1 results): '" & Name & "'")
             resolvedType = Nothing
+            Return Helper.AddError(Me, "Could not resolve (>1 results): '" & Name & "'")
         Else
-            Helper.AddError("Could not resolve (no result): '" & Name & "'")
             resolvedType = Nothing
+            Return Helper.AddError(Me, "Could not resolve (no result): '" & Name & "'")
         End If
 
         m_ResolvedType = resolvedType

@@ -88,7 +88,7 @@ Public Class CatchStatement
             Emitter.MarkLabel(Info, DoWhenComparison)
             Emitter.EmitPop(Info, Compiler.TypeCache.System_Exception)
             'result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            result = CBoolExpression.GenerateCode(m_When, Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+            result = CBoolExpression.GenerateCode(m_When, Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
             Emitter.MarkLabel(Info, EndWhen)
             Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
@@ -138,7 +138,7 @@ Public Class CatchStatement
             m_ExceptionType = m_TypeName.ResolvedType
             Helper.Assert(m_ExceptionType IsNot Nothing)
             If Helper.CompareType(Compiler.TypeCache.System_Exception, m_ExceptionType) = False AndAlso Helper.IsSubclassOf(Compiler.TypeCache.System_Exception, m_ExceptionType) = False Then
-                Helper.AddError("Exception type does not inherit from System.Exception")
+                Helper.AddError(Me, "Exception type does not inherit from System.Exception")
                 result = True
             End If
         ElseIf m_When Is Nothing Then

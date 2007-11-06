@@ -32,6 +32,8 @@ Public Class Define
     Private m_Value As String
     Private m_ObjectValue As Object
 
+    Private m_Compiler As Compiler
+
     ReadOnly Property ObjectValue() As Object
         Get
             Return m_ObjectValue
@@ -83,9 +85,10 @@ Public Class Define
     ''' <summary>
     ''' Create a new define with the specified values.
     ''' </summary>
-    Sub New(ByVal Symbol As String, ByVal Value As String)
+    Sub New(ByVal Compiler As Compiler, ByVal Symbol As String, ByVal Value As String)
         Me.m_Symbol = Symbol
         Me.m_Value = Value
+        Me.m_Compiler = Compiler
 
         Parse()
     End Sub
@@ -116,7 +119,7 @@ Public Class Define
                 m_ObjectValue = DateTime.Parse(m_Value.Substring(1, m_Value.Length - 2))
                 Return
             Else
-                Helper.AddError("Invalid date constant: " & m_Value)
+                Helper.AddError(Compiler, Span.CommandLineSpan, "Invalid date constant: " & m_Value)
             End If
         End If
 
@@ -125,7 +128,7 @@ Public Class Define
                 m_ObjectValue = m_Value.Substring(1, m_Value.Length - 2)
                 Return
             Else
-                Helper.AddError("Invalid string constant: " & m_Value)
+                Helper.AddError(Compiler, Span.CommandLineSpan, "Invalid string constant: " & m_Value)
             End If
         End If
 
@@ -134,6 +137,12 @@ Public Class Define
             Return
         End If
 
-        Helper.AddError("Invalid constant: '" & m_Value & "' (Type=" & m_Value.GetType.FullName & ")")
+        Helper.AddError(Compiler, Span.CommandLineSpan, "Invalid constant: '" & m_Value & "' (Type=" & m_Value.GetType.FullName & ")")
     End Sub
+
+    ReadOnly Property Compiler() As Compiler
+        Get
+            Return m_Compiler
+        End Get
+    End Property
 End Class

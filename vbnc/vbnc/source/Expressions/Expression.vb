@@ -144,7 +144,7 @@ Public MustInherit Class Expression
     ''' <remarks></remarks>
     Overridable ReadOnly Property ExpressionType() As Type
         Get
-            Helper.NotImplemented("Expression.ExpressionType (Type = " & Me.GetType.ToString & ")")
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Return Nothing
         End Get
     End Property
@@ -185,7 +185,7 @@ Public MustInherit Class Expression
             ElseIf Info.DesiredType IsNot Nothing AndAlso Info.DesiredType.IsByRef Then
                 Emitter.EmitLoadValueAddress(Info, Me.ConstantValue)
             Else
-                Emitter.EmitLoadValue(Info.Clone(Me.ExpressionType), Me.ConstantValue)
+                Emitter.EmitLoadValue(Info.Clone(Me, Me.ExpressionType), Me.ConstantValue)
             End If
         ElseIf TypeOf Me.Classification Is MethodGroupClassification Then
             result = Me.Classification.AsMethodGroupClassification.GenerateCode(Info) AndAlso result
@@ -197,7 +197,7 @@ Public MustInherit Class Expression
     End Function
 
     Protected Overridable Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Helper.NotImplemented() : Return False
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
 #Region "Resolution region"
@@ -300,13 +300,12 @@ Public MustInherit Class Expression
     End Function
 
     Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        Helper.NotImplemented(Me.GetType.ToString & ".Clone() not implemented.")
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Return Nothing
     End Function
 
     Protected Overridable Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Helper.NotImplemented(Me.GetType.ToString & ".ResolveExpressionInternal(ResolveInfo) not implemented.")
-        Return False
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
     Function ResolveAddressOfExpression(ByVal DelegateType As Type) As Boolean
@@ -441,7 +440,7 @@ Public MustInherit Class Expression
                     exp = New MemberAccessExpression(Me)
                     exp.Init(m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias, mae.SecondExpression)
                     If Not exp.ResolveExpression(ResolveInfo.Default(Compiler)) Then
-                        Helper.NotImplemented("Some error message here.")
+                        Helper.AddError(Me)
                         Return Nothing
                     End If
                     Return exp.ReclassifyToValueExpression
@@ -451,7 +450,8 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.Namespace
                 Throw New InternalException(Me)
             Case Else
-                Helper.NotImplemented() : Return Nothing
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return Nothing
         End Select
 
         Return result

@@ -25,10 +25,10 @@ Public Class LShiftExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim expInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
-        result = m_RightExpression.GenerateCode(expInfo.Clone(Compiler.TypeCache.System_Int32)) AndAlso result
+        result = m_RightExpression.GenerateCode(expInfo.Clone(Me, Compiler.TypeCache.System_Int32)) AndAlso result
 
         Select Case OperandTypeCode
             Case TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Byte, TypeCode.SByte

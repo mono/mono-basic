@@ -60,10 +60,10 @@ Public Class MethodPointerClassification
         Helper.Assert(m_DelegateType IsNot Nothing)
 
         If m_MethodGroup.InstanceExpression IsNot Nothing Then
-            result = m_MethodGroup.InstanceExpression.GenerateCode(Info.Clone(True, False, m_MethodGroup.InstanceExpression.ExpressionType)) AndAlso result
+            result = m_MethodGroup.InstanceExpression.GenerateCode(Info.Clone(Parent, True, False, m_MethodGroup.InstanceExpression.ExpressionType)) AndAlso result
             Emitter.EmitDup(Info)
         Else
-            Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Object))
+            Emitter.EmitLoadNull(Info.Clone(Parent, True, False, Compiler.TypeCache.System_Object))
         End If
 
         Emitter.EmitLoadVftn(Info, m_ResolvedMethod)
@@ -99,7 +99,7 @@ Public Class MethodPointerClassification
         Dim params() As ParameterInfo = Helper.GetDelegateArguments(Compiler, DelegateType)
         Dim paramtypes() As Type = Helper.GetParameterTypes(params)
 
-        m_ResolvedMethod = CType(Helper.ResolveGroupExact(Compiler, m_MethodGroup.Group, paramtypes), MethodBase)
+        m_ResolvedMethod = CType(Helper.ResolveGroupExact(Me.Parent, m_MethodGroup.Group, paramtypes), MethodBase)
         m_DelegateType = DelegateType
 
         result = m_ResolvedMethod IsNot Nothing AndAlso result

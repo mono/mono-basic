@@ -20,7 +20,7 @@
 Public Class GlobalNamespace
     Inherits [Namespace]
 
-    Sub New(ByVal Parent As IBaseObject)
+    Sub New(ByVal Parent As BaseObject)
         MyBase.New(Parent, "", True)
         m_Global = True
     End Sub

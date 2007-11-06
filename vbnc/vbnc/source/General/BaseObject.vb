@@ -29,7 +29,7 @@ Public MustInherit Class BaseObject
     ''' The parent of this object
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Parent As IBaseObject
+    Private m_Parent As BaseObject
 
     ''' <summary>
     ''' The location in the source of this object.
@@ -125,7 +125,7 @@ Public MustInherit Class BaseObject
     ''' <summary>
     ''' Create a new base object with the specified Parent.
     ''' </summary>
-    Protected Sub New(ByVal Parent As IBaseObject)
+    Protected Sub New(ByVal Parent As BaseObject)
         m_Parent = Parent
         If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentToken.Location
         'If m_Parent IsNot Nothing AndAlso tm IsNot Nothing Then m_Location = tm.CurrentToken.Location
@@ -144,7 +144,7 @@ Public MustInherit Class BaseObject
     ''' <summary>
     ''' Create a new base object with the specified Parent.
     ''' </summary>
-    Protected Sub New(ByVal Parent As IBaseObject, ByVal Location As Span)
+    Protected Sub New(ByVal Parent As BaseObject, ByVal Location As Span)
         m_Parent = Parent
         m_Location = Location
 #If DEBUG Then
@@ -173,7 +173,7 @@ Public MustInherit Class BaseObject
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Private Property pParent() As IBaseObject Implements IBaseObject.Parent
+    Private Property pParent() As BaseObject Implements IBaseObject.Parent
         Get
             Dim tmpPTD As PartialTypeDeclaration = TryCast(m_Parent, PartialTypeDeclaration)
             If tmpPTD IsNot Nothing AndAlso tmpPTD.IsPartial AndAlso tmpPTD.IsMainPartialDeclaration = False Then
@@ -183,7 +183,7 @@ Public MustInherit Class BaseObject
             End If
             Return m_Parent
         End Get
-        Set(ByVal value As IBaseObject)
+        Set(ByVal value As BaseObject)
             m_Parent = value
         End Set
     End Property
@@ -283,13 +283,13 @@ Public MustInherit Class BaseObject
 
     Overridable Function ResolveCode(ByVal Info As ResolveInfo) As Boolean Implements IBaseObject.ResolveCode
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveInfo ignored for '" & Me.GetType.ToString & "'")
-        Helper.NotImplemented("ResolveCode not implemented for type: " & Me.GetType.ToString())
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         'Return ResolveCode()
     End Function
 
     Friend Overridable Function GenerateCode(ByVal Info As EmitInfo) As Boolean Implements IBaseObject.GenerateCode
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "The class " & Me.GetType.ToString & " does not implement GenerateCode()")
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
     ''' <summary>
@@ -300,7 +300,7 @@ Public MustInherit Class BaseObject
     <Obsolete("Throws NotImplementedException() - The class you are using does not override this method!")> _
     Overridable Function Define() As Boolean Implements IBaseObject.Define
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "The class " & Me.GetType.ToString & " does not implement Define()")
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
     '#If DEBUG Then

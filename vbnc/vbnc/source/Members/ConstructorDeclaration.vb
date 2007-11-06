@@ -240,7 +240,7 @@ Public Class ConstructorDeclaration
             result = Signature.Parameters(i).Define(Me.ConstructorBuilder) AndAlso result
         Next
 
-        Compiler.Helper.DumpDefine(Compiler, m_ConstructorBuilder)
+        Compiler.Helper.DumpDefine(Me, m_ConstructorBuilder)
 
         Return result
     End Function
@@ -270,7 +270,7 @@ Public Class ConstructorDeclaration
             Emitter.EmitLoadMe(Info, ParentType.BaseType)
             For i As Integer = 0 To params.Length - 1
                 Helper.Assert(params(i).IsOptional)
-                Emitter.EmitLoadValue(Info.Clone(True, False, params(i).ParameterType), params(i).DefaultValue)
+                Emitter.EmitLoadValue(Info.Clone(Me, True, False, params(i).ParameterType), params(i).DefaultValue)
             Next
 
             Emitter.EmitCall(Info, m_DefaultBaseConstructor)
@@ -330,7 +330,7 @@ Public Class ConstructorDeclaration
             defaultctor = classtype.GetBaseDefaultConstructor()
             If defaultctor IsNot Nothing AndAlso defaultctor.IsPrivate = False Then
                 If defaultctor.IsPrivate OrElse (defaultctor.IsFamilyOrAssembly AndAlso defaultctor.DeclaringType.Assembly IsNot Me.Compiler.AssemblyBuilder) Then
-                    Helper.AddError("Base class does not have an accessible default constructor")
+                    Helper.AddError(Me, "Base class does not have an accessible default constructor")
                 Else
                     m_DefaultBaseConstructor = defaultctor
 
@@ -345,7 +345,7 @@ Public Class ConstructorDeclaration
 #End If
                 End If
             Else
-                Helper.AddError("Base class does not have a default constructor")
+                Helper.AddError(Me, "Base class does not have a default constructor")
             End If
         End If
     End Sub

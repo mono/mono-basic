@@ -79,7 +79,7 @@ Public MustInherit Class UnaryExpression
                 m_Expression = m_Expression.ReclassifyToValueExpression
                 result = m_Expression.ResolveExpression(Info) AndAlso result
             Else
-                Helper.AddError("Value must be value classification.")
+                result = Helper.AddError(Me, "Value must be value classification.") AndAlso result
             End If
         End If
 

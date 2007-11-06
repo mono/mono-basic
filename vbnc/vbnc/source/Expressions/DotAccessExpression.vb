@@ -39,6 +39,6 @@ Public Class DotAccessExpression
 #End If
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 End Class

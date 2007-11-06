@@ -3684,7 +3684,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30744 = 30744
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Internal compiler error."
     ''' VB   = "Internal compiler error."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6839,6 +6839,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC90023 = 90023
+
+    ''' <summary>
+    ''' VBNC = "You've encountered something in the compiler which is not implemented. Please file a bug (see instructions here: http://mono-project.com/Bugs)"
+    ''' VB   = "(no corresponding VB warning)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC99997 = 99997
 
     ''' <summary>
     ''' VBNC = "{0}"

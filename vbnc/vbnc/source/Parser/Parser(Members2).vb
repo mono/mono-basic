@@ -641,7 +641,7 @@ Partial Class Parser
         If tm.CurrentToken.IsStringLiteral Then
             m_StringLiteral = tm.CurrentToken
         Else
-            Helper.NotImplemented() 'TODO: Adderror
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
         End If
 
         result.Init(m_StringLiteral)
@@ -664,7 +664,7 @@ Partial Class Parser
             m_StringLiteral = tm.CurrentToken
             tm.NextToken()
         Else
-            Helper.NotImplemented() 'TODO: Adderror
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
             m_StringLiteral = Nothing
         End If
 

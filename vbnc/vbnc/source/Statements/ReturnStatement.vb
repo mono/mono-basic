@@ -37,7 +37,7 @@ Public Class ReturnStatement
             Helper.Assert(m_Expression Is Nothing)
         Else
             Helper.Assert(m_Expression IsNot Nothing)
-            result = m_Expression.GenerateCode(Info.Clone(True, , Info.Method.Signature.ReturnType)) AndAlso result
+            result = m_Expression.GenerateCode(Info.Clone(Me, True, , Info.Method.Signature.ReturnType)) AndAlso result
         End If
 
         Emitter.EmitRetOrLeave(Info, Me, m_Expression IsNot Nothing)

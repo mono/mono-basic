@@ -418,11 +418,12 @@ Public Class TypeResolution
         End If
     End Function
 
-    Function IsImplicitlyConvertible(ByVal Compiler As Compiler, ByVal FromType As TypeDescriptor, ByVal ToType As TypeDescriptor) As Boolean
-        Return IsImplicitlyConvertible(Compiler, FromType.TypeInReflection, ToType.TypeInReflection)
+    Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As TypeDescriptor, ByVal ToType As TypeDescriptor) As Boolean
+        Return IsImplicitlyConvertible(Context, FromType.TypeInReflection, ToType.TypeInReflection)
     End Function
 
-    Function IsImplicitlyConvertible(ByVal Compiler As Compiler, ByVal FromType As Type, ByVal ToType As Type) As Boolean
+    Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As Type, ByVal ToType As Type) As Boolean
+        Dim Compiler As Compiler = Context.Compiler
         Dim tpFrom, tpTo As TypeCode
         If Helper.CompareType(Compiler.TypeCache.Nothing, FromType) Then Return True
         If FromType.IsByRef Then FromType = FromType.GetElementType
@@ -430,7 +431,7 @@ Public Class TypeResolution
         tpFrom = Helper.GetTypeCode(Compiler, FromType)
         tpTo = Helper.GetTypeCode(Compiler, ToType)
         If tpTo = TypeCode.Object Then
-            Return Helper.IsAssignable(Compiler, FromType, ToType) ' ToType.IsAssignableFrom(FromType)
+            Return Helper.IsAssignable(Context, FromType, ToType) ' ToType.IsAssignableFrom(FromType)
         ElseIf Helper.IsEnum(Compiler, ToType) AndAlso Helper.IsEnum(Compiler, FromType) = False Then
             Return False
         ElseIf Helper.IsEnum(Compiler, ToType) AndAlso Helper.IsEnum(Compiler, FromType) Then
@@ -1017,13 +1018,13 @@ Public Class TypeResolution
                 Dim result As Boolean = True
                 result = DirectCast(types(0), TypeDescriptor).Declaration.CreateType() AndAlso result
                 If result = False Then
-                    Helper.NotImplemented()
+                    Throw New InternalException()
                 End If
             Else
                 Throw New InternalException("Found type " & args.Name & ", but it isn't a TypeDescriptor!")
             End If
         Else
-            Helper.AddError("Compiler cannot decide between several types with the name " & args.Name)
+            Helper.AddError(Compiler, Span.CommandLineSpan, "Compiler cannot decide between several types with the name " & args.Name)
         End If
 
         Return Compiler.AssemblyBuilder

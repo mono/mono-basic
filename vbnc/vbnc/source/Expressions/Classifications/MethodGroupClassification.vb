@@ -107,7 +107,7 @@ Public Class MethodGroupClassification
         If Info.IsRHS Then
             result = GenerateCodeAsValue(Info) AndAlso result
         ElseIf Info.IsLHS Then
-            Helper.NotImplemented()
+            Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         Else
             Throw New InternalException(Me)
         End If
@@ -345,13 +345,13 @@ Public Class MethodGroupClassification
                 methodtypes = Type.EmptyTypes
             Case Else
                 methodtypes = Nothing
-                Helper.NotImplemented()
+                codedMember.Compiler.Report.ShowMessage(Messages.VBNC99997, codedMember.Location)
         End Select
 
         For Each member As MemberInfo In grp
             Select Case member.MemberType
                 Case MemberTypes.Method
-                    grptypes = Helper.GetParameterTypes(codedMember.Compiler, DirectCast(member, MethodInfo))
+                    grptypes = Helper.GetParameterTypes(codedMember.Parent, DirectCast(member, MethodInfo))
                 Case MemberTypes.Property
                     grptypes = Helper.GetParameterTypes(Helper.GetParameters(codedMember.Compiler, DirectCast(member, PropertyInfo)))
                 Case MemberTypes.Event

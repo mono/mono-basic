@@ -75,7 +75,7 @@ Public Class RedimClause
         Helper.Assert(m_Rank >= 1)
 
         If m_Rank = 1 Then
-            result = m_ArgumentList.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Int32), rankTypes) AndAlso result
+            result = m_ArgumentList.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32), rankTypes) AndAlso result
             Emitter.EmitNewArr(Info, m_ElementType)
         Else
             'Dim ctor As ConstructorInfo
@@ -104,7 +104,7 @@ Public Class RedimClause
 
     Private Function GenerateCodeForPreserve(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        result = m_Expression.GenerateCode(Info.Clone(True, False, m_ArrayType)) AndAlso result
+        result = m_Expression.GenerateCode(Info.Clone(Me, True, False, m_ArrayType)) AndAlso result
         Emitter.EmitCastClass(Info, m_Expression.ExpressionType, Compiler.TypeCache.System_Array)
         result = GenerateCodeForNewArray(Info) AndAlso result
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Utils__CopyArray_Array_Array)
@@ -125,7 +125,7 @@ Public Class RedimClause
         Dim exp As CompilerGeneratedExpression
         If preserve Then
             exp = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeForPreserve), m_ArrayType)
-            result = m_Expression.GenerateCode(Info.Clone(exp)) AndAlso result
+            result = m_Expression.GenerateCode(Info.Clone(Me, exp)) AndAlso result
         Else
             result = m_AssignStatement.GenerateCode(Info) AndAlso result
         End If
@@ -155,12 +155,12 @@ Public Class RedimClause
                 m_ArrayType = m_ElementType.MakeArrayType(m_Rank)
             End If
         ElseIf m_ArrayType.IsArray = False Then
-            Helper.AddError()
+            Return Helper.AddError(Me)
         Else
             m_Rank = m_ArrayType.GetArrayRank
             m_ElementType = m_ArrayType.GetElementType()
             If m_ArgumentList.Count <> m_Rank Then
-                Helper.AddError()
+                Return Helper.AddError(Me)
             End If
         End If
 
@@ -191,11 +191,11 @@ Public Class RedimClause
         ElseIf m_Expression.Classification.IsVariableClassification Then
         ElseIf m_Expression.Classification.IsPropertyAccessClassification Then
         Else
-            Helper.AddError("Redim clause must be classifiable as a property access or variable.")
+            Return Helper.AddError(Me, "Redim clause must be classifiable as a property access or variable.")
         End If
         If IsPreserve Then
             If m_Expression.Classification.CanBeValueClassification = False Then
-                Helper.AddError("Redim Preserve clause must be classifiable as a value.")
+                Return Helper.AddError(Me, "Redim Preserve clause must be classifiable as a value.")
             End If
         End If
 

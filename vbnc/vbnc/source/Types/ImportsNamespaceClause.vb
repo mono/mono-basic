@@ -105,7 +105,7 @@ Public Class ImportsNamespaceClause
         ElseIf nri.FoundIs(Of TypeDescriptor)() Then
             m_Type = nri.FoundAs(Of TypeDescriptor)()
         Else
-            Helper.AddError()
+            Helper.AddError(Me)
         End If
         Return result
     End Function

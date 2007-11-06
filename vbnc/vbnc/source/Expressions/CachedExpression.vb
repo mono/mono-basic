@@ -32,7 +32,7 @@ Public Class CachedExpression
         Dim result As Boolean = True
 
         If m_Local Is Nothing Then
-            result = m_Expression.GenerateCode(Info.Clone(True, False, m_Expression.ExpressionType)) AndAlso result
+            result = m_Expression.GenerateCode(Info.Clone(Me, True, False, m_Expression.ExpressionType)) AndAlso result
             m_Local = Emitter.DeclareLocal(Info, m_Expression.ExpressionType)
             Emitter.EmitStoreVariable(Info, m_Local)
         End If

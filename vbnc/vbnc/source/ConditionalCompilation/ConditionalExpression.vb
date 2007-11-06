@@ -415,7 +415,7 @@ Public Class ConditionalExpression
                         Throw New InternalException(Me)
                 End Select
             Catch ex As Exception
-                Helper.AddError(ex.Message & VB.vbNewLine & ex.StackTrace)
+                Helper.AddError(Me, ex.Message & VB.vbNewLine & ex.StackTrace)
                 Return False
             End Try
         End While

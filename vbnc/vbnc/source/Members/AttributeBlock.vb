@@ -40,7 +40,7 @@ Public Class AttributeBlock
         Return m_List.ResolveCode(info)
     End Function
 
-    Sub New(ByVal Parent As IBaseObject, ByVal ParamArray Attributes() As Attribute)
+    Sub New(ByVal Parent As BaseObject, ByVal ParamArray Attributes() As Attribute)
         MyBase.New(Parent)
         m_List = New AttributeList(Me)
         m_List.List.AddRange(Attributes)

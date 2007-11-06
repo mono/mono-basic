@@ -78,7 +78,7 @@ Public Class UsingStatement
             Next
         ElseIf usingExp IsNot Nothing Then
             Dim local As LocalBuilder = Emitter.DeclareLocal(Info, usingExp.ExpressionType)
-            result = usingExp.GenerateCode(Info.Clone(True, False, usingExp.ExpressionType)) AndAlso result
+            result = usingExp.GenerateCode(Info.Clone(Me, True, False, usingExp.ExpressionType)) AndAlso result
             Emitter.EmitStoreVariable(Info, local)
             usingVars.Push(local)
             exceptionEnds.Push(Info.ILGen.BeginExceptionBlock())

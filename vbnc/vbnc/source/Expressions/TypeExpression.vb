@@ -38,7 +38,7 @@ Public Class TypeExpression
     End Function
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Sub New(ByVal Parent As ParsedObject)
@@ -52,6 +52,6 @@ Public Class TypeExpression
 #End If
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
     End Function
 End Class

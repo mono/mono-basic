@@ -78,8 +78,7 @@ Public Class ExitStatement
                     Throw New InternalException(Me)
                 End If
             Case Else
-                Helper.NotImplemented()
-                Throw New InternalException(Me)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End Select
 
         Return result

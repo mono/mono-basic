@@ -346,6 +346,10 @@ Public Class Report
             End If
         End If
 
+#If TRACEMESSAGES Then
+        Console.WriteLine(Environment.StackTrace)
+#End If
+
 #If STOPONERROR Then
         If Helper.IsDebugging AndAlso Message.Level = MessageLevel.Error Then
             Helper.Stop()

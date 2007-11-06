@@ -116,7 +116,7 @@ Public Class ForEachStatement
             Emitter.EmitLoadObject(Info, varType)
             Emitter.MarkLabel(Info, valueTPLoaded)
         Else
-            Emitter.EmitConversion(Compiler.TypeCache.System_Object, varType, Info.Clone(True, True, varType))
+            Emitter.EmitConversion(Compiler.TypeCache.System_Object, varType, Info.Clone(Me, True, True, varType))
         End If
         Return True
     End Function
@@ -137,10 +137,10 @@ Public Class ForEachStatement
         beginEx = Info.ILGen.BeginExceptionBlock()
 
         Compiler.Helper.AddCheck("Check correct type of foreach loop container.")
-        Helper.Assert(Helper.CompareType(Compiler.TypeCache.System_Object, m_InExpression.ExpressionType) OrElse Helper.IsAssignable(Compiler, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable))
+        Helper.Assert(Helper.CompareType(Compiler.TypeCache.System_Object, m_InExpression.ExpressionType) OrElse Helper.IsAssignable(Me, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable))
 
         'Load the container variable and get the enumerator
-        result = m_InExpression.GenerateCode(Info.Clone(True, False, m_InExpression.ExpressionType)) AndAlso result
+        result = m_InExpression.GenerateCode(Info.Clone(Me, True, False, m_InExpression.ExpressionType)) AndAlso result
         Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable)
         Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator)
         Emitter.EmitStoreVariable(Info, m_Enumerator)
@@ -153,7 +153,7 @@ Public Class ForEachStatement
 
         Emitter.EmitNop(Info)
         Dim cge As New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCode_LoadCurrentLoopVariable), m_LoopControlVariable.VariableType)
-        result = m_LoopControlVariable.EmitStoreVariable(Info.Clone(cge)) AndAlso result
+        result = m_LoopControlVariable.EmitStoreVariable(Info.Clone(Me, cge)) AndAlso result
 
         result = CodeBlock.GenerateCode(Info) AndAlso result
 

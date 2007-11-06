@@ -176,10 +176,10 @@ Public Class ForStatement
         Dim result As Boolean = True
         Select Case Data.Type
             Case LoopCounterTypes.Array
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Case LoopCounterTypes.Field
                 If Data.InstanceExpression IsNot Nothing Then
-                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Me, Data.InstanceExpression.ExpressionType)) AndAlso result
                 End If
                 Emitter.EmitLoadVariableLocation(Info, Data.FieldInfo)
             Case LoopCounterTypes.Local
@@ -194,10 +194,10 @@ Public Class ForStatement
         Dim result As Boolean = True
         Select Case Data.Type
             Case LoopCounterTypes.Array
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Case LoopCounterTypes.Field
                 If Data.InstanceExpression IsNot Nothing Then
-                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+                    result = Data.InstanceExpression.GenerateCode(Info.Clone(Me, Data.InstanceExpression.ExpressionType)) AndAlso result
                 End If
                 Emitter.EmitLoadVariable(Info, Data.FieldInfo)
             Case LoopCounterTypes.Local
@@ -212,7 +212,7 @@ Public Class ForStatement
         Dim result As Boolean = True
 
         If Data.InstanceExpression IsNot Nothing Then
-            result = Data.InstanceExpression.GenerateCode(Info.Clone(Data.InstanceExpression.ExpressionType)) AndAlso result
+            result = Data.InstanceExpression.GenerateCode(Info.Clone(Me, Data.InstanceExpression.ExpressionType)) AndAlso result
         End If
 
         Return result
@@ -222,7 +222,7 @@ Public Class ForStatement
         Dim result As Boolean = True
         Select Case Data.Type
             Case LoopCounterTypes.Array
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Case LoopCounterTypes.Field
                 Emitter.EmitStoreField(Info, Data.FieldInfo)
             Case LoopCounterTypes.Local
@@ -257,7 +257,7 @@ Public Class ForStatement
         EndLabel = Info.ILGen.DefineLabel
         m_NextIteration = Info.ILGen.DefineLabel
 
-        loadInfo = Info.Clone(True, False, m_LoopType)
+        loadInfo = Info.Clone(Me, True, False, m_LoopType)
 
         'Create the localbuilder
         If m_LoopControlVariable.IsVariableDeclaration Then
@@ -378,7 +378,7 @@ Public Class ForStatement
                     Emitter.EmitGE(Info, m_LoopType)
                     Emitter.EmitBranchIfTrue(Info, startlabel)
                 Else
-                    Helper.AddError("Infinite loop")
+                    Helper.AddError(Me, "Infinite loop")
                 End If
             Else
                 Dim negativeLabel As Label
@@ -388,7 +388,7 @@ Public Class ForStatement
                 endCheck = Emitter.DefineLabel(Info)
 
                 Emitter.EmitLoadVariable(Info, loopStep)
-                Emitter.EmitLoadValue(Info.Clone(True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
+                Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
                 Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
                 Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
                 Info.Stack.Pop(Compiler.TypeCache.System_Boolean)

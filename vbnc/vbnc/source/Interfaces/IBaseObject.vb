@@ -20,7 +20,7 @@
 Public Interface IBaseObject
     ReadOnly Property Assembly() As AssemblyDeclaration
     Property Location() As Span
-    Property Parent() As IBaseObject
+    Property Parent() As BaseObject
     ReadOnly Property Compiler() As Compiler
     ReadOnly Property FullName() As String
     Function ResolveCode(ByVal Info As ResolveInfo) As Boolean

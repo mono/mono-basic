@@ -239,7 +239,7 @@ Public Class CodeFile
     ''' </summary>
     ''' <param name="FileName"></param>
     ''' <remarks></remarks>
-    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As IBaseObject)
+    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As BaseObject)
         MyBase.New(Parent)
         'Try to get the absolute path for all files.
         If FileName Is Nothing OrElse FileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0 Then
@@ -250,7 +250,7 @@ Public Class CodeFile
         m_RelativePath = RelativePath
     End Sub
 
-    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As IBaseObject, ByVal Code As String)
+    Sub New(ByVal FileName As String, ByVal RelativePath As String, ByVal Parent As BaseObject, ByVal Code As String)
         Me.New(FileName, RelativePath, Parent)
         m_Code = Code
     End Sub

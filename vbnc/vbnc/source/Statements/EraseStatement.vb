@@ -50,7 +50,7 @@ Public Class EraseStatement
         result = nullExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
         For i As Integer = 0 To m_Targets.Count - 1
             Dim exp As Expression = DirectCast(m_Targets.Item(i), Expression)
-            result = exp.GenerateCode(Info.Clone(nullExp)) AndAlso result
+            result = exp.GenerateCode(Info.Clone(Me, nullExp)) AndAlso result
         Next
 
         Return result

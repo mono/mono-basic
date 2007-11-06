@@ -147,7 +147,7 @@ Public MustInherit Class MethodDeclaration
             m_MethodBuilder.SetImplementationFlags(MethodImplAttributes.Value)
         End If
 
-        Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
+        Compiler.Helper.DumpDefine(Me, m_MethodBuilder)
 
         Return result
     End Function

@@ -470,7 +470,7 @@ Public MustInherit Class TypeDeclaration
             End If
         Next
 
-        Helper.NotImplementedYet("Check that the property is indexed.")
+        'Helper.NotImplementedYet("Check that the property is indexed.")
         Dim attrib As Attribute
         attrib = New Attribute(Me, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, Name)
         result = attrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result

@@ -116,12 +116,12 @@ Public Class PropertyGroupClassification
                     m_ResolvedProperty = m_Members(0)
                     Return m_Members(0).PropertyType
                 Else
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                 End If
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             Return Nothing
         End Get
     End Property

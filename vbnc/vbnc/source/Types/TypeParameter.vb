@@ -137,7 +137,7 @@ Public Class TypeParameter
                         interfaces.Add(constraint.TypeName.ResolvedType)
                     Else
                         If basetype IsNot Nothing Then
-                            Helper.AddError()
+                            result = Helper.AddError(Me) AndAlso result
                             result = False
                         Else
                             basetype = constraint.TypeName.ResolvedType

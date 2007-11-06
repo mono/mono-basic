@@ -36,11 +36,11 @@ Public Class [Namespace]
         End Get
     End Property
 
-    Protected Sub New(ByVal Parent As IBaseObject)
+    Protected Sub New(ByVal Parent As BaseObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As IBaseObject, ByVal Previous As [Namespace], ByVal Name As String)
+    Sub New(ByVal Parent As BaseObject, ByVal Previous As [Namespace], ByVal Name As String)
         MyBase.New(Parent)
         If Previous Is Nothing Then Throw New ArgumentNullException("Namespace")
 
@@ -53,7 +53,7 @@ Public Class [Namespace]
         End If
     End Sub
 
-    Sub New(ByVal Parent As IBaseObject, ByVal Name As String, ByVal [Global] As Boolean)
+    Sub New(ByVal Parent As BaseObject, ByVal Name As String, ByVal [Global] As Boolean)
         MyBase.New(Parent)
         If Name = "" AndAlso [Global] = False Then Throw New ArgumentNullException("Name")
         m_Name = Name

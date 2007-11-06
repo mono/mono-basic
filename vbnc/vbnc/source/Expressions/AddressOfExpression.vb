@@ -98,7 +98,7 @@ Public Class AddressOfExpression
 
             m_ExpressionType = Info.Compiler.TypeCache.DelegateUnresolvedType
         Else
-            Helper.AddError(Me.Location.ToString(Compiler))
+            Helper.AddError(Me, Me.Location.ToString(Compiler))
         End If
 
         Return result

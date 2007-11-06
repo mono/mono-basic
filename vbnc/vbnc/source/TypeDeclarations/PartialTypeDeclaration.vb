@@ -115,7 +115,8 @@ Public MustInherit Class PartialTypeDeclaration
         Helper.Assert(Helper.CompareName(Me.Name, Declaration.Name) AndAlso Helper.CompareName(Me.Namespace, Declaration.Namespace))
 
         If Declaration.GetType IsNot Me.GetType Then
-            Helper.AddError("Cannot mix partial class declarations with partial structure declarations")
+            Helper.AddError(Me, "Cannot mix partial class declarations with partial structure declarations")
+            Return
         End If
 
         If m_MainDeclaration Is Nothing Then
@@ -192,7 +193,7 @@ Public MustInherit Class PartialTypeDeclaration
                     Dim tmpType As Type
                     tmpType = CheckUniqueType(inheritedTypes)
                     If tmpType Is Nothing Then
-                        Helper.AddError("Partial classes must inherit from only one base class.")
+                        Return Helper.AddError(Me, "Partial classes must inherit from only one base class.")
                     Else
                         BaseType = tmpType
                     End If

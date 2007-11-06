@@ -32,15 +32,13 @@ Public MustInherit Class OperatorExpression
     Inherits Expression
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-
-        Helper.NotImplemented()
-
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Shared Function IsUnaryMe(ByVal tm As tm) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return tm.Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
 
         Return result
     End Function
@@ -48,7 +46,7 @@ Public MustInherit Class OperatorExpression
     Shared Function IsBinaryMe(ByVal tm As tm) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return tm.Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
 
         Return result
     End Function
@@ -56,7 +54,7 @@ Public MustInherit Class OperatorExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
 
         Return result
     End Function
@@ -67,7 +65,7 @@ Public MustInherit Class OperatorExpression
 
 #If DEBUG Then
     Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Helper.NotImplemented()
+
     End Sub
 #End If
 
