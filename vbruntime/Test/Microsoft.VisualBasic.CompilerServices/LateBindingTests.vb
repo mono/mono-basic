@@ -51,6 +51,28 @@ Public Class LateBindingTests
     Dim ul As ULong = 1
 #End If
 
+    <TestFixture()> _
+    Public Class Bug344217
+        Public Class StrangeClass
+            Sub TheFunc(ByRef output(,) As Double)
+                output(0, 0) = 1.0
+            End Sub
+        End Class
+
+        <Test()> _
+       Public Sub Main()
+
+            Dim o As Object
+            o = New StrangeClass
+            Dim data(1, 1) As Double
+            o.TheFunc(data)
+            Assert.AreEqual(1.0, data(0, 0), "0,0")
+            Assert.AreEqual(0.0, data(0, 1), "0,1")
+            Assert.AreEqual(0.0, data(1, 0), "1,0")
+            Assert.AreEqual(0.0, data(1, 1), "1,1")
+        End Sub
+    End Class
+
     <Test()> _
     Public Sub A_ShouldFailWithMono()
         ' FIXME: used to determine the environment the tests run in. Should be removed.

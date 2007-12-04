@@ -1,3 +1,7 @@
+2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBindingTests.vb: Add test for #344217.
+
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* OperatorsTests.vb: Added test for #328099.
