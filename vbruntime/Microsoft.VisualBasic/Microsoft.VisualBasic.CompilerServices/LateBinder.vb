@@ -220,9 +220,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                                     If oargs(i).GetType().IsArray Then
                                         'array that was passed by ref
                                         Dim arr As Array = CType(clone(reverseMapping), Array)
-                                        For j As Integer = 0 To arr.Length - 1
-                                            CType(oargs(i), Array).SetValue(arr.GetValue(j), j)
-                                        Next
+                                        Array.Copy(arr, CType(oargs(i), Array), arr.Length)
                                         args(i) = oargs(i)
                                     ElseIf oargs(i).GetType().IsPrimitive Then
                                         'primitives passed by ref should be updated

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,10 +14,12 @@
     <OutputPath>../bin/</OutputPath>
     <DocumentationFile>Microsoft.VisualBasic.xml</DocumentationFile>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CompilerResponseFile>2005VB.rsp</CompilerResponseFile>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>false</DefineTrace>
@@ -25,8 +27,8 @@
     </NoWarn>
     <DefineConstants>NET_2_0=True,_MYTYPE="Empty",mono_not_yet=true,INDEVENV=true,NET_VER=2.0</DefineConstants>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <WarningLevel>4</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
@@ -34,22 +36,22 @@
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <RootNamespace>
     </RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CompilerResponseFile>2005VB.rsp</CompilerResponseFile>
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <Optimize>True</Optimize>
+    <Optimize>true</Optimize>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DebugSymbols>True</DebugSymbols>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DebugSymbols>true</DebugSymbols>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>4</WarningLevel>
@@ -58,33 +60,33 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <RootNamespace>
     </RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
     <RootNamespace>dummy_root</RootNamespace>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OutputPath>..\bin\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>INDEVENV=true,NET_2_0=true,NET_VER=2.0</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />

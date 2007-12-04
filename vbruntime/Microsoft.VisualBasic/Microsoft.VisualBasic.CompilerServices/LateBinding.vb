@@ -36,7 +36,12 @@ Imports System.Diagnostics
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class LateBinding
-
+        Public Class DebuggerStepThrough
+            Inherits Attribute
+        End Class
+        Public Class DebuggerHidden
+            Inherits Attribute
+        End Class
         Private Shared ReadOnly Property LBinder() As Microsoft.VisualBasic.CompilerServices.LateBinder
             Get
                 Return New LateBinder
@@ -137,7 +142,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Try
         End Sub
 
-        <DebuggerStepThrough(), DebuggerHidden()> _
+        '<DebuggerStepThrough(), DebuggerHidden()> _
         Public Shared Function LateGet(ByVal o As Object, ByVal objType As System.Type, ByVal name As String, ByVal args() As Object, ByVal paramnames() As String, ByVal CopyBack() As Boolean) As Object
             Dim realType As System.Type = objType
             If realType Is Nothing Then
@@ -145,12 +150,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             Dim flags As BindingFlags = BindingFlags.FlattenHierarchy Or _
-                                        BindingFlags.GetField Or _
                                         BindingFlags.GetProperty Or _
                                         BindingFlags.IgnoreCase Or _
                                         BindingFlags.Instance Or _
                                         BindingFlags.InvokeMethod Or _
-                                        BindingFlags.NonPublic Or _
                                         BindingFlags.OptionalParamBinding Or _
                                         BindingFlags.Public Or _
                                         BindingFlags.Static
