@@ -31,6 +31,7 @@ Imports System.Globalization
 Imports System.Diagnostics
 
 Namespace Microsoft.VisualBasic.Devices
+    <DebuggerTypeProxy(GetType(ComputerInfoDebugView))> _
     Public Class ComputerInfo
         Public Sub New()
             'Empty
@@ -87,6 +88,10 @@ Namespace Microsoft.VisualBasic.Devices
                 Throw New NotImplementedException()
             End Get
         End Property
+
+        Private Class ComputerInfoDebugView
+            'If you want to view ComputerInfo classes in VS, implement me
+        End Class
     End Class
 End Namespace
 #End If

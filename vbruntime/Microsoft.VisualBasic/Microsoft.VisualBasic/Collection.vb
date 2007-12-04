@@ -39,7 +39,7 @@ Imports System.Reflection
 
 Namespace Microsoft.VisualBasic
 #If NET_VER >= 2.0 Then
-    '<DebuggerTypeProxy ("??")>
+    <DebuggerTypeProxy(GetType(Collection.CollectionDebugView))> _
     <Serializable()> _
     <DebuggerDisplay("Count = {Count}")> _
     Public NotInheritable Class Collection
@@ -522,6 +522,12 @@ Namespace Microsoft.VisualBasic
         Private Sub OnDeserialization(ByVal sender As Object) Implements System.Runtime.Serialization.IDeserializationCallback.OnDeserialization
             Throw New NotImplementedException
         End Sub
+#End If
+
+#If NET_VER >= 2.0 Then
+        Private Class CollectionDebugView
+            'If you want to view Collection classes in VS, implement me
+        End Class
 #End If
     End Class
 End Namespace

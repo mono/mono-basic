@@ -1,5 +1,9 @@
 2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* LateBinding.vb: Revert last changes, wasn't supposed to go in.
+
+2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* LateBinder.vb: Implement compatibility with multidimensional arrays. Fixes
 	  #344217.
 

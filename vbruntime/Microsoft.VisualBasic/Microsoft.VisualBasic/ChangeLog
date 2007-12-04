@@ -1,3 +1,7 @@
+2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Collection.vb: Corcompare work.
+
 2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DateAndTime.vb: Remove warning.
