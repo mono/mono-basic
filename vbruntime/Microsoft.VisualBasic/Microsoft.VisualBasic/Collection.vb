@@ -525,7 +525,7 @@ Namespace Microsoft.VisualBasic
 #End If
 
 #If NET_VER >= 2.0 Then
-        Private Class CollectionDebugView
+        Friend Class CollectionDebugView
             'If you want to view Collection classes in VS, implement me
         End Class
 #End If

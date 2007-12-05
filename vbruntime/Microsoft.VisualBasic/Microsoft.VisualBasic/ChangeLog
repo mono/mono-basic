@@ -1,3 +1,7 @@
+2007-12-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Collection.vb: Make the changes actually compile.
+
 2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Collection.vb: Corcompare work.
