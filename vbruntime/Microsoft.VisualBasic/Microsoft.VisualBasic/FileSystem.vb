@@ -105,9 +105,10 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
-            Dim str_parent_dir, str_pattern As String
+            Dim str_parent_dir As String = Nothing
+            Dim str_pattern As String = Nothing
             Dim di As DirectoryInfo
-            Dim dirs As DirectoryInfo()
+            Dim dirs As DirectoryInfo() = nothing
             Dim files As FileInfo()
             Dim result As String
             Dim length As Integer
