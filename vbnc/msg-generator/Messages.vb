@@ -108,7 +108,7 @@ Class Messages
 			If Contains(id) Then
 				msg = Item(id)
 			Else
-				msg = New Message(id)
+				msg = New Message(id, "")
 				Add(msg)
 			End If
 			If IsVBNCMessages Then
@@ -145,10 +145,10 @@ nextline:
 				ElseIf xml.Name = "Message" Then
 					Dim id As Integer, level As String
                     id = CInt(xml.GetAttribute("id"))
-                    Console.WriteLine("Read ID=" & xml.GetAttribute("id") & ", converted into: " & id.ToString())
 					level = xml.GetAttribute("level")
+                    Console.WriteLine("Read ID=" & xml.GetAttribute("id") & ", level: " & level & ", converted into: " & id.ToString())
 					xml.Read()
-                    Dim msg As New Message(id)
+                    Dim msg As New Message(id, level)
 					While xml.Name <> "Message"
 						If xml.Name = "ChangedValue" OrElse xml.Name = "VBNCValue" Then
 							xml.Read()
