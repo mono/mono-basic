@@ -325,6 +325,8 @@ Public Class Attribute
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
         m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
+        Helper.GetFieldOrFieldBuilder(m_Fields)
+        Helper.GetPropertyOrPropertyBuilder(m_Properties)
 
         For i As Integer = 0 To m_Arguments.Length - 1
             Dim type As Type

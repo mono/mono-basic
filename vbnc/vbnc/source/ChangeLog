@@ -1,3 +1,8 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/Attribute.vb: Don't pass XDescriptors to SRE.
+	* General/Helper.vb: Added more GetXOrXBuilder methods.
+
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* TypeDeclarations/PartialTypeDeclaration.vb: Add attributes to the main

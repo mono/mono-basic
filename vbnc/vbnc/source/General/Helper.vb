@@ -2873,6 +2873,15 @@ Public Class Helper
         End If
     End Function
 
+    Shared Sub GetPropertyOrPropertyBuilder(ByVal Properties As Generic.List(Of PropertyInfo))
+        For i As Integer = 0 To Properties.Count - 1
+            Dim tmp As PropertyDescriptor = TryCast(Properties(i), PropertyDescriptor)
+            If tmp IsNot Nothing Then
+                Properties(i) = tmp.PropertyInReflection
+            End If
+        Next
+    End Sub
+
     Shared Function GetFieldOrFieldBuilder(ByVal Field As FieldInfo) As FieldInfo
         Dim tmp As FieldDescriptor = TryCast(Field, FieldDescriptor)
         If tmp Is Nothing Then
@@ -2881,6 +2890,15 @@ Public Class Helper
             Return tmp.FieldInReflection
         End If
     End Function
+
+    Shared Sub GetFieldOrFieldBuilder(ByVal Fields As Generic.List(Of FieldInfo))
+        For i As Integer = 0 To Fields.Count - 1
+            Dim tmp As FieldDescriptor = TryCast(Fields(i), FieldDescriptor)
+            If tmp IsNot Nothing Then
+                Fields(i) = tmp.FieldInReflection
+            End If
+        Next
+    End Sub
 
     ''' <summary>
     ''' 
