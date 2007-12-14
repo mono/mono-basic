@@ -289,6 +289,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Else
                             Return Nothing 'not-optional parameter missing
                         End If
+                    ElseIf args(mappedArgument) Is Missing.Value AndAlso parameters(i).IsOptional Then
+                        preparedArguments(i) = parameters(i).DefaultValue
                     Else
                         preparedArguments(i) = args(mappedArgument) 'initialize parameter from argument
                     End If

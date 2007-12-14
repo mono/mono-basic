@@ -1,3 +1,9 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBinder.vb: If Missing.Value has been provided for an optional
+	  parameter, call the method with the default value, not Missing.Value.
+	* ExceptionUtils.vb: Added GetVBException.
+
 2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* LateBinding.vb: Revert last changes, wasn't supposed to go in.

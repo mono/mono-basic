@@ -132,6 +132,7 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DesignerGeneratedAttribute.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\TypeCombinations.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\VBErrors.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\Versioned.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DateType.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\DecimalType.vb" />
@@ -165,13 +166,11 @@
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\MyWebClient.vb">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Microsoft.VisualBasic.Devices\Network.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventArgs.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventHandler.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\MyProgressDialog.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Microsoft.VisualBasic.Devices\Ports.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Ports.vb" />
@@ -182,10 +181,8 @@
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystem.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperation.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUI.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUIQuestion.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineException.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\RecycleOption.vb" />

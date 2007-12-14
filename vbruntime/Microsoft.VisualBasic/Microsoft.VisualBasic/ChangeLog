@@ -1,3 +1,9 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ErrObject.vb: Make GetExceptionFromNumber friend so that ExceptionUtils
+	  can access it.
+	* FileSystem.vb: Implement FreeFile,FileClose and partially FileOpen.
+
 2007-12-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileSystem.vb: Remove a couple of warnings.
