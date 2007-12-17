@@ -1,3 +1,7 @@
+2007-12-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileSystem.vb: Make this compile with vbc 7.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ErrObject.vb: Make GetExceptionFromNumber friend so that ExceptionUtils

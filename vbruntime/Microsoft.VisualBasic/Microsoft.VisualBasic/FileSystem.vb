@@ -31,6 +31,7 @@
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic.CompilerServices
+Imports System.Collections
 
 Namespace Microsoft.VisualBasic
     Public Module FileSystem
@@ -273,7 +274,7 @@ Namespace Microsoft.VisualBasic
 
         Public Sub FileOpen(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, Optional ByVal Access As Microsoft.VisualBasic.OpenAccess = Microsoft.VisualBasic.OpenAccess.[Default], Optional ByVal Share As Microsoft.VisualBasic.OpenShare = Microsoft.VisualBasic.OpenShare.[Default], Optional ByVal RecordLength As Integer = -1)
 
-            If FileNumber <= 0 OrElse FileNumber > 255 OrElse (m_OpenFiles IsNot Nothing AndAlso m_OpenFiles.ContainsKey(FileNumber)) Then
+            If FileNumber <= 0 OrElse FileNumber > 255 OrElse (Not m_OpenFiles Is Nothing AndAlso m_OpenFiles.ContainsKey(FileNumber)) Then
                 Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
             End If
 

@@ -116,6 +116,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Return result
         End Function
+#End If
 
         Friend Shared Function GetResourceString(ByVal Name As String) As String
             Try
@@ -127,7 +128,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return "Error message not available."
             End Try
         End Function
-#End If
     End Class
 
 End Namespace
