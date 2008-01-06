@@ -378,6 +378,7 @@
 ..\..\source\Enums\Enums.vb
 -res:..\..\source\Resources\Errors.resx
 ..\..\source\Expressions\Expression.vb
+..\..\source\General\CecilHelper.vb
 ..\..\source\General\Helper.vb
 ..\..\source\General\Main.vb
 ..\..\source\Members\AttributeMembers.vb

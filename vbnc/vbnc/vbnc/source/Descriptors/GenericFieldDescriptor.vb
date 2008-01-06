@@ -31,6 +31,13 @@ Public Class GenericFieldDescriptor
 
     Private m_ClosedField As FieldInfo
 
+#If ENABLECECIL Then
+    Private m_ClosedFieldCecil As Mono.Cecil.FieldReference
+    Private m_OpenFieldCecil As Mono.Cecil.FieldReference
+    Private m_ClosedTypeCecil As Mono.Cecil.TypeReference
+    Private m_TypeArgumentsOriginal As Type()
+    Private m_TypeArgumentsCecil As Mono.Cecil.TypeReference()
+#End If
     Sub New(ByVal Parent As ParsedObject, ByVal OpenField As FieldInfo, ByVal TypeParameters() As Type, ByVal TypeArguments() As Type, ByVal ClosedType As Type)
         MyBase.New(Parent)
 
@@ -39,7 +46,9 @@ Public Class GenericFieldDescriptor
         m_ClosedType = ClosedType
         m_TypeParameters = TypeParameters
         m_TypeArguments = TypeArguments
-
+#If ENABLECECIL Then
+        m_TypeArgumentsOriginal = m_TypeArguments
+#End If
     End Sub
 
     Public Overrides ReadOnly Property Attributes() As System.Reflection.FieldAttributes
@@ -79,6 +88,19 @@ Public Class GenericFieldDescriptor
             Return result
         End Get
     End Property
+
+#If ENABLECECIL Then
+    Overrides ReadOnly Property FieldInCecil() As Mono.Cecil.FieldReference
+        Get
+            If m_ClosedFieldCecil Is Nothing Then
+                m_ClosedTypeCecil = Helper.GetTypeOrTypeReference(Compiler, m_ClosedType)
+                m_OpenFieldCecil = Helper.GetFieldOrFieldReference(Compiler, m_OpenField)
+                m_ClosedFieldCecil = New Mono.Cecil.FieldReference(m_OpenField.Name, m_ClosedTypeCecil, m_OpenFieldCecil.FieldType)
+            End If
+            Return m_ClosedFieldCecil
+        End Get
+    End Property
+#End If
 
     Public Overrides ReadOnly Property FieldInReflection() As System.Reflection.FieldInfo
         Get

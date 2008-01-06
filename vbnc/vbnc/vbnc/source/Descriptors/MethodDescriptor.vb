@@ -85,6 +85,14 @@ Public Class MethodDescriptor
         End Get
     End Property
 
+#If ENABLECECIL Then
+    Overridable ReadOnly Property MethodInCecil() As Mono.Cecil.MethodReference
+        Get
+            Return m_Declaration.CecilBuilder
+        End Get
+    End Property
+#End If
+
     Sub New(ByVal Parent As ParsedObject)
         m_Parent = Parent
         m_Declaration = TryCast(Parent, MethodDeclaration)

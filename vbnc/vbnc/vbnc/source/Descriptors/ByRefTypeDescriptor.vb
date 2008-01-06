@@ -28,6 +28,9 @@ Public Class ByRefTypeDescriptor
     Private m_ElementType As Type
 
     Private m_ByRefType As Type
+#If ENABLECECIL Then
+    Private m_ByRefTypeCecil As Mono.Cecil.ReferenceType
+#End If
 
     Sub New(ByVal ElementType As TypeDescriptor)
         MyBase.New(ElementType.Declaration)
@@ -213,6 +216,16 @@ Public Class ByRefTypeDescriptor
         Compiler.TypeManager.RegisterReflectionType(m_ByRefType, Me)
     End Sub
 
+#If ENABLECECIL Then
+    Public Overrides ReadOnly Property TypeInCecil() As Mono.Cecil.TypeReference
+        Get
+            If m_ByRefTypeCecil Is Nothing Then
+                m_ByRefTypeCecil = New Mono.Cecil.ReferenceType(Helper.GetTypeOrTypeReference(Compiler, GetElementType))
+            End If
+            Return m_ByRefTypeCecil
+        End Get
+    End Property
+#End If
     Public Overrides ReadOnly Property TypeInReflection() As System.Type
         Get
             Return UnderlyingSystemType

@@ -51,6 +51,14 @@ Public Class FieldDescriptor
         End Get
     End Property
 
+#If ENABLECECIL Then
+    Overridable ReadOnly Property FieldInCecil() As Mono.Cecil.FieldReference
+        Get
+            Return m_Declaration.FieldBuilderCecil
+        End Get
+    End Property
+#End If
+
     Overridable ReadOnly Property FieldInReflection() As FieldInfo
         Get
             Return m_Declaration.FieldBuilder

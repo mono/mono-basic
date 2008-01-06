@@ -31,6 +31,12 @@ Public Class GenericMethodDescriptor
     Private m_ClosedMethodDescriptor As MethodDescriptor
     Private m_ClosedMethod As MethodInfo
 
+#If ENABLECECIL Then
+    Private m_ClosedTypeCecil As Mono.Cecil.TypeReference
+    Private m_OpenMethodCecil As Mono.Cecil.MethodReference
+    Private m_ClosedMethodInCecil As Mono.Cecil.MethodReference
+#End If
+
 
     ''' <summary>
     ''' The open type parameters for this method.
@@ -224,6 +230,40 @@ Public Class GenericMethodDescriptor
         DumpMethodInfo(result)
         Return result
     End Function
+
+#If ENABLECECIL Then
+    Public Overrides ReadOnly Property MethodInCecil() As Mono.Cecil.MethodReference
+        Get
+            If m_ClosedMethodInCecil Is Nothing Then
+                Dim isMethod As Boolean
+
+                isMethod = m_OpenMethod.IsGenericMethod
+                If isMethod Then
+                    Dim meth As Mono.Cecil.GenericInstanceMethod
+
+                    m_OpenMethodCecil = Helper.GetMethodOrMethodReference(Compiler, m_OpenMethod)
+                    meth = New Mono.Cecil.GenericInstanceMethod(m_OpenMethodCecil)
+                    m_ClosedMethodInCecil = meth
+                    For Each tp As Type In m_TypeArguments
+                        meth.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, tp))
+                    Next
+                Else
+
+                    m_ClosedTypeCecil = Helper.GetTypeOrTypeReference(Compiler, m_ClosedType)
+                    m_OpenMethodCecil = Helper.GetMethodOrMethodReference(Compiler, m_OpenMethod)
+                    m_ClosedMethodInCecil = New Mono.Cecil.MethodReference(m_OpenMethodCecil.Name, m_ClosedTypeCecil, m_OpenMethodCecil.ReturnType.ReturnType, m_OpenMethodCecil.HasThis, m_OpenMethodCecil.ExplicitThis, m_OpenMethodCecil.CallingConvention)
+                    For Each param As Mono.Cecil.ParameterDefinition In m_OpenMethodCecil.Parameters
+                        m_ClosedMethodInCecil.Parameters.Add(param)
+                    Next
+                End If
+            End If
+
+            Helper.Assert(m_ClosedMethodInCecil IsNot Nothing)
+
+            Return m_ClosedMethodInCecil
+        End Get
+    End Property
+#End If
 
     Public Overrides ReadOnly Property MethodInReflection() As System.Reflection.MethodInfo
         Get

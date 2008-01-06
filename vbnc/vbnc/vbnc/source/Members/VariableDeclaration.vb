@@ -47,6 +47,7 @@ Public Class VariableDeclaration
 
 #If ENABLECECIL Then
     Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
+    Private m_FieldBuilderStaticCecil As Mono.Cecil.FieldDefinition
 #End If
 
     Private m_WithEventsRedirect As PropertyDeclaration
@@ -321,10 +322,18 @@ Public Class VariableDeclaration
             Dim staticName As String
             staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
             m_FieldBuilder = Me.DeclaringType.TypeBuilder.DefineField(staticName, VariableTypeOrTypeBuilder, m_Descriptor.Attributes)
-
+            Compiler.TypeManager.RegisterReflectionMember(m_FieldBuilder, Me.FieldDescriptor)
             If Me.HasInitializer Then
                 m_StaticInitBuilder = Me.DeclaringType.TypeBuilder.DefineField(m_FieldBuilder.Name & "$Init", Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag, m_FieldBuilder.Attributes)
+#If ENABLECECIL Then
+                m_FieldBuilderStaticCecil = New Mono.Cecil.FieldDefinition(m_FieldBuilder.Name & "$Init", Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag), CType(m_Descriptor.Attributes, Mono.Cecil.FieldAttributes))
+                DeclaringType.CecilType.Fields.Add(m_FieldBuilderStaticCecil)
+#End If
             End If
+#If ENABLECECIL Then
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(staticName, Helper.GetTypeOrTypeReference(Compiler, FieldType), CType(m_Descriptor.Attributes, Mono.Cecil.FieldAttributes))
+            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
+#End If
         End If
 
         Return result

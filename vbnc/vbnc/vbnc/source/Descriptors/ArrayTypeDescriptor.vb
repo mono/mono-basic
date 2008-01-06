@@ -33,6 +33,10 @@ Public Class ArrayTypeDescriptor
     Private m_AllMembers As Generic.List(Of MemberInfo)
     Private m_AllDeclaredMembers As Generic.List(Of MemberInfo)
 
+#If ENABLECECIL Then
+    Private m_ArrayTypeCecil As Mono.Cecil.ArrayType
+#End If
+
     Sub New(ByVal ElementType As TypeDescriptor, ByVal Ranks As Integer)
         Me.New(ElementType.Parent, ElementType, Ranks)
     End Sub
@@ -274,6 +278,17 @@ Public Class ArrayTypeDescriptor
         Compiler.TypeManager.RegisterReflectionType(m_ArrayType, Me)
         'Helper.Assert(Helper.CompareName(Me.FullName, m_ArrayType.FullName))
     End Sub
+
+#If ENABLECECIL Then
+    Public Overrides ReadOnly Property TypeInCecil() As Mono.Cecil.TypeReference
+        Get
+            If m_ArrayTypeCecil Is Nothing Then
+                m_ArrayTypeCecil = New Mono.Cecil.ArrayType(Helper.GetTypeOrTypeReference(Compiler, GetElementType), GetArrayRank())
+            End If
+            Return m_ArrayTypeCecil
+        End Get
+    End Property
+#End If
 
     Public Overrides ReadOnly Property TypeInReflection() As System.Type
         Get

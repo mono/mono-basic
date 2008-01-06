@@ -65,7 +65,7 @@ Public Class ConstructorDeclaration
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
 
         'If vbnc.Modifiers.IsNothing(Modifiers) = False AndAlso Modifiers.Is(ModifierMasks.Shared) Then
-        If Modifiers.Is(ModifierMasks.Shared) Then
+        If Modifiers.Is(ModifierMasks.Shared) OrElse FindTypeParent.IsModule Then
             Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, SharedConstructorName), Signature.TypeParameters, Signature.Parameters)
         Else
             Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, ConstructorName), Signature.TypeParameters, Signature.Parameters)
@@ -165,7 +165,7 @@ Public Class ConstructorDeclaration
         result = MyBase.ResolveMember(Info) AndAlso result
 
 #If ENABLECECIL Then
-        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, CType(Me.MethodAttributes, Mono.Cecil.MethodAttributes), Compiler.CecilTypeCache.System_Void)
+        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, CType(Me.MethodAttributes.Value, Mono.Cecil.MethodAttributes), Compiler.CecilTypeCache.System_Void)
         DeclaringType.CecilType.Constructors.Add(m_CecilBuilder)
 #End If
 

@@ -72,9 +72,11 @@ Public MustInherit Class PartialTypeDeclaration
     Public Overrides ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition
         Get
             Dim result As Mono.Cecil.TypeDefinition
-            result = MyBase.CecilType
-            If result Is Nothing AndAlso m_MainDeclaration IsNot Nothing AndAlso m_MainDeclaration IsNot Me Then
+
+            If m_MainDeclaration IsNot Nothing AndAlso m_MainDeclaration IsNot Me Then
                 result = m_MainDeclaration.CecilType
+            Else
+                result = MyBase.CecilType
             End If
 
             'Helper.Assert(result IsNot Nothing)

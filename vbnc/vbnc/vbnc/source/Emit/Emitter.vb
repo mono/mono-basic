@@ -475,10 +475,12 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitIsInst(ByVal Info As EmitInfo, ByVal FromType As Type, ByVal ToType As Type)
+        Dim toOriginal As Type = ToType
+
         FromType = Helper.GetTypeOrTypeBuilder(FromType)
         ToType = Helper.GetTypeOrTypeBuilder(ToType)
         Info.Stack.Pop(FromType)
-        Info.ILGen.Emit(OpCodes.Isinst, ToType)
+        Info.ILGen.Emit(OpCodes.Isinst, toOriginal)
         Info.Stack.Push(ToType)
     End Sub
 
@@ -1686,11 +1688,11 @@ Partial Public Class Emitter
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_Byte)
                 Return
             Case TypeCode.UInt16
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt16, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt16, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_UInt16)
                 Return
             Case TypeCode.UInt32
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt32, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt32, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CUInt(Value))
                 Return
             Case TypeCode.UInt64
@@ -1901,7 +1903,7 @@ Partial Public Class Emitter
         If Variable.ParameterType.IsByRef Then
             EmitLoadParameter(Info, Variable)
         Else
-            Info.ILGen.Emit(OpCodes.Ldarga, GetParameterPosition(Variable))
+            Info.ILGen.Emit(OpCodes.Ldarga, CShort(GetParameterPosition(Variable)))
         End If
     End Sub
 

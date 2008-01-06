@@ -40,12 +40,20 @@ Public Class GenericTypeDescriptor
     ''' </summary>
     ''' <remarks></remarks>
     Private m_TypeArguments() As Type
+    Private m_TypeArgumentsOriginal() As Type
 
     ''' <summary>
     ''' The final closed type.
     ''' </summary>
     ''' <remarks></remarks>
     Private m_ClosedType As Type
+
+#If ENABLECECIL Then
+    Private m_OpenTypeCecil As Mono.Cecil.TypeReference
+    Private m_TypeParametersCecil() As Mono.Cecil.TypeReference
+    Private m_TypeArgumentsCecil() As Mono.Cecil.TypeReference
+    Private m_ClosedTypeCecil As Mono.Cecil.GenericInstanceType
+#End If
 
     Private m_AllMembers As Generic.List(Of MemberInfo)
     Private m_AllDeclaredMembers As Generic.List(Of MemberInfo)
@@ -61,6 +69,8 @@ Public Class GenericTypeDescriptor
         m_OpenTypeDescriptor = TryCast(m_OpenType, TypeDescriptor)
 
         'Helper.StopIfDebugging(m_OpenTypeDescriptor Is Nothing AndAlso Helper.IsReflectionType(OpenType))
+
+        m_TypeArgumentsOriginal = m_TypeArguments
 
         Helper.Assert(m_OpenType IsNot Nothing)
         Helper.Assert(m_TypeArguments IsNot Nothing AndAlso m_TypeArguments.Length > 0)
@@ -112,6 +122,27 @@ Public Class GenericTypeDescriptor
             Return result
         End Get
     End Property
+
+#If ENABLECECIL Then
+    Overrides ReadOnly Property TypeInCecil() As Mono.Cecil.TypeReference
+        Get
+            If m_ClosedTypeCecil Is Nothing Then
+                m_OpenTypeCecil = Helper.GetTypeOrTypeReference(Compiler, m_OpenType)
+
+                m_ClosedTypeCecil = New Mono.Cecil.GenericInstanceType(m_OpenTypeCecil)
+                ReDim m_TypeArgumentsCecil(m_TypeArgumentsOriginal.Length - 1)
+                For i As Integer = 0 To m_TypeArgumentsOriginal.Length - 1
+                    m_TypeArgumentsCecil(i) = Helper.GetTypeOrTypeReference(Compiler, m_TypeArgumentsOriginal(i))
+                    m_ClosedTypeCecil.GenericArguments.Add(m_TypeArgumentsCecil(i))
+                Next
+            End If
+
+            Helper.Assert(m_ClosedTypeCecil IsNot Nothing)
+
+            Return m_ClosedTypeCecil
+        End Get
+    End Property
+#End If
 
     ''' <summary>
     ''' Gets the Reflection.Emit created type for this descriptor.

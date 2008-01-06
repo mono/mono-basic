@@ -32,6 +32,14 @@ Public Class TypeParameterDescriptor
         m_TypeParameter = TypeParameter
     End Sub
 
+#If ENABLECECIL Then
+    Public Overrides ReadOnly Property TypeInCecil() As Mono.Cecil.TypeReference
+        Get
+            Return TypeParameter.CecilBuilder
+        End Get
+    End Property
+#End If
+
     ''' <summary>
     ''' Gets the Reflection.Emit created type for this descriptor.
     ''' It is a TypeParameterBuilder

@@ -64,7 +64,7 @@ Public Class EmitLog
         End Set
     End Property
 
-    Private m_Hashed As Generic.Dictionary(Of String, Mono.Cecil.Cil.OpCode)
+    Private Shared m_Hashed As Generic.Dictionary(Of String, Mono.Cecil.Cil.OpCode)
 
     Function ConvertOpCode(ByVal SRE As OpCode) As Mono.Cecil.Cil.OpCode
 
@@ -83,6 +83,11 @@ Public Class EmitLog
                 value = DirectCast(tmp, Mono.Cecil.Cil.OpCode)
                 m_Hashed.Add(value.Name, value)
             Next
+        End If
+
+        If m_Hashed.ContainsKey(SRE.Name) = False Then
+            If SRE.Name = "stelem" Then Return Mono.Cecil.Cil.OpCodes.Stelem_Any
+            Stop
         End If
 
         Return m_Hashed(SRE.Name)
@@ -351,9 +356,9 @@ Public Class EmitLog
 #End If
     End Sub
     Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal cls As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(cls))
+        'Helper.Assert(Helper.IsEmittableMember(cls))
         Log("Emit({0},{1})", opcode.ToString, ToString(cls))
-        m_ILGen.Emit(opcode, cls)
+        m_ILGen.Emit(opcode, Helper.GetTypeOrTypeBuilder(cls))
 
 #If ENABLECECIL Then
         Emit(ConvertOpCode(opcode), Helper.GetTypeOrTypeReference(Compiler, cls))
@@ -464,6 +469,7 @@ Public Class EmitLog
     Private Class TryBlock
         Public Start As Integer
         Public EndBlock As Mono.Cecil.Cil.Instruction
+        Public EndTry As Mono.Cecil.Cil.Instruction
         Public Handlers As New Generic.List(Of Mono.Cecil.Cil.ExceptionHandler)
 
         ReadOnly Property CurrentHandler() As Mono.Cecil.Cil.ExceptionHandler
@@ -483,25 +489,58 @@ Public Class EmitLog
         Log("BeginCatchBlock")
         Helper.Assert(Helper.IsEmittableMember(m_Compiler, exceptionType))
 
-        Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Catch)
-        Dim block As TryBlock = m_ExceptionBlocks.Peek
-        block.Handlers.Add(ex)
+        If exceptionType Is Nothing Then
+            Dim block As TryBlock = m_ExceptionBlocks.Peek
+            Dim ex As Mono.Cecil.Cil.ExceptionHandler = block.Handlers(block.Handlers.Count - 1)
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfilter)
+            ex.FilterEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            ex.HandlerStart = ex.FilterEnd
+        Else
+            Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Catch)
+            Dim block As TryBlock = m_ExceptionBlocks.Peek
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+            Dim handlerStart As Integer = CilBody.Instructions.Count
+            If block.Handlers.Count = 0 Then
+                ex.TryEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            Else
+                ex.TryEnd = block.Handlers(0).TryEnd
+                CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            End If
+            block.EndTry = ex.TryEnd
+            If block.Handlers.Count > 0 Then
+                block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilBody.Instructions(CilBody.Instructions.Count - 1) 'CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            End If
+            ex.HandlerStart = CilBody.Instructions(handlerStart)
+            ex.CatchType = exceptionType
+            block.Handlers.Add(ex)
+        End If
     End Sub
 
     Private Sub BeginExceptFilterBlockCecil()
         Log("BeginExceptFilterBlock")
         Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Filter)
         Dim block As TryBlock = m_ExceptionBlocks.Peek
+
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+        If block.EndTry Is Nothing Then block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        If block.Handlers.Count > 0 Then
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop) ' cilBody.Instructions(CilBody.Instructions.Count - 1) ' CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        End If
+
+        ex.FilterStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
+        ex.HandlerStart = ex.FilterStart
         block.Handlers.Add(ex)
     End Sub
 
     Private Function BeginExceptionBlockCecil() As Mono.Cecil.Cil.Instruction
         Log("BeginExceptionBlock")
         Dim block As New TryBlock
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
         block.Start = CilBody.Instructions.Count
         block.EndBlock = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
         If m_ExceptionBlocks Is Nothing Then m_ExceptionBlocks = New Generic.Stack(Of TryBlock)
         m_ExceptionBlocks.Push(block)
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
         Return block.EndBlock
     End Function
 
@@ -514,26 +553,46 @@ Public Class EmitLog
     Private Sub BeginFinallyBlockCecil()
         Log("BeginFinallyBlock")
         Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Finally)
-        CilBody.ExceptionHandlers.Add(ex)
         Dim block As TryBlock = m_ExceptionBlocks.Peek
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+        If block.EndTry Is Nothing Then
+            block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        End If
+        If block.Handlers.Count > 0 Then
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop) ' CilBody.Instructions(CilBody.Instructions.Count - 1)
+        End If
+
+        ex.HandlerStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
+        ex.TryEnd = ex.HandlerStart
         block.Handlers.Add(ex)
     End Sub
 
     Public Sub EndExceptionBlockCecil()
         Log("EndExceptionBlock")
         Dim block As TryBlock = m_ExceptionBlocks.Pop
+        If block.EndTry Is Nothing Then block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
 
         Dim TryStart As Mono.Cecil.Cil.Instruction
-        Dim TryEnd As Mono.Cecil.Cil.Instruction
         TryStart = CilBody.Instructions(block.Start)
-        TryEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        If block.Handlers(block.Handlers.Count - 1).Type = Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfinally)
+        End If
         For i As Integer = 0 To block.Handlers.Count - 1
             Dim handler As Mono.Cecil.Cil.ExceptionHandler
             handler = block.Handlers(i)
             handler.TryStart = TryStart
-            handler.TryEnd = TryEnd
+            If handler.TryEnd Is Nothing Then
+                handler.TryEnd = block.EndTry
+            End If
+            If handler.HandlerEnd Is Nothing Then
+                If handler.Type <> Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+                    CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+                End If
+                handler.HandlerEnd = block.EndBlock
+            End If
             CilBody.ExceptionHandlers.Add(handler)
         Next
+        CilWorker.Append(block.EndBlock)
     End Sub
 
     Private Sub BeginScopeCecil()
@@ -638,6 +697,13 @@ Public Class EmitLog
     End Sub
 
     Private Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal field As Mono.Cecil.FieldReference)
+        If TypeOf field Is Mono.Cecil.FieldDefinition AndAlso field.DeclaringType.GenericParameters.Count > 0 Then
+            Dim dT As Mono.Cecil.GenericInstanceType
+            dT = New Mono.Cecil.GenericInstanceType(field.DeclaringType)
+            dT.GenericArguments.Add(field.DeclaringType.GenericParameters(0))
+            field = New Mono.Cecil.FieldReference(field.Name, dT, field.FieldType)
+        End If
+
         Helper.Assert(Helper.IsEmittableMember(Compiler, field))
         Log("Emit({0},{1})", opcode.ToString, ToString(field))
         CilWorker.Emit(opcode, field)

@@ -43,6 +43,12 @@ Public Class TypeParameter
         m_Identifier = Identifier
         m_TypeParameterConstraints = TypeParameterConstraints
         m_GenericParameterPosition = GenericParameterPosition
+
+
+#If ENABLECECIL Then
+        m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, Nothing)
+#End If
+
     End Sub
 
 #If ENABLECECIL Then
@@ -57,7 +63,7 @@ Public Class TypeParameter
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New TypeParameter(NewParent)
         result.m_Identifier = m_Identifier
-        If m_TypeParameterConstraints IsNot Nothing Then result.m_TypeParameterConstraints = m_TypeParameterConstraints.clone(result)
+        If m_TypeParameterConstraints IsNot Nothing Then result.m_TypeParameterConstraints = m_TypeParameterConstraints.Clone(result)
         Return result
     End Function
 
@@ -106,23 +112,26 @@ Public Class TypeParameter
         End If
 
 #If ENABLECECIL Then
-        Dim method As IBaseObject = FindMethod()
-        If method IsNot Nothing Then
+        If m_CecilBuilder.Owner Is Nothing Then
+            Dim parent As Mono.Cecil.IGenericParameterProvider
+
+            Dim method As IBaseObject = FindMethod()
             Dim imethod As IMethod = TryCast(method, IMethod)
+
             If imethod IsNot Nothing Then
-                m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, imethod.CecilBuilder)
-                imethod.CecilBuilder.GenericParameters.Add(m_CecilBuilder)
+                parent = imethod.CecilBuilder
             Else
-                Throw New NotImplementedException
+                parent = FindFirstParent(Of TypeDeclaration)().CecilType
             End If
-        Else
-            Dim type As TypeDeclaration = FindFirstParent(Of TypeDeclaration)()
-            m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, type.CecilType)
-            type.CecilType.GenericParameters.Add(m_CecilBuilder)
+
+            If parent IsNot Nothing Then
+                m_CecilBuilder.Owner = parent
+                m_CecilBuilder.Position = parent.GenericParameters.Count
+                parent.GenericParameters.Add(m_CecilBuilder)
+            End If
         End If
 #End If
-
-        Return result
+            Return result
     End Function
 
     <Obsolete("No code to resolve here.")> Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean

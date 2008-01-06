@@ -30,6 +30,11 @@ Public Class GenericConstructorDescriptor
     Private m_ClosedConstructorDescriptor As ConstructorDescriptor
     Private m_ClosedConstructor As ConstructorInfo
 
+#If ENABLECECIL Then
+    Private m_ClosedTypeCecil As Mono.Cecil.TypeReference
+    Private m_OpenConstructorCecil As Mono.Cecil.MethodReference
+    Private m_ClosedConstructorCecil As Mono.Cecil.MethodReference
+#End If
     ''' <summary>
     ''' The open type parameters for this method.
     ''' </summary>
@@ -105,6 +110,27 @@ Public Class GenericConstructorDescriptor
             Return result
         End Get
     End Property
+
+
+#If ENABLECECIL Then
+    Overrides ReadOnly Property MethodInCecil() As Mono.Cecil.MethodReference
+        Get
+            If m_ClosedConstructorCecil Is Nothing Then
+                m_ClosedTypeCecil = Helper.GetTypeOrTypeReference(Compiler, m_ClosedType)
+                m_OpenConstructorCecil = Helper.GetMethodOrMethodReference(Compiler, m_OpenConstructor)
+
+                m_ClosedConstructorCecil = New Mono.Cecil.MethodReference(m_OpenConstructorCecil.Name, m_ClosedTypeCecil, m_OpenConstructorCecil.ReturnType.ReturnType, m_OpenConstructorCecil.HasThis, m_OpenConstructorCecil.ExplicitThis, m_OpenConstructorCecil.CallingConvention)
+                For Each param As Mono.Cecil.ParameterDefinition In m_OpenConstructorCecil.Parameters
+                    m_ClosedConstructorCecil.Parameters.Add(param)
+                Next
+            End If
+
+            Helper.Assert(m_ClosedConstructorCecil IsNot Nothing)
+
+            Return m_ClosedConstructorCecil
+        End Get
+    End Property
+#End If
 
     Overrides ReadOnly Property ConstructorInReflection() As ConstructorInfo
         Get

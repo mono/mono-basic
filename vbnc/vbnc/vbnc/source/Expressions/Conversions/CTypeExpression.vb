@@ -223,11 +223,12 @@ Public Class CTypeExpression
             End If
         ElseIf SourceType.IsClass Then
             If DestinationType.IsGenericParameter Then
-                Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+                'Dim method As MethodInfo
+                Dim methodD As New GenericMethodDescriptor(Me, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.GetGenericArguments(), New Type() {DestinationType.UnderlyingSystemType})
+                'method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                Emitter.EmitCall(Info, method)
+                Emitter.EmitCall(Info, methodD)
             ElseIf DestinationType.IsClass Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             ElseIf DestinationType.IsInterface Then
@@ -256,11 +257,15 @@ Public Class CTypeExpression
             End If
         ElseIf SourceType.IsInterface Then
             If DestinationType.IsGenericParameter Then
-                Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+                'Dim method As MethodInfo
+
+                Dim methodD As New GenericMethodDescriptor(Me, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.GetGenericArguments(), New Type() {DestinationType.UnderlyingSystemType})
+                'method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+
+                'method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                Emitter.EmitCall(Info, method)
+                Emitter.EmitCall(Info, methodD)
             ElseIf Helper.DoesTypeImplementInterface(Compiler, DestinationType, SourceType) Then
                 If DestinationType.IsValueType Then
                     Emitter.EmitUnbox(Info, DestinationType)

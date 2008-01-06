@@ -28,6 +28,8 @@
 Public Class Compiler
     Inherits BaseObject
 
+    Public Shared CurrentCompiler As Compiler
+
     ''' <summary>
     ''' The filename of the resulting assembly.
     ''' </summary>
@@ -121,6 +123,7 @@ Public Class Compiler
 
     Sub New()
         MyBase.New(Nothing)
+        CurrentCompiler = Me
     End Sub
 
     Public Sub VerifyConsistency(ByVal result As Boolean, Optional ByVal Location As String = "")
@@ -330,7 +333,21 @@ Public Class Compiler
         End If
 
 #If ENABLECECIL Then
-        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, Mono.Cecil.AssemblyKind.Dll)
+        Dim kind As Mono.Cecil.AssemblyKind
+        Select Case CommandLine.Target
+            Case vbnc.CommandLine.Targets.Console
+                kind = Mono.Cecil.AssemblyKind.Console
+            Case vbnc.CommandLine.Targets.Library
+                kind = Mono.Cecil.AssemblyKind.Dll
+            Case vbnc.CommandLine.Targets.Module
+                Report.ShowMessage(Messages.VBNC99999, "Compiling modules (-target:module) hasn't been implemented yet.")
+                kind = Mono.Cecil.AssemblyKind.Dll
+            Case vbnc.CommandLine.Targets.Winexe
+                kind = Mono.Cecil.AssemblyKind.Windows
+            Case Else
+                kind = Mono.Cecil.AssemblyKind.Console
+        End Select
+        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
 #End If
 
@@ -487,6 +504,10 @@ Public Class Compiler
 
             'Show logo, unless asked not to
             If CommandLine.NoLogo = False Then ShowLogo()
+
+#If ENABLECECIL Then
+            Console.WriteLine("Compiled with Cecil support.")
+#End If
 
             If Report.ShowSavedMessages Then
                 Return 1
@@ -880,11 +901,27 @@ EndOfCompilation:
             'Report.WriteLine("Defining resource, FileName=" & r.Filename & ", Identifier=" & r.Identifier & ", reader is nothing=" & (reader Is Nothing).ToString())
             If reader IsNot Nothing Then
                 Dim writer As System.Resources.IResourceWriter = ModuleBuilder.DefineResource(resourceName, resourceDescription, attrib)
+#If ENABLECECIL Then
+                Dim cecilStream As New IO.MemoryStream()
+                Dim cecilWriter As New System.Resources.ResourceWriter(cecilStream)
+                Dim cecilResource As New Mono.Cecil.EmbeddedResource(resourceName, Mono.Cecil.ManifestResourceAttributes.Public) 'FIXME: accesibility
+#End If
+
                 For Each resource As System.Collections.DictionaryEntry In reader
                     'Report.WriteLine(">" & resource.Key.ToString & "=" & resource.Value.ToString)
                     writer.AddResource(resource.Key.ToString, resource.Value)
+#If ENABLECECIL Then
+                    cecilWriter.AddResource(resource.Key.ToString, resource.Value)
+#End If
                 Next
                 reader.Dispose()
+#If ENABLECECIL Then
+                cecilWriter.Generate()
+                cecilResource.Data = cecilStream.ToArray
+                AssemblyBuilderCecil.MainModule.Resources.Add(cecilResource)
+                cecilWriter.Dispose()
+                cecilStream.Dispose()
+#End If
             Else
                 'Report.WriteLine(">Writing ManifestResource")
                 ModuleBuilder.DefineManifestResource(resourceName, New IO.FileStream(r.Filename, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read), attrib)
@@ -962,6 +999,9 @@ EndOfCompilation:
                 End If
                 entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
                 AssemblyBuilder.SetEntryPoint(entryMethod)
+#If ENABLECECIL Then
+                AssemblyBuilderCecil.EntryPoint = CecilHelper.FindDefinition(Helper.GetMethodOrMethodReference(Me, entryMethod))
+#End If
             End If
 
         Catch ex As Exception

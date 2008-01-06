@@ -206,6 +206,9 @@ Public Class RegularEventDeclaration
             Throw New InternalException(Me)
         End If
 
+        If m_ImplicitEventDelegate IsNot Nothing Then
+            result = m_ImplicitEventDelegate.ResolveType AndAlso result
+        End If
 
         result = MyBase.ResolveTypeReferences AndAlso result
 

@@ -84,13 +84,27 @@ Public MustInherit Class MethodDeclaration
         Return result
     End Function
 
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
+        MyBase.Init(Attributes, Modifiers, Signature)
+
+#If ENABLECECIL Then
+        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Compiler.CecilTypeCache.System_Void)
+#End If
+    End Sub
+
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
+        MyBase.Init(Attributes, Modifiers, Signature, Code)
+#If ENABLECECIL Then
+        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Compiler.CecilTypeCache.System_Void)
+#End If
+    End Sub
+
     Public Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
         result = MyBase.ResolveMember(Info) AndAlso result
 
 #If ENABLECECIL Then
-        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Compiler.CecilTypeCache.System_Void)
         DeclaringType.CecilType.Methods.Add(m_CecilBuilder)
         m_CecilBuilder.HasThis = Not IsShared
 #End If
@@ -182,7 +196,7 @@ Public MustInherit Class MethodDeclaration
 #End If
         End If
 
-        Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
+        '        Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
 
         Return result
     End Function

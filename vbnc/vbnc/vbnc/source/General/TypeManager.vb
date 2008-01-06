@@ -79,11 +79,17 @@ Public Class TypeManager
 
 
     Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.Helper.StringComparer)
-    Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
-    Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
+    'Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
+    'Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
 
-    Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
-    Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
+    Private Shared m_TypeDescriptorsOfTypesBuilders As New Generic.List(Of Type)
+    Private Shared m_TypeDescriptorsOfTypesDescriptors As New Generic.List(Of TypeDescriptor)
+
+    'Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
+    'Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
+    Private Shared m_MemberDescriptorsOfMembersBuilders As New Generic.List(Of MemberInfo)
+    Private Shared m_MemberDescriptorsOfMembersDescriptors As New Generic.List(Of MemberInfo)
+
 
     Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)(New TypeComparer)
 
@@ -513,27 +519,36 @@ Public Class TypeManager
     End Function
 
     Sub RegisterReflectionType(ByVal ReflectionType As Type, ByVal Descriptor As TypeDescriptor)
-        If m_TypeDescriptorsOfTypes.ContainsKey(ReflectionType) = False Then
-            m_TypeDescriptorsOfTypes.Add(ReflectionType, Descriptor)
-            m_TypeDescriptorsOfTypes2.Add(ReflectionType.GetHashCode, Descriptor)
-        End If
+        m_TypeDescriptorsOfTypesBuilders.Add(ReflectionType)
+        m_TypeDescriptorsOfTypesDescriptors.Add(Descriptor)
+        'If m_TypeDescriptorsOfTypes.ContainsKey(ReflectionType) = False Then
+        '    m_TypeDescriptorsOfTypes.Add(ReflectionType, Descriptor)
+        '    m_TypeDescriptorsOfTypes2.Add(ReflectionType.GetHashCode, Descriptor)
+        'End If
     End Sub
 
     Function GetRegisteredType(ByVal Type As Type) As Type
         If Type Is Nothing Then Return Nothing
         If TypeOf Type Is TypeDescriptor Then Return Type
-        If m_TypeDescriptorsOfTypes2.ContainsKey(Type.GetHashCode) Then Return m_TypeDescriptorsOfTypes2(Type.GetHashCode)
-        If m_TypeDescriptorsOfTypes.ContainsKey(Type) Then Return m_TypeDescriptorsOfTypes(Type)
-        For Each key As Type In m_TypeDescriptorsOfTypes.Keys
-            If key Is Type Then
-                For Each item As Generic.KeyValuePair(Of Type, TypeDescriptor) In m_TypeDescriptorsOfTypes
-                    If item.Key Is Type Then
-                        Return item.Value
-                    End If
-                Next
-                Helper.Assert(False)
+
+        For i As Integer = 0 To m_TypeDescriptorsOfTypesBuilders.Count - 1
+            If m_TypeDescriptorsOfTypesBuilders(i) Is Type Then
+                Return m_TypeDescriptorsOfTypesDescriptors(i)
             End If
         Next
+
+        'If m_TypeDescriptorsOfTypes2.ContainsKey(Type.GetHashCode) Then Return m_TypeDescriptorsOfTypes2(Type.GetHashCode)
+        'If m_TypeDescriptorsOfTypes.ContainsKey(Type) Then Return m_TypeDescriptorsOfTypes(Type)
+        'For Each key As Type In m_TypeDescriptorsOfTypes.Keys
+        '    If key Is Type Then
+        '        For Each item As Generic.KeyValuePair(Of Type, TypeDescriptor) In m_TypeDescriptorsOfTypes
+        '            If item.Key Is Type Then
+        '                Return item.Value
+        '            End If
+        '        Next
+        '        Helper.Assert(False)
+        '    End If
+        'Next
         Helper.Assert(Helper.IsReflectionType(Type) = False)
         Return Type
     End Function
@@ -550,10 +565,14 @@ Public Class TypeManager
         'Else
         'Console.WriteLine(">Descriptor = " & Descriptor.Name)
         'End If
-        If m_MemberDescriptorsOfMembers.ContainsKey(ReflectionMember.GetHashCode) = False Then
-            m_MemberDescriptorsOfMembers.Add(ReflectionMember.GetHashCode, Descriptor)
-            m_MemberDescriptorsOfMembers2.Add(ReflectionMember, Descriptor)
-        End If
+        ' If m_MemberDescriptorsOfMembers.ContainsKey(ReflectionMember.GetHashCode) = False Then
+        'm_MemberDescriptorsOfMembers.Add(ReflectionMember.GetHashCode, Descriptor)
+        ' End If
+        m_MemberDescriptorsOfMembersBuilders.Add(ReflectionMember)
+        m_MemberDescriptorsOfMembersDescriptors.Add(Descriptor)
+        'If m_MemberDescriptorsOfMembers2.ContainsKey(ReflectionMember) = False Then
+        '    m_MemberDescriptorsOfMembers2.Add(ReflectionMember, Descriptor)
+        'End If
     End Sub
 
     Function GetRegisteredMember(ByVal Member As MemberInfo) As MemberInfo
@@ -566,14 +585,19 @@ Public Class TypeManager
         If TypeOf Member Is TypeDescriptor Then Return Member
         If TypeOf Member Is EventDescriptor Then Return Member
 
-        If m_MemberDescriptorsOfMembers.ContainsKey(Member.GetHashCode) Then Return m_MemberDescriptorsOfMembers(Member.GetHashCode)
-        If m_MemberDescriptorsOfMembers2.ContainsKey(Member) Then Return m_MemberDescriptorsOfMembers2(Member)
-        For Each item As Generic.KeyValuePair(Of MemberInfo, MemberInfo) In m_MemberDescriptorsOfMembers2
-            If item.Key Is Member Then
-                Return item.Value
+        'If m_MemberDescriptorsOfMembers.ContainsKey(Member.GetHashCode) Then Return m_MemberDescriptorsOfMembers(Member.GetHashCode)
+        For i As Integer = 0 To m_MemberDescriptorsOfMembersBuilders.Count - 1
+            If m_MemberDescriptorsOfMembersBuilders(i) Is Member Then
+                Return m_MemberDescriptorsOfMembersDescriptors(i)
             End If
         Next
-        Helper.Assert(Helper.IsReflectionMember(Member) = False)
+        'If m_MemberDescriptorsOfMembers2.ContainsKey(Member) Then Return m_MemberDescriptorsOfMembers2(Member)
+        'For Each item As Generic.KeyValuePair(Of MemberInfo, MemberInfo) In m_MemberDescriptorsOfMembers2
+        '    If item.Key Is Member Then
+        '        Return item.Value
+        '    End If
+        'Next
+        'Helper.Assert(Helper.IsReflectionMember(Member) = False)
         Return Member
     End Function
 

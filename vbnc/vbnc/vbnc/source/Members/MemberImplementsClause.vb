@@ -115,6 +115,12 @@ Public Class MemberImplementsClause
 
             Helper.Assert(methodI IsNot Nothing)
             Builder.DefineMethodOverride(Method, methodI)
+#If ENABLECECIL Then
+            Dim methodDef As Mono.Cecil.MethodDefinition
+            Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), MethodDescriptor)
+            methodDef = TryCast(mD.MethodInCecil, Mono.Cecil.MethodDefinition)
+            methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, methodI))
+#End If
 #If EXTENDEDDEBUG Then
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Defined method override '" & Builder.FullName & ":" & Method.Name & "' overrides or implements '" & methodI.DeclaringType.FullName & ":" & methodI.Name & "'")
 #End If

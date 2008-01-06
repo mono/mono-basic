@@ -16,7 +16,6 @@
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-
 #If DEBUG Then
 #Const DEBUGMETHODRESOLUTION = 0
 #Const DEBUGMETHODADD = 0
@@ -326,7 +325,7 @@ Public Class Helper
         result = typesTypename = "TypeBuilder" OrElse typesTypename = "TypeBuilderInstantiation" OrElse typesTypename = "SymbolType"
 
 #If DEBUG Then
-        Helper.Assert(result = (Type.GetType.Namespace = "System.Reflection.Emit"), Type.GetType.FullName)
+        'Helper.Assert(result = (Type.GetType.Namespace = "System.Reflection.Emit"), Type.GetType.FullName)
 #End If
 
         Return result
@@ -376,6 +375,8 @@ Public Class Helper
         Dim result As Boolean
 
         If Member Is Nothing Then Return True
+        If TypeOf Member Is Mono.Cecil.GenericParameter Then Return True
+        If TypeOf Member Is Mono.Cecil.ArrayType Then Return True
         result = FindAssembly(Member) Is Compiler.AssemblyBuilderCecil
 
         Return result
@@ -390,7 +391,9 @@ Public Class Helper
 
     Shared Function FindAssembly(ByVal type As Mono.Cecil.TypeReference) As Mono.Cecil.AssemblyDefinition
         Helper.Assert(type IsNot Nothing)
+
         While type.DeclaringType IsNot Nothing
+            If type.Module IsNot Nothing AndAlso type.Module.Assembly IsNot Nothing Then Return type.Module.Assembly
             type = type.DeclaringType
         End While
         Dim tS As Mono.Cecil.TypeSpecification = TryCast(type, Mono.Cecil.TypeSpecification)
@@ -398,8 +401,13 @@ Public Class Helper
             type = tS.ElementType
             tS = TryCast(type, Mono.Cecil.TypeSpecification)
         End While
-        Helper.Assert(type IsNot Nothing AndAlso type.[Module] IsNot Nothing)
-        Return type.Module.Assembly
+        'Helper.Assert(type IsNot Nothing AndAlso type.[Module] IsNot Nothing)
+
+        If type Is Nothing OrElse type.Module Is Nothing Then
+            Return Nothing
+        Else
+            Return type.Module.Assembly
+        End If
     End Function
 #End If
 
@@ -931,6 +939,10 @@ Public Class Helper
 
         If mD IsNot Nothing Then Return mD.IsPrivate
 
+        mD = CecilHelper.FindDefinition(Method)
+
+        If mD IsNot Nothing Then Return mD.IsPrivate
+
         Throw New NotImplementedException
     End Function
 
@@ -938,6 +950,10 @@ Public Class Helper
         Dim mD As Mono.Cecil.MethodDefinition
 
         mD = TryCast(Method, Mono.Cecil.MethodDefinition)
+
+        If mD IsNot Nothing Then Return mD.IsFamilyOrAssembly
+
+        mD = CecilHelper.FindDefinition(Method)
 
         If mD IsNot Nothing Then Return mD.IsFamilyOrAssembly
 
@@ -1866,45 +1882,21 @@ Public Class Helper
     Private Shared m_TypeReferenceCache As New Generic.Dictionary(Of Type, Mono.Cecil.TypeReference)
 
     Public Shared Function GetTypeOrTypeReference(ByVal Compiler As Compiler, ByVal Type As Type) As Mono.Cecil.TypeReference
-        Dim tD As TypeDescriptor = TryCast(Type, TypeDescriptor)
+        Dim tD As TypeDescriptor
+
+        If Type Is Nothing Then Return Nothing
+
         Helper.Assert(Type IsNot Nothing)
-        If tD IsNot Nothing Then
-            If tD.Declaration IsNot Nothing Then
-                Dim arrTD As ArrayTypeDescriptor = TryCast(tD, ArrayTypeDescriptor)
-                If arrTD IsNot Nothing Then
-                    Return New Mono.Cecil.ArrayType(tD.Declaration.CecilType, arrTD.GetArrayRank())
-                Else
-                    Return tD.Declaration.CecilType
-                End If
-            End If
-            Dim tByRef As ByRefTypeDescriptor = TryCast(Type, ByRefTypeDescriptor)
-            If tByRef IsNot Nothing Then
-                If tByRef.GetElementType.Assembly Is Compiler.AssemblyBuilder Then
-                    Dim tElementD As TypeDescriptor = DirectCast(tByRef.GetElementType, TypeDescriptor)
-                    Return New Mono.Cecil.ReferenceType(GetTypeOrTypeReference(Compiler, tElementD))
-                Else
-                    Return GetTypeReference(Compiler, tByRef.TypeInReflection)
-                End If
-            End If
-            Dim tdG As GenericTypeDescriptor = TryCast(Type, GenericTypeDescriptor)
-            If tdG IsNot Nothing Then
-                If tdG.IsGenericType Then
-                    Dim result As New Mono.Cecil.GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, tdG.GetGenericTypeDefinition))
-                    For Each arg As Type In tdG.GetGenericArguments
-                        result.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, arg))
-                    Next
-                    Return result
-                End If
-                'Return New Mono.Cecil.GenericInstanceType (
-            End If
-            Dim tdP As TypeParameterDescriptor = TryCast(Type, TypeParameterDescriptor)
-            If tdP IsNot Nothing Then
-                Return tdP.TypeParameter.CecilBuilder
-            End If
-            Throw New NotImplementedException
-        Else
-            Return GetTypeReference(Compiler, Type)
+
+        tD = TryCast(Type, TypeDescriptor)
+
+        If tD Is Nothing Then
+            tD = TryCast(Compiler.TypeManager.GetRegisteredType(Type), TypeDescriptor)
         End If
+
+        If tD IsNot Nothing Then Return tD.TypeInCecil
+
+        Return GetTypeReference(Compiler, Type)
     End Function
 
     Private Shared Function GetTypeReference(ByVal Compiler As Compiler, ByVal Type As Type) As Mono.Cecil.TypeReference
@@ -1912,30 +1904,52 @@ Public Class Helper
 
         If m_TypeReferenceCache.TryGetValue(Type, tpRef) = False Then
             If Compiler.Assembly.IsDefinedHere(Type) Then
-                Return GetTypeOrTypeReference(Compiler, Compiler.TypeManager.GetRegisteredType(Type))
-            End If
+                If TypeOf Type Is GenericTypeParameterBuilder Then
+                    If Type.DeclaringMethod IsNot Nothing Then
+                        Dim meth As MethodBase = Type.DeclaringMethod
+                        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(meth), MethodDescriptor)
+                        For Each obj As TypeParameter In mD.Declaration.Signature.TypeParameters.Parameters
+                            If obj.TypeParameterBuilder Is Type Then
+                                Return obj.CecilBuilder
+                            End If
+                        Next
+                    End If
 
-            Dim elementType As Type = Nothing
-            If Type.IsGenericType = False Then
-                elementType = Type.GetElementType()
-            End If
-            While elementType IsNot Nothing
-                If Type.IsArray Then
-                    Return New Mono.Cecil.ArrayType(GetTypeOrTypeReference(Compiler, elementType), Type.GetArrayRank())
-                ElseIf Type.IsByRef Then
-                    Return New Mono.Cecil.ReferenceType(GetTypeOrTypeReference(Compiler, elementType))
-                ElseIf Type.IsPointer Then
-                    Throw New InternalException()
-                Else
-                    Throw New InternalException()
+                    Dim tp As Type = Type.DeclaringType
+                    Dim tpD As TypeDescriptor = TryCast(Compiler.TypeManager.GetRegisteredType(tp), TypeDescriptor)
+                    Dim tpG As GenericTypeDeclaration = TryCast(tpD.Declaration, GenericTypeDeclaration)
+                    For Each obj As TypeParameter In tpG.TypeParameters.Parameters
+                        If obj.TypeParameterBuilder Is Type Then
+                            Return obj.CecilBuilder
+                        End If
+                    Next
+                    Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
+                    Helper.NotImplemented()
                 End If
+            Return GetTypeOrTypeReference(Compiler, Compiler.TypeManager.GetRegisteredType(Type))
+        End If
 
-                Type = elementType
-                elementType = Type.GetElementType()
-            End While
+        Dim elementType As Type = Nothing
+        If Type.IsGenericType = False Then
+            elementType = Type.GetElementType()
+        End If
+        While elementType IsNot Nothing
+            If Type.IsArray Then
+                Return New Mono.Cecil.ArrayType(GetTypeOrTypeReference(Compiler, elementType), Type.GetArrayRank())
+            ElseIf Type.IsByRef Then
+                Return New Mono.Cecil.ReferenceType(GetTypeOrTypeReference(Compiler, elementType))
+            ElseIf Type.IsPointer Then
+                Throw New InternalException()
+            Else
+                Throw New InternalException()
+            End If
 
-            tpRef = Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
-            m_TypeReferenceCache.Add(Type, tpRef)
+            Type = elementType
+            elementType = Type.GetElementType()
+        End While
+
+        tpRef = Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
+        m_TypeReferenceCache.Add(Type, tpRef)
         End If
 
         Return tpRef
@@ -3124,15 +3138,16 @@ Public Class Helper
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
         End If
     End Function
+
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As ConstructorInfo) As Mono.Cecil.MethodReference
-        If Compiler.AssemblyBuilder Is Method.DeclaringType.Assembly Then
-            Dim tmp As MemberInfo
-            Dim cD As ConstructorDescriptor
-            cD = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), ConstructorDescriptor)
+        Dim cD As ConstructorDescriptor
+        cD = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), ConstructorDescriptor)
+
+        If cD IsNot Nothing Then
             If cD Is Nothing Then
                 Throw New NotImplementedException("")
             End If
-            Return cD.Declaration.CecilBuilder
+            Return cD.MethodInCecil
         Else
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
         End If
@@ -3141,16 +3156,32 @@ Public Class Helper
     Private Shared m_MethodRefCache As New Generic.Dictionary(Of MethodInfo, Mono.Cecil.MethodReference)
 
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As MethodInfo) As Mono.Cecil.MethodReference
-        If Compiler.AssemblyBuilder Is Method.DeclaringType.Assembly Then
-            Dim mD As MethodDescriptor = DirectCast(Compiler.TypeManager.GetRegisteredMember(Method), MethodDescriptor)
-            Return mD.Declaration.CecilBuilder
+        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), MethodDescriptor)
+        If mD IsNot Nothing Then
+            Return mD.MethodInCecil
         Else
             Dim result As Mono.Cecil.MethodReference = Nothing
             If m_MethodRefCache.TryGetValue(Method, result) = False Then
                 Try
+                    If TypeOf Method Is MethodBuilder Then Stop
+                    If Method.GetType().FullName.Contains("System.Reflection.Emit") AndAlso Method.DeclaringType.GetElementType IsNot Nothing AndAlso Method.DeclaringType.IsArray Then
+                        'Stop
+                        Dim retType As Mono.Cecil.TypeReference = Nothing
+                        If Method.Name = "Get" Then
+                            retType = Helper.GetTypeOrTypeReference(Compiler, Method.DeclaringType.GetElementType)
+                        End If
+                        result = New Mono.Cecil.MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler, Method.DeclaringType), retType, True, False, Mono.Cecil.MethodCallingConvention.Default)
+                        result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Compiler.AssemblyBuilderCecil.MainModule.Import(Compiler.CecilTypeCache.System_Int32)))
+                        result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Compiler.AssemblyBuilderCecil.MainModule.Import(Compiler.CecilTypeCache.System_Int32)))
+                        Return result
+                    End If
                     result = Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
                 Catch ex As TargetInvocationException
-                    Console.WriteLine(ex.Message)
+                    Dim ex2 As Exception = ex.InnerException
+                    Do Until ex2 Is Nothing
+                        Console.WriteLine(ex2.ToString)
+                        ex2 = ex2.InnerException
+                    Loop
                 End Try
                 m_MethodRefCache.Add(Method, result)
             End If
@@ -3165,9 +3196,9 @@ Public Class Helper
             Dim fD As FieldDescriptor
             fD = TryCast(fieldD, FieldDescriptor)
             If fD IsNot Nothing Then
-                Return fD.Declaration.FieldBuilderCecil
+                Return fD.FieldInCecil
             End If
-            Throw New NotImplementedException("")
+            Return Compiler.AssemblyBuilderCecil.MainModule.Import(field)
         Else
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(field)
         End If
@@ -4027,14 +4058,14 @@ Public Class Helper
         End Select
     End Function
 
-    Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal Members As Generic.IList(Of MemberInfo)) As ParameterInfo()()
-        Dim result As ParameterInfo()()
-        ReDim result(Members.Count - 1)
-        For i As Integer = 0 To result.Length - 1
-            result(i) = GetParameters(Compiler, Members(i))
-        Next
-        Return result
-    End Function
+    'Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal Members As Generic.IList(Of MemberInfo)) As ParameterInfo()()
+    '    Dim result As ParameterInfo()()
+    '    ReDim result(Members.Count - 1)
+    '    For i As Integer = 0 To result.Length - 1
+    '        result(i) = GetParameters(Compiler, Members(i))
+    '    Next
+    '    Return result
+    'End Function
 
     ''' <summary>
     ''' Gets the parameters of the specified constructor 
@@ -4283,4 +4314,5 @@ Public Class Helper
         End Select
         Return False
     End Function
+
 End Class

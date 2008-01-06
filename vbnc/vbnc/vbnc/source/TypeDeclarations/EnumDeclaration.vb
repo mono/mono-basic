@@ -59,7 +59,8 @@ Public Class EnumDeclaration
         Dim result As Boolean = True
 
 #If ENABLECECIL Then
-        CecilBaseType = Compiler.CecilTypeCache.System_Enum
+        'FIXME: Use the type cache when #351879 is fixed.
+        CecilBaseType = Compiler.AssemblyBuilderCecil.MainModule.Import(GetType(System.Enum)) ' Compiler.CecilTypeCache.System_Enum
 #End If
         BaseType = Compiler.TypeCache.System_Enum
 
@@ -97,6 +98,7 @@ Public Class EnumDeclaration
             'This is necessary on MS, since they won't allow the use of the enum fields in attribute constructors otherwise.
             enumBuilder = Compiler.ModuleBuilder.DefineEnum(FullName, Attr And Reflection.TypeAttributes.VisibilityMask, EnumConstantType)
             Compiler.TypeManager.RegisterReflectionType(enumBuilder, Me.TypeDescriptor)
+            Compiler.TypeManager.RegisterReflectionType(enumBuilder.UnderlyingField.DeclaringType, Me.TypeDescriptor)
             MyBase.EnumBuilder = enumBuilder
         End If
 

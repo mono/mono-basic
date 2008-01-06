@@ -115,6 +115,14 @@ Public Class TypeDescriptor
     End Sub
 #End If
 
+#If ENABLECECIL Then
+    Overridable ReadOnly Property TypeInCecil() As Mono.Cecil.TypeReference
+        Get
+            Return m_Declaration.CecilType
+        End Get
+    End Property
+#End If
+
     ''' <summary>
     ''' Gets the Reflection.Emit created type for this descriptor.
     ''' It is a TypeBuilder.
@@ -128,9 +136,11 @@ Public Class TypeDescriptor
 
             Helper.Assert(m_Declaration IsNot Nothing)
 
-            result = m_Declaration.TypeBuilder
+            result = m_Declaration.EnumBuilder
+
             If result Is Nothing Then
-                result = m_Declaration.EnumBuilder
+                result = m_Declaration.TypeBuilder
+                'result = m_Declaration.EnumBuilder
             End If
 
             Return result

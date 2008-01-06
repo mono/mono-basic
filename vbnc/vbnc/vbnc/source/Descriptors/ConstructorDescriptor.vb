@@ -278,6 +278,13 @@ Public Class ConstructorDescriptor
         Return result
     End Function
 
+#If ENABLECECIL Then
+    Overridable ReadOnly Property MethodInCecil() As Mono.Cecil.MethodReference
+        Get
+            Return m_Declaration.CecilBuilder
+        End Get
+    End Property
+#End If
     Overridable ReadOnly Property ConstructorInReflection() As ConstructorInfo
         Get
             Return m_Declaration.ConstructorBuilder

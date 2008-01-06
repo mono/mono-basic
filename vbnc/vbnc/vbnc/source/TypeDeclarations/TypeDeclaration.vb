@@ -348,7 +348,7 @@ Public MustInherit Class TypeDeclaration
         Helper.Assert(m_BaseType IsNot Nothing OrElse Me.IsInterface)
 
 #If ENABLECECIL Then
-        If Compiler.ModuleBuilderCecil.Types.Contains(CecilType) = False Then
+        If CecilType.Module Is Nothing Then
             Compiler.ModuleBuilderCecil.Types.Add(CecilType)
             If IsNestedType Then
                 DeclaringType.CecilType.NestedTypes.Add(CecilType)
@@ -437,6 +437,9 @@ Public MustInherit Class TypeDeclaration
         Else
             m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, m_CecilBaseType)
         End If
+        If DeclaringType IsNot Nothing Then
+            m_CecilType.DeclaringType = DeclaringType.CecilType
+        End If
         'If IsNestedType Then
         '    DeclaringType.CecilType.NestedTypes.Add(m_CecilType)
         'End If
@@ -466,6 +469,9 @@ Public MustInherit Class TypeDeclaration
                     Compiler.Report.WriteLine("Setting implement," & FullName & " now implements " & Type.FullName)
 #End If
                     m_TypeBuilder.AddInterfaceImplementation(Type)
+#If ENABLECECIL Then
+                    CecilType.Interfaces.Add(Helper.GetTypeOrTypeReference(Compiler, Type))
+#End If
                 Next
             End If
         Else

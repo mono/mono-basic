@@ -366,10 +366,12 @@ Public Class Attribute
         Try
             result = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, m_ResolvedTypeConstructor))
             For i As Integer = 0 To m_Fields.Count - 1
-                result.Fields.Add(m_Fields(i), m_FieldValues(i))
+                result.Fields.Add(m_Fields(i).Name, m_FieldValues(i))
+                result.SetFieldType(m_Fields(i).Name, Helper.GetTypeOrTypeReference(Compiler, m_Fields(i).FieldType))
             Next
             For i As Integer = 0 To m_Properties.Count - 1
-                result.Properties.Add(m_Properties(i), m_PropertyValues(i))
+                result.Properties.Add(m_Properties(i).Name, m_PropertyValues(i))
+                result.SetPropertyType(m_Properties(i).Name, Helper.GetTypeOrTypeReference(Compiler, m_Properties(i).PropertyType))
             Next
             For i As Integer = 0 To m_Arguments.Length - 1
                 result.ConstructorParameters.Add(m_Arguments(i))

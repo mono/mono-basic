@@ -18,7 +18,7 @@
 ' 
 #Const DEBUGRESOLVE = True
 #If DEBUG Then
-#Const EXTENDEDDEBUG = 0
+#Const EXTENDEDDEBUG = 1
 #End If
 
 Imports System.Reflection.Emit
@@ -498,7 +498,7 @@ Public Class AssemblyDeclaration
         result = EmitAttributes() AndAlso result
 
         For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
+            '#If EXTENDEDDEBUG Then
             Dim iCount As Integer
             iCount += 1
             Try
@@ -512,7 +512,7 @@ Public Class AssemblyDeclaration
             Catch ex As Exception
 
             End Try
-#End If
+'#End If
             result = Emit(type) AndAlso result
         Next
 
