@@ -10,7 +10,7 @@ all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
 all-local $(STD_TARGETS:=-local):
 	@:
 
-DISTFILES = README configure mkinstalldirs install-sh
+DISTFILES = README configure mkinstalldirs install-sh LICENSE
 
 # fun specialty targets
 
