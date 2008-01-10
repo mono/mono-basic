@@ -74,7 +74,7 @@ Public Class ContinueStatement
         End Select
 
         Helper.Assert(nextIteration.HasValue)
-        Emitter.EmitBranch(Info, nextIteration.Value)
+        Emitter.EmitBranchOrLeave(Info, nextIteration.Value, Me, m_ContainingStatement)
 
         Return result
     End Function
