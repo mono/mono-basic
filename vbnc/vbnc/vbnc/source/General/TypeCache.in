@@ -200,6 +200,8 @@ vbtype "Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag"
 field MS_VB_CS_StaticLocalInitFlag "State"
 ctor MS_VB_CS_StaticLocalInitFlag
 
+vbtype "Microsoft.VisualBasic.CompilerServices.DesignerGeneratedAttribute"
+
 vbtype "Microsoft.VisualBasic.CompilerServices.IncompleteInitialization"
 vbtype "Microsoft.VisualBasic.CompilerServices.NewLateBinding"
 vbtype "Microsoft.VisualBasic.CompilerServices.LateBinding"

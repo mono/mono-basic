@@ -64,7 +64,7 @@ Public Class CSngExpression
         Dim expType As Type = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
-        result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
+        result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Boolean
@@ -87,14 +87,14 @@ Public Class CSngExpression
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSingle_Object)
                 Else
-                    Helper.NotImplemented()
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
                 End If
             Case TypeCode.String
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToSingle_String)
             Case TypeCode.Decimal
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Convert__ToSingle_Decimal)
             Case Else
-                Helper.NotImplemented()
+                Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
         End Select
 
         Return result

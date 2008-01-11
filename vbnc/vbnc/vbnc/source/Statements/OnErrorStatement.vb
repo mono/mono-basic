@@ -96,7 +96,7 @@ Public Class OnErrorStatement
         block.HasUnstructuredExceptionHandling = True
         If m_IsResumeNext Then block.HasResume = True
         If block.HasStructuredExceptionHandling Then
-            Helper.AddError("No structured exception handling in the same method.")
+            Helper.AddError(Me, "No structured exception handling in the same method.")
         End If
 
         If Token.IsSomething(m_Label) Then

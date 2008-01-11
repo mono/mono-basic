@@ -1017,7 +1017,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30179 = 30179
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Keyword does not name a type."
     ''' VB   = "Keyword does not name a type."
     ''' </summary>
     ''' <remarks></remarks>
@@ -3684,7 +3684,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30744 = 30744
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Internal compiler error."
     ''' VB   = "Internal compiler error."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5007,7 +5007,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31508 = 31508
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to open resource file '{0}': {1}"
     ''' VB   = "Unable to open resource file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>
@@ -5628,6 +5628,48 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32098 = 32098
+
+    ''' <summary>
+    ''' VBNC = "'Class' constraint cannot be specified multiple times for the same type parameter."
+    ''' VB   = "'Class' constraint cannot be specified multiple times for the same type parameter."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32101 = 32101
+
+    ''' <summary>
+    ''' VBNC = "'Structure' constraint cannot be specified multiple times for the same type parameter."
+    ''' VB   = "'Structure' constraint cannot be specified multiple times for the same type parameter."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32102 = 32102
+
+    ''' <summary>
+    ''' VBNC = "'New' constraint and 'Structure' constraint cannot be used at the same time."
+    ''' VB   = "'New' constraint and 'Structure' constraint cannot be combined."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32103 = 32103
+
+    ''' <summary>
+    ''' VBNC = "'Class' constraint and 'Structure' constraint cannot be used at the same time."
+    ''' VB   = "'Class' constraint and 'Structure' constraint cannot be combined."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32104 = 32104
+
+    ''' <summary>
+    ''' VBNC = "Type argument '{0}' does not satisfy the 'Structure' constraint for type parameter '{1}'"
+    ''' VB   = "Type argument '|1' does not satisfy the 'Structure' constraint for type parameter '|2'"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32105 = 32105
+
+    ''' <summary>
+    ''' VBNC = "Type argument '{0}' does not satisfy the 'Class' constraint for type parameter '{1}'"
+    ''' VB   = "Type argument '|1' does not satisfy the 'Class' constraint for type parameter '|2'"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32106 = 32106
 
     ''' <summary>
     ''' VBNC = "CHANGEME"
@@ -6797,6 +6839,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC90023 = 90023
+
+    ''' <summary>
+    ''' VBNC = "You've encountered something in the compiler which is not implemented. Please file a bug (see instructions here: http://mono-project.com/Bugs)"
+    ''' VB   = "(no corresponding VB warning)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC99997 = 99997
 
     ''' <summary>
     ''' VBNC = "{0}"

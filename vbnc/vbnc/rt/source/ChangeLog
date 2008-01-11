@@ -1,3 +1,8 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Test.vb: Strip invalid characters from log filenames.
+	* Tests.vb: Sort files (NTFS does it automatically).
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VerificationBase.vb, Test.vb, ExternalProcessVerification.vb,

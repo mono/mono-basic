@@ -66,7 +66,7 @@ Public Class PropertyAccessClassification
         If m_LateBoundExpression IsNot Nothing Then Return m_LateBoundExpression.GenerateCode(Info)
 
         Dim rside As EmitInfo
-        rside = Info.Clone(True)
+        rside = Info.Clone(Parent, True)
 
         If m_Classification IsNot Nothing Then
             m_InstanceExpression = m_Classification.InstanceExpression

@@ -167,6 +167,8 @@ Public Class Tests
         'Get all the code files in the directory.
         Dim files() As String = IO.Directory.GetFiles(m_Path, "*.vb")
 
+        Array.Sort(files)
+
         'Remove files that aren't there anymore
         Dim j As Integer = 0
         While j < Me.Count

@@ -77,7 +77,7 @@ Public Class RaiseEventStatement
         raiseMethod = cl.EventInfo.GetRaiseMethod(True)
         If raiseMethod IsNot Nothing Then
             'Call the raise method
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         Else
             'Manually raise the event
             Dim delegateVar As LocalBuilder
@@ -112,7 +112,7 @@ Public Class RaiseEventStatement
             'Load the field again
             Emitter.EmitLoadVariable(Info, delegateVar)
             'Load the invoke arguments
-            result = m_Arguments.GenerateCode(Info.Clone(True), invokemethod.GetParameters) AndAlso result
+            result = m_Arguments.GenerateCode(Info.Clone(Me, True), invokemethod.GetParameters) AndAlso result
             'Call the invoke method.
             Emitter.EmitCallOrCallVirt(Info, invokemethod)
 

@@ -34,6 +34,7 @@
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DesignerGeneratedAttribute.vb
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.vb
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\TypeCombinations.vb
+..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\VBErrors.vb
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\Versioned.vb
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DateType.vb
 ..\..\..\..\vbruntime\Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DecimalType.vb

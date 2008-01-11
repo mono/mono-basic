@@ -191,6 +191,19 @@ Public Class ArgumentList
         End Get
     End Property
 
+    ReadOnly Property ArgumentsTypesAsString() As String
+        Get
+            Dim result As String = ""
+            Dim sep As String = ""
+
+            For Each arg As Argument In m_Arguments
+                result = result & sep & arg.AsTypeString
+                sep = ", "
+            Next
+            Return result
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
@@ -234,7 +247,7 @@ Public Class ArgumentList
             If arg.Expression IsNot Nothing Then
                 result.Add(arg.Expression.ExpressionType)
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         Next
 
@@ -278,7 +291,7 @@ Public Class ArgumentList
         Helper.Assert(Types.Length = Me.Count)
 
         For i As Integer = 0 To Count - 1
-            result = Item(i).GenerateCode(Info.Clone(True, False, Types(i)), Nothing) AndAlso result
+            result = Item(i).GenerateCode(Info.Clone(Me, True, False, Types(i)), Nothing) AndAlso result
         Next
         Return result
     End Function
@@ -289,12 +302,12 @@ Public Class ArgumentList
         Helper.Assert(params.Length >= Me.Count)
 
         For i As Integer = 0 To Count - 1
-            result = Item(i).GenerateCode(Info.Clone(True, False, params(i).ParameterType), params(i)) AndAlso result
+            result = Item(i).GenerateCode(Info.Clone(Me, True, False, params(i).ParameterType), params(i)) AndAlso result
         Next
 
         For i As Integer = Count To params.Length - 1
             Helper.Assert(params(i).IsOptional)
-            Emitter.EmitLoadValue(Info.Clone(params(i).ParameterType), params(i).DefaultValue)
+            Emitter.EmitLoadValue(Info.Clone(Me, params(i).ParameterType), params(i).DefaultValue)
         Next
 
         Return result

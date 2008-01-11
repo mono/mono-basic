@@ -23,6 +23,18 @@ Public Class PropertyAccessToValueExpression
     Private m_PropertyAccess As PropertyAccessClassification
     Private m_ExpressionType As Type
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Dim result As String = ""
+            If m_PropertyAccess.InstanceExpression IsNot Nothing Then
+                result = m_PropertyAccess.InstanceExpression.AsString & "."
+            End If
+            result &= m_PropertyAccess.ResolvedProperty.Name
+            result &= "(" & m_PropertyAccess.Parameters.AsString & ")"
+            Return result
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             Return m_PropertyAccess.IsConstant

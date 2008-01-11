@@ -180,7 +180,7 @@ Partial Class Parser
                 m_QualifiedName = tm.CurrentToken.Keyword
                 tm.NextToken()
             Else
-                Helper.AddError("Enum type must be integral")
+                Helper.AddError(Compiler, tm.CurrentLocation, "Enum type must be integral")
             End If
         End If
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()

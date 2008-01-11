@@ -61,7 +61,7 @@ Public Class SyncLockStatement
         Dim lockVariable As LocalBuilder
         lockVariable = Emitter.DeclareLocal(Info, lockType)
 
-        result = m_Lock.GenerateCode(Info.Clone(True, False, lockType)) AndAlso result
+        result = m_Lock.GenerateCode(Info.Clone(Me, True, False, lockType)) AndAlso result
         Emitter.EmitStoreVariable(Info, lockVariable)
 
         If Helper.CompareType(Compiler.TypeCache.System_Object, lockVariable.LocalType) Then

@@ -12,13 +12,17 @@ Class Message
     ''' <summary>
     '''
     ''' </summary>
-    Sub New(ByVal ID As Integer)
+    Sub New(ByVal ID As Integer, Level As String)
         Me.ID = ID
-        If ID >= 40000 Then
-            Me.Level = "Warning"
-        Else
-            Me.Level = "Error"
-        End If
+	If Level = "" Then
+		If ID >= 40000 Then
+		    Me.Level = "Warning"
+		Else
+		    Me.Level = "Error"
+		End If
+	Else
+		Me.Level = level
+	End If
         Console.WriteLine("Created ID=" & ID)
     End Sub
 

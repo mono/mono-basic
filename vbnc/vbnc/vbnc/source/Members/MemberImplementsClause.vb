@@ -107,7 +107,7 @@ Public Class MemberImplementsClause
                 ElseIf Method.Name.StartsWith("set_") Then
                     methodI = propertyI.GetSetMethod(True)
                 Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
                 End If
                 methodI = Helper.GetMethodOrMethodBuilder(methodI)
             End If
@@ -117,7 +117,7 @@ Public Class MemberImplementsClause
             Builder.DefineMethodOverride(Method, methodI)
 #If ENABLECECIL Then
             Dim methodDef As Mono.Cecil.MethodDefinition
-            Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), MethodDescriptor)
+            Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, Method), MethodDescriptor)
             methodDef = TryCast(mD.MethodInCecil, Mono.Cecil.MethodDefinition)
             methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, methodI))
 #End If

@@ -40,7 +40,7 @@ Public Class VariableExpression
         If Variable.LocalBuilder IsNot Nothing Then
             result = Emit(Info, Variable.LocalBuilder) AndAlso result
         Else
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Variable.Location)
         End If
 
         Return True
@@ -53,7 +53,7 @@ Public Class VariableExpression
         If Info.IsRHS Then
             Emitter.EmitLoadVariable(Info, LocalBuilder)
         Else
-            Dim rInfo As EmitInfo = Info.Clone(True, False, LocalBuilder.LocalType)
+            Dim rInfo As EmitInfo = Info.Clone(Info.Context, True, False, LocalBuilder.LocalType)
 
             Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
             Helper.Assert(Info.RHSExpression.Classification.IsValueClassification OrElse Info.RHSExpression.Classification.CanBeValueClassification)

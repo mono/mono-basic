@@ -560,6 +560,46 @@ Public Class AssemblyDeclaration
         Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
     End Sub
 
+#If ENABLECECIL Then
+    Public Sub SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition)
+        Dim keyfile As String = Nothing
+        Dim keyname As String = Nothing
+        Dim delaysign As Boolean = False
+
+        Name.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
+
+#If DEBUGREFLECTION Then
+        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
+        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
+#End If
+
+        If Compiler.CommandLine.KeyFile <> String.Empty Then
+            keyfile = Compiler.CommandLine.KeyFile
+        End If
+
+        For Each attri As Attribute In Me.Attributes
+            Dim attribType As Type
+            attribType = attri.ResolvedType
+
+            If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
+                SetVersion(Name, attri, attri.Location)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
+                If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
+                keyname = TryCast(attri.Arguments()(0), String)
+            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyDelaySignAttribute) Then
+                delaysign = CBool(attri.Arguments()(0))
+            End If
+        Next
+
+        If keyfile <> String.Empty Then
+            If SignWithKeyFile(Name, keyfile, delaysign) = False Then
+                Return
+            End If
+        End If
+    End Sub
+#End If
+
     Public Function GetName() As AssemblyName
         Dim result As New AssemblyName()
         Dim keyfile As String = Nothing
@@ -600,7 +640,43 @@ Public Class AssemblyDeclaration
 
         Return result
     End Function
+#If ENABLECECIL Then
+    Private Function SignWithKeyFile(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
+        Dim filename As String
 
+        filename = IO.Path.GetFullPath(KeyFile)
+
+#If DEBUG Then
+        Compiler.Report.WriteLine("Signing with file: " & filename)
+#End If
+
+        If IO.File.Exists(filename) = False Then
+            Helper.AddError(Me, "Can't find keyfile: " & filename)
+            Return False
+        End If
+
+        Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+            Dim snkeypair() As Byte
+            ReDim snkeypair(CInt(stream.Length - 1))
+            stream.Read(snkeypair, 0, snkeypair.Length)
+
+            If Helper.IsOnMono Then
+                SignWithKeyFileMono(result, filename, DelaySign, snkeypair)
+            Else
+                If DelaySign Then
+                    result.PublicKey = snkeypair
+                Else
+                    'FIXME: Check if this is correct, I suppose it's not
+                    'result.KeyPair = New StrongNameKeyPair(snkeypair)
+                    result.PublicKey = snkeypair
+                End If
+            End If
+
+        End Using
+
+        Return True
+    End Function
+#End If
     Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
         Dim filename As String
 
@@ -611,7 +687,7 @@ Public Class AssemblyDeclaration
 #End If
 
         If IO.File.Exists(filename) = False Then
-            Helper.AddError("Can't find keyfile: " & filename)
+            Helper.AddError(Me, "Can't find keyfile: " & filename)
             Return False
         End If
 
@@ -634,6 +710,62 @@ Public Class AssemblyDeclaration
 
         Return True
     End Function
+
+#If ENABLECECIL Then
+    Private Function SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
+        Dim CryptoConvert As Type
+        Dim FromCapiKeyBlob As MethodInfo
+        Dim ToCapiPublicKeyBlob As MethodInfo
+        Dim FromCapiPrivateKeyBlob As MethodInfo
+        Dim RSA As Type
+        Dim mscorlib As Assembly = GetType(Integer).Assembly
+
+#If DEBUG Then
+        Compiler.Report.WriteLine("Signing on Mono")
+#End If
+
+        Try
+            RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
+            CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
+            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
+            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
+            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
+
+            If DelaySign Then
+                If blob.Length = 16 Then
+                    result.PublicKey = blob
+#If DEBUG Then
+                    Compiler.Report.WriteLine("Delay signed 1")
+#End If
+                Else
+                    Dim publickey() As Byte
+                    Dim fromCapiResult As Object
+                    Dim publicKeyHeader As Byte() = New Byte() {&H0, &H24, &H0, &H0, &H4, &H80, &H0, &H0, &H94, &H0, &H0, &H0}
+                    Dim encodedPublicKey() As Byte
+
+                    fromCapiResult = FromCapiKeyBlob.Invoke(Nothing, New Object() {blob})
+                    publickey = CType(ToCapiPublicKeyBlob.Invoke(Nothing, New Object() {fromCapiResult}), Byte())
+
+                    ReDim encodedPublicKey(11 + publickey.Length)
+                    Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
+                    Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
+                    result.PublicKey = encodedPublicKey
+#If DEBUG Then
+                    Compiler.Report.WriteLine("Delay signed 2")
+#End If
+                End If
+            Else
+                FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})
+                'FIXME: Check if this is correct, I suppose it's not
+                'result.KeyPair = New StrongNameKeyPair(blob)
+                result.PublicKey = blob
+            End If
+        Catch ex As Exception
+            Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
+        End Try
+
+    End Function
+#End If
 
     Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
         Dim CryptoConvert As Type
@@ -682,10 +814,67 @@ Public Class AssemblyDeclaration
                 result.KeyPair = New StrongNameKeyPair(blob)
             End If
         Catch ex As Exception
-            Helper.AddError("Invalid key file: " & KeyFile & ", got error: " & ex.Message)
+            Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
         End Try
 
     End Function
+
+#If ENABLECECIL Then
+    Private Function SetVersion(ByVal Name As Mono.Cecil.AssemblyNameDefinition, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
+        Dim result As Version
+        Dim version As String = ""
+
+        If Attribute.Arguments IsNot Nothing AndAlso Attribute.Arguments.Length = 1 Then
+            version = TryCast(Attribute.Arguments()(0), String)
+        Else
+            Return ShowInvalidVersionMessage(version, Location)
+        End If
+
+        Try
+            Dim parts() As String
+            Dim major, minor, build, revision As UShort
+            parts = version.Split("."c)
+
+            If parts.Length > 4 Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If Not UShort.TryParse(parts(0), major) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If Not UShort.TryParse(parts(1), minor) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If parts.Length < 3 Then
+                'Use 0
+            ElseIf parts(2) = "*" Then
+                build = CUShort((Date.Now - New Date(2000, 1, 1)).TotalDays)
+                revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+            ElseIf Not UShort.TryParse(parts(2), build) Then
+                Return ShowInvalidVersionMessage(version, Location)
+            End If
+
+            If parts.Length < 4 Then
+                'Use 0
+            ElseIf parts.Length > 3 Then
+                If parts(3) = "*" Then
+                    revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+                ElseIf Not UShort.TryParse(parts(3), revision) Then
+                    Return ShowInvalidVersionMessage(version, Location)
+                End If
+            End If
+
+            result = New Version(major, minor, build, revision)
+        Catch ex As Exception
+            Return ShowInvalidVersionMessage(version, Location)
+        End Try
+
+        Name.Version = result
+        Return True
+    End Function
+#End If
 
     Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
         Dim result As Version

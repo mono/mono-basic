@@ -235,7 +235,7 @@ Public Class VariableDeclaration
 
                 If m_IsNew Then
                     If m_TypeName.IsNonArrayTypeName = False Then
-                        Helper.AddError()
+                        result = Helper.AddError(Me) AndAlso result
                     End If
                     m_NewExpression = New DelegateOrObjectCreationExpression(Me, m_TypeName.AsNonArrayTypeName, m_ArgumentList)
                 End If
@@ -253,7 +253,7 @@ Public Class VariableDeclaration
 
         If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.HasArrayNameModifier Then
             If m_FieldType.IsArray Then
-                Helper.AddError("Cannot specify array modifier on both type name and on variable name.")
+                result = Helper.AddError(Me, "Cannot specify array modifier on both type name and on variable name.") AndAlso result
             Else
                 If m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
                     m_FieldType = m_VariableIdentifier.ArrayNameModifier.AsArraySizeInitializationModifier.CreateArrayType(m_FieldType)
@@ -381,7 +381,7 @@ Public Class VariableDeclaration
         ElseIf m_FieldBuilder IsNot Nothing Then
             Emitter.EmitStoreField(Info, m_FieldBuilder)
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If
     End Sub
 
@@ -459,7 +459,7 @@ Public Class VariableDeclaration
 
         If m_VariableInitializer IsNot Nothing Then
             EmitThisIfNecessary(Info)
-            result = m_VariableInitializer.GenerateCode(Info.Clone(True, False, varType)) AndAlso result
+            result = m_VariableInitializer.GenerateCode(Info.Clone(Me, True, False, varType)) AndAlso result
 
             If m_VariableInitializer.InitializerExpression IsNot Nothing AndAlso Helper.CompareType(varType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(m_VariableInitializer.ExpressionType, Compiler.TypeCache.System_Object) Then
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
@@ -468,7 +468,7 @@ Public Class VariableDeclaration
         ElseIf m_IsNew Then
             Helper.Assert(m_NewExpression IsNot Nothing)
             EmitThisIfNecessary(Info)
-            result = m_NewExpression.GenerateCode(Info.Clone(True, False, varType)) AndAlso result
+            result = m_NewExpression.GenerateCode(Info.Clone(Me, True, False, varType)) AndAlso result
             EmitStore(Info)
         End If
 

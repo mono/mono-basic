@@ -133,7 +133,7 @@ Public Class GenericMethodDescriptor
         ElseIf m_ClosedMethodDescriptor IsNot Nothing Then
             result = Helper.FilterCustomAttributes(attributeType, inherit, m_ClosedMethodDescriptor.Declaration)
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             result = Nothing
         End If
         DumpMethodInfo(result)
@@ -148,7 +148,7 @@ Public Class GenericMethodDescriptor
             If TypeOf m_OpenMethod Is MethodBuilder = False Then
                 result = m_OpenMethod.GetGenericArguments
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
                 result = Nothing
             End If
         Else
@@ -420,7 +420,7 @@ Public Class GenericMethodDescriptor
 #End If
                             m_ClosedMethod = TypeBuilder.GetMethod(m_ClosedType, m_OpenMethod.GetGenericMethodDefinition)
                         Else
-                            Helper.NotImplemented()
+                            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
                         End If
 
                     End If

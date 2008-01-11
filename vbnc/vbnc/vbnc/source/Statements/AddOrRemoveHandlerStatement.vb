@@ -113,7 +113,7 @@ Public Class AddOrRemoveHandlerStatement
         If handler.IsStatic = False Then
             result = m_Event.Classification.AsEventAccess.GenerateCode(Info) AndAlso result
         End If
-        result = m_EventHandler.Classification.GenerateCode(Info.Clone(True, False, m_EventHandler.ExpressionType)) AndAlso result
+        result = m_EventHandler.Classification.GenerateCode(Info.Clone(Me, True, False, m_EventHandler.ExpressionType)) AndAlso result
 
         Helper.Assert(handler IsNot Nothing)
 

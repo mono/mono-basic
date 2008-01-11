@@ -174,7 +174,7 @@ Public Class TypeDescriptor
     Public Overrides ReadOnly Property GenericParameterAttributes() As System.Reflection.GenericParameterAttributes
         Get
             Dim result As GenericParameterAttributes
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             DumpMethodInfo(result)
             Return result
         End Get
@@ -183,7 +183,7 @@ Public Class TypeDescriptor
     Public Overrides ReadOnly Property GenericParameterPosition() As Integer
         Get
             Dim result As Integer
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             DumpMethodInfo(result)
             Return result
         End Get
@@ -303,7 +303,8 @@ Public Class TypeDescriptor
     Public Overrides ReadOnly Property AssemblyQualifiedName() As String
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -376,7 +377,7 @@ Public Class TypeDescriptor
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         Return result
     End Function
 
@@ -405,12 +406,14 @@ Public Class TypeDescriptor
 
     Public Overloads Overrides Function GetEvent(ByVal name As String, ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.EventInfo
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetEvents(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.EventInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetField(ByVal name As String, ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.FieldInfo
@@ -430,12 +433,14 @@ Public Class TypeDescriptor
 
     Public Overloads Overrides Function GetFields(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.FieldInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetInterface(ByVal name As String, ByVal ignoreCase As Boolean) As System.Type
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides Function GetInterfaces() As System.Type()
@@ -518,7 +523,8 @@ Public Class TypeDescriptor
 #If DEBUG Then
         Dim tmp As BindingFlags = (Not (BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static)) And bindingAttr
         If CInt(tmp) > 0 Then
-            Helper.NotImplemented("bindingAttr has some value not checked for: " & tmp.ToString)
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            'Helper.NotImplemented("bindingAttr has some value not checked for: " & tmp.ToString)
         End If
 #End If
 
@@ -565,7 +571,7 @@ Public Class TypeDescriptor
         Dim tmp As BindingFlags = (Not (BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static Or BindingFlags.FlattenHierarchy Or BindingFlags.DeclaredOnly)) And bindingAttr
 
         If CInt(tmp) > 0 Then
-            Helper.NotImplementedYet("bindingAttr has some value not checked for: " & tmp.ToString)
+            'Helper.NotImplementedYet("bindingAttr has some value not checked for: " & tmp.ToString)
         End If
 #End If
 
@@ -604,7 +610,7 @@ Public Class TypeDescriptor
         Dim candidates As Generic.List(Of MemberInfo)
 
         If (bindingAttr And BindingFlags.DeclaredOnly) = 0 Then
-            Helper.NotImplementedYet("Get* should not be called without DeclaredOnly, if base members are needed call Compiler.TypeManager.GetCache(type).FlattenedMembers")
+            'Helper.NotImplementedYet("Get* should not be called without DeclaredOnly, if base members are needed call Compiler.TypeManager.GetCache(type).FlattenedMembers")
             candidates = AllMembers
         Else
             candidates = AllDeclaredMembers
@@ -631,7 +637,7 @@ Public Class TypeDescriptor
         result = New Generic.List(Of MemberInfo)
 
         If (bindingAttr And BindingFlags.DeclaredOnly) = 0 Then
-            Helper.NotImplementedYet("Get* should not be called without DeclaredOnly, if base members are needed call Compiler.TypeManager.GetCache(type).FlattenedMembers")
+            'Helper.NotImplementedYet("Get* should not be called without DeclaredOnly, if base members are needed call Compiler.TypeManager.GetCache(type).FlattenedMembers")
             result.AddRange(Filter(AllMembers, bindingAttr).ToArray)
         Else
             result.AddRange(Filter(AllDeclaredMembers, bindingAttr).ToArray)
@@ -660,7 +666,7 @@ Public Class TypeDescriptor
         ElseIf allMembers.Count = 1 Then
             result = TryCast(allMembers(0), MethodInfo)
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
 
         DumpMethodInfo(result)
@@ -747,7 +753,8 @@ Public Class TypeDescriptor
 
     Public Overloads Overrides Function GetProperties(ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.PropertyInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Protected Overrides Function GetPropertyImpl(ByVal name As String, ByVal bindingAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal returnType As System.Type, ByVal types() As System.Type, ByVal modifiers() As System.Reflection.ParameterModifier) As System.Reflection.PropertyInfo
@@ -771,21 +778,23 @@ Public Class TypeDescriptor
     Public Overrides ReadOnly Property GUID() As System.Guid
         Get
             DumpMethodInfo()
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
     Protected Overrides Function HasElementTypeImpl() As Boolean
         Dim result As Boolean
 
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         DumpMethodInfo(result)
         Return result
     End Function
 
     Public Overloads Overrides Function InvokeMember(ByVal name As String, ByVal invokeAttr As System.Reflection.BindingFlags, ByVal binder As System.Reflection.Binder, ByVal target As Object, ByVal args() As Object, ByVal modifiers() As System.Reflection.ParameterModifier, ByVal culture As System.Globalization.CultureInfo, ByVal namedParameters() As String) As Object
         DumpMethodInfo()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Protected Overrides Function IsArrayImpl() As Boolean
@@ -802,12 +811,12 @@ Public Class TypeDescriptor
 
     Protected Overrides Function IsCOMObjectImpl() As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
     End Function
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
     End Function
 
     Protected Overrides Function IsPointerImpl() As Boolean
@@ -931,7 +940,7 @@ Public Class TypeDescriptor
                 result = False
             End If
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
         DumpMethodInfo(result)
         Return result
@@ -956,7 +965,7 @@ Public Class TypeDescriptor
         Get
             Dim result As MethodBase
 
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             result = Nothing
 
             DumpMethodInfo(result)
@@ -965,23 +974,28 @@ Public Class TypeDescriptor
     End Property
     Public Overrides Function FindInterfaces(ByVal filter As System.Reflection.TypeFilter, ByVal filterCriteria As Object) As System.Type()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.FindInterfaces(filter, filterCriteria)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.FindInterfaces(filter, filterCriteria)
     End Function
     Public Overrides Function FindMembers(ByVal memberType As System.Reflection.MemberTypes, ByVal bindingAttr As System.Reflection.BindingFlags, ByVal filter As System.Reflection.MemberFilter, ByVal filterCriteria As Object) As System.Reflection.MemberInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.FindMembers(memberType, bindingAttr, filter, filterCriteria)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.FindMembers(memberType, bindingAttr, filter, filterCriteria)
     End Function
     Public Overrides Function GetArrayRank() As Integer
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetArrayRank()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetArrayRank()
     End Function
     Public Overrides Function GetDefaultMembers() As System.Reflection.MemberInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetDefaultMembers()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetDefaultMembers()
     End Function
     Public Overrides Function GetEvents() As System.Reflection.EventInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetEvents()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetEvents()
     End Function
 
     Public Overrides Function GetGenericArguments() As System.Type()
@@ -999,7 +1013,7 @@ Public Class TypeDescriptor
                 tmpResult.AddRange(Me.DeclaringType.GetGenericArguments)
             End If
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
 
         result = tmpResult.ToArray
@@ -1010,7 +1024,8 @@ Public Class TypeDescriptor
 
     Public Overrides Function GetGenericParameterConstraints() As System.Type()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetGenericParameterConstraints()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetGenericParameterConstraints()
     End Function
     Public Overrides Function GetGenericTypeDefinition() As System.Type
         Dim result As Type = Nothing
@@ -1024,11 +1039,11 @@ Public Class TypeDescriptor
                 If tmpGen IsNot Nothing AndAlso (tmpGen.TypeParameters Is Nothing OrElse tmpGen.TypeParameters.Parameters.Length = 0) Then
                     Return Me
                 Else
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
                 End If
             End If
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
         DumpMethodInfo(result)
         Return result
@@ -1044,15 +1059,18 @@ Public Class TypeDescriptor
 
     Public Overrides Function GetInterfaceMap(ByVal interfaceType As System.Type) As System.Reflection.InterfaceMapping
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetInterfaceMap(interfaceType)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetInterfaceMap(interfaceType)
     End Function
     Public Overrides Function GetMember(ByVal name As String, ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.MemberInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetMember(name, bindingAttr)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetMember(name, bindingAttr)
     End Function
     Public Overrides Function GetMember(ByVal name As String, ByVal type As System.Reflection.MemberTypes, ByVal bindingAttr As System.Reflection.BindingFlags) As System.Reflection.MemberInfo()
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetMember(name, type, bindingAttr)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetMember(name, type, bindingAttr)
     End Function
     ''' <summary>
     ''' 
@@ -1073,7 +1091,7 @@ Public Class TypeDescriptor
         ElseIf TypeOf c Is IType = False Then
             result = False
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
 
         DumpMethodInfo(result)
@@ -1082,17 +1100,20 @@ Public Class TypeDescriptor
 
     Protected Overrides Function IsContextfulImpl() As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.IsContextfulImpl()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.IsContextfulImpl()
     End Function
 
     Public Overrides Function IsInstanceOfType(ByVal o As Object) As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.IsInstanceOfType(o)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.IsInstanceOfType(o)
     End Function
 
     Protected Overrides Function IsMarshalByRefImpl() As Boolean
         DumpMethodInfo()
-        Helper.NotImplemented() : Return MyBase.IsMarshalByRefImpl()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.IsMarshalByRefImpl()
     End Function
 
     Public Overrides Function IsSubclassOf(ByVal c As System.Type) As Boolean
@@ -1133,7 +1154,7 @@ Public Class TypeDescriptor
         ElseIf TypeOf Me Is ArrayTypeDescriptor Then
             result = New ArrayTypeDescriptor(Me, rank)
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         End If
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good is any type comparison would fail.
@@ -1171,7 +1192,7 @@ Public Class TypeDescriptor
 
     Public Overrides Function MakePointerType() As System.Type
         Dim result As Type = Nothing
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
         DumpMethodInfo(result)
         Return result
     End Function
@@ -1193,7 +1214,7 @@ Public Class TypeDescriptor
         Get
             Dim result As Integer
             DumpMethodInfo(result)
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             Return result
         End Get
     End Property
@@ -1202,7 +1223,7 @@ Public Class TypeDescriptor
         Get
             Dim result As Type = Nothing
             DumpMethodInfo(result)
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             Return result
         End Get
     End Property
@@ -1211,7 +1232,7 @@ Public Class TypeDescriptor
         Get
             Dim result As Runtime.InteropServices.StructLayoutAttribute = Nothing
             DumpMethodInfo(result)
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             Return result
         End Get
     End Property
@@ -1220,7 +1241,7 @@ Public Class TypeDescriptor
         Get
             Dim result As RuntimeTypeHandle
             DumpMethodInfo(result)
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
             Return result
         End Get
     End Property

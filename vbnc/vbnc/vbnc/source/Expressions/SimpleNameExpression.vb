@@ -82,9 +82,11 @@ Public Class SimpleNameExpression
                 Case ExpressionClassification.Classifications.Variable
                     result = Classification.AsVariableClassification.Type
                 Case ExpressionClassification.Classifications.Type
-                    Helper.NotImplemented() : result = Nothing
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                    result = Nothing
                 Case ExpressionClassification.Classifications.Namespace
-                    Helper.NotImplemented() : result = Nothing
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                    result = Nothing
                 Case ExpressionClassification.Classifications.PropertyGroup
                     result = Classification.AsPropertyGroup.Type
                 Case ExpressionClassification.Classifications.PropertyAccess
@@ -158,7 +160,7 @@ Public Class SimpleNameExpression
             If Me.Classification.IsVariableClassification Then
                 result = Me.Classification.AsVariableClassification.GenerateCode(Info) AndAlso result
             ElseIf Me.Classification.IsPropertyGroupClassification Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf Me.Classification.IsValueClassification Then
                 Throw New InternalException(Me)
             Else
@@ -383,7 +385,7 @@ Public Class SimpleNameExpression
             Compiler.Report.WriteLine("Found " & membersArray.Length & " members, after filtering by name it's " & members.Count & " members")
 #End If
 
-            Helper.ApplyTypeArguments(members, m_TypeArgumentList)
+            Helper.ApplyTypeArguments(Me, members, m_TypeArgumentList)
 
             If members.Count > 0 Then
                 'Otherwise, if the type is the immediately enclosing type and the lookup identifies a non-shared 
@@ -466,7 +468,7 @@ Public Class SimpleNameExpression
             If modulemembers.Count = 1 Then
                 Return SetClassificationOfModuleMembers(modulemembers)
             ElseIf modulemembers.Count > 1 Then
-                Helper.AddError()
+                Return Helper.AddError(Me)
             End If
 
             currentNS = Helper.GetNamespaceParent(currentNS)
@@ -599,7 +601,7 @@ Public Class SimpleNameExpression
         End If
 
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-        Helper.AddError()
+        Helper.AddError(Me)
 
         Return Nothing
     End Function
@@ -704,7 +706,7 @@ Public Class SimpleNameExpression
         '(not applicable)
 
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-        Helper.AddError()
+        Helper.AddError(Me)
 
         Return Nothing
     End Function
@@ -740,7 +742,7 @@ Public Class SimpleNameExpression
             Classification = New TypeClassification(Me, foundType)
             Return True
         ElseIf foundNamespace IsNot Nothing AndAlso foundType IsNot Nothing Then
-            Helper.AddError()
+            Return Helper.AddError(Me)
         End If
 
         If foundNamespace Is Nothing Then Return False
@@ -753,7 +755,7 @@ Public Class SimpleNameExpression
             Helper.Assert(Helper.IsTypeDeclaration(members(0)))
             Classification = New TypeClassification(Me, members(0))
         ElseIf members.Count > 1 Then
-            Helper.AddError()
+            Return Helper.AddError(Me)
         End If
 
         Return False
@@ -812,7 +814,7 @@ Public Class SimpleNameExpression
             End If
             If result IsNot Nothing AndAlso result.Count > 0 Then
                 If impmembers.Count > 0 Then
-                    Helper.AddError("If the identifier matches the name of an accessible type or type member in more than one import, a compile-time error occurs.")
+                    Return Helper.AddError(Me, "If the identifier matches the name of an accessible type or type member in more than one import, a compile-time error occurs.")
                 End If
                 impmembers.AddRange(result)
                 'result.Clear()
@@ -835,7 +837,7 @@ Public Class SimpleNameExpression
                 Classification = New ValueClassification(Me, DirectCast(impmembers(0), FieldInfo), Nothing)
                 Return True
             End If
-            Helper.NotImplemented("Found " & impmembers.Count & " impmembers.")
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         End If
 
         Dim nsmembers As Generic.List(Of [Namespace])
@@ -847,7 +849,7 @@ Public Class SimpleNameExpression
             Classification = New NamespaceClassification(Me, nsmembers(0))
             Return True
         ElseIf nsmembers.Count > 1 Then
-            Helper.AddError()
+            Return Helper.AddError(Me)
         End If
 
         'Otherwise, if the imports contain one or more accessible standard modules, and a member name 
@@ -875,7 +877,7 @@ Public Class SimpleNameExpression
             Return True
         End If
         If found.Count > 1 Then
-            Helper.AddError()
+            Return Helper.AddError(Me)
         End If
         If Helper.IsTypeDeclaration(found(0)) Then
             Classification = New TypeClassification(Me, found(0))
@@ -894,7 +896,7 @@ Public Class SimpleNameExpression
             Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
             Return True
         End If
-        Helper.NotImplemented("Found " & found.Count & " of type " & found(0).GetType.Name & " in location: " & Me.Location.ToString(Compiler))
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Return True
     End Function
 

@@ -78,24 +78,24 @@ Partial Public Class Parser
         While tm.CurrentToken.Equals(KS.Option)
             If OptionExplicitStatement.IsMe(tm) Then
                 If m_OptionExplicit IsNot Nothing Then
-                    Helper.NotImplemented() 'AddError
+                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
                 End If
                 m_OptionExplicit = ParseOptionExplicitStatement(CodeFile)
                 If m_OptionExplicit Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionStrictStatement.IsMe(tm) Then
                 If m_OptionStrict IsNot Nothing Then
-                    Helper.NotImplemented() 'AddError
+                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
                 End If
                 m_OptionStrict = ParseOptionStrictStatement(CodeFile)
                 If m_OptionStrict Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionCompareStatement.IsMe(tm) Then
                 If m_OptionCompare IsNot Nothing Then
-                    Helper.NotImplemented() 'AddError
+                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
                 End If
                 m_OptionCompare = ParseOptionCompareStatement(CodeFile)
                 If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             Else
-                Helper.NotImplemented()
+                result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
             End If
         End While
 
@@ -115,7 +115,7 @@ Partial Public Class Parser
     ''' CompareOption  ::=  "Binary" | "Text"
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseOptionCompareStatement(ByVal Parent As IBaseObject) As OptionCompareStatement
+    Private Function ParseOptionCompareStatement(ByVal Parent As BaseObject) As OptionCompareStatement
         Dim result As New OptionCompareStatement(Parent)
 
         Dim m_IsBinary As Boolean
@@ -128,7 +128,7 @@ Partial Public Class Parser
         ElseIf tm.Accept("Binary") Then
             m_IsBinary = True
         Else
-            Helper.NotImplemented() 'AddError
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
         End If
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -142,7 +142,7 @@ Partial Public Class Parser
     ''' OptionStrictStatement  ::=  "Option" "Strict" [  OnOff  ]  StatementTerminator
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseOptionStrictStatement(ByVal Parent As IBaseObject) As OptionStrictStatement
+    Private Function ParseOptionStrictStatement(ByVal Parent As BaseObject) As OptionStrictStatement
         Dim result As New OptionStrictStatement(Parent)
 
         Dim m_Off As Boolean
@@ -168,7 +168,7 @@ Partial Public Class Parser
     ''' OptionExplicitStatement  ::=  Option  Explicit  [  OnOff  ]  StatementTerminator
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseOptionExplicitStatement(ByVal Parent As IBaseObject) As OptionExplicitStatement
+    Private Function ParseOptionExplicitStatement(ByVal Parent As BaseObject) As OptionExplicitStatement
         Dim result As New OptionExplicitStatement(Parent)
 
         Dim m_Off As Boolean
@@ -649,7 +649,7 @@ Partial Public Class Parser
             result = New IdentifierOrKeyword(Parent, tm.CurrentToken)
             tm.NextToken()
         Else
-            Helper.AddError()
+            Helper.AddError(Compiler, tm.CurrentLocation)
             result = Nothing
         End If
 
@@ -1137,6 +1137,10 @@ Partial Public Class Parser
             Dim m_QualifiedIdentifier As QualifiedIdentifier
 
             If QualifiedIdentifier.CanBeQualifiedIdentifier(tm) = False Then
+                If tm.CurrentToken.IsKeyword Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30180, tm.CurrentLocation)
+                    tm.NextToken()
+                End If
                 Return Nothing
             End If
 
@@ -1295,7 +1299,9 @@ Partial Public Class Parser
             ElseIf InterfacePropertyMemberDeclaration.IsMe(tm) Then
                 newMember = ParseInterfacePropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
             Else
-                If attributes.Count > 0 Then Helper.AddError("Hanging attributes.")
+                If attributes.Count > 0 Then
+                    Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
+                End If
                 Exit While
             End If
 
@@ -1396,7 +1402,9 @@ Partial Public Class Parser
                 newMember = ParseConstructorMember(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             Else
-                If attributes.Count > 0 Then Helper.AddError("Hanging attributes.")
+                If attributes.Count > 0 Then
+                    Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
+                End If
                 Exit While
             End If
 
@@ -1497,10 +1505,12 @@ Partial Public Class Parser
                         currentNameSpace &= currentNamespaces(currentNamespaces.Count - 1).Name
                     End If
                 Else
-                    Helper.AddError("'End Namespace' without 'Namespace'.")
+                    Helper.AddError(Compiler, tm.CurrentLocation, "'End Namespace' without 'Namespace'.")
                 End If
             Else
-                If attributes.Count > 0 Then Helper.AddError("Hanging attributes.")
+                If attributes.Count > 0 Then
+                    Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
+                End If
                 Exit While
             End If
         End While

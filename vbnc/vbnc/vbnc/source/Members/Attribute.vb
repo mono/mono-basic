@@ -199,7 +199,8 @@ Public Class Attribute
                         For Each m As MemberInfo In members
                             Console.WriteLine(m.DeclaringType.FullName & ":" & m.Name)
                         Next
-                        Helper.NotImplemented(String.Format("Property resolution for attribute arguments ({0} members named '{1}' in {2})" & Me.Location.AsString, members.Count, name, m_ResolvedType.FullName))
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                        '                        Helper.NotImplemented(String.Format("Property resolution for attribute arguments ({0} members named '{1}' in {2})" & Me.Location.AsString, members.Count, name, m_ResolvedType.FullName))
                     End If
                     member = members(0)
                     Select Case member.MemberType
@@ -220,7 +221,7 @@ Public Class Attribute
                             m_PropertyValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
                             'm_PropertyValues.add(item.
                         Case Else
-                            Helper.AddError("Invalid member type for attribute value: " & member.MemberType.ToString)
+                            Helper.AddError(Me, "Invalid member type for attribute value: " & member.MemberType.ToString)
                     End Select
 
                 Next
@@ -276,7 +277,7 @@ Public Class Attribute
             builder = GetAttributeBuilder()
             Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
 #If ENABLECECIL Then
-            Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cecilBuilder)
+            Me.Compiler.AssemblyBuilderCecil.MainModule.CustomAttributes.Add(cecilBuilder)
 #End If
         ElseIf m_IsModule Then
             Dim builder As CustomAttributeBuilder
@@ -390,11 +391,13 @@ Public Class Attribute
 
         Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
         Helper.Assert(m_Arguments IsNot Nothing)
-        Helper.Assert(Helper.GetParameters(Compiler, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
+        Helper.Assert(Helper.GetParameters(Me, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
         Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
         m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
+        Helper.GetFieldOrFieldBuilder(m_Fields)
+        Helper.GetPropertyOrPropertyBuilder(m_Properties)
 
         For i As Integer = 0 To m_Arguments.Length - 1
             Dim type As Type

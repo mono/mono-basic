@@ -51,7 +51,7 @@ Public Class CObjExpression
         Dim result As Boolean = True
 
         If Info.IsRHS Then
-            result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
+            result = Expression.GenerateCode(Info.Clone(Expression, True, False, Expression.ExpressionType)) AndAlso result
             If Expression.ExpressionType.IsValueType OrElse Expression.ExpressionType.IsGenericParameter Then
                 Emitter.EmitBox(Info, Expression.ExpressionType)
             End If

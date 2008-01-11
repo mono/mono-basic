@@ -27,7 +27,7 @@ Public Class OptionCompareStatement
 
     Private m_IsBinary As Boolean
 
-    Sub New(ByVal Parent As IBaseObject)
+    Sub New(ByVal Parent As BaseObject)
         MyBase.New(Parent)
     End Sub
 

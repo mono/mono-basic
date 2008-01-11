@@ -304,7 +304,7 @@ Public Class ArrayTypeDescriptor
         ElseIf Helper.CompareType(Me.GetElementType, c.GetElementType) Then
             result = True
         Else
-            Helper.NotImplementedYet("ArrayTypeDescriptor:IsAssignableFrom")
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Declaration.Location)
             result = False
         End If
 

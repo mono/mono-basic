@@ -57,7 +57,7 @@ Public Class CStrExpression
         Dim expType As Type = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
-        result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
+        result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Boolean
@@ -101,7 +101,7 @@ Public Class CStrExpression
             Case TypeCode.Decimal
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Decimal)
             Case Else
-                Helper.NotImplemented()
+                Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
         End Select
 
         Return result

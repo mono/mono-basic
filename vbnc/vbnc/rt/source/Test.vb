@@ -802,6 +802,15 @@ Public Class Test
         Try
             compiler = "(" & VBNCVerification.Process.FileVersion.FileVersion & " " & VBNCVerification.Process.LastWriteDate.ToString(DATETIMEFORMAT) & ")"
             compiler &= "." & m_Result.ToString
+	
+            Dim i As Integer
+            i = compiler.IndexOfAny (IO.Path.GetInvalidPathChars)
+            If i >= 0 Then
+                For Each c As Char In IO.Path.GetInvalidPathChars
+                    compiler = compiler.Replace (c.ToString (), "")
+                Next
+            End If
+
             filename = IO.Path.Combine(Me.OutputPath, Me.Name & "." & compiler & ".testresult")
             Using contents As New Xml.XmlTextWriter(filename, Nothing)
                 contents.Formatting = Xml.Formatting.Indented
@@ -838,7 +847,7 @@ Public Class Test
                 End If
             End Using
         Catch ex As Exception
-            Debug.WriteLine(ex.Message & vbNewLine & ex.StackTrace)
+            Console.WriteLine(ex.Message & vbNewLine & ex.StackTrace)
         End Try
     End Sub
 
@@ -864,7 +873,9 @@ Public Class Test
     End Function
 
     Sub DoTest()
-        Environment.CurrentDirectory = BasePath
+	If BasePath <> "" Then
+	        Environment.CurrentDirectory = BasePath
+	End If
         If CreateVerifications() = False Then
             Return
         End If

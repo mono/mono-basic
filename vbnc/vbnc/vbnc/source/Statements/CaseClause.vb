@@ -78,7 +78,7 @@ Public Class CaseClause
         Dim casestmt As CaseStatement = Me.FindFirstParent(Of CaseStatement)()
         Dim selectstmt As SelectStatement = Me.FindFirstParent(Of SelectStatement)()
 
-        result = m_ComparisonExpression.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+        result = m_ComparisonExpression.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
 
         Emitter.EmitBranchIfTrue(Info, casestmt.StartCode)
 

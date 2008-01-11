@@ -374,7 +374,7 @@ Public Class CodeBlock
         Info.ILGen.BeginExceptFilterBlock()
         Info.Stack.Push(Compiler.TypeCache.System_Object)
         Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
-        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Exception))
+        Emitter.EmitLoadNull(Info.Clone(Me, True, False, Compiler.TypeCache.System_Exception))
         Emitter.EmitGT_Un(Info, Compiler.TypeCache.System_Exception) 'TypeOf ... Is System.Exception
 
         Emitter.EmitLoadVariable(Info, Me.VB_ActiveHandler)
@@ -407,7 +407,7 @@ Public Class CodeBlock
         Emitter.MarkLabel(Info, EndMethodLabel)
 
         Dim veryMethodEnd As Label = Emitter.DefineLabel(Info)
-        Emitter.EmitLoadVariable(Info.Clone(True, False, Compiler.TypeCache.System_Boolean), VB_ResumeTarget)
+        Emitter.EmitLoadVariable(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean), VB_ResumeTarget)
         Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfFalse(Info, veryMethodEnd)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)

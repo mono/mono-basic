@@ -31,7 +31,7 @@ Public Class TryCastExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = Expression.GenerateCode(Info.Clone(ExpressionType)) AndAlso result
+        result = Expression.GenerateCode(Info.Clone(Me, ExpressionType)) AndAlso result
         Emitter.EmitIsInst(Info, Expression.ExpressionType, ExpressionType)
 
         Return result

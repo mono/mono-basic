@@ -109,21 +109,21 @@ Public Class ConstructorDescriptor
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         Return result
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
         Dim result As Object() = Nothing
         DumpMethodInfo(result)
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         Return result
     End Function
 
     Public Overrides Function GetMethodImplementationFlags() As System.Reflection.MethodImplAttributes
         Dim result As MethodImplAttributes
         DumpMethodInfo(result)
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         Return result
     End Function
 
@@ -144,7 +144,7 @@ Public Class ConstructorDescriptor
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
         Dim result As Boolean
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         DumpMethodInfo(result)
         Return result
     End Function
@@ -152,7 +152,7 @@ Public Class ConstructorDescriptor
     Public Overrides ReadOnly Property MethodHandle() As System.RuntimeMethodHandle
         Get
             Dim result As RuntimeMethodHandle
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
             DumpMethodInfo(result)
             Return result
         End Get
@@ -215,13 +215,13 @@ Public Class ConstructorDescriptor
 
     Public Overrides Function GetHashCode() As Integer
         Dim result As Integer
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         DumpMethodInfo(result)
         Return result
     End Function
     Public Overrides Function GetMethodBody() As System.Reflection.MethodBody
         Dim result As MethodBody = Nothing
-        Helper.NotImplemented()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
         DumpMethodInfo(result)
         Return result
     End Function
@@ -257,7 +257,7 @@ Public Class ConstructorDescriptor
     Public Overrides ReadOnly Property MetadataToken() As Integer
         Get
             Dim result As Integer
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Declaration.Location)
             DumpMethodInfo(result)
             Return result
         End Get

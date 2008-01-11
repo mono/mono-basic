@@ -38,7 +38,7 @@ Public Class CCharExpression
         Dim expType As Type = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
-        result = Expression.GenerateCode(Info.Clone(Info.Compiler.TypeCache.System_Char)) AndAlso result
+        result = Expression.GenerateCode(Info.Clone(Expression, Info.Compiler.TypeCache.System_Char)) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Char
@@ -55,12 +55,12 @@ Public Class CCharExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'Nothing to do
                 Else
-                    Helper.NotImplemented()
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
                 End If
             Case TypeCode.String
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToChar_String)
             Case Else
-                Helper.NotImplemented()
+                Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
         End Select
 
         Return result

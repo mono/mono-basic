@@ -55,13 +55,13 @@ Public Class TypeOfExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_Expression.GenerateCode(Info.Clone(True, False, m_Expression.ExpressionType)) AndAlso result
+        result = m_Expression.GenerateCode(Info.Clone(Me, True, False, m_Expression.ExpressionType)) AndAlso result
         If m_Expression.ExpressionType.IsGenericParameter Then
             Emitter.EmitBox(Info, m_Expression.ExpressionType)
         End If
         Emitter.EmitIsInst(Info, m_Expression.ExpressionType, m_Type.ResolvedType)
 
-        Emitter.EmitLoadNull(Info.Clone(True, False, Compiler.TypeCache.System_Object))
+        Emitter.EmitLoadNull(Info.Clone(Me, True, False, Compiler.TypeCache.System_Object))
         Info.Stack.SwitchHead(Compiler.TypeCache.System_Object, Helper.GetTypeOrTypeBuilder(m_Type.ResolvedType))
         If m_Is Then
             Emitter.EmitNotEquals(Info, m_Type.ResolvedType)
@@ -85,7 +85,7 @@ Public Class TypeOfExpression
             m_Expression = m_Expression.ReclassifyToValueExpression()
             result = m_Expression.ResolveExpression(Info) AndAlso result
         Else
-            Helper.AddError()
+            result = Helper.AddError(Me) AndAlso result
         End If
 
         Return result

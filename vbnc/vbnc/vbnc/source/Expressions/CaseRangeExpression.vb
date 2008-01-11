@@ -38,6 +38,6 @@ Public Class CaseRangeExpression
 #End If
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
     End Function
 End Class

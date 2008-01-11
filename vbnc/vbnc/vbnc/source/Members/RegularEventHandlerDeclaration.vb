@@ -33,7 +33,7 @@ Public Class RegularEventHandlerDeclaration
                 Case KS.RemoveHandler
                     Code = New ImplicitCodeBlock(Me, New ImplicitCodeBlock.CodeGenerator(AddressOf CreateRemoveHandlerCode))
                 Case KS.RaiseEvent
-                    Helper.NotImplemented()
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     Code = Nothing
                 Case Else
                     Throw New InternalException(Me)

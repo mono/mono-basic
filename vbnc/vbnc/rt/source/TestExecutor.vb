@@ -185,6 +185,12 @@ Friend Class TestExecutor
                     End If
                 End If
             Next
+            Dim tp As Tests = TryCast(Tests, Tests)
+            If tp IsNot Nothing Then
+                For Each tl As TestList In tp.ContainedTests
+                    RunAsync(tl, Priority)
+                Next
+            End If
         End SyncLock
         StartThread()
     End Sub

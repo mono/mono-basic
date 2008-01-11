@@ -46,7 +46,7 @@ Public Class ConversionOperatorDeclaration
         ElseIf Modifiers.Is(ModifierMasks.Narrowing) Then
             mySignature.Init("op_Explicit", Nothing, parameters, ReturnTypeAttributes, TypeName, Me.Location)
         Else
-            Helper.AddError()
+            Helper.AddError(Me)
         End If
 
         m_Operator = [Operator]

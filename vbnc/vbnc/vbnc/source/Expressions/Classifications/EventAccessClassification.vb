@@ -59,7 +59,7 @@ Public Class EventAccessClassification
         Dim result As Boolean = True
 
         If m_InstanceExpression IsNot Nothing Then
-            result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, m_InstanceExpression.ExpressionType)) AndAlso result
+            result = m_InstanceExpression.GenerateCode(Info.Clone(Parent, True, False, m_InstanceExpression.ExpressionType)) AndAlso result
         End If
 
         Return result

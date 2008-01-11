@@ -35,23 +35,23 @@ Public Class DirectCastExpression
         Dim result As Boolean = True
 
         If ExpressionType.IsGenericParameter Then
-            result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
+            result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
             If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
                 Emitter.EmitUnbox_Any(Info, ExpressionType)
             End If
         Else
             If Expression.ExpressionType.IsValueType Then
                 If Helper.CompareType(ExpressionType, Expression.ExpressionType) Then
-                    result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
+                    result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
             ElseIf ExpressionType.IsGenericParameter = False AndAlso Expression.ExpressionType.IsClass AndAlso ExpressionType.IsValueType Then
-                result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
+                result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Emitter.EmitUnbox(Info, ExpressionType)
                 Emitter.EmitLoadObject(Info, ExpressionType)
             Else
-                result = Expression.GenerateCode(Info.Clone(True, False, Expression.ExpressionType)) AndAlso result
+                result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
                     Emitter.EmitCastClass(Info, Expression.ExpressionType, ExpressionType)
                 End If

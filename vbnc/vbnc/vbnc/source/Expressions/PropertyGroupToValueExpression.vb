@@ -25,7 +25,12 @@ Public Class PropertyGroupToValueExpression
 
     Public Overrides ReadOnly Property AsString() As String
         Get
-            Return m_PropertyGroup.InstanceExpression.AsString & "." & m_PropertyGroup.Group(0).Name
+            Dim result As String = ""
+            If m_PropertyGroup.InstanceExpression IsNot Nothing Then
+                result = m_PropertyGroup.InstanceExpression.AsString & "."
+            End If
+            result &= m_PropertyGroup.Group(0).Name
+            Return result
         End Get
     End Property
 

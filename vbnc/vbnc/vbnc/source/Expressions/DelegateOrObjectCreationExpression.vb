@@ -168,7 +168,7 @@ Public Class DelegateOrObjectCreationExpression
                 If m_ArgumentList.Count > 0 Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC32085, Me.Location)
                 End If
-                If (resolvedType.GenericParameterAttributes And GenericParameterAttributes.DefaultConstructorConstraint) = 0 Then
+                If (resolvedType.GenericParameterAttributes And GenericParameterAttributes.DefaultConstructorConstraint) = 0 AndAlso (resolvedType.GenericParameterAttributes And GenericParameterAttributes.NotNullableValueTypeConstraint) = 0 Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC32046, Me.Location)
                 End If
                 m_IsGenericConstructor = True
@@ -179,12 +179,12 @@ Public Class DelegateOrObjectCreationExpression
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
                 result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, finalArguments) AndAlso result
                 If result = False Then
-                    Helper.AddError("Delegate problems 3, " & Me.Location.ToString(Compiler) & ">" & Me.Parent.Location.ToString(Compiler))
+                    Helper.AddError(Me, "Delegate problems 3, " & Me.Location.ToString(Compiler) & ">" & Me.Parent.Location.ToString(Compiler))
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
             Else
-                Helper.AddError("Delegate problems 4, " & Me.Location.ToString(Compiler))
+                Helper.AddError(Me, "Delegate problems 4, " & Me.Location.ToString(Compiler))
             End If
 
             Classification = New ValueClassification(Me, resolvedType)

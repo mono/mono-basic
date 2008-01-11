@@ -201,7 +201,7 @@ Public Class EventDeclaration
         Dim parent As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
         m_EventType = Helper.GetTypeOrTypeBuilder(m_EventType)
         m_Builder = parent.TypeBuilder.DefineEvent(Name, EventAttributes.None, m_EventType)
-        Helper.NotImplementedYet("Cannot register event builder, it is not a memberinfo...")
+        'Helper.NotImplementedYet("Cannot register event builder, it is not a memberinfo...")
         'Compiler.TypeManager.RegisterReflectionMember(m_Builder, Me.MemberDescriptor)
 
 #If ENABLECECIL Then

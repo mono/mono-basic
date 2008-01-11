@@ -559,7 +559,7 @@ End Class
 #End If
 
 'START SRE
-' 
+'' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -737,6 +737,7 @@ Public Partial Class TypeCache
     Public MS_VB_CS_StaticLocalInitFlag As System.Type
     Public MS_VB_CS_StaticLocalInitFlag__State As System.Reflection.FieldInfo
     Public MS_VB_CS_StaticLocalInitFlag__ctor As System.Reflection.ConstructorInfo
+    Public MS_VB_CS_DesignerGeneratedAttribute As System.Type
     Public MS_VB_CS_IncompleteInitialization As System.Type
     Public MS_VB_CS_NewLateBinding As System.Type
     Public MS_VB_CS_LateBinding As System.Type
@@ -988,6 +989,7 @@ Public Partial Class TypeCache
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")
         MS_VB_CS_StaticLocalInitFlag = GetVBType("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag")
+        MS_VB_CS_DesignerGeneratedAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.DesignerGeneratedAttribute")
         MS_VB_CS_IncompleteInitialization = GetVBType("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization")
         MS_VB_CS_NewLateBinding = GetVBType("Microsoft.VisualBasic.CompilerServices.NewLateBinding")
         MS_VB_CS_LateBinding = GetVBType("Microsoft.VisualBasic.CompilerServices.LateBinding")
@@ -1105,6 +1107,7 @@ Public Partial Class TypeCache
     End Sub
 
 End Class
+
 
 
 'END SRE

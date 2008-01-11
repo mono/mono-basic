@@ -347,8 +347,9 @@ Public Class Compiler
             Case Else
                 kind = Mono.Cecil.AssemblyKind.Console
         End Select
-        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, kind)
+        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, Mono.Cecil.TargetRuntime.NET_2_0, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
+        Me.Assembly.SetCecilName(AssemblyBuilderCecil.Name)
 #End If
 
         Return Compiler.Report.Errors = 0
@@ -877,7 +878,8 @@ EndOfCompilation:
     Private Function AddResources() As Boolean
         Dim result As Boolean = True
 
-        For Each r As Resource In CommandLine.Resources
+        For i As Integer = 0 To CommandLine.Resources.Count - 1
+            Dim r As Resource = CommandLine.Resources(i)
             Dim resourceDescription As String = ""
             Dim resourceFile As String = IO.Path.GetFileName(r.Filename)
             Dim resourceName As String = IO.Path.GetFileName(r.Filename)
@@ -893,7 +895,12 @@ EndOfCompilation:
                 Case ".resx"
                     reader = Nothing 'New System.Resources.ResXResourceReader(r.Filename)
                 Case ".resources"
-                    reader = New System.Resources.ResourceReader(r.Filename)
+                    Try
+                        reader = New System.Resources.ResourceReader(r.Filename)
+                    Catch ex As Exception
+                        result = Compiler.Report.ShowMessage(Messages.VBNC31509, r.Filename, ex.Message) AndAlso result
+                        Continue For
+                    End Try
                 Case Else
                     reader = Nothing
             End Select
@@ -1005,7 +1012,6 @@ EndOfCompilation:
             End If
 
         Catch ex As Exception
-            vbnc.Helper.NotImplementedYet(ex.Message)
             Throw
         End Try
 

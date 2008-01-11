@@ -61,6 +61,12 @@ Public Class InvocationOrIndexExpression
     ''' <remarks></remarks>
     Private m_InvocationMethod As MethodInfo
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            Return m_Expression.AsString & "(" & m_ArgumentList.AsString & ")"
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
@@ -130,7 +136,7 @@ Public Class InvocationOrIndexExpression
         Dim result As Boolean = True
 
         If m_AscWExpression IsNot Nothing Then
-            result = m_AscWExpression.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Char)) AndAlso result
+            result = m_AscWExpression.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Char)) AndAlso result
             Info.Stack.SwitchHead(Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32)
 
             Return result
@@ -153,11 +159,13 @@ Public Class InvocationOrIndexExpression
                     If Info.IsRHS Then
                         If Me.Classification.IsVariableClassification Then
                             result = Me.Classification.GenerateCode(Info) AndAlso result
+                        ElseIf Me.Classification.IsPropertyAccessClassification Then
+                            result = Me.Classification.AsPropertyAccess.GenerateCode(Info) AndAlso result
                         Else
                             result = m_Expression.GenerateCode(Info) AndAlso result
                         End If
                     Else
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 Case ExpressionClassification.Classifications.PropertyAccess
                     If Info.IsRHS Then
@@ -167,7 +175,7 @@ Public Class InvocationOrIndexExpression
                             result = m_Expression.GenerateCode(Info) AndAlso result
                         End If
                     Else
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 Case ExpressionClassification.Classifications.PropertyGroup
                     'Helper.NotImplemented()
@@ -180,6 +188,8 @@ Public Class InvocationOrIndexExpression
                             result = Classification.AsValueClassification.GenerateCode(Info) AndAlso result
                         ElseIf Classification.IsPropertyGroupClassification Then
                             result = Classification.AsPropertyGroup.GenerateCodeAsValue(Info) AndAlso result
+                        ElseIf Classification.IsPropertyAccessClassification Then
+                            result = Classification.AsPropertyAccess.GenerateCode(Info) AndAlso result
                         Else
                             result = Classification.AsVariableClassification.GenerateCodeAsValue(Info) AndAlso result
                         End If
@@ -201,7 +211,7 @@ Public Class InvocationOrIndexExpression
     End Function
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean
@@ -242,7 +252,7 @@ Public Class InvocationOrIndexExpression
                             m_ArgumentList(i).Expression = m_ArgumentList(i).Expression.ReclassifyToValueExpression
                             result = m_ArgumentList(i).Expression.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
                         Else
-                            Helper.AddError()
+                            Helper.AddError(Me)
                         End If
                 End Select
             End If
@@ -261,15 +271,15 @@ Public Class InvocationOrIndexExpression
 
             Case ExpressionClassification.Classifications.Value
                 If m_Expression.ExpressionType.IsArray Then
-                    result = ResolveArrayInvocation(m_Expression.ExpressionType) AndAlso result
+                    result = ResolveArrayInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 Else
-                    result = ResolveIndexInvocation(Info.Compiler, m_Expression.ExpressionType) AndAlso result
+                    result = ResolveIndexInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 End If
             Case ExpressionClassification.Classifications.PropertyAccess
                 If m_Expression.ExpressionType.IsArray Then
-                    result = ResolveArrayInvocation(m_Expression.ExpressionType) AndAlso result
+                    result = ResolveArrayInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 Else
-                    result = ResolveIndexInvocation(Info.Compiler, m_Expression.ExpressionType) AndAlso result
+                    result = ResolveIndexInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 End If
             Case ExpressionClassification.Classifications.PropertyGroup
                 result = ResolvePropertyGroupInvocation() AndAlso result
@@ -292,9 +302,9 @@ Public Class InvocationOrIndexExpression
                     expType = m_Expression.ExpressionType
                 End If
 
-                result = ResolveIndexInvocation(Info.Compiler, expType) AndAlso result
+                result = ResolveIndexInvocation(Me, expType) AndAlso result
             Case Else
-                Helper.AddError("Some error...")
+                Helper.AddError(Me, "Some error...")
         End Select
 
         If result = False Then Return result
@@ -308,24 +318,26 @@ Public Class InvocationOrIndexExpression
         Return result
     End Function
 
-    Private Function ResolveIndexInvocation(ByVal Compiler As Compiler, ByVal VariableType As Type) As Boolean
+    Private Function ResolveIndexInvocation(ByVal Context As ParsedObject, ByVal VariableType As Type) As Boolean
         Dim result As Boolean = True
+        Dim Compiler As Compiler = Context.Compiler
 
         Dim defaultProperties As Generic.List(Of PropertyInfo) = Nothing
 
         If VariableType.IsArray Then
-            result = ResolveArrayInvocation(VariableType) AndAlso result
+            result = ResolveArrayInvocation(context, VariableType) AndAlso result
         ElseIf Helper.IsDelegate(Compiler, VariableType) Then
             'This is an invocation expression (the classification can be reclassified as value and the expression is a delegate expression)
-            result = ResolveDelegateInvocation(Compiler, VariableType)
-        ElseIf Helper.HasDefaultProperty(Compiler, VariableType, defaultProperties) Then
+            result = ResolveDelegateInvocation(Context, VariableType)
+        ElseIf Helper.HasDefaultProperty(Me, VariableType, defaultProperties) Then
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
             Dim finalArguments As Generic.List(Of Argument) = Nothing
-            result = propGroup.ResolveGroup(m_ArgumentList, finalarguments)
+            result = propGroup.ResolveGroup(m_ArgumentList, finalArguments)
             If result Then
                 m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, propGroup.ResolvedProperty)
             End If
-            Classification = propGroup
+            Classification = New PropertyAccessClassification(propGroup)
+            'Classification = propGroup
         ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Object) Then
             Dim lbaClass As New LateBoundAccessClassification(Me, m_Expression, Nothing, Nothing)
             lbaClass.Arguments = m_ArgumentList
@@ -337,7 +349,7 @@ Public Class InvocationOrIndexExpression
         Return result
     End Function
 
-    Private Function ResolveArrayInvocation(ByVal ArrayType As Type) As Boolean
+    Private Function ResolveArrayInvocation(ByVal Context As ParsedObject, ByVal ArrayType As Type) As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(ArrayType.IsArray)
@@ -348,7 +360,7 @@ Public Class InvocationOrIndexExpression
         End If
 
         If ArrayType.GetArrayRank <> m_ArgumentList.Count Then
-            Helper.AddError("Array dimensions are not correct.")
+            Helper.AddError(Me, "Array dimensions are not correct.")
             Return False
         End If
 
@@ -358,9 +370,9 @@ Public Class InvocationOrIndexExpression
             Dim arg As Argument = m_ArgumentList(i)
             Dim argtype As Type = arg.Expression.ExpressionType
 
-            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argtype, Compiler.TypeCache.System_Int32) = False Then
+            If Compiler.TypeResolution.IsImplicitlyConvertible(context, argtype, Compiler.TypeCache.System_Int32) = False Then
                 If isStrictOn Then
-                    Helper.AddError("Array argument must be implicitly convertible to Integer.")
+                    Helper.AddError(Me, "Array argument must be implicitly convertible to Integer.")
                     Return False
                 End If
                 Dim exp As Expression
@@ -377,12 +389,13 @@ Public Class InvocationOrIndexExpression
         Return result
     End Function
 
-    Private Function ResolveDelegateInvocation(ByVal Compiler As Compiler, ByVal DelegateType As Type) As Boolean
+    Private Function ResolveDelegateInvocation(ByVal Context As ParsedObject, ByVal DelegateType As Type) As Boolean
         Dim result As Boolean = True
         Dim invokeMethod As MethodInfo
         Dim params() As ParameterInfo
         Dim argTypes As Generic.List(Of Type)
         Dim paramTypes() As Type
+        Dim Compiler As Compiler = Context.Compiler
 
         invokeMethod = Helper.GetInvokeMethod(Compiler, DelegateType)
         params = Helper.GetParameters(Compiler, invokeMethod)
@@ -392,8 +405,8 @@ Public Class InvocationOrIndexExpression
         If argTypes.Count <> paramTypes.Length Then Return False
 
         For i As Integer = 0 To argTypes.Count - 1
-            If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, argTypes(i), paramTypes(i)) = False Then
-                Helper.AddError("Cannot convert implicitly from '" & argTypes(i).Name & "' to '" & paramTypes(i).Name & "'")
+            If Compiler.TypeResolution.IsImplicitlyConvertible(context, argTypes(i), paramTypes(i)) = False Then
+                Helper.AddError(Me, "Cannot convert implicitly from '" & argTypes(i).Name & "' to '" & paramTypes(i).Name & "'")
                 Return False
             End If
         Next
@@ -440,13 +453,13 @@ Public Class InvocationOrIndexExpression
         result = tmpExp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
 
         If result = False Then
-            Helper.AddError()
+            Helper.AddError(Me)
             Return False
         End If
 
         oldExp = m_Expression
         m_Expression = tmpExp
-        result = ResolveIndexInvocation(Compiler, m_Expression.ExpressionType) AndAlso result
+        result = ResolveIndexInvocation(Me, m_Expression.ExpressionType) AndAlso result
 
         Helper.StopIfDebugging(result = False)
 

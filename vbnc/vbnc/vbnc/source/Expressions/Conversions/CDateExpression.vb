@@ -38,7 +38,7 @@ Public Class CDateExpression
         Dim expType As Type = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
-        result = Expression.Classification.GenerateCode(Info.Clone(expType)) AndAlso result
+        result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.DateTime
@@ -58,12 +58,12 @@ Public Class CDateExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDate_Object)
                 Else
-                    Helper.NotImplemented()
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
                 End If
             Case TypeCode.String
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDate_String)
             Case Else
-                Helper.NotImplemented()
+                Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
         End Select
 
         Return result

@@ -43,7 +43,7 @@ Public Class AndExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim expInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
         result = m_RightExpression.GenerateCode(expInfo) AndAlso result

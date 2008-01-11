@@ -72,7 +72,7 @@ Public Class CallStatement
 
         If IsExcluded() Then Return result
 
-        result = m_Target.GenerateCode(Info.Clone(True)) AndAlso result
+        result = m_Target.GenerateCode(Info.Clone(Me, True)) AndAlso result
         If m_Target.Classification.IsValueClassification Then
             If Helper.CompareType(m_Target.Classification.AsValueClassification.Type, Compiler.TypeCache.System_Void) = False Then
                 Emitter.EmitPop(Info, m_Target.ExpressionType)

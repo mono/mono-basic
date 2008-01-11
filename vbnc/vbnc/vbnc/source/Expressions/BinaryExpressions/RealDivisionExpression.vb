@@ -25,7 +25,7 @@ Public Class RealDivisionExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        Dim expInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim expInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(expInfo) AndAlso result
         result = m_RightExpression.GenerateCode(expInfo) AndAlso result
@@ -81,7 +81,8 @@ Public Class RealDivisionExpression
                 csmallest = TypeConverter.GetRealDivResultType(clvalue, crvalue)
 
                 If CDbl(rvalue) = 0 Then
-                    Helper.AddError("Divide by zero")
+                    Helper.AddError(Me, "Divide by zero")
+                    Return Double.NaN
                 End If
 
                 Select Case csmallest

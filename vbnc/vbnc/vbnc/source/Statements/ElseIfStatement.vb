@@ -48,7 +48,7 @@ Public Class ElseIfStatement
 
         Dim falseLabel As Label = Emitter.DefineLabel(Info)
 
-        result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+        result = m_Condition.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
         Emitter.EmitBranchIfFalse(Info, falseLabel)
 
         result = CodeBlock.GenerateCode(Info) AndAlso result
@@ -82,17 +82,17 @@ Public Class ElseIfStatement
             result = m_Condition.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
 
             If result = False Then
-                Helper.AddError()
+                result = Helper.AddError(Me) AndAlso result
                 Return result
             End If
             m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
 
             If result = False Then
-                Helper.AddError()
+                result = Helper.AddError(Me) AndAlso result
                 Return result
             End If
         Else
-            Helper.AddError("Each expression in an If...Then...Else statement must be classified as a value and be implicitly convertible to Boolean")
+            result = Helper.AddError(Me, "Each expression in an If...Then...Else statement must be classified as a value and be implicitly convertible to Boolean") AndAlso result
         End If
 
         Return result

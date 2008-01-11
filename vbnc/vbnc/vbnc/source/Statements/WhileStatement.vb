@@ -68,7 +68,7 @@ Public Class WhileStatement
         m_NextIteration = Emitter.DefineLabel(Info)
 
         Emitter.MarkLabel(Info, m_NextIteration)
-        result = m_Condition.GenerateCode(Info.Clone(True, , Compiler.TypeCache.System_Boolean)) AndAlso result
+        result = m_Condition.GenerateCode(Info.Clone(Me, True, , Compiler.TypeCache.System_Boolean)) AndAlso result
         Emitter.EmitBranchIfFalse(Info, EndLabel)
         result = CodeBlock.GenerateCode(Info) AndAlso result
         Emitter.EmitBranch(Info, m_NextIteration)

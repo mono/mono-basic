@@ -119,10 +119,10 @@ Public Class CTypeExpression
         End If
 
         If ops.Count = 0 Then
-            Helper.AddError("Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
+            Helper.AddError(Expression, "Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
             result = False
         ElseIf ops.Count > 1 Then
-            Helper.AddError("Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
+            Helper.AddError(Expression, "Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
             result = False
         Else
             Emitter.EmitCall(Info, ops(0))
@@ -133,7 +133,7 @@ Public Class CTypeExpression
     Private Function EmitStringToCharArray(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = Expression.GenerateCode(Info.Clone(Compiler.TypeCache.System_String)) AndAlso result
+        result = Expression.GenerateCode(Info.Clone(Info.Context, Compiler.TypeCache.System_String)) AndAlso result
         Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToCharArrayRankOne_String)
 
         Return result
@@ -146,26 +146,26 @@ Public Class CTypeExpression
             Return EmitStringToCharArray(Info) AndAlso result
         End If
 
-        result = Expression.Classification.GenerateCode(Info.Clone(DestinationType)) AndAlso result
+        result = Expression.Classification.GenerateCode(Info.Clone(Me, DestinationType)) AndAlso result
 
         If Helper.CompareType(Compiler.TypeCache.Nothing, SourceType) Then
             'There is nothing to do here
         ElseIf SourceType.IsGenericParameter Then
             If DestinationType.IsGenericParameter Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf DestinationType.IsArray Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf DestinationType.IsClass Then
                 DestinationType = Helper.GetTypeOrTypeBuilder(DestinationType)
-                If Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(SourceType), DestinationType) Then
+                If Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceType), DestinationType) Then
                     'Emitter.EmitUnbox_Any(Info, DestinationType)
                     Emitter.EmitBox(Info, SourceType)
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
-                    Helper.AddError()
+                    Helper.AddError(Me)
                 End If
             ElseIf DestinationType.IsValueType Then
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf DestinationType.IsInterface Then
                 Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
@@ -174,11 +174,11 @@ Public Class CTypeExpression
             End If
         ElseIf SourceType.IsArray Then
             If DestinationType.IsInterface Then
-                If Helper.DoesTypeImplementInterface(Compiler, SourceType, DestinationType) Then
+                If Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.CompareType(SourceType, Compiler.TypeCache.System_Object_Array) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf DestinationType.IsArray AndAlso Helper.DoesTypeImplementInterface(Compiler, SourceType.GetElementType, DestinationType.GetElementType) Then
+                ElseIf DestinationType.IsArray AndAlso Helper.DoesTypeImplementInterface(Me, SourceType.GetElementType, DestinationType.GetElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
@@ -206,14 +206,14 @@ Public Class CTypeExpression
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse DestinationElementType.IsSubclassOf(SourceElementType) OrElse SourceElementType.IsSubclassOf(DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf Helper.DoesTypeImplementInterface(Compiler, SourceElementType, DestinationElementType) Then
+                ElseIf Helper.DoesTypeImplementInterface(Me, SourceElementType, DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf DestinationElementType.IsInterface AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf SourceElementType.IsEnum AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
                     'Conversions also exist between an array of an enumerated type and an array of the enumerated type's underlying type of the same rank.
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf TypeOf SourceElementType Is TypeParameterDescriptor AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(SourceElementType), DestinationElementType) Then
+                ElseIf TypeOf SourceElementType Is TypeParameterDescriptor AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
@@ -247,7 +247,7 @@ Public Class CTypeExpression
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
             If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
-            ElseIf Helper.DoesTypeImplementInterface(Compiler, SourceType, DestinationType) Then
+            ElseIf Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, DestinationType)
             ElseIf Helper.CompareType(SourceType.BaseType, DestinationType) Then
@@ -266,7 +266,7 @@ Public Class CTypeExpression
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 Emitter.EmitCall(Info, methodD)
-            ElseIf Helper.DoesTypeImplementInterface(Compiler, DestinationType, SourceType) Then
+            ElseIf Helper.DoesTypeImplementInterface(Me, DestinationType, SourceType) Then
                 If DestinationType.IsValueType Then
                     Emitter.EmitUnbox(Info, DestinationType)
                     Emitter.EmitLdobj(Info, DestinationType)
@@ -278,10 +278,10 @@ Public Class CTypeExpression
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             Else
                 'However, classes that represent COM classes may have interface implementations that are not known until run time. Consequently, a class type may also be converted to an interface type that it does not implement, an interface type may be converted to a class type that does not implement it, and an interface type may be converted to another interface type with which it has no inheritance relationship
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             End If
         Else
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         End If
 
         Return result
@@ -364,12 +364,10 @@ Public Class CTypeExpression
                         Case TypeCode.Char
                             Return CStr(Expression.ConstantValue)
                         Case Else
-                            Helper.NotImplemented()
-                            Throw New InternalException(Me)
+                            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
                     End Select
                 Case Else
-                    Helper.NotImplemented()
-                    Throw New InternalException(Me)
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             End Select
         End Get
     End Property

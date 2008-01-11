@@ -25,7 +25,7 @@ Public Class LTExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        Dim eqInfo As EmitInfo = Info.Clone(True, False, OperandType)
+        Dim eqInfo As EmitInfo = Info.Clone(Me, True, False, OperandType)
 
         result = m_LeftExpression.GenerateCode(eqInfo) AndAlso result
         result = m_RightExpression.GenerateCode(eqInfo) AndAlso result

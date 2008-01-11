@@ -144,7 +144,7 @@ Public Class ExternalProcessExecutor
         m_Executable = Environment.ExpandEnvironmentVariables(Executable)
         m_ExpandedCmdLine = m_UnexpandedCmdLine
         m_ExpandedCmdLine = Environment.ExpandEnvironmentVariables(m_ExpandedCmdLine)
-        m_TimeOut = TimeOut
+        m_TimeOut = TimeOut * 4
         m_WorkingDirectory = WorkingDirectory
         If IO.File.Exists(m_Executable) Then m_Version = FileVersionInfo.GetVersionInfo(m_Executable)
     End Sub

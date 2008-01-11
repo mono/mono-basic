@@ -64,28 +64,28 @@ Public Class MidAssignStatement
         Dim tmpLocal As LocalBuilder = Nothing
         If m_Target.Classification.IsPropertyAccessClassification Then
             tmpLocal = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_String, "MidTmp" & ObjectID.ToString)
-            result = m_Target.GenerateCode(Info.Clone(True, False, tmpLocal.LocalType)) AndAlso result
+            result = m_Target.GenerateCode(Info.Clone(Me, True, False, tmpLocal.LocalType)) AndAlso result
             Emitter.EmitStoreVariable(Info, tmpLocal)
             Emitter.EmitLoadVariableLocation(Info, tmpLocal)
         Else
-            result = m_Target.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_String_ByRef)) AndAlso result
+            result = m_Target.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_String_ByRef)) AndAlso result
         End If
 
-        result = m_Start.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Int32)) AndAlso result
+        result = m_Start.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)) AndAlso result
         Emitter.EmitConversion(m_Start.ExpressionType, Compiler.TypeCache.System_Int32, Info)
         If m_Length IsNot Nothing Then
-            result = m_Length.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_Int32)) AndAlso result
+            result = m_Length.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)) AndAlso result
             Emitter.EmitConversion(m_Length.ExpressionType, Compiler.TypeCache.System_Int32, Info)
         Else
             Emitter.EmitLoadI4Value(Info, Integer.MaxValue)
         End If
-        result = m_Source.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.System_String)) AndAlso result
+        result = m_Source.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_String)) AndAlso result
         Emitter.EmitConversion(m_Source.ExpressionType, Compiler.TypeCache.System_String, Info)
 
         Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.MS_VB_CS_StringType__MidStmtStr_String_Int32_Int32_String)
 
         If m_Target.Classification.IsPropertyAccessClassification Then
-            result = m_Target.GenerateCode(Info.Clone(New LoadLocalExpression(Me, tmpLocal))) AndAlso result
+            result = m_Target.GenerateCode(Info.Clone(Me, New LoadLocalExpression(Me, tmpLocal))) AndAlso result
         End If
 
         Return result

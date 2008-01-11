@@ -62,7 +62,7 @@ Public Class WithStatement
 
         If m_WithExpression Is m_WithVariableExpression = False Then
             m_WithVariable = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(m_WithExpression.ExpressionType), "WithVariable" & Me.ObjectID.ToString)
-            result = m_WithExpression.GenerateCode(Info.Clone(True, False, m_WithVariable.LocalType)) AndAlso result
+            result = m_WithExpression.GenerateCode(Info.Clone(Me, True, False, m_WithVariable.LocalType)) AndAlso result
             Emitter.EmitStoreVariable(Info, m_WithVariable)
         End If
 

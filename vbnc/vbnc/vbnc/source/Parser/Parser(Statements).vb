@@ -301,7 +301,7 @@ Partial Public Class Parser
             m_Expression = invExpression.Expression
             m_ArgumentList = invExpression.ArgumentList
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
             Return Nothing
         End If
 
@@ -613,7 +613,9 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Do)
         If tm.CurrentToken.Equals(KS.While, KS.Until) Then
             m_PreCondition = ParseDoStatementCondition(result, m_IsWhile)
-            If m_PreCondition Is Nothing Then Helper.NotImplemented()
+            If m_PreCondition Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+            End If
         Else
             m_PreCondition = Nothing
         End If
@@ -626,7 +628,9 @@ Partial Public Class Parser
         If tm.AcceptIfNotError(KS.Loop) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.CurrentToken.Equals(KS.While, KS.Until) Then
             m_PostCondition = ParseDoStatementCondition(result, m_IsWhile)
-            If m_PostCondition Is Nothing Then Helper.NotImplemented()
+            If m_PostCondition Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+            End If
         Else
             m_PostCondition = Nothing
         End If
@@ -716,7 +720,9 @@ Partial Public Class Parser
         End If
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.NotImplemented()
+        If m_Code Is Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+        End If
 
         result.Init(m_Variable, m_TypeName, m_When, m_Code)
 
@@ -756,7 +762,7 @@ Partial Public Class Parser
         If tm.Accept(KS.Then) = False Then
             m_OneLiner = False 'Cannot be a oneliner if Then is not found.
             If IsOneLiner Then
-                Helper.AddError("report error BC30081, 'if' must end with a matching 'end if'")
+                Helper.AddError(Compiler, tm.CurrentLocation, "report error BC30081, 'if' must end with a matching 'end if'")
                 tm.GotoNewline(False)
             Else
                 tm.AcceptEndOfStatement(False, True)
@@ -822,7 +828,7 @@ Partial Public Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         If IsOneLiner Then
-            Helper.AddError()
+            Helper.AddError(Compiler, tm.CurrentLocation)
             'TODO: Add error, 
         End If
 
@@ -897,10 +903,14 @@ Partial Public Class Parser
                 Helper.ErrorRecoveryNotImplemented()
             End If
         End If
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.NotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+        End If
 
         m_Block = ParseCodeBlock(result, IsOneLiner)
-        If m_Block Is Nothing Then Helper.NotImplemented()
+        If m_Block Is Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+        End If
 
         result.Init(m_IsElse, m_Clauses, m_Block)
 

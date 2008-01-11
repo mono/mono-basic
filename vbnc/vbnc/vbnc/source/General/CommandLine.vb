@@ -977,7 +977,7 @@ Public Class CommandLine
                         Compiler.Report.ShowMessage(Messages.VBNC90017, str)
                         result = False
                     Else
-                        m_lstDefine.Add(New Define(strSplit(0), strSplit(1)))
+                        m_lstDefine.Add(New Define(Compiler, strSplit(0), strSplit(1)))
                     End If
                 Next
             Case "imports"
@@ -1052,7 +1052,7 @@ Public Class CommandLine
                 If paths IsNot Nothing AndAlso paths.Length = 1 Then
                     m_strKeyFile = paths(0)
                 Else
-                    Helper.AddError("""")
+                    Helper.AddError(Compiler, """")
                 End If
             Case "libpath"
                 m_lstLibPath.AddRange(Split(strValue, ","))
@@ -1076,7 +1076,7 @@ Public Class CommandLine
             Case "novbruntimeref"
                 m_NoVBRuntimeRef = True
             Case "errorreport"
-                Helper.NotImplementedYet(strName)
+                result = Compiler.Report.SaveMessage(Messages.VBNC99998, "/errorreport isn't implemented yet.") AndAlso result
             Case "vbversion"
                 Select Case strValue
                     Case "7"

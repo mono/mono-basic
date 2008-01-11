@@ -98,7 +98,7 @@ Public Class Namespaces
         End Get
     End Property
 
-    Overloads Sub Add(ByVal Parent As IBaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
+    Overloads Sub Add(ByVal Parent As BaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
         If ns = "" Then Return
         Add(New [Namespace](Parent, ns, IsGlobal))
     End Sub
@@ -110,7 +110,7 @@ Public Class Namespaces
     ''' <param name="ns"></param>
     ''' <param name="IsGlobal"></param>
     ''' <remarks></remarks>
-    Sub AddAllNamespaces(ByVal Parent As IBaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
+    Sub AddAllNamespaces(ByVal Parent As BaseObject, ByVal ns As String, ByVal IsGlobal As Boolean)
         If ns = String.Empty Then Return
 
         If Me.ContainsKey(ns) Then Return
@@ -138,7 +138,7 @@ Public Class Namespaces
         End If
     End Sub
 
-    Overloads Sub AddRange(ByVal Parent As IBaseObject, ByVal Namespaces As String(), ByVal IsGlobal As Boolean)
+    Overloads Sub AddRange(ByVal Parent As BaseObject, ByVal Namespaces As String(), ByVal IsGlobal As Boolean)
         For Each ns As String In Namespaces
             Add(Parent, ns, IsGlobal)
         Next

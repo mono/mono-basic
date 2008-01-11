@@ -1,3 +1,8 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Message.vb, Messages.vb: Make message ids > 40000 warnings unless
+	  otherwise specified.
+
 2007-03-01  Rolf Bjarne Kvinge  <Rkvinge@novell.com>
 
 	* Messages.vb:

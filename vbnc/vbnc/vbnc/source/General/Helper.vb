@@ -312,7 +312,7 @@ Public Class Helper
             Expression = Expression.ReclassifyToValueExpression
             result = Expression.ResolveExpression(Info) AndAlso result
         Else
-            Helper.AddError()
+            Helper.AddError(Expression)
             result = False
         End If
         Return result
@@ -331,7 +331,7 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function IsReflectionMember(ByVal Member As MemberInfo) As Boolean
+    Shared Function IsReflectionMember(ByVal Context As BaseObject, ByVal Member As MemberInfo) As Boolean
         Dim result As Boolean
         If TypeOf Member Is MethodDescriptor Then Return False
         If TypeOf Member Is FieldDescriptor Then Return False
@@ -345,17 +345,17 @@ Public Class Helper
         ElseIf Member.MemberType = MemberTypes.TypeInfo OrElse Member.MemberType = MemberTypes.NestedType Then
             result = IsReflectionType(DirectCast(Member, Type))
         Else
-            Helper.NotImplemented()
+            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
         End If
         Return result
     End Function
 
-    Shared Function IsReflectionMember(ByVal Members() As MemberInfo) As Boolean
+    Shared Function IsReflectionMember(ByVal Context As BaseObject, ByVal Members() As MemberInfo) As Boolean
         If Members Is Nothing Then Return True
         If Members.Length = 0 Then Return True
 
         For Each m As MemberInfo In Members
-            If IsReflectionMember(m) = False Then Return False
+            If IsReflectionMember(context, m) = False Then Return False
         Next
         Return True
     End Function
@@ -451,11 +451,12 @@ Public Class Helper
     ''' <param name="method"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal method As MethodInfo) As Type()
+    Shared Function GetParameterTypes(ByVal Context As BaseObject, ByVal method As MethodInfo) As Type()
+        Dim Compiler As Compiler = Context.Compiler
         Dim result As Type()
         Dim builder As MethodBuilder = TryCast(method, MethodBuilder)
         If builder IsNot Nothing Then
-            Dim reflectableInfo As MethodInfo = TryCast(Compiler.TypeManager.GetRegisteredMember(builder), MethodInfo)
+            Dim reflectableInfo As MethodInfo = TryCast(Compiler.TypeManager.GetRegisteredMember(Context, builder), MethodInfo)
 
             If reflectableInfo IsNot Nothing Then
                 result = GetParameterTypes(reflectableInfo.GetParameters)
@@ -474,18 +475,19 @@ Public Class Helper
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function GetParameterTypes(ByVal Compiler As Compiler, ByVal ctor As ConstructorInfo) As Type()
+    Shared Function GetParameterTypes(ByVal Context As BaseObject, ByVal ctor As ConstructorInfo) As Type()
+        Dim Compiler As Compiler = Context.Compiler
         Dim result As Type()
         Dim builder As ConstructorBuilder = TryCast(ctor, ConstructorBuilder)
         If builder IsNot Nothing Then
-            Dim tmp As ConstructorInfo = TryCast(Compiler.TypeManager.GetRegisteredMember(builder), ConstructorInfo)
+            Dim tmp As ConstructorInfo = TryCast(Compiler.TypeManager.GetRegisteredMember(context, builder), ConstructorInfo)
             Dim method As MethodBuilder
             If tmp IsNot Nothing Then
                 result = GetParameterTypes(tmp.GetParameters)
             Else
                 Helper.Assert(False)
                 method = CType(GetType(ConstructorBuilder).GetField("m_methodBuilder", BindingFlags.Instance Or BindingFlags.NonPublic Or BindingFlags.Public).GetValue(builder), MethodBuilder)
-                result = GetParameterTypes(Compiler, method)
+                result = GetParameterTypes(Context, method)
             End If
         Else
             result = GetParameterTypes(ctor.GetParameters())
@@ -493,16 +495,17 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function GetGenericParameterConstraints(ByVal Type As Type) As Type()
+    Shared Function GetGenericParameterConstraints(ByVal Context As BaseObject, ByVal Type As Type) As Type()
         If Type.IsGenericParameter = False Then Throw New InternalException("")
         If TypeOf Type Is GenericTypeParameterBuilder Then
-            Helper.NotImplemented() : Throw New InternalException("")
+            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
+            Return New Type() {}
         Else
             Return Type.GetGenericParameterConstraints
         End If
     End Function
 
-    Shared Function IsAssembly(ByVal member As MemberInfo) As Boolean
+    Shared Function IsAssembly(ByVal Context As BaseObject, ByVal member As MemberInfo) As Boolean
         Dim mi As MethodInfo = TryCast(member, MethodInfo)
         If mi IsNot Nothing Then
             Return mi.IsAssembly
@@ -515,7 +518,7 @@ Public Class Helper
                 If fi IsNot Nothing Then
                     Return fi.IsAssembly
                 Else
-                    Helper.NotImplemented()
+                    Context.Compiler.Report.ShowMessage(Messages.VBNC99997, context.Location)
                 End If
             End If
         End If
@@ -616,8 +619,9 @@ Public Class Helper
         End If
     End Function
 
-    Shared Function IsInterface(ByVal Compiler As Compiler, ByVal Type As Type) As Boolean
+    Shared Function IsInterface(ByVal Context As BaseObject, ByVal Type As Type) As Boolean
         Dim tmpTP As Type
+        Dim Compiler As Compiler = Context.Compiler
 
         If Type.GetType.Name = "SymbolType" Then Return Type.IsInterface
 
@@ -632,7 +636,7 @@ Public Class Helper
         ElseIf TypeOf Type Is Type Then
             Return Compiler.TypeManager.GetRegisteredType(Type).IsInterface
         Else
-            Helper.NotImplemented()
+            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
         End If
     End Function
 
@@ -1037,7 +1041,7 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function FilterByName(ByVal collection As ICollection, ByVal Name As String) As ArrayList
+    Shared Function FilterByName(ByVal Context As BaseObject, ByVal collection As ICollection, ByVal Name As String) As ArrayList
         Dim result As New ArrayList
         Dim tmpname As String = ""
         For Each obj As Object In collection
@@ -1046,7 +1050,7 @@ Public Class Helper
             ElseIf TypeOf obj Is MemberInfo Then
                 tmpname = DirectCast(obj, MemberInfo).Name
             Else
-                Helper.NotImplemented()
+                Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
             End If
             If Helper.CompareName(Name, tmpname) Then result.Add(obj)
         Next
@@ -1205,8 +1209,7 @@ Public Class Helper
     ''' <remarks></remarks>
     Function GetConstructors(ByVal tp As Mono.Cecil.TypeReference) As Mono.Cecil.ConstructorCollection
         Helper.Assert(tp IsNot Nothing)
-        Dim tD As Mono.Cecil.TypeDefinition = TryCast(tp, Mono.Cecil.TypeDefinition)
-        If tD Is Nothing Then Helper.NotImplemented()
+        Dim tD As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(tp)
         Return tD.Constructors
     End Function
 
@@ -1433,7 +1436,7 @@ Public Class Helper
         Dim arrayType As Type = Info.Compiler.TypeCache.System_Int32_Array
         Dim elementType As Type = arrayType.GetElementType
         Dim tmpVar As LocalBuilder = Emitter.DeclareLocal(Info, arrayType)
-        Dim elementInfo As EmitInfo = Info.Clone(True, False, elementType)
+        Dim elementInfo As EmitInfo = Info.Clone(Info.Context, True, False, elementType)
 
         'Create the array.
         ArrayCreationExpression.EmitArrayCreation(Info, arrayType, New Generic.List(Of Integer)(New Integer() {Arguments.Count}))
@@ -1470,10 +1473,10 @@ Public Class Helper
         Helper.Assert(newValue IsNot Nothing)
         Helper.Assert(newValue.Classification.IsValueClassification)
 
-        result = ArrayVariable.GenerateCode(Info.Clone(True, False, ArrayType)) AndAlso result
+        result = ArrayVariable.GenerateCode(Info.Clone(Info.Context, True, False, ArrayType)) AndAlso result
 
         If isArraySetValue Then
-            result = newValue.GenerateCode(Info.Clone(True, False, ElementType)) AndAlso result
+            result = newValue.GenerateCode(Info.Clone(Info.Context, True, False, ElementType)) AndAlso result
             If ElementType.IsValueType Then
                 Emitter.EmitBox(Info, ElementType)
             End If
@@ -1481,14 +1484,14 @@ Public Class Helper
             Emitter.EmitCallOrCallVirt(Info, Info.Compiler.TypeCache.System_Array__SetValue)
         Else
             Dim methodtypes As New Generic.List(Of Type)
-            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32)
+            Dim elementInfo As EmitInfo = Info.Clone(Info.Context, True, False, Info.Compiler.TypeCache.System_Int32)
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
                 Emitter.EmitConversion(Arguments(i).Expression.ExpressionType, Info.Compiler.TypeCache.System_Int32, Info)
                 methodtypes.Add(Info.Compiler.TypeCache.System_Int32)
             Next
 
-            Dim rInfo As EmitInfo = Info.Clone(True, False, ElementType)
+            Dim rInfo As EmitInfo = Info.Clone(Info.Context, True, False, ElementType)
             methodtypes.Add(ElementType)
 
             If isNonPrimitiveValueType Then
@@ -1526,7 +1529,7 @@ Public Class Helper
             '    Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.Object, ElementType)
             'End If
         Else
-            Dim elementInfo As EmitInfo = Info.Clone(True, False, Info.Compiler.TypeCache.System_Int32)
+            Dim elementInfo As EmitInfo = Info.Clone(Info.Context, True, False, Info.Compiler.TypeCache.System_Int32)
             Dim methodtypes(Arguments.Count - 1) As Type
             For i As Integer = 0 To Arguments.Count - 1
                 result = Arguments(i).GenerateCode(elementInfo) AndAlso result
@@ -1573,11 +1576,11 @@ Public Class Helper
                 End If
             End If
 
-            ieInfo = Info.Clone(True, False, ieDesiredType)
+            ieInfo = Info.Clone(Info.Context, True, False, ieDesiredType)
 
             Dim derefExp As DeRefExpression = TryCast(InstanceExpression, DeRefExpression)
             If needsConstrained AndAlso derefExp IsNot Nothing Then
-                result = derefExp.Expression.GenerateCode(Info.Clone(True, False, derefExp.Expression.ExpressionType)) AndAlso result
+                result = derefExp.Expression.GenerateCode(Info.Clone(Info.Context, True, False, derefExp.Expression.ExpressionType)) AndAlso result
             Else
                 Dim getRef As GetRefExpression = TryCast(InstanceExpression, GetRefExpression)
                 If getRef IsNot Nothing AndAlso getRef.Expression.ExpressionType.IsValueType AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) Then
@@ -1652,7 +1655,7 @@ Public Class Helper
 
                 If exp Is Nothing Then Continue For
 
-                result = exp.GenerateCode(Info.Clone(New LoadLocalExpression(exp, local))) AndAlso result
+                result = exp.GenerateCode(Info.Clone(Info.Context, New LoadLocalExpression(exp, local))) AndAlso result
             Next
         End If
 
@@ -1687,8 +1690,9 @@ Public Class Helper
     ''' <param name="DefaultProperties"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function HasDefaultProperty(ByVal Compiler As Compiler, ByVal Type As Type, ByRef DefaultProperties As Generic.List(Of PropertyInfo)) As Boolean
+    Shared Function HasDefaultProperty(ByVal Context As BaseObject, ByVal Type As Type, ByRef DefaultProperties As Generic.List(Of PropertyInfo)) As Boolean
         Dim attrib As Reflection.DefaultMemberAttribute
+        Dim Compiler As Compiler = Context.compiler
         Dim tD As TypeDescriptor
 
         tD = TryCast(Type, TypeDescriptor)
@@ -1727,12 +1731,12 @@ Public Class Helper
                 If propD IsNot Nothing Then
                     If propD.IsDefault Then properties.Add(propD)
                 ElseIf prop IsNot Nothing Then
-                    Helper.NotImplemented() 'I don't know if this is a possibility with generic types.
+                    Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location) 'I don't know if this is a possibility with generic types.
                 End If
             Next
             If properties.Count = 0 Then
                 If tD.BaseType IsNot Nothing Then
-                    Return Helper.HasDefaultProperty(Compiler, tD.BaseType, DefaultProperties)
+                    Return Helper.HasDefaultProperty(Context, tD.BaseType, DefaultProperties)
                 Else
                     Return False
                 End If
@@ -1759,7 +1763,7 @@ Public Class Helper
         Return attrib
     End Function
 
-    Shared Function IsShadows(ByVal Member As MemberInfo) As Boolean
+    Shared Function IsShadows(ByVal Context As BaseObject, ByVal Member As MemberInfo) As Boolean
         Dim result As Boolean = True
         Select Case Member.MemberType
             Case MemberTypes.Method, MemberTypes.Constructor
@@ -1775,8 +1779,7 @@ Public Class Helper
             Case MemberTypes.Event
                 Return DirectCast(Member, EventInfo).GetAddMethod.IsHideBySig = False
             Case Else
-                Helper.NotImplemented()
-                Throw New InternalException("")
+                Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
         End Select
     End Function
 
@@ -1907,7 +1910,7 @@ Public Class Helper
                 If TypeOf Type Is GenericTypeParameterBuilder Then
                     If Type.DeclaringMethod IsNot Nothing Then
                         Dim meth As MethodBase = Type.DeclaringMethod
-                        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(meth), MethodDescriptor)
+                        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, meth), MethodDescriptor)
                         For Each obj As TypeParameter In mD.Declaration.Signature.TypeParameters.Parameters
                             If obj.TypeParameterBuilder Is Type Then
                                 Return obj.CecilBuilder
@@ -1924,7 +1927,6 @@ Public Class Helper
                         End If
                     Next
                     Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
-                    Helper.NotImplemented()
                 End If
             Return GetTypeOrTypeReference(Compiler, Compiler.TypeManager.GetRegisteredType(Type))
         End If
@@ -1955,17 +1957,17 @@ Public Class Helper
         Return tpRef
     End Function
 #End If
-    Shared Sub ApplyTypeArguments(ByVal Members As Generic.List(Of MemberInfo), ByVal TypeArguments As TypeArgumentList)
+    Shared Sub ApplyTypeArguments(ByVal Context As BaseObject, ByVal Members As Generic.List(Of MemberInfo), ByVal TypeArguments As TypeArgumentList)
         If TypeArguments Is Nothing OrElse TypeArguments.Count = 0 Then Return
 
         For i As Integer = Members.Count - 1 To 0 Step -1
-            Members(i) = ApplyTypeArguments(Members(i), TypeArguments)
+            Members(i) = ApplyTypeArguments(Context, Members(i), TypeArguments)
             If Members(i) Is Nothing Then Members.RemoveAt(i)
         Next
 
     End Sub
 
-    Shared Function ApplyTypeArguments(ByVal Member As MemberInfo, ByVal TypeArguments As TypeArgumentList) As MemberInfo
+    Shared Function ApplyTypeArguments(ByVal Context As BaseObject, ByVal Member As MemberInfo, ByVal TypeArguments As TypeArgumentList) As MemberInfo
         Dim result As MemberInfo
         Dim minfo As MethodInfo
 
@@ -1981,7 +1983,7 @@ Public Class Helper
             End If
         Else
             result = Nothing
-            Helper.NotImplemented()
+            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
         End If
 
         Return result
@@ -2023,7 +2025,7 @@ Public Class Helper
 
             result = Parent.Compiler.TypeManager.MakeGenericType(Parent, OpenType, typeArgs.ToArray)
         ElseIf OpenType.IsGenericTypeDefinition Then
-            Helper.NotImplemented()
+            Parent.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         ElseIf OpenType.ContainsGenericParameters Then
             If OpenType.IsArray Then
                 Dim elementType As Type
@@ -2036,7 +2038,7 @@ Public Class Helper
                 elementType = ApplyTypeArguments(Parent, elementType, TypeParameters, TypeArguments)
                 result = New ByRefTypeDescriptor(Parent, elementType)
             Else
-                Helper.NotImplemented()
+                Parent.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         Else
             result = OpenType
@@ -2262,7 +2264,8 @@ Public Class Helper
         Return True
     End Function
 
-    Shared Function IsAccessible(ByVal Compiler As Compiler, ByVal CalledMethodAccessability As MethodAttributes, ByVal CalledType As Type) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal CalledMethodAccessability As MethodAttributes, ByVal CalledType As Type) As Boolean
+        Dim Compiler As Compiler = Context.Compiler
 
         Helper.Assert(Compiler IsNot Nothing)
         Helper.Assert(CalledType IsNot Nothing)
@@ -2315,13 +2318,13 @@ Public Class Helper
             Return True
         End If
 
-        Helper.NotImplemented("No accessibility??")
+        Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location) '("No accessibility??")
 
         Return False
     End Function
 
 
-    Shared Function IsAccessible(ByVal CalledMethodAccessability As MethodAttributes, ByVal CalledType As Type, ByVal CallerType As Type) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal CalledMethodAccessability As MethodAttributes, ByVal CalledType As Type, ByVal CallerType As Type) As Boolean
         'If both types are equal everything is accessible.
         If CompareType(CalledType, CallerType) Then Return True
 
@@ -2360,7 +2363,7 @@ Public Class Helper
             Return CallerType.IsSubclassOf(CalledType)
         End If
 
-        Helper.NotImplemented("No accessibility??")
+        Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location) '("No accessibility??")
 
         'private 	    = 1	= 0001
         'famandassembly = 2 = 0010
@@ -2369,6 +2372,7 @@ Public Class Helper
         'famorassembly  = 5 = 0101
         'public 	    = 6	= 0110
 
+        Return False
     End Function
 
     ''' <summary>
@@ -2388,9 +2392,9 @@ Public Class Helper
         Return False
     End Function
 
-    Shared Function IsAccessible(ByVal FieldAccessability As FieldAttributes, ByVal CalledType As Type, ByVal CallerType As Type) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal FieldAccessability As FieldAttributes, ByVal CalledType As Type, ByVal CallerType As Type) As Boolean
         'The fieldattributes for accessibility are the same as methodattributes.
-        Return IsAccessible(CType(FieldAccessability, MethodAttributes), CalledType, CallerType)
+        Return IsAccessible(Context, CType(FieldAccessability, MethodAttributes), CalledType, CallerType)
     End Function
 
     Shared Function CreateGenericTypename(ByVal Typename As String, ByVal TypeArgumentCount As Integer) As String
@@ -2421,7 +2425,8 @@ Public Class Helper
     ''' <param name="params"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function ResolveGroupExact(ByVal Compiler As Compiler, ByVal grp As Generic.List(Of MemberInfo), ByVal params() As Type) As MemberInfo
+    Shared Function ResolveGroupExact(ByVal Context As BaseObject, ByVal grp As Generic.List(Of MemberInfo), ByVal params() As Type) As MemberInfo
+        Dim Compiler As Compiler = Context.Compiler
         Dim result As MemberInfo = Nothing
 
         For i As Integer = 0 To grp.Count - 1
@@ -2444,7 +2449,7 @@ Public Class Helper
                         Exit For
                     End If
                 Case MemberTypes.Event
-                    Helper.NotImplemented()
+                    Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
                 Case Else
                     Throw New InternalException("")
             End Select
@@ -2488,7 +2493,8 @@ Public Class Helper
         Return result
     End Function
 
-    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Compiler As Compiler, ByVal Method As MethodBuilder)
+    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As MethodBuilder)
+        Dim Compiler As Compiler = Context.Compiler
         Dim rettype As Type = Method.ReturnType
         Dim strrettype As String
         If rettype IsNot Nothing Then
@@ -2501,7 +2507,7 @@ Public Class Helper
             strrettype = ""
         End If
         Dim tp As Type = Method.DeclaringType
-        Dim paramstypes As Type() = Helper.GetParameterTypes(Compiler, Method)
+        Dim paramstypes As Type() = Helper.GetParameterTypes(context, Method)
         Dim attribs As MethodAttributes = Method.Attributes
         Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
         Dim name As String = tp.FullName & ":" & Method.Name
@@ -2523,7 +2529,7 @@ Public Class Helper
 #End If
     End Sub
 
-    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Compiler As Compiler, ByVal Method As ConstructorBuilder)
+    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As ConstructorBuilder)
         Dim rettype As Type = Nothing
         Dim strrettype As String
         If rettype IsNot Nothing Then
@@ -2532,7 +2538,7 @@ Public Class Helper
             strrettype = ""
         End If
         Dim tp As Type = Method.DeclaringType
-        Dim paramstypes As Type() = Helper.GetParameterTypes(Compiler, Method)
+        Dim paramstypes As Type() = Helper.GetParameterTypes(context, Method)
         Dim attribs As MethodAttributes = Method.Attributes
         Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
         Dim name As String = tp.FullName & ":" & Method.Name
@@ -2623,7 +2629,7 @@ Public Class Helper
         Dim result As Boolean = True
         Helper.Assert(Collection.Count = Types.Length)
         For i As Integer = 0 To Collection.Count - 1
-            result = DirectCast(Collection(i), IBaseObject).GenerateCode(Info.Clone(Info.IsRHS, Info.IsExplicitConversion, Types(i))) AndAlso result
+            result = DirectCast(Collection(i), IBaseObject).GenerateCode(Info.Clone(Info.Context, Info.IsRHS, Info.IsExplicitConversion, Types(i))) AndAlso result
         Next
         Return result
     End Function
@@ -2706,17 +2712,20 @@ Public Class Helper
         Next
     End Sub
 
-    <Diagnostics.DebuggerHidden()> Shared Sub AddError(Optional ByVal Message As String = "(No message provided)")
-        Dim msg As String
-        msg = "An error message should have been shown: '" & Message & "'"
-        If IsDebugging() Then
-            Console.WriteLine(msg)
-            Diagnostics.Debug.WriteLine(msg)
-            Helper.Stop()
-        Else
-            Throw New NotImplementedException(msg)
+
+    <Diagnostics.DebuggerHidden()> Shared Function AddError(ByVal Compiler As Compiler, ByVal Location As Span, Optional ByVal Message As String = Nothing) As Boolean
+        If Message Is Nothing Then
+            Message = "<no message written yet>"
         End If
-    End Sub
+        Return Compiler.Report.ShowMessage(Messages.VBNC99999, Location, Message)
+    End Function
+
+    <Diagnostics.DebuggerHidden()> Shared Function AddError(ByVal Context As BaseObject, Optional ByVal Message As String = Nothing) As Boolean
+        If Message Is Nothing Then
+            Message = "<no message written yet>"
+        End If
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC99999, Context.Location, Message)
+    End Function
 
     <Diagnostics.DebuggerHidden()> Shared Sub AddWarning(Optional ByVal Message As String = "(No message provided)")
         Dim msg As String
@@ -2743,12 +2752,6 @@ Public Class Helper
         Return True
     End Function
 
-    <Diagnostics.Conditional("EXTENDEDDEBUG"), Diagnostics.DebuggerHidden()> Shared Sub NotImplementedYet(ByVal message As String)
-#If EXTENDEDDEBUG Then
-        Console.WriteLine("Not implemented yet: " & message)
-#End If
-    End Sub
-
     <Diagnostics.DebuggerHidden()> Shared Sub ErrorRecoveryNotImplemented()
         Console.WriteLine("Error recovery not implemented yet.")
     End Sub
@@ -2764,15 +2767,6 @@ Public Class Helper
             MyBase.New(Message)
         End Sub
     End Class
-
-    <Diagnostics.DebuggerHidden()> Shared Sub NotImplemented(Optional ByVal message As String = "")
-        If IsDebugging() Then
-            Diagnostics.Debug.WriteLine(message)
-            IndirectedStop()
-        Else
-            Throw New NotImplementedException(message)
-        End If
-    End Sub
 
     <Diagnostics.DebuggerHidden()> Shared Sub StopIfDebugging(Optional ByVal Condition As Boolean = True)
         If Condition AndAlso IsDebugging() Then
@@ -3141,7 +3135,7 @@ Public Class Helper
 
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As ConstructorInfo) As Mono.Cecil.MethodReference
         Dim cD As ConstructorDescriptor
-        cD = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), ConstructorDescriptor)
+        cD = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, Method), ConstructorDescriptor)
 
         If cD IsNot Nothing Then
             If cD Is Nothing Then
@@ -3156,7 +3150,7 @@ Public Class Helper
     Private Shared m_MethodRefCache As New Generic.Dictionary(Of MethodInfo, Mono.Cecil.MethodReference)
 
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As MethodInfo) As Mono.Cecil.MethodReference
-        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Method), MethodDescriptor)
+        Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, Method), MethodDescriptor)
         If mD IsNot Nothing Then
             Return mD.MethodInCecil
         Else
@@ -3192,7 +3186,7 @@ Public Class Helper
     Shared Function GetFieldOrFieldReference(ByVal Compiler As Compiler, ByVal field As FieldInfo) As Mono.Cecil.FieldReference
         If Compiler.AssemblyBuilder Is field.DeclaringType.Assembly Then
             Dim fieldD As FieldInfo
-            fieldD = DirectCast(Compiler.TypeManager.GetRegisteredMember(field), FieldInfo)
+            fieldD = DirectCast(Compiler.TypeManager.GetRegisteredMember(Compiler, field), FieldInfo)
             Dim fD As FieldDescriptor
             fD = TryCast(fieldD, FieldDescriptor)
             If fD IsNot Nothing Then
@@ -3214,6 +3208,15 @@ Public Class Helper
         End If
     End Function
 
+    Shared Sub GetPropertyOrPropertyBuilder(ByVal Properties As Generic.List(Of PropertyInfo))
+        For i As Integer = 0 To Properties.Count - 1
+            Dim tmp As PropertyDescriptor = TryCast(Properties(i), PropertyDescriptor)
+            If tmp IsNot Nothing Then
+                Properties(i) = tmp.PropertyInReflection
+            End If
+        Next
+    End Sub
+
     Shared Function GetFieldOrFieldBuilder(ByVal Field As FieldInfo) As FieldInfo
         Dim tmp As FieldDescriptor = TryCast(Field, FieldDescriptor)
         If tmp Is Nothing Then
@@ -3222,6 +3225,15 @@ Public Class Helper
             Return tmp.FieldInReflection
         End If
     End Function
+
+    Shared Sub GetFieldOrFieldBuilder(ByVal Fields As Generic.List(Of FieldInfo))
+        For i As Integer = 0 To Fields.Count - 1
+            Dim tmp As FieldDescriptor = TryCast(Fields(i), FieldDescriptor)
+            If tmp IsNot Nothing Then
+                Fields(i) = tmp.FieldInReflection
+            End If
+        Next
+    End Sub
 
     ''' <summary>
     ''' 
@@ -3253,7 +3265,8 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function IsAssignable(ByVal Compiler As Compiler, ByVal FromType As Type, ByVal ToType As Type) As Boolean
+    Shared Function IsAssignable(ByVal Context As BaseObject, ByVal FromType As Type, ByVal ToType As Type) As Boolean
+        Dim Compiler As Compiler = Context.Compiler
         'If TypeOf FromType Is TypeDescriptor Then FromType = FromType.UnderlyingSystemType
         'If TypeOf ToType Is TypeDescriptor Then ToType = ToType.UnderlyingSystemType
 #If EXTENDEDDEBUG Then
@@ -3274,19 +3287,19 @@ Public Class Helper
             If Helper.CompareType(Helper.GetTypeOrTypeBuilder(FromType), ToType) Then
                 Return True
             Else
-                Helper.NotImplementedYet("")
+                Return False
             End If
             Return True
         ElseIf TypeOf ToType Is TypeDescriptor = False AndAlso TypeOf FromType Is TypeDescriptor = False AndAlso ToType.IsAssignableFrom(FromType) Then
             Return True
-        ElseIf IsInterface(Compiler, ToType) Then
+        ElseIf IsInterface(Context, ToType) Then
             Dim ifaces() As Type = Compiler.TypeManager.GetRegisteredType(FromType).GetInterfaces()
             For Each iface As Type In ifaces
-                If Helper.IsAssignable(Compiler, iface, ToType) Then Return True
+                If Helper.IsAssignable(Context, iface, ToType) Then Return True
                 If Helper.CompareType(iface, ToType) Then Return True
                 If Helper.IsSubclassOf(ToType, iface) Then Return True
             Next
-            If IsInterface(Compiler, FromType) AndAlso FromType.IsGenericType AndAlso ToType.IsGenericType Then
+            If IsInterface(Context, FromType) AndAlso FromType.IsGenericType AndAlso ToType.IsGenericType Then
                 Dim baseFromI, baseToI As Type
                 baseFromI = FromType.GetGenericTypeDefinition
                 baseToI = ToType.GetGenericTypeDefinition
@@ -3296,14 +3309,14 @@ Public Class Helper
                     toArgs = ToType.GetGenericArguments
                     If fromArgs.Length = toArgs.Length Then
                         For i As Integer = 0 To toArgs.Length - 1
-                            If Helper.IsAssignable(Compiler, fromArgs(i), toArgs(i)) = False Then Return False
+                            If Helper.IsAssignable(Context, fromArgs(i), toArgs(i)) = False Then Return False
                         Next
                         Return True
                     End If
                 End If
             End If
             Return False
-        ElseIf Helper.IsEnum(Compiler, FromType) AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, GetEnumType(Compiler, FromType), ToType) Then
+        ElseIf Helper.IsEnum(Compiler, FromType) AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Context, GetEnumType(Compiler, FromType), ToType) Then
             Return True
         ElseIf ToType.FullName IsNot Nothing AndAlso FromType.FullName IsNot Nothing AndAlso ToType.FullName.Equals(FromType.FullName, StringComparison.Ordinal) Then
             Return True
@@ -3321,10 +3334,10 @@ Public Class Helper
             If fromElement.IsValueType Xor toElement.IsValueType Then
                 Return False
             Else
-                Return Helper.IsAssignable(Compiler, fromElement, toElement)
+                Return Helper.IsAssignable(Context, fromElement, toElement)
             End If
         Else
-            Helper.NotImplementedYet("Don't know if it possible to convert from " & FromType.Name & " to " & ToType.Name)
+            'Helper.NotImplementedYet("Don't know if it possible to convert from " & FromType.Name & " to " & ToType.Name)
             Return False
         End If
     End Function
@@ -3380,11 +3393,11 @@ Public Class Helper
         Return False
     End Function
 
-    Shared Function DoesTypeImplementInterface(ByVal Compiler As Compiler, ByVal Type As Type, ByVal [Interface] As Type) As Boolean
+    Shared Function DoesTypeImplementInterface(ByVal Context As BaseObject, ByVal Type As Type, ByVal [Interface] As Type) As Boolean
         Dim ifaces() As Type
-        ifaces = Compiler.TypeManager.GetRegisteredType(Type).GetInterfaces
+        ifaces = Context.Compiler.TypeManager.GetRegisteredType(Type).GetInterfaces
         For Each iface As Type In ifaces
-            If Helper.IsAssignable(Compiler, iface, [Interface]) Then Return True
+            If Helper.IsAssignable(context, iface, [Interface]) Then Return True
         Next
         Return False
         Return Array.IndexOf(Type.GetInterfaces, [Interface]) >= 0
@@ -3436,9 +3449,9 @@ Public Class Helper
 
         If Helper.CompareType(fromType, DestinationType) Then
             'do nothing
-        ElseIf fromExpr.ExpressionType.IsByRef AndAlso IsAssignable(Parent.Compiler, fromType.GetElementType, DestinationType) Then
+        ElseIf fromExpr.ExpressionType.IsByRef AndAlso IsAssignable(Parent, fromType.GetElementType, DestinationType) Then
             'do nothing
-        ElseIf DestinationType.IsByRef AndAlso IsAssignable(Parent.Compiler, fromExpr.ExpressionType, DestinationType.GetElementType) Then
+        ElseIf DestinationType.IsByRef AndAlso IsAssignable(Parent, fromExpr.ExpressionType, DestinationType.GetElementType) Then
 #If EXTENDEDDEBUG Then
             Parent.Compiler.Report.WriteLine(">3")
 #End If
@@ -3447,7 +3460,7 @@ Public Class Helper
                 result = fromExpr.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
             End If
             'do nothing
-        ElseIf DestinationType.IsByRef AndAlso Parent.Compiler.TypeResolution.IsImplicitlyConvertible(Parent.Compiler, fromExpr.ExpressionType, DestinationType.GetElementType) Then
+        ElseIf DestinationType.IsByRef AndAlso Parent.Compiler.TypeResolution.IsImplicitlyConvertible(Parent, fromExpr.ExpressionType, DestinationType.GetElementType) Then
             Dim tmpExp As Expression
             tmpExp = CreateTypeConversion(Parent, fromExpr, DestinationType.GetElementType, result)
             If result = False Then Return fromExpr
@@ -3564,7 +3577,6 @@ Public Class Helper
                 'td1 is a type descriptor, but it does not have a type declaration?
                 Return False 'Helper.NotImplemented()
             End If
-            Helper.NotImplemented()
         End If
     End Function
 
@@ -3681,7 +3693,8 @@ Public Class Helper
         End Select
     End Function
 
-    Overloads Shared Function ToString(ByVal Compiler As Compiler, ByVal Member As MemberInfo) As String
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As MemberInfo) As String
+        Dim Compiler As Compiler = Context.Compiler
         Dim result As String
         Select Case Member.MemberType
             Case MemberTypes.Constructor
@@ -3694,7 +3707,7 @@ Public Class Helper
                 Dim pinfo As PropertyInfo = DirectCast(Member, PropertyInfo)
                 result = pinfo.Name & "(" & Helper.ToString(Compiler, Helper.GetParameters(Compiler, pinfo)) & ")"
             Case Else
-                Helper.NotImplemented()
+                Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
                 result = ""
         End Select
         Return result
@@ -3789,7 +3802,8 @@ Public Class Helper
     End Function
 
 
-    Shared Function IsFirstMoreApplicable(ByVal Compiler As Compiler, ByVal Arguments As Generic.List(Of Argument), ByVal MTypes As Type(), ByVal NTypes() As Type) As Boolean
+    Shared Function IsFirstMoreApplicable(ByVal Context As BaseObject, ByVal Arguments As Generic.List(Of Argument), ByVal MTypes As Type(), ByVal NTypes() As Type) As Boolean
+        Dim Compiler As Compiler = Context.Compiler
         Dim result As Boolean = True
         'A member M is considered more applicable than N if their signatures are different and, 
         'for each pair of parameters Mj and Nj that matches an argument Aj, 
@@ -3818,7 +3832,7 @@ Public Class Helper
             isEqual = Helper.CompareType(MTypes(i), NTypes(i))
 
             '*	There exists a widening conversion from the type of Mj to the type Nj, or
-            isWidening = Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, MTypes(i), NTypes(i))
+            isWidening = Compiler.TypeResolution.IsImplicitlyConvertible(context, MTypes(i), NTypes(i))
 
             '*	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
             isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(Compiler, NTypes(i))
@@ -3853,27 +3867,27 @@ Public Class Helper
         Return False
     End Function
 
-    Shared Function IsFirstLessGeneric() As Boolean
+    Shared Function IsFirstLessGeneric(ByVal Context As BaseObject) As Boolean
         'A member M is determined to be less generic than a member N using the following steps:
         '-	If M has fewer method type parameters than N, then M is less generic than N.
         '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect to type parameters on the method, or Mj is less generic with respect to type parameters on the method, and at least one Mj is less generic than Nj, then M is less generic than N.
         '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect to type parameters on the type, or Mj is less generic with respect to type parameters on the type, and at least one Mj is less generic than Nj, then M is less generic than N.
-        Helper.NotImplemented()
+        Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
     End Function
 
-    Shared Function IsAccessible(ByVal Compiler As Compiler, ByVal Caller As TypeDeclaration, ByVal Method As MethodBase) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal Caller As TypeDeclaration, ByVal Method As MethodBase) As Boolean
         If Caller Is Nothing Then
-            Return Helper.IsAccessible(Compiler, Method.Attributes, Method.DeclaringType)
+            Return Helper.IsAccessible(Context, Method.Attributes, Method.DeclaringType)
         Else
-            Return Helper.IsAccessible(Method.Attributes, Method.DeclaringType, Caller.TypeDescriptor)
+            Return Helper.IsAccessible(Context, Method.Attributes, Method.DeclaringType, Caller.TypeDescriptor)
         End If
     End Function
 
-    Shared Function IsAccessible(ByVal Compiler As Compiler, ByVal Caller As TypeDeclaration, ByVal [Property] As PropertyInfo) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal Caller As TypeDeclaration, ByVal [Property] As PropertyInfo) As Boolean
         If Caller Is Nothing Then
-            Return Helper.IsAccessible(Compiler, GetPropertyAccess([Property]), [Property].DeclaringType)
+            Return Helper.IsAccessible(Context, GetPropertyAccess([Property]), [Property].DeclaringType)
         Else
-            Return Helper.IsAccessible(GetPropertyAccess([Property]), [Property].DeclaringType, Caller.TypeDescriptor)
+            Return Helper.IsAccessible(Context, GetPropertyAccess([Property]), [Property].DeclaringType, Caller.TypeDescriptor)
         End If
     End Function
 
@@ -4034,21 +4048,21 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function IsAccessible(ByVal Compiler As Compiler, ByVal Caller As TypeDeclaration, ByVal Member As MemberInfo) As Boolean
+    Shared Function IsAccessible(ByVal Context As BaseObject, ByVal Caller As TypeDeclaration, ByVal Member As MemberInfo) As Boolean
         Select Case Member.MemberType
             Case MemberTypes.Constructor, MemberTypes.Method
-                Return IsAccessible(Compiler, Caller, DirectCast(Member, MethodBase))
+                Return IsAccessible(Context, Caller, DirectCast(Member, MethodBase))
             Case MemberTypes.Property
-                Return IsAccessible(Compiler, Caller, DirectCast(Member, PropertyInfo))
+                Return IsAccessible(Context, Caller, DirectCast(Member, PropertyInfo))
             Case Else
                 Throw New InternalException("")
         End Select
     End Function
 
-    Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal Member As MemberInfo) As ParameterInfo()
+    Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Member As MemberInfo) As ParameterInfo()
         Select Case Member.MemberType
             Case MemberTypes.Method
-                Return GetParameters(Compiler, DirectCast(Member, MethodInfo))
+                Return GetParameters(Context, DirectCast(Member, MethodInfo))
             Case MemberTypes.Property
                 Return DirectCast(Member, PropertyInfo).GetIndexParameters
             Case MemberTypes.Constructor
@@ -4058,11 +4072,11 @@ Public Class Helper
         End Select
     End Function
 
-    'Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal Members As Generic.IList(Of MemberInfo)) As ParameterInfo()()
+    'Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Members As Generic.IList(Of MemberInfo)) As ParameterInfo()()
     '    Dim result As ParameterInfo()()
     '    ReDim result(Members.Count - 1)
     '    For i As Integer = 0 To result.Length - 1
-    '        result(i) = GetParameters(Compiler, Members(i))
+    '        result(i) = GetParameters(Context, Members(i))
     '    Next
     '    Return result
     'End Function
@@ -4073,11 +4087,12 @@ Public Class Helper
     ''' <param name="constructor"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal constructor As ConstructorInfo) As ParameterInfo()
-        If Helper.IsReflectionMember(constructor) Then
+    Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal constructor As ConstructorInfo) As ParameterInfo()
+        Dim Compiler As Compiler = Context.Compiler
+        If Helper.IsReflectionMember(Context, constructor) Then
             Dim ctor As MemberInfo
-            ctor = Compiler.TypeManager.GetRegisteredMember(constructor)
-            Helper.Assert(Helper.IsReflectionMember(ctor) = False)
+            ctor = Compiler.TypeManager.GetRegisteredMember(Context, constructor)
+            Helper.Assert(Helper.IsReflectionMember(Context, ctor) = False)
             Return DirectCast(ctor, ConstructorInfo).GetParameters
         Else
             Return constructor.GetParameters
@@ -4093,7 +4108,8 @@ Public Class Helper
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal method As MethodInfo) As ParameterInfo()
+    Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal method As MethodInfo) As ParameterInfo()
+        Dim Compiler As Compiler = Context.Compiler
         If TypeOf method Is MethodDescriptor Then
             Return method.GetParameters()
         End If
@@ -4107,7 +4123,8 @@ Public Class Helper
             Return method.GetParameters
         End If
         If Compiler.theAss.IsDefinedHere(method.DeclaringType) Then
-            Helper.NotImplemented() : Return Nothing
+            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
+            Return Nothing
             'Return DirectCast(Compiler.theAss.FindBuildingType(method.DeclaringType), ContainerType).FindMethod(method).GetParameters()
         Else
             Return method.GetParameters
@@ -4119,11 +4136,11 @@ Public Class Helper
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Overloads Shared Function GetParameters(ByVal Compiler As Compiler, ByVal method As MethodBase) As ParameterInfo()
+    Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal method As MethodBase) As ParameterInfo()
         If TypeOf method Is MethodInfo Then
-            Return GetParameters(Compiler, DirectCast(method, MethodInfo))
+            Return GetParameters(Context, DirectCast(method, MethodInfo))
         ElseIf TypeOf method Is ConstructorInfo Then
-            Return GetParameters(Compiler, DirectCast(method, ConstructorInfo))
+            Return GetParameters(Context, DirectCast(method, ConstructorInfo))
         Else
             Helper.Stop()
             Throw New NotImplementedException
@@ -4307,10 +4324,10 @@ Public Class Helper
                 If vC.IsConstant Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC30074, Location)
                 Else
-                    Helper.AddError("Expected " & Expected & " got " & ActualClassification.Classification.ToString())
+                    Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
                 End If
             Case Else
-                Helper.AddError("Expected " & Expected & " got " & ActualClassification.Classification.ToString())
+                Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
         End Select
         Return False
     End Function

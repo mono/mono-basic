@@ -211,9 +211,9 @@ Public Class TypeNameResolutionInfo
                 result = ResolveUnqualifiedName(names, Me.TypeArgumentCount) AndAlso result
             End If
         ElseIf ctn IsNot Nothing Then
-            Helper.NotImplemented()
+            Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
         Else
-            Helper.NotImplemented()
+            Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
         End If
 
         Return result
@@ -359,15 +359,15 @@ Public Class TypeNameResolutionInfo
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    Helper.NotImplemented()
+                    Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
                     modules = TypeDescriptor.CreateList(tp.GetNestedTypes())
                 End If
             Else
                 '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
                 '** or type, a compile-time error occurs.  (..)
                 If ShowError = False Then Return False
-                Helper.AddError("(2) Could not resolve: " & R & ", Location: " & FromWhere.Location.AsString)
-                Helper.NotImplemented()
+                'Helper.AddError("(2) Could not resolve: " & R & ", Location: " & FromWhere.Location.AsString)
+                Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
             End If
 
             '**	If N contains one or more standard modules, and R matches the name of a type in 
@@ -383,14 +383,16 @@ Public Class TypeNameResolutionInfo
                 Return False
             ElseIf m_FoundObjects.Count > 1 Then
                 If ShowError = False Then Return False
-                Helper.AddError("Found " & m_FoundObjects.Count.ToString & " members in type or namespace '" & Qualifier.FoundObject.ToString & "'")
+                Helper.AddError(Name, "Found " & m_FoundObjects.Count.ToString & " members in type or namespace '" & Qualifier.FoundObject.ToString & "'")
+                Return False
             Else
                 Return True
             End If
         Else
             '**	If resolution of N fails, (...)
             If ShowError = False Then Return False
-            Helper.AddError("Qualifying member '" & Qualifier.m_Qualifier.FoundObject.ToString & "' resolves to '" & Qualifier.FoundObjects.Count.ToString & " objects" & "(R = " & R & ")")
+            Helper.AddError(Name, "Qualifying member '" & Qualifier.m_Qualifier.FoundObject.ToString & "' resolves to '" & Qualifier.FoundObjects.Count.ToString & " objects" & "(R = " & R & ")")
+            Return False
         End If
 
         Return False
@@ -542,7 +544,7 @@ Public Class TypeNameResolutionInfo
         ElseIf allModuleTypes.Count > 1 Then
             '** If R matches the name of accessible nested types in more than one standard module, a compile-time 
             '** error occurs.
-            Helper.AddError()
+            Helper.AddError(Name)
             Return False
         End If
     End Function
@@ -595,7 +597,7 @@ Public Class TypeNameResolutionInfo
             ElseIf typesInAllModules.Count > 1 Then
                 '** If R matches the name of accessible nested types in more than one standard module, a compile-time 
                 '** error occurs.
-                Helper.AddError()
+                Helper.AddError(Name)
                 Return False
             End If
         End If
@@ -728,7 +730,7 @@ Public Class TypeNameResolutionInfo
             m_FoundObjects.Add(tpFound(0))
             Return True
         ElseIf tpFound.Count > 0 Then
-            Helper.AddError()
+            Helper.AddError(Name)
             Return False
         End If
 
@@ -752,7 +754,7 @@ Public Class TypeNameResolutionInfo
             m_FoundObjects.Add(tpFound(0))
             Return True
         ElseIf tpFound.Count > 0 Then
-            Helper.AddError()
+            Helper.AddError(Name)
             Return False
         End If
 

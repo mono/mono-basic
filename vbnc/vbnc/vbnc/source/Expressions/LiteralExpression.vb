@@ -33,6 +33,16 @@ Public Class LiteralExpression
     ''' <remarks></remarks>
     Private m_Value As Token
 
+    Public Overrides ReadOnly Property AsString() As String
+        Get
+            If TypeOf m_Value.LiteralValue Is String Then
+                Return """" & m_Value.LiteralValue.ToString & """"
+            Else
+                Return m_Value.LiteralValue.ToString()
+            End If
+        End Get
+    End Property
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub

@@ -82,10 +82,10 @@ Public Class ValueClassification
                 Case Classifications.PropertyGroup
                     result = m_Classification.AsPropertyGroup.GenerateCodeAsValue(Info) AndAlso result
                 Case Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End Select
         Else
-            Helper.NotImplemented()
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         End If
 
         Return result

@@ -65,9 +65,16 @@ Public Class EventDescriptor
         m_Parent = Declaration
     End Sub
 
+    ReadOnly Property Compiler() As Compiler
+        Get
+            Return m_Declaration.Compiler
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property Attributes() As System.Reflection.EventAttributes
         Get
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -82,11 +89,13 @@ Public Class EventDescriptor
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overloads Overrides Function GetRaiseMethod(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo
@@ -98,7 +107,8 @@ Public Class EventDescriptor
     End Function
 
     Public Overrides Function IsDefined(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Boolean
-        Helper.NotImplemented() : Return Nothing
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return Nothing
     End Function
 
     Public Overrides ReadOnly Property Name() As String
@@ -109,7 +119,8 @@ Public Class EventDescriptor
 
     Public Overrides ReadOnly Property ReflectedType() As System.Type
         Get
-            Helper.NotImplemented() : Return Nothing
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return Nothing
         End Get
     End Property
 
@@ -127,10 +138,12 @@ Public Class EventDescriptor
     End Function
 
     Public Overrides Function GetHashCode() As Integer
-        Helper.NotImplemented() : Return MyBase.GetHashCode()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetHashCode()
     End Function
     Public Overrides Function GetOtherMethods(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo()
-        Helper.NotImplemented() : Return MyBase.GetOtherMethods(nonPublic)
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.GetOtherMethods(nonPublic)
     End Function
     Public Overrides ReadOnly Property MemberType() As System.Reflection.MemberTypes
         Get
@@ -142,15 +155,18 @@ Public Class EventDescriptor
     End Property
     Public Overrides ReadOnly Property MetadataToken() As Integer
         Get
-            Helper.NotImplemented() : Return MyBase.MetadataToken
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.MetadataToken
         End Get
     End Property
     Public Overrides ReadOnly Property [Module]() As System.Reflection.Module
         Get
-            Helper.NotImplemented() : Return MyBase.[Module]
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+            Return MyBase.[Module]
         End Get
     End Property
     Public Overrides Function ToString() As String
-        Helper.NotImplemented() : Return MyBase.ToString()
+        Compiler.Report.ShowMessage(Messages.VBNC99997, Declaration.Location)
+        Return MyBase.ToString()
     End Function
 End Class

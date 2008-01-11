@@ -88,7 +88,7 @@ Public Class IfStatement
 
         'result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
         'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
-        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
 
         Emitter.EmitBranchIfFalse(Info, startFalse)
         'True code
@@ -129,17 +129,17 @@ Public Class IfStatement
             result = m_Condition.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
 
             If result = False Then
-                Helper.AddError()
+                Helper.AddError(Me)
                 Return result
             End If
             m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
 
             If result = False Then
-                Helper.AddError()
+                Helper.AddError(Me)
                 Return result
             End If
         Else
-            Helper.AddError("Each expression in an If...Then...Else statement must be classified as a value and be implicitly convertible to Boolean")
+            Helper.AddError(Me, "Each expression in an If...Then...Else statement must be classified as a value and be implicitly convertible to Boolean")
         End If
 
         Return result

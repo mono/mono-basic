@@ -575,7 +575,7 @@ Public Class TypeManager
         'End If
     End Sub
 
-    Function GetRegisteredMember(ByVal Member As MemberInfo) As MemberInfo
+    Function GetRegisteredMember(ByVal Context As BaseObject, ByVal Member As MemberInfo) As MemberInfo
         If Member Is Nothing Then Return Nothing
 
         If TypeOf Member Is ConstructorDescriptor Then Return Member
@@ -591,13 +591,7 @@ Public Class TypeManager
                 Return m_MemberDescriptorsOfMembersDescriptors(i)
             End If
         Next
-        'If m_MemberDescriptorsOfMembers2.ContainsKey(Member) Then Return m_MemberDescriptorsOfMembers2(Member)
-        'For Each item As Generic.KeyValuePair(Of MemberInfo, MemberInfo) In m_MemberDescriptorsOfMembers2
-        '    If item.Key Is Member Then
-        '        Return item.Value
-        '    End If
-        'Next
-        'Helper.Assert(Helper.IsReflectionMember(Member) = False)
+        'Helper.Assert(Helper.IsReflectionMember(Context, Member) = False)
         Return Member
     End Function
 

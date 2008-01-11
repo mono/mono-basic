@@ -104,7 +104,7 @@ Public Class ParameterDescriptor
             ElseIf m_Type IsNot Nothing AndAlso m_Type.IsArray = False Then
                 Return False
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
             End If
         End Get
     End Property
@@ -136,7 +136,7 @@ Public Class ParameterDescriptor
                     Helper.Assert(Me.IsOptional = False)
                 End If
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
             End If
 
             If result Is DBNull.Value Then result = Nothing
@@ -155,19 +155,22 @@ Public Class ParameterDescriptor
     Public Overrides Function GetCustomAttributes(ByVal inherit As Boolean) As Object()
         Dim result As Object() = MyBase.GetCustomAttributes(inherit)
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
+        Return result
     End Function
 
     Public Overrides Function GetCustomAttributes(ByVal attributeType As System.Type, ByVal inherit As Boolean) As Object()
         Dim result As Object() = MyBase.GetCustomAttributes(attributeType, inherit)
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
+        Return result
     End Function
 
     Public Overrides Function GetHashCode() As Integer
         Dim result As Integer = MyBase.GetHashCode
         DumpMethodInfo(result)
-        Helper.NotImplemented() : Return result
+        Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
+        Return result
     End Function
 
     Public Overrides Function GetOptionalCustomModifiers() As System.Type()
@@ -190,10 +193,10 @@ Public Class ParameterDescriptor
                 result = m_Parameter.CustomAttributes.IsDefined(attributeType)
             End If
             If result = False AndAlso inherit = True Then
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
             End If
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
         End If
 
         DumpMethodInfo(result)
@@ -206,7 +209,7 @@ Public Class ParameterDescriptor
             If m_Parameter IsNot Nothing Then
                 result = m_Parameter.FindFirstParent(Of IMember).MemberDescriptor
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
             End If
             DumpMethodInfo(result)
             Return result
@@ -238,7 +241,7 @@ Public Class ParameterDescriptor
             ElseIf m_Parameter IsNot Nothing Then
                 result = m_Parameter.ParameterType
             Else
-                Helper.NotImplemented()
+                Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
             End If
             DumpMethodInfo(result)
             Return result
@@ -266,7 +269,7 @@ Public Class ParameterDescriptor
         If m_Type IsNot Nothing Then
             result = m_Type.ToString
         Else
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parameter.Location)
         End If
         DumpMethodInfo(result)
         Return result

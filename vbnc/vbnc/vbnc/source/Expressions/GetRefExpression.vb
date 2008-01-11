@@ -47,7 +47,7 @@ Public Class GetRefExpression
         'Helper.Assert(Expression.Classification.IsVariableClassification = False OrElse TypeOf Expression.Classification.AsVariableClassification.Expression Is GetRefExpression = False)
 
         If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then
-            Helper.NotImplemented()
+            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Throw New InternalException(Me)
         End If
     End Sub
@@ -63,14 +63,14 @@ Public Class GetRefExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim refInfo As EmitInfo = Info.Clone(Me.ExpressionType)
+        Dim refInfo As EmitInfo = Info.Clone(Me, Me.ExpressionType)
 
         Select Case m_Expression.Classification.Classification
             Case ExpressionClassification.Classifications.Variable
                 Dim varC As VariableClassification = m_Expression.Classification.AsVariableClassification
 
                 If varC.InstanceExpression IsNot Nothing Then
-                    result = varC.InstanceExpression.GenerateCode(Info.Clone(varC.InstanceExpression.ExpressionType)) AndAlso result
+                    result = varC.InstanceExpression.GenerateCode(Info.Clone(Me, varC.InstanceExpression.ExpressionType)) AndAlso result
                     'result = varC.InstanceExpression.GenerateCode(refInfo) AndAlso result
                 End If
 
@@ -93,18 +93,18 @@ Public Class GetRefExpression
                     Dim elementtype As Type = arrtype.GetElementType
                     Dim isnonprimitivevaluetype As Boolean = elementtype.IsPrimitive = False AndAlso elementtype.IsValueType
 
-                    result = varC.ArrayVariable.GenerateCode(Info.Clone(True, False, arrtype)) AndAlso result
+                    result = varC.ArrayVariable.GenerateCode(Info.Clone(Me, True, False, arrtype)) AndAlso result
 
                     Dim methodtypes As New Generic.List(Of Type)
 
-                    Dim elementInfo As EmitInfo = Info.Clone(True, False, Compiler.TypeCache.System_Int32)
+                    Dim elementInfo As EmitInfo = Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)
                     For i As Integer = 0 To varC.Arguments.Count - 1
                         result = varC.Arguments(i).GenerateCode(elementInfo) AndAlso result
                         Emitter.EmitConversion(varC.Arguments(i).Expression.ExpressionType, Compiler.TypeCache.System_Int32, Info)
                         methodtypes.Add(Compiler.TypeCache.System_Int32)
                     Next
 
-                    Dim rInfo As EmitInfo = Info.Clone(True, False, elementtype)
+                    Dim rInfo As EmitInfo = Info.Clone(Me, True, False, elementtype)
                     methodtypes.Add(elementtype)
 
                     If arrtype.GetArrayRank = 1 Then
@@ -118,7 +118,7 @@ Public Class GetRefExpression
                             'Emitter.EmitStoreElement(Info, elementtype, arrtype)
                         End If
                     Else
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                         'Dim method As MethodInfo = ArrayElementInitializer.GetSetMethod(arrtype)
 
                         'If isnonprimitivevaluetype Then
@@ -138,25 +138,24 @@ Public Class GetRefExpression
                     ElseIf TypeOf varC.Expression Is GetRefExpression AndAlso varC.Expression IsNot Me Then
                         result = varC.Expression.GenerateCode(Info) AndAlso result
                     Else
-                        Helper.NotImplemented(Me.Location.ToString(Compiler))
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
             Case ExpressionClassification.Classifications.Value
-                result = m_Expression.GenerateCode(Info.Clone(m_Expression.ExpressionType)) AndAlso result
+                result = m_Expression.GenerateCode(Info.Clone(Me, m_Expression.ExpressionType)) AndAlso result
 
                 Dim local As LocalBuilder
                 local = Emitter.DeclareLocal(Info, m_Expression.ExpressionType)
                 Emitter.EmitStoreVariable(Info, local)
                 Emitter.EmitLoadVariableLocation(Info, local)
             Case ExpressionClassification.Classifications.PropertyAccess
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Case ExpressionClassification.Classifications.MethodPointer
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Case Else
-                Helper.NotImplemented()
-                Throw New InternalException(Me)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End Select
 
         Return result

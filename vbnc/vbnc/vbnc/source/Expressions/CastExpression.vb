@@ -32,7 +32,7 @@ Public MustInherit Class CastExpression
     Inherits Expression
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
@@ -42,7 +42,7 @@ Public MustInherit Class CastExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.NotImplemented()
+        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
 
         Return result
     End Function
@@ -53,7 +53,7 @@ Public MustInherit Class CastExpression
 
 #If DEBUG Then
     Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Helper.NotImplemented()
+
     End Sub
 #End If
 

@@ -93,7 +93,7 @@ Public Class ImportsNamespaceClause
 
         If nri.FoundOnlyOneObject = False Then
             Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
-            Return True
+            Return result
         End If
 
         If nri.FoundIs(Of [Namespace])() Then
@@ -105,7 +105,7 @@ Public Class ImportsNamespaceClause
         ElseIf nri.FoundIs(Of TypeDescriptor)() Then
             m_Type = nri.FoundAs(Of TypeDescriptor)()
         Else
-            Helper.AddError()
+            Helper.AddError(Me)
         End If
         Return result
     End Function

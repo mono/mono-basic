@@ -1,3 +1,189 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/Attribute.vb: Don't pass XDescriptors to SRE.
+	* General/Helper.vb: Added more GetXOrXBuilder methods.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TypeDeclarations/PartialTypeDeclaration.vb: Add attributes to the main
+	  declaration as well. Fixes #333952.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Parser/Parser.vb, Resources/Source.xml, Resources/Errors.resx,
+	  General/Messages.vb: Implemented 30180. Fixes #325340.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/NewExpression.vb, Expressions/OperatorExpression.vb,
+	  Expressions/PropertyGroupToPropertyAccessExpression.vb,
+	  Expressions/NamespaceExpression.vb, Expressions/ArgumentList.vb,
+	  Expressions/CaseComparisonExpression.vb,
+	  Expressions/TypeOfExpression.vb, Expressions/CachedExpression.vb,
+	  Expressions/DotAccessExpression.vb, Expressions/AddressOfExpression.vb,
+	  Expressions/UnaryExpressions/UnaryMinusExpression.vb,
+	  Expressions/UnaryExpressions/UnaryExpression.vb,
+	  Expressions/UnaryExpressions/UnaryNotExpression.vb,
+	  Expressions/UnaryExpressions/UnaryPlusExpression.vb,
+	  Expressions/GetRefExpression.vb, Expressions/TypeExpression.vb,
+	  Expressions/Conversions/CSByteExpression.vb,
+	  Expressions/Conversions/TryCastExpression.vb,
+	  Expressions/Conversions/CSngExpression.vb,
+	  Expressions/Conversions/CIntExpression.vb,
+	  Expressions/Conversions/CDecExpression.vb,
+	  Expressions/Conversions/CBoolExpression.vb,
+	  Expressions/Conversions/CShortExpression.vb,
+	  Expressions/Conversions/CDblExpression.vb,
+	  Expressions/Conversions/CByteExpression.vb,
+	  Expressions/Conversions/CULngExpression.vb,
+	  Expressions/Conversions/CStrExpression.vb,
+	  Expressions/Conversions/CObjExpression.vb,
+	  Expressions/Conversions/CDateExpression.vb,
+	  Expressions/Conversions/CCharExpression.vb,
+	  Expressions/Conversions/CUIntExpression.vb,
+	  Expressions/Conversions/CLngExpression.vb,
+	  Expressions/Conversions/CTypeExpression.vb,
+	  Expressions/Conversions/DirectCastExpression.vb,
+	  Expressions/Conversions/CUShortExpression.vb,
+	  Expressions/VariableToValueExpression.vb,
+	  Expressions/CompilerGeneratedExpression.vb,
+	  Expressions/MemberAccessExpression.vb, Expressions/SimpleExpression.vb,
+	  Expressions/CastExpression.vb, Expressions/SimpleNameExpression.vb,
+	  Expressions/BinaryExpressions/LShiftExpression.vb,
+	  Expressions/BinaryExpressions/EqualsExpression.vb,
+	  Expressions/BinaryExpressions/GEExpression.vb,
+	  Expressions/BinaryExpressions/BinaryAddExpression.vb,
+	  Expressions/BinaryExpressions/BinarySubExpression.vb,
+	  Expressions/BinaryExpressions/RShiftExpression.vb,
+	  Expressions/BinaryExpressions/IntDivisionExpression.vb,
+	  Expressions/BinaryExpressions/ExponentExpression.vb,
+	  Expressions/BinaryExpressions/LEExpression.vb,
+	  Expressions/BinaryExpressions/AndExpression.vb,
+	  Expressions/BinaryExpressions/ConcatExpression.vb,
+	  Expressions/BinaryExpressions/XorExpression.vb,
+	  Expressions/BinaryExpressions/GTExpression.vb,
+	  Expressions/BinaryExpressions/NotEqualsExpression.vb,
+	  Expressions/BinaryExpressions/LTExpression.vb,
+	  Expressions/BinaryExpressions/ModExpression.vb,
+	  Expressions/BinaryExpressions/OrExpression.vb,
+	  Expressions/BinaryExpressions/MultExpression.vb,
+	  Expressions/BinaryExpressions/LikeExpression.vb,
+	  Expressions/BinaryExpressions/Is_IsNotExpression.vb,
+	  Expressions/BinaryExpressions/RealDivisionExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb,
+	  Expressions/LateBoundAccessToExpression.vb,
+	  Expressions/ArrayCreationExpression.vb, Expressions/Expression.vb,
+	  Expressions/DeRefExpression.vb, Expressions/VariableExpression.vb,
+	  Expressions/DictionaryAccessExpression.vb,
+	  Expressions/DelegateOrObjectCreationExpression.vb,
+	  Expressions/Classifications/MethodGroupClassification.vb,
+	  Expressions/Classifications/ExpressionClassification.vb,
+	  Expressions/Classifications/MethodPointerClassification.vb,
+	  Expressions/Classifications/PropertyGroupClassification.vb,
+	  Expressions/Classifications/EventAccessClassification.vb,
+	  Expressions/Classifications/VariableClassification.vb,
+	  Expressions/Classifications/PropertyAccessClassification.vb,
+	  Expressions/Classifications/ValueClassification.vb,
+	  Expressions/CaseRangeExpression.vb, Interfaces/IBaseObject.vb,
+	  Statements/ForStatement.vb, Statements/LoopControlVariable.vb,
+	  Statements/IfStatement.vb, Statements/EraseStatement.vb,
+	  Statements/UsingDeclarator.vb, Statements/ElseIfStatement.vb,
+	  Statements/ExitStatement.vb, Statements/OptionExplicitStatement.vb,
+	  Statements/CallStatement.vb, Statements/CatchStatement.vb,
+	  Statements/CaseClause.vb, Statements/UsingStatement.vb,
+	  Statements/SyncLockStatement.vb, Statements/OnErrorStatement.vb,
+	  Statements/ErrorStatement.vb, Statements/OptionStrictStatement.vb,
+	  Statements/AssignStatements/AssignmentStatement.vb,
+	  Statements/AssignStatements/CompoundAssignmentStatement.vb,
+	  Statements/AssignStatements/MidAssignStatement.vb,
+	  Statements/DoStatement.vb, Statements/ThrowStatement.vb,
+	  Statements/RaiseEventStatement.vb,
+	  Statements/AddOrRemoveHandlerStatement.vb,
+	  Statements/ForEachStatement.vb, Statements/RedimClause.vb,
+	  Statements/WhileStatement.vb, Statements/WithStatement.vb,
+	  Statements/ReturnStatement.vb, Statements/OptionCompareStatement.vb,
+	  Members/EventAccessorDeclarations.vb, Members/ConstantDeclaration.vb,
+	  Members/MethodResolver.vb, Members/EventMemberSpecifier.vb,
+	  Members/ConversionOperatorDeclaration.vb,
+	  Members/RegularEventHandlerDeclaration.vb, Members/Attribute.vb,
+	  Members/Parameter.vb, Members/MethodDeclaration.vb,
+	  Members/ConstructorDeclaration.vb, Members/ArrayElementInitializer.vb,
+	  Members/MemberImplementsClause.vb, Members/AttributeBlock.vb,
+	  Members/InterfaceMemberSpecifier.vb, Members/EventDeclaration.vb,
+	  Members/VariableDeclaration.vb, Members/AttributeList.vb,
+	  Members/MemberDeclarations.vb, Members/PropertySetDeclaration.vb,
+	  Parser/Parser(Members2).vb, Parser/Parser.vb,
+	  Parser/Parser(Expressions).vb, Parser/Parser(Events).vb,
+	  Parser/Parser(Types).vb, Parser/Parser(Statements).vb,
+	  Parser/Parser(Members).vb, Emit/Emitter.vb, Emit/EmitInfo.vb,
+	  Descriptors/GenericMethodDescriptor.vb,
+	  Descriptors/GenericTypeDescriptor.vb,
+	  Descriptors/ArrayTypeDescriptor.vb, Descriptors/MethodDescriptor.vb,
+	  Descriptors/ParameterDescriptor.vb, Descriptors/EventDescriptor.vb,
+	  Descriptors/TypeDescriptor.vb, Descriptors/TypeParameterDescriptor.vb,
+	  Descriptors/FieldDescriptor.vb, Descriptors/PropertyDescriptor.vb,
+	  Descriptors/ConstructorDescriptor.vb,
+	  Descriptors/ByRefTypeDescriptor.vb,
+	  ConditionalCompilation/ConditionalCompilation.vb,
+	  ConditionalCompilation/ConditionalExpression.vb,
+	  Tokens/IdentifierOrKeywordWithTypeArguments.vb,
+	  Names/QualifiedIdentifier.vb, Types/TypeParameter.vb,
+	  Types/TypeNameResolutionInfo.vb, Types/ConstructedTypeName.vb,
+	  Types/ImportsNamespaceClause.vb, Code/CodeBlock.vb,
+	  Resources/Source.xml, Resources/Errors.resx,
+	  TypeDeclarations/PartialTypeDeclaration.vb,
+	  TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb, General/CodeFile.vb,
+	  General/Report.vb, General/GlobalNamespace.vb, General/Helper.vb,
+	  General/Namespaces.vb, General/Message.vb, General/AssemblyInfo.vb,
+	  General/Namespace.vb, General/TypeResolution.vb, General/Compiler.vb,
+	  General/TypeManager.vb, General/CommandLine.vb, General/Define.vb,
+	  General/BaseObject.vb, General/Messages.vb: Remove all uses of
+	  Helper.NotImplemented, Helper.NotImplementedYet and Helper.AddError.
+	  Replaced with reported warnings/errors.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/AssemblyInfo.vb: Updated.
+	* General/TypeCache.in, General/TypeCache.vb: Added
+	  MS_VB_CS_DesignerGeneratedAttribute.
+	* TypeDeclarations/ClassDeclaration.vb: Implemented automatic invocation of
+	  InitializeComponent. Fixes #333962.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/DelegateOrObjectCreationExpression.vb: Allow for creation of
+	  type parameter with a 'Structure' constraint. Fixes #333961.
+	* Types/ConstraintList.vb: Implemented 32101-32104.
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  32101-32106.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Resources/Source.xml, Resources/Errors.resx, General/Messages.vb: Added
+	  31509.
+	* General/Compiler.vb: Guard resource reading in a try block, to be able to
+	  display an error instead of a crash.
+	* General/AssemblyInfo.vb: Updated.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/LiteralExpression.vb,
+	  Expressions/PropertyGroupToValueExpression.vb,
+	  Expressions/Conversions/ConversionExpression.vb,
+	  Expressions/PropertyAccessToValueExpression.vb: Implemented AsString.
+	* Expressions/ArgumentList.vb: Added ArgumentsAsTypeString.
+	* Expressions/Argument.vb: Added AsTypeString.
+	* Expressions/Conversions/CIntExpression.vb, Members/MethodResolver.vb,
+	  General/AssemblyInfo.vb: Updated.
+	* Expressions/InvocationOrIndexExpression.vb: Implemented AsString. Fix
+	  resolution of default properties to resolve to a
+	  PropertyAccessClassification, and emit that correctly.
+	* Types/ImportsNamespaceClause.vb: Don't return true unconditionally.
+
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Compiler.vb: Only create a Main method for a main:x form if x

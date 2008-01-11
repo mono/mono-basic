@@ -75,7 +75,7 @@ Public Class ConstantDeclaration
                 Dim result As Boolean
                 result = ResolveConstantValue(ResolveInfo.Default(Compiler))
                 If result = False Then
-                    Helper.AddError("")
+                    Helper.AddError(Me, "")
                     Return Nothing
                 End If
             End If
@@ -89,7 +89,7 @@ Public Class ConstantDeclaration
         If m_TypeName IsNot Nothing Then
             result = m_TypeName.ResolveTypeReferences AndAlso result
             If m_Identifier.HasTypeCharacter Then
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
         ElseIf m_Identifier.HasTypeCharacter Then
             m_TypeName = New TypeName(Me, TypeCharacters.TypeCharacterToType(Compiler, m_Identifier.TypeCharacter))
@@ -117,7 +117,7 @@ Public Class ConstantDeclaration
                 End If
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
-                Helper.AddError("Constant value is not constant!")
+                Helper.AddError(Me, "Constant value is not constant!")
                 result = False
             End If
             m_Resolved = True
@@ -132,7 +132,7 @@ Public Class ConstantDeclaration
         Dim result As Boolean = True
 
         If m_ConstantExpression Is Nothing Then
-            Helper.AddError("No constant expression.")
+            Helper.AddError(Me, "No constant expression.")
             Return False
         End If
 
@@ -155,9 +155,11 @@ Public Class ConstantDeclaration
         If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
             m_FieldBuilder.SetConstant(Nothing)
         ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_Decimal) Then
-            Helper.NotImplementedYet("Emit value of a decimal constant")
+            result = Compiler.Report.ShowMessage(Messages.VBNC99997) AndAlso result
+            'Helper.NotImplementedYet("Emit value of a decimal constant")
         ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_DateTime) Then
-            Helper.NotImplementedYet("Emit value of a date constant")
+            'Helper.NotImplementedYet("Emit value of a date constant")
+            result = Compiler.Report.ShowMessage(Messages.VBNC99997) AndAlso result
         Else
             If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
                 m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)

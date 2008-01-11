@@ -100,20 +100,20 @@ Public Class MemberAccessExpression
         Select Case Classification.Classification
             Case ExpressionClassification.Classifications.MethodGroup
                 If m_First Is Nothing Then
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 Else
                     With Classification.AsMethodGroupClassification
                         If Info.IsRHS Then
                             Dim tmp As ValueClassification = .ReclassifyToValue
                             result = tmp.GenerateCode(Info) AndAlso result
                         Else
-                            Helper.NotImplemented()
+                            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                         End If
                     End With
                 End If
             Case ExpressionClassification.Classifications.Variable
                 If m_First Is Nothing Then
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 Else
                     With Classification.AsVariableClassification
                         result = .GenerateCode(Info) AndAlso result
@@ -129,7 +129,7 @@ Public Class MemberAccessExpression
                         Dim tmp As ValueClassification = .ReclassifyToValue
                         result = tmp.GenerateCode(Info) AndAlso result
                     Else
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 End With
             Case ExpressionClassification.Classifications.LateBoundAccess
@@ -137,13 +137,13 @@ Public Class MemberAccessExpression
                     If Info.RHSExpression Is Nothing Then
                         LateBoundAccessToExpression.EmitLateCall(Info, Me.Classification.AsLateBoundAccess)
                     Else
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 Else
-                    Helper.NotImplemented()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
             Case Else
-                Helper.NotImplemented()
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End Select
 
         Return result
@@ -232,7 +232,7 @@ Public Class MemberAccessExpression
             '  error occurs.
             m_WithStatement = Me.FindFirstParentOfCodeBlock(Of WithStatement)()
             If m_WithStatement Is Nothing Then
-                Helper.AddError()
+                Helper.AddError(Me)
                 Return False
             Else
                 m_First = m_WithStatement.WithVariableExpression
@@ -283,7 +283,7 @@ Public Class MemberAccessExpression
                 Classification = New TypeClassification(Me, foundType)
                 Return True
             ElseIf foundns IsNot Nothing AndAlso nstypes IsNot Nothing Then
-                Helper.AddError("Found a namespace and a type with the same name.")
+                Helper.AddError(Me, "Found a namespace and a type with the same name.")
             End If
 
             'TODO: The spec is missing info about modules in namespaces. Doing check anyway.
@@ -299,14 +299,14 @@ Public Class MemberAccessExpression
                         Classification = New TypeClassification(Me, first)
                         Return True
                     Else
-                        Helper.AddError()
+                        Helper.AddError(Me)
                     End If
                 ElseIf Helper.IsFieldDeclaration(first) Then
                     If members.Count = 1 Then
                         Classification = New VariableClassification(Me, DirectCast(first, FieldInfo), Nothing)
                         Return True
                     Else
-                        Helper.AddError()
+                        Helper.AddError(Me)
                     End If
                 ElseIf Helper.IsPropertyDeclaration(first) Then
                     Classification = New PropertyGroupClassification(Me, Nothing, members)
@@ -335,7 +335,7 @@ Public Class MemberAccessExpression
         If m_First.Classification.IsTypeClassification Then
             If m_Second.IsKeyword AndAlso m_Second.Token.Equals(KS.[New]) Then
                 '** If I is the keyword New, then a compile-time error occurs.
-                Helper.AddError()
+                Helper.AddError(Me)
             End If
             Dim members As Generic.List(Of MemberInfo)
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
@@ -423,9 +423,9 @@ Public Class MemberAccessExpression
                 End If
 
                 '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-                Helper.AddError("Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString(Compiler))
+                Helper.AddError(Me, "Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString(Compiler))
             Else
-                Helper.AddError("Could not resolve name '" & Name & "'" & "," & Me.Location.ToString(Compiler))
+                Helper.AddError(Me, "Could not resolve name '" & Name & "'" & "," & Me.Location.ToString(Compiler))
             End If
         End If
 
@@ -481,7 +481,7 @@ Public Class MemberAccessExpression
                     Classification = New MethodGroupClassification(Me, m_First, Nothing, Helper.GetInstanceConstructors(T))
                     Return True
                 Else
-                    Helper.AddError()
+                    Helper.AddError(Me)
                 End If
             End If
 
@@ -570,7 +570,7 @@ Public Class MemberAccessExpression
                         Throw New InternalException(Me)
                     End If
                 ElseIf fld IsNot Nothing Then
-                    If Helper.IsAccessible(fld.Attributes, fld.DeclaringType, Me.FindFirstParent_IType.TypeDescriptor) = False Then
+                    If Helper.IsAccessible(Me, fld.Attributes, fld.DeclaringType, Me.FindFirstParent_IType.TypeDescriptor) = False Then
                         Return Compiler.Report.ShowMessage(Messages.VBNC30390, Location, fld.DeclaringType.FullName, fld.Name, Helper.ToString(fld.Attributes))
                     End If
 
@@ -669,7 +669,7 @@ Public Class MemberAccessExpression
                     Dim compresult As Boolean = False
                     If td Is Nothing Then compresult = Helper.CompareType(T, Compiler.TypeCache.System_Object)
                     If compresult Then
-                        Helper.NotImplemented()
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If
                 End If
                 '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
@@ -687,7 +687,7 @@ Public Class MemberAccessExpression
     End Function
 
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-        Helper.NotImplemented()
+        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 
     Shared Function IsUnaryMe(ByVal Tm As tm) As Boolean

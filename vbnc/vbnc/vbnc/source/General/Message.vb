@@ -153,30 +153,7 @@ Public Class Message
         For i As Integer = 0 To m_Message.GetUpperBound(0)
             strMessages(i) = Report.LookupErrorCode(m_Message(i))
             Helper.Assert(m_Parameters(i) IsNot Nothing, "m_Parameters(" & i.ToString & ") Is Nothing")
-            Select Case m_Parameters(i).Length
-                Case 0
-                    'strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
-                Case 1
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0))
-                Case 2
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1))
-                Case 3
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2))
-                Case 4
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3))
-                Case 5
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4))
-                Case 6
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5))
-                Case 7
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6))
-                Case 8
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6), m_Parameters(i)(7))
-                Case 9
-                    strMessages(i) = String.Format(strMessages(i), m_Parameters(i)(0), m_Parameters(i)(1), m_Parameters(i)(2), m_Parameters(i)(3), m_Parameters(i)(4), m_Parameters(i)(5), m_Parameters(i)(6), m_Parameters(i)(7), m_Parameters(i)(8))
-                Case Else
-                    Helper.NotImplemented("")
-            End Select
+            strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
             If i = 0 Then strMessages(i) = m_Message(i).ToString & ": " & strMessages(i)
         Next
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)

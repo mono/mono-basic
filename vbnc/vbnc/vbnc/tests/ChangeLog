@@ -1,3 +1,37 @@
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-333962.vb: Added.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/30180-bug-325340.vb: Implemented 30180. Fixes #325340.
+
+2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/vbnc.Errors.resources: Remove all uses of Helper.NotImplemented,
+	  Helper.NotImplementedYet and Helper.AddError. Replaced with reported
+	  warnings/errors.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CompileTime/Constraint1.vb, CompileTime2/Constraint1.vb,
+	  CompileTime2/DefaultProperty4.vb, CompileTime2/DefaultProperty5.vb,
+	  CompileTime2/DefaultProperty6.vb, Errors/32101.vb, Errors/32102.vb,
+	  Errors/32103.vb, Errors/32104.vb, Errors/32105.vb, Errors/32106.vb: More
+	  tests.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Errors/31509.resources, Errors/31509.response, Errors/31509.vb: Added.
+
+2007-11-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/vbnc.Errors.resources: Updated.
+	* CompileTime/PropertyAccess5.vb, CompileTime/PropertyAccess5.response:
+	  Added.
+	* 1Declarations/ArrayType8.vb, Errors/30311.vb, Errors/30337.vb: Fixed
+	  eol-style.
+
 2007-10-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-333403.vb, Bugs/bug-333403.rsp, My/bug-333403.rsp,

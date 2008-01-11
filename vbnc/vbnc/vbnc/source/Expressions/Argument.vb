@@ -36,6 +36,16 @@ Public MustInherit Class Argument
             If m_Expression Is Nothing Then
                 Return "Nothing"
             Else
+                Return m_Expression.AsString
+            End If
+        End Get
+    End Property
+
+    Overridable ReadOnly Property AsTypeString() As String
+        Get
+            If m_Expression Is Nothing Then
+                Return "Nothing"
+            Else
                 If m_Expression.ExpressionType Is Nothing Then
                     Return "(Nothing)"
                 Else

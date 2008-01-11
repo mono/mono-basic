@@ -67,6 +67,7 @@ Public Class EmitInfo
 #If ENABLECECIL Then
     Private m_CilBody As Mono.Cecil.Cil.MethodBody
 #End If
+    Private m_Context As ParsedObject
 
 #If ENABLECECIL Then
     ReadOnly Property CilBody() As Mono.Cecil.Cil.MethodBody
@@ -80,6 +81,18 @@ Public Class EmitInfo
         End Get
     End Property
 #End If
+
+    ReadOnly Property Context() As ParsedObject
+        Get
+            Return m_Context
+        End Get
+    End Property
+
+    ReadOnly Property Location() As Span
+        Get
+            Return Nothing
+        End Get
+    End Property
 
     ''' <summary>
     ''' Used by Emitter.
@@ -223,29 +236,41 @@ Public Class EmitInfo
     ''' <param name="RHSExpression"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function Clone(ByVal RHSExpression As Expression) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal RHSExpression As Expression) As EmitInfo
         Dim result As New EmitInfo(Me)
 
         result.m_IsRHS = False
         result.m_RHSExpression = RHSExpression
         result.m_DesiredType = Nothing
+        result.m_Context = Context
 
         Return result
     End Function
 
-    Function Clone(Optional ByVal IsRHS As Boolean = True, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Type = Nothing) As EmitInfo
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="Context"></param>
+    ''' <param name="IsRHS">Default = True</param>
+    ''' <param name="IsExplicitConversion"></param>
+    ''' <param name="DesiredType"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function Clone(ByVal Context As ParsedObject, ByVal IsRHS As Boolean, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Type = Nothing) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_IsRHS = IsRHS
         result.m_IsExplicitConversion = IsExplicitConversion
         result.m_DesiredType = DesiredType
         result.m_RHSExpression = Nothing
+        result.m_Context = Context
         Return result
     End Function
 
-    Function Clone(ByVal DesiredType As Type) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal DesiredType As Type) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_DesiredType = DesiredType
         result.m_RHSExpression = Nothing
+        result.m_Context = Context
         Return result
     End Function
 

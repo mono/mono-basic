@@ -48,7 +48,7 @@ Public Class DeRefExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_Expression.GenerateCode(Info.Clone(True, False, m_Expression.ExpressionType)) AndAlso result
+        result = m_Expression.GenerateCode(Info.Clone(Me, True, False, m_Expression.ExpressionType)) AndAlso result
 
         Emitter.EmitLoadIndirect(Info, m_Expression.ExpressionType)
 
