@@ -331,15 +331,7 @@ Public Class LateBindingTests6
             .a2 = "Hello World"
             GoTo labelA
             ' Exit before all statements in With have been executed  
-            .a1 = 20
-            Dim x As New C300
-            a = x
-            If (.a1 = a.a1) Then bRes1 = True
-            If (.a2 = a.a2) Then bRes2 = True
-            Assert.AreEqual(False, bRes1, ".a1 and a.a1 Should not be Equal")
-            Assert.AreEqual(False, bRes2, ".a2 and a.a2 Should not be Equal")
-            a.f1()
-            .f1()
+            Throw New Exception("Exit before all statements in With have been executed")
 labelA:
         End With
         bRes1 = False
