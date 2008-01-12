@@ -78,6 +78,7 @@
     <Compile Include="Microsoft.VisualBasic\ErrObjectTests.vb" />
     <Compile Include="Microsoft.VisualBasic\ExceptionFilteringTests.vb" />
     <Compile Include="Microsoft.VisualBasic\FileSystemTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileSystemTests2.vb" />
     <Compile Include="Microsoft.VisualBasic\GlobalsTests.vb" />
     <Compile Include="Microsoft.VisualBasic\Helper.vb">
     </Compile>
