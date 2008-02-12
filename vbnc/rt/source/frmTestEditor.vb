@@ -34,7 +34,7 @@ Public Class frmTestEditor
                 End If
             End If
 
-            IO.File.WriteAllText(IO.Path.Combine(txtFolder.Text, txtFile.Text), txtCode.Text, System.Text.UnicodeEncoding.Unicode)
+            IO.File.WriteAllText(IO.Path.Combine(txtFolder.Text, txtFile.Text), txtCode.Text, System.Text.Encoding.GetEncoding(65001))
 
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)

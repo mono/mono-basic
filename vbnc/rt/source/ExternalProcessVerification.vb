@@ -107,7 +107,7 @@ Public Class ExternalProcessVerification
         If m_Process.Executable.Contains("PEVerify") Then
             Debug.WriteLine(MyBase.DescriptiveMessage)
             If MyBase.DescriptiveMessage.ToLowerInvariant.Contains("warning") Then
-                Stop
+                'Stop
             End If
         End If
 

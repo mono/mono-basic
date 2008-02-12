@@ -1207,43 +1207,43 @@ Class frmMain
     End Sub
 
     Private Sub LoadOldResults()
-        Static thread As Threading.Thread
-        Static sync As New Object
+        'Static thread As Threading.Thread
+        'Static sync As New Object
 
         Return
 
-        SyncLock sync
-            If thread Is Nothing Then
-                thread = New Threading.Thread(New Threading.ThreadStart(AddressOf LoadOldResults))
-                thread.Start()
-                Exit Sub
-            End If
-        End SyncLock
+        'SyncLock sync
+        '    If thread Is Nothing Then
+        '        thread = New Threading.Thread(New Threading.ThreadStart(AddressOf LoadOldResults))
+        '        thread.Start()
+        '        Exit Sub
+        '    End If
+        'End SyncLock
 
-        Try
-            Dim tests As Tests = m_Tests
-            Dim stack As New Generic.Queue(Of Tests)
+        'Try
+        '    Dim tests As Tests = m_Tests
+        '    Dim stack As New Generic.Queue(Of Tests)
 
-            stack.Enqueue(tests)
-            Do Until stack.Count = 0
-                tests = stack.Dequeue
-                For Each subtests As Tests In tests.ContainedTests
-                    stack.Enqueue(subtests)
-                Next
-                For Each test As Test In tests
-                    If Me.IsDisposed Then Exit Do
-                    Try
-                        Me.Invoke(New CrossAppDomainDelegate(AddressOf test.LoadOldResults))
-                    Catch ex As Exception
-                        Continue For
-                    End Try
-                    Threading.Thread.Sleep(0)
-                Next
-            Loop
-            thread = Nothing
-        Catch ex As Exception
-            MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
-        End Try
+        '    stack.Enqueue(tests)
+        '    Do Until stack.Count = 0
+        '        tests = stack.Dequeue
+        '        For Each subtests As Tests In tests.ContainedTests
+        '            stack.Enqueue(subtests)
+        '        Next
+        '        For Each test As Test In tests
+        '            If Me.IsDisposed Then Exit Do
+        '            Try
+        '                Me.Invoke(New CrossAppDomainDelegate(AddressOf test.LoadOldResults))
+        '            Catch ex As Exception
+        '                Continue For
+        '            End Try
+        '            Threading.Thread.Sleep(0)
+        '        Next
+        '    Loop
+        '    thread = Nothing
+        'Catch ex As Exception
+        '    MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
+        'End Try
     End Sub
 
     Private Sub cmdSelfTest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdSelfTest.Click

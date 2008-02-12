@@ -679,7 +679,7 @@ Public Class Test
     Private ReadOnly Property GetACPath() As String
         Get
             If m_AC <> String.Empty Then Return m_AC
-            Return IO.Path.GetFullPath("..\..\ac\bin\ac.exe".Replace("\", IO.Path.DirectorySeparatorChar))
+            Return IO.Path.GetFullPath("..\..\..\ac\bin\ac.exe".Replace("\", IO.Path.DirectorySeparatorChar))
         End Get
     End Property
 
@@ -742,8 +742,15 @@ Public Class Test
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
 
-            'm_Verifications.Add(New XMLVerifier(Me))
-            'm_Verifications(m_Verifications.Count - 1).Name = "Xml verification"
+            Dim peverify As String
+            peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
+            If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
+                Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
+                peV.Name = "Type Safety and Security Verification"
+                peV.Process.DependentFiles.AddRange(m_References)
+                peV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
+                m_Verifications.Add(peV)
+            End If
 
             Dim ac As String
             ac = GetACPath
@@ -754,16 +761,6 @@ Public Class Test
                 acV.Process.DependentFiles.AddRange(m_References)
                 acV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
                 m_Verifications.Add(acV)
-            End If
-
-            Dim peverify As String
-            peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
-            If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
-                Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
-                peV.Name = "Type Safety and Security Verification"
-                peV.Process.DependentFiles.AddRange(m_References)
-                peV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
-                m_Verifications.Add(peV)
             End If
 
             If Me.m_Target = "exe" AndAlso m_DontExecute = False Then
