@@ -1,3 +1,7 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ChangeLog, Changelog: Rename Changelog to ChangeLog to avoid confusing MD.
+
 2005-05-09 Aldo Monteiro <aldo@psl-pr.softwarelivre.org>
 	Added CultureInfo("en-US") to the following tests
 	
