@@ -1,3 +1,11 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Statements/ForStatement.vb, Statements/EndStatement.vb,
+	  Members/Attribute.vb, Descriptors/MethodDescriptor.vb,
+	  Types/TypeParameter.vb, Types/ImportsNamespaceClause.vb,
+	  TypeDeclarations/AssemblyDeclaration.vb, General/Helper.vb,
+	  General/Compiler.vb: More cecil fixes.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Members/Attribute.vb: Don't pass XDescriptors to SRE.

@@ -185,6 +185,9 @@ Public Class TypeParameter
             If basetype IsNot Nothing Then
                 basetype = Helper.GetTypeOrTypeBuilder(basetype)
                 m_Builder.SetBaseTypeConstraint(basetype)
+#If ENABLECECIL Then
+                m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, basetype))
+#End If
 #If DEBUGREFLECTION Then
                 Helper.DebugReflection_AppendLine("{0}.SetBaseTypeConstraint({1})", m_Builder, basetype)
 #End If
@@ -192,6 +195,11 @@ Public Class TypeParameter
             If interfaces.Count > 0 Then
                 Dim types As Type() = Helper.GetTypeOrTypeBuilders(interfaces.ToArray)
                 m_Builder.SetInterfaceConstraints(types)
+#If ENABLECECIL Then
+                For i As Integer = 0 To interfaces.Count - 1
+                    m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, interfaces(i)))
+                Next
+#End If
 #If DEBUGREFLECTION Then
                 types = Helper.DebugReflection_BuildArray(Of Type)(types)
                 Helper.DebugReflection_AppendLine("{0}.SetInterfaceConstraints({1})", m_Builder, types)
@@ -203,6 +211,9 @@ Public Class TypeParameter
         End If
 
         m_Builder.SetGenericParameterAttributes(attributes)
+#If ENABLECECIL Then
+        m_CecilBuilder.Attributes = CType(attributes, Mono.Cecil.GenericParameterAttributes)
+#End If
 #If DEBUGREFLECTION Then
         Helper.DebugReflection_AppendLine("{0}.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes.{1})", m_Builder, attributes.ToString)
 #End If

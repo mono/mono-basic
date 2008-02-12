@@ -92,8 +92,7 @@ Public Class ImportsNamespaceClause
         result = nri.Resolve AndAlso result
 
         If nri.FoundOnlyOneObject = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
-            Return result
+            Return Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
         End If
 
         If nri.FoundIs(Of [Namespace])() Then

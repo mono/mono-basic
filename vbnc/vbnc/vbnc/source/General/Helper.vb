@@ -3157,7 +3157,7 @@ Public Class Helper
             Dim result As Mono.Cecil.MethodReference = Nothing
             If m_MethodRefCache.TryGetValue(Method, result) = False Then
                 Try
-                    If TypeOf Method Is MethodBuilder Then Stop
+                    If TypeOf Method Is MethodBuilder Then Helper.Stop()
                     If Method.GetType().FullName.Contains("System.Reflection.Emit") AndAlso Method.DeclaringType.GetElementType IsNot Nothing AndAlso Method.DeclaringType.IsArray Then
                         'Stop
                         Dim retType As Mono.Cecil.TypeReference = Nothing

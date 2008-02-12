@@ -349,7 +349,6 @@ Public Class Compiler
         End Select
         AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, Mono.Cecil.TargetRuntime.NET_2_0, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
-        Me.Assembly.SetCecilName(AssemblyBuilderCecil.Name)
 #End If
 
         Return Compiler.Report.Errors = 0
@@ -581,6 +580,7 @@ Public Class Compiler
             result = Compile_Resolve() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
+            result = Me.Assembly.SetCecilName(AssemblyBuilderCecil.Name) AndAlso result
 
             result = AddResources() AndAlso result
             If result = False Then GoTo ShowErrors
@@ -958,7 +958,9 @@ EndOfCompilation:
             'Find the main function
             Dim lstMethods As New Generic.List(Of MethodInfo)
             Dim mainClass As TypeDeclaration = Nothing
-
+#If ENABLECECIL Then
+            Dim mainCecil As Mono.Cecil.MethodDefinition = Nothing
+#End If
             result = FindMainClass(mainClass) AndAlso result
             result = FindMainMethod(mainClass, lstMethods) AndAlso result
 
@@ -980,6 +982,13 @@ EndOfCompilation:
                     ilGen.Emit(OpCodes.Call, TypeCache.System_Windows_Forms_Application__Run)
                     ilGen.Emit(OpCodes.Ret)
                     lstMethods.Add(mainBuilder)
+#If ENABLECECIL Then
+                    mainCecil = New Mono.Cecil.MethodDefinition("Main", Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.Static Or Mono.Cecil.MethodAttributes.HideBySig, Helper.GetTypeOrTypeReference(Me, CecilTypeCache.System_Void))
+                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Newobj, formConstructor.CecilBuilder)
+                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
+                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Ret)
+                    mainClass.CecilType.Methods.Add(mainCecil)
+#End If
                 End If
             End If
 
@@ -1007,7 +1016,11 @@ EndOfCompilation:
                 entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
                 AssemblyBuilder.SetEntryPoint(entryMethod)
 #If ENABLECECIL Then
-                AssemblyBuilderCecil.EntryPoint = CecilHelper.FindDefinition(Helper.GetMethodOrMethodReference(Me, entryMethod))
+                If mainCecil Is Nothing Then
+                    mainCecil = CecilHelper.FindDefinition(Helper.GetMethodOrMethodReference(Me, entryMethod))
+                End If
+                mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, CecilTypeCache.System_STAThreadAttribute__ctor)))
+                AssemblyBuilderCecil.EntryPoint = mainCecil
 #End If
             End If
 

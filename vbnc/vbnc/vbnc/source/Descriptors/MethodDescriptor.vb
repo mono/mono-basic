@@ -163,6 +163,9 @@ Public Class MethodDescriptor
                 result = result Or MethodAttributes.SpecialName
             End If
 
+            If m_Declaration.CustomAttributes.IsDefined(Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
+                result = result Or MethodAttributes.PinvokeImpl
+            End If
 
             DumpMethodInfo(result)
             Return result

@@ -421,6 +421,8 @@ Public Class ForStatement
         result = m_LoopStartExpression.ResolveExpression(Info) AndAlso result
         result = m_LoopEndExpression.ResolveExpression(Info) AndAlso result
 
+        If result = False Then Return result
+
         If m_LoopControlVariable.Expression IsNot Nothing Then
             If m_LoopControlVariable.Expression.Classification.IsVariableClassification = False Then
                 Return Helper.ShowClassificationError(Compiler, Me.Location, m_LoopControlVariable.Expression.Classification, "Variable")

@@ -561,7 +561,8 @@ Public Class AssemblyDeclaration
     End Sub
 
 #If ENABLECECIL Then
-    Public Sub SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition)
+    Public Function SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition) As Boolean
+        Dim result As Boolean = True
         Dim keyfile As String = Nothing
         Dim keyname As String = Nothing
         Dim delaysign As Boolean = False
@@ -582,7 +583,7 @@ Public Class AssemblyDeclaration
             attribType = attri.ResolvedType
 
             If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
-                SetVersion(Name, attri, attri.Location)
+                result = SetVersion(Name, attri, attri.Location) AndAlso result
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
                 If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
@@ -594,10 +595,12 @@ Public Class AssemblyDeclaration
 
         If keyfile <> String.Empty Then
             If SignWithKeyFile(Name, keyfile, delaysign) = False Then
-                Return
+                Return result
             End If
         End If
-    End Sub
+
+        Return result
+    End Function
 #End If
 
     Public Function GetName() As AssemblyName

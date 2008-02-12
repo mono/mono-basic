@@ -277,7 +277,7 @@ Public Class Attribute
             builder = GetAttributeBuilder()
             Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
 #If ENABLECECIL Then
-            Me.Compiler.AssemblyBuilderCecil.MainModule.CustomAttributes.Add(cecilBuilder)
+            Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cecilBuilder)
 #End If
         ElseIf m_IsModule Then
             Dim builder As CustomAttributeBuilder
@@ -356,11 +356,14 @@ Public Class Attribute
 
         m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
 
-        For i As Integer = 0 To m_Arguments.Length - 1
+        Dim cecilArguments As Object()
+        ReDim cecilArguments(m_Arguments.Length - 1)
+        Array.Copy(m_Arguments, cecilArguments, m_Arguments.Length)
+        For i As Integer = 0 To cecilArguments.Length - 1
             Dim type As Type
-            type = TryCast(m_Arguments(i), Type)
+            type = TryCast(cecilArguments(i), Type)
             If type IsNot Nothing Then
-                m_Arguments(i) = Helper.GetTypeOrTypeReference(Compiler, type)
+                cecilArguments(i) = Helper.GetTypeOrTypeReference(Compiler, type)
             End If
         Next
 
@@ -374,8 +377,8 @@ Public Class Attribute
                 result.Properties.Add(m_Properties(i).Name, m_PropertyValues(i))
                 result.SetPropertyType(m_Properties(i).Name, Helper.GetTypeOrTypeReference(Compiler, m_Properties(i).PropertyType))
             Next
-            For i As Integer = 0 To m_Arguments.Length - 1
-                result.ConstructorParameters.Add(m_Arguments(i))
+            For i As Integer = 0 To cecilArguments.Length - 1
+                result.ConstructorParameters.Add(cecilArguments(i))
             Next
         Catch ex As Exception
             Throw
