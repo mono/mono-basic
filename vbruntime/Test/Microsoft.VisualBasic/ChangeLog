@@ -1,3 +1,9 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileSystemTestGenerator.vb: Make this 1.1 compatible.
+	* FileSystemTests2.vb: Make this 1.1 compatible, add a few more tests.
+	* Helper.vb: Make this 1.1 compatible, add Read/Write/AppendAllBytes/Text.
+
 2008-01-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Helper.vb: Added a few helper methods.

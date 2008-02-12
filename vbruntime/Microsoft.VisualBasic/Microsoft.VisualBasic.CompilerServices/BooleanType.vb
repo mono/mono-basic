@@ -127,8 +127,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Else
                     Return False
                 End If
-            Catch ex As System.Exception
-                Throw New InvalidCastException("Cast from string """ + Value + """ to type 'Boolean' is not valid.", ex)
+            Catch ex As System.FormatException
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), Value, "Boolean"), ex)
             End Try
 
         End Function

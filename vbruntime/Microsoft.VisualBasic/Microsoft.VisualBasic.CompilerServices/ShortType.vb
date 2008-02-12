@@ -65,7 +65,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Return Short.Parse(value)
             Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + value + """ to type 'Short' is not valid.", ex)
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), value, "Short"), ex)
             End Try
         End Function
     End Class

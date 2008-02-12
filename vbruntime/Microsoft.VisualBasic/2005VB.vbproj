@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -166,6 +166,7 @@
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\MyWebClient.vb">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Microsoft.VisualBasic.Devices\Network.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventArgs.vb" />
@@ -215,6 +216,7 @@
     <Compile Include="Microsoft.VisualBasic\ControlChars.vb" />
     <Compile Include="Microsoft.VisualBasic\Conversion.vb" />
     <Compile Include="Microsoft.VisualBasic\AudioPlayMode.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileData.vb" />
     <Compile Include="Microsoft.VisualBasic\Globals.vb" />
     <Compile Include="Microsoft.VisualBasic\SpcInfo.vb" />
     <Compile Include="Microsoft.VisualBasic\TabInfo.vb" />
@@ -254,6 +256,9 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="strings.resources" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

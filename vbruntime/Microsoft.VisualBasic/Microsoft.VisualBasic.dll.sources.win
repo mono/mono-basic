@@ -125,6 +125,7 @@ Microsoft.VisualBasic\DateInterval.vb
 Microsoft.VisualBasic\DueDate.vb
 Microsoft.VisualBasic\ErrObject.vb
 Microsoft.VisualBasic\FileAttribute.vb
+Microsoft.VisualBasic\FileData.vb
 Microsoft.VisualBasic\FileSystem.vb
 Microsoft.VisualBasic\Financial.vb
 Microsoft.VisualBasic\FirstDayOfWeek.vb

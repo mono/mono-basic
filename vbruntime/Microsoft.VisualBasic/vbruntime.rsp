@@ -8,4 +8,3 @@
 /optionstrict+
 /imports:System,System.Collections,System.Data,System.Diagnostics
 /out:Microsoft.VisualBasic.dll
-/res:strings.resources

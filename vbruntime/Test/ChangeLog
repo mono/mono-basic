@@ -1,3 +1,10 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Make.cmd: Minor fixes and more output.
+	* 2005VB_test_VB.dll.sources.win, 2005VB_test_VB.dll.sources,
+	  2005VB_test_VB.vbproj: Updated.
+	* Tester.vb: A more sophisticated tester.
+
 2008-01-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 2005VB_test_VB.vbproj: Updated.

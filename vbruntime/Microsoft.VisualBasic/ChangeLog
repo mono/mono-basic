@@ -1,3 +1,10 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile, vbruntime1.rsp, vbruntime2.rsp, vbruntime.rsp: Implement
+	  building different resources for 1.1 and 2.0 profiles.
+	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win, strings.resources,
+	  2005VB.sln: Updated.
+
 2007-12-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	

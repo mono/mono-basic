@@ -17,10 +17,17 @@ NO_SIGN_ASSEMBLY = true
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 
-BUILT_FILES = strings.resources
+BUILT_FILES = strings1.resources strings2.resources
 
-strings.resources: strings.txt
-	resgen strings.txt
+strings1.resources: strings.txt strings-only1.txt
+	cat strings.txt > strings1.txt
+	cat strings-only1.txt >> strings1.txt
+	resgen strings1.txt strings1.resources
+
+strings2.resources: strings.txt strings-only2.txt
+	cat strings.txt > strings2.txt
+	cat strings-only2.txt >> strings2.txt
+	resgen2 strings2.txt strings2.resources
 
 include ../../build/library.make
 
@@ -28,8 +35,11 @@ DISTFILES =	\
 	AssemblyInfo.vb				\
 	msfinal.pub				\
 	strings.txt				\
+	strings-only1.txt			\
+	strings-only2.txt			\
 	2005VB.vbproj				\
-	strings.resources			\
+	strings1.resources			\
+	strings2.resources			\
 	ChangeLog				\
 	Makefile				\
 	Microsoft.VisualBasic.dll.sources	\

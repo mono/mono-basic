@@ -1,3 +1,10 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DoubleTypeTest.vb, DateTypeTest.vb, BooleanTypeTest.vb, SingleTypeTest.vb,
+	  IntegerTypeTest.vb, DecimalTypeTest.vb, LongTypeTest.vb,
+	  ShortTypeTest.vb, ByteTypeTest.vb: Added.
+	* OperatorsTests.vb: Set current culture to en-US.
+
 2008-01-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* LateBindingTests6.vb: Fix unused variable warning.

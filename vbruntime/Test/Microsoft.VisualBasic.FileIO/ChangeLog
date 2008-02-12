@@ -1,3 +1,7 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileSystemTest.vb: Set default culture to en-US.
+
 2007-05-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MalformedLineExceptionTest.cs: Use Environment.NewLine instead of

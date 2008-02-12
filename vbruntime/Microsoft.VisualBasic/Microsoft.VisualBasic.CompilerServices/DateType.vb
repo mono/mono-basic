@@ -44,33 +44,36 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Console.WriteLine("TRACE:DateType.FromObject:input:" + Value.ToString())
 #End If
 
-            'FIXME: Notice: The following code block will cause a recursive call to FromObject
-            ' The 'Is' should be replaced with an alternative.
-            'If Value Is Nothing Then
-            '    Return Nothing
-            'End If
+            If Value Is Nothing Then
+                Dim d As DateTime
+                Return d
+            End If
 
             If TypeOf Value Is String Then
                 Return FromString(DirectCast(Value, String))
             End If
 
             If TypeOf Value Is Date Then
-                Return Convert.ToDateTime(Value)
+                Return DirectCast(Value, Date)
             End If
-
-
+            Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromTypeToType"), Information.VBName(Value.GetType), "Date"))
         End Function
+
         Public Shared Function FromString(ByVal Value As String, ByVal culture As System.Globalization.CultureInfo) As Date
             Return DateTime.Parse(Value, culture)
         End Function
+
         Public Shared Function FromString(ByVal Value As String) As DateTime
 
 #If TRACE Then
             Console.WriteLine("TRACE:DateType.FromString:input:" + Value)
             Console.WriteLine("TRACE:DateType.FromString:output:" + DateTime.Parse(Value).ToString())
 #End If
-
-            Return DateTime.Parse(Value)
+            Try
+                Return DateTime.Parse(Value)
+            Catch ex As FormatException
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), Value, "Date"))
+            End Try
         End Function
     End Class
 End Namespace

@@ -2,4 +2,5 @@
 /imports:System.Collections.Generic
 /codepage:65001
 /noconfig
+/res:strings2.resources,strings.resources
 @vbruntime.rsp

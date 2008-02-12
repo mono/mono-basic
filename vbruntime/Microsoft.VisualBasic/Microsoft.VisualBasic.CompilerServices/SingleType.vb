@@ -67,7 +67,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Return SingleType.FromString(value, Nothing)
             Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + value + """ to type 'Single' is not valid.", ex)
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), value, "Single"), ex)
             End Try
         End Function
         Public Shared Function FromString(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Single

@@ -42,11 +42,11 @@ Public Class FileSystemTestGenerator
     Shared Function Generate() As String
         Dim builder As New StringBuilder
 
-        Threading.Thread.CurrentThread.CurrentCulture = Globalization.CultureInfo.GetCultureInfo("en-US")
+        Threading.Thread.CurrentThread.CurrentCulture = New Globalization.CultureInfo("en-US")
         Threading.Thread.CurrentThread.CurrentUICulture = Threading.Thread.CurrentThread.CurrentCulture
 
         Dim generator As New FileSystemTestGenerator
-        Dim basedir As String = ""
+        Dim basedir As String = "G:\Volatile\head\"
 
         If basedir = "" Then
             Throw New Exception("You need to set 'basedir' to where mono-basic resides.")
@@ -84,10 +84,22 @@ Public Class FileSystemTestGenerator
         Return result
     End Function
 
-    Private Structure DataInfo
-        Dim Type As Type
-        Dim Value As Object
-        Dim ValueAsCode As String
+    Private Class DataInfo
+        Public Type As Type
+        Public Value As Object
+        Public ValueAsCode As String
+
+        ReadOnly Property Requires2_0() As Boolean
+            Get
+                If Value Is Nothing Then Return False
+                Select Case Type.GetTypeCode(Value.GetType)
+                    Case TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.SByte
+                        Return True
+                    Case Else
+                        Return False
+                End Select
+            End Get
+        End Property
 
         Sub New(ByVal Type As Type, ByVal Value As Object, Optional ByVal Code As String = Nothing)
             Me.Type = Type
@@ -161,7 +173,7 @@ Public Class FileSystemTestGenerator
                     Return """<huh: " & tc.ToString() & "?> """""
             End Select
         End Function
-    End Structure
+    End Class
 
     Private Shared Datas As New Generic.List(Of DataInfo)
     Private Shared TestFileData As New Generic.List(Of Byte())
@@ -170,7 +182,7 @@ Public Class FileSystemTestGenerator
 
     Shared Sub New()
         Datas.Clear()
-        'Datas.Add(New DataInfo(Missing.Value, "System.Reflection.Missing.Value"))ç
+        'Datas.Add(New DataInfo(Missing.Value, "System.Reflection.Missing.Value"))ï¿½
         Datas.Add(New DataInfo(DBNull.Value, "System.DBNull.Value"))
         Datas.Add(New DataInfo(True))
         Datas.Add(New DataInfo(False))
@@ -219,7 +231,7 @@ Public Class FileSystemTestGenerator
     Private DATA_DIR As String
 
     Sub New()
-        Threading.Thread.CurrentThread.CurrentCulture = Globalization.CultureInfo.GetCultureInfo("en-US")
+        Threading.Thread.CurrentThread.CurrentCulture = New Globalization.CultureInfo("en-US")
         Threading.Thread.CurrentThread.CurrentUICulture = Threading.Thread.CurrentThread.CurrentCulture
 
         DATA_DIR = Environment.GetEnvironmentVariable("DATA_DIR")
@@ -393,7 +405,7 @@ Public Class FileSystemTestGenerator
 
                         filename = base_filename & unique
 
-                        GeneratePrologue(builder, testname, unique)
+                        GeneratePrologue(builder, testname, unique, data)
 
                         Try
                             Dim args As Object() = CreateArguments(method, data.Value, hasParamArray, str = "FilePut" OrElse str = "FilePutObject")
@@ -420,9 +432,14 @@ Public Class FileSystemTestGenerator
                         End Try
                         builder.AppendLine("{0}{0}{0}Initialize()")
                         builder.AppendLine("{0}{0}{0}FileOpen(1, filename, OpenMode." & openmode.ToString() & ")")
-                        builder.AppendLine("{0}{0}{0}" & method.Name & "(1, " & CreateObjectArrayCode(hasParamArray, data) & ")")
+                        Dim code As String = CreateObjectArrayCode(hasParamArray, data)
+                        If code.StartsWith("CObj (") Then
+                            builder.AppendLine("{0}{0}{0}" & method.Name & "(CObj(1), " & code & ")")
+                        Else
+                            builder.AppendLine("{0}{0}{0}" & method.Name & "(1, " & code & ")")
+                        End If
 
-                        GenerateEpilogue(builder, exception, result)
+                        GenerateEpilogue(builder, exception, result, data, testname)
                         counter += 1
                     Next
                 Next
@@ -461,7 +478,7 @@ Public Class FileSystemTestGenerator
 
                         filename = base_filename & unique
 
-                        GeneratePrologue(builder, testname, unique)
+                        GeneratePrologue(builder, testname, unique, Nothing)
 
                         If str = "InputString" Then
                             args(1) = testfile.Length
@@ -488,9 +505,9 @@ Public Class FileSystemTestGenerator
                             CleanUp()
                         End Try
 
-                        builder.AppendLine("{0}{0}{0}Dim value As String")
+                        builder.AppendLine("{0}{0}{0}Dim value As String = Nothing")
                         builder.AppendLine("{0}{0}{0}Initialize()")
-                        builder.AppendLine("{0}{0}{0}IO.File.WriteAllBytes (filename, " & Helper.CreateCode(testfile) & ")")
+                        builder.AppendLine("{0}{0}{0}Helper.WriteAllBytes (filename, " & Helper.CreateCode(testfile) & ")")
                         builder.AppendLine("{0}{0}{0}FileOpen(1, filename, OpenMode." & openmode.ToString() & ")")
                         If str = "InputString" Then
                             builder.AppendLine("{0}{0}{0}value = " & method.Name & "(1, " & testfile.Length.ToString() & ")")
@@ -498,7 +515,7 @@ Public Class FileSystemTestGenerator
                             builder.AppendLine("{0}{0}{0}value = " & method.Name & "(1)")
                         End If
 
-                        GenerateEpilogue(builder, exception, result)
+                        GenerateEpilogue(builder, exception, result, Nothing, testname, testfile)
                         counter += 1
                     Next
                 Next
@@ -523,7 +540,7 @@ Public Class FileSystemTestGenerator
 
                             filename = base_filename & unique
 
-                            GeneratePrologue(builder, testname, unique)
+                            GeneratePrologue(builder, testname, unique, Nothing)
 
                             Try
                                 Initialize()
@@ -547,13 +564,13 @@ Public Class FileSystemTestGenerator
                                 CleanUp()
                             End Try
 
-                            builder.AppendLine("{0}{0}{0}Dim value As " & parameter.ParameterType.GetElementType.FullName)
+                            builder.AppendLine("{0}{0}{0}Dim value As " & parameter.ParameterType.GetElementType.FullName & " = Nothing")
                             builder.AppendLine("{0}{0}{0}Initialize()")
-                            builder.AppendLine("{0}{0}{0}IO.File.WriteAllBytes (filename, " & Helper.CreateCode(testfile) & ")")
+                            builder.AppendLine("{0}{0}{0}Helper.WriteAllBytes (filename, " & Helper.CreateCode(testfile) & ")")
                             builder.AppendLine("{0}{0}{0}FileOpen(1, filename, OpenMode." & openmode.ToString() & ")")
                             builder.AppendLine("{0}{0}{0}" & method.Name & "(1, value)")
 
-                            GenerateEpilogue(builder, exception, result)
+                            GenerateEpilogue(builder, exception, result, Nothing, testname)
                             counter += 1
                         Next
                     Next
@@ -567,7 +584,10 @@ Public Class FileSystemTestGenerator
         End Try
     End Sub
 
-    Private Shared Sub GeneratePrologue(ByVal builder As StringBuilder, ByVal testname As String, ByVal unique As String)
+    Private Shared Sub GeneratePrologue(ByVal builder As StringBuilder, ByVal testname As String, ByVal unique As String, ByVal data As DataInfo)
+        If data IsNot Nothing AndAlso data.Requires2_0 Then
+            builder.AppendLine("#If NET_VER >= 2.0 Then")
+        End If
         builder.AppendLine("{0}<Test ()> _")
         builder.AppendLine("{0}Sub " & testname & unique & "()")
         'builder.AppendLine("{0}{0}Dim base_filename As String = Path.Combine (DATA_DIR, """ & Helper.Stringify(testname) & """)")
@@ -579,13 +599,19 @@ Public Class FileSystemTestGenerator
 
     Private Shared total As Integer, exceptions As Integer
 
-    Private Shared Sub GenerateEpilogue(ByVal builder As StringBuilder, ByVal exception As Exception, ByVal result As Object)
+    Private Sub GenerateEpilogue(ByVal builder As StringBuilder, ByVal exception As Exception, ByVal result As Object, ByVal data As DataInfo, ByVal name As String, Optional ByVal input() As Byte = Nothing)
         builder.AppendLine("{0}{0}{0}FileClose(1)")
+
+        Dim useLike As Boolean
+
+        useLike = exception IsNot Nothing AndAlso exception.Message.Contains(DATA_DIR)
+
         If exception IsNot Nothing Then
-            builder.AppendLine("{0}{0}{0}Assert.Fail (""Expected " & exception.GetType.FullName & " ('" & Helper.Stringify(exception.Message) & "')"", filename)")
+            Dim msg As String = Helper.Stringify(exception.Message).Replace(DATA_DIR, "<DATA_DIR>")
+            builder.AppendLine("{0}{0}{0}Assert.Fail (""Expected " & exception.GetType.FullName & " ('" & msg & "')"", filename)")
         Else
             If TypeOf result Is Byte() Then
-                builder.AppendLine("{0}{0}{0}Helper.CompareBytes (File.ReadAllBytes (filename), " & Helper.CreateCode(DirectCast(result, Byte())) & ", filename)")
+                builder.AppendLine("{0}{0}{0}Helper.CompareBytes (Helper.ReadAllBytes (filename), " & Helper.CreateCode(DirectCast(result, Byte())) & ", filename)")
             Else
                 builder.AppendLine("{0}{0}{0}Assert.AreEqual (" & Helper.CreateCode(result) & ", value, filename)")
             End If
@@ -594,8 +620,39 @@ Public Class FileSystemTestGenerator
         builder.AppendLine("{0}{0}{0}Throw")
         builder.AppendLine("{0}{0}Catch ex As Exception")
         If exception IsNot Nothing Then
-            builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & exception.GetType.FullName & """, ex.GetType.FullName, filename)")
-            builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message, filename)")
+            Dim isWeirdExc As Boolean = exception.GetType Is GetType(NullReferenceException) AndAlso name.Contains("InputString") AndAlso input IsNot Nothing AndAlso input.Length <> 0
+
+            If isWeirdExc Then
+                builder.AppendLine("#If NET_VER >= 2.0 Then")
+                builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & exception.GetType.FullName & """, ex.GetType.FullName, filename)")
+                builder.AppendLine("#Else")
+                builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & GetType(IOException).FullName & """, ex.GetType.FullName, filename)")
+                builder.AppendLine("#End If")
+            Else
+                builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & exception.GetType.FullName & """, ex.GetType.FullName, filename)")
+            End If
+            If useLike Then
+                Dim dir As String
+                If DATA_DIR.EndsWith(Path.DirectorySeparatorChar) Then dir = DATA_DIR Else dir = DATA_DIR & Path.DirectorySeparatorChar
+                Dim pattern As String = Helper.Stringify(exception.Message).Replace(dir, "*").Replace("""", "?").Replace("'", "?")
+                builder.AppendLine("{0}{0}{0}Assert.IsTrue (ex.Message Like """ & pattern & """, filename & "" - <"" & ex.Message & ""> didn't match <" & pattern & ">"")")
+            Else
+                If exception.GetType Is GetType(InvalidCastException) AndAlso exception.Message.Contains("Conversion") Then
+                    builder.AppendLine("#If NET_VER >= 2.0 Then")
+                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message, filename)")
+                    builder.AppendLine("#Else")
+                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message).Replace("Conversion ", "Cast ") & """, ex.Message, filename)")
+                    builder.AppendLine("#End If")
+                ElseIf isWeirdExc Then
+                    builder.AppendLine("#If NET_VER >= 2.0 Then")
+                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message, filename)")
+                    builder.AppendLine("#Else")
+                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify("Bad file mode.") & """, ex.Message, filename)")
+                    builder.AppendLine("#End If")
+                Else
+                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message.Replace (""Acess"", ""Access""), filename)")
+                End If
+            End If
         Else
             builder.AppendLine("{0}{0}{0}Assert.Fail (""Did not expect any exception, got "" & ex.GetType.FullName & "" ("" & ex.Message, filename)")
         End If
@@ -603,5 +660,8 @@ Public Class FileSystemTestGenerator
         builder.AppendLine("{0}{0}{0}CleanUp()")
         builder.AppendLine("{0}{0}End Try")
         builder.AppendLine("{0}End Sub")
+        If data IsNot Nothing AndAlso data.Requires2_0 Then
+            builder.AppendLine("#End If")
+        End If
     End Sub
 End Class

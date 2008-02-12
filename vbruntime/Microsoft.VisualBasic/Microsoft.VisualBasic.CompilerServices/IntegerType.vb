@@ -97,7 +97,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 #End If
                 Return Int32.Parse(Value)
             Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + Value + """ to type 'Integer' is not valid.", ex)
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), Value, "Integer"), ex)
             End Try
 
         End Function
