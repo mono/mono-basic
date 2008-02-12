@@ -3,7 +3,7 @@ Imports System.Drawing
 
 Module Test3
 
-private form1 As Form
+private form1 As Form
 Sub Main()
     ' Create a new instance of the form.
     Dim button1 As Button
@@ -44,7 +44,7 @@ Sub Main()
     ' Add button2 to the form.
     form1.Controls.Add(button2)
        
-           AddHandler form1.Closed, AddressOf Me.OnClosed
+           AddHandler form1.Closed, AddressOf Me.OnClosed
     AddHandler button1.Click, AddressOf Me.OnOK
     AddHandler button2.Click, AddressOf Me.OnCancel
  
@@ -54,7 +54,7 @@ End Sub
 Private Sub OnClosed(ByVal sender As Object, ByVal e As System.EventArgs)
 	Application.Exit()
 End Sub	
-	Private Sub OnCancel(ByVal sender As Object, ByVal e As System.EventArgs)
+	Private Sub OnCancel(ByVal sender As Object, ByVal e As System.EventArgs)
 	System.Console.WriteLine("CANCEL pressed")
 	form1.Close()
 End Sub	
