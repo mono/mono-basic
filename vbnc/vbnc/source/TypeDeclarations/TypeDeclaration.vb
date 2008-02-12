@@ -43,7 +43,7 @@ Public MustInherit Class TypeDeclaration
     'Information collected during parse phase.
     Private m_Members As MemberDeclarations
     Private m_Namespace As String
-    Private m_Name As Token
+    Private m_Name As Identifier
 
     'Information collected during resolve phase.
     Private m_BaseType As Type
@@ -104,7 +104,7 @@ Public MustInherit Class TypeDeclaration
         Helper.Assert(m_Namespace IsNot Nothing)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeArgumentCount As Integer)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
         MyBase.Init(CustomAttributes, Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
 
         m_Members = Members
@@ -185,7 +185,7 @@ Public MustInherit Class TypeDeclaration
         End Set
     End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Name
         End Get

@@ -372,7 +372,7 @@ Partial Class Parser
     Private Function ParseVariableIdentifier(ByVal Parent As ParsedObject) As VariableIdentifier
         Dim result As New VariableIdentifier(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_ArrayNameModifier As ArrayNameModifier
 
         If tm.CurrentToken.IsIdentifier = False Then
@@ -380,7 +380,8 @@ Partial Class Parser
             Return Nothing
         End If
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If vbnc.ArrayNameModifier.CanBeMe(tm) Then
             m_ArrayNameModifier = ParseArrayNameModifier(result)
@@ -411,7 +412,7 @@ Partial Class Parser
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         m_Event = New SimpleNameExpression(result)
-        m_Event.Identifier = Token.CreateIdentifierToken(m_Identifier.Location, m_Identifier.Identifier, TypeCharacters.Characters.None, m_Identifier.IsKeyword)
+        m_Event.Identifier = New Identifier(m_Event, m_Identifier.Identifier, m_Identifier.Location, TypeCharacters.Characters.None)
 
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
@@ -591,22 +592,23 @@ Partial Class Parser
     Private Function ParseLoopControlVariable(ByVal Parent As ParsedObject) As LoopControlVariable
         Dim result As New LoopControlVariable(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_ArrayNameModifier As ArrayNameModifier = Nothing
         Dim m_TypeName As TypeName = Nothing
         Dim m_Expression As Expression = Nothing
 
         'First try first option
-        Dim tmpI As Token = Nothing, tmpANM As ArrayNameModifier = Nothing
+        Dim tmpANM As ArrayNameModifier = Nothing
         Dim iCurrent As RestorablePoint = tm.GetRestorablePoint
         Dim doExpression As Boolean = True
-        If tm.AcceptIdentifier(tmpI) Then
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier IsNot Nothing Then
             If ArrayNameModifier.CanBeMe(tm) Then
                 tmpANM = ParseArrayNameModifier(result)
                 If tmpANM Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             End If
             If tmpANM Is Nothing AndAlso tm.Accept(KS.As) Then
-                m_Identifier = tmpI
                 m_ArrayNameModifier = tmpANM
                 m_TypeName = ParseTypeName(result)
                 If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -793,10 +795,11 @@ Partial Class Parser
     Private Function ParseSimpleNameExpression(ByVal Parent As ParsedObject) As SimpleNameExpression
         Dim result As New SimpleNameExpression(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeArgumentList As TypeArgumentList
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of Then
             m_TypeArgumentList = ParseTypeArgumentList(result)

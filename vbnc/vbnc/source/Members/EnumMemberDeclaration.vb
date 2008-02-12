@@ -32,7 +32,7 @@ Public Class EnumMemberDeclaration
     ''' </summary>
     ''' <remarks></remarks>
     Private m_EnumIndex As Integer
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_ConstantExpression As Expression
 
     Private m_FieldBuilder As FieldBuilder
@@ -49,7 +49,7 @@ Public Class EnumMemberDeclaration
         m_EnumIndex = EnumIndex
     End Sub
 
-    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Attributes As Attributes, ByVal Identifier As Token, ByVal ConstantExpression As Expression)
+    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Attributes As Attributes, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
         MyBase.Init(Attributes, New Modifiers(), Identifier.Identifier)
         m_EnumIndex = EnumIndex
         m_Identifier = Identifier
@@ -94,7 +94,7 @@ Public Class EnumMemberDeclaration
         End Get
     End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get

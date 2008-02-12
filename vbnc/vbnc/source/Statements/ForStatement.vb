@@ -421,9 +421,18 @@ Public Class ForStatement
         result = m_LoopStartExpression.ResolveExpression(Info) AndAlso result
         result = m_LoopEndExpression.ResolveExpression(Info) AndAlso result
 
+        If result = False Then Return result
+
         If m_LoopControlVariable.Expression IsNot Nothing Then
             If m_LoopControlVariable.Expression.Classification.IsVariableClassification = False Then
-                Return Helper.ShowClassificationError(Compiler, Me.Location, m_LoopControlVariable.Expression.Classification, "Variable")
+                Select Case m_LoopControlVariable.Expression.Classification.Classification
+                    Case ExpressionClassification.Classifications.PropertyAccess, ExpressionClassification.Classifications.PropertyGroup, ExpressionClassification.Classifications.LateBoundAccess
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30039, Me.Location) AndAlso result
+                    Case ExpressionClassification.Classifications.Value
+                        Return Helper.ShowClassificationError(Compiler, Me.Location, m_LoopControlVariable.Expression.Classification, "Variable") AndAlso result
+                    Case Else
+                        Return Helper.ShowClassificationError(Compiler, Me.Location, m_LoopControlVariable.Expression.Classification, "Variable") AndAlso result
+                End Select
             End If
         End If
 

@@ -21,4 +21,5 @@ Public Interface ITokenReader
     Function [Next]() As Token
     Function Current() As Token
     Function Peek() As Token
+    Function CurrentTypeCharacter() As TypeCharacters.Characters
 End Interface

@@ -26,14 +26,14 @@
 Public Class LoopControlVariable
     Inherits ParsedObject
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_ArrayNameModifier As ArrayNameModifier
     Private m_TypeName As TypeName
     Private m_Expression As Expression
 
     Private m_Declaration As VariableDeclaration
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
@@ -73,7 +73,7 @@ Public Class LoopControlVariable
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal ArrayNameModifier As ArrayNameModifier, ByVal TypeName As TypeName, ByVal Expression As Expression)
+    Sub Init(ByVal Identifier As Identifier, ByVal ArrayNameModifier As ArrayNameModifier, ByVal TypeName As TypeName, ByVal Expression As Expression)
         m_Identifier = Identifier
         m_ArrayNameModifier = ArrayNameModifier
         m_TypeName = TypeName
@@ -160,6 +160,11 @@ Public Class LoopControlVariable
 
         If m_Expression IsNot Nothing Then
             result = m_Expression.ResolveExpression(Info) AndAlso result
+
+            Dim iie As InvocationOrIndexExpression = TryCast(m_Expression, InvocationOrIndexExpression)
+            If iie IsNot Nothing AndAlso iie.IsLateBoundArray Then
+                Return Compiler.Report.ShowMessage(Messages.VBNC30039, Location) AndAlso result
+            End If
         Else
             'result = m_Identifier.Resolve AndAlso result
             'result = m_ArrayNameModifier.Resolve AndAlso result

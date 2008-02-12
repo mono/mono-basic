@@ -372,5 +372,9 @@ Public Class ConditionalCompiler
     Public Function Current() As Token Implements ITokenReader.Current
         Return m_Current
     End Function
+
+    Public Function CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
+        Return m_Reader.CurrentTypeCharacter
+    End Function
 End Class
 

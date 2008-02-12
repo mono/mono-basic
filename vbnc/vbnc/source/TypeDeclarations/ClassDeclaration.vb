@@ -42,7 +42,7 @@ Public Class ClassDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters, TypeImplementsClauses)
         m_Inherits = [Inherits]
     End Sub
@@ -176,7 +176,7 @@ Public Class ClassDeclaration
         Else
             Dim callStmt As New CallStatement(Me)
             Dim sExp As New SimpleNameExpression(callStmt)
-            sExp.Init(Token.CreateIdentifierToken(Me.Location, "InitializeComponent", TypeCharacters.Characters.None, False), Nothing)
+            sExp.Init(New Identifier(Me, "InitializeComponent", Me.Location, TypeCharacters.Characters.None), Nothing)
             callStmt.Init(sExp)
             Ctor.Code.AddStatement(callStmt)
         End If
@@ -412,8 +412,8 @@ Public Class ClassDeclaration
             Dim get_1_right_instance_exp_typeargs_1 As New TypeName(get_1_right_instance_exp_typeargs)
             Dim get_1_right_arg1 As New SimpleNameExpression(get_1_right)
             Dim get_1_right_arglist As New ArgumentList(get_1_right, get_1_right_arg1)
-            Dim get_1_right_field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
-            Dim get_1_right_method_token As Token = Token.CreateIdentifierToken(attrib.Location, createInstanceMethodName, TypeCharacters.Characters.None, False)
+            Dim get_1_right_field_token As Identifier = New Identifier(get_1_right, fieldName, attrib.Location, TypeCharacters.Characters.None)
+            Dim get_1_right_method_token As Identifier = New Identifier(get_1_right, createInstanceMethodName, attrib.Location, TypeCharacters.Characters.None)
 
             get_1_left.Init(get_1_right_field_token, Nothing)
 
@@ -433,8 +433,8 @@ Public Class ClassDeclaration
             getter.Code.AddStatement(get_2)
 
             Dim set_if1 As New IfStatement(setter.Code)
-            Dim value_token As Token = Token.CreateIdentifierToken(attrib.Location, "Value", TypeCharacters.Characters.None, False)
-            Dim field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
+            Dim value_token As Identifier = New Identifier(set_if1, "Value", attrib.Location, TypeCharacters.Characters.None)
+            Dim field_token As Identifier = New Identifier(set_if1, fieldName, attrib.Location, TypeCharacters.Characters.None)
             Dim set_if1_condition_left As New SimpleNameExpression(set_if1)
             Dim set_if1_condition_right As New SimpleNameExpression(set_if1)
             Dim set_if1_condition As New Is_IsNotExpression(set_if1, set_if1_condition_left, set_if1_condition_right, KS.IsNot)
@@ -454,8 +454,8 @@ Public Class ClassDeclaration
             Dim set_dispose_invocation_instance_exp_typeargs_1 As New TypeName(set_dispose_invocation_instance_exp_typeargs)
             Dim set_dispose_invocation_arg1 As New SimpleNameExpression(set_dispose_invocation)
             Dim set_dispose_invocation_arglist As New ArgumentList(set_dispose_invocation, set_dispose_invocation_arg1)
-            Dim set_dispose_invocation_field_token As Token = Token.CreateIdentifierToken(attrib.Location, fieldName, TypeCharacters.Characters.None, False)
-            Dim set_dispose_invocation_method_token As Token = Token.CreateIdentifierToken(attrib.Location, disposeInstanceMethodName, TypeCharacters.Characters.None, False)
+            Dim set_dispose_invocation_field_token As Identifier = New Identifier(set_dispose_invocation, fieldName, attrib.Location, TypeCharacters.Characters.None)
+            Dim set_dispose_invocation_method_token As Identifier = New Identifier(set_dispose_invocation, disposeInstanceMethodName, attrib.Location, TypeCharacters.Characters.None)
 
             set_throw_creation.Init(Compiler.TypeCache.System_ArgumentException, set_throw_args)
             set_throw.Init(set_throw_creation)

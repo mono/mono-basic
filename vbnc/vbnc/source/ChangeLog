@@ -1,3 +1,37 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/SimpleNameExpression.vb, Interfaces/ITokenReader.vb,
+	  Statements/ForStatement.vb, Statements/LoopControlVariable.vb,
+	  Statements/UsingDeclarator.vb, Statements/CatchStatement.vb,
+	  Members/VariableIdentifier.vb, Members/ExternalFunctionDeclaration.vb,
+	  Members/ConstantDeclaration.vb, Members/SubSignature.vb,
+	  Members/EventHandlerDeclaration.vb, Members/EnumMemberDeclaration.vb,
+	  Members/FunctionSignature.vb, Members/ParemeterIdentifier.vb,
+	  Members/ConstructorDeclaration.vb, Members/Operand.vb,
+	  Members/PropertyGetDeclaration.vb, Members/VariableDeclaration.vb,
+	  Members/PropertySetDeclaration.vb, Parser/Parser(Members2).vb,
+	  Parser/Parser.vb, Parser/Parser(Expressions).vb,
+	  Parser/Parser(Types).vb, Parser/Parser(Statements).vb,
+	  Parser/Parser(Members).vb,
+	  ConditionalCompilation/ConditionalCompilation.vb, Tokens/Token.vb,
+	  Names/Identifier.vb, Types/TokenManager.vb, Types/TypeParameter.vb,
+	  Types/ImportsAliasClause.vb, Types/ImportsNamespaceClause.vb,
+	  TypeDeclarations/EnumDeclaration.vb,
+	  TypeDeclarations/ClassDeclaration.vb,
+	  TypeDeclarations/GenericTypeDeclaration.vb,
+	  TypeDeclarations/PartialTypeDeclaration.vb,
+	  TypeDeclarations/InterfaceDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb, General/Report.vb,
+	  General/Scanner.vb, General/InternalException.vb, General/Compiler.vb,
+	  General/BaseObject.vb, General/TypeDictionary.vb: Removed type character
+	  for identifiers from Token.
+	* Expressions/InvocationOrIndexExpression.vb: Fix late bound arrays.
+	* vbnc.vbproj, General/AssemblyInfo.vb: Updated.
+	* Members/AttributeMember.vb: Deleted.
+	* Members/AttributeMembers.vb: Deleted
+	* General/Helper.vb: Fix a bug with method overloading and signed/unsigned
+	  types.
+
 2008-01-10  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* Statements/ContinueStatement.vb: Make sure we use leave whenever necessary.

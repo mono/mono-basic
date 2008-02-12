@@ -289,7 +289,7 @@ Public Class Report
     <Diagnostics.DebuggerHidden()> _
     Function ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            Return ShowMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
+            Return ShowMessage(Message, Compiler.tm.CurrentLocation, Parameters)
         Else
             Dim loc As Span = Nothing
             Return ShowMessage(Message, loc, Parameters)
@@ -319,7 +319,7 @@ Public Class Report
     <Diagnostics.DebuggerHidden()> _
     Function SaveMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            Return SaveMessage(Message, Compiler.tm.CurrentToken.Location, Parameters)
+            Return SaveMessage(Message, Compiler.tm.CurrentLocation, Parameters)
         Else
             Return SaveMessage(Message, Nothing, Parameters)
         End If

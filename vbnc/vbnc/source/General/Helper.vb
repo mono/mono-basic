@@ -3481,6 +3481,15 @@ Public Class Helper
         '*	Mj is Integer and Nj is UInteger, or 
         '*	Mj is Long and Nj is ULong.
 
+        'LAMESPEC?
+        'I've found that the previous section must be:
+        '*	Mj is Byte and Nj is SByte, or
+        '*  Mj is Short/Byte and Nj is UShort, or
+        '*	Mj is Integer/Short/Byte and Nj is UInteger, or 
+        '*	Mj is Long/Integer/Short/Byte and Nj is ULong.
+        'example that doesn't work otherwise:
+        ' Two methods with parameter types Int32 and UInt64 which is passed in a UInt16.
+
         'A member M is considered more applicable than N if their signatures are different 
         If Helper.CompareTypes(MTypes, NTypes) Then
             'Signatures are not different so none is more applicable
@@ -3489,7 +3498,10 @@ Public Class Helper
 
         For i As Integer = 0 To Arguments.Count - 1
             Dim is1stMoreApplicable As Boolean
-            Dim isEqual, isWidening, isLiteral0, isByte, isShort, isInteger, isLong As Boolean
+            Dim isEqual, isWidening, isLiteral0 As Boolean
+            Dim isMByte, isMShort, isMInteger, isMLong As Boolean
+            Dim isNByte, isNShort, isNInteger, isNLong As Boolean
+            'Dim isMSigned, isNUnsigned As Boolean 'Names are not accurate for Byte/SByte
 
             If MTypes.Length - 1 < i OrElse NTypes.Length - 1 < i Then Exit For
 
@@ -3502,19 +3514,33 @@ Public Class Helper
             '*	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
             isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(Compiler, NTypes(i))
 
-            '*	Mj is Byte and Nj is SByte, or
-            isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
+            isMByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Byte)
+            isMShort = isMByte = False AndAlso Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int16)
+            isMInteger = isMByte = False AndAlso isMShort = False AndAlso Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int32)
+            isMLong = isMByte = False AndAlso isMShort = False AndAlso isMInteger = False AndAlso Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int64)
 
-            '*	Mj is Short and Nj is UShort, or
-            isShort = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int16) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt16)
+            isNByte = Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
+            isNShort = isNByte = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt16)
+            isNInteger = isNByte = False AndAlso isNShort = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt32)
+            isNLong = isNByte = False AndAlso isNShort = False AndAlso isNInteger = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_uInt64)
 
-            '*	Mj is Integer and Nj is UInteger, or 
-            isInteger = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int32) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt32)
+            ''*	Mj is Byte and Nj is SByte, or
+            'isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
 
-            '*	Mj is Long and Nj is ULong.
-            isLong = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int64) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt64)
+            ''*	Mj is Short and Nj is UShort, or
+            'isShort = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int16) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt16)
 
-            is1stMoreApplicable = isEqual OrElse isWidening OrElse isLiteral0 OrElse isByte OrElse isShort OrElse isInteger OrElse isLong
+            ''*	Mj is Integer and Nj is UInteger, or 
+            'isInteger = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int32) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt32)
+
+            ''*	Mj is Long and Nj is ULong.
+            'isLong = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Int64) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt64)
+
+            is1stMoreApplicable = isEqual OrElse isWidening OrElse isLiteral0
+            is1stMoreApplicable = is1stMoreApplicable OrElse (isMByte AndAlso isNByte)
+            is1stMoreApplicable = is1stMoreApplicable OrElse ((isMByte OrElse isMShort) AndAlso isNShort)
+            is1stMoreApplicable = is1stMoreApplicable OrElse ((isMByte OrElse isMShort OrElse isMInteger) AndAlso isNInteger)
+            is1stMoreApplicable = is1stMoreApplicable OrElse ((isMByte OrElse isMShort OrElse isMInteger OrElse isMLong) AndAlso isNLong)
             result = is1stMoreApplicable AndAlso result
         Next
 

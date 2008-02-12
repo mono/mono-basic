@@ -26,14 +26,14 @@ Public Class ParameterIdentifier
     Inherits ParsedObject
     Implements INameable
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_ArrayNameModifier As ArrayNameModifier
 
-    Property Identifier() As Token
+    Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
-        Set(ByVal value As Token)
+        Set(ByVal value As Identifier)
             m_Identifier = value
         End Set
     End Property
@@ -44,10 +44,10 @@ Public Class ParameterIdentifier
 
     Sub New(ByVal Parent As Parameter, ByVal Name As String)
         MyBase.New(Parent)
-        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal ArrayNameModifier As ArrayNameModifier)
+    Sub Init(ByVal Identifier As Identifier, ByVal ArrayNameModifier As ArrayNameModifier)
         m_Identifier = Identifier
         m_ArrayNameModifier = ArrayNameModifier
     End Sub

@@ -1,3 +1,8 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/SelfCompile.files.linux: Updated.
+	* CompileTime2/LessGeneric2.vb, CompileTime2/LessGeneric1.vb: Added.
+
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-333962.vb: Added.

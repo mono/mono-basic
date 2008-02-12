@@ -652,7 +652,6 @@
     <Compile Include="General\Namespaces.vb" />
     <Compile Include="General\TooManyErrorsException.vb" />
     <Compile Include="General\vbncException.vb" />
-    <Compile Include="Members\AttributeMember.vb" />
     <Compile Include="General\Index.vb" />
     <Compile Include="General\Message.vb" />
     <Compile Include="General\MessageAttribute.vb" />
@@ -758,7 +757,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Notes.txt" />
-    <Compile Include="Members\AttributeMembers.vb" />
     <Compile Include="Members\EnumMemberDeclaration.vb" />
     <Compile Include="Members\PropertyGetDeclaration.vb" />
     <Compile Include="Members\PropertySetDeclaration.vb" />

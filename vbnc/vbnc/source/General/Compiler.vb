@@ -363,7 +363,7 @@ Public Class Compiler
             Throw
         Catch ex As Exception
             If Token.IsSomething(tm.CurrentToken) Then
-                Report.ShowMessage(Messages.VBNC99999, tm.CurrentToken.Location, "vbnc crashed nearby this location in the source code.")
+                Report.ShowMessage(Messages.VBNC99999, tm.CurrentLocation, "vbnc crashed nearby this location in the source code.")
             End If
             Throw
         End Try

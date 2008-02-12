@@ -1,3 +1,7 @@
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.exe.sources: Updated.
+
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.Errors.resources: Implemented 30180. Fixes #325340.

@@ -61,6 +61,14 @@ Public Class InvocationOrIndexExpression
     ''' <remarks></remarks>
     Private m_InvocationMethod As MethodInfo
 
+    Private m_IsLateBoundArray As Boolean
+
+    ReadOnly Property IsLateBoundArray() As Boolean
+        Get
+            Return m_IsLateBoundArray
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property AsString() As String
         Get
             Return m_Expression.AsString & "(" & m_ArgumentList.AsString & ")"
@@ -144,6 +152,11 @@ Public Class InvocationOrIndexExpression
 
         If m_InvocationMethod IsNot Nothing Then
             result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_Expression, m_ArgumentList, m_InvocationMethod) AndAlso result
+            Return True
+        End If
+
+        If m_IsLateBoundArray Then
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             Return True
         End If
 
@@ -325,7 +338,9 @@ Public Class InvocationOrIndexExpression
         Dim defaultProperties As Generic.List(Of PropertyInfo) = Nothing
 
         If VariableType.IsArray Then
-            result = ResolveArrayInvocation(context, VariableType) AndAlso result
+            result = ResolveArrayInvocation(Context, VariableType) AndAlso result
+        ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Array) Then
+            result = ResolveLateboundArrayInvocation(Context) AndAlso result
         ElseIf Helper.IsDelegate(Compiler, VariableType) Then
             'This is an invocation expression (the classification can be reclassified as value and the expression is a delegate expression)
             result = ResolveDelegateInvocation(Context, VariableType)
@@ -345,6 +360,16 @@ Public Class InvocationOrIndexExpression
         Else
             result = Compiler.Report.ShowMessage(Messages.VBNC30471, Location) AndAlso result
         End If
+
+        Return result
+    End Function
+
+    Private Function ResolveLateBoundArrayInvocation(ByVal Context As ParsedObject) As Boolean
+        Dim result As Boolean = True
+
+        Classification = New LateBoundAccessClassification(Me, Expression, Nothing, Nothing)
+
+        m_IsLateBoundArray = True
 
         Return result
     End Function
@@ -370,7 +395,7 @@ Public Class InvocationOrIndexExpression
             Dim arg As Argument = m_ArgumentList(i)
             Dim argtype As Type = arg.Expression.ExpressionType
 
-            If Compiler.TypeResolution.IsImplicitlyConvertible(context, argtype, Compiler.TypeCache.System_Int32) = False Then
+            If Compiler.TypeResolution.IsImplicitlyConvertible(Context, argtype, Compiler.TypeCache.System_Int32) = False Then
                 If isStrictOn Then
                     Helper.AddError(Me, "Array argument must be implicitly convertible to Integer.")
                     Return False
@@ -405,7 +430,7 @@ Public Class InvocationOrIndexExpression
         If argTypes.Count <> paramTypes.Length Then Return False
 
         For i As Integer = 0 To argTypes.Count - 1
-            If Compiler.TypeResolution.IsImplicitlyConvertible(context, argTypes(i), paramTypes(i)) = False Then
+            If Compiler.TypeResolution.IsImplicitlyConvertible(Context, argTypes(i), paramTypes(i)) = False Then
                 Helper.AddError(Me, "Cannot convert implicitly from '" & argTypes(i).Name & "' to '" & paramTypes(i).Name & "'")
                 Return False
             End If

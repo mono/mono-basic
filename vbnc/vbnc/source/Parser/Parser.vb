@@ -293,13 +293,13 @@ Partial Public Class Parser
     Private Shared Function ParseImportsAliasClause(ByVal Parent As ParsedObject, ByVal str As String) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_Second As ImportsNamespaceClause = Nothing
 
         Dim values() As String = str.Split("="c)
         If values.Length <> 2 Then Return Nothing
 
-        m_Identifier = Token.CreateIdentifierToken(Span.CommandLineSpan, values(0), TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(result, values(0), Span.CommandLineSpan, TypeCharacters.Characters.None)
 
         m_Second = ParseImportsNamespaceClause(result, values(1))
         If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -321,10 +321,11 @@ Partial Public Class Parser
     Private Function ParseImportsAliasClause(ByVal Parent As ParsedObject) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_Second As ImportsNamespaceClause = Nothing
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         tm.AcceptIfNotInternalError(KS.Equals)
 
@@ -1176,12 +1177,11 @@ Partial Public Class Parser
         ElseIf first.Length > 7 AndAlso Helper.CompareName(first.Substring(1, 7), "Global.") Then
             m_First = New GlobalExpression(result)
         Else
-            Dim i As Token = Token.CreateIdentifierToken(Parent.Location, first, TypeCharacters.Characters.None, False)
-            m_First = New Identifier(result, i)
+            m_First = New Identifier(Parent, first, Parent.Location, TypeCharacters.Characters.None)
         End If
 
         If second IsNot Nothing Then
-            m_Second = Token.CreateIdentifierToken(Span.CommandLineSpan, second, TypeCharacters.Characters.None, False)
+            m_Second = Token.CreateIdentifierToken(Span.CommandLineSpan, second)
         End If
 
         result.Init(m_First, m_Second)
@@ -1232,7 +1232,7 @@ Partial Public Class Parser
         Dim result As Identifier
 
         If tm.CurrentToken.IsIdentifier Then
-            result = New Identifier(Parent, tm.CurrentToken)
+            result = New Identifier(Parent, tm.CurrentToken.Identifier, tm.CurrentToken.Location, tm.CurrentTypeCharacter)
             tm.NextToken()
         Else
             result = Nothing

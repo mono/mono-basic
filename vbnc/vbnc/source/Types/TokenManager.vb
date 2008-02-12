@@ -43,6 +43,12 @@ Public Class tm
         End Set
     End Property
 
+    ReadOnly Property CurrentTypeCharacter() As TypeCharacters.Characters
+        Get
+            Return m_Reader.currenttypecharacter
+        End Get
+    End Property
+
     Function CurrentToken() As Token
         Return Current
     End Function
@@ -262,7 +268,7 @@ Public Class tm
     ''' <param name="Special"></param>
     ''' <remarks></remarks>
     Sub AcceptIfNotInternalError(ByVal Special As KS)
-        If Not Accept(Special) Then Throw New InternalException("Location: " & CurrentToken.Location.ToString(Compiler))
+        If Not Accept(Special) Then Throw New InternalException("Location: " & CurrentLocation.ToString(Compiler))
     End Sub
 
     Sub AcceptIfNotInternalError(ByVal Identifier As String)
@@ -396,6 +402,7 @@ Public Class tm
         End If
     End Function
 
+    <Obsolete()> _
     Function AcceptIdentifier(ByRef result As Token) As Boolean
         Dim tmp As Token = CurrentToken()
         If CurrentToken.IsIdentifier Then

@@ -149,10 +149,11 @@ Partial Class Parser
     Private Function ParseEnumMemberDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo, ByVal EnumIndex As Integer) As EnumMemberDeclaration
         Dim result As New EnumMemberDeclaration(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_ConstantExpression As Expression
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.Equals) Then
             m_ConstantExpression = ParseExpression(result)
@@ -175,12 +176,13 @@ Partial Class Parser
     Private Function ParseOperand(ByVal Parent As ParsedObject) As Operand
         Dim result As New Operand(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeName As TypeName
 
         tm.Accept(KS.ByVal)
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.As) Then
             m_TypeName = ParseTypeName(result)
@@ -433,7 +435,7 @@ Partial Class Parser
                 Helper.ErrorRecoveryNotImplemented()
             End If
             Dim sne As New SimpleNameExpression(result)
-            sne.Init(id.Token, New TypeArgumentList(sne))
+            sne.Init(id, New TypeArgumentList(sne))
             m_First = sne
         End If
         If m_First Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -571,7 +573,7 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_CharsetModifier As KS
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
         Dim m_ParameterList As ParameterList = Nothing
@@ -588,11 +590,8 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Function)
 
-        If tm.CurrentToken.IsIdentifier = False Then
-            Helper.ErrorRecoveryNotImplemented()
-        End If
-        m_Identifier = tm.CurrentToken
-        tm.NextToken()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         m_LibraryClause = ParseLibraryClause(result)
         If m_LibraryClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -681,11 +680,14 @@ Partial Class Parser
     Private Function ParseConstantDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo, ByVal Modifiers As Modifiers) As ConstantDeclaration
         Dim result As New ConstantDeclaration(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeName As TypeName = Nothing
         Dim m_ConstantExpression As Expression = Nothing
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then
+            Helper.ErrorRecoveryNotImplemented()
+        End If
 
         If tm.Accept(KS.As) Then
             m_TypeName = ParseTypeName(result)

@@ -441,7 +441,7 @@ Partial Public Class Parser
     Private Function ParseUsingDeclarator(ByVal Parent As ParsedObject) As UsingDeclarator
         Dim result As New UsingDeclarator(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_IsNew As Boolean
         Dim m_IsVariableDeclaration As Boolean
         Dim m_TypeName As NonArrayTypeName
@@ -449,7 +449,8 @@ Partial Public Class Parser
         Dim m_ArgumentList As ArgumentList = Nothing
         Dim m_VariableDeclaration As VariableDeclaration
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.As) Then
             m_IsVariableDeclaration = True
@@ -700,14 +701,15 @@ Partial Public Class Parser
         Dim result As New CatchStatement(Parent)
 
         Dim m_Code As CodeBlock
-        Dim m_Variable As Token = Nothing
+        Dim m_Variable As Identifier = Nothing
         Dim m_When As Expression = Nothing
         Dim m_TypeName As NonArrayTypeName = Nothing
 
         tm.AcceptIfNotInternalError(KS.Catch)
 
         If tm.AcceptEndOfStatement(IsOneLiner) = False Then
-            If tm.AcceptIdentifier(m_Variable) Then
+            m_Variable = ParseIdentifier(result)
+            If m_Variable IsNot Nothing Then
                 If tm.AcceptIfNotError(KS.As) = False Then Helper.ErrorRecoveryNotImplemented()
                 m_TypeName = ParseNonArrayTypeName(result)
                 If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()

@@ -78,6 +78,7 @@ Public Class Scanner
     Private m_Peeked As Token
     Private m_PeekedExact As Token
     Private m_Current As Token
+    Private m_CurrentTypeCharacter As TypeCharacters.Characters
 
     'Useful constants.
     Private Const nl0 As Char = Microsoft.VisualBasic.ChrW(0)
@@ -456,13 +457,15 @@ Public Class Scanner
         Dim canstartidentifier As Boolean = Me.IsLastChar = False AndAlso (IsAlphaCharacter(PeekChar) OrElse IsUnderscoreCharacter(PeekChar))
         If TypeCharacters.IsTypeCharacter(CurrentChar, typecharacter) AndAlso (canstartidentifier = False OrElse typecharacter <> TypeCharacters.Characters.SingleTypeCharacter) Then
             NextChar()
-            Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent, typecharacter, Escaped)
+            m_CurrentTypeCharacter = typecharacter
+            Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
         Else
             Dim keyword As KS
             If Escaped = False AndAlso Token.IsKeyword(strIdent, keyword) Then
                 Return Token.CreateKeywordToken(GetCurrentLocation, keyword)
             Else
-                Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent, typecharacter, Escaped)
+                m_CurrentTypeCharacter = typecharacter
+                Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
             End If
         End If
     End Function
@@ -1240,6 +1243,8 @@ Public Class Scanner
     Private Function NextExactToken() As Token
         Dim result As Token
 
+        m_CurrentTypeCharacter = TypeCharacters.Characters.None
+
         If Token.IsSomething(m_PeekedExact) Then
             result = m_PeekedExact
             m_PeekedExact = Nothing
@@ -1307,6 +1312,10 @@ Public Class Scanner
 
     Public Function Current() As Token Implements ITokenReader.Current
         Return m_Current
+    End Function
+
+    Public Function CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
+        Return m_CurrentTypeCharacter
     End Function
 End Class
 

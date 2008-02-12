@@ -38,21 +38,6 @@ Public Structure Token
         End Get
     End Property
 
-    ReadOnly Property HasTypeCharacter() As Boolean
-        Get
-            Return IsIdentifier() AndAlso TypeCharacter <> TypeCharacters.Characters.None
-        End Get
-    End Property
-
-    Property TypeCharacter() As TypeCharacters.Characters
-        Get
-            Return CType(m_TokenData1, TypeCharacters.Characters)
-        End Get
-        Set(ByVal value As TypeCharacters.Characters)
-            m_TokenData1 = CType(value, LiteralTypeCharacters_Characters)
-        End Set
-    End Property
-
     Public Overrides Function ToString() As String
         If Me.IsIdentifier Then
             Return Me.Identifier
@@ -61,19 +46,10 @@ Public Structure Token
         End If
     End Function
 
-    Shared Function CreateIdentifierToken(ByVal Location As Span, ByVal Identifier As String, ByVal TypeCharacter As TypeCharacters.Characters, ByVal Escaped As Boolean) As Token
+    Shared Function CreateIdentifierToken(ByVal Location As Span, ByVal Identifier As String) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Identifier
         result.m_TokenObject = Identifier
-        result.m_TokenData1 = CType(TypeCharacter, LiteralTypeCharacters_Characters)
-        Return result
-    End Function
-
-    Shared Function CreateIdentifierToken(ByVal CopyFrom As Token, ByVal Name As String) As Token
-        Dim result As New Token(CopyFrom.Location)
-        result.m_TokenType = TokenType.Identifier
-        result.m_TokenObject = Name
-        result.m_TokenData1 = CopyFrom.m_TokenData1
         Return result
     End Function
 

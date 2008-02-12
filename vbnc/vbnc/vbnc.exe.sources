@@ -290,7 +290,6 @@ source/General/Namespace.vb
 source/General/Namespaces.vb
 source/General/TooManyErrorsException.vb
 source/General/vbncException.vb
-source/Members/AttributeMember.vb
 source/General/Index.vb
 source/General/Message.vb
 source/General/MessageAttribute.vb
@@ -379,7 +378,6 @@ source/Enums/Enums.vb
 source/Expressions/Expression.vb
 source/General/Helper.vb
 source/General/Main.vb
-source/Members/AttributeMembers.vb
 source/Members/EnumMemberDeclaration.vb
 source/Members/PropertyGetDeclaration.vb
 source/Members/PropertySetDeclaration.vb
