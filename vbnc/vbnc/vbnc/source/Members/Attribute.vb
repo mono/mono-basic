@@ -311,7 +311,66 @@ Public Class Attribute
                 ElseIf mthd IsNot Nothing Then
                     mthd.MethodBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
-                    mthd.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.CecilTypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
+                        Dim values As IDictionary = cecilBuilder.Fields
+                        Dim entry As String = DirectCast(values("EntryPoint"), String)
+                        Dim modRef As Mono.Cecil.ModuleReference = New Mono.Cecil.ModuleReference(DirectCast(cecilBuilder.ConstructorParameters(0), String))
+
+                        If entry = String.Empty Then entry = mthd.Name
+                        Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences.Add(modRef)
+                        mthd.CecilBuilder.PInvokeInfo = New Mono.Cecil.PInvokeInfo(mthd.CecilBuilder)
+                        mthd.CecilBuilder.PInvokeInfo.EntryPoint = entry
+                        mthd.CecilBuilder.PInvokeInfo.Module = modRef
+
+                        Dim charset As System.Runtime.InteropServices.CharSet
+                        If values.Contains("CharSet") Then
+                            charset = DirectCast(values("CharSet"), System.Runtime.InteropServices.CharSet)
+                        Else
+                            charset = Runtime.InteropServices.CharSet.Auto
+                        End If
+                        Select Case charset
+                            Case Runtime.InteropServices.CharSet.Ansi
+                                mthd.CecilBuilder.PInvokeInfo.IsCharSetAnsi = True
+                            Case Runtime.InteropServices.CharSet.Auto
+                                mthd.CecilBuilder.PInvokeInfo.IsCharSetAuto = True
+                            Case Runtime.InteropServices.CharSet.None
+                                mthd.CecilBuilder.PInvokeInfo.IsCharSetNotSpec = True
+                            Case Runtime.InteropServices.CharSet.Unicode
+                                mthd.CecilBuilder.PInvokeInfo.IsCharSetUnicode = True
+                            Case Else
+                                result = Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Invalid charset: " & charset.ToString()) AndAlso result
+                        End Select
+
+                        Dim callingconv As System.Runtime.InteropServices.CallingConvention
+                        If values.Contains("CallingConvention") Then
+                            callingconv = DirectCast(values("CallingConvention"), System.Runtime.InteropServices.CallingConvention)
+                        Else
+                            callingconv = Runtime.InteropServices.CallingConvention.StdCall
+                        End If
+                        Select Case callingconv
+                            Case Runtime.InteropServices.CallingConvention.Cdecl
+                                mthd.CecilBuilder.PInvokeInfo.IsCallConvCdecl = True
+                            Case Runtime.InteropServices.CallingConvention.FastCall
+                                mthd.CecilBuilder.PInvokeInfo.IsCallConvFastcall = True
+                            Case Runtime.InteropServices.CallingConvention.StdCall
+                                mthd.CecilBuilder.PInvokeInfo.IsCallConvStdCall = True
+                            Case Runtime.InteropServices.CallingConvention.ThisCall
+                                mthd.CecilBuilder.PInvokeInfo.IsCallConvThiscall = True
+                            Case Runtime.InteropServices.CallingConvention.Winapi
+                                mthd.CecilBuilder.PInvokeInfo.IsCallConvWinapi = True
+                            Case Else
+                                result = Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Invalid calling convention: " & callingconv.ToString()) AndAlso result
+                        End Select
+
+                        Dim setlasterror As Boolean = True
+                        If values.Contains("SetLastError") Then
+                            setlasterror = DirectCast(values("SetLastError"), Boolean)
+                        End If
+                        mthd.CecilBuilder.PInvokeInfo.SupportsLastError = setlasterror
+                        mthd.CecilBuilder.PInvokeInfo.IsNoMangle = True
+                    Else
+                        mthd.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                    End If
 #End If
                 ElseIf ctro IsNot Nothing Then
                     ctro.ConstructorBuilder.SetCustomAttribute(GetAttributeBuilder)

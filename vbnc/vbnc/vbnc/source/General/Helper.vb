@@ -3513,6 +3513,8 @@ Public Class Helper
 #If ENABLECECIL Then
     Shared Function CompareType(ByVal t1 As Mono.Cecil.TypeReference, ByVal t2 As Mono.Cecil.TypeReference) As Boolean
         If t1 Is t2 Then Return True
+        If CecilHelper.FindDefinition(t1) Is CecilHelper.FindDefinition(t2) Then Return True
+        If t1.FullName IsNot Nothing AndAlso t2.FullName IsNot Nothing AndAlso Helper.CompareNameOrdinal(t1.FullName, t2.FullName) Then Return True
         Helper.Assert(t1.FullName.Equals(t2.FullName) = False)
         Return False
     End Function

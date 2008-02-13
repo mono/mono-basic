@@ -1,3 +1,10 @@
+2008-02-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/Attribute.vb: Implement pinvokes.
+	* Members/MemberImplementsClause.vb: Implement event interface
+	  implementations.
+	* General/Helper.vb: Do some more checking when comparing types.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Statements/ForStatement.vb, Statements/EndStatement.vb,

@@ -71,12 +71,30 @@ Public Class MemberImplementsClause
             Helper.Assert((raiseMethodI Is Nothing Xor raiseMethod Is Nothing) = False)
 
             If addMethod IsNot Nothing AndAlso addMethodI IsNot Nothing Then
+#If ENABLECECIL Then
+                Dim methodDef As Mono.Cecil.MethodDefinition
+                Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, addMethod), MethodDescriptor)
+                methodDef = TryCast(mD.MethodInCecil, Mono.Cecil.MethodDefinition)
+                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, addMethodI))
+#End If
                 declType.DefineMethodOverride(addMethod, addMethodI)
             End If
             If removeMethod IsNot Nothing AndAlso removeMethodI IsNot Nothing Then
+#If ENABLECECIL Then
+                Dim methodDef As Mono.Cecil.MethodDefinition
+                Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, removeMethod), MethodDescriptor)
+                methodDef = TryCast(mD.MethodInCecil, Mono.Cecil.MethodDefinition)
+                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, removeMethodI))
+#End If
                 declType.DefineMethodOverride(removeMethod, removeMethodI)
             End If
             If raiseMethod IsNot Nothing AndAlso raiseMethodI IsNot Nothing Then
+#If ENABLECECIL Then
+                Dim methodDef As Mono.Cecil.MethodDefinition
+                Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, raiseMethod), MethodDescriptor)
+                methodDef = TryCast(mD.MethodInCecil, Mono.Cecil.MethodDefinition)
+                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, raiseMethodI))
+#End If
                 declType.DefineMethodOverride(raiseMethod, raiseMethodI)
             End If
         Next
