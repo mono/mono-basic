@@ -1,5 +1,10 @@
 2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Makefile: don't extract resources from the vbproj file.
+	* Microsoft.VisualBasic.dll.sources.win, strings.resources: Updated.
+
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* strings-only1.txt, strings-only2.txt: Added.
 
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
