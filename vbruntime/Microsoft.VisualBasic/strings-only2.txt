@@ -1,0 +1,2 @@
+CastFromTypeToType=Conversion from type '{0}' to type '{1}' is not valid.
+CastFromStringToType=Conversion from string "{0}" to type '{1}' is not valid.
