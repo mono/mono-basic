@@ -27,7 +27,7 @@ Public Class ConditionalCompiler
     Private m_CurrentConstants As ConditionalConstants
     Private m_Evaluator As New ConditionalExpression(Me)
 
-    Private m_Reader As ITokenReader
+    Private m_Reader As Scanner
     Private m_Peeked As Token
     Private m_Current As Token
 
@@ -103,7 +103,7 @@ Public Class ConditionalCompiler
         End Get
     End Property
 
-    Sub New(ByVal Parent As BaseObject, ByVal Reader As ITokenReader)
+    Sub New(ByVal Parent As BaseObject, ByVal Reader As Scanner)
         MyBase.New(Parent)
         m_Reader = Reader
         LoadProjectConstants()
@@ -152,7 +152,7 @@ Public Class ConditionalCompiler
 
         If Not Me.IfdOut Then
             m_CurrentConstants.Add(New ConditionalConstant(name, value))
-            current.Location.File(Compiler).AddConditionalConstants(current.Location.Line, m_CurrentConstants)
+            GetLocation.File(Compiler).AddConditionalConstants(GetLocation.Line, m_CurrentConstants)
         End If
 
         ParseEndOfLine()
@@ -223,7 +223,7 @@ Public Class ConditionalCompiler
     Private Function CheckEmtpyStack(Optional ByVal Msg As Messages = Messages.VBNC30013) As Boolean
         If m_ConditionStack.Count > 0 Then Return True
 
-        Compiler.Report.ShowMessage(Msg, m_Reader.Current.Location)
+        Compiler.Report.ShowMessage(Msg, m_Reader.GetCurrentLocation)
         vbnc.tm.GotoNewline(m_Reader, True)
 
         Return False
@@ -322,37 +322,32 @@ Public Class ConditionalCompiler
             '            End If
             '#End If
 
-            If result.IsKeyword Then
-                Select Case result.Keyword
-                    Case KS.ConditionalIf
-                        ParseIf()
-                    Case KS.ConditionalElse
-                        ParseElse()
-                    Case KS.ConditionalElseIf
-                        ParseElseIf()
-                    Case KS.ConditionalEndIf
+            If m_Reader.TokensSeenOnLine > 0 AndAlso result = KS.Numeral Then
+                result = m_Reader.Next
+                If result = KS.If Then
+                    ParseIf()
+                ElseIf result = KS.Else Then
+                    ParseElse()
+                ElseIf result = KS.ElseIf Then
+                    ParseElseIf()
+                ElseIf result = KS.Const Then
+                    ParseConst()
+                ElseIf m_Reader.TokenType = vbnc.TokenType.Identifier AndAlso Helper.CompareName("ExternalSource", DirectCast(m_Reader.TokenData, String)) Then
+                    ParseExternalSource()
+                ElseIf m_Reader.TokenType = vbnc.TokenType.Identifier AndAlso Helper.CompareName("Region", DirectCast(m_Reader.TokenData, String)) Then
+                    ParseRegion()
+                ElseIf result = KS.End Then
+                    result = m_Reader.Next
+                    If result = KS.If Then
                         ParseEndIf()
-                    Case KS.ConditionalConst
-                        ParseConst()
-                    Case KS.ConditionalExternalSource
-                        ParseExternalSource()
-                    Case KS.ConditionalEndExternalSource
+                    ElseIf m_Reader.TokenType = vbnc.TokenType.Identifier AndAlso Helper.CompareName("ExternalSource", DirectCast(m_Reader.TokenData, String)) Then
                         ParseEndExternalSource()
-                    Case KS.ConditionalRegion
-                        ParseRegion()
-                    Case KS.ConditionalEndRegion
+                    ElseIf m_Reader.TokenType = vbnc.TokenType.Identifier AndAlso Helper.CompareName("Region", DirectCast(m_Reader.TokenData, String)) Then
                         ParseEndRegion()
-                    Case KS.ConditionalEnd
+                    Else
                         Helper.AddError(Me, "'End' what?")
-                        Continue Do
-                    Case Else
-                        If IfdOut Then
-                            Continue Do
-                        Else
-                            m_Current = result
-                            Return result
-                        End If
-                End Select
+                    End If
+                End If
             ElseIf IfdOut Then
                 Continue Do
             Else
@@ -369,12 +364,34 @@ Public Class ConditionalCompiler
         Return m_Peeked
     End Function
 
-    Public Function Current() As Token Implements ITokenReader.Current
-        Return m_Current
-    End Function
+    Public ReadOnly Property Current() As Token Implements ITokenReader.Current
+        Get
+            Return m_Current
+        End Get
+    End property
 
-    Public Function CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
-        Return m_Reader.CurrentTypeCharacter
-    End Function
+    Public ReadOnly Property CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
+        Get
+            Return m_Reader.CurrentTypeCharacter
+        End Get
+    End Property
+
+    ReadOnly Property GetLocation() As Span Implements ITokenReader.CurrentLocation
+        Get
+            Return m_Reader.GetCurrentLocation
+        End Get
+    End Property
+
+    ReadOnly Property TokenType() As TokenType Implements ITokenReader.TokenType
+        Get
+            Return m_Reader.TokenType
+        End Get
+    End Property
+
+    ReadOnly Property TokenData() As Object Implements ITokenReader.TokenData
+        Get
+            Return m_Reader.TokenData
+        End Get
+    End Property
 End Class
 

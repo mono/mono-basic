@@ -72,7 +72,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Sub) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Block)
@@ -138,7 +138,7 @@ Partial Class Parser
             End If
         Loop
 
-        If tm.AcceptIfNotError(KS.End_Property) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Property) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
@@ -197,7 +197,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Set) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Set) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
 
@@ -232,7 +232,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Get) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Get) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, ParentSignature, ParentImplements, m_Block)
@@ -324,7 +324,7 @@ Partial Class Parser
             If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         End If
 
-        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.PeekToken(-1).Location))
+        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation))
 
         Return result
     End Function

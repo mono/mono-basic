@@ -27,7 +27,7 @@ Public Class ExternalSubDeclaration
     Inherits SubDeclaration
 
     Private m_CharsetModifier As KS
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_LibraryClause As LibraryClause
     Private m_AliasClause As AliasClause
 
@@ -35,7 +35,7 @@ Public Class ExternalSubDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Token, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Identifier, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
         MyBase.Init(Attributes, Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
         MyBase.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
@@ -65,7 +65,7 @@ Public Class ExternalSubDeclaration
         End Get
     End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get

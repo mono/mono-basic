@@ -263,11 +263,6 @@ Module Enums
                 strSpecial(value) = stringAttribute.Value
                 strSpecialFriendly(value) = stringAttribute.FriendlyValue
 
-                If stringAttribute.IsMultiKeyword Then
-                    If GetKSStringAttribute(GetKSStringAttribute(stringAttribute.MultiKeyword).MultiKeyword).Equals(stringAttribute) = False Then
-                        Throw New InternalException("") 'There is no circular reference!
-                    End If
-                End If
                 If stringAttribute.IsKeyword Then
                     keywordLookup.Add(stringAttribute.Value, field.GetValue(Nothing))
                 End If

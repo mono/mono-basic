@@ -76,9 +76,24 @@ Public Class Scanner
     Private m_Compiler As Compiler
 
     Private m_Peeked As Token
-    Private m_PeekedExact As Token
     Private m_Current As Token
     Private m_CurrentTypeCharacter As TypeCharacters.Characters
+    Private m_CurrentTokenType As TokenType
+    Private m_CurrentData As Object
+
+    Private Structure Data
+        Public Type As TokenType
+        Public Symbol As KS
+        Public Data As Object
+        Public TypeCharacter As TypeCharacters.Characters
+
+        Public Sub Clear()
+            Type = vbnc.TokenType.None
+            Symbol = KS.None
+            Data = Nothing
+            TypeCharacter = TypeCharacters.Characters.None
+        End Sub
+    End Structure
 
     'Useful constants.
     Private Const nl0 As Char = Microsoft.VisualBasic.ChrW(0)
@@ -91,6 +106,12 @@ Public Class Scanner
     Private Const COMMENTCHAR1 As Char = "'"c
     Private Const COMMENTCHAR2 As Char = Microsoft.VisualBasic.ChrW(&H2018)
     Private Const COMMENTCHAR3 As Char = Microsoft.VisualBasic.ChrW(&H2019)
+
+    ReadOnly Property TokensSeenOnLine() As Integer
+        Get
+            Return m_TokensSeenOnLine
+        End Get
+    End Property
 
     ReadOnly Property TotalLineCount() As UInteger
         Get
@@ -634,11 +655,11 @@ Public Class Scanner
                     End If
                     Select Case tp
                         Case BuiltInDataTypes.Decimal
-                            GetNumber = Token.CreateDecimalToken(GetCurrentLocation, Decimal.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateDecimalToken(GetCurrentLocation, Decimal.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Double
-                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, Double.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, Double.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Single
-                            GetNumber = Token.CreateSingleToken(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateSingleToken(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Integer, BuiltInDataTypes.Long, BuiltInDataTypes.Short, BuiltInDataTypes.UInteger, BuiltInDataTypes.ULong, BuiltInDataTypes.UShort
                             If bReal Then
                                 Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
@@ -672,14 +693,14 @@ Public Class Scanner
                             GetNumber = GetIntegralToken(ULong.Parse(strResult, Helper.USCulture), Base, typeCharacter)
                         Case Else
                             Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
-                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                     End Select
                 Catch ex As System.OverflowException
                     Compiler.Report.ShowMessage(Messages.VBNC30036)
-                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 Catch ex As Exception
                     Compiler.Report.ShowMessage(Messages.VBNC90005)
-                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 End Try
 #If EXTENDED Then
             Case IntegerBase.Binary
@@ -726,17 +747,17 @@ Public Class Scanner
 
         Select Case case_type
             Case BuiltInDataTypes.Integer
-                Return Token.CreateInt32Token(GetCurrentLocation, ExtractInt(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt32Token(GetCurrentLocation, ExtractInt(Value, Base))
             Case BuiltInDataTypes.UInteger
-                Return Token.CreateUInt32Token(GetCurrentLocation, ExtractUInt(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt32Token(GetCurrentLocation, ExtractUInt(Value, Base))
             Case BuiltInDataTypes.Long
-                Return Token.CreateInt64Token(GetCurrentLocation, ExtractLong(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt64Token(GetCurrentLocation, ExtractLong(Value, Base))
             Case BuiltInDataTypes.ULong
-                Return Token.CreateUInt64Token(GetCurrentLocation, ExtractULong(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt64Token(GetCurrentLocation, ExtractULong(Value, Base))
             Case BuiltInDataTypes.Short
-                Return Token.CreateInt16Token(GetCurrentLocation, ExtractShort(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt16Token(GetCurrentLocation, ExtractShort(Value, Base))
             Case BuiltInDataTypes.UShort
-                Return Token.CreateUInt16Token(GetCurrentLocation, ExtractUShort(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt16Token(GetCurrentLocation, ExtractUShort(Value, Base))
             Case Else
                 Throw New InternalException("")
         End Select
@@ -1119,89 +1140,6 @@ Public Class Scanner
         Return Result
     End Function
 
-    Function SetMultiKeywords(ByVal current As Token) As Token
-        Dim peeked As Token
-
-        If current.Equals(KS.ConditionalEnd) Then
-            peeked = Me.PeekExactToken()
-
-            If peeked.Equals(KS.If) Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndIf)
-            End If
-
-            If Not peeked.IsIdentifier Then Return current
-
-            If peeked.Equals("Region") Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndRegion)
-            ElseIf peeked.Equals("ExternalSource") Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndExternalSource)
-            Else
-                Return current
-            End If
-        End If
-
-        If current.Equals(KS.End) Then
-            peeked = Me.PeekExactToken()
-            If Not peeked.IsKeyword Then Return current
-
-            Dim attrib As KSEnumStringAttribute
-            attrib = Enums.GetKSStringAttribute(peeked.Keyword)
-            If Not attrib.IsMultiKeyword Then Return current
-
-            peeked = Me.NextExactToken
-            Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), attrib.MultiKeyword)
-        End If
-
-        If current.Equals(KS.Numeral) AndAlso m_TokensSeenOnLine = 1 Then
-            peeked = Me.PeekExactToken
-            If peeked.IsKeyword Then
-                Select Case peeked.Keyword
-                    Case KS.If
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalIf)
-                    Case KS.Else
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalElse)
-                    Case KS.ElseIf
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalElseIf)
-                    Case KS.Const
-                        peeked = Me.NextExactToken
-                        Return SetMultiKeywords(Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalConst))
-                    Case KS.End
-                        peeked = Me.NextExactToken
-                        Return SetMultiKeywords(Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEnd))
-                    Case KS.End_If
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndIf)
-                    Case Else
-                        Return current
-                End Select
-            ElseIf peeked.IsIdentifier Then
-                If peeked.Equals("Region") Then
-                    peeked = Me.NextExactToken
-                    Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalRegion)
-                ElseIf peeked.Equals("ExternalSource") Then
-                    peeked = Me.NextExactToken
-                    Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalExternalSource)
-                Else
-                    Return current
-                End If
-            End If
-        End If
-
-        If current.IsIdentifier AndAlso current.Equals("Custom") Then
-            If Not Me.PeekExactToken.Equals(KS.Event) Then Return current
-            peeked = Me.Next()
-            Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.CustomEvent)
-        End If
-
-        Return current
-    End Function
-
     Public Sub New(ByVal Compiler As Compiler)
         m_Compiler = Compiler
         m_Files = New Generic.Queue(Of CodeFile)(m_Compiler.CommandLine.Files)
@@ -1240,28 +1178,6 @@ Public Class Scanner
         End If
     End Sub
 
-    Private Function NextExactToken() As Token
-        Dim result As Token
-
-        m_CurrentTypeCharacter = TypeCharacters.Characters.None
-
-        If Token.IsSomething(m_PeekedExact) Then
-            result = m_PeekedExact
-            m_PeekedExact = Nothing
-            Return result
-        End If
-
-        Return GetNextToken()
-    End Function
-
-    Private Function PeekExactToken() As Token
-        If Token.IsSomething(m_PeekedExact) = False Then
-            m_PeekedExact = NextExactToken()
-        End If
-
-        Return m_PeekedExact
-    End Function
-
     Public Function [Next]() As Token Implements ITokenReader.Next
         Dim result As Token
 
@@ -1271,51 +1187,77 @@ Public Class Scanner
             Return m_Current
         End If
 
+        If Token.IsSomething(m_Current) AndAlso m_Current.IsEndOfFile Then
+            NextFile()
+        End If
+
         If m_CodeFile Is Nothing Then
             result = Token.CreateEndOfCodeToken
             m_Current = result
             Return result
         End If
 
-        result = NextExactToken()
+        m_CurrentTypeCharacter = TypeCharacters.Characters.None
+        result = GetNextToken()
 
         'Console.WriteLine("Scanned token: " & result.FriendlyString())
 
-        result = SetMultiKeywords(result)
-
         If result.IsEndOfLineOnly Then
-            Do While PeekExactToken().IsEndOfLineOnly
-                result = Me.NextExactToken() 'Eat all posterior newlines
+            Dim tmp As Token = result
+            Do While result.IsEndOfLineOnly
+                result = GetNextToken() 'Eat all posterior newlines
             Loop
-        End If
-
-        If result.IsEndOfFile() Then
+            m_Peeked = result
+            result = tmp
+        ElseIf result.IsEndOfFile() Then
             If Token.IsSomething(m_Current) AndAlso Not m_Current.IsEndOfLineOnly Then
                 m_Peeked = result
-                result = Token.CreateEndOfLineToken(m_Peeked.Location)
+                result = Token.CreateEndOfLineToken(Me.GetCurrentLocation)
             End If
-            NextFile()
+            'NextFile()
         End If
 
         m_Current = result
-
-        'Console.WriteLine("Returning token: " & result.FriendlyString)
+        m_CurrentTokenType = result.m_TokenType
+        m_CurrentData = result.m_TokenObject
 
         Return result
     End Function
 
     Public Function Peek() As Token Implements ITokenReader.Peek
         If Token.IsSomething(m_Peeked) Then Return m_Peeked
-        m_Peeked = [Next]()
+        m_Peeked = GetNextToken()
         Return m_Peeked
     End Function
 
-    Public Function Current() As Token Implements ITokenReader.Current
-        Return m_Current
-    End Function
+    Public ReadOnly Property Current() As Token Implements ITokenReader.Current
+        Get
+            Return m_Current
+        End Get
+    End Property
 
-    Public Function CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
-        Return m_CurrentTypeCharacter
-    End Function
+    Public ReadOnly Property CurrentTypeCharacter() As TypeCharacters.Characters Implements ITokenReader.CurrentTypeCharacter
+        Get
+            Return m_CurrentTypeCharacter
+        End Get
+    End Property
+
+    Public ReadOnly Property GetLocation() As Span Implements ITokenReader.CurrentLocation
+        Get
+            Return Me.GetCurrentLocation
+        End Get
+    End Property
+
+    Public ReadOnly Property TokenData() As Object Implements ITokenReader.TokenData
+        Get
+            Return m_CurrentData
+        End Get
+    End Property
+
+    Public ReadOnly Property TokenType() As TokenType Implements ITokenReader.TokenType
+        Get
+            Return m_CurrentTokenType
+        End Get
+    End Property
 End Class
 

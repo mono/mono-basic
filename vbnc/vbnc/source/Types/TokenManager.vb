@@ -49,13 +49,19 @@ Public Class tm
         End Get
     End Property
 
+    ReadOnly Property Reader() As ITokenReader
+        Get
+            Return m_Reader
+        End Get
+    End Property
+
     Function CurrentToken() As Token
         Return Current
     End Function
 
     ReadOnly Property CurrentLocation() As Span
         Get
-            Return Current.Location
+            Return m_Reader.CurrentLocation
         End Get
     End Property
 
@@ -259,7 +265,18 @@ Public Class tm
     <Diagnostics.DebuggerHidden()> Function AcceptIfNotError(ByVal Special As KS, Optional ByVal GotoNewline As Boolean = False) As Boolean
         Return AcceptIfNotError(Special, Messages.VBNC90019, GotoNewline, Enums.strSpecial(Special))
     End Function
-  
+
+    ''' <summary>
+    ''' Eats the current tokens if if coincides, if not shows a 
+    ''' message "Expected: " and the keyword.
+    ''' If GotoNewline = true then calls GotoNewline(True) - next token is the first one after the newline.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Diagnostics.DebuggerHidden()> Function AcceptIfNotError(ByVal Special1 As KS, ByVal Special2 As KS, Optional ByVal GotoNewline As Boolean = False) As Boolean
+        Return AcceptIfNotError(Special1, Messages.VBNC90019, GotoNewline, Enums.strSpecial(Special1)) AndAlso AcceptIfNotError(Special2, Messages.VBNC90019, GotoNewline, Enums.strSpecial(Special2))
+    End Function
+
     ''' <summary>
     ''' If the current token is not the specified keyword / symbol, then a
     ''' InternalException is thrown. (In which case it doesn't return,
@@ -500,6 +517,24 @@ Public Class tm
             If GotoNewline Then Me.GotoNewline(True)
             Accept = False
         End If
+    End Function
+
+    ''' <summary>
+    ''' If GotoNewline = true then calls GotoNewline(True) - next token is the first one after the newline.
+    ''' </summary>
+    ''' <param name="GotoNewline"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function Accept(ByVal Special1 As KS, ByVal Special2 As KS, Optional ByVal GotoNewline As Boolean = False) As Boolean
+        If CurrentToken.Equals(Special1) AndAlso PeekToken.Equals(Special2) Then
+            NextToken()
+            NextToken()
+        Else
+            If GotoNewline Then Me.GotoNewline(True)
+            Return False
+        End If
+
+        Return True
     End Function
 
     ''' <summary>

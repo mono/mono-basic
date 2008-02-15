@@ -152,6 +152,7 @@ Public Class CodeFile
         m_OptionStrict = OptionStrict
         m_OptionExplicit = OptionExplicit
         m_Imports = [Imports]
+        Helper.AssertNotNothing(m_Imports)
     End Sub
 
     ''' <summary>

@@ -1,3 +1,18 @@
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Interfaces/ITokenReader.vb, Enums/KS.vb, Enums/KSEnumStringAttribute.vb,
+	  Enums/TypeCharacters.vb, Enums/TokenType.vb, Enums/Enums.vb,
+	  Members/ExternalSubDeclaration.vb, Members/CustomEventDeclaration.vb,
+	  Members/OperatorDeclaration.vb, Parser/Parser(Members2).vb,
+	  Parser/Parser.vb, Parser/Parser(Expressions).vb,
+	  Parser/Parser(Events).vb, Parser/Parser(Types).vb,
+	  Parser/Parser(Statements).vb, Parser/Parser(Members).vb,
+	  ConditionalCompilation/ConditionalCompilation.vb,
+	  ConditionalCompilation/ConditionalExpression.vb, Tokens/Token.vb,
+	  Names/Identifier.vb, Types/TokenManager.vb, General/CodeFile.vb,
+	  General/Scanner.vb, General/AssemblyInfo.vb: Simply Token to contain
+	  less data, access the data directy on the scanner when required.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/SimpleNameExpression.vb, Interfaces/ITokenReader.vb,

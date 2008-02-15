@@ -53,22 +53,22 @@ Public Class ConditionalExpression
             Result = Nothing
             Reader.Next()
         ElseIf Reader.Peek.IsLiteral Then
-            Dim tp As TypeCode = Type.GetTypeCode(Reader.Peek.LiteralValue.GetType)
+            Reader.Next()
+            Dim tp As TypeCode = Type.GetTypeCode(Reader.Current.LiteralValue.GetType)
             Select Case tp
                 Case TypeCode.String
-                    Result = Reader.Peek.StringLiteral
+                    Result = Reader.Current.StringLiteral
                 Case TypeCode.Object
                     Throw New InternalException("Shouldn't happen, Nothing is a keyword.")
                 Case TypeCode.Boolean
                     Throw New InternalException("Shouldn't happen, True and False are keywords.")
                 Case TypeCode.DateTime
-                    Result = Reader.Peek.DateLiteral
+                    Result = Reader.Current.DateLiteral
                 Case Else
-                    Helper.Assert(Compiler.TypeResolution.IsNumericType(Reader.Peek.LiteralValue.GetType))
-                    Result = CDbl(Reader.Peek.LiteralValue) 'AsFloatingPointLiteral.Literal
+                    Helper.Assert(Compiler.TypeResolution.IsNumericType(Reader.Current.LiteralValue.GetType))
+                    Result = CDbl(Reader.Current.LiteralValue) 'AsFloatingPointLiteral.Literal
             End Select
             'Result = CurrentToken.Value.Literal
-            Reader.Next()
         ElseIf Reader.Peek.IsKeyword Then
             Dim tpType As Type = Compiler.TypeResolution.KeywordToType(Reader.Peek.Keyword)
             If tpType Is Nothing Then

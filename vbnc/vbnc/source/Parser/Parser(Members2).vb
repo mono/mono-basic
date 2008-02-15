@@ -134,7 +134,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Operator) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Operator) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, m_Operator, m_Operand, m_ReturnTypeAttributes, m_TypeName, m_Block)
@@ -217,7 +217,8 @@ Partial Class Parser
         Dim result As New OperatorDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers
-        Dim m_Operator As Token
+        Dim m_OperatorSymbol As KS
+        Dim m_OperatorIdentifier As String = Nothing
         Dim m_Operand1 As Operand
         Dim m_Operand2 As Operand
         Dim m_TypeName As TypeName
@@ -229,7 +230,12 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Operator)
 
         If vbnc.OperatorDeclaration.IsOverloadableOperator(tm.CurrentToken) Then
-            m_Operator = tm.CurrentToken : tm.NextToken()
+            If tm.CurrentToken.IsIdentifier Then
+                m_OperatorIdentifier = DirectCast(tm.Reader.TokenData, String)
+            Else
+                m_OperatorSymbol = tm.CurrentToken.Symbol
+            End If
+            tm.NextToken()
         Else
             Throw New InternalException(result)
         End If
@@ -263,10 +269,10 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Operator) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Operator) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
-        result.Init(Info.Attributes, m_Modifiers, m_Operator, m_Operand1, m_Operand2, m_ReturnTypeAttributes, m_TypeName, m_Block)
+        result.Init(Info.Attributes, m_Modifiers, m_OperatorIdentifier, m_OperatorSymbol, m_Operand1, m_Operand2, m_ReturnTypeAttributes, m_TypeName, m_Block)
 
         Return result
     End Function
@@ -310,7 +316,7 @@ Partial Class Parser
             m_Block = ParseCodeBlock(result, False)
             If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-            If tm.AcceptIfNotError(KS.End_Function) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.End, KS.Function) = False Then Helper.ErrorRecoveryNotImplemented()
             If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
         End If
 
@@ -356,7 +362,7 @@ Partial Class Parser
             m_Block = ParseCodeBlock(result, False)
             If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-            If tm.AcceptIfNotError(KS.End_Sub) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented()
             If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
         End If
 
@@ -511,7 +517,7 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers = Nothing
         Dim m_CharsetModifier As KS
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
         Dim m_ParameterList As ParameterList = Nothing
@@ -527,11 +533,10 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Sub)
 
-        If tm.CurrentToken.IsIdentifier = False Then
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then
             Helper.ErrorRecoveryNotImplemented()
         End If
-        m_Identifier = tm.CurrentToken
-        tm.NextToken()
 
         m_LibraryClause = ParseLibraryClause(result)
         If m_LibraryClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()

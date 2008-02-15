@@ -45,12 +45,6 @@ Public Class Identifier
         m_TypeCharacter = TypeCharacter
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal TypeCharacter As TypeCharacters.Characters)
-        Me.Location = Identifier.Location
-        m_Name = Identifier.Identifier
-        m_TypeCharacter = TypeCharacter
-    End Sub
-
     ReadOnly Property Identifier() As String
         Get
             Return m_Name

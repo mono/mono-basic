@@ -18,10 +18,9 @@
 ' 
 
 Public Structure Token
-    Private m_Location As Span 'Long
-    Private m_TokenType As TokenType 'Byte
-    Private m_TokenData1 As Byte
-    Private m_TokenObject As Object
+    Public m_TokenType As TokenType 'Byte
+    'Private m_TokenData1 As Byte
+    Public m_TokenObject As Object
 
     Shared Function IsSomething(ByVal Token As Token) As Boolean
         'Return Token IsNot Nothing AndAlso Token.IsSomething
@@ -31,12 +30,6 @@ Public Structure Token
     Function IsSomething() As Boolean
         Return m_TokenType <> TokenType.None
     End Function
-
-    ReadOnly Property Name() As String
-        Get
-            Return Identifier
-        End Get
-    End Property
 
     Public Overrides Function ToString() As String
         If Me.IsIdentifier Then
@@ -74,7 +67,7 @@ Public Structure Token
     Shared Function CreateKeywordToken(ByVal Location As Span, ByVal Keyword As KS) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Keyword
-        result.m_TokenData1 = Keyword
+        result.m_TokenObject = Keyword
         Return result
     End Function
 
@@ -92,80 +85,80 @@ Public Structure Token
         Return result
     End Function
 
-    Shared Function CreateDecimalToken(ByVal Location As Span, ByVal Value As Decimal, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateDecimalToken(ByVal Location As Span, ByVal Value As Decimal) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.DecimalLiteral
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        '        result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
-    Shared Function CreateSingleToken(ByVal Location As Span, ByVal Value As Single, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateSingleToken(ByVal Location As Span, ByVal Value As Single) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.SingleLiteral
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
-    Shared Function CreateDoubleToken(ByVal Location As Span, ByVal Value As Double, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateDoubleToken(ByVal Location As Span, ByVal Value As Double) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.DoubleLiteral
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        ' result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
-    Shared Function CreateInt16Token(ByVal Location As Span, ByVal Value As Short, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateInt16Token(ByVal Location As Span, ByVal Value As Short) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int16Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
 
-    Shared Function CreateInt32Token(ByVal Location As Span, ByVal Value As Integer, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateInt32Token(ByVal Location As Span, ByVal Value As Integer) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int32Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
 
-    Shared Function CreateInt64Token(ByVal Location As Span, ByVal Value As Long, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateInt64Token(ByVal Location As Span, ByVal Value As Long) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int64Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
 
-    Shared Function CreateUInt16Token(ByVal Location As Span, ByVal Value As UShort, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateUInt16Token(ByVal Location As Span, ByVal Value As UShort) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt16Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
 
-    Shared Function CreateUInt32Token(ByVal Location As Span, ByVal Value As UInteger, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateUInt32Token(ByVal Location As Span, ByVal Value As UInteger) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt32Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
 
-    Shared Function CreateUInt64Token(ByVal Location As Span, ByVal Value As ULong, ByVal base As IntegerBase, ByVal TypeCharacter As LiteralTypeCharacters_Characters) As Token
+    Shared Function CreateUInt64Token(ByVal Location As Span, ByVal Value As ULong) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt64Literal
         result.m_TokenObject = Value
-        result.m_TokenData1 = TypeCharacter
+        'result.m_TokenData1 = TypeCharacter
         'result.m_TokenData2 = base
         Return result
     End Function
@@ -180,18 +173,11 @@ Public Structure Token
     Shared Function CreateSymbolToken(ByVal Location As Span, ByVal Symbol As KS) As Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Symbol
-        result.m_TokenData1 = Symbol
+        result.m_TokenObject = Symbol
         Return result
     End Function
 
-    ReadOnly Property Location() As Span
-        Get
-            Return m_Location
-        End Get
-    End Property
-
     Sub New(ByVal Span As Span)
-        m_Location = Span
     End Sub
 
     Function IdentiferOrKeywordIdentifier() As String
@@ -248,7 +234,7 @@ Public Structure Token
             ElseIf IsSymbol() Then
                 Return Symbol
             Else
-                Throw New InternalException()
+                Return KS.None
             End If
         End Get
     End Property
@@ -263,13 +249,13 @@ Public Structure Token
 
     ReadOnly Property Symbol() As KS
         Get
-            Return CType(m_TokenData1, KS)
+            Return CType(m_TokenObject, KS)
         End Get
     End Property
 
     ReadOnly Property Keyword() As KS
         Get
-            Return CType(m_TokenData1, KS)
+            Return CType(m_TokenObject, KS)
         End Get
     End Property
 
@@ -306,12 +292,6 @@ Public Structure Token
         Return m_TokenType = TokenType.DateLiteral
     End Function
 
-    ReadOnly Property DateLiteral() As Date
-        Get
-            Return DirectCast(m_TokenObject, Date)
-        End Get
-    End Property
-
     Function IsIntegerLiteral() As Boolean
         Select Case m_TokenType
             Case TokenType.Int16Literal, TokenType.Int32Literal, TokenType.Int64Literal, TokenType.UInt16Literal, TokenType.UInt32Literal, TokenType.UInt64Literal
@@ -338,6 +318,12 @@ Public Structure Token
     ReadOnly Property StringLiteral() As String
         Get
             Return DirectCast(m_TokenObject, String)
+        End Get
+    End Property
+
+    ReadOnly Property DateLiteral() As Date
+        Get
+            Return DirectCast(m_TokenObject, Date)
         End Get
     End Property
 
@@ -411,7 +397,7 @@ Public Structure Token
 
     Public Overloads Function Equals(ByVal Special As KS) As Boolean
         If m_TokenType = TokenType.Keyword OrElse m_TokenType = TokenType.Symbol Then
-            Return CInt(m_TokenData1) = CInt(Special)
+            Return CInt(m_TokenObject) = CInt(Special)
         Else
             Return False
         End If

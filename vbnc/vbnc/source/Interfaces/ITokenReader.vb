@@ -19,7 +19,11 @@
 
 Public Interface ITokenReader
     Function [Next]() As Token
-    Function Current() As Token
+    ReadOnly Property Current() As Token
     Function Peek() As Token
-    Function CurrentTypeCharacter() As TypeCharacters.Characters
+    ReadOnly Property CurrentTypeCharacter() As TypeCharacters.Characters
+    ReadOnly Property CurrentLocation() As Span
+    ReadOnly Property TokenType() As TokenType
+    ReadOnly Property TokenData() As Object
+    'ReadOnly Property TokenAsDateLiteral() As Date
 End Interface

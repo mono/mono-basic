@@ -93,7 +93,8 @@ Partial Class Parser
 
         m_Modifiers = ParseModifiers(result, ModifierMasks.EventModifiers)
 
-        tm.AcceptIfNotInternalError(KS.CustomEvent)
+        tm.AcceptIfNotInternalError("Custom")
+        tm.AcceptIfNotInternalError(KS.Event)
 
         m_Identifier = ParseIdentifier(result)
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -112,7 +113,7 @@ Partial Class Parser
         m_EventAccessorDeclarations = ParseEventAccessorDeclarations(result, m_Identifier, m_Modifiers)
         If m_EventAccessorDeclarations Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Event) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Event) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, m_Identifier, m_TypeName, m_ImplementsClause)
@@ -253,10 +254,8 @@ Partial Class Parser
         Dim m_HandlerType As KS
         Dim m_Modifiers As Modifiers
 
-        Dim endkeyword As KS
         If tm.CurrentToken.Equals(KS.AddHandler, KS.RemoveHandler, KS.RaiseEvent) Then
             m_HandlerType = tm.CurrentToken.Keyword
-            endkeyword = Enums.GetKSStringAttribute(m_HandlerType).MultiKeyword
             tm.NextToken()
         Else
             Throw New InternalException(result)
@@ -275,7 +274,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(endkeyword) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, m_HandlerType) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         If m_ParameterList Is Nothing Then m_ParameterList = New ParameterList(result)

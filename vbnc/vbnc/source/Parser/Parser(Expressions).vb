@@ -974,9 +974,13 @@ Partial Class Parser
                         result.AddStatement(newStop)
                     Case KS.End
                         Dim newEnd As EndStatement
-                        newEnd = ParseEndStatement(result)
-                        If newEnd Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-                        result.AddStatement(newEnd)
+                        If tm.PeekToken.IsEndOfStatement() Then
+                            newEnd = ParseEndStatement(result)
+                            If newEnd Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            result.AddStatement(newEnd)
+                        Else
+                            breakloop = True
+                        End If
                     Case KS.While
                         Dim newWhile As WhileStatement
                         newWhile = ParseWhileStatement(result, IsOneLiner)
@@ -1319,7 +1323,7 @@ Partial Class Parser
             ElseIf op = KS.RealDivision Then
                 lSide = New RealDivisionExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 
@@ -1367,7 +1371,7 @@ Partial Class Parser
             ElseIf op = KS.Minus Then
                 lSide = New BinarySubExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 
@@ -1403,7 +1407,7 @@ Partial Class Parser
             ElseIf op = KS.ShiftLeft Then
                 lSide = New LShiftExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 
@@ -1423,7 +1427,7 @@ Partial Class Parser
             ElseIf tm.CurrentToken.IsKeyword Then
                 op = tm.CurrentToken.Keyword
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
 
             tm.NextToken()
@@ -1447,7 +1451,7 @@ Partial Class Parser
             ElseIf op = KS.Like Then
                 lSide = New LikeExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 
@@ -1481,7 +1485,7 @@ Partial Class Parser
             ElseIf op = KS.AndAlso Then
                 lSide = New AndAlsoExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 
@@ -1505,7 +1509,7 @@ Partial Class Parser
             ElseIf op = KS.Xor Then
                 lSide = New XOrExpression(Info.Parent, lSide, rSide)
             Else
-                Throw New InternalException(tm.CurrentToken.Location)
+                Throw New InternalException(tm.CurrentLocation)
             End If
         End While
 

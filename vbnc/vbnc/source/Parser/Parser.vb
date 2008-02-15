@@ -153,7 +153,6 @@ Partial Public Class Parser
         If tm.Accept(KS.On) Then
             m_Off = False
         ElseIf tm.Accept("Off") Then
-            Compiler.Report.ShowMessage(Messages.VBNC99998, tm.PeekToken(-1).Location, "Option Strict Off will probably fail.")
             m_Off = True
         End If
 
@@ -393,8 +392,8 @@ Partial Public Class Parser
 
     Private Function ParseAssemblyDeclaration(ByVal RootNamespace As String, ByVal assembly As AssemblyDeclaration) As Boolean
         Dim result As Boolean = True
-        'Dim assembly As New AssemblyDeclaration(m_Compiler)
-        Dim iLastToken As Token
+
+        Dim iLastLocation As Span
 
         Dim AssemblyAttributes As New Attributes(assembly)
         Dim AssemblyTypes As New MemberDeclarations(assembly)
@@ -408,14 +407,15 @@ Partial Public Class Parser
             iTotalFiles = Me.Compiler.CommandLine.Files.Count
             Me.Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Parsing file " & tm.CurrentToken.Location.File.FileName & " (" & iFileCount & " of " & iTotalFiles & " files)")
 #End If
-            iLastToken = tm.CurrentToken
+            iLastLocation = tm.CurrentLocation
+
             While tm.AcceptNewLine
 
             End While
             '[  OptionStatement+  ]
             '[  ImportsStatement+  ]
 
-            If Me.ParseFileHeader(tm.CurrentToken.Location.File(Compiler), assembly) = False Then
+            If Me.ParseFileHeader(tm.CurrentLocation.File(Compiler), assembly) = False Then
                 Helper.ErrorRecoveryNotImplemented()
             End If
             ''	[  AttributesStatement+  ]
@@ -432,8 +432,8 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If Token.IsSomething(iLastToken) = Token.IsSomething(tm.CurrentToken) AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentToken.Location) AndAlso result
+            If iLastLocation.Equals(tm.CurrentLocation) Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
             End If
         Loop
@@ -605,7 +605,7 @@ Partial Public Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseList(Of T)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
-        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentToken.Location.ToString(Compiler))
+        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentLocation.ToString(Compiler))
         Do
             Dim newObject As T
             newObject = ParseMethod(Parent)
@@ -752,7 +752,7 @@ Partial Public Class Parser
             Return Nothing
         End If
         If ArrayNameModifier.CanBeMe(tm) = False Then
-            If ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC90007, tm.CurrentToken.Location, tm.CurrentToken.ToString)
+            If ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC90007, tm.CurrentLocation, tm.CurrentToken.ToString)
             Return Nothing
         End If
 
@@ -1232,7 +1232,7 @@ Partial Public Class Parser
         Dim result As Identifier
 
         If tm.CurrentToken.IsIdentifier Then
-            result = New Identifier(Parent, tm.CurrentToken.Identifier, tm.CurrentToken.Location, tm.CurrentTypeCharacter)
+            result = New Identifier(Parent, tm.CurrentToken.Identifier, tm.CurrentLocation, tm.CurrentTypeCharacter)
             tm.NextToken()
         Else
             result = Nothing
@@ -1492,7 +1492,7 @@ Partial Public Class Parser
                     currentNameSpace &= currentNamespaces(currentNamespaces.Count - 1).Name
                 End If
                 If tm.AcceptNewLine(True, True, True) = False Then Helper.ErrorRecoveryNotImplemented()
-            ElseIf tm.Accept(KS.End_Namespace) Then
+            ElseIf tm.Accept(KS.End, KS.Namespace) Then
                 If tm.AcceptNewLine(True, False, True) = False Then Helper.ErrorRecoveryNotImplemented()
                 If currentNamespaces.Count >= 1 Then
                     currentNamespaces.RemoveAt(currentNamespaces.Count - 1)

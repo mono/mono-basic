@@ -22,27 +22,19 @@ Public Class KSEnumStringAttribute
     Protected m_FriendlyValue As String
     Protected m_IsKeyword As Boolean
     Protected m_IsSymbol As Boolean
-    Protected m_MultiKeyword As KS
-    ReadOnly Property MultiKeyword() As KS
-        Get
-            Return m_MultiKeyword
-        End Get
-    End Property
-    ReadOnly Property IsMultiKeyword() As Boolean
-        Get
-            Return m_MultiKeyword <> KS.None
-        End Get
-    End Property
+
     ReadOnly Property IsKeyword() As Boolean
         Get
             Return m_IsKeyword
         End Get
     End Property
+
     ReadOnly Property IsSymbol() As Boolean
         Get
             Return m_IsSymbol
         End Get
     End Property
+
     Public ReadOnly Property FriendlyValue() As String
         Get
             If m_FriendlyValue Is Nothing Then
@@ -52,6 +44,7 @@ Public Class KSEnumStringAttribute
             End If
         End Get
     End Property
+
     ''' <summary>
     ''' Constructor.
     ''' </summary>
@@ -60,16 +53,15 @@ Public Class KSEnumStringAttribute
     ''' <param name="IsKeyword">Is this a real keyword?</param>
     ''' <param name="IsSymbol">Is this a real symbol?</param>
     ''' <remarks></remarks>
-    Public Sub New(ByVal Value As String, ByVal FriendlyValue As String, ByVal IsKeyword As Boolean, ByVal IsSymbol As Boolean, Optional ByVal MultiKeyword As KS = KS.None)
+    Public Sub New(ByVal Value As String, ByVal FriendlyValue As String, ByVal IsKeyword As Boolean, ByVal IsSymbol As Boolean)
         MyBase.New(Value, Nothing)
         m_FriendlyValue = FriendlyValue
         m_IsKeyword = IsKeyword
         m_IsSymbol = IsSymbol
-        m_MultiKeyword = MultiKeyword
     End Sub
 
     Public Sub New(ByVal Value As String, Optional ByVal FriendlyValue As String = Nothing, Optional ByVal Tag As String = Nothing)
-        Me.New(Value, FriendlyValue, False, False, KS.None)
+        Me.New(Value, FriendlyValue, False, False)
         m_Tag = Tag
     End Sub
 End Class
