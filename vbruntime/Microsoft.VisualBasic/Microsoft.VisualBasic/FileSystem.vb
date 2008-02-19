@@ -168,20 +168,33 @@ Namespace Microsoft.VisualBasic
             Return result
         End Function
 
-        Public Function EOF(ByVal FileNumber As Integer) As Boolean
-            Throw New NotImplementedException
+        Private Function FindFileData(ByVal FileNumber As Integer) As FileData
+            If m_OpenFiles Is Nothing OrElse m_OpenFiles.ContainsKey(FileNumber) = False Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
+            End If
+
+            Return DirectCast(m_OpenFiles(FileNumber), FileData)
         End Function
+
+        Public Function EOF(ByVal FileNumber As Integer) As Boolean
+            Return FindFileData(FileNumber).EOF
+        End Function
+
         Public Function FileAttr(ByVal FileNumber As Integer) As Microsoft.VisualBasic.OpenMode
-            Throw New NotImplementedException
+            Return FindFileData(FileNumber).Mode
         End Function
 
         Public Sub FileClose(ByVal ParamArray FileNumbers() As Integer)
+            If m_OpenFiles Is Nothing OrElse m_OpenFiles.Count = 0 Then Return
+
             If FileNumbers Is Nothing OrElse FileNumbers.Length = 0 Then
                 For Each fd As FileData In m_OpenFiles.Values
                     fd.Close()
                 Next
                 m_OpenFiles = Nothing
+                Return
             End If
+
             For i As Integer = 0 To FileNumbers.Length - 1
                 Dim number As Integer = FileNumbers(i)
                 Dim fd As FileData
@@ -219,47 +232,48 @@ Namespace Microsoft.VisualBasic
                 Throw New System.IO.FileNotFoundException("File " + "'" + PathName + "'" + " not found.")
             End If
         End Function
+
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Boolean, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Byte, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Char, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Date, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Decimal, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Double, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Integer, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Long, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Short, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Single, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
         Public Sub FileGetObject(ByVal FileNumber As Integer, ByRef Value As Object, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileGetObject(Value, RecordNumber)
         End Sub
         Public Function FileLen(ByVal PathName As String) As Long
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.IO.FileNotFoundException("File " + "'" + PathName + "'" + " not found.")
@@ -294,109 +308,67 @@ Namespace Microsoft.VisualBasic
                 Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
             End If
 
-            If Access = OpenAccess.Write AndAlso Mode = OpenMode.Input Then
-                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            If (Access = OpenAccess.Write OrElse Access = OpenAccess.ReadWrite) AndAlso Mode = OpenMode.Input Then
+                Throw New ArgumentException("Argument 'Access' is not valid. Valid values for Input mode are 'OpenAccess.Read' and 'OpenAccess.Default'.")
             End If
 
-            If Access = OpenAccess.Read AndAlso (Mode = OpenMode.Output OrElse Mode = OpenMode.Append) Then
-                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            If (Access = OpenAccess.Read OrElse Access = OpenAccess.ReadWrite) AndAlso Mode = OpenMode.Output Then
+                Throw New ArgumentException("Argument 'Access' is not valid. Valid values for Output mode are 'OpenAccess.Write' and 'OpenAccess.Default'.")
+            End If
+
+            If Access = OpenAccess.Read AndAlso Mode = OpenMode.Append Then
+                Throw New ArgumentException("Argument 'Access' is not valid. Valid values for Append mode are 'OpenAccess.Write' and 'OpenAccess.Default'.")
             End If
 
             If RecordLength < -1 Then
                 Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
             End If
 
-            Dim data As New FileData(FileNumber, FileName, Mode, Access, OpenShare.Shared, RecordLength)
+            Dim data As New FileData(FileNumber, FileName, Mode, Access, Share, RecordLength)
 
             m_OpenFiles.Add(FileNumber, data)
 
-            If Access = OpenAccess.Default Then Access = OpenAccess.ReadWrite
-            If Share = OpenShare.Default Then Share = OpenShare.LockReadWrite
-
-            Dim ioAccess As System.IO.FileAccess
-            Dim ioShare As System.IO.FileShare
-            Dim ioMode As System.IO.FileMode
-
-            Select Case Access
-                Case OpenAccess.Read
-                    ioAccess = FileAccess.Read
-                Case OpenAccess.ReadWrite
-                    ioAccess = FileAccess.ReadWrite
-                Case OpenAccess.Write
-                    ioAccess = FileAccess.Write
-                Case Else
-                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
-            End Select
-
-            Select Case Mode
-                Case OpenMode.Append
-                    ioMode = FileMode.Append
-                Case OpenMode.Binary
-                    ioMode = FileMode.OpenOrCreate
-                Case OpenMode.Input
-                    ioMode = FileMode.Open
-                Case OpenMode.Output
-                    ioMode = FileMode.OpenOrCreate
-                Case OpenMode.Random
-                    ioMode = FileMode.OpenOrCreate
-                Case Else
-                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
-            End Select
-
-            Select Case Share
-                Case OpenShare.LockRead
-                    ioShare = FileShare.Write
-                Case OpenShare.LockReadWrite
-                    ioShare = FileShare.None
-                Case OpenShare.LockWrite
-                    ioShare = FileShare.Read
-                Case OpenShare.Shared
-                    ioShare = FileShare.ReadWrite
-                Case Else
-                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
-            End Select
-
-            data.Stream = New IO.FileStream(FileName, ioMode, ioAccess, ioShare)
+            'data.CreateStream()
         End Sub
 
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Boolean, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Byte, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Char, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Date, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Decimal, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Double, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Integer, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Long, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Short, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Single, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber, StringIsFixedLength)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber, ArrayIsDynamic, StringIsFixedLength)
         End Sub
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
 #If NET_VER >= 2.0 Then
         <Obsolete("This member has been deprectated. Try FilePutObject.")> _
@@ -404,13 +376,13 @@ Namespace Microsoft.VisualBasic
 #Else
         Public Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
 #End If
-            Throw New NotImplementedException
+            Throw New ArgumentException("Use 'FilePutObject' instead of 'FilePut' when using argument of type 'Object'.")
         End Sub
         Public Sub FilePutObject(ByVal FileNumber As Integer, ByVal Value As Object, Optional ByVal RecordNumber As Long = -1)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FilePutObject(Value, RecordNumber)
         End Sub
         Public Sub FileWidth(ByVal FileNumber As Integer, ByVal RecordWidth As Integer)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).FileWidth(RecordWidth)
         End Sub
 
         Public Function FreeFile() As Integer
@@ -452,43 +424,43 @@ Namespace Microsoft.VisualBasic
             Return CType(attr, Microsoft.VisualBasic.FileAttribute)
         End Function
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Boolean)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Byte)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Char)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Date)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Decimal)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Double)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Integer)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Object)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Short)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Single)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Sub Input(ByVal FileNumber As Integer, ByRef Value As String)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Input(Value)
         End Sub
         Public Function InputString(ByVal FileNumber As Integer, ByVal CharCount As Integer) As String
-            Throw New NotImplementedException
+            Return FindFileData(FileNumber).InputString(CharCount)
         End Function
         Public Sub Kill(ByVal PathName As String)
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
@@ -518,22 +490,22 @@ Namespace Microsoft.VisualBasic
 
         End Sub
         Public Function LineInput(ByVal FileNumber As Integer) As String
-            Throw New NotImplementedException
+            Return FindFileData(FileNumber).LineInput
         End Function
         Public Function Loc(ByVal FileNumber As Integer) As Long
-            Throw New NotImplementedException
+            Return FindFileData(FileNumber).Loc()
         End Function
         Public Sub Lock(ByVal FileNumber As Integer)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Lock()
         End Sub
         Public Sub Lock(ByVal FileNumber As Integer, ByVal Record As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Lock(Record)
         End Sub
         Public Sub Lock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Lock(FromRecord, ToRecord)
         End Sub
         Public Function LOF(ByVal FileNumber As Integer) As Long
-            Throw New NotImplementedException
+            FindFileData(FileNumber).LOF()
         End Function
         Public Sub MkDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
@@ -546,10 +518,10 @@ Namespace Microsoft.VisualBasic
 
         End Sub
         Public Sub Print(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Print(Output)
         End Sub
         Public Sub PrintLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).PrintLine(Output)
         End Sub
         Public Sub Rename(ByVal OldPath As String, ByVal NewPath As String)
             If ((OldPath = "") Or (OldPath Is Nothing) Or (NewPath = "") Or (NewPath Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
@@ -593,7 +565,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Sub
         Public Sub Reset()
-            Throw New NotImplementedException
+            FileClose()
         End Sub
         Public Sub RmDir(ByVal Path As String)
             Dim fi As FileInfo()
@@ -609,10 +581,10 @@ Namespace Microsoft.VisualBasic
 
         End Sub
         Public Function Seek(ByVal FileNumber As Integer) As Long
-            Throw New NotImplementedException
+            Return FindFileData(FileNumber).Seek
         End Function
         Public Sub Seek(ByVal FileNumber As Integer, ByVal Position As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Seek(Position)
         End Sub
         Public Sub SetAttr(ByVal PathName As String, ByVal Attributes As Microsoft.VisualBasic.FileAttribute)
 
@@ -641,52 +613,36 @@ Namespace Microsoft.VisualBasic
 
         End Sub
         Public Function SPC(ByVal Count As Short) As Microsoft.VisualBasic.SpcInfo
-            Throw New NotImplementedException
+            Dim info As Microsoft.VisualBasic.SpcInfo
+            info.Count = Count
+            Return info
         End Function
         Public Function TAB() As Microsoft.VisualBasic.TabInfo
-            Throw New NotImplementedException
+            Dim info As TabInfo
+            info.Column = -1 'TODO: Add test
+            Return info
         End Function
         Public Function TAB(ByVal Column As Short) As Microsoft.VisualBasic.TabInfo
-            Throw New NotImplementedException
+            Dim info As TabInfo
+            info.Column = Column
+            Return info
         End Function
         Public Sub Unlock(ByVal FileNumber As Integer)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Unlock()
         End Sub
         Public Sub Unlock(ByVal FileNumber As Integer, ByVal Record As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Unlock(Record)
         End Sub
         Public Sub Unlock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Unlock(FromRecord, ToRecord)
         End Sub
         Public Sub Write(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).Write(Output)
         End Sub
         Public Sub WriteLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
-            Throw New NotImplementedException
+            FindFileData(FileNumber).WriteLine(Output)
         End Sub
 
-        Private Class FileData
-            Public FileNumber As Integer
-            Public FileName As String
-            Public Mode As Microsoft.VisualBasic.OpenMode
-            Public Access As Microsoft.VisualBasic.OpenAccess
-            Public Share As Microsoft.VisualBasic.OpenShare
-            Public RecordLength As Integer = -1
-            Public Stream As Stream
-
-            Public Sub New(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, ByVal Access As Microsoft.VisualBasic.OpenAccess, ByVal Share As Microsoft.VisualBasic.OpenShare, ByVal RecordLength As Integer)
-                Me.FileNumber = FileNumber
-                Me.FileName = FileName
-                Me.Mode = Mode
-                Me.Access = Access
-                Me.Share = Share
-                Me.RecordLength = RecordLength
-            End Sub
-
-            Public Sub Close()
-                Stream.Close()
-                Stream = Nothing
-            End Sub
-        End Class
+  
     End Module
 End Namespace
