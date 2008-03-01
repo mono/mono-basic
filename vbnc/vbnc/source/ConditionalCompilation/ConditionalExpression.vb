@@ -22,68 +22,71 @@ Option Compare Text
 Public Class ConditionalExpression
     Inherits BaseObject
 
-    Private m_Compiler As ConditionalCompiler
-
-    <Obsolete()> Friend Overrides ReadOnly Property tm() As tm
-        Get
-            Return MyBase.tm 'Throw New InternalException("Don't use this")
-        End Get
-    End Property
+    Private m_Scanner As Scanner
 
     ReadOnly Property CurrentConstants() As ConditionalConstants
         Get
-            Return m_Compiler.CurrentConstants
+            Return m_Scanner.CurrentConstants
         End Get
     End Property
 
-    Public Sub New(ByVal Compiler As ConditionalCompiler)
-        MyBase.New(Compiler)
-        m_Compiler = Compiler
+    Public Sub New(ByVal Scanner As Scanner)
+        MyBase.New(Scanner)
+        m_Scanner = Scanner
     End Sub
 
-    ReadOnly Property Reader() As ITokenReader
+    'ReadOnly Property Reader() As Scanner
+    '    Get
+    '        Return m_Compiler
+    '    End Get
+    'End Property
+
+    Sub NextToken()
+        m_Scanner.NextUnconditionally()
+    End Sub
+
+    ReadOnly Property CurrentToken() As Token
         Get
-            Return m_Compiler.Reader
+            Return m_Scanner.Current
         End Get
     End Property
 
     Function RuleIdentifier(ByRef Result As Object) As Boolean
         'A value of 0 evaluates as false, anything else as true
-        If Reader.Peek.Equals(KS.Nothing) Then
+        If CurrentToken.Equals(KS.Nothing) Then
             Result = Nothing
-            Reader.Next()
-        ElseIf Reader.Peek.IsLiteral Then
-            Reader.Next()
-            Dim tp As TypeCode = Type.GetTypeCode(Reader.Current.LiteralValue.GetType)
+            NextToken()
+        ElseIf CurrentToken.IsLiteral Then
+            Dim tp As TypeCode = Type.GetTypeCode(CurrentToken.LiteralValue.GetType)
             Select Case tp
                 Case TypeCode.String
-                    Result = Reader.Current.StringLiteral
+                    Result = CurrentToken.StringLiteral
                 Case TypeCode.Object
                     Throw New InternalException("Shouldn't happen, Nothing is a keyword.")
                 Case TypeCode.Boolean
                     Throw New InternalException("Shouldn't happen, True and False are keywords.")
                 Case TypeCode.DateTime
-                    Result = Reader.Current.DateLiteral
+                    Result = CurrentToken.DateLiteral
                 Case Else
-                    Helper.Assert(Compiler.TypeResolution.IsNumericType(Reader.Current.LiteralValue.GetType))
-                    Result = CDbl(Reader.Current.LiteralValue) 'AsFloatingPointLiteral.Literal
+                    Helper.Assert(Compiler.TypeResolution.IsNumericType(CurrentToken.LiteralValue.GetType))
+                    Result = CDbl(CurrentToken.LiteralValue) 'AsFloatingPointLiteral.Literal
             End Select
-            'Result = CurrentToken.Value.Literal
-        ElseIf Reader.Peek.IsKeyword Then
-            Dim tpType As Type = Compiler.TypeResolution.KeywordToType(Reader.Peek.Keyword)
+            NextToken()
+        ElseIf CurrentToken.IsKeyword Then
+            Dim tpType As Type = Compiler.TypeResolution.KeywordToType(CurrentToken.Keyword)
             If tpType Is Nothing Then
-                If Reader.Peek.Equals(KS.True) Then
+                If CurrentToken.Equals(KS.True) Then
                     Result = True
-                    Reader.Next()
+                    NextToken()
                     Return True
-                ElseIf Reader.Peek.Equals(KS.False) Then
+                ElseIf CurrentToken.Equals(KS.False) Then
                     Result = False
-                    Reader.Next()
+                    NextToken()
                     Return True
                 Else 'TODO: Conversion functions (CInt...)
                     Compiler.Report.ShowMessage(Messages.VBNC30201)
                 End If
-                Reader.Next()
+                NextToken()
                 Return False
             Else
                 'A builtin type, i.e:
@@ -91,14 +94,14 @@ Public Class ConditionalExpression
                 '#Const a = (user defined type).Constant is not allowed.
                 Throw New InternalException("") 'TODO
             End If
-        ElseIf Reader.Peek.IsIdentifier Then
+        ElseIf CurrentToken.IsIdentifier Then
             'Find the identifier in the list of defines.
-            If CurrentConstants.ContainsKey(Reader.Peek.Identifier) Then
-                Result = CurrentConstants.Item(Reader.Peek.Identifier).Value
-                Reader.Next()
+            If CurrentConstants.ContainsKey(CurrentToken.Identifier) Then
+                Result = CurrentConstants.Item(CurrentToken.Identifier).Value
+                NextToken()
             Else
                 Result = Nothing
-                Reader.Next()
+                NextToken()
             End If
         End If
 
@@ -110,8 +113,8 @@ Public Class ConditionalExpression
 
         If RuleIdentifier(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Power)
-            Reader.Next()
+        While CurrentToken.Equals(KS.Power)
+            NextToken()
             RuleIdentifier(RSide)
 
             Dim op1, op2 As Double
@@ -139,8 +142,8 @@ Public Class ConditionalExpression
     Function RuleUnaryNegation(ByRef Result As Object) As Boolean
         Dim LSide As Object = Nothing
 
-        If Reader.Peek.Equals(KS.Minus) Then
-            Reader.Next()
+        If CurrentToken.Equals(KS.Minus) Then
+            NextToken()
             RuleUnaryNegation = RuleExponent(LSide)
 
             Dim op1 As Double
@@ -164,10 +167,10 @@ Public Class ConditionalExpression
 
         If RuleUnaryNegation(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Mult, KS.RealDivision)
+        While CurrentToken.Equals(KS.Mult, KS.RealDivision)
             Dim DoMult As Boolean
-            DoMult = Reader.Peek.Equals(KS.Mult)
-            Reader.Next()
+            DoMult = CurrentToken.Equals(KS.Mult)
+            NextToken()
 
             RuleUnaryNegation(RSide)
 
@@ -205,8 +208,8 @@ Public Class ConditionalExpression
 
         If RuleMultiplicationAndRealDivision(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.IntDivision)
-            Reader.Next()
+        While CurrentToken.Equals(KS.IntDivision)
+            NextToken()
             RuleMultiplicationAndRealDivision(RSide)
 
             Dim op1, op2 As Double
@@ -239,8 +242,8 @@ Public Class ConditionalExpression
 
         If RuleIntegerDivision(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Mod)
-            Reader.Next()
+        While CurrentToken.Equals(KS.Mod)
+            NextToken()
             RuleIntegerDivision(RSide)
 
             Dim op1, op2 As Double
@@ -270,10 +273,10 @@ Public Class ConditionalExpression
 
         If RuleMod(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Minus, KS.Add)
+        While CurrentToken.Equals(KS.Minus, KS.Add)
             Dim DoAdd As Boolean
-            DoAdd = Reader.Peek.Equals(KS.Add)
-            Reader.Next()
+            DoAdd = CurrentToken.Equals(KS.Add)
+            NextToken()
             RuleMod(RSide)
 
             Dim bErr As Boolean
@@ -325,8 +328,8 @@ Public Class ConditionalExpression
 
         If RuleAdditionSubtractionStringConcat(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Concat)
-            Reader.Next()
+        While CurrentToken.Equals(KS.Concat)
+            NextToken()
             RuleAdditionSubtractionStringConcat(RSide)
 
             Dim op1, op2 As String
@@ -351,10 +354,10 @@ Public Class ConditionalExpression
 
         If RuleStringConcat(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.ShiftLeft, KS.ShiftRight)
+        While CurrentToken.Equals(KS.ShiftLeft, KS.ShiftRight)
             Dim DoLeft As Boolean
-            DoLeft = Reader.Peek.Equals(KS.ShiftLeft)
-            Reader.Next()
+            DoLeft = CurrentToken.Equals(KS.ShiftLeft)
+            NextToken()
             RuleStringConcat(RSide)
 
             Dim op1 As Double, op2 As Double
@@ -391,9 +394,9 @@ Public Class ConditionalExpression
 
         If RuleArithmeticBitshift(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Equals, KS.NotEqual, KS.GT, KS.LT, KS.GE, KS.LE)
-            Dim DoWhat As KS = Reader.Peek.Symbol
-            Reader.Next()
+        While CurrentToken.Equals(KS.Equals, KS.NotEqual, KS.GT, KS.LT, KS.GE, KS.LE)
+            Dim DoWhat As KS = CurrentToken.Symbol
+            NextToken()
             RuleArithmeticBitshift(RSide)
 
             'Compiler.Report.WriteLine(String.Format("RuleRelational: " & DoWhat.ToString() & ", Left={0}, Right={1}", LSide, RSide) & Reader.Current.Location.ToString())
@@ -427,8 +430,8 @@ Public Class ConditionalExpression
     Function RuleNot(ByRef Result As Object) As Boolean
         Dim LSide As Object = Nothing
 
-        If Reader.Peek.Equals(KS.Not) Then
-            Reader.Next()
+        If CurrentToken.Equals(KS.Not) Then
+            NextToken()
             RuleNot = RuleRelational(LSide)
 
             Dim op1 As Boolean
@@ -452,10 +455,10 @@ Public Class ConditionalExpression
 
         If RuleNot(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.And, KS.AndAlso)
+        While CurrentToken.Equals(KS.And, KS.AndAlso)
             Dim DoAlso As Boolean
-            DoAlso = Reader.Peek.Equals(KS.AndAlso)
-            Reader.Next()
+            DoAlso = CurrentToken.Equals(KS.AndAlso)
+            NextToken()
             RuleNot(RSide)
 
             Dim op1 As Boolean, op2 As Boolean
@@ -487,10 +490,10 @@ Public Class ConditionalExpression
 
         If RuleAnd_AndAlso(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Or, KS.OrElse)
+        While CurrentToken.Equals(KS.Or, KS.OrElse)
             Dim DoElse As Boolean
-            DoElse = Reader.Peek.Equals(KS.OrElse)
-            Reader.Next()
+            DoElse = CurrentToken.Equals(KS.OrElse)
+            NextToken()
             RuleAnd_AndAlso(RSide)
 
             Dim op1 As Boolean, op2 As Boolean
@@ -522,8 +525,8 @@ Public Class ConditionalExpression
 
         If RuleOr_OrElse(LSide) = False Then Return False
 
-        While Reader.Peek.Equals(KS.Xor)
-            Reader.Next()
+        While CurrentToken.Equals(KS.Xor)
+            NextToken()
             RuleOr_OrElse(RSide)
 
             Dim op1 As Boolean, op2 As Boolean

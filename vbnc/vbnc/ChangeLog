@@ -1,3 +1,9 @@
+2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* vbnc.exe.sources: Updated.
+	* Makefile: Include mono version number and svn revision into vbnc, and
+	  print it out with the vbnc logo.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.exe.sources: Updated.

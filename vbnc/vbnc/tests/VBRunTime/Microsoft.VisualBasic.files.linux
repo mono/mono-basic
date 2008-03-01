@@ -113,6 +113,7 @@
 ../../../../vbruntime/Microsoft.VisualBasic/ControlChars.vb
 ../../../../vbruntime/Microsoft.VisualBasic/Conversion.vb
 ../../../../vbruntime/Microsoft.VisualBasic/AudioPlayMode.vb
+../../../../vbruntime/Microsoft.VisualBasic/FileData.vb
 ../../../../vbruntime/Microsoft.VisualBasic/Globals.vb
 ../../../../vbruntime/Microsoft.VisualBasic/SpcInfo.vb
 ../../../../vbruntime/Microsoft.VisualBasic/TabInfo.vb
@@ -143,3 +144,4 @@
 ../../../../vbruntime/Microsoft.VisualBasic/VBMath.vb
 ../../../../vbruntime/Microsoft.VisualBasic/VbStrConv.vb
 ../../../../vbruntime/MonoTODOAttribute.vb
+-res:../../../../vbruntime/strings.resources

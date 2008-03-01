@@ -45,7 +45,7 @@ Partial Public Class Parser
         Helper.Assert(tm IsNot Nothing)
     End Sub
 
-    Public Sub New(ByVal Compiler As Compiler, ByVal TokenReader As ITokenReader)
+    Public Sub New(ByVal Compiler As Compiler, ByVal TokenReader As Scanner)
         m_Compiler = Compiler
         tm = New tm(Compiler, TokenReader)
         tm.NextToken()
@@ -421,7 +421,7 @@ Partial Public Class Parser
             ''	[  AttributesStatement+  ]
             'If vbnc.Attributes.IsMe(tm) Then
             '    If Me.ParseAttributes(result, AssemblyAttributes) = False Then
-            '        Helper.ErrorRecoveryNotImplemented()
+            '        Helper.ErrorRecoveryNot    Implemented()
             '    End If
             'End If
 
@@ -432,7 +432,7 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If iLastLocation.Equals(tm.CurrentLocation) Then
+            If iLastLocation.Equals(tm.CurrentLocation) AndAlso Compiler.Report.Errors = 0 Then
                 result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
             End If

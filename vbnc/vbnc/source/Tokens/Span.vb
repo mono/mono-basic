@@ -123,6 +123,12 @@ Public Structure Span
         End Get
     End Property
 
+    ReadOnly Property AsString(ByVal Compiler As Compiler) As String
+        Get
+            Return ToString(Compiler)
+        End Get
+    End Property
+
     ''' <summary>
     ''' The end column of the span.
     ''' </summary>

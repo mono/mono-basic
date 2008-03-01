@@ -18,8 +18,7 @@
 ' 
 
 Public Structure Token
-    Public m_TokenType As TokenType 'Byte
-    'Private m_TokenData1 As Byte
+    Public m_TokenType As TokenType
     Public m_TokenObject As Object
 
     Shared Function IsSomething(ByVal Token As Token) As Boolean
@@ -220,7 +219,7 @@ Public Structure Token
                 Case TokenType.StringLiteral
                     Return """" & Me.StringLiteral & """"
                 Case TokenType.Symbol
-                    Return IdentiferOrKeywordIdentifier()
+                    Return Me.Symbol.ToString
                 Case Else
                     Return "EMPTY TOKEN"
             End Select

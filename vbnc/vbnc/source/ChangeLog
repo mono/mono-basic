@@ -1,3 +1,15 @@
+2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Statements/CallStatement.vb, Parser/Parser.vb,
+	  Descriptors/GenericTypeDescriptor.vb,
+	  ConditionalCompilation/ConditionalConstants.vb,
+	  ConditionalCompilation/ConditionalExpression.vb, Tokens/Token.vb,
+	  Tokens/Span.vb, Types/TokenManager.vb, Types/TypeNameResolutionInfo.vb,
+	  General/Helper.vb, General/Version.vb, General/Scanner.vb,
+	  General/AssemblyInfo.vb, General/Compiler.vb: Move the conditional
+	  compiler into the scanner. Fixes #325331.
+	* vbnc.vbproj: Updated.
+
 2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Interfaces/ITokenReader.vb, Enums/KS.vb, Enums/KSEnumStringAttribute.vb,

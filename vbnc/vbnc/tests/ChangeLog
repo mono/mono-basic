@@ -1,3 +1,10 @@
+2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/SelfCompile.files.linux,
+	  VBRunTime/Microsoft.VisualBasic.files.windows,
+	  VBRunTime/Microsoft.VisualBasic.files.linux: Updated.
+	* CompileTime/ConditionalCompilation1.vb: Added.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SelfTest/SelfCompile.files.linux: Updated.

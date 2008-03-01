@@ -139,7 +139,7 @@ Public Class GenericTypeDescriptor
                     Compiler.Report.WriteLine(">GenericTypeDescriptor (m_OpenType.IsGenericTypeDefinition): " & m_OpenType.IsGenericTypeDefinition.ToString)
                     Compiler.Report.WriteLine(">TypeArguments.Count: " & m_TypeArguments.Length.ToString)
                     For i As Integer = 0 To m_TypeArguments.Length - 1
-                        Compiler.Report.WriteLine(">>#" & i.ToString & " Fullname = " & m_TypeArguments(i).FullName & " GetType.Fullname = " & m_TypeArguments(i).GetType.FullName)
+                            Compiler.Report.WriteLine(">>#" & i.ToString & " Fullname = " & m_TypeArguments(i).FullName & " GetType.Fullname = " & m_TypeArguments(i).GetType.FullName)
                     Next
 #End If
                     If m_OpenType.GetType.Name = "TypeBuilderInstantiation" Then

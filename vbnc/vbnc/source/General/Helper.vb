@@ -2334,6 +2334,7 @@ Public Class Helper
     Shared Function ResolveCodeCollection(ByVal Collection As IEnumerable, ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
         If Info Is Nothing Then Info = ResolveInfo.Default(Info.Compiler)
+        Helper.AssertNotNothing(Collection)
         For Each obj As BaseObject In Collection
             result = obj.ResolveCode(Info) AndAlso result
             'Helper.Assert(result = (obj.Compiler.Report.Errors = 0))

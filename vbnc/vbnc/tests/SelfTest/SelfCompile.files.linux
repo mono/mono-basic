@@ -4,7 +4,6 @@
 ../../source/AutoGen/ZCompilerCodeGenerator.vb
 ../../source/Code/CodeBlock.vb
 ../../source/Code/ImplicitCodeBlock.vb
-../../source/ConditionalCompilation/ConditionalCompilation.vb
 ../../source/ConditionalCompilation/ConditionalConstant.vb
 ../../source/ConditionalCompilation/ConditionalConstants.vb
 ../../source/ConditionalCompilation/ConditionalExpression.vb
@@ -86,10 +85,10 @@
 ../../source/General/TypeDictionary.vb
 ../../source/General/TypeList.vb
 ../../source/Descriptors/GenericMethodDescriptor.vb
+../../source/General/Version.vb
 ../../source/Infos/ExpressionResolveInfo.vb
 ../../source/Interfaces/IHasImplicitMembers.vb
 ../../source/Interfaces/IHasImplicitTypes.vb
-../../source/Interfaces/ITokenReader.vb
 ../../source/Members/EventHandlerDeclaration.vb
 ../../source/Members/EventDeclaration.vb
 ../../source/Members/MemberDeclaration.vb

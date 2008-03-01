@@ -24,7 +24,7 @@
 Public Class tm
     Inherits Helper
 
-    Private m_Reader As ITokenReader
+    Private m_Reader As Scanner
     Private m_TokenList As New Generic.List(Of Token)
     Private m_RestorePoints As Integer
     Private m_CurrentIndex As Integer
@@ -49,7 +49,7 @@ Public Class tm
         End Get
     End Property
 
-    ReadOnly Property Reader() As ITokenReader
+    ReadOnly Property Reader() As Scanner
         Get
             Return m_Reader
         End Get
@@ -61,7 +61,7 @@ Public Class tm
 
     ReadOnly Property CurrentLocation() As Span
         Get
-            Return m_Reader.CurrentLocation
+            Return m_Reader.GetCurrentLocation
         End Get
     End Property
 
@@ -150,15 +150,6 @@ Public Class tm
     End Property
 #End If
 
-    Shared Sub GotoNewline(ByVal reader As ITokenReader, ByVal eatNewLine As Boolean)
-        Do Until reader.Peek.IsEndOfLine
-            reader.Next()
-        Loop
-        If eatNewLine AndAlso reader.Peek.IsEndOfLineOnly Then
-            reader.Next()
-        End If
-    End Sub
-
     Function AcceptSequence(ByVal ParamArray ks As KS()) As Boolean
         For i As Integer = 0 To ks.GetUpperBound(0)
             If Me.PeekToken(i).Equals(ks(i)) = False Then Return False
@@ -167,9 +158,9 @@ Public Class tm
         Return True
     End Function
 
-    Sub New(ByVal Compiler As Compiler, ByVal Reader As ITokenReader)
+    Sub New(ByVal Compiler As Compiler, ByVal Reader As Scanner)
         MyBase.New(Compiler)
-        m_reader = Reader
+        m_Reader = Reader
     End Sub
 
     ReadOnly Property IsCurrentTokenValid() As Boolean
@@ -398,6 +389,8 @@ Public Class tm
                     NextToken()
                 Loop While CurrentToken.IsEndOfLineOnly OrElse CurrentToken.Equals(KS.Colon)
                 Return True
+            ElseIf CurrentToken.IsEndOfFile Then
+                Return True
             Else
                 If ReportError Then
 #If DEBUG Then
@@ -461,15 +454,6 @@ Public Class tm
         End If
     End Function
 
-    Shared Function AcceptStringLiteral(ByVal Reader As ITokenReader, Optional ByVal GotoNewline As Boolean = False) As Boolean
-        If Reader.Peek.IsStringLiteral Then
-            Reader.Next()
-            Return True
-        Else
-            If GotoNewline Then tm.GotoNewline(Reader, True)
-            Return False
-        End If
-    End Function
     ''' <summary>
     ''' If GotoNewline = true then calls GotoNewline(True) - next token is the first one after the newline.
     ''' </summary>
@@ -482,22 +466,6 @@ Public Class tm
             Return True
         Else
             If GotoNewline Then Me.GotoNewline(True)
-            Return False
-        End If
-    End Function
-
-    ''' <summary>
-    ''' If GotoNewline = true then calls GotoNewline(True) - next token is the first one after the newline.
-    ''' </summary>
-    ''' <param name="GotoNewline"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function AcceptIntegerLiteral(ByVal Reader As ITokenReader, Optional ByVal GotoNewline As Boolean = False) As Boolean
-        If Reader.Peek.IsIntegerLiteral Then
-            Reader.Next()
-            Return True
-        Else
-            If GotoNewline Then tm.GotoNewline(Reader, True)
             Return False
         End If
     End Function
@@ -535,23 +503,6 @@ Public Class tm
         End If
 
         Return True
-    End Function
-
-    ''' <summary>
-    ''' If GotoNewline = true then calls GotoNewline(True) - next token is the first one after the newline.
-    ''' </summary>
-    ''' <param name="Special"></param>
-    ''' <param name="GotoNewline"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function Accept(ByVal Reader As ITokenReader, ByVal Special As KS, Optional ByVal GotoNewline As Boolean = False) As Boolean
-        If Reader.Peek.Equals(Special) Then
-            Accept = True
-            Reader.Next()
-        Else
-            If GotoNewline Then tm.GotoNewline(Reader, True)
-            Accept = False
-        End If
     End Function
 
     ''' <summary>

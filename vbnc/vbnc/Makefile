@@ -21,7 +21,17 @@ DISTFILES = \
 	source/Resources/Errors.resx \
 	source/vbnc.rsp
 
-all-local: vbnc.Errors.resources vbnc.exe.sources
+VERSION_VB=source/General/Version.vb
+
+version: source/Version.vb source/VersionAttribute.vb ../../configure
+	-cat ../License\ FileHeader.txt > $(VERSION_VB)
+	-echo -n "<Assembly: AssemblyInformationalVersion (\"" >> $(VERSION_VB)
+	-echo -n `more ../../configure | grep VERSION | grep -v echo | sed 's/VERSION=//'` >> $(VERSION_VB)
+	-echo -n " - r" >> $(VERSION_VB)
+	-echo -n `svn info ../../ | grep Revision | sed 's/Revision: //'` >> $(VERSION_VB)
+	-echo -n "\")>" >> $(VERSION_VB)
+
+all-local: vbnc.Errors.resources vbnc.exe.sources version
 
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
@@ -49,6 +59,7 @@ boot-from-ms:
 	cp tests/SelfTest/vbnc.exe ../../class/lib/bootstrap
 	
 test-thorough:
+	cd tests/SelfTest/ && updatesources.sh
 	cd tests/SelfTest/ && rerun.sh && rerun.sh && rerun.sh
 	cp tests/SelfTest/vbnc.exe* ../../class/lib/bootstrap
 	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll* ../class/lib/bootstrap/
