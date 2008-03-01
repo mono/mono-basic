@@ -21,15 +21,12 @@ Public Interface IMethod
     Inherits INonTypeMember, IDefinableMember
     ReadOnly Property Signature() As SubSignature
     ReadOnly Property HasReturnValue() As Boolean
-    ReadOnly Property ILGenerator() As ILGenerator
-    ReadOnly Property MethodBuilder() As MethodBuilder
-    ReadOnly Property MethodDescriptor() As MethodBase
-    ReadOnly Property GetParameters() As ParameterInfo()
-    ReadOnly Property DefaultReturnVariable() As LocalBuilder
+    'ReadOnly Property MethodBuilder() As Mono.Cecil.MethodDefinition
+    'ReadOnly Property MethodDescriptor() As Mono.Cecil.MethodDefinition
+    ReadOnly Property GetParameters() As Mono.Cecil.ParameterDefinition()
+    ReadOnly Property DefaultReturnVariable() As Mono.Cecil.Cil.VariableDefinition
 
     ReadOnly Property HandlesOrImplements() As HandlesOrImplements
-    Sub SetImplementationFlags(ByVal flags As MethodImplAttributes)
-#If ENABLECECIL Then
+    Property MethodImplementationFlags() As Mono.Cecil.MethodImplAttributes
     ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition
-#End If
 End Interface

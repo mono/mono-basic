@@ -1,3 +1,7 @@
+2007-12-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ConsoleApplicationBase.vb: Implement CommandLineArgs.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CantStartSingleInstanceException.vb, ShutdownEventHandler.vb, WebUser.vb,

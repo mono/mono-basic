@@ -43,24 +43,28 @@ Public Class SubDeclaration
         MyBase.new(Parent)
     End Sub
 
-    Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As MethodAttributes, ByVal ParameterTypes As Type())
+    Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As Mono.Cecil.MethodAttributes, ByVal ParameterTypes As Mono.Cecil.TypeReference())
         MyBase.New(Parent)
         MyBase.Init(Nothing, New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
-        MyBase.Attributes = MethodAttributes
+        MyBase.MethodAttributes = MethodAttributes
+        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
         MyBase.Init(Attributes, Modifiers, Signature, Block)
+        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal HandlesOrImplements As HandlesOrImplements, ByVal Block As CodeBlock)
         MyBase.Init(Attributes, Modifiers, Signature, Block)
         m_HandlesOrImplements = HandlesOrImplements
+        UpdateDefinition()
     End Sub
 
     Protected Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
         MyBase.Init(Attributes, Modifiers, Signature, Block)
         If ImplementsClause IsNot Nothing Then m_HandlesOrImplements = New HandlesOrImplements(Me, ImplementsClause)
+        UpdateDefinition()
     End Sub
 
     Public Overrides ReadOnly Property HandlesOrImplements() As HandlesOrImplements
@@ -86,7 +90,7 @@ Public Class SubDeclaration
             If hclause IsNot Nothing Then
                 'Helper.NotImplemented()
             ElseIf iclause IsNot Nothing Then
-                result = iclause.DefineImplements(Me.DeclaringType.TypeBuilder, Me.MethodBuilder)
+                result = iclause.DefineImplements(Me.CecilBuilder)
             Else
                 Throw New InternalException(Me)
             End If

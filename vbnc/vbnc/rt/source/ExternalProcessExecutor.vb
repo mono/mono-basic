@@ -173,7 +173,11 @@ Public Class ExternalProcessExecutor
     End Sub
 
     Private Sub OutputReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
-        m_StdOut &= e.Data & vbNewLine
+        Try
+            m_StdOut &= e.Data & vbNewLine
+        Catch ex As OutOfMemoryException
+            m_StdOut = ex.Message
+        End Try
     End Sub
 
     Public Function RunProcess() As Boolean

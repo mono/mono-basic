@@ -31,6 +31,7 @@
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic.CompilerServices
+Imports System.Collections
 
 Namespace Microsoft.VisualBasic
     Public Module FileSystem
@@ -44,6 +45,8 @@ Namespace Microsoft.VisualBasic
         'Private ResStr As String = ""
         'Private m_len As Integer = 0
         'Private m_IsLastElem As Boolean = Nothing
+
+        Private m_OpenFiles As Hashtable
 
         Public Sub ChDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
@@ -105,9 +108,10 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
-            Dim str_parent_dir, str_pattern As String
+            Dim str_parent_dir As String = Nothing
+            Dim str_pattern As String = Nothing
             Dim di As DirectoryInfo
-            Dim dirs As DirectoryInfo()
+            Dim dirs As DirectoryInfo() = nothing
             Dim files As FileInfo()
             Dim result As String
             Dim length As Integer
@@ -170,9 +174,27 @@ Namespace Microsoft.VisualBasic
         Public Function FileAttr(ByVal FileNumber As Integer) As Microsoft.VisualBasic.OpenMode
             Throw New NotImplementedException
         End Function
+
         Public Sub FileClose(ByVal ParamArray FileNumbers() As Integer)
-            Throw New NotImplementedException
+            If FileNumbers Is Nothing OrElse FileNumbers.Length = 0 Then
+                For Each fd As FileData In m_OpenFiles.Values
+                    fd.Close()
+                Next
+                m_OpenFiles = Nothing
+            End If
+            For i As Integer = 0 To FileNumbers.Length - 1
+                Dim number As Integer = FileNumbers(i)
+                Dim fd As FileData
+
+                If m_OpenFiles.ContainsKey(number) = False Then
+                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
+                End If
+                fd = DirectCast(m_OpenFiles(number), FileData)
+                fd.Close()
+                m_OpenFiles.Remove(FileNumbers(i))
+            Next
         End Sub
+
         Public Sub FileCopy(ByVal Source As String, ByVal Destination As String)
             '' seems File.Copy throw the same exceptions VB requires 
             File.Copy(Source, Destination, True)
@@ -249,9 +271,94 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Function
+
         Public Sub FileOpen(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, Optional ByVal Access As Microsoft.VisualBasic.OpenAccess = Microsoft.VisualBasic.OpenAccess.[Default], Optional ByVal Share As Microsoft.VisualBasic.OpenShare = Microsoft.VisualBasic.OpenShare.[Default], Optional ByVal RecordLength As Integer = -1)
-            Throw New NotImplementedException
+
+            If FileNumber <= 0 OrElse FileNumber > 255 OrElse (Not m_OpenFiles Is Nothing AndAlso m_OpenFiles.ContainsKey(FileNumber)) Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
+            End If
+
+            If m_OpenFiles Is Nothing Then
+                m_OpenFiles = New Hashtable
+            End If
+
+            If Mode <> OpenMode.Append AndAlso Mode <> OpenMode.Binary AndAlso Mode <> OpenMode.Input AndAlso Mode <> OpenMode.Output AndAlso Mode <> OpenMode.Random Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            If Access <> OpenAccess.Default AndAlso Access <> OpenAccess.Read AndAlso Access <> OpenAccess.ReadWrite AndAlso Access <> OpenAccess.Write Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            If Share <> OpenShare.Default AndAlso Share <> OpenShare.LockRead AndAlso Share <> OpenShare.LockReadWrite AndAlso Share <> OpenShare.LockWrite AndAlso Share <> OpenShare.Shared Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            If Access = OpenAccess.Write AndAlso Mode = OpenMode.Input Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            If Access = OpenAccess.Read AndAlso (Mode = OpenMode.Output OrElse Mode = OpenMode.Append) Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            If RecordLength < -1 Then
+                Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End If
+
+            Dim data As New FileData(FileNumber, FileName, Mode, Access, OpenShare.Shared, RecordLength)
+
+            m_OpenFiles.Add(FileNumber, data)
+
+            If Access = OpenAccess.Default Then Access = OpenAccess.ReadWrite
+            If Share = OpenShare.Default Then Share = OpenShare.LockReadWrite
+
+            Dim ioAccess As System.IO.FileAccess
+            Dim ioShare As System.IO.FileShare
+            Dim ioMode As System.IO.FileMode
+
+            Select Case Access
+                Case OpenAccess.Read
+                    ioAccess = FileAccess.Read
+                Case OpenAccess.ReadWrite
+                    ioAccess = FileAccess.ReadWrite
+                Case OpenAccess.Write
+                    ioAccess = FileAccess.Write
+                Case Else
+                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End Select
+
+            Select Case Mode
+                Case OpenMode.Append
+                    ioMode = FileMode.Append
+                Case OpenMode.Binary
+                    ioMode = FileMode.OpenOrCreate
+                Case OpenMode.Input
+                    ioMode = FileMode.Open
+                Case OpenMode.Output
+                    ioMode = FileMode.OpenOrCreate
+                Case OpenMode.Random
+                    ioMode = FileMode.OpenOrCreate
+                Case Else
+                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End Select
+
+            Select Case Share
+                Case OpenShare.LockRead
+                    ioShare = FileShare.Write
+                Case OpenShare.LockReadWrite
+                    ioShare = FileShare.None
+                Case OpenShare.LockWrite
+                    ioShare = FileShare.Read
+                Case OpenShare.Shared
+                    ioShare = FileShare.ReadWrite
+                Case Else
+                    Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR5_Invalid_procedure_call)
+            End Select
+
+            data.Stream = New IO.FileStream(FileName, ioMode, ioAccess, ioShare)
         End Sub
+
         Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Boolean, Optional ByVal RecordNumber As Long = -1)
             Throw New NotImplementedException
         End Sub
@@ -305,9 +412,19 @@ Namespace Microsoft.VisualBasic
         Public Sub FileWidth(ByVal FileNumber As Integer, ByVal RecordWidth As Integer)
             Throw New NotImplementedException
         End Sub
+
         Public Function FreeFile() As Integer
-            Throw New NotImplementedException
+            If m_OpenFiles Is Nothing Then Return 1
+
+            For i As Integer = 1 To 255
+                If m_OpenFiles.ContainsKey(i) = False Then
+                    Return i
+                End If
+            Next
+
+            Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR67_Too_many_files)
         End Function
+
         Public Function GetAttr(ByVal PathName As String) As Microsoft.VisualBasic.FileAttribute
 
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
@@ -547,5 +664,29 @@ Namespace Microsoft.VisualBasic
         Public Sub WriteLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             Throw New NotImplementedException
         End Sub
+
+        Private Class FileData
+            Public FileNumber As Integer
+            Public FileName As String
+            Public Mode As Microsoft.VisualBasic.OpenMode
+            Public Access As Microsoft.VisualBasic.OpenAccess
+            Public Share As Microsoft.VisualBasic.OpenShare
+            Public RecordLength As Integer = -1
+            Public Stream As Stream
+
+            Public Sub New(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, ByVal Access As Microsoft.VisualBasic.OpenAccess, ByVal Share As Microsoft.VisualBasic.OpenShare, ByVal RecordLength As Integer)
+                Me.FileNumber = FileNumber
+                Me.FileName = FileName
+                Me.Mode = Mode
+                Me.Access = Access
+                Me.Share = Share
+                Me.RecordLength = RecordLength
+            End Sub
+
+            Public Sub Close()
+                Stream.Close()
+                Stream = Nothing
+            End Sub
+        End Class
     End Module
 End Namespace

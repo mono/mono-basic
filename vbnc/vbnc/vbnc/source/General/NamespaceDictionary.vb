@@ -24,7 +24,7 @@ Public Class NamespaceDictionary
         MyBase.new(Helper.StringComparer)
     End Sub
 
-    Sub AddType(ByVal Type As Type)
+    Sub AddType(ByVal Type As Mono.Cecil.TypeReference)
         Dim [namespace] As String = Type.Namespace
 
         If [namespace] Is Nothing Then [namespace] = String.Empty
@@ -69,57 +69,57 @@ Public Class NamespaceDictionary
     End Function
 End Class
 
-#If ENABLECECIL Then
-Public Class CecilNamespaceDictionary
-    Inherits Generic.Dictionary(Of String, CecilTypeDictionary)
+'#If ENABLECECIL Then
+'Public Class CecilNamespaceDictionary
+'    Inherits Generic.Dictionary(Of String, CecilTypeDictionary)
 
-    Sub New()
-        MyBase.new(Helper.StringComparer)
-    End Sub
+'    Sub New()
+'        MyBase.new(Helper.StringComparer)
+'    End Sub
 
-    Sub AddType(ByVal Type As Mono.Cecil.TypeDefinition)
-        Dim [namespace] As String = Type.Namespace
+'    Sub AddType(ByVal Type As Mono.Cecil.TypeDefinition)
+'        Dim [namespace] As String = Type.Namespace
 
-        If [namespace] Is Nothing Then [namespace] = ""
-        GetTypes([namespace]).Add(Type)
-    End Sub
+'        If [namespace] Is Nothing Then [namespace] = ""
+'        GetTypes([namespace]).Add(Type)
+'    End Sub
 
-    Function GetTypes(ByVal [Namespace] As String) As CecilTypeDictionary
-        If Me.ContainsKey([Namespace]) = False Then
-            Return Me.AddNamespace([Namespace])
-        End If
-        Return MyBase.Item([Namespace])
-    End Function
+'    Function GetTypes(ByVal [Namespace] As String) As CecilTypeDictionary
+'        If Me.ContainsKey([Namespace]) = False Then
+'            Return Me.AddNamespace([Namespace])
+'        End If
+'        Return MyBase.Item([Namespace])
+'    End Function
 
-    Function AddNamespace(ByVal [Namespace] As String) As CecilTypeDictionary
-        Dim result As New CecilTypeDictionary()
-        Helper.Assert(MyBase.ContainsKey([Namespace]) = False)
-        MyBase.Add([Namespace], result)
-        Return result
-    End Function
+'    Function AddNamespace(ByVal [Namespace] As String) As CecilTypeDictionary
+'        Dim result As New CecilTypeDictionary()
+'        Helper.Assert(MyBase.ContainsKey([Namespace]) = False)
+'        MyBase.Add([Namespace], result)
+'        Return result
+'    End Function
 
-    ''' <summary>
-    ''' Never returns nothing.
-    ''' </summary>
-    ''' <param name="Namespace"></param>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Default Shadows ReadOnly Property Item(ByVal [Namespace] As String) As CecilTypeDictionary
-        Get
-            If MyBase.ContainsKey([Namespace]) Then
-                Return MyBase.Item([Namespace])
-            Else
-                Return CecilTypeDictionary.EmptyDictionary
-            End If
-        End Get
-    End Property
+'    ''' <summary>
+'    ''' Never returns nothing.
+'    ''' </summary>
+'    ''' <param name="Namespace"></param>
+'    ''' <value></value>
+'    ''' <returns></returns>
+'    ''' <remarks></remarks>
+'    Default Shadows ReadOnly Property Item(ByVal [Namespace] As String) As CecilTypeDictionary
+'        Get
+'            If MyBase.ContainsKey([Namespace]) Then
+'                Return MyBase.Item([Namespace])
+'            Else
+'                Return CecilTypeDictionary.EmptyDictionary
+'            End If
+'        End Get
+'    End Property
 
-    Function GetAllDictionaries() As Generic.List(Of CecilTypeDictionary)
-        Dim result As New Generic.List(Of CecilTypeDictionary)
-        result.AddRange(Values)
-        Return result
-    End Function
-End Class
+'    Function GetAllDictionaries() As Generic.List(Of CecilTypeDictionary)
+'        Dim result As New Generic.List(Of CecilTypeDictionary)
+'        result.AddRange(Values)
+'        Return result
+'    End Function
+'End Class
 
-#End If
+'#End If

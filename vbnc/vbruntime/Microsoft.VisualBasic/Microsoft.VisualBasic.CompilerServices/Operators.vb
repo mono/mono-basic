@@ -344,7 +344,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
 {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
 {TypeCode.Object, TypeCode.Object, TypeCode.DBNull, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Object}, _
-{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Boolean, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Object}, _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Boolean, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.Boolean}, _
 {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Char, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.String}, _
 {TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.SByte, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
 {TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Byte, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Int32, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Int32, TypeCode.Int32}, _
@@ -359,7 +359,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 {TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Decimal}, _
 {TypeCode.Object, TypeCode.Object, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.DateTime, TypeCode.Object, TypeCode.DateTime}, _
 {TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.Object, TypeCode.Object, TypeCode.Object}, _
-{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.String, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.String} _
+{TypeCode.Object, TypeCode.Object, TypeCode.Object, TypeCode.Boolean, TypeCode.String, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int32, TypeCode.Int64, TypeCode.Int64, TypeCode.Object, TypeCode.Double, TypeCode.Double, TypeCode.Decimal, TypeCode.DateTime, TypeCode.Object, TypeCode.String} _
 }
 
         'Returns the expected return TypeCode of operation between these two objects or TypeCode.Empty if operation is not possible.
@@ -718,6 +718,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     End If
                 End If
                 Return result = CompareResult.Equal
+            Catch ex As FormatException
+                Throw New InvalidCastException(ex.Message)
             Catch ex As Exception
                 Throw New InvalidCastException("Operator '=' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
             End Try

@@ -67,17 +67,17 @@ Public Class ArraySizeInitializationModifier
         End Get
     End Property
 
-    Function CreateArrayType(ByVal OriginalType As Type) As Type
-        Dim result As Type = OriginalType
+    Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
+        Dim result As Mono.Cecil.TypeReference = OriginalType
 
         If m_ArrayTypeModifiers IsNot Nothing Then
             result = m_ArrayTypeModifiers.CreateArrayType(result)
         End If
 
         If m_BoundList.Expressions.GetUpperBound(0) = 0 Then
-            result = result.MakeArrayType
+            result = CecilHelper.MakeArrayType(result)
         Else
-            result = result.MakeArrayType(m_BoundList.Expressions.GetUpperBound(0) + 1)
+            result = CecilHelper.MakeArrayType(result, m_BoundList.Expressions.GetUpperBound(0) + 1)
         End If
 
         Return result

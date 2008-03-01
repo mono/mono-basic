@@ -1365,10 +1365,10 @@ Partial Public Class Parser
                 newMember = ParseCustomEventMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf VariableDeclaration.IsMe(tm) Then
-                Dim tmp As Generic.List(Of VariableDeclaration)
-                tmp = ParseVariableMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
+                Dim tmp As Generic.List(Of TypeVariableDeclaration)
+                tmp = ParseTypeVariableMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-                For Each item As VariableDeclaration In tmp
+                For Each item As TypeVariableDeclaration In tmp
                     newMembers.Add(item)
                 Next
                 newMember = Nothing

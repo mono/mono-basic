@@ -27,7 +27,7 @@ Public Class GetTypeTypeName
     Private m_Name As ParsedObject
     Private m_TypeArity As Integer
 
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
 
     ReadOnly Property Name() As ParsedObject
         Get
@@ -66,7 +66,7 @@ Public Class GetTypeTypeName
         m_TypeArity = TypeArity
     End Sub
 
-    ReadOnly Property ResolvedType() As Type
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Helper.Assert(m_ResolvedType IsNot Nothing)
             Return m_ResolvedType

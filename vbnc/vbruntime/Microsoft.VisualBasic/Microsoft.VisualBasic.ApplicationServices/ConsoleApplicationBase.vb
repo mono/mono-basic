@@ -48,7 +48,16 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         Public ReadOnly Property CommandLineArgs() As ReadOnlyCollection(Of String)
             Get
-                Throw New NotImplementedException
+                Dim CommandLineStrings() As String = Environment.GetCommandLineArgs()
+
+                Dim ReturnCollection As New List(Of String)(CommandLineStrings)
+
+                ' Do not return the application name, just the command line args
+                If ReturnCollection.Count > 0 Then
+                    ReturnCollection.RemoveAt(0)
+                End If
+
+                Return ReturnCollection.AsReadOnly()
             End Get
         End Property
 #If mono_not_yet Then

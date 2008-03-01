@@ -61,14 +61,14 @@ Public Class ArrayElementInitializer
             Dim expInfo As ExpressionResolveInfo = TryCast(Info, ExpressionResolveInfo)
             Dim elementInfo As ResolveInfo
             If expInfo IsNot Nothing Then
-                Helper.Assert(expInfo.LHSType.GetElementType IsNot Nothing)
-                Helper.Assert(expInfo.LHSType.IsArray)
-                If expInfo.LHSType isnot nothing andalso expInfo.LHSType.GetArrayRank > 1 Then
-                    Dim newArrayRank As Integer = expInfo.LHSType.GetArrayRank - 1
-                    Dim elementType As System.Type = expInfo.LHSType.GetElementType.MakeArrayType(newArrayRank)
+                Helper.Assert(CecilHelper.GetElementType(expInfo.LHSType) IsNot Nothing)
+                Helper.Assert(CecilHelper.IsArray(expInfo.LHSType))
+                If expInfo.LHSType IsNot Nothing AndAlso CecilHelper.GetArrayRank(expInfo.LHSType) > 1 Then
+                    Dim newArrayRank As Integer = CecilHelper.GetArrayRank(expInfo.LHSType) - 1
+                    Dim elementType As Mono.Cecil.TypeReference = CecilHelper.MakeArrayType(CecilHelper.GetElementType(expInfo.LHSType), newArrayRank)
                     elementInfo = New ExpressionResolveInfo(Compiler, elementType)
                 Else
-                    elementInfo = New ExpressionResolveInfo(Compiler, expInfo.LHSType.GetElementType)
+                    elementInfo = New ExpressionResolveInfo(Compiler, CecilHelper.GetElementType(expInfo.LHSType))
                 End If
             Else
                 Helper.StopIfDebugging(True)
@@ -109,9 +109,9 @@ Public Class ArrayElementInitializer
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim arraytype As Type = Info.DesiredType
-        Dim elementtype As Type = arraytype.GetElementType
-        Dim tmpvar As LocalBuilder = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(arraytype))
+        Dim arraytype As Mono.Cecil.TypeReference = Info.DesiredType
+        Dim elementtype As Mono.Cecil.TypeReference = CecilHelper.GetElementType(arraytype)
+        Dim tmpvar As Mono.Cecil.Cil.VariableDefinition = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(Compiler, arraytype))
         Dim elementInfo As EmitInfo = Info.Clone(Me, True, False, elementtype)
         Dim indexInfo As EmitInfo = Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)
 
@@ -135,7 +135,7 @@ Public Class ArrayElementInitializer
         Next
 
         'Get the set method, if it is a multidimensional array.
-        Dim method As MethodInfo = Nothing
+        Dim method As Mono.Cecil.MethodReference = Nothing
         If m_Elements.Count > 1 Then
             method = GetSetMethod(Compiler, arraytype)
         End If
@@ -148,7 +148,7 @@ Public Class ArrayElementInitializer
             For j As Integer = 0 To indices.Count - 1
                 Emitter.EmitLoadI4Value(indexInfo, indices(j))
             Next
-            If elementtype.IsValueType AndAlso elementtype.IsPrimitive = False AndAlso elementtype.IsEnum = False Then
+            If elementtype.IsValueType AndAlso CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso Helper.IsEnum(Compiler, elementtype) = False Then
                 Emitter.EmitLoadElementAddress(Info, elementtype, arraytype)
             End If
             'Get the element expression.
@@ -179,37 +179,39 @@ Public Class ArrayElementInitializer
         Return result
     End Function
 
-    Shared Function GetGetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
-        Dim result As MethodInfo
-        Dim elementType As Type = ArrayType.GetElementType
-        Dim ranks As Integer = ArrayType.GetArrayRank
-        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, ranks)
+    Shared Function GetGetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
+        Dim result As Mono.Cecil.MethodReference
+        Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
+        Dim ranks As Integer = CecilHelper.GetArrayRank(ArrayType)
+        Dim methodtypes As Mono.Cecil.TypeReference() = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Compiler.TypeCache.System_Int32, ranks)
 
         If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
-            ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
-            elementType = Helper.GetTypeOrTypeBuilder(elementType)
-            result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Get", CallingConventions.HasThis Or CallingConventions.Standard, elementType, methodtypes)
+            Throw New NotImplementedException
+            'ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
+            'elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
+            'result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Get", CallingConventions.HasThis Or CallingConventions.Standard, elementType, methodtypes)
         Else
-            result = ArrayType.GetMethod("Get", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+            result = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Get", methodtypes)
         End If
 
         Return result
     End Function
 
-    Shared Function GetSetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
-        Dim result As MethodInfo
-        Dim elementType As Type = ArrayType.GetElementType
-        Dim ranks As Integer = ArrayType.GetArrayRank
-        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, ranks + 1)
+    Shared Function GetSetMethod(ByVal Compiler As Compiler, ByVal ArrayType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
+        Dim result As Mono.Cecil.MethodReference
+        Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
+        Dim ranks As Integer = CecilHelper.GetArrayRank(ArrayType)
+        Dim methodtypes As Mono.Cecil.TypeReference() = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Compiler.TypeCache.System_Int32, ranks + 1)
 
         methodtypes(ranks) = elementType
 
         If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
-            ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
-            elementType = Helper.GetTypeOrTypeBuilder(elementType)
-            result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Set", CallingConventions.HasThis Or CallingConventions.Standard, Nothing, methodtypes)
+            Throw New NotImplementedException
+            'ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
+            'elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
+            'result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Set", CallingConventions.HasThis Or CallingConventions.Standard, Nothing, methodtypes)
         Else
-            result = ArrayType.GetMethod("Set", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+            result = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Set", methodtypes)
         End If
 
         Return result

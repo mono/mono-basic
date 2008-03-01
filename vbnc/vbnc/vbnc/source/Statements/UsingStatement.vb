@@ -64,7 +64,7 @@ Public Class UsingStatement
 
         Dim usingDecls As UsingDeclarators = TryCast(m_UsingResources, UsingDeclarators)
         Dim usingExp As Expression = TryCast(m_UsingResources, Expression)
-        Dim usingVars As New Generic.Stack(Of LocalBuilder)
+        Dim usingVars As New Generic.Stack(Of Mono.Cecil.Cil.VariableDefinition)
         Dim exceptionEnds As New Generic.Stack(Of Label)
         Dim exceptionEnds2 As New Generic.Stack(Of Label)
 
@@ -77,7 +77,7 @@ Public Class UsingStatement
                 exceptionEnds2.Push(Emitter.DefineLabel(Info))
             Next
         ElseIf usingExp IsNot Nothing Then
-            Dim local As LocalBuilder = Emitter.DeclareLocal(Info, usingExp.ExpressionType)
+            Dim local As Mono.Cecil.Cil.VariableDefinition = Emitter.DeclareLocal(Info, usingExp.ExpressionType)
             result = usingExp.GenerateCode(Info.Clone(Me, True, False, usingExp.ExpressionType)) AndAlso result
             Emitter.EmitStoreVariable(Info, local)
             usingVars.Push(local)
@@ -90,7 +90,7 @@ Public Class UsingStatement
         result = CodeBlock.GenerateCode(Info) AndAlso result
 
         Do Until usingVars.Count = 0
-            Dim tmpvar As LocalBuilder = usingVars.Pop
+            Dim tmpvar As Mono.Cecil.Cil.VariableDefinition = usingVars.Pop
             Dim endblock As Label = exceptionEnds.Pop
             Dim endblock2 As Label = exceptionEnds2.Pop
 

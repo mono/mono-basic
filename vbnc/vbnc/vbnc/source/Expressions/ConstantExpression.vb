@@ -27,7 +27,7 @@ Public Class ConstantExpression
     Inherits Expression
 
     Private m_Value As Object
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     ''' <summary>
     ''' Only sets the classification for this expression (Value).
@@ -44,7 +44,7 @@ Public Class ConstantExpression
         Return True
     End Function
 
-    Protected Sub Init(ByVal Value As Object, ByVal ExpressionType As Type)
+    Protected Sub Init(ByVal Value As Object, ByVal ExpressionType As Mono.Cecil.TypeReference)
         m_Value = Value
         m_ExpressionType = ExpressionType
     End Sub
@@ -64,7 +64,7 @@ Public Class ConstantExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
             Return m_ExpressionType
@@ -75,7 +75,7 @@ Public Class ConstantExpression
         MyBase.new(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Constant As Object, ByVal ExpressionType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal Constant As Object, ByVal ExpressionType As Mono.Cecil.TypeReference)
         MyBase.New(Parent)
         m_Value = Constant
         m_ExpressionType = ExpressionType

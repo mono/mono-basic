@@ -54,6 +54,7 @@ Public MustInherit Class EventHandlerDeclaration
         mySignature.Init(Token.CreateIdentifierToken(EventName.Token.Location, name, EventName.Token.TypeCharacter, False), Nothing, Parameters)
 
         MyBase.Init(Attributes, Modifiers, mySignature, Code)
+        UpdateDefinition()
     End Sub
 
     ''' <summary>

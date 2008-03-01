@@ -26,7 +26,7 @@ Public Class SimpleTypeName
 
     Private m_TypeName As ParsedObject
 
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
     Private m_TypeParameter As TypeParameter
 
     Sub New(ByVal Parent As ParsedObject)
@@ -69,7 +69,7 @@ Public Class SimpleTypeName
         End Get
     End Property
 
-    ReadOnly Property ResolvedType() As Type 'Descriptor
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference 'Descriptor
         Get
             Return m_ResolvedType
         End Get
@@ -85,12 +85,12 @@ Public Class SimpleTypeName
             'Not necessary.'result = AsBuiltInTypeName.ResolveTypeReferences AndAlso result
             m_ResolvedType = AsBuiltInTypeName.ResolvedType
         ElseIf IsQualifiedIdentifier Then
-            Dim tpParam As TypeParameterDescriptor
+            Dim tpParam As Mono.Cecil.GenericParameter
             result = AsQualifiedIdentifier.ResolveAsTypeName(AsAttributeTypeName) AndAlso result
             m_ResolvedType = AsQualifiedIdentifier.ResolvedType
-            tpParam = TryCast(m_ResolvedType, TypeParameterDescriptor)
+            tpParam = TryCast(m_ResolvedType, Mono.Cecil.GenericParameter)
             If tpParam IsNot Nothing Then
-                m_TypeParameter = tpParam.TypeParameter
+                m_TypeParameter = DirectCast(tpParam.Annotations(Compiler), TypeParameter)
             End If
         Else
             Throw New InternalException(Me)

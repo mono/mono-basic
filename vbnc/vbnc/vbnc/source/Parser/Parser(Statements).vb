@@ -447,7 +447,7 @@ Partial Public Class Parser
         Dim m_TypeName As NonArrayTypeName
         Dim m_VariableInitializer As VariableInitializer = Nothing
         Dim m_ArgumentList As ArgumentList = Nothing
-        Dim m_VariableDeclaration As VariableDeclaration
+        Dim m_VariableDeclaration As LocalVariableDeclaration
 
         If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
 
@@ -471,7 +471,7 @@ Partial Public Class Parser
                 If m_ArgumentList Is Nothing Then m_ArgumentList = New ArgumentList(result)
             End If
 
-            m_VariableDeclaration = New VariableDeclaration(result, Nothing, m_Identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
+            m_VariableDeclaration = New LocalVariableDeclaration(result, Nothing, m_Identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
         Else
             m_VariableDeclaration = Nothing
             m_VariableInitializer = Nothing

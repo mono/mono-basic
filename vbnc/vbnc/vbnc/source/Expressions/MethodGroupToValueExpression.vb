@@ -21,7 +21,7 @@ Public Class MethodGroupToValueExpression
     Inherits Expression
 
     Private m_MethodGroup As MethodGroupClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject, ByVal MethodGroupClassification As MethodGroupClassification)
         MyBase.new(Parent)
@@ -55,7 +55,7 @@ Public Class MethodGroupToValueExpression
         Helper.Assert(m_MethodGroup.ResolvedMethod IsNot Nothing)
 
         If m_MethodGroup.ResolvedMethodInfo IsNot Nothing Then
-            m_ExpressionType = m_MethodGroup.ResolvedMethodInfo.ReturnType
+            m_ExpressionType = m_MethodGroup.ResolvedMethodInfo.ReturnType.ReturnType
         ElseIf m_MethodGroup.ResolvedConstructor IsNot Nothing Then
             m_ExpressionType = m_MethodGroup.ResolvedConstructor.DeclaringType
         Else
@@ -79,7 +79,7 @@ Public Class MethodGroupToValueExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

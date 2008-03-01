@@ -61,9 +61,9 @@ Public Class InterfaceBases
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property AsTypes() As Type()
+    ReadOnly Property AsTypes() As Mono.Cecil.TypeReference()
         Get
-            Dim result(m_Bases.GetUpperBound(0)) As Type
+            Dim result(m_Bases.GetUpperBound(0)) As Mono.Cecil.TypeReference
             For i As Integer = 0 To m_Bases.GetUpperBound(0)
                 result(i) = m_Bases(i).ResolvedType
             Next

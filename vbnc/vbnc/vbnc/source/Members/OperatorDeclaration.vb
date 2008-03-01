@@ -46,7 +46,7 @@ Public Class OperatorDeclaration
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal [Operator] As Token, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
 
         Dim mySignature As New FunctionSignature(Me)
-        Dim parameters As New ParameterList(mySignature)
+        Dim parameters As New ParameterList(Me)
         Dim name As String
 
         parameters.Add(New Parameter(parameters, Operand1.Name, Operand1.TypeName))

@@ -61,7 +61,7 @@ Public Class ArrayNameModifier
         Return result
     End Function
 
-    Function CreateArrayType(ByVal OriginalType As Type) As Type
+    Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         If Me.IsArraySizeInitializationModifier Then
             Return Me.AsArraySizeInitializationModifier.CreateArrayType(OriginalType)
         ElseIf Me.IsArrayTypeModifiers Then

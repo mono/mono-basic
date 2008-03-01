@@ -19,6 +19,5 @@
 
 Public Interface IConstructorMember
     Inherits IMethod
-    ReadOnly Property ConstructorBuilder() As ConstructorBuilder
-    ReadOnly Property ConstructorDescriptor() As ConstructorDescriptor
+
 End Interface

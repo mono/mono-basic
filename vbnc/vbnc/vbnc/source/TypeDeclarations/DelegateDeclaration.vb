@@ -48,7 +48,7 @@ Public Class DelegateDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal Modifiers As Modifiers, ByVal Parameters As ParameterList, Optional ByVal ReturnType As Type = Nothing)
+    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal Modifiers As Modifiers, ByVal Parameters As ParameterList, Optional ByVal ReturnType As Mono.Cecil.TypeReference = Nothing)
         Me.New(Parent, Parent.Namespace)
 
         If ReturnType Is Nothing Then
@@ -84,8 +84,8 @@ Public Class DelegateDeclaration
         m_Constructor.Init(Nothing)
         m_Constructor.Signature.Parameters.Add("TargetObject", Compiler.TypeCache.System_Object)
         m_Constructor.Signature.Parameters.Add("TargetMethod", Compiler.TypeCache.System_IntPtr)
-        m_Constructor.Attributes = Reflection.MethodAttributes.Public Or Reflection.MethodAttributes.SpecialName Or Reflection.MethodAttributes.RTSpecialName
-        m_Constructor.SetImplementationFlags(MethodImplAttributes.Runtime)
+        m_Constructor.MethodAttributes = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.SpecialName Or Mono.Cecil.MethodAttributes.RTSpecialName
+        m_Constructor.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
 
         Members.Add(m_Constructor)
 
@@ -143,21 +143,21 @@ Public Class DelegateDeclaration
         m_BeginInvoke.Init(Nothing, New Modifiers(), beginInvokeSignature, Nothing, Nothing)
         m_EndInvoke.Init(Nothing, New Modifiers(), endInvokeSignature, Nothing, Nothing)
 
-        Dim attr As MethodAttributes
-        Dim implattr As MethodImplAttributes = MethodImplAttributes.Runtime
-        attr = MethodAttributes.Public Or MethodAttributes.NewSlot Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+        Dim attr As Mono.Cecil.MethodAttributes
+        Dim implattr As Mono.Cecil.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
+        attr = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.Strict
 
         'If Me.DeclaringType IsNot Nothing AndAlso Me.DeclaringType.TypeDescriptor.IsInterface Then
         '    attr = attr Or MethodAttributes.CheckAccessOnOverride
         'End If
 
-        m_Invoke.Attributes = attr
-        m_BeginInvoke.attributes = attr
-        m_EndInvoke.Attributes = attr
+        m_Invoke.MethodAttributes = attr
+        m_BeginInvoke.MethodAttributes = attr
+        m_EndInvoke.MethodAttributes = attr
 
-        m_Invoke.SetImplementationFlags(implattr)
-        m_BeginInvoke.SetImplementationFlags(implattr)
-        m_EndInvoke.SetImplementationFlags(implattr)
+        m_Invoke.MethodImplAttributes = implattr
+        m_BeginInvoke.MethodImplAttributes = implattr
+        m_EndInvoke.MethodImplAttributes = implattr
 
         Members.Add(m_BeginInvoke)
         Members.Add(m_EndInvoke)
@@ -169,15 +169,11 @@ Public Class DelegateDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-#If ENABLECECIL Then
-        CecilBaseType = Compiler.CecilTypeCache.System_MulticastDelegate
-#End If
-
         BaseType = Compiler.TypeCache.System_MulticastDelegate
 
-        result = m_Signature.ResolveTypeReferences(False) AndAlso result
-
         result = MyBase.ResolveType AndAlso result
+
+        result = m_Signature.ResolveTypeReferences(False) AndAlso result
 
         Return result
     End Function
@@ -196,9 +192,9 @@ Public Class DelegateDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Reflection.TypeAttributes.Sealed
-        End Get
-    End Property
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+    End Sub
 End Class

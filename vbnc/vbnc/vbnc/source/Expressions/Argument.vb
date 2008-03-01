@@ -71,7 +71,7 @@ Public MustInherit Class Argument
         Return m_Expression.GenerateCode(Info)
     End Function
 
-    Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal Destination As ParameterInfo) As Boolean
+    Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal Destination As Mono.Cecil.ParameterDefinition) As Boolean
         Dim result As Boolean = True
 
         If m_Expression IsNot Nothing Then
@@ -79,7 +79,7 @@ Public MustInherit Class Argument
         Else
             Helper.Assert(Destination IsNot Nothing)
             Helper.Assert(Destination.IsOptional)
-            Emitter.EmitLoadValue(Info, Destination.DefaultValue)
+            Emitter.EmitLoadValue(Info, Destination.Constant)
         End If
 
         Return result

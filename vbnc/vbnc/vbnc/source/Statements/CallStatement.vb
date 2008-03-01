@@ -39,7 +39,7 @@ Public Class CallStatement
 
     Private Function IsExcluded() As Boolean
         Dim exp As InvocationOrIndexExpression
-        Dim method As MethodInfo
+        Dim method As Mono.Cecil.MethodReference
         Dim classification As MethodGroupClassification
    
         If Not m_Target.Classification.IsVoidClassification Then Return False

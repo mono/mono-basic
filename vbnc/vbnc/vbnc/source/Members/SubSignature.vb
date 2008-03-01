@@ -45,13 +45,13 @@ Public Class SubSignature
     ''' <remarks></remarks>
     Private m_ParameterList As ParameterList
 
-    Protected m_ReturnParameter As ParameterInfo
+    'Protected m_ReturnParameter As ParameterInfo
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterInfo())
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.ParameterReference())
         MyBase.New(Parent)
         m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
         m_ParameterList = New ParameterList(Me)
@@ -65,25 +65,31 @@ Public Class SubSignature
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList)
         MyBase.New(Parent)
         m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
-        m_ParameterList = Parameters
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If Parameters Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = Parameters
+        End If
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Type())
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.TypeReference())
         MyBase.New(Parent)
         m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
-        m_ParameterList = New ParameterList(Me, Parameters)
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If Parameters Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = New ParameterList(Me, Parameters)
+        End If
     End Sub
 
     Sub Init(ByVal Identifier As Token, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
-        m_ParameterList = ParameterList
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If ParameterList Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = ParameterList
+        End If
     End Sub
 
     Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
@@ -109,16 +115,9 @@ Public Class SubSignature
         End Get
     End Property
 
-    Overridable ReadOnly Property ReturnParameter() As ParameterInfo
+    Overridable ReadOnly Property ReturnType() As Mono.Cecil.TypeReference
         Get
-            If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(Compiler.TypeCache.System_Void, 1, Me)
-            Return m_ReturnParameter
-        End Get
-    End Property
-
-    Overridable ReadOnly Property ReturnType() As Type
-        Get
-            Return Nothing
+            Return Compiler.TypeCache.System_Void
         End Get
     End Property
 
@@ -129,10 +128,13 @@ Public Class SubSignature
         End Get
     End Property
 
-    ReadOnly Property TypeParameters() As TypeParameters
+    Property TypeParameters() As TypeParameters
         Get
             Return m_TypeParameters
         End Get
+        Set(ByVal value As TypeParameters)
+            m_TypeParameters = value
+        End Set
     End Property
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean

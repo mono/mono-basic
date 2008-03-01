@@ -1,3 +1,8 @@
+2007-12-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileSystemTests2.vb: Added, contains code for the missing fileio support.
+	  Not included in build yet, since it's not working for the moment.
+
 2007-08-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileSystemTests.vb: Remove some warnings and make assert messages more

@@ -72,7 +72,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>GENERATOR,DEVGENERATOR,ENABLECECIL=TRUE,DEBUGREFLECTION=false</DefineConstants>
+    <DefineConstants>ENABLECECIL=TRUE,DEBUGREFLECTION=false</DefineConstants>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
@@ -234,7 +234,6 @@
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Reflection" />
-    <Import Include="System.Reflection.Emit" />
     <Import Include="VB=Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
@@ -340,11 +339,13 @@
     <Compile Include="Interfaces\ITokenReader.vb" />
     <Compile Include="Members\EventHandlerDeclaration.vb" />
     <Compile Include="Members\EventDeclaration.vb" />
+    <Compile Include="Members\LocalVariableDeclaration.vb" />
     <Compile Include="Members\MemberDeclaration.vb" />
     <Compile Include="Members\MethodDeclaration.vb" />
     <Compile Include="Members\MethodResolver.vb" />
     <Compile Include="Members\PropertyDeclaration.vb" />
     <Compile Include="Members\PropertyHandlerDeclaration.vb" />
+    <Compile Include="Members\TypeVariableDeclaration.vb" />
     <Compile Include="Names\Identifier.vb" />
     <Compile Include="Parser\ParsedObject.vb" />
     <Compile Include="Parser\Parser%28Events%29.vb" />
@@ -361,9 +362,7 @@
     <Compile Include="General\TypeCombinations.vb" />
     <Compile Include="General\TypeConverter.vb" />
     <Compile Include="Interfaces\IConstructorMember.vb" />
-    <Compile Include="Interfaces\ICreatableType.vb" />
     <Compile Include="Interfaces\IFieldMember.vb" />
-    <Compile Include="Interfaces\IMemberDescriptor.vb" />
     <Compile Include="Interfaces\IAttributableDeclaration.vb">
       <SubType>Code</SubType>
     </Compile>
@@ -377,9 +376,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\IEmittable.vb" />
-    <Compile Include="Interfaces\IEventMemberDeclaration.vb">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Interfaces\IDefinableMember.vb" />
     <Compile Include="Interfaces\IMember.vb" />
     <Compile Include="Interfaces\IMethod.vb">
@@ -389,11 +385,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\INonTypeMember.vb" />
-    <Compile Include="Interfaces\IPropertyMember.vb" />
     <Compile Include="Interfaces\IType.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITypeContainer.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Members\BaseList.vb" />

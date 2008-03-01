@@ -24,25 +24,29 @@ Public MustInherit Class MethodBaseDeclaration
     Private m_Signature As SubSignature
     Private m_Code As CodeBlock
 
-    Private m_MethodAttributes As Nullable(Of MethodAttributes)
-    Private m_MethodImplAttributes As Nullable(Of MethodImplAttributes)
+    'Private m_MethodAttributes As Nullable(Of Mono.Cecil.MethodAttributes)
+    'Private m_MethodImplAttributes As Nullable(Of Mono.Cecil.MethodImplAttributes)
 
-    Private m_ReturnType As Type
-    Private m_ParameterTypes() As Type
-    Private m_DefaultReturnVariable As LocalBuilder
+    'Private m_ReturnType As Mono.Cecil.TypeReference
+    'Private m_ParameterTypes() As Mono.Cecil.TypeReference
+    Private m_DefaultReturnVariable As Mono.Cecil.Cil.VariableDefinition
 
-    Private m_MethodOverrides As MethodInfo
+    Private m_MethodOverrides As Mono.Cecil.MethodReference
+    Private m_CecilBuilder As Mono.Cecil.MethodDefinition
 
     Protected Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
     Protected Sub New(ByVal Parent As PropertyDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
     Protected Sub New(ByVal Parent As EventDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
@@ -57,58 +61,72 @@ Public MustInherit Class MethodBaseDeclaration
         Helper.Assert(m_Signature IsNot Nothing)
     End Sub
 
-    Property ParameterTypes() As Type()
-        Get
-            Return m_ParameterTypes
-        End Get
-        Set(ByVal value As Type())
-            m_ParameterTypes = value
-        End Set
-    End Property
+    Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
 
-    Property ReturnType() As Type
-        Get
-            Return m_ReturnType
-        End Get
-        Set(ByVal value As Type)
-            m_ReturnType = value
-        End Set
-    End Property
+        If m_CecilBuilder Is Nothing Then
+            m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void))
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
+        End If
+        m_CecilBuilder.Name = Name
+        m_CecilBuilder.HasThis = Not Me.IsShared
 
-    ReadOnly Property MethodAttributes() As Nullable(Of MethodAttributes)
-        Get
-            Return m_MethodAttributes
-        End Get
-    End Property
+        If Signature IsNot Nothing AndAlso Signature.Parameters IsNot Nothing Then
+            ReturnType = m_Signature.ReturnType
+            If Signature.Parameters IsNot Nothing Then
+                For i As Integer = 0 To Signature.Parameters.Count - 1
+                    Signature.Parameters(i).UpdateDefinition()
+                Next
+            End If
+        End If
 
-    Property Attributes() As MethodAttributes
-        Get
-            Helper.Assert(m_MethodAttributes.HasValue)
-            Return m_MethodAttributes.Value
-        End Get
-        Set(ByVal value As MethodAttributes)
-            m_MethodAttributes = value
-        End Set
-    End Property
-
-    ReadOnly Property MethodImplAttributes() As Nullable(Of MethodImplAttributes)
-        Get
-            Return m_MethodImplAttributes
-        End Get
-    End Property
-
-    Function GetMethodImplementationFlags() As MethodImplAttributes
-        Helper.Assert(m_MethodImplAttributes.HasValue)
-        Return m_MethodImplAttributes.Value
-    End Function
-
-    Public Sub SetImplementationFlags(ByVal flags As System.Reflection.MethodImplAttributes) Implements IMethod.SetImplementationFlags
-        m_MethodImplAttributes = flags
+        MethodAttributes = Helper.GetAttributes(Me)
+        MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
     End Sub
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    'Property ParameterTypes() As Mono.Cecil.TypeReference()
+    '    Get
+    '        Return m_ParameterTypes
+    '    End Get
+    '    Set(ByVal value As Mono.Cecil.TypeReference())
+    '        m_ParameterTypes = value
+    '    End Set
+    'End Property
+
+    Property ReturnType() As Mono.Cecil.TypeReference
         Get
-            Return Me.MethodDescriptor
+            Return m_CecilBuilder.ReturnType.ReturnType
+        End Get
+        Set(ByVal value As Mono.Cecil.TypeReference)
+            m_CecilBuilder.ReturnType.ReturnType = Helper.GetTypeOrTypeReference(Compiler, value)
+        End Set
+    End Property
+
+    Property MethodAttributes() As Mono.Cecil.MethodAttributes
+        Get
+            Return m_CecilBuilder.Attributes
+        End Get
+        Set(ByVal value As Mono.Cecil.MethodAttributes)
+            If (value And Mono.Cecil.MethodAttributes.MemberAccessMask) = 0 Then
+                m_CecilBuilder.Attributes = value Or m_CecilBuilder.Attributes
+            Else
+                m_CecilBuilder.Attributes = value Or (m_CecilBuilder.Attributes And Not Mono.Cecil.MethodAttributes.MemberAccessMask)
+            End If
+        End Set
+    End Property
+
+    Property MethodImplAttributes() As Mono.Cecil.MethodImplAttributes Implements IMethod.MethodImplementationFlags
+        Get
+            Return m_CecilBuilder.ImplAttributes
+        End Get
+        Set(ByVal value As Mono.Cecil.MethodImplAttributes)
+            m_CecilBuilder.ImplAttributes = value Or m_CecilBuilder.ImplAttributes
+        End Set
+    End Property
+
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
+        Get
+            Return Me.CecilBuilder
         End Get
     End Property
 
@@ -121,13 +139,13 @@ Public MustInherit Class MethodBaseDeclaration
         End Set
     End Property
 
-    Public ReadOnly Property DefaultReturnVariable() As LocalBuilder Implements IMethod.DefaultReturnVariable
+    Public ReadOnly Property DefaultReturnVariable() As Mono.Cecil.Cil.VariableDefinition Implements IMethod.DefaultReturnVariable
         Get
             Return m_DefaultReturnVariable
         End Get
     End Property
 
-    Public ReadOnly Property GetParameters() As System.Reflection.ParameterInfo() Implements IMethod.GetParameters
+    Public ReadOnly Property GetParameters() As Mono.Cecil.ParameterDefinition() Implements IMethod.GetParameters
         Get
             Helper.Assert(m_Signature IsNot Nothing)
             Helper.Assert(m_Signature.Parameters IsNot Nothing)
@@ -147,12 +165,18 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator Implements IMethod.ILGenerator
-    Public MustOverride ReadOnly Property MethodBuilder() As System.Reflection.Emit.MethodBuilder Implements IMethod.MethodBuilder
+    'Public MustOverride ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator Implements IMethod.ILGenerator
+    'Public ReadOnly Property MethodBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.MethodBuilder
+    '    Get
+    '        Return m_CecilBuilder
+    '    End Get
+    'End Property
 
-#If ENABLECECIL Then
-    Public MustOverride ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.CecilBuilder
-#End If
+    Public ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.CecilBuilder
+        Get
+            Return m_CecilBuilder
+        End Get
+    End Property
 
     ReadOnly Property HasMethodBody() As Boolean
         Get
@@ -160,7 +184,7 @@ Public MustInherit Class MethodBaseDeclaration
 
             If TypeOf Me Is ExternalSubDeclaration Then Return False
 
-            result = CBool(m_MethodAttributes.Value And Reflection.MethodAttributes.Abstract) = False AndAlso CBool(m_MethodImplAttributes.Value And Reflection.MethodImplAttributes.Runtime) = False
+            result = CBool(MethodAttributes And Mono.Cecil.MethodAttributes.Abstract) = False AndAlso CBool(MethodImplAttributes And Mono.Cecil.MethodImplAttributes.Runtime) = False
 
             If result Then
                 If Me.CustomAttributes IsNot Nothing AndAlso Me.CustomAttributes.IsDefined(Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
@@ -172,7 +196,11 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property MethodDescriptor() As System.Reflection.MethodBase Implements IMethod.MethodDescriptor
+    'Public ReadOnly Property MethodDescriptor() As Mono.Cecil.MethodDefinition Implements IMethod.MethodDescriptor
+    '    Get
+    '        Return m_CecilBuilder
+    '    End Get
+    'End Property
 
     Public ReadOnly Property Signature() As SubSignature Implements IMethod.Signature
         Get
@@ -187,8 +215,8 @@ Public MustInherit Class MethodBaseDeclaration
 
         result = m_Signature.ResolveTypeReferences AndAlso result
         If result = False Then Return result
-        m_ParameterTypes = m_Signature.Parameters.ToTypeArray
-        m_ReturnType = m_Signature.ReturnType
+        'm_ParameterTypes = m_Signature.Parameters.ToTypeArray
+        ReturnType = m_Signature.ReturnType
 
         If m_Code IsNot Nothing Then result = m_Code.ResolveTypeReferences AndAlso result
 
@@ -199,22 +227,6 @@ Public MustInherit Class MethodBaseDeclaration
         Dim result As Boolean = True
 
         result = m_Signature.Parameters.ResolveParameters(Info, True) AndAlso result
-
-        If m_Signature.Parameters Is Nothing Then
-            m_ParameterTypes = New Type() {}
-        Else
-            m_ParameterTypes = m_Signature.Parameters.ToTypeArray
-        End If
-        m_ReturnType = m_Signature.ReturnType
-
-        If m_MethodAttributes.HasValue = False Then
-            m_MethodAttributes = Me.MethodDescriptor.Attributes()
-        End If
-        If m_MethodImplAttributes.HasValue = False Then
-            m_MethodImplAttributes = Reflection.MethodImplAttributes.IL
-        End If
-
-        'Helper.Assert(m_Code IsNot Nothing = Me.HasMethodBody)
 
         Return result
     End Function
@@ -252,8 +264,7 @@ Public MustInherit Class MethodBaseDeclaration
 
             'Create the default return variable
             If Me.HasReturnValue Then
-                Helper.Assert(m_ReturnType IsNot Nothing)
-                m_DefaultReturnVariable = Emitter.DeclareLocal(Info, m_ReturnType)
+                m_DefaultReturnVariable = Emitter.DeclareLocal(Info, ReturnType)
             End If
 
             result = m_Code.GenerateCode(Me) AndAlso result
@@ -262,7 +273,7 @@ Public MustInherit Class MethodBaseDeclaration
         Return result
     End Function
 
-    ReadOnly Property MethodOverride() As MethodInfo
+    ReadOnly Property MethodOverride() As Mono.Cecil.MethodReference
         Get
             Return m_MethodOverrides
         End Get
@@ -339,8 +350,9 @@ Public MustInherit Class MethodBaseDeclaration
         Dim result As Boolean = True
 
         If m_MethodOverrides IsNot Nothing Then
-            m_MethodOverrides = Helper.GetMethodOrMethodBuilder(m_MethodOverrides)
-            DeclaringType.TypeBuilder.DefineMethodOverride(MethodBuilder, m_MethodOverrides)
+            Throw New NotImplementedException
+            'm_MethodOverrides = Helper.GetMethodOrMethodBuilder(Compiler, m_MethodOverrides)
+            'DeclaringType.TypeBuilder.DefineMethodOverride(MethodBuilder, m_MethodOverrides)
         End If
 
         Return result
@@ -368,10 +380,10 @@ Public MustInherit Class MethodBaseDeclaration
         Helper.Assert(isGet Xor isSet)
 
         Dim info As New EmitInfo(Me)
-        Dim meType As Type = Helper.GetTypeOrTypeBuilder(Me.FindFirstParent(Of TypeDeclaration).TypeDescriptor)
+        Dim meType As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeBuilder(Compiler, Me.FindFirstParent(Of TypeDeclaration).CecilType)
         If isGet Then
             If Me.IsShared = False Then
-                Emitter.EmitLoadMe(info, metype)
+                Emitter.EmitLoadMe(info, meType)
             End If
             Emitter.EmitLoadVariable(info, propD.HandlesField.FieldBuilder)
             Emitter.EmitRet(info)

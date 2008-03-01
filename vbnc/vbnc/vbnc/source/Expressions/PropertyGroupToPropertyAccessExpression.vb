@@ -21,7 +21,7 @@ Public Class PropertyGroupToPropertyAccessExpression
     Inherits Expression
 
     Private m_PropertyGroup As PropertyGroupClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
@@ -74,7 +74,7 @@ Public Class PropertyGroupToPropertyAccessExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

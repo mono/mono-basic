@@ -39,27 +39,27 @@ Public Class ConditionalCompiler
     ''' <remarks></remarks>
     Private m_ConditionStack As New Generic.List(Of Integer)
 
-    Private m_Methods As New Generic.Dictionary(Of MethodInfo, Object())
+    Private m_Methods As New Generic.Dictionary(Of Mono.Cecil.MethodReference, Mono.Cecil.CustomAttributeCollection)
 
-    Function IsConditionallyExcluded(ByVal CalledMethod As MethodInfo, ByVal AtLocation As Span) As Boolean
-        Dim attribs() As Object
+    Function IsConditionallyExcluded(ByVal CalledMethod As Mono.Cecil.MethodReference, ByVal AtLocation As Span) As Boolean
+        Dim attribs As Mono.Cecil.CustomAttributeCollection
 
         If m_Methods.ContainsKey(CalledMethod) Then
             attribs = m_Methods(CalledMethod)
         Else
-            attribs = CalledMethod.GetCustomAttributes(Compiler.TypeCache.System_Diagnostics_ConditionalAttribute, False)
+            attribs = CecilHelper.GetCustomAttributes(CecilHelper.FindDefinition(CalledMethod).CustomAttributes, Compiler.TypeCache.System_Diagnostics_ConditionalAttribute)
             m_Methods.Add(CalledMethod, attribs)
         End If
 
         If attribs Is Nothing Then Return False
 
-        For Each attrib As Object In attribs
-            Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
+        For Each attrib As Mono.Cecil.CustomAttribute In attribs
+            'Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
 
-            conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
-            If conditionalAttrib Is Nothing Then Continue For
+            'conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
+            'If conditionalAttrib Is Nothing Then Continue For
 
-            If Not IsDefinedAtLocation(conditionalAttrib.ConditionString, AtLocation) Then Return True
+            If Not IsDefinedAtLocation(DirectCast(attrib.Properties("ConditionString"), String), AtLocation) Then Return True
         Next
 
         Return False

@@ -19,30 +19,30 @@
 
 Public Class DumperXML
     Public Shared Sub Dump(ByVal Obj As BaseObject, ByVal Xml As Xml.XmlWriter)
-        Xml.WriteStartElement(Obj.GetType.ToString)
-        Dim fields() As FieldInfo = Obj.GetType.GetFields(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
-        For Each field As FieldInfo In fields
-            If field.Name <> "m_Parent" AndAlso field.Name <> "Parent" Then
-                Dim fieldtypename As String = field.FieldType.ToString
-                Dim fieldvalue As String = "Nothing"
+        'Xml.WriteStartElement(Obj.GetType.ToString)
+        'Dim fields() As FieldInfo = Obj.GetType.GetFields(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
+        'For Each field As FieldInfo In fields
+        '    If field.Name <> "m_Parent" AndAlso field.Name <> "Parent" Then
+        '        Dim fieldtypename As String = field.FieldType.ToString
+        '        Dim fieldvalue As String = "Nothing"
 
-                If Obj.GetType.IsAssignableFrom(field.FieldType) Then
-                    Dim bofield As BaseObject = CType(field.GetValue(Obj), BaseObject)
-                    If bofield IsNot Nothing Then
-                        Dump(bofield, Xml)
-                    End If
-                Else
-                    Dim vofield As Object = field.GetValue(Obj)
-                    If vofield IsNot Nothing Then
-                        fieldvalue = vofield.ToString
-                    End If
-                End If
-                Xml.WriteStartElement(field.Name)
-                Xml.WriteAttributeString("Type", fieldtypename)
-                Xml.WriteString(fieldvalue)
-                Xml.WriteEndElement()
-            End If
-        Next
-        Xml.WriteEndElement()
+        '        If Obj.GetType.IsAssignableFrom(field.FieldType) Then
+        '            Dim bofield As BaseObject = CType(field.GetValue(Obj), BaseObject)
+        '            If bofield IsNot Nothing Then
+        '                Dump(bofield, Xml)
+        '            End If
+        '        Else
+        '            Dim vofield As Object = field.GetValue(Obj)
+        '            If vofield IsNot Nothing Then
+        '                fieldvalue = vofield.ToString
+        '            End If
+        '        End If
+        '        Xml.WriteStartElement(field.Name)
+        '        Xml.WriteAttributeString("Type", fieldtypename)
+        '        Xml.WriteString(fieldvalue)
+        '        Xml.WriteEndElement()
+        '    End If
+        'Next
+        'Xml.WriteEndElement()
     End Sub
 End Class

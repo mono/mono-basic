@@ -32,7 +32,7 @@ Public Class EventMemberSpecifier
 
     Private m_Expression As MemberAccessExpression
 
-    Private m_Event As EventInfo
+    Private m_Event As Mono.Cecil.EventReference
 
     ReadOnly Property First() As BaseObject
         Get
@@ -94,23 +94,25 @@ Public Class EventMemberSpecifier
             sne = TryCast(m_First, SimpleNameExpression)
             'Console.WriteLine(Me.Location.ToString(Compiler))
             Helper.Assert(sne IsNot Nothing)
-            Dim propD As PropertyDescriptor
+            Dim propD As Mono.Cecil.PropertyDefinition 'PropertyDescriptor
+            Dim propDecl As PropertyDeclaration
             Helper.Assert(sne.Classification.IsPropertyGroupClassification)
             Helper.Assert(sne.Classification.AsPropertyGroup.IsResolved)
             Helper.Assert(sne.Classification.AsPropertyGroup.ResolvedProperty IsNot Nothing)
 
-            propD = TryCast(sne.Classification.AsPropertyGroup.ResolvedProperty, PropertyDescriptor)
+            propD = CecilHelper.FindDefinition(sne.Classification.AsPropertyGroup.ResolvedProperty)
+            propDecl = DirectCast(propD.Annotations(Compiler), PropertyDeclaration)
             Helper.Assert(propD IsNot Nothing)
 
             Dim arhs As New AddOrRemoveHandlerStatement(Me)
             Dim instanceExp As MeExpression = Nothing
-            If propD.IsShared = False Then
+            If Helper.IsShared(propD) = False Then
                 instanceExp = New MeExpression(Me)
                 result = instanceExp.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
             End If
 
             arhs.Init(m_Expression, handler, True, instanceExp)
-            propD.PropertyDeclaration.Handlers.Add(arhs)
+            propDecl.Handlers.Add(arhs)
         End If
 
         Return result

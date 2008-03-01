@@ -25,7 +25,7 @@
 ''' <remarks></remarks>
 Public Interface IMember
     Inherits IAttributableNamedDeclaration, IModifiable
-    ReadOnly Property MemberDescriptor() As MemberInfo
+    ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
     ReadOnly Property IsShared() As Boolean
     Property DeclaringType() As TypeDeclaration
 End Interface

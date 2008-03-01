@@ -28,8 +28,8 @@ Public Class CodeBlock
     ''' This is just a cache, all the variables are also in m_Statements.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Variables As New Nameables(Of VariableDeclaration)(Me)
-    Private m_StaticVariables As Generic.List(Of VariableDeclaration)
+    Private m_Variables As New Nameables(Of LocalVariableDeclaration)(Me)
+    Private m_StaticVariables As Generic.List(Of LocalVariableDeclaration)
 
     ''' <summary>
     ''' A list of all the statements (expressions) in this code block.
@@ -57,7 +57,7 @@ Public Class CodeBlock
     ''' This is the variable informing which handler should handle an exception.
     ''' </summary>
     ''' <remarks></remarks>
-    Public VB_ActiveHandler As LocalBuilder
+    Public VB_ActiveHandler As Mono.Cecil.Cil.VariableDefinition
     Public VB_ActiveHandlerLabel As Label
     ''' <summary>
     ''' A value is stored here to check if the running code is in the unstructured handler
@@ -65,7 +65,7 @@ Public Class CodeBlock
     ''' -1: in the handler.
     ''' </summary>
     ''' <remarks></remarks>
-    Public VB_ResumeTarget As LocalBuilder
+    Public VB_ResumeTarget As Mono.Cecil.Cil.VariableDefinition
     Public UnstructuredResumeNextHandler As Label
     Public UnstructuredResumeHandler As Label
     ''' <summary>
@@ -83,7 +83,7 @@ Public Class CodeBlock
     ''' The index into the jump table of the current instruction.
     ''' </summary>
     ''' <remarks></remarks>
-    Public VB_CurrentInstruction As LocalBuilder
+    Public VB_CurrentInstruction As Mono.Cecil.Cil.VariableDefinition
     Public UnstructuredExceptionHandlers As Generic.List(Of Label)
     Public UnstructuredExceptionLabels As Generic.List(Of Label)
     Public EndMethodLabel As Label
@@ -110,13 +110,13 @@ Public Class CodeBlock
         End Get
     End Property
 
-    Sub FindStaticVariables(ByVal list As Generic.List(Of VariableDeclaration))
+    Sub FindStaticVariables(ByVal list As Generic.List(Of LocalVariableDeclaration))
         If m_StaticVariables IsNot Nothing Then
             list.AddRange(m_StaticVariables)
             Return
         End If
 
-        For Each var As VariableDeclaration In m_Variables
+        For Each var As LocalVariableDeclaration In m_Variables
             If var.Modifiers.Is(ModifierMasks.Static) Then
                 list.Add(var)
             End If
@@ -153,13 +153,13 @@ Public Class CodeBlock
         If cb IsNot Nothing Then cb.AddLabel(lbl)
     End Sub
 
-    Sub AddVariable(ByVal var As VariableDeclaration)
+    Sub AddVariable(ByVal var As LocalVariableDeclaration)
         m_Variables.Add(var)
         m_Sequence.Add(var)
     End Sub
 
-    Sub AddVariables(ByVal list As Generic.ICollection(Of VariableDeclaration))
-        For Each var As VariableDeclaration In list
+    Sub AddVariables(ByVal list As Generic.ICollection(Of LocalVariableDeclaration))
+        For Each var As LocalVariableDeclaration In list
             AddVariable(var)
         Next
     End Sub
@@ -307,7 +307,7 @@ Public Class CodeBlock
 
     Private Function GenerateUnstructuredEnd(ByVal Method As IMethod, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim retvar As LocalBuilder = Method.DefaultReturnVariable
+        Dim retvar As Mono.Cecil.Cil.VariableDefinition = Method.DefaultReturnVariable
 
         'Add a label to the end of the code as the last item in the switch.
 
@@ -319,7 +319,7 @@ Public Class CodeBlock
 
         Me.UnstructuredExceptionLabels.Add(UnstructuredSwitchHandlerEnd)
 
-        Dim tmpVar As LocalBuilder = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Int32)
+        Dim tmpVar As Mono.Cecil.Cil.VariableDefinition = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Int32)
         If Me.HasResume Then
             'Increment the instruction pointer index with one, then jump to the switch
             Emitter.MarkLabel(Info, ResumeNextExceptionHandler)
@@ -390,7 +390,7 @@ Public Class CodeBlock
         Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
 
         'create the catch block
-        Info.ILGen.BeginCatchBlock(CType(Nothing, Type))
+        Info.ILGen.BeginCatchBlock(CType(Nothing, Mono.Cecil.TypeReference))
         Info.Stack.Push(Compiler.TypeCache.System_Object)
         Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__SetProjectError_Exception)
@@ -416,10 +416,10 @@ Public Class CodeBlock
         If retvar IsNot Nothing Then
             Emitter.MarkLabel(Info, m_EndOfMethodLabel.Value)
             Emitter.EmitLoadVariable(Info, retvar)
-            Info.ILGen.Emit(OpCodes.Ret)
+            Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Ret)
         Else
             Emitter.MarkLabel(Info, m_EndOfMethodLabel.Value)
-            Info.ILGen.Emit(OpCodes.Ret)
+            Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Ret)
         End If
 
         Return result
@@ -461,8 +461,8 @@ Public Class CodeBlock
         End If
 
 #If DEBUG Then
-        If Method.MemberDescriptor.MemberType = MemberTypes.Constructor = False Then
-            info.ILGen.Emit(OpCodes.Nop)
+        If CecilHelper.GetMemberType(Method.MemberDescriptor) = MemberTypes.Constructor = False Then
+            info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Nop)
         End If
 #End If
 
@@ -472,7 +472,7 @@ Public Class CodeBlock
             Emitter.MarkLabel(info, m_EndOfMethodLabel.Value)
         End If
 
-        Dim retvar As LocalBuilder = Method.DefaultReturnVariable
+        Dim retvar As Mono.Cecil.Cil.VariableDefinition = Method.DefaultReturnVariable
         If retvar IsNot Nothing Then
             Emitter.EmitLoadVariable(info, retvar)
         Else
@@ -528,7 +528,7 @@ Public Class CodeBlock
 #End If
 
         For i As Integer = 0 To m_Variables.Count - 1
-            Dim var As VariableDeclaration = m_Variables(i)
+            Dim var As LocalVariableDeclaration = m_Variables(i)
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
             result = var.DefineLocalVariable(Info) AndAlso result
         Next
@@ -552,7 +552,7 @@ Public Class CodeBlock
         Return result
     End Function
 
-    ReadOnly Property Variables() As Nameables(Of VariableDeclaration)
+    ReadOnly Property Variables() As Nameables(Of LocalVariableDeclaration)
         Get
             Return m_Variables
         End Get
@@ -590,7 +590,7 @@ Public Class CodeBlock
         Dim result As Boolean = True
 
         For i As Integer = 0 To m_Variables.Count - 1
-            result = m_Variables(i).ResolveMember(Info) AndAlso result
+            'result = m_Variables(i).ResolveMember(Info) AndAlso result
             result = m_Variables(i).ResolveCode(Info) AndAlso result
             'Helper.Assert(result = (Compiler.Report.Errors = 0))
         Next

@@ -69,7 +69,7 @@ Public MustInherit Class GenericTypeDeclaration
         Dim result As Boolean = True
 
         If m_TypeParameters IsNot Nothing Then
-            result = m_TypeParameters.Parameters.DefineGenericParameters(TypeBuilder) AndAlso result
+            result = m_TypeParameters.Parameters.DefineGenericParameters(CecilType) AndAlso result
         End If
 
         Return result

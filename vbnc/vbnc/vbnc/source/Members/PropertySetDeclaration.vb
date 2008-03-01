@@ -34,44 +34,25 @@ Public Class PropertySetDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock, ByVal SetParameters As ParameterList)
-        Dim mySignature As SubSignature
-        Dim name As String
-        Dim typeParams As TypeParameters
-        Dim params As ParameterList
-
-        mySignature = New SubSignature(Me)
+    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock, ByVal params As ParameterList)
+        Dim mySignature As SubSignature = New SubSignature(Me, "set_" & PropertySignature.Name, params)
+        params = mySignature.Parameters
 
         If PropertySignature.TypeParameters IsNot Nothing Then
-            typeParams = PropertySignature.TypeParameters.Clone(mySignature)
+            mySignature.TypeParameters = PropertySignature.TypeParameters.Clone(mySignature)
         Else
-            typeParams = Nothing
+            mySignature.TypeParameters = Nothing
         End If
-        If PropertySignature.Parameters IsNot Nothing Then
-            params = PropertySignature.Parameters.Clone(mySignature)
-        Else
-            params = New ParameterList(mySignature)
-        End If
-        name = "set_" & PropertySignature.Name
 
-        mySignature.Init(Token.CreateIdentifierToken(PropertySignature.Identifier, name), typeParams, params)
-
-        Dim valueName As String = "value"
-        If SetParameters IsNot Nothing AndAlso SetParameters.Count > 0 Then
-            If SetParameters.Count > 1 Then
-                Helper.AddError(Me)
-                Return
+        If params.Count = 0 Then
+            Dim param As Parameter
+            If PropertySignature.ReturnType IsNot Nothing Then
+                param = New Parameter(params, "value", PropertySignature.ReturnType)
+            Else
+                param = New Parameter(params, "value", PropertySignature.TypeName)
             End If
-            valueName = SetParameters(0).Name
+            params.Add(param)
         End If
-        Dim param As Parameter
-        If PropertySignature.ReturnType IsNot Nothing Then
-            param = New Parameter(mySignature.Parameters, valueName, PropertySignature.ReturnType)
-        Else
-            param = New Parameter(mySignature.Parameters, valueName, PropertySignature.TypeName)
-        End If
-        param.Identifier.Identifier = Token.CreateIdentifierToken(param.Identifier.Identifier.Location, param.Identifier.Identifier.Identifier, mySignature.Identifier.TypeCharacter, False)
-        mySignature.Parameters.Add(param)
 
         MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
     End Sub

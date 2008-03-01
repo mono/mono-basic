@@ -93,9 +93,9 @@ Public Class MemberDeclarations
         End Get
     End Property
 
-    ReadOnly Property MemberDeclarations() As Generic.List(Of MemberInfo)
+    ReadOnly Property MemberDeclarations() As Generic.List(Of Mono.Cecil.MemberReference)
         Get
-            Dim result As New Generic.List(Of MemberInfo)
+            Dim result As New Generic.List(Of Mono.Cecil.MemberReference)
             For Each member As IMember In Me
                 result.Add(member.MemberDescriptor)
             Next
@@ -103,25 +103,25 @@ Public Class MemberDeclarations
         End Get
     End Property
 
-    Function GetMethod(ByVal Name As String, ByVal bindingAttr As BindingFlags, ByVal types As Type()) As MethodInfo
-        Dim result As MethodInfo = Nothing
-        Dim methods As Generic.List(Of MethodDeclaration)
+    'Function GetMethod(ByVal Name As String, ByVal bindingAttr As BindingFlags, ByVal types As Mono.Cecil.TypeReference()) As Mono.Cecil.MethodReference
+    '    Dim result As Mono.Cecil.MethodReference = Nothing
+    '    Dim methods As Generic.List(Of MethodDeclaration)
 
-        methods = GetSpecificMembers(Of MethodDeclaration)()
-        For Each method As MethodDeclaration In methods
-            If Helper.CompareName(method.Name, Name) Then
-                If Helper.CompareTypes(method.Signature.Parameters.ToTypeArray, types) Then
-                    result = New MethodDescriptor(method)
-                    Exit For
-                End If
-            End If
-        Next
+    '    methods = GetSpecificMembers(Of MethodDeclaration)()
+    '    For Each method As MethodDeclaration In methods
+    '        If Helper.CompareName(method.Name, Name) Then
+    '            If Helper.CompareTypes(method.Signature.Parameters.ToTypeArray, types) Then
+    '                result = method.MethodDescriptor 'New MethodDescriptor(method)
+    '                Exit For
+    '            End If
+    '        End If
+    '    Next
 
-        If result Is Nothing AndAlso CBool(bindingAttr And BindingFlags.FlattenHierarchy) Then
-            result = parent.FindFirstParent(Of IType).BaseType.GetMethod(Name, bindingAttr, Nothing, types, Nothing)
-        End If
-        Return result
-    End Function
+    '    If result Is Nothing AndAlso CBool(bindingAttr And BindingFlags.FlattenHierarchy) Then
+    '        result = Parent.FindFirstParent(Of IType).CecilBaseType.GetMethod(Name, bindingAttr, Nothing, types, Nothing)
+    '    End If
+    '    Return result
+    'End Function
 
     Function GetSpecificMembers(Of T)() As Generic.List(Of T)
         Dim result As New Generic.List(Of T)

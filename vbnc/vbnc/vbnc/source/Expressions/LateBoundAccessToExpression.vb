@@ -53,7 +53,7 @@ Public MustInherit Class LateBoundAccessToExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Object
         End Get
@@ -85,7 +85,7 @@ Public MustInherit Class LateBoundAccessToExpression
     ''' <param name="LateBoundAccess"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Shared Function EmitArguments(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByRef arguments As LocalBuilder) As Boolean
+    Private Shared Function EmitArguments(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByRef arguments As Mono.Cecil.Cil.VariableDefinition) As Boolean
         Dim result As Boolean = True
 
         Dim argCount As Integer
@@ -136,7 +136,7 @@ Public MustInherit Class LateBoundAccessToExpression
         Emitter.EmitLoadVariable(Info, arguments)
 
         If namedCount > 0 Then
-            Dim namedArguments As LocalBuilder
+            Dim namedArguments As Mono.Cecil.Cil.VariableDefinition
             namedArguments = Emitter.DeclareLocal(Info, Info.Compiler.TypeCache.System_String_Array)
             Emitter.EmitLoadI4Value(Info, namedCount)
             Emitter.EmitNewArr(Info, Info.Compiler.TypeCache.System_String)
@@ -173,7 +173,7 @@ Public MustInherit Class LateBoundAccessToExpression
     ''' <param name="LateBoundAccess"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Shared Function EmitCopyBacks(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByRef copyBackHints As Boolean(), ByRef copyBacks As LocalBuilder) As Boolean
+    Private Shared Function EmitCopyBacks(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByRef copyBackHints As Boolean(), ByRef copyBacks As Mono.Cecil.Cil.VariableDefinition) As Boolean
         Dim result As Boolean = True
         Dim args As ArgumentList
 
@@ -207,10 +207,10 @@ Public MustInherit Class LateBoundAccessToExpression
                             If varC.LocalBuilder IsNot Nothing Then
                                 copyBack = True
                             ElseIf varC.FieldInfo IsNot Nothing Then
-                                Dim fD As FieldDescriptor = TryCast(varC.FieldInfo, FieldDescriptor)
+                                Dim fD As IFieldMember = TryCast(varC.FieldInfo.Annotations(Info.Compiler), IFieldMember)
                                 If fD IsNot Nothing Then
                                     'TODO: Is the copyback done for readonly fields inside constructors?
-                                    copyBack = fD.IsLiteral = False AndAlso fD.Declaration.Modifiers.Is(ModifierMasks.ReadOnly) = False
+                                    copyBack = varC.FieldInfo.IsLiteral = False AndAlso fD.Modifiers.Is(ModifierMasks.ReadOnly) = False
                                 Else
                                     copyBack = varC.FieldInfo.IsLiteral = False
                                 End If
@@ -220,7 +220,7 @@ Public MustInherit Class LateBoundAccessToExpression
                         Case ExpressionClassification.Classifications.Value
                             copyBack = False
                         Case ExpressionClassification.Classifications.PropertyAccess
-                            copyBack = exp.Classification.AsPropertyAccess.ResolvedProperty.CanWrite
+                            copyBack = CecilHelper.FindDefinition(exp.Classification.AsPropertyAccess.ResolvedProperty).SetMethod IsNot Nothing '.CanWrite
                         Case Else
                             Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, LateBoundAccess.Parent.Location)
                     End Select
@@ -239,7 +239,7 @@ Public MustInherit Class LateBoundAccessToExpression
         Return result
     End Function
 
-    Private Shared Function EmitStoreBacks(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByVal CopyBacks As Boolean(), ByVal array As LocalBuilder, ByVal arguments As LocalBuilder) As Boolean
+    Private Shared Function EmitStoreBacks(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification, ByVal CopyBacks As Boolean(), ByVal array As Mono.Cecil.Cil.VariableDefinition, ByVal arguments As Mono.Cecil.Cil.VariableDefinition) As Boolean
         Dim result As Boolean = True
         Dim args As ArgumentList
 
@@ -264,7 +264,7 @@ Public MustInherit Class LateBoundAccessToExpression
             Emitter.EmitLoadElement(Info, Info.Compiler.TypeCache.System_Boolean_Array)
             Emitter.EmitBranchIfFalse(Info, branch)
 
-            Dim tmpVar As LocalBuilder
+            Dim tmpVar As Mono.Cecil.Cil.VariableDefinition
             tmpVar = Emitter.DeclareLocal(Info, exp.ExpressionType)
 
             Emitter.EmitLoadVariable(Info, arguments)
@@ -291,7 +291,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
     Public Shared Function EmitLateGet(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification) As Boolean
         Dim result As Boolean = True
-        Dim copyBacks As LocalBuilder = Nothing, arguments As LocalBuilder = Nothing
+        Dim copyBacks As Mono.Cecil.Cil.VariableDefinition = Nothing, arguments As Mono.Cecil.Cil.VariableDefinition = Nothing
         Dim copyBackHints As Boolean() = Nothing
 
         'We need to emit a call to LateGet
@@ -329,7 +329,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
     Public Shared Function EmitLateIndexGet(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification) As Boolean
         Dim result As Boolean = True
-        Dim arguments As LocalBuilder = Nothing
+        Dim arguments As Mono.Cecil.Cil.VariableDefinition = Nothing
 
         'We need to emit a call to LateIndexGet
 
@@ -348,7 +348,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
     Public Shared Function EmitLateSet(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification) As Boolean
         Dim result As Boolean = True
-        Dim arguments As LocalBuilder = Nothing
+        Dim arguments As Mono.Cecil.Cil.VariableDefinition = Nothing
 
         'We need to emit a call to LateSet
 
@@ -379,7 +379,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
     Public Shared Function EmitLateIndexSet(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification) As Boolean
         Dim result As Boolean = True
-        Dim arguments As LocalBuilder = Nothing
+        Dim arguments As Mono.Cecil.Cil.VariableDefinition = Nothing
 
         'We need to emit a call to LateIndexSet
 
@@ -397,7 +397,7 @@ Public MustInherit Class LateBoundAccessToExpression
 
     Public Shared Function EmitLateCall(ByVal Info As EmitInfo, ByVal LateBoundAccess As LateBoundAccessClassification) As Boolean
         Dim result As Boolean = True
-        Dim copyBacks As LocalBuilder = Nothing, arguments As LocalBuilder = Nothing
+        Dim copyBacks As Mono.Cecil.Cil.VariableDefinition = Nothing, arguments As Mono.Cecil.Cil.VariableDefinition = Nothing
         Dim copyBackHints As Boolean() = Nothing
 
         'We need to emit a call to LateCall

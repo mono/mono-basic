@@ -88,16 +88,16 @@ Public Class MethodResolver
         End Get
     End Property
 
-    ReadOnly Property MethodDeclaringType() As Type
+    ReadOnly Property MethodDeclaringType() As Mono.Cecil.TypeReference
         Get
             Return m_InitialCandidates(0).Member.DeclaringType
         End Get
     End Property
 
-    Sub Init(ByVal InitialGroup As Generic.List(Of MemberInfo), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList)
+    Sub Init(ByVal InitialGroup As Generic.List(Of Mono.Cecil.MemberReference), ByVal Arguments As ArgumentList, ByVal TypeArguments As TypeArgumentList)
         m_Candidates = New Generic.List(Of MemberCandidate)(InitialGroup.Count)
         For i As Integer = 0 To InitialGroup.Count - 1
-            Dim member As MemberInfo = InitialGroup(i)
+            Dim member As Mono.Cecil.MemberReference = InitialGroup(i)
             m_Candidates.Add(New MemberCandidate(Me, member))
         Next
 
@@ -201,9 +201,9 @@ Public Class MethodResolver
         If ShowErrors AndAlso CandidatesLeft = 0 Then
             If m_InitialCandidates.Length = 1 Then
                 Dim argsGiven, argsRequired As Integer
-                Dim params() As ParameterInfo
+                Dim params As Mono.Cecil.ParameterDefinitionCollection
                 params = Helper.GetParameters(Compiler, m_InitialCandidates(0).Member)
-                argsRequired = params.Length
+                argsRequired = params.Count
                 argsGiven = m_Arguments.Length
                 If argsGiven >= argsRequired Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
@@ -233,7 +233,7 @@ Public Class MethodResolver
         If CandidatesLeft = 1 Then
             Return True
         ElseIf CandidatesLeft = 0 Then
-            If Caller.Location.File(Compiler).IsOptionStrictOn = False Then
+            If Parent.Location.File(Compiler).IsOptionStrictOn = False Then
                 m_IsLateBound = True
                 Return True
             End If
@@ -399,7 +399,7 @@ Public Class MethodResolver
 
     Sub SelectMostApplicable()
         'Find most applicable methods.
-        Dim expandedArgumentTypes(m_Candidates.Count - 1)() As Type
+        Dim expandedArgumentTypes(m_Candidates.Count - 1)() As Mono.Cecil.TypeReference
 
         For i As Integer = 0 To m_Candidates.Count - 1
             If m_Candidates(i) Is Nothing Then Continue For
@@ -473,28 +473,28 @@ Public Class MethodResolver
         End Get
     End Property
 
-    ReadOnly Property ResolvedMember() As MemberInfo
+    ReadOnly Property ResolvedMember() As Mono.Cecil.MemberReference
         Get
             If m_ResolvedCandidate Is Nothing Then Return Nothing
             Return m_ResolvedCandidate.Member
         End Get
     End Property
 
-    ReadOnly Property ResolvedMethod() As MethodInfo
+    ReadOnly Property ResolvedMethod() As Mono.Cecil.MethodReference
         Get
-            Return TryCast(ResolvedMember, MethodInfo)
+            Return TryCast(ResolvedMember, Mono.Cecil.MethodReference)
         End Get
     End Property
 
-    ReadOnly Property ResolvedConstructor() As ConstructorInfo
+    ReadOnly Property ResolvedConstructor() As Mono.Cecil.MethodReference
         Get
-            Return TryCast(ResolvedMember, ConstructorInfo)
+            Return TryCast(ResolvedMember, Mono.Cecil.MethodReference)
         End Get
     End Property
 
-    ReadOnly Property ResolvedProperty() As PropertyInfo
+    ReadOnly Property ResolvedProperty() As Mono.Cecil.PropertyReference
         Get
-            Return TryCast(ResolvedMember, PropertyInfo)
+            Return TryCast(ResolvedMember, Mono.Cecil.PropertyReference)
         End Get
     End Property
 
@@ -509,13 +509,13 @@ Public Class MethodResolver
 End Class
 
 Public Class MemberCandidate
-    Private m_Member As MemberInfo
-    Private m_DefinedParameters As ParameterInfo()
-    Private m_DefinedParametersTypes As Type()
+    Private m_Member As Mono.Cecil.MemberReference
+    Private m_DefinedParameters As Mono.Cecil.ParameterDefinitionCollection
+    Private m_DefinedParametersTypes As Mono.Cecil.TypeReference()
     Private m_Parent As MethodResolver
 
     Private m_ExactArguments As Generic.List(Of Argument)
-    Private m_TypesInInvokedOrder As Type()
+    Private m_TypesInInvokedOrder As Mono.Cecil.TypeReference()
 
     Private m_IsParamArray As Boolean
 
@@ -523,12 +523,12 @@ Public Class MemberCandidate
         Return Helper.ToString(m_Parent.Parent, m_Member)
     End Function
 
-    Sub New(ByVal Parent As MethodResolver, ByVal Member As MemberInfo)
+    Sub New(ByVal Parent As MethodResolver, ByVal Member As Mono.Cecil.MemberReference)
         m_Parent = Parent
         m_Member = Member
     End Sub
 
-    ReadOnly Property TypesInInvokedOrder() As Type()
+    ReadOnly Property TypesInInvokedOrder() As Mono.Cecil.TypeReference()
         Get
             Return m_TypesInInvokedOrder
         End Get
@@ -540,14 +540,14 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property DefinedParameters() As ParameterInfo()
+    ReadOnly Property DefinedParameters() As Mono.Cecil.ParameterDefinitionCollection
         Get
             If m_DefinedParameters Is Nothing Then m_DefinedParameters = Helper.GetParameters(Compiler, Member)
             Return m_DefinedParameters
         End Get
     End Property
 
-    ReadOnly Property DefinedParametersTypes() As Type()
+    ReadOnly Property DefinedParametersTypes() As Mono.Cecil.TypeReference()
         Get
             If m_DefinedParametersTypes Is Nothing Then m_DefinedParametersTypes = Helper.GetTypes(DefinedParameters)
             Return m_DefinedParametersTypes
@@ -560,7 +560,7 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property Member() As MemberInfo
+    ReadOnly Property Member() As Mono.Cecil.MemberReference
         Get
             Return m_Member
         End Get
@@ -593,7 +593,11 @@ Public Class MemberCandidate
 
     ReadOnly Property IsAccessible() As Boolean
         Get
-            Return Helper.IsAccessible(Compiler, Resolver.Caller, m_Member)
+            If Resolver.Caller Is Nothing Then
+                Return Helper.IsAccessibleExternal(Compiler, m_Member)
+            Else
+                Return Helper.IsAccessible(Compiler, Resolver.Caller.CecilType, m_Member)
+            End If
         End Get
     End Property
 
@@ -616,9 +620,9 @@ Public Class MemberCandidate
     End Property
 
     Private Function IsNarrowingInternal(ByVal ExceptObject As Boolean) As Boolean
-        For j As Integer = 0 To InputParameters.Length - 1
+        For j As Integer = 0 To InputParameters.Count - 1
             Dim arg As Argument
-            Dim param As ParameterInfo
+            Dim param As Mono.Cecil.ParameterDefinition
 
             param = InputParameters(j)
             arg = ExactArguments(j)
@@ -649,22 +653,22 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property InputParameters() As ParameterInfo()
+    ReadOnly Property InputParameters() As Mono.Cecil.ParameterDefinitionCollection
         Get
             Return DefinedParameters
         End Get
     End Property
 
-    ReadOnly Property ParamArrayParameter() As ParameterInfo
+    ReadOnly Property ParamArrayParameter() As Mono.Cecil.ParameterDefinition
         Get
             If m_IsParamArray = False Then Return Nothing
-            Return m_DefinedParameters(m_DefinedParameters.Length - 1)
+            Return m_DefinedParameters(m_DefinedParameters.Count - 1)
         End Get
     End Property
 
     Sub ExpandParamArray()
-        If DefinedParameters.Length = 0 Then Return
-        If Helper.IsParamArrayParameter(Compiler, DefinedParameters(DefinedParameters.Length - 1)) = False Then Return
+        If DefinedParameters.Count = 0 Then Return
+        If Helper.IsParamArrayParameter(Compiler, DefinedParameters(DefinedParameters.Count - 1)) = False Then Return
 
         Dim candidate As New MemberCandidate(Resolver, m_Member)
         candidate.m_IsParamArray = True
@@ -672,21 +676,21 @@ Public Class MemberCandidate
     End Sub
 
     Function DefineApplicability() As Boolean
-        Dim matchedParameters As Generic.List(Of ParameterInfo)
+        Dim matchedParameters As Generic.List(Of Mono.Cecil.ParameterReference)
         Dim exactArguments As Generic.List(Of Argument)
-        Dim method As MethodBase = TryCast(Member, MethodBase)
-        Dim prop As PropertyInfo = TryCast(Member, PropertyInfo)
+        Dim method As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
+        Dim prop As Mono.Cecil.PropertyReference = TryCast(Member, Mono.Cecil.PropertyReference)
 
         Dim isLastParamArray As Boolean
         Dim paramArrayExpression As ArrayCreationExpression = Nothing
-        Dim inputParametersCount As Integer = InputParameters.Length
+        Dim inputParametersCount As Integer = InputParameters.Count
 
         isLastParamArray = m_IsParamArray
 
         '(if there are more arguments than parameters and the last parameter is not a 
         'paramarray parameter the method should not be applicable)
-        If Arguments.Count > InputParameters.Length Then
-            If InputParameters.Length < 1 Then
+        If Arguments.Count > InputParameters.Count Then
+            If InputParameters.Count < 1 Then
                 'LogResolutionMessage(Parent.Compiler, "N/A: 1")
                 Return False
             End If
@@ -696,7 +700,7 @@ Public Class MemberCandidate
             End If
         End If
 
-        matchedParameters = New Generic.List(Of ParameterInfo)
+        matchedParameters = New Generic.List(Of Mono.Cecil.ParameterReference)
         exactArguments = New Generic.List(Of Argument)(Helper.CreateArray(Of Argument)(Nothing, inputParametersCount))
 
         ReDim m_TypesInInvokedOrder(Math.Max(Arguments.Count - 1, inputParametersCount - 1))
@@ -708,7 +712,7 @@ Public Class MemberCandidate
             paramArrayExpression = New ArrayCreationExpression(paramArrayArg)
             paramArrayExpression.Init(ParamArrayParameter.ParameterType, New Expression() {})
 
-            paramArrayArg.Init(ParamArrayParameter.Position, paramArrayExpression)
+            paramArrayArg.Init(ParamArrayParameter.Sequence, paramArrayExpression)
             exactArguments(inputParametersCount - 1) = paramArrayArg
 
             m_TypesInInvokedOrder(inputParametersCount - 1) = ParamArrayParameter.ParameterType
@@ -744,7 +748,7 @@ Public Class MemberCandidate
                     paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(j).Expression)
 
                     Helper.Assert(m_TypesInInvokedOrder(j) Is Nothing)
-                    m_TypesInInvokedOrder(j) = ParamArrayParameter.ParameterType.GetElementType
+                    m_TypesInInvokedOrder(j) = CecilHelper.GetElementType(ParamArrayParameter.ParameterType)
                 Next
                 Exit For
             Else
@@ -762,7 +766,7 @@ Public Class MemberCandidate
                         Dim exp As Expression
                         Dim pArg As New PositionalArgument(Parent)
                         exp = Helper.GetOptionalValueExpression(pArg, InputParameters(i))
-                        pArg.Init(InputParameters(i).Position, exp)
+                        pArg.Init(InputParameters(i).Sequence, exp)
                         arg = pArg
                     End If
                 Else
@@ -774,7 +778,7 @@ Public Class MemberCandidate
                     Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 0)
                     paramArrayExpression.ArrayElementInitalizer.AddInitializer(arg.Expression)
                     'Helper.Assert(m_TypesInInvokedOrder(i) Is Nothing)
-                    m_TypesInInvokedOrder(i) = ParamArrayParameter.ParameterType.GetElementType
+                    m_TypesInInvokedOrder(i) = CecilHelper.GetElementType(ParamArrayParameter.ParameterType)
                 Else
                     If isLastParamArray Then exactArguments(i) = arg
                 End If
@@ -796,7 +800,7 @@ Public Class MemberCandidate
             Dim matched As Boolean = False
             For j As Integer = 0 To inputParametersCount - 1
                 'Next, match each named argument to a parameter with the given name. 
-                Dim inputParam As ParameterInfo = InputParameters(j)
+                Dim inputParam As Mono.Cecil.ParameterReference = InputParameters(j)
                 If Helper.CompareName(inputParam.Name, namedArgument.Name) Then
                     If matchedParameters.Contains(inputParam) Then
                         'If one of the named arguments (...) matches an argument already matched with 
@@ -848,7 +852,7 @@ Public Class MemberCandidate
                 Dim exp As Expression
                 Dim arg As New PositionalArgument(Parent)
                 exp = Helper.GetOptionalValueExpression(arg, InputParameters(i))
-                arg.Init(InputParameters(i).Position, exp)
+                arg.Init(InputParameters(i).Sequence, exp)
                 If isLastParamArray = False Then
                     Helper.Assert(m_TypesInInvokedOrder(i) Is Nothing)
                     m_TypesInInvokedOrder(i) = InputParameters(i).ParameterType
@@ -869,9 +873,9 @@ Public Class MemberCandidate
         'Otherwise, the type arguments are filled in the place of the 
         'type parameters in the signature.
         Dim genericTypeArgumentCount As Integer
-        Dim genericTypeArguments As Type()
-        If method IsNot Nothing AndAlso method.IsGenericMethod Then
-            genericTypeArguments = method.GetGenericArguments()
+        Dim genericTypeArguments As Mono.Cecil.TypeReference()
+        If method IsNot Nothing AndAlso CecilHelper.IsGenericMethod(method) Then
+            genericTypeArguments = CecilHelper.GetGenericArguments(method)
             genericTypeArgumentCount = genericTypeArguments.Length
         ElseIf prop IsNot Nothing Then
             'property cannot be generic.
@@ -908,7 +912,7 @@ Public Class MemberCandidate
 
         For i As Integer = 0 To m_ExactArguments.Count - 1
             Dim exp As Expression
-            Dim expType As Type
+            Dim expType As Mono.Cecil.TypeReference
 
             exp = m_ExactArguments(0).Expression
             expType = exp.ExpressionType
@@ -933,7 +937,7 @@ Public Class MemberCandidate
         If IsParamArrayCandidate Then
             Dim ace As ArrayCreationExpression
             ace = ParamArrayExpression ' TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)
-            If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Length - 1)) Then
+            If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Count - 1)) Then
                 If ace.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
                     Helper.ErrorRecoveryNotImplemented()
                 End If

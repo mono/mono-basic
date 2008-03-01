@@ -24,17 +24,17 @@
 Public Class TypeResolution
     Inherits Helper
 
-    Friend BuiltInTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Boolean, Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Char, Compiler.TypeCache.System_DateTime, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_String, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Uint64})
-    Friend NumericTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
-    Friend IntegralTypes As New ArrayList(New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Uint16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
+    Friend BuiltInTypes As New Generic.List(Of Mono.Cecil.TypeReference)(New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Boolean, Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Char, Compiler.TypeCache.System_DateTime, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_String, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Uint64})
+    Friend NumericTypes As New Generic.List(Of Mono.Cecil.TypeReference)(New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
+    Friend IntegralTypes As New Generic.List(Of Mono.Cecil.TypeReference)(New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_int16, Compiler.TypeCache.System_Uint16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_int64, Compiler.TypeCache.System_Uint64})
 
-    Private valCanBeContainBy(15)() As Type
+    Private valCanBeContainBy(15)() As Mono.Cecil.TypeReference
 
     Public Shared Conversion As TypeConversionInfo(,)
 
-    Private Shared m_ImplicitlyConvertedIntrinsicTypes As New Generic.Dictionary(Of Type, TypeCode())
+    Private Shared m_ImplicitlyConvertedIntrinsicTypes As New Generic.Dictionary(Of Mono.Cecil.TypeReference, TypeCode())
 
-    Shared Function GetIntrinsicTypesImplicitlyConvertibleFrom(ByVal Compiler As Compiler, ByVal Type As Type) As TypeCode()
+    Shared Function GetIntrinsicTypesImplicitlyConvertibleFrom(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As TypeCode()
         Dim result As TypeCode() = Nothing
 
         If m_ImplicitlyConvertedIntrinsicTypes.TryGetValue(Type, result) Then
@@ -91,21 +91,21 @@ Public Class TypeResolution
         MyBase.New(Compiler)
 
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Boolean)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Byte)) = New Type() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Byte)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Byte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Char)) = Nothing
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Date)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Decimal)) = New Type() {Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Double)) = New Type() {Compiler.TypeCache.System_Double}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Integer)) = New Type() {Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Long)) = New Type() {Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Decimal)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Double)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Double}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Integer)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Long)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Object)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[SByte])) = New Type() {Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Short)) = New Type() {Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Single)) = New Type() {Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[SByte])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_SByte, Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Short)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Int16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.Single)) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.String)) = Nothing
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UInteger])) = New Type() {Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[ULong])) = New Type() {Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
-        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UShort])) = New Type() {Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UInteger])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[ULong])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
+        valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UShort])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
 
 
 
@@ -118,11 +118,11 @@ Public Class TypeResolution
     ''' <param name="tp"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function BuiltInTypeToType(ByVal tp As BuiltInDataTypes) As Type
+    Function BuiltInTypeToType(ByVal tp As BuiltInDataTypes) As Mono.Cecil.TypeReference
         Return KeywordToType(CType(tp, KS))
     End Function
 
-    Function IsBuiltInType(ByVal Type As Type) As Boolean
+    Function IsBuiltInType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return BuiltInTypes.Contains(Type)
     End Function
 
@@ -208,11 +208,11 @@ Public Class TypeResolution
         End Select
     End Function
 
-    Function TypeCodeToTypeDescriptor(ByVal Code As TypeCode) As Type
+    Function TypeCodeToTypeDescriptor(ByVal Code As TypeCode) As Mono.Cecil.TypeReference
         Return TypeCodeToType(Code)
     End Function
 
-    Function TypeCodeToType(ByVal Code As TypeCode) As Type
+    Function TypeCodeToType(ByVal Code As TypeCode) As Mono.Cecil.TypeReference
         Select Case Code
             Case TypeCode.Boolean
                 Return Compiler.TypeCache.System_Boolean
@@ -340,7 +340,7 @@ Public Class TypeResolution
     ''' <returns></returns>
     ''' <remarks></remarks>
     ''' 
-    Function KeywordToType(ByVal Keyword As KS) As Type
+    Function KeywordToType(ByVal Keyword As KS) As Mono.Cecil.TypeReference
         Select Case Keyword
             Case KS.Boolean
                 Return Compiler.TypeCache.System_Boolean
@@ -380,7 +380,7 @@ Public Class TypeResolution
         End Select
     End Function
 
-    Function TypeToKeyword(ByVal Type As Type) As KS
+    Function TypeToKeyword(ByVal Type As Mono.Cecil.TypeReference) As KS
         If Helper.CompareType(Type, Compiler.TypeCache.System_Boolean) Then
             Return KS.Boolean
         ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Byte) Then
@@ -418,16 +418,16 @@ Public Class TypeResolution
         End If
     End Function
 
-    Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As TypeDescriptor, ByVal ToType As TypeDescriptor) As Boolean
-        Return IsImplicitlyConvertible(Context, FromType.TypeInReflection, ToType.TypeInReflection)
-    End Function
+    'Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As TypeDescriptor, ByVal ToType As TypeDescriptor) As Boolean
+    '    Return IsImplicitlyConvertible(Context, FromType.TypeInReflection, ToType.TypeInReflection)
+    'End Function
 
-    Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As Type, ByVal ToType As Type) As Boolean
+    Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference) As Boolean
         Dim Compiler As Compiler = Context.Compiler
         Dim tpFrom, tpTo As TypeCode
         If Helper.CompareType(Compiler.TypeCache.Nothing, FromType) Then Return True
-        If FromType.IsByRef Then FromType = FromType.GetElementType
-        If ToType.IsByRef Then ToType = ToType.GetElementType
+        If CecilHelper.IsByRef(FromType) Then FromType = CecilHelper.GetElementType(FromType)
+        If CecilHelper.IsByRef(ToType) Then ToType = CecilHelper.GetElementType(ToType)
         tpFrom = Helper.GetTypeCode(Compiler, FromType)
         tpTo = Helper.GetTypeCode(Compiler, ToType)
         If tpTo = TypeCode.Object Then
@@ -465,21 +465,21 @@ Public Class TypeResolution
         Return result
     End Function
 
-    Function IsNumericType(ByVal Type As Type) As Boolean
-        For Each t As Type In NumericTypes
+    Function IsNumericType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
+        For Each t As Mono.Cecil.TypeReference In NumericTypes
             If Helper.CompareType(t, Type) Then Return True
         Next
     End Function
 
-    Function IsIntegralType(ByVal Type As Type) As Boolean
-        For Each t As Type In IntegralTypes
+    Function IsIntegralType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
+        For Each t As Mono.Cecil.TypeReference In IntegralTypes
             If Helper.CompareType(t, Type) Then Return True
         Next
         Return False
     End Function
 
     Function IsIntegralType(ByVal Type As TypeCode) As Boolean
-        For Each t As Type In IntegralTypes
+        For Each t As Mono.Cecil.TypeReference In IntegralTypes
             If Helper.GetTypeCode(Compiler, t) = Type Then Return True
         Next
         Return False
@@ -489,14 +489,14 @@ Public Class TypeResolution
         Return IsIntegralType(BuiltInTypeToTypeCode(Type))
     End Function
 
-    Function IsSignedIntegralType(ByVal Type As Type) As Boolean
+    Function IsSignedIntegralType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return Helper.CompareType(Type, Compiler.TypeCache.System_SByte) OrElse _
          Helper.CompareType(Type, Compiler.TypeCache.System_Int16) OrElse _
          Helper.CompareType(Type, Compiler.TypeCache.System_Int32) OrElse _
          Helper.CompareType(Type, Compiler.TypeCache.System_Int64)
     End Function
 
-    Function IsUnsignedIntegralType(ByVal Type As Type) As Boolean
+    Function IsUnsignedIntegralType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return Helper.CompareType(Type, Compiler.TypeCache.System_Byte) OrElse _
          Helper.CompareType(Type, Compiler.TypeCache.System_UInt16) OrElse _
          Helper.CompareType(Type, Compiler.TypeCache.System_UInt32) OrElse _
@@ -510,11 +510,11 @@ Public Class TypeResolution
     ''' <param name="tp"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetIntegralType(ByVal tp As Type) As Type
+    Function GetIntegralType(ByVal Compiler As Compiler, ByVal tp As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Helper.Assert(tp IsNot Nothing, "tp Is Nothing")
-        If tp.IsEnum Then
-            Dim field As FieldInfo
-            field = tp.GetField(EnumDeclaration.EnumTypeMemberName)
+        If Helper.IsEnum(Compiler, tp) Then
+            Dim field As Mono.Cecil.FieldDefinition
+            field = CecilHelper.FindDefinition(tp).Fields.GetField(EnumDeclaration.EnumTypeMemberName)
             Helper.Assert(field IsNot Nothing, "field '" & EnumDeclaration.EnumTypeMemberName & "' Is Nothing of Type '" & tp.FullName & "'")
             Return field.FieldType
         Else
@@ -531,23 +531,23 @@ Public Class TypeResolution
     ''' <param name="tp2"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetSmallestIntegralType(ByVal tp1 As Type, ByVal tp2 As Type) As Type
-        Dim cont1(), cont2() As Type
+    Function GetSmallestIntegralType(ByVal tp1 As Mono.Cecil.TypeReference, ByVal tp2 As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
+        Dim cont1(), cont2() As Mono.Cecil.TypeReference
 
         Helper.Assert(tp1 IsNot Nothing, "tp1 Is Nothing")
         Helper.Assert(tp2 IsNot Nothing, "tp2 Is Nothing")
 
-        Dim itp1, itp2 As Type
-        itp1 = GetIntegralType(tp1)
-        itp2 = GetIntegralType(tp2)
+        Dim itp1, itp2 As Mono.Cecil.TypeReference
+        itp1 = GetIntegralType(Compiler, tp1)
+        itp2 = GetIntegralType(Compiler, tp2)
         cont1 = valCanBeContainBy(getTypeIndex(CType(TypeToKeyword(itp1), BuiltInDataTypes)))
         cont2 = valCanBeContainBy(getTypeIndex(CType(TypeToKeyword(itp2), BuiltInDataTypes)))
 
         If cont1 Is Nothing Or cont2 Is Nothing Then Return Nothing
 
         Dim found As New ArrayList
-        For Each t1 As Type In cont1
-            For Each t2 As Type In cont2
+        For Each t1 As Mono.Cecil.TypeReference In cont1
+            For Each t2 As Mono.Cecil.TypeReference In cont2
                 If Helper.CompareType(t1, t2) Then
                     found.Add(t1)
                 End If
@@ -557,7 +557,7 @@ Public Class TypeResolution
         If found.Count = 0 Then
             Return Nothing
         Else
-            Return CType(found(0), Type)
+            Return CType(found(0), Mono.Cecil.TypeReference)
         End If
     End Function
 
@@ -577,7 +577,7 @@ Public Class TypeResolution
     ''' <param name="desiredType"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function CheckNumericRange(ByVal value As Object, ByRef result As Object, ByVal desiredType As Type) As Boolean
+    Public Function CheckNumericRange(ByVal value As Object, ByRef result As Object, ByVal desiredType As Mono.Cecil.TypeReference) As Boolean
         Dim builtInType As BuiltInDataTypes = TypeResolution.TypeCodeToBuiltInType(Helper.GetTypeCode(Compiler, desiredType))
 
         If value Is Nothing Then 'Nothing can be converted into anything.
@@ -587,13 +587,13 @@ Public Class TypeResolution
 
         If IsNumericType(desiredType) = False Then Return False
 
-        If IsIntegralType(builtInType) AndAlso IsIntegralType(Helper.GetTypeCode(Compiler, value.GetType)) Then
+        If IsIntegralType(builtInType) AndAlso IsIntegralType(Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))) Then
             Return CheckIntegralRange(value, result, builtInType)
         Else
-            Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, value.GetType)
+            Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))
             Dim desiredCode As TypeCode = Helper.GetTypeCode(Compiler, desiredType)
 
-            If Helper.CompareType(value.GetType, desiredType) Then
+            If Helper.CompareType(CecilHelper.GetType(Compiler, value), desiredType) Then
                 result = value
                 Return True
             End If
@@ -637,7 +637,7 @@ Public Class TypeResolution
                 Return True
             End If
 
-            If IsNumericType(value.GetType) = False Then Return False
+            If IsNumericType(CecilHelper.GetType(Compiler, value)) = False Then Return False
 
             Select Case desiredCode
                 Case TypeCode.Double
@@ -875,7 +875,7 @@ Public Class TypeResolution
     Public Function CheckIntegralRange(ByVal value As Object, ByRef result As Object, ByVal desiredType As BuiltInDataTypes) As Boolean
         Helper.Assert(value IsNot Nothing)
         Helper.Assert(IsIntegralType(desiredType))
-        Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, value.GetType)
+        Dim tpValue As TypeCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))
         Helper.Assert(IsIntegralType(tpValue))
         Select Case tpValue
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
@@ -1003,54 +1003,54 @@ Public Class TypeResolution
         End Select
     End Function
 
-    Function TypeResolver(ByVal sender As Object, ByVal args As ResolveEventArgs) As System.Reflection.Assembly
-        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Resolve event fired for type '" & args.Name & "'")
-#If EXTENDEDDEBUG Then
-        Compiler.Report.WriteLine("Looking for type: " & args.Name)
-#End If
-        Dim types As Generic.List(Of Type)
-        types = Me.Compiler.TypeManager.GetType(args.Name, True)
+    '    Function TypeResolver(ByVal sender As Object, ByVal args As ResolveEventArgs) As System.Reflection.Assembly
+    '        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Resolve event fired for type '" & args.Name & "'")
+    '#If EXTENDEDDEBUG Then
+    '        Compiler.Report.WriteLine("Looking for type: " & args.Name)
+    '#End If
+    '        Dim types As Generic.List(Of Type)
+    '        types = Me.Compiler.TypeManager.GetType(args.Name, True)
 
-        If types.Count = 0 Then
-            Throw New InternalException("Type '" & args.Name & "' was been referenced while compiling, but it wasn't found...")
-        ElseIf types.Count = 1 Then
-            If TypeOf types(0) Is TypeDescriptor Then
-                Dim result As Boolean = True
-                result = DirectCast(types(0), TypeDescriptor).Declaration.CreateType() AndAlso result
-                If result = False Then
-                    Throw New InternalException()
-                End If
-            Else
-                Throw New InternalException("Found type " & args.Name & ", but it isn't a TypeDescriptor!")
-            End If
-        Else
-            Helper.AddError(Compiler, Span.CommandLineSpan, "Compiler cannot decide between several types with the name " & args.Name)
-        End If
+    '        If types.Count = 0 Then
+    '            Throw New InternalException("Type '" & args.Name & "' was been referenced while compiling, but it wasn't found...")
+    '        ElseIf types.Count = 1 Then
+    '            If TypeOf types(0) Is TypeDescriptor Then
+    '                Dim result As Boolean = True
+    '                result = DirectCast(types(0), TypeDescriptor).Declaration.CreateType() AndAlso result
+    '                If result = False Then
+    '                    Throw New InternalException()
+    '                End If
+    '            Else
+    '                Throw New InternalException("Found type " & args.Name & ", but it isn't a TypeDescriptor!")
+    '            End If
+    '        Else
+    '            Helper.AddError(Compiler, Span.CommandLineSpan, "Compiler cannot decide between several types with the name " & args.Name)
+    '        End If
 
-        Return Compiler.AssemblyBuilder
-    End Function
+    '        Return Compiler.AssemblyBuilder
+    '    End Function
 
-    ''' <summary>
-    ''' Looks up the specified type in the current compiling assembly.
-    ''' This function looks up the name in the code / referenced assemblies
-    ''' and returns an arraylist of found objects.
-    ''' Can be anything:
-    ''' If found in the parsing code, any Type* Object
-    ''' If not found in the parsing code, but found in referenced assemblies, could be any of the following Reflection classes:
-    '''   MemberInfo
-    '''   Module
-    ''' If a namespace was found, a string variable is returned with the name of the namespace.
-    ''' </summary>
-    ''' <param name="Name"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function LookupType(ByVal Name As String) As ArrayList
-        Dim result As New ArrayList
+    '''' <summary>
+    '''' Looks up the specified type in the current compiling assembly.
+    '''' This function looks up the name in the code / referenced assemblies
+    '''' and returns an arraylist of found objects.
+    '''' Can be anything:
+    '''' If found in the parsing code, any Type* Object
+    '''' If not found in the parsing code, but found in referenced assemblies, could be any of the following Reflection classes:
+    ''''   MemberInfo
+    ''''   Module
+    '''' If a namespace was found, a string variable is returned with the name of the namespace.
+    '''' </summary>
+    '''' <param name="Name"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Function LookupType(ByVal Name As String) As ArrayList
+    '    Dim result As New ArrayList
 
-        result.Add(Compiler.AssemblyBuilder.GetType(Name))
+    '    result.Add(Compiler.AssemblyBuilder.GetType(Name))
 
-        Return result
-    End Function
+    '    Return result
+    'End Function
 End Class
 
 Public Enum ConversionType

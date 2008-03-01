@@ -30,7 +30,7 @@ Public Class VariablePropertyInitializerList
     Overloads Sub Add(ByVal Name As String, ByVal Value As Object)
         Dim var As New VariablePropertyInitializer(Me)
         Dim exp As New AttributeArgumentExpression(var)
-        exp.Init(New ConstantExpression(var, Value, Value.GetType))
+        exp.Init(New ConstantExpression(var, Value, CecilHelper.GetType(Compiler, Value)))
         var.Init(Name, exp)
         Add(var)
     End Sub

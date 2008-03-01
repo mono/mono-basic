@@ -39,12 +39,11 @@ Public Class InterfaceDeclaration
         m_InterfaceBases = InterfaceBases
     End Sub
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or _
-            Reflection.TypeAttributes.Interface Or Reflection.TypeAttributes.Abstract
-        End Get
-    End Property
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Interface Or Mono.Cecil.TypeAttributes.Abstract
+    End Sub
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get

@@ -3,6 +3,7 @@
 '
 ' Author:
 '   Mizrahi Rafael (rafim@mainsoft.com)
+'   Rolf Bjarne Kvinge  (RKvinge@novell.com)
 '
 
 '
@@ -37,5 +38,15 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Private Sub New()
             'Nobody should see constructor
         End Sub
+
+        Friend Shared Function GetVBException(ByVal Number As VBErrors) As Exception
+            Dim msg As String
+            Dim ex As Exception
+
+            msg = Utils.GetResourceString("ERR" & CInt(Number).ToString())
+            ex = ErrObject.GetExceptionFromNumber(Number, msg)
+
+            Return ex
+        End Function
     End Class
 End Namespace

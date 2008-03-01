@@ -59,7 +59,7 @@ Public Class TypeCharacters
     Private Const m_Characters As String = "%&@!#$"
     Private Shared m_DataTypes() As KS = {KS.None, KS.Integer, KS.Long, KS.Decimal, KS.Single, KS.Double, KS.String}
 
-    Shared Function TypeCharacterToType(ByVal Compiler As Compiler, ByVal TypeCharacter As TypeCharacters.Characters) As Type
+    Shared Function TypeCharacterToType(ByVal Compiler As Compiler, ByVal TypeCharacter As TypeCharacters.Characters) As Mono.Cecil.TypeReference
         Select Case GetDataType(TypeCharacter)
             Case KS.Integer
                 Return Compiler.TypeCache.System_Int32

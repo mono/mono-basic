@@ -57,11 +57,11 @@ Public Class ModuleDeclaration
     Public Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-#If ENABLECECIL Then
-        MyBase.CecilBaseType = Compiler.CecilTypeCache.System_Object
-#End If
-
+        '#If ENABLECECIL Then
         MyBase.BaseType = Compiler.TypeCache.System_Object
+        '#End If
+
+        '        MyBase.BaseType = Compiler.TypeCache.System_Object
         result = MyBase.ResolveType AndAlso result
 
         Me.FindDefaultConstructors()
@@ -77,11 +77,11 @@ Public Class ModuleDeclaration
         Return tm.PeekToken(i).Equals(KS.Module)
     End Function
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Reflection.TypeAttributes.Sealed
-        End Get
-    End Property
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+    End Sub
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get

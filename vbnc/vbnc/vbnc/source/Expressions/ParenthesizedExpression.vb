@@ -86,7 +86,7 @@ Public Class ParenthesizedExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_Expression.ExpressionType
         End Get

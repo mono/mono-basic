@@ -28,8 +28,8 @@ Public Class TypeArgumentList
         MyBase.New(Parent)
     End Sub
 
-    Function AsTypeArray() As Type()
-        Dim result As New Generic.List(Of Type)
+    Function AsTypeArray() As Mono.Cecil.TypeReference()
+        Dim result As New Generic.List(Of Mono.Cecil.TypeReference)
         For Each arg As TypeName In Me
             result.Add(arg.ResolvedType)
         Next

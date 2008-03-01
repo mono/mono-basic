@@ -21,7 +21,7 @@ Public Class PropertyGroupToValueExpression
     Inherits Expression
 
     Private m_PropertyGroup As PropertyGroupClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Public Overrides ReadOnly Property AsString() As String
         Get
@@ -73,16 +73,16 @@ Public Class PropertyGroupToValueExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim method As MethodInfo
+        Dim method As Mono.Cecil.MethodReference
 
-        method = m_PropertyGroup.ResolvedProperty.GetGetMethod(True)
+        method = CecilHelper.FindDefinition(m_PropertyGroup.ResolvedProperty).GetMethod
 
         result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_PropertyGroup.InstanceExpression, m_PropertyGroup.Parameters, method) AndAlso result
 
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

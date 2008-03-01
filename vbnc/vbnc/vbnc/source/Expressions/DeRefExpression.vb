@@ -21,7 +21,7 @@ Public Class DeRefExpression
     Inherits Expression
 
     Private m_Expression As Expression
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     ''' <summary>
     ''' Automatically resolved.
@@ -32,7 +32,7 @@ Public Class DeRefExpression
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression)
         MyBase.new(Parent)
         m_Expression = Expression
-        m_ExpressionType = Expression.ExpressionType.GetElementType
+        m_ExpressionType = CecilHelper.GetElementType(Expression.ExpressionType)
 
         Classification = New VariableClassification(Me, Expression, m_ExpressionType)
 
@@ -69,7 +69,7 @@ Public Class DeRefExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

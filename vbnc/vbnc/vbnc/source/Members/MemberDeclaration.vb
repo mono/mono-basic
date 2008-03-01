@@ -28,6 +28,10 @@ Public MustInherit Class MemberDeclaration
     Private m_Name As String
     Private m_GeneratedCode As Boolean
 
+    Overridable Sub UpdateDefinition()
+
+    End Sub
+
     ReadOnly Property GeneratedCode() As Boolean
         Get
             Return m_GeneratedCode
@@ -80,6 +84,9 @@ Public MustInherit Class MemberDeclaration
 
     Protected Sub Rename(ByVal Name As String)
         m_Name = Name
+        If MemberDescriptor IsNot Nothing Then
+            MemberDescriptor.Name = m_Name
+        End If
     End Sub
 
     Public ReadOnly Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
@@ -103,7 +110,7 @@ Public MustInherit Class MemberDeclaration
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo Implements IMember.MemberDescriptor
+    Public MustOverride ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference Implements IMember.MemberDescriptor
 
     Public ReadOnly Property Modifiers() As Modifiers Implements IModifiable.Modifiers
         Get
@@ -113,7 +120,6 @@ Public MustInherit Class MemberDeclaration
 
     Public ReadOnly Property Name() As String Implements INameable.Name
         Get
-            If m_Name Is Nothing Then Throw New InternalException(Me.GetType().FullName)
             Return m_Name
         End Get
     End Property

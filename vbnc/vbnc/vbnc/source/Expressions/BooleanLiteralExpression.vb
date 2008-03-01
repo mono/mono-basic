@@ -30,7 +30,7 @@ Public Class BooleanLiteralExpression
         m_Value = Value
     End Sub
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
             Return Compiler.TypeCache.System_Boolean '_Descriptor

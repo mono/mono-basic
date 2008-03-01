@@ -68,33 +68,33 @@ Public Class RaiseEventStatement
         Helper.Assert(m_Event.Classification.IsEventAccessClassification)
 
         Dim cl As EventAccessClassification = m_Event.Classification.AsEventAccess
-        Dim eventtp As Type = cl.EventType
-        Dim delegatetp As Type = cl.Type
+        Dim eventtp As Mono.Cecil.TypeReference = cl.EventType
+        Dim delegatetp As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(cl.Type)
 
         Helper.Assert(delegatetp IsNot Nothing)
 
-        Dim raiseMethod As MethodInfo
-        raiseMethod = cl.EventInfo.GetRaiseMethod(True)
+        Dim raiseMethod As Mono.Cecil.MethodReference
+        raiseMethod = CecilHelper.FindDefinition(cl.EventInfo).InvokeMethod
         If raiseMethod IsNot Nothing Then
             'Call the raise method
             Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         Else
             'Manually raise the event
-            Dim delegateVar As LocalBuilder
+            Dim delegateVar As Mono.Cecil.Cil.VariableDefinition
             Dim endIfLabel As Label
             Dim eventDeclaration As RegularEventDeclaration
-            Dim eventdesc As EventDescriptor
-            Dim invokemethod As MethodInfo
+            Dim eventdesc As Mono.Cecil.EventDefinition
+            Dim invokemethod As Mono.Cecil.MethodReference
 
-            delegateVar = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(delegatetp))
+            delegateVar = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(Compiler, delegatetp))
             endIfLabel = Emitter.DefineLabel(Info)
-            eventdesc = DirectCast(cl.EventInfo, EventDescriptor)
-            eventDeclaration = TryCast(eventdesc.EventDeclaration, RegularEventDeclaration)
-            invokemethod = delegatetp.GetMethod("Invoke")
+            eventdesc = CecilHelper.FindDefinition(cl.EventInfo)
+            eventDeclaration = DirectCast(eventdesc.Annotations(Compiler), RegularEventDeclaration)
+            invokemethod = Helper.GetInvokeMethod(Compiler, delegatetp)
 
-            Helper.Assert(eventDeclaration IsNot Nothing)
-            Helper.Assert(TypeOf cl.EventInfo Is EventDescriptor)
-            Helper.Assert(Helper.CompareType(cl.EventType, Me.FindFirstParent(Of IType).TypeDescriptor))
+            'Helper.Assert(eventDeclaration IsNot Nothing)
+            'Helper.Assert(TypeOf cl.EventInfo Is EventDescriptor)
+            Helper.Assert(Helper.CompareType(cl.EventType, Me.FindFirstParent(Of IType).CecilType))
             Helper.Assert(invokemethod IsNot Nothing)
 
             'Load the field of the variable
@@ -112,7 +112,7 @@ Public Class RaiseEventStatement
             'Load the field again
             Emitter.EmitLoadVariable(Info, delegateVar)
             'Load the invoke arguments
-            result = m_Arguments.GenerateCode(Info.Clone(Me, True), invokemethod.GetParameters) AndAlso result
+            result = m_Arguments.GenerateCode(Info.Clone(Me, True), invokemethod.Parameters) AndAlso result
             'Call the invoke method.
             Emitter.EmitCallOrCallVirt(Info, invokemethod)
 

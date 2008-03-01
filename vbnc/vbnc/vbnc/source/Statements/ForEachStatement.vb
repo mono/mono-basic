@@ -34,7 +34,7 @@ Public Class ForEachStatement
 
     Private m_NextIteration As Label
 
-    Private m_Enumerator As LocalBuilder
+    Private m_Enumerator As Mono.Cecil.Cil.VariableDefinition
 
     ReadOnly Property NextExpression() As Expression
         Get
@@ -66,7 +66,7 @@ Public Class ForEachStatement
         m_NextExpression = NextExpression
     End Sub
 
-    ReadOnly Property Enumerator() As LocalBuilder
+    ReadOnly Property Enumerator() As Mono.Cecil.Cil.VariableDefinition
         Get
             Return m_Enumerator
         End Get
@@ -79,10 +79,10 @@ Public Class ForEachStatement
     End Property
 
     Function GenerateCode_LoadCurrentLoopVariable(ByVal Info As EmitInfo) As Boolean
-        Dim varType As Type = m_LoopControlVariable.VariableType
-        Dim isGenericParameter As Boolean = varType.IsGenericParameter
+        Dim varType As Mono.Cecil.TypeReference = m_LoopControlVariable.VariableType
+        Dim isGenericParameter As Boolean = CecilHelper.IsGenericParameter(varType)
         Dim isValueType As Boolean = isGenericParameter = False AndAlso varType.IsValueType
-        Dim isClass As Boolean = isgenericparameter = False AndAlso varType.IsClass
+        Dim isClass As Boolean = isGenericParameter = False AndAlso CecilHelper.IsClass(varType)
 
         Emitter.EmitLoadVariable(Info, m_Enumerator)
         Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__get_Current)
@@ -91,7 +91,7 @@ Public Class ForEachStatement
         Dim valueTPLoaded As Label = Nothing
 
         If isValueType Then
-            Dim tmpStructureVariable As LocalBuilder
+            Dim tmpStructureVariable As Mono.Cecil.Cil.VariableDefinition
 
             valueTPLoad = Emitter.DefineLabel(Info)
             valueTPLoaded = Emitter.DefineLabel(Info)

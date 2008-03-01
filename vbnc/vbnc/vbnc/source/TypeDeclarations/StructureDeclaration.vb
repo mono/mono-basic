@@ -37,10 +37,6 @@ Public Class StructureDeclaration
         Dim result As Boolean = True
 
         MyBase.BaseType = Compiler.TypeCache.System_ValueType
-
-#If ENABLECECIL Then
-        MyBase.CecilBaseType = Compiler.CecilTypeCache.System_ValueType
-#End If
         result = MyBase.ResolveType AndAlso result
 
         Return result
@@ -54,13 +50,9 @@ Public Class StructureDeclaration
         Return tm.PeekToken(i).Equals(KS.Structure)
     End Function
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Dim result As TypeAttributes = MyBase.TypeAttributes
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
 
-            result = result Or Reflection.TypeAttributes.SequentialLayout Or Reflection.TypeAttributes.Sealed
-
-            Return result
-        End Get
-    End Property
+        TypeAttributes = MyBase.typeattributes Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
+    End Sub
 End Class

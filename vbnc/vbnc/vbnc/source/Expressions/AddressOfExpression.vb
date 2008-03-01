@@ -40,7 +40,7 @@ Public Class AddressOfExpression
     ''' </summary>
     ''' <remarks></remarks>
     Private m_Expression As Expression
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
@@ -75,7 +75,7 @@ Public Class AddressOfExpression
         Return tm.CurrentToken.Equals(KS.AddressOf)
     End Function
 
-    Function Resolve(ByVal DelegateType As Type) As Boolean
+    Function Resolve(ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
         result = Classification.AsMethodPointerClassification.Resolve(DelegateType) AndAlso result
@@ -104,7 +104,7 @@ Public Class AddressOfExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             If MyBase.IsResolved Then
                 Return m_ExpressionType

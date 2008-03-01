@@ -35,7 +35,7 @@ Public Class PropertyAccessClassification
     Private m_InstanceExpression As Expression
     Private m_Parameters As ArgumentList
 
-    Private m_Property As Reflection.PropertyInfo
+    Private m_Property As Mono.Cecil.PropertyReference
     Private m_Classification As PropertyGroupClassification
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
@@ -53,7 +53,7 @@ Public Class PropertyAccessClassification
         End Get
     End Property
 
-    ReadOnly Property ResolvedProperty() As PropertyInfo
+    ReadOnly Property ResolvedProperty() As Mono.Cecil.PropertyReference
         Get
             Return m_Property
         End Get
@@ -61,7 +61,7 @@ Public Class PropertyAccessClassification
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim method As MethodInfo
+        Dim method As Mono.Cecil.MethodReference
 
         If m_LateBoundExpression IsNot Nothing Then Return m_LateBoundExpression.GenerateCode(Info)
 
@@ -77,9 +77,9 @@ Public Class PropertyAccessClassification
         Helper.Assert(m_Property IsNot Nothing)
 
         If Info.IsLHS Then
-            method = m_Property.GetSetMethod(True)
+            method = CecilHelper.FindDefinition(m_Property).SetMethod
         Else
-            method = m_Property.GetGetMethod(True)
+            method = CecilHelper.FindDefinition(m_Property).GetMethod
         End If
 
         'If m_InstanceExpression IsNot Nothing Then
@@ -145,16 +145,16 @@ Public Class PropertyAccessClassification
         End Get
     End Property
 
-    Property [Property]() As Reflection.PropertyInfo
+    Property [Property]() As Mono.Cecil.PropertyReference
         Get
             Return m_Property
         End Get
-        Set(ByVal value As Reflection.PropertyInfo)
+        Set(ByVal value As Mono.Cecil.PropertyReference)
             m_Property = value
         End Set
     End Property
 
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             If m_Property Is Nothing Then
                 Helper.Assert(m_Classification IsNot Nothing)
@@ -166,7 +166,7 @@ Public Class PropertyAccessClassification
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Property] As Reflection.PropertyInfo, ByVal InstanceExpression As Expression, ByVal Parameters As ArgumentList)
+    Sub New(ByVal Parent As ParsedObject, ByVal [Property] As Mono.Cecil.PropertyReference, ByVal InstanceExpression As Expression, ByVal Parameters As ArgumentList)
         MyBase.New(Classifications.PropertyAccess, Parent)
         m_Property = [Property]
         m_InstanceExpression = InstanceExpression

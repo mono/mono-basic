@@ -84,42 +84,38 @@ Public Class Compiler
     ''' <remarks></remarks>
     Friend theAss As AssemblyDeclaration
 
-    ''' <summary>
-    ''' The created assembly
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public AssemblyBuilder As System.Reflection.Emit.AssemblyBuilder
+    '''' <summary>
+    '''' The created assembly
+    '''' </summary>
+    '''' <remarks></remarks>
+    'Public AssemblyBuilder As System.Reflection.Emit.AssemblyBuilder
 
 #If ENABLECECIL Then
     Public AssemblyBuilderCecil As Mono.Cecil.AssemblyDefinition
 #End If
 
-    ''' <summary>
-    ''' The one and only module in the assembly
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public ModuleBuilder As System.Reflection.Emit.ModuleBuilder
+    '''' <summary>
+    '''' The one and only module in the assembly
+    '''' </summary>
+    '''' <remarks></remarks>
+    'Public ModuleBuilder As System.Reflection.Emit.ModuleBuilder
 
-#If ENABLECECIL Then
     Public ModuleBuilderCecil As Mono.Cecil.ModuleDefinition
-#End If
+
     ''' <summary>
     ''' Represents the conditinal compiler.
     ''' </summary>
     ''' <remarks></remarks>
     Private m_ConditionalCompiler As ConditionalCompiler
 
-    Private m_TypeCache As TypeCache
-#If ENABLECECIL Then
-    Private m_CecilTypeCache As CecilTypeCache
-#End If
+    Private m_TypeCache As CecilTypeCache
 
     'Private SequenceCompleted(CompilerSequence.Finished) As Boolean
     Private SequenceTime(CompilerSequence.End) As DateTime
 
     Private m_TypeResolver As TypeResolution
 
-    Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
+    'Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
 
     Sub New()
         MyBase.New(Nothing)
@@ -142,25 +138,17 @@ Public Class Compiler
         End Get
     End Property
 
-#If ENABLECECIL Then
-    ReadOnly Property CecilTypeCache() As CecilTypeCache
-        Get
-            Return m_CecilTypeCache
-        End Get
-    End Property
-#End If
-
-    ReadOnly Property TypeCache() As TypeCache
+    ReadOnly Property TypeCache() As CecilTypeCache
         Get
             Return m_TypeCache
         End Get
     End Property
 
-    ReadOnly Property SymbolWriter() As System.Diagnostics.SymbolStore.ISymbolWriter
-        Get
-            Return m_SymbolWriter
-        End Get
-    End Property
+    'ReadOnly Property SymbolWriter() As System.Diagnostics.SymbolStore.ISymbolWriter
+    '    Get
+    '        Return m_SymbolWriter
+    '    End Get
+    'End Property
 
     ''' <summary>
     ''' Contains info about all the types and namespaces available.
@@ -315,24 +303,32 @@ Public Class Compiler
         Return True
     End Function
 
+    Private Function Compile_FinishAssemblyAndModuleBuilders() As Boolean
+        Dim result As Boolean = True
+        Dim assemblyName As String
+
+        assemblyName = IO.Path.GetFileNameWithoutExtension(OutFileName)
+
+        AssemblyBuilderCecil.Name.Name = assemblyName
+
+        Return result
+    End Function
+
     Private Function Compile_CreateAssemblyAndModuleBuilders() As Boolean
-        Dim assemblyName As Reflection.AssemblyName
 
-        assemblyName = Me.Assembly.GetName
 
-        AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
-        ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
+        'AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
+        'ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
 
-#If DEBUGREFLECTION Then
-        vbnc.Helper.DebugReflection_AppendLine("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", AssemblyBuilder, assemblyName, IO.Path.GetDirectoryName(m_OutFilename))
-        vbnc.Helper.DebugReflection_AppendLine("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", ModuleBuilder, assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, AssemblyBuilder)
-#End If
+        '#If DEBUGREFLECTION Then
+        '        vbnc.Helper.DebugReflection_AppendLine("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", AssemblyBuilder, assemblyName, IO.Path.GetDirectoryName(m_OutFilename))
+        '        vbnc.Helper.DebugReflection_AppendLine("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", ModuleBuilder, assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, AssemblyBuilder)
+        '#End If
 
-        If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
-            m_SymbolWriter = ModuleBuilder.GetSymWriter
-        End If
+        'If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
+        '    m_SymbolWriter = ModuleBuilder.GetSymWriter
+        'End If
 
-#If ENABLECECIL Then
         Dim kind As Mono.Cecil.AssemblyKind
         Select Case CommandLine.Target
             Case vbnc.CommandLine.Targets.Console
@@ -347,9 +343,9 @@ Public Class Compiler
             Case Else
                 kind = Mono.Cecil.AssemblyKind.Console
         End Select
-        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(assemblyName.Name, Mono.Cecil.TargetRuntime.NET_2_0, kind)
+
+        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly("vbnc", Mono.Cecil.TargetRuntime.NET_2_0, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
-#End If
 
         Return Compiler.Report.Errors = 0
     End Function
@@ -426,9 +422,9 @@ Public Class Compiler
         VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result
 
-        m_TypeCache.InitInternalVBMembers()
+        'm_TypeCache.InitInternalVBMembers()
 #If ENABLECECIL Then
-        m_CecilTypeCache.InitInternalVBMembers()
+        m_TypeCache.InitInternalVBMembers()
 #End If
 
         result = theAss.CreateImplicitMembers AndAlso result
@@ -540,10 +536,7 @@ Public Class Compiler
             result = Compile_CalculateOutputFilename() AndAlso result
 
             'Load all the referenced assemblies and load all the types and namespaces into the type manager
-            m_TypeCache = New TypeCache(Me)
-#If ENABLECECIL Then
-            m_CecilTypeCache = New CecilTypeCache(Me)
-#End If
+            m_TypeCache = New CecilTypeCache(Me)
 
             result = GenerateMy() AndAlso result
 
@@ -552,6 +545,8 @@ Public Class Compiler
 
             m_TypeResolver = New TypeResolution(Me)
 
+            'Create the assembly and module builders
+            result = Compile_CreateAssemblyAndModuleBuilders() AndAlso result
 
             'Parse the code into the type tree
 #If DEBUG Then
@@ -564,9 +559,9 @@ Public Class Compiler
             m_TypeManager.LoadCompiledTypes()
 
             If CommandLine.NoVBRuntimeRef Then
-                m_TypeCache.InitInternalVB()
+                'm_TypeCache.InitInternalVB()
 #If ENABLECECIL Then
-                m_CecilTypeCache.InitInternalVB()
+                m_TypeCache.InitInternalVB()
 #End If
             End If
 
@@ -574,18 +569,17 @@ Public Class Compiler
 #If DEBUG Then
             Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Resolve")
 #End If
-            'Create the assembly and module builders
-            result = Compile_CreateAssemblyAndModuleBuilders() AndAlso result
 
             result = Compile_Resolve() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
+            result = Me.Compile_FinishAssemblyAndModuleBuilders() AndAlso result
             result = Me.Assembly.SetCecilName(AssemblyBuilderCecil.Name) AndAlso result
 
             result = AddResources() AndAlso result
             If result = False Then GoTo ShowErrors
 
-            AddHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
+            'AddHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
 
             'Passed this step no errors should be found...
 #If DEBUG Then
@@ -616,10 +610,10 @@ Public Class Compiler
             If result = False Then GoTo ShowErrors
 
             'Create the assembly types
-            result = theAss.CreateTypes AndAlso result
-            vbnc.Helper.Assert(result)
+            'result = theAss.CreateTypes AndAlso result
+            'vbnc.Helper.Assert(result)
 
-            RemoveHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
+            'RemoveHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
 
             If result = False Then
                 Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Error creating the assembly!")
@@ -632,8 +626,8 @@ Public Class Compiler
 #End If
 
             'Save the assembly
-            AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilder.FullName, m_OutFilename))
+            'AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
+            'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilder.FullName, m_OutFilename))
 
 #If ENABLECECIL Then
 
@@ -753,20 +747,20 @@ EndOfCompilation:
     ''' <param name="method"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function IsMainMethod(ByVal method As Reflection.MethodInfo) As Boolean
+    Function IsMainMethod(ByVal method As Mono.Cecil.MethodDefinition) As Boolean
         'Only static methods
         If method.IsStatic = False Then Return False
         'Only methods called 'Main'
         If vbnc.Helper.CompareName(method.Name, "Main") = False Then Return False
         'Only methods with no return type or Integer return type
-        If method.ReturnType IsNot Nothing AndAlso method.ReturnType IsNot Compiler.TypeCache.System_Void AndAlso method.ReturnType IsNot Compiler.TypeCache.System_Int32 Then Return False
+        If Helper.CompareType(method.ReturnType.ReturnType, Compiler.TypeCache.System_Void) = False AndAlso Helper.CompareType(method.ReturnType.ReturnType, Compiler.TypeCache.System_Int32) = False Then Return False
 
         'Only methods with no parameters or methods with one String() parameter
-        Dim params() As ParameterInfo
-        params = method.GetParameters
-        If params.Length = 0 Then Return True
-        If params.Length > 1 Then Return False
-        If params(0).ParameterType Is Compiler.TypeCache.System_String_Array AndAlso params(0).IsOptional = False AndAlso params(0).IsOut = False Then Return True
+        Dim params As Mono.Cecil.ParameterDefinitionCollection
+        params = method.Parameters
+        If params.Count = 0 Then Return True
+        If params.Count > 1 Then Return False
+        If Helper.CompareType(params(0).ParameterType, Compiler.TypeCache.System_String_Array) AndAlso params(0).IsOptional = False AndAlso params(0).IsOut = False Then Return True
 
         Return False
     End Function
@@ -885,9 +879,9 @@ EndOfCompilation:
             Dim resourceName As String = IO.Path.GetFileName(r.Filename)
             Dim attrib As System.Reflection.ResourceAttributes
             If r.Public Then
-                attrib = ResourceAttributes.Public
+                attrib = System.Reflection.ResourceAttributes.Public
             Else
-                attrib = ResourceAttributes.Private
+                attrib = System.Reflection.ResourceAttributes.Private
             End If
 
             Dim reader As System.Resources.IResourceReader
@@ -907,7 +901,7 @@ EndOfCompilation:
 
             'Report.WriteLine("Defining resource, FileName=" & r.Filename & ", Identifier=" & r.Identifier & ", reader is nothing=" & (reader Is Nothing).ToString())
             If reader IsNot Nothing Then
-                Dim writer As System.Resources.IResourceWriter = ModuleBuilder.DefineResource(resourceName, resourceDescription, attrib)
+                'Dim writer As System.Resources.IResourceWriter = ModuleBuilder.DefineResource(resourceName, resourceDescription, attrib)
 #If ENABLECECIL Then
                 Dim cecilStream As New IO.MemoryStream()
                 Dim cecilWriter As New System.Resources.ResourceWriter(cecilStream)
@@ -916,7 +910,7 @@ EndOfCompilation:
 
                 For Each resource As System.Collections.DictionaryEntry In reader
                     'Report.WriteLine(">" & resource.Key.ToString & "=" & resource.Value.ToString)
-                    writer.AddResource(resource.Key.ToString, resource.Value)
+                    'writer.AddResource(resource.Key.ToString, resource.Value)
 #If ENABLECECIL Then
                     cecilWriter.AddResource(resource.Key.ToString, resource.Value)
 #End If
@@ -931,7 +925,7 @@ EndOfCompilation:
 #End If
             Else
                 'Report.WriteLine(">Writing ManifestResource")
-                ModuleBuilder.DefineManifestResource(resourceName, New IO.FileStream(r.Filename, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read), attrib)
+                'ModuleBuilder.DefineManifestResource(resourceName, New IO.FileStream(r.Filename, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read), attrib)
             End If
         Next
 
@@ -956,7 +950,7 @@ EndOfCompilation:
             If CommandLine.Target = vbnc.CommandLine.Targets.Module Then Return True
 
             'Find the main function
-            Dim lstMethods As New Generic.List(Of MethodInfo)
+            Dim lstMethods As New Generic.List(Of Mono.Cecil.MethodDefinition)
             Dim mainClass As TypeDeclaration = Nothing
 #If ENABLECECIL Then
             Dim mainCecil As Mono.Cecil.MethodDefinition = Nothing
@@ -966,24 +960,24 @@ EndOfCompilation:
 
             If result = False Then Return result
 
-            If lstMethods.Count = 0 AndAlso CommandLine.Target = vbnc.CommandLine.Targets.Winexe AndAlso mainClass IsNot Nothing AndAlso vbnc.Helper.IsSubclassOf(TypeCache.System_Windows_Forms_Form, mainClass.TypeBuilder) Then
+            If lstMethods.Count = 0 AndAlso CommandLine.Target = vbnc.CommandLine.Targets.Winexe AndAlso mainClass IsNot Nothing AndAlso vbnc.Helper.IsSubclassOf(TypeCache.System_Windows_Forms_Form, mainClass.CecilType) Then
                 'In this case we need to create our own main method
-                Dim mainBuilder As MethodBuilder
+                'Dim mainBuilder As MethodBuilder
                 Dim formConstructor As ConstructorDeclaration
-                Dim ilGen As ILGenerator
+                'Dim ilGen As ILGenerator
 
                 formConstructor = mainClass.DefaultInstanceConstructor
 
                 If formConstructor IsNot Nothing Then
                     'TODO: If the class has a My default instance, use that default instance.
-                    mainBuilder = mainClass.TypeBuilder.DefineMethod("Main", MethodAttributes.Public Or MethodAttributes.Static Or MethodAttributes.HideBySig, Nothing, Type.EmptyTypes)
-                    ilGen = mainBuilder.GetILGenerator()
-                    ilGen.Emit(OpCodes.Newobj, formConstructor.ConstructorBuilder)
-                    ilGen.Emit(OpCodes.Call, TypeCache.System_Windows_Forms_Application__Run)
-                    ilGen.Emit(OpCodes.Ret)
-                    lstMethods.Add(mainBuilder)
+                    'mainBuilder = mainClass.TypeBuilder.DefineMethod("Main", MethodAttributes.Public Or MethodAttributes.Static Or MethodAttributes.HideBySig, Nothing, Type.EmptyTypes)
+                    'ilGen = mainBuilder.GetILGenerator()
+                    'ilGen.Emit(OpCodes.Newobj, formConstructor.ConstructorBuilder)
+                    'ilGen.Emit(OpCodes.Call, TypeCache.System_Windows_Forms_Application__Run)
+                    'ilGen.Emit(OpCodes.Ret)
+                    'lstMethods.Add(mainBuilder)
 #If ENABLECECIL Then
-                    mainCecil = New Mono.Cecil.MethodDefinition("Main", Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.Static Or Mono.Cecil.MethodAttributes.HideBySig, Helper.GetTypeOrTypeReference(Me, CecilTypeCache.System_Void))
+                    mainCecil = New Mono.Cecil.MethodDefinition("Main", Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.Static Or Mono.Cecil.MethodAttributes.HideBySig, Helper.GetTypeOrTypeReference(Me, TypeCache.System_Void))
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Newobj, formConstructor.CecilBuilder)
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Ret)
@@ -1004,23 +998,23 @@ EndOfCompilation:
                 Report.ShowMessage(Messages.VBNC30420, name)
                 Return False
             Else
-                Dim entryMethod As MethodBuilder
-                Dim entryMethodDescriptor As MethodDescriptor
+                Dim entryMethod As Mono.Cecil.MethodDefinition = lstMethods(0)
+                'Dim entryMethodDescriptor As MethodDescriptor
 
-                entryMethodDescriptor = TryCast(lstMethods(0), MethodDescriptor)
-                If entryMethodDescriptor IsNot Nothing Then
-                    entryMethod = entryMethodDescriptor.Declaration.MethodBuilder
-                Else
-                    entryMethod = DirectCast(lstMethods(0), MethodBuilder)
-                End If
-                entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
-                AssemblyBuilder.SetEntryPoint(entryMethod)
+                'entryMethodDescriptor = TryCast(lstMethods(0), MethodDescriptor)
+                'If entryMethodDescriptor IsNot Nothing Then
+                '    entryMethod = entryMethodDescriptor.Declaration.MethodBuilder
+                'Else
+                '    entryMethod = DirectCast(lstMethods(0), MethodBuilder)
+                'End If
+                'entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
+                'AssemblyBuilder.SetEntryPoint(entryMethod)
 #If ENABLECECIL Then
                 If mainCecil Is Nothing Then
-                    mainCecil = CecilHelper.FindDefinition(Helper.GetMethodOrMethodReference(Me, entryMethod))
+                    mainCecil = entryMethod
                 End If
-                mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, CecilTypeCache.System_STAThreadAttribute__ctor)))
-                AssemblyBuilderCecil.EntryPoint = mainCecil
+                mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, TypeCache.System_STAThreadAttribute__ctor)))
+                AssemblyBuilderCecil.EntryPoint = entryMethod
 #End If
             End If
 
@@ -1054,9 +1048,8 @@ EndOfCompilation:
         Return True
     End Function
 
-    Function FindMainMethod(ByVal MainClass As TypeDeclaration, ByVal Result As Generic.List(Of MethodInfo)) As Boolean
+    Function FindMainMethod(ByVal MainClass As TypeDeclaration, ByVal Result As Generic.List(Of Mono.Cecil.MethodDefinition)) As Boolean
         Dim tps() As TypeDeclaration
-        Dim methods As Reflection.MethodInfo()
 
         If MainClass Is Nothing Then
             tps = theAss.Types
@@ -1066,8 +1059,7 @@ EndOfCompilation:
 
         Result.Clear()
         For Each t As TypeDeclaration In tps
-            methods = t.TypeDescriptor.GetMethods()
-            For Each m As Reflection.MethodInfo In methods
+            For Each m As Mono.Cecil.MethodDefinition In t.CecilType.Methods
                 If IsMainMethod(m) Then Result.Add(m)
             Next
         Next

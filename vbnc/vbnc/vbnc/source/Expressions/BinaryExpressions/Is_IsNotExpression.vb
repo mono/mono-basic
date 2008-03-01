@@ -22,7 +22,7 @@ Public Class Is_IsNotExpression
     Inherits BinaryExpression
 
     Private m_Keyword As KS
-    Private m_DesiredNothingType As Type
+    Private m_DesiredNothingType As Mono.Cecil.TypeReference
 
     Overrides ReadOnly Property IsOverloadable() As Boolean
         Get
@@ -35,11 +35,11 @@ Public Class Is_IsNotExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        If result AndAlso m_LeftExpression.ExpressionType.IsGenericParameter Then
+        If result AndAlso CecilHelper.IsGenericParameter(m_LeftExpression.ExpressionType) Then
             m_LeftExpression = New BoxExpression(Me, m_LeftExpression, m_LeftExpression.ExpressionType)
             m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If
-        If result AndAlso m_RightExpression.ExpressionType.IsGenericParameter Then
+        If result AndAlso CecilHelper.IsGenericParameter(m_RightExpression.ExpressionType) Then
             m_RightExpression = New BoxExpression(Me, m_RightExpression, m_RightExpression.ExpressionType)
             m_DesiredNothingType = Compiler.TypeCache.System_Object
         End If
@@ -59,7 +59,7 @@ Public Class Is_IsNotExpression
             Throw New InternalException(Me)
         End If
 
-        Dim desiredType As Type = m_DesiredNothingType
+        Dim desiredType As Mono.Cecil.TypeReference = m_DesiredNothingType
         If TypeOf m_LeftExpression Is NothingConstantExpression = False Then
             If desiredType Is Nothing Then desiredType = m_LeftExpression.ExpressionType
         ElseIf TypeOf m_RightExpression Is NothingConstantExpression = False Then
@@ -71,7 +71,7 @@ Public Class Is_IsNotExpression
         End If
 
         If desiredType IsNot Nothing Then
-            If desiredType.IsByRef Then desiredType = desiredType.GetElementType
+            If CecilHelper.IsByRef(desiredType) Then desiredType = CecilHelper.GetElementType(desiredType)
             Info = Info.Clone(Me, True, False, desiredType)
         End If
 
@@ -89,7 +89,7 @@ Public Class Is_IsNotExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Boolean
         End Get

@@ -30,13 +30,13 @@ Public Class Attribute
     Private m_SimpleTypeName As SimpleTypeName
     Private m_AttributeArguments As AttributeArguments
 
-    Private m_ResolvedType As Type
-    Private m_ResolvedTypeConstructor As ConstructorInfo
+    Private m_ResolvedType As Mono.Cecil.TypeReference
+    Private m_ResolvedTypeConstructor As Mono.Cecil.MethodReference
 
     Private m_Arguments As Object()
-    Private m_Fields As Generic.List(Of FieldInfo)
+    Private m_Fields As Generic.List(Of Mono.Cecil.FieldReference)
     Private m_FieldValues As Generic.List(Of Object)
-    Private m_Properties As Generic.List(Of PropertyInfo)
+    Private m_Properties As Generic.List(Of Mono.Cecil.PropertyReference)
     Private m_PropertyValues As Generic.List(Of Object)
     Private m_IsResolved As Boolean
 
@@ -80,11 +80,11 @@ Public Class Attribute
         End Get
     End Property
 
-    Property ResolvedType() As Type
+    Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType
         End Get
-        Set(ByVal value As Type)
+        Set(ByVal value As Mono.Cecil.TypeReference)
             m_ResolvedType = value
         End Set
     End Property
@@ -102,7 +102,7 @@ Public Class Attribute
         MyBase.New(Parent)
     End Sub
 
-    Public Sub New(ByVal Parent As ParsedObject, ByVal Type As Type, ByVal ParamArray Arguments() As Object)
+    Public Sub New(ByVal Parent As ParsedObject, ByVal Type As Mono.Cecil.TypeReference, ByVal ParamArray Arguments() As Object)
         MyBase.New(Parent)
         m_ResolvedType = Type
         m_Arguments = Arguments
@@ -128,16 +128,16 @@ Public Class Attribute
         Return result
     End Function
 
-    ReadOnly Property AttributeInstance() As System.Attribute
-        Get
-            If m_Instance Is Nothing Then
-                m_Instance = CType(Activator.CreateInstance(m_ResolvedType, BindingFlags.CreateInstance, Nothing, m_Arguments, Nothing), System.Attribute)
-            End If
-            Return m_Instance
-        End Get
-    End Property
+    'ReadOnly Property AttributeInstance() As System.Attribute
+    '    Get
+    '        If m_Instance Is Nothing Then
+    '            m_Instance = CType(Activator.CreateInstance(m_ResolvedType, BindingFlags.CreateInstance, Nothing, m_Arguments, Nothing), System.Attribute)
+    '        End If
+    '        Return m_Instance
+    '    End Get
+    'End Property
 
-    ReadOnly Property AttributeType() As Type
+    ReadOnly Property AttributeType() As Mono.Cecil.TypeReference
         Get
             If m_ResolvedType Is Nothing Then Throw New InternalException(Me)
             Return m_ResolvedType
@@ -186,8 +186,8 @@ Public Class Attribute
 
                 For Each item As VariablePropertyInitializer In m_AttributeArguments.VariablePropertyInitializerList
                     Dim name As String
-                    Dim member As MemberInfo
-                    Dim members As Generic.List(Of MemberInfo)
+                    Dim member As Mono.Cecil.MemberReference
+                    Dim members As Generic.List(Of Mono.Cecil.MemberReference)
 
                     name = item.Identifier
                     members = cache.LookupFlattenedMembers(name)
@@ -196,53 +196,51 @@ Public Class Attribute
                         If members(0) Is members(1) Then
                             Console.WriteLine("They are the same!")
                         End If
-                        For Each m As MemberInfo In members
+                        For Each m As Mono.Cecil.MemberReference In members
                             Console.WriteLine(m.DeclaringType.FullName & ":" & m.Name)
                         Next
                         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                         '                        Helper.NotImplemented(String.Format("Property resolution for attribute arguments ({0} members named '{1}' in {2})" & Me.Location.AsString, members.Count, name, m_ResolvedType.FullName))
                     End If
                     member = members(0)
-                    Select Case member.MemberType
-                        Case MemberTypes.Field
-                            Dim field As FieldInfo
-                            field = DirectCast(member, FieldInfo)
+                    If TypeOf member Is Mono.Cecil.FieldReference Then
+                        Dim field As Mono.Cecil.FieldReference
+                        field = DirectCast(member, Mono.Cecil.FieldReference)
 
-                            If m_Fields Is Nothing Then m_Fields = New Generic.List(Of FieldInfo)
-                            If m_FieldValues Is Nothing Then m_FieldValues = New Generic.List(Of Object)
-                            m_Fields.Add(field)
-                            m_FieldValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
-                        Case MemberTypes.Property
-                            Dim prop As PropertyInfo
-                            prop = DirectCast(member, PropertyInfo)
-                            If m_Properties Is Nothing Then m_Properties = New Generic.List(Of PropertyInfo)
-                            If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
-                            m_Properties.Add(prop)
-                            m_PropertyValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
-                            'm_PropertyValues.add(item.
-                        Case Else
-                            Helper.AddError(Me, "Invalid member type for attribute value: " & member.MemberType.ToString)
-                    End Select
-
+                        If m_Fields Is Nothing Then m_Fields = New Generic.List(Of Mono.Cecil.FieldReference)
+                        If m_FieldValues Is Nothing Then m_FieldValues = New Generic.List(Of Object)
+                        m_Fields.Add(field)
+                        m_FieldValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
+                    ElseIf TypeOf member Is Mono.Cecil.PropertyReference Then
+                        Dim prop As Mono.Cecil.PropertyReference
+                        prop = DirectCast(member, Mono.Cecil.PropertyReference)
+                        If m_Properties Is Nothing Then m_Properties = New Generic.List(Of Mono.Cecil.PropertyReference)
+                        If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
+                        m_Properties.Add(prop)
+                        m_PropertyValues.Add(item.AttributeArgumentExpression.Expression.ConstantValue)
+                        'm_PropertyValues.add(item.
+                    Else
+                        Helper.AddError(Me, "Invalid member type for attribute value.")
+                    End If
                 Next
-            End If
+        End If
 
         ElseIf m_Arguments IsNot Nothing Then
-            argList = New ArgumentList(Me)
-            For i As Integer = 0 To m_Arguments.Length - 1
-                argList.Arguments.Add(New PositionalArgument(argList, argList.Count, New ConstantExpression(argList, m_Arguments(i), m_Arguments(i).GetType)))
-            Next
+        argList = New ArgumentList(Me)
+        For i As Integer = 0 To m_Arguments.Length - 1
+                argList.Arguments.Add(New PositionalArgument(argList, argList.Count, New ConstantExpression(argList, m_Arguments(i), CecilHelper.GetType(Compiler, m_Arguments(i)))))
+        Next
         Else
-            argList = New ArgumentList(Me)
+        argList = New ArgumentList(Me)
         End If
 
         If m_Arguments Is Nothing Then m_Arguments = New Object() {}
-        If m_Fields Is Nothing Then m_Fields = New Generic.List(Of FieldInfo)
+        If m_Fields Is Nothing Then m_Fields = New Generic.List(Of Mono.Cecil.FieldReference)
         If m_FieldValues Is Nothing Then m_FieldValues = New Generic.List(Of Object)
-        If m_Properties Is Nothing Then m_Properties = New Generic.List(Of PropertyInfo)
+        If m_Properties Is Nothing Then m_Properties = New Generic.List(Of Mono.Cecil.PropertyReference)
         If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
 
-        Dim ctors As ConstructorInfo()
+        Dim ctors As Mono.Cecil.ConstructorCollection
         ctors = Compiler.Helper.GetConstructors(m_ResolvedType)
 
         Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, ctors)
@@ -273,16 +271,16 @@ Public Class Attribute
 #End If
 
         If m_IsAssembly Then
-            Dim builder As CustomAttributeBuilder
-            builder = GetAttributeBuilder()
-            Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
+            '           Dim builder As CustomAttributeBuilder
+            '            builder = GetAttributeBuilder()
+            '            Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
 #If ENABLECECIL Then
             Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cecilBuilder)
 #End If
         ElseIf m_IsModule Then
-            Dim builder As CustomAttributeBuilder
-            builder = GetAttributeBuilder()
-            Me.Compiler.ModuleBuilder.SetCustomAttribute(builder)
+            'Dim builder As CustomAttributeBuilder
+            'builder = GetAttributeBuilder()
+            'Me.Compiler.ModuleBuilder.SetCustomAttribute(builder)
 #If ENABLECECIL Then
             Me.Compiler.ModuleBuilderCecil.CustomAttributes.Add(cecilBuilder)
 #End If
@@ -300,18 +298,18 @@ Public Class Attribute
                 Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
 
                 If tp IsNot Nothing Then
-                    If tp.TypeBuilder Is Nothing Then
-                        tp.EnumBuilder.SetCustomAttribute(GetAttributeBuilder)
-                    Else
-                        tp.TypeBuilder.SetCustomAttribute(GetAttributeBuilder)
-                    End If
+                    'If tp.TypeBuilder Is Nothing Then
+                    '    tp.EnumBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    'Else
+                    '    tp.TypeBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    'End If
 #If ENABLECECIL Then
                     tp.CecilType.CustomAttributes.Add(cecilBuilder)
 #End If
                 ElseIf mthd IsNot Nothing Then
-                    mthd.MethodBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    'mthd.MethodBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
-                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.CecilTypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
+                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
                         Dim values As IDictionary = cecilBuilder.Fields
                         Dim entry As String = DirectCast(values("EntryPoint"), String)
                         Dim modRef As Mono.Cecil.ModuleReference = New Mono.Cecil.ModuleReference(DirectCast(cecilBuilder.ConstructorParameters(0), String))
@@ -373,22 +371,22 @@ Public Class Attribute
                     End If
 #End If
                 ElseIf ctro IsNot Nothing Then
-                    ctro.ConstructorBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    '                   ctro.ConstructorBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
                     ctro.CecilBuilder.CustomAttributes.Add(cecilBuilder)
 #End If
                 ElseIf fld IsNot Nothing Then
-                    fld.FieldBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    '                    fld.FieldBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
-                    fld.FieldBuilderCecil.CustomAttributes.Add(cecilBuilder)
+                    fld.FieldBuilder.CustomAttributes.Add(cecilBuilder)
 #End If
                 ElseIf prop IsNot Nothing Then
-                    prop.PropertyBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    '              prop.PropertyBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
                     prop.CecilBuilder.CustomAttributes.Add(cecilBuilder)
 #End If
                 ElseIf param IsNot Nothing Then
-                    param.ParameterBuilder.SetCustomAttribute(GetAttributeBuilder)
+                    '            param.ParameterBuilder.SetCustomAttribute(GetAttributeBuilder)
 #If ENABLECECIL Then
                     param.CecilBuilder.CustomAttributes.Add(cecilBuilder)
 #End If
@@ -409,18 +407,18 @@ Public Class Attribute
 
         Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
         Helper.Assert(m_Arguments IsNot Nothing)
-        Helper.Assert(Helper.GetParameters(Compiler, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
+        Helper.Assert(Helper.GetParameters(Compiler, m_ResolvedTypeConstructor).Count = m_Arguments.Length)
         Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
-        m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
+        m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(Compiler, m_ResolvedTypeConstructor)
 
         Dim cecilArguments As Object()
         ReDim cecilArguments(m_Arguments.Length - 1)
         Array.Copy(m_Arguments, cecilArguments, m_Arguments.Length)
         For i As Integer = 0 To cecilArguments.Length - 1
-            Dim type As Type
-            type = TryCast(cecilArguments(i), Type)
+            Dim type As Mono.Cecil.TypeReference
+            type = TryCast(cecilArguments(i), Mono.Cecil.TypeReference)
             If type IsNot Nothing Then
                 cecilArguments(i) = Helper.GetTypeOrTypeReference(Compiler, type)
             End If
@@ -448,34 +446,34 @@ Public Class Attribute
 
 #End If
 
-    Private Function GetAttributeBuilder() As CustomAttributeBuilder
-        Dim result As CustomAttributeBuilder
+    'Private Function GetAttributeBuilder() As CustomAttributeBuilder
+    '    Dim result As CustomAttributeBuilder
 
-        Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
-        Helper.Assert(m_Arguments IsNot Nothing)
-        Helper.Assert(Helper.GetParameters(Me, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
-        Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
-        Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
+    '    Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
+    '    Helper.Assert(m_Arguments IsNot Nothing)
+    '    Helper.Assert(Helper.GetParameters(Me, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
+    '    Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
+    '    Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
-        m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
-        Helper.GetFieldOrFieldBuilder(m_Fields)
-        Helper.GetPropertyOrPropertyBuilder(m_Properties)
+    '    m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
+    '    Helper.GetFieldOrFieldBuilder(m_Fields)
+    '    Helper.GetPropertyOrPropertyBuilder(m_Properties)
 
-        For i As Integer = 0 To m_Arguments.Length - 1
-            Dim type As Type
-            type = TryCast(m_Arguments(i), Type)
-            If type IsNot Nothing Then
-                m_Arguments(i) = Helper.GetTypeOrTypeBuilder(type)
-            End If
-        Next
+    '    For i As Integer = 0 To m_Arguments.Length - 1
+    '        Dim type As Type
+    '        type = TryCast(m_Arguments(i), Type)
+    '        If type IsNot Nothing Then
+    '            m_Arguments(i) = Helper.GetTypeOrTypeBuilder(type)
+    '        End If
+    '    Next
 
-        Try
-            result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties.ToArray, m_PropertyValues.ToArray, m_Fields.ToArray, m_FieldValues.ToArray)
-        Catch ex As Exception
-            Throw
-        End Try
+    '    Try
+    '        result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties.ToArray, m_PropertyValues.ToArray, m_Fields.ToArray, m_FieldValues.ToArray)
+    '    Catch ex As Exception
+    '        Throw
+    '    End Try
 
-        Return result
-    End Function
+    '    Return result
+    'End Function
 
 End Class

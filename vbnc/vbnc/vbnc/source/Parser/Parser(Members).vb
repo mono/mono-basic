@@ -104,6 +104,7 @@ Partial Class Parser
 
         m_Signature = ParseFunctionSignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        result.Signature = m_Signature
 
         If tm.AcceptEndOfStatement() = False Then
             m_ImplementsClause = ParseImplementsClause(result)
@@ -201,7 +202,7 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
 
-        result.Init(Info.Attributes, m_Modifiers, ParentSignature, ParentImplements, m_Block, m_ParameterList)
+        result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block, m_ParameterList)
 
         Return result
     End Function
@@ -235,7 +236,7 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End_Get) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
-        result.Init(Info.Attributes, m_Modifiers, ParentSignature, ParentImplements, m_Block)
+        result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block)
 
         Return result
     End Function

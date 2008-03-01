@@ -43,13 +43,13 @@ Public Class MethodGroupClassification
     ''' <remarks></remarks>
     Private m_InstanceExpression As Expression
     Private m_Parameters As Expression()
-    Private m_TypeArguments As Type()
+    Private m_TypeArguments As Mono.Cecil.TypeReference()
 
     ''' <summary>
     ''' The group of possible methods.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Group As Generic.List(Of MemberInfo)
+    Private m_Group As Generic.List(Of Mono.Cecil.MemberReference)
     ''' <summary>
     ''' The type where the calling code is found.
     ''' </summary>
@@ -65,10 +65,10 @@ Public Class MethodGroupClassification
 
 #If DEBUG Then
 
-    Private m_OriginalGroup As Generic.List(Of MemberInfo)
+    Private m_OriginalGroup As Generic.List(Of Mono.Cecil.MemberReference)
 
     Sub RevertResolveGroup()
-        m_Group = New Generic.List(Of MemberInfo)(m_OriginalGroup)
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)(m_OriginalGroup)
     End Sub
 #End If
 
@@ -184,12 +184,12 @@ Public Class MethodGroupClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             If SuccessfullyResolved = False Then Throw New InternalException(Me)
-            Dim m As MethodInfo = ResolvedMethodInfo
+            Dim m As Mono.Cecil.MethodReference = ResolvedMethodInfo
             If m Is Nothing Then
-                Dim c As ConstructorInfo = ResolvedConstructor
+                Dim c As Mono.Cecil.MethodReference = ResolvedConstructor
                 If c Is Nothing Then
                     Throw New InternalException(Me)
                 Else
@@ -199,7 +199,7 @@ Public Class MethodGroupClassification
                 If m.ReturnType Is Nothing Then
                     Return Compiler.TypeCache.System_Void
                 Else
-                    Return m.ReturnType
+                    Return m.ReturnType.ReturnType
                 End If
             End If
         End Get
@@ -210,11 +210,11 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    ReadOnly Property ResolvedMethodInfo() As MethodInfo
+    ReadOnly Property ResolvedMethodInfo() As Mono.Cecil.MethodReference
         Get
             If SuccessfullyResolved = False Then Throw New InternalException(Me)
-            If TypeOf m_Group(0) Is MethodInfo Then
-                Return DirectCast(m_Group(0), MethodInfo)
+            If TypeOf m_Group(0) Is Mono.Cecil.MethodReference Then
+                Return DirectCast(m_Group(0), Mono.Cecil.MethodReference)
             Else
                 Return Nothing
             End If
@@ -227,11 +227,11 @@ Public Class MethodGroupClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property ResolvedConstructor() As ConstructorInfo
+    ReadOnly Property ResolvedConstructor() As Mono.Cecil.MethodReference
         Get
             If SuccessfullyResolved = False Then Throw New InternalException(Me)
-            If TypeOf m_Group(0) Is ConstructorInfo Then
-                Return DirectCast(m_Group(0), ConstructorInfo)
+            If TypeOf m_Group(0) Is Mono.Cecil.MethodReference Then
+                Return DirectCast(m_Group(0), Mono.Cecil.MethodReference)
             Else
                 Return Nothing
             End If
@@ -244,11 +244,11 @@ Public Class MethodGroupClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property ResolvedMethod() As MethodBase
+    ReadOnly Property ResolvedMethod() As Mono.Cecil.MethodReference
         Get
             If SuccessfullyResolved = False Then Throw New InternalException(Me)
             If m_Group.Count = 0 Then Return Nothing
-            Return DirectCast(m_Group(0), MethodBase)
+            Return DirectCast(m_Group(0), Mono.Cecil.MethodReference)
         End Get
     End Property
 
@@ -270,30 +270,48 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
-    Private Sub SetMethods(ByVal lst As Generic.List(Of MemberInfo))
-        m_Group = New Generic.List(Of MemberInfo)
+    Private Sub SetMethods(ByVal lst As Generic.IList(Of Mono.Cecil.MemberReference))
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         For i As Integer = 0 To lst.Count - 1
-            Dim member As MemberInfo = lst(i)
-            Dim method As MethodBase
-            method = TryCast(member, MethodBase)
-            Helper.Assert(method IsNot Nothing)
-            m_Group.Add(method)
+            Dim member As Mono.Cecil.MemberReference = lst(i)
+            m_Group.Add(member)
         Next
 #If DEBUG Then
-        m_OriginalGroup = New Generic.List(Of MemberInfo)(m_Group)
+        m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
 #End If
     End Sub
 
-    Private Sub SetMethods(ByVal lst As Generic.List(Of MethodBase))
-        m_Group = New Generic.List(Of MemberInfo)
+    Private Sub SetMethods(ByVal lst As Generic.IList(Of Mono.Cecil.MethodReference))
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         For i As Integer = 0 To lst.Count - 1
-            Dim method As MethodBase = lst(i)
-            m_Group.Add(method)
+            Dim member As Mono.Cecil.MemberReference = lst(i)
+            m_Group.Add(member)
         Next
 #If DEBUG Then
-        m_OriginalGroup = New Generic.List(Of MemberInfo)(lst.ToArray)
+        m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
 #End If
     End Sub
+
+    Private Sub SetMethods(ByVal lst As Mono.Cecil.ConstructorCollection)
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
+        For i As Integer = 0 To lst.Count - 1
+            Dim member As Mono.Cecil.MemberReference = lst(i)
+            m_Group.Add(member)
+        Next
+#If DEBUG Then
+        m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
+#End If
+    End Sub
+    '    Private Sub SetMethods(ByVal lst As Generic.List(Of MethodBase))
+    '        m_Group = New Generic.List(Of MemberInfo)
+    '        For i As Integer = 0 To lst.Count - 1
+    '            Dim method As MethodBase = lst(i)
+    '            m_Group.Add(method)
+    '        Next
+    '#If DEBUG Then
+    '        m_OriginalGroup = New Generic.List(Of MemberInfo)(lst.ToArray)
+    '#End If
+    '    End Sub
 
     ''' <summary>
     ''' The name of the method. (Any method actually, since they should all have the same name).
@@ -318,23 +336,23 @@ Public Class MethodGroupClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Property [Group]() As Generic.List(Of MemberInfo)
+    Property [Group]() As Generic.List(Of Mono.Cecil.MemberReference)
         Get
             Return m_Group
         End Get
-        Set(ByVal value As Generic.List(Of MemberInfo))
+        Set(ByVal value As Generic.List(Of Mono.Cecil.MemberReference))
             m_Group = value
         End Set
     End Property
 
-    Shared Function ResolveInterfaceGroup(ByVal grp As Generic.List(Of MemberInfo), ByVal codedMember As IMember) As MemberInfo
+    Shared Function ResolveInterfaceGroup(ByVal grp As Generic.List(Of Mono.Cecil.MemberReference), ByVal codedMember As IMember) As Mono.Cecil.MemberReference
         Helper.Assert(codedMember IsNot Nothing)
 
-        Dim methodtypes() As Type
-        Dim grptypes() As Type
-        Dim result As MemberInfo = Nothing
+        Dim methodtypes() As Mono.Cecil.TypeReference
+        Dim grptypes() As Mono.Cecil.TypeReference
+        Dim result As Mono.Cecil.MemberReference = Nothing
 
-        Select Case codedMember.MemberDescriptor.MemberType
+        Select Case CecilHelper.GetMemberType(codedMember.MemberDescriptor)
             Case MemberTypes.Method
                 Dim method As IMethod = TryCast(codedMember, IMethod)
                 methodtypes = method.Signature.Parameters.ToTypeArray
@@ -342,20 +360,20 @@ Public Class MethodGroupClassification
                 Dim prop As PropertyDeclaration = TryCast(codedMember, PropertyDeclaration)
                 methodtypes = prop.Signature.Parameters.ToTypeArray
             Case MemberTypes.Event
-                methodtypes = Type.EmptyTypes
+                methodtypes = New Mono.Cecil.TypeReference() {}
             Case Else
                 methodtypes = Nothing
                 codedMember.Compiler.Report.ShowMessage(Messages.VBNC99997, codedMember.Location)
         End Select
 
-        For Each member As MemberInfo In grp
-            Select Case member.MemberType
+        For Each member As Mono.Cecil.MemberReference In grp
+            Select Case CecilHelper.GetMemberType(member)
                 Case MemberTypes.Method
-                    grptypes = Helper.GetParameterTypes(codedMember.Parent, DirectCast(member, MethodInfo))
+                    grptypes = Helper.GetParameterTypes(codedMember.Parent, member)
                 Case MemberTypes.Property
-                    grptypes = Helper.GetParameterTypes(Helper.GetParameters(codedMember.Compiler, DirectCast(member, PropertyInfo)))
+                    grptypes = Helper.GetParameterTypes(Helper.GetParameters(codedMember.Compiler, DirectCast(member, Mono.Cecil.PropertyReference)))
                 Case MemberTypes.Event
-                    grptypes = Type.EmptyTypes
+                    grptypes = New Mono.Cecil.TypeReference() {}
                 Case Else
                     Throw New InternalException(codedMember)
             End Select
@@ -390,7 +408,7 @@ Public Class MethodGroupClassification
         End If
         If m_Group.Count <= 0 Then Throw New InternalException("Nothing to resolve...")
 
-        Dim resolvedGroup As New Generic.List(Of MemberInfo)
+        Dim resolvedGroup As New Generic.List(Of Mono.Cecil.MemberReference)
 
         If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
         m_Resolver.ShowErrors = ShowErrors
@@ -409,7 +427,7 @@ Public Class MethodGroupClassification
         If result Then
             m_Group = resolvedGroup
             m_Resolved = True
-            If IsLateBound = False AndAlso ResolvedMethod.IsStatic Then
+            If IsLateBound = False AndAlso Helper.IsShared(ResolvedMethod) Then
                 'Helper.StopIfDebugging(m_InstanceExpression IsNot Nothing AndAlso TypeOf m_InstanceExpression Is MeExpression = False)
                 m_InstanceExpression = Nothing
             End If
@@ -435,18 +453,18 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <remarks></remarks>
     Private Sub ShrinkGroup()
-        m_Group.RemoveAll(New Predicate(Of MemberInfo)(AddressOf Helper.IsNothing(Of MemberInfo)))
+        m_Group.RemoveAll(New Predicate(Of Mono.Cecil.MemberReference)(AddressOf Helper.IsNothing(Of Mono.Cecil.MemberReference)))
     End Sub
 
-    Function IsAccessible(ByVal Caller As TypeDeclaration, ByVal Method As MethodBase) As Boolean
+    Function IsAccessible(ByVal Caller As Mono.Cecil.TypeReference, ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Return Helper.IsAccessible(Compiler, Caller, Method)
     End Function
 
 
     Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Method As MethodDeclaration)
         MyBase.New(Classifications.MethodGroup, Parent)
-        m_Group = New Generic.List(Of MemberInfo)
-        m_Group.Add(Method.MethodDescriptor)
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
+        m_Group.Add(Method.CecilBuilder)
         m_Resolved = True
         m_InstanceExpression = InstanceExpression
     End Sub
@@ -460,14 +478,28 @@ Public Class MethodGroupClassification
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal ParamArray Methods As MemberInfo())
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal ParamArray Methods As Mono.Cecil.MemberReference())
         Me.New(Parent, InstanceExpression, Parameters)
-        SetMethods(New Generic.List(Of MemberInfo)(Methods))
+        SetMethods(New Generic.List(Of Mono.Cecil.MemberReference)(Methods))
         Helper.Assert(Methods.Length > 0)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of MemberInfo))
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of Mono.Cecil.MemberReference))
+        Me.new(Parent, InstanceExpression, Parameters)
+        SetMethods(Methods)
+        Helper.Assert(Methods.Count > 0)
+        Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of Mono.Cecil.MethodReference))
+        Me.new(Parent, InstanceExpression, Parameters)
+        SetMethods(Methods)
+        Helper.Assert(Methods.Count > 0)
+        Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Cecil.ConstructorCollection)
         Me.new(Parent, InstanceExpression, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)

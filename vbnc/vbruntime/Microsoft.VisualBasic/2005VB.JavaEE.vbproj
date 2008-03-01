@@ -145,6 +145,7 @@
     <Compile Include="Microsoft.VisualBasic.CompilerServices\TypeCombinations.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\Utils.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\Versioned.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\VBErrors.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Audio.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Audio.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Clock.vb" />

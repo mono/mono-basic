@@ -59,7 +59,7 @@ Public Class EmitInfo
     ''' The desired type to emit.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_DesiredType As Type
+    Private m_DesiredType As Mono.Cecil.TypeReference
 
 
     Private m_InExceptionFilter As Boolean
@@ -133,7 +133,7 @@ Public Class EmitInfo
         End Get
     End Property
 
-    ReadOnly Property DesiredType() As Type
+    ReadOnly Property DesiredType() As Mono.Cecil.TypeReference
         Get
             Return m_DesiredType
         End Get
@@ -175,7 +175,7 @@ Public Class EmitInfo
     ReadOnly Property ILGen() As EmitLog
         Get
             If m_FakeGenerator Is Nothing Then
-                m_FakeGenerator = New EmitLog(m_Method.ILGenerator, Compiler)
+                m_FakeGenerator = New EmitLog(Compiler)
 #If ENABLECECIL Then
                 m_FakeGenerator.CilBody = CilBody
 #End If
@@ -256,7 +256,7 @@ Public Class EmitInfo
     ''' <param name="DesiredType"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function Clone(ByVal Context As ParsedObject, ByVal IsRHS As Boolean, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Type = Nothing) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal IsRHS As Boolean, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Mono.Cecil.TypeReference = Nothing) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_IsRHS = IsRHS
         result.m_IsExplicitConversion = IsExplicitConversion
@@ -266,7 +266,7 @@ Public Class EmitInfo
         Return result
     End Function
 
-    Function Clone(ByVal Context As ParsedObject, ByVal DesiredType As Type) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal DesiredType As Mono.Cecil.TypeReference) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_DesiredType = DesiredType
         result.m_RHSExpression = Nothing

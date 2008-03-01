@@ -38,7 +38,7 @@ Public MustInherit Class TypeDeclaration
     Inherits MemberDeclaration
     Implements IType
 
-    Private m_TypeDescriptor As TypeDescriptor
+    'Private m_TypeDescriptor As TypeDescriptor
 
     'Information collected during parse phase.
     Private m_Members As MemberDeclarations
@@ -46,24 +46,22 @@ Public MustInherit Class TypeDeclaration
     Private m_Name As Token
 
     'Information collected during resolve phase.
-    Private m_BaseType As Type
-    Private m_ImplementedTypes As Type()
+    'Private m_BaseType As Type
+    Private m_ImplementedTypes As Mono.Cecil.TypeReference()
 
     Private m_DefaultInstanceConstructor As ConstructorDeclaration
     Private m_DefaultSharedConstructor As ConstructorDeclaration
-    Private m_StaticVariables As Generic.List(Of VariableDeclaration)
+    Private m_StaticVariables As Generic.List(Of LocalVariableDeclaration)
     Private m_BeforeFieldInit As Boolean
 
     'Information collected during define phase.
-#If ENABLECECIL Then
     Private m_CecilType As Mono.Cecil.TypeDefinition
-    Private m_CecilBaseType As Mono.Cecil.TypeReference
-#End If
-    Private m_TypeBuilder As TypeBuilder
-    'Another hack for another bug in the ms runtime: you cannot create an attribute when the attribute's constructor has a enum parameter and the enum parameter is defined with a typebuilder, it only works if the enum parameter's type is defined with an enumbuilder.
-    Private m_EnumBuilder As EnumBuilder
+    'Private m_CecilBaseType As Mono.Cecil.TypeReference
+    'Private m_TypeBuilder As TypeBuilder
+    ''Another hack for another bug in the ms runtime: you cannot create an attribute when the attribute's constructor has a enum parameter and the enum parameter is defined with a typebuilder, it only works if the enum parameter's type is defined with an enumbuilder.
+    'Private m_EnumBuilder As EnumBuilder
 
-    Private m_FinalType As Type
+    'Private m_FinalType As Type
 
     Private m_FullName As String
 
@@ -97,11 +95,12 @@ Public MustInherit Class TypeDeclaration
 
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
         MyBase.New(Parent)
-        m_TypeDescriptor = New TypeDescriptor(Me)
+        'm_TypeDescriptor = New TypeDescriptor(Me)
 
         m_Namespace = [Namespace]
 
         Helper.Assert(m_Namespace IsNot Nothing)
+        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeArgumentCount As Integer)
@@ -115,14 +114,28 @@ Public MustInherit Class TypeDeclaration
         Helper.Assert(m_Namespace IsNot Nothing)
         'Helper.Assert(m_Name IsNot Nothing)
 
-#If ENABLECECIL Then
-        If Me.IsNestedType Then
-            m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Nothing, 0, Nothing)
-        Else
-            m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Me.Namespace, 0, Nothing)
-        End If
-#End If
+        UpdateDefinition()
 
+    End Sub
+
+    Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If m_CecilType Is Nothing Then
+            If Me.IsNestedType Then
+                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Nothing, 0, Nothing)
+            Else
+                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Me.Namespace, 0, Nothing)
+            End If
+        End If
+        m_CecilType.Name = Name
+
+        If CecilType.Module Is Nothing Then
+            Compiler.ModuleBuilderCecil.Types.Add(CecilType)
+            If IsNestedType Then
+                DeclaringType.CecilType.NestedTypes.Add(CecilType)
+            End If
+        End If
     End Sub
 
     Protected Property BeforeFieldInit() As Boolean
@@ -185,11 +198,11 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Property ImplementedTypes() As Type()
+    Property ImplementedTypes() As Mono.Cecil.TypeReference()
         Get
             Return m_ImplementedTypes
         End Get
-        Protected Set(ByVal value As Type())
+        Protected Set(ByVal value As Mono.Cecil.TypeReference())
             m_ImplementedTypes = value
         End Set
     End Property
@@ -200,22 +213,15 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property Created() As Boolean Implements ICreatableType.Created
-        Get
-            Helper.Assert(m_TypeBuilder IsNot Nothing)
-            Return m_TypeBuilder.IsCreated
-        End Get
-    End Property
-
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get
             Return TypeOf Me Is ModuleDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
         Get
-            Return m_TypeDescriptor
+            Return m_CecilType
         End Get
     End Property
 
@@ -246,36 +252,16 @@ Public MustInherit Class TypeDeclaration
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Property BaseType() As System.Type
+    Public Property BaseType() As Mono.Cecil.TypeReference Implements IType.BaseType
         Get
-            Return m_BaseType
+            If m_CecilType Is Nothing Then
+                Return Nothing
+            End If
+            Return m_CecilType.BaseType
         End Get
-        Protected Set(ByVal value As System.Type)
-            m_BaseType = value
-            Helper.Assert(m_BaseType IsNot Nothing)
+        Set(ByVal value As Mono.Cecil.TypeReference)
+            m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, value)
         End Set
-    End Property
-#If ENABLECECIL Then
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Property CecilBaseType() As Mono.Cecil.TypeReference
-        Get
-            Return m_CecilBaseType
-        End Get
-        Protected Set(ByVal value As Mono.Cecil.TypeReference)
-            m_CecilBaseType = value
-            Helper.Assert(m_CecilBaseType IsNot Nothing)
-        End Set
-    End Property
-#End If
-    Private ReadOnly Property BaseType2() As System.Type Implements IType.BaseType
-        Get
-            Return BaseType
-        End Get
     End Property
 
     Public Property Members() As MemberDeclarations
@@ -294,42 +280,9 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Property EnumBuilder() As EnumBuilder
-        Get
-            Return m_EnumBuilder
-        End Get
-        Protected Set(ByVal value As EnumBuilder)
-            m_EnumBuilder = value
-        End Set
-    End Property
-
-#If ENABLECECIL Then
-    Public Overridable ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition
+    Public Overridable ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition Implements IType.CecilType
         Get
             Return m_CecilType
-        End Get
-    End Property
-#End If
-
-    Public Overridable Property TypeBuilder() As System.Reflection.Emit.TypeBuilder
-        Get
-            Return m_TypeBuilder
-        End Get
-        Protected Set(ByVal value As System.Reflection.Emit.TypeBuilder)
-            Compiler.TypeManager.RegisterReflectionType(value, Me.TypeDescriptor)
-            m_TypeBuilder = value
-        End Set
-    End Property
-
-    Private ReadOnly Property TypeBuilder2() As System.Reflection.Emit.TypeBuilder Implements IType.TypeBuilder
-        Get
-            Return TypeBuilder
-        End Get
-    End Property
-
-    Public ReadOnly Property TypeDescriptor() As TypeDescriptor Implements IType.TypeDescriptor
-        Get
-            Return m_TypeDescriptor
         End Get
     End Property
 
@@ -345,16 +298,8 @@ Public MustInherit Class TypeDeclaration
     Public Overridable Function ResolveType() As Boolean Implements IType.ResolveType
         Dim result As Boolean = True
 
-        Helper.Assert(m_BaseType IsNot Nothing OrElse Me.IsInterface)
+        Helper.Assert(BaseType IsNot Nothing OrElse Me.IsInterface)
 
-#If ENABLECECIL Then
-        If CecilType.Module Is Nothing Then
-            Compiler.ModuleBuilderCecil.Types.Add(CecilType)
-            If IsNestedType Then
-                DeclaringType.CecilType.NestedTypes.Add(CecilType)
-            End If
-        End If
-#End If
         Return result
     End Function
 
@@ -369,7 +314,7 @@ Public MustInherit Class TypeDeclaration
             CustomAttributes.Add(textAttribute)
         End If
 
-        m_StaticVariables = New Generic.List(Of VariableDeclaration)
+        m_StaticVariables = New Generic.List(Of LocalVariableDeclaration)
         For Each method As MethodDeclaration In m_Members.GetSpecificMembers(Of MethodDeclaration)()
             If method.Code IsNot Nothing Then method.Code.FindStaticVariables(m_StaticVariables)
         Next
@@ -384,41 +329,7 @@ Public MustInherit Class TypeDeclaration
     Overridable Function DefineType() As Boolean Implements IDefinableType.DefineType
         Dim result As Boolean = True
 
-        Helper.Assert(m_BaseType IsNot Nothing OrElse Me.TypeDescriptor.IsInterface)
-        'Helper.Assert(m_Name IsNot Nothing)
-
-        'Create the type builder.
-        Dim Attr As TypeAttributes
-        Attr = Me.TypeAttributes
-        If m_BeforeFieldInit Then
-            Attr = Attr Or Reflection.TypeAttributes.BeforeFieldInit
-        End If
-        If IsNestedType Then
-            Helper.Assert(DeclaringType IsNot Nothing)
-            Helper.Assert(DeclaringType.TypeBuilder IsNot Nothing)
-#If EXTENDEDDEBUG Then
-            Compiler.Report.WriteLine("Defining nested type: " & Name & " with attributes: " & Attr.ToString & " = " & CInt(Attr))
-#End If
-            m_TypeBuilder = DeclaringType.TypeBuilder.DefineNestedType(Name, Attr)
-        Else
-#If EXTENDEDDEBUG Then
-            Compiler.Report.WriteLine("Defining type: " & Name & " with attributes: " & Attr.ToString & " = " & CInt(Attr))
-#End If
-            m_TypeBuilder = Compiler.ModuleBuilder.DefineType(FullName, Attr)
-#If DEBUGREFLECTION Then
-            Helper.DebugReflection_AppendLine(String.Format("{0} = {1}.DefineType(""{2}"", {3})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(Compiler.ModuleBuilder), FullName, CInt(Attr).ToString))
-#End If
-
-        End If
-
-#If ENABLECECIL Then
-        m_CecilType.Attributes = CType(Attr, Mono.Cecil.TypeAttributes)
-        'Compiler.ModuleBuilderCecil.Types.Add(m_CecilType)
-#End If
-
-        Compiler.TypeManager.RegisterReflectionType(m_TypeBuilder, Me.TypeDescriptor)
-
-        Helper.Assert(m_TypeBuilder IsNot Nothing)
+        Helper.Assert(BaseType IsNot Nothing OrElse Me.CecilType.IsInterface)
 
         Return result
     End Function
@@ -426,56 +337,27 @@ Public MustInherit Class TypeDeclaration
     Public Overridable Function DefineTypeHierarchy() As Boolean Implements IDefinableType.DefineTypeHierarchy
         Dim result As Boolean = True
 
-#If ENABLECECIL Then
-        m_CecilBaseType = Helper.GetTypeDefinition(Compiler, m_BaseType)
-        If m_CecilBaseType Is Nothing Then
-            If Me.IsInterface Then
-                'do nothing
-            Else
+        If BaseType Is Nothing Then
+            If Me.IsInterface = False Then
                 m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
             End If
         Else
-            m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, m_CecilBaseType)
+            'm_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, CecilBaseType)
         End If
         If DeclaringType IsNot Nothing Then
             m_CecilType.DeclaringType = DeclaringType.CecilType
         End If
-        'If IsNestedType Then
-        '    DeclaringType.CecilType.NestedTypes.Add(m_CecilType)
-        'End If
-#End If
 
-        If m_TypeBuilder IsNot Nothing Then
-            m_BaseType = Helper.GetTypeOrTypeBuilder(m_BaseType)
-
+        If m_ImplementedTypes IsNot Nothing Then
+            For Each Type As Mono.Cecil.TypeReference In m_ImplementedTypes
+                Type = Helper.GetTypeOrTypeBuilder(Compiler, Type)
+                Helper.Assert(Helper.IsInterface(Compiler, Type))
 #If EXTENDEDDEBUG Then
-            If Me.BaseType Is Nothing Then
-                Compiler.Report.WriteLine("Setting parent of " & FullName & " to Nothing")
-            Else
-                Compiler.Report.WriteLine("Setting parent of " & FullName & " to " & Me.BaseType.FullName)
-            End If
-#End If
-            m_TypeBuilder.SetParent(m_BaseType)
-
-#If DEBUGREFLECTION Then
-            Helper.DebugReflection_AppendLine(String.Format("{0}.SetParent({1})", Helper.GetObjectName(m_TypeBuilder), Helper.GetObjectName(m_BaseType)))
+                Compiler.Report.WriteLine("Setting implement," & FullName & " now implements " & Type.FullName)
 #End If
 
-            If m_ImplementedTypes IsNot Nothing Then
-                For Each Type As Type In m_ImplementedTypes
-                    Type = Helper.GetTypeOrTypeBuilder(Type)
-                    Helper.Assert(Type.IsInterface)
-#If EXTENDEDDEBUG Then
-                    Compiler.Report.WriteLine("Setting implement," & FullName & " now implements " & Type.FullName)
-#End If
-                    m_TypeBuilder.AddInterfaceImplementation(Type)
-#If ENABLECECIL Then
-                    CecilType.Interfaces.Add(Helper.GetTypeOrTypeReference(Compiler, Type))
-#End If
-                Next
-            End If
-        Else
-            Helper.Assert(m_EnumBuilder IsNot Nothing)
+                CecilType.Interfaces.Add(Helper.GetTypeOrTypeReference(Compiler, Type))
+            Next
         End If
 
         Return result
@@ -520,7 +402,7 @@ Public MustInherit Class TypeDeclaration
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        For Each var As VariableDeclaration In m_StaticVariables
+        For Each var As LocalVariableDeclaration In m_StaticVariables
             result = var.DefineStaticMember AndAlso result
         Next
 
@@ -529,50 +411,20 @@ Public MustInherit Class TypeDeclaration
         Return result
     End Function
 
-    ''' <summary>
-    ''' Creates the type if it has not already been created.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Overridable Function CreateType() As Boolean Implements ICreatableType.CreateType
-        If m_FinalType IsNot Nothing Then Return True
-
-        'HACK: !!!
-        If TypeOf Me Is ModuleDeclaration Then
-            If Helper.IsOnMS Then
-                'This is necessary, otherwise the typebuilder will create a default constructor for the module.
-                'http://lab.msdn.microsoft.com/productfeedback/viewfeedback.aspx?feedbackid=9bde9cf4-61e3-4b02-9fb5-894359cb7849
-                GetType(TypeBuilder).GetField("m_constructorCount", BindingFlags.NonPublic Or BindingFlags.Instance).SetValue(m_TypeBuilder, -1)
-            End If
-        End If
-        'HACK!!!
-
-#If EXTENDEDDEBUG Then
-        Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Creating: " & Me.FullName)
-#End If
-        If m_TypeBuilder IsNot Nothing Then
-#If DEBUGREFLECTION Then
-            Helper.DebugReflection_AppendLine(String.Format("{0}.CreateType ()", Helper.GetObjectName(m_TypeBuilder)))
-#End If
-            m_FinalType = m_TypeBuilder.CreateType()
-        ElseIf m_EnumBuilder IsNot Nothing Then
-            m_FinalType = m_EnumBuilder.CreateType()
-        Else
-            Throw New InternalException(Me)
-        End If
-#If EXTENDEDDEBUG Then
-        Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Created:  " & Me.FullName)
-#End If
-        Return True
-    End Function
-
-    ReadOnly Property StaticVariables() As Generic.List(Of VariableDeclaration)
+    ReadOnly Property StaticVariables() As Generic.List(Of LocalVariableDeclaration)
         Get
             Return m_StaticVariables
         End Get
     End Property
 
-    MustOverride ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes Implements IType.TypeAttributes
+    Property TypeAttributes() As Mono.Cecil.TypeAttributes Implements IType.TypeAttributes
+        Get
+            Return m_CecilType.Attributes
+        End Get
+        Set(ByVal value As Mono.Cecil.TypeAttributes)
+            m_CecilType.Attributes = value
+        End Set
+    End Property
 
     ReadOnly Property IsInterface() As Boolean
         Get

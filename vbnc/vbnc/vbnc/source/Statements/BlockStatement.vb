@@ -49,12 +49,12 @@ Public MustInherit Class BlockStatement
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-#If DEBUG Then
-        Dim m1, m2 As MethodInfo
-        m1 = Me.GetType.GetMethod("ResolveTypeReferences")
-        m2 = GetType(BlockStatement).GetMethod("ResolveTypeReferences")
-        Helper.Assert(m1 IsNot m2)
-#End If
+        '#If DEBUG Then
+        '        Dim m1, m2 As MethodInfo
+        '        m1 = Me.GetType.GetMethod("ResolveTypeReferences")
+        '        m2 = GetType(BlockStatement).GetMethod("ResolveTypeReferences")
+        '        Helper.Assert(m1 IsNot m2)
+        '#End If
 
         result = m_Code.ResolveTypeReferences AndAlso result
 

@@ -73,6 +73,7 @@ Partial Class Parser
 
         m_Signature = ParseFunctionSignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        result.Signature = m_Signature
 
         If MemberImplementsClause.IsMe(tm) Then
             m_ImplementsClause = ParseImplementsClause(result)
@@ -81,7 +82,7 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
-        result.Init(Info.Attributes, m_Modifiers, m_Signature, m_ImplementsClause)
+        result.Init(Info.Attributes, m_Modifiers, m_Signature, , , m_ImplementsClause)
 
         Return result
     End Function
@@ -463,7 +464,7 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Sub)
 
-        m_Signature = ParseSubSignature(Parent)
+        m_Signature = ParseSubSignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -705,14 +706,14 @@ Partial Class Parser
     ''' <summary>
     ''' LocalDeclarationStatement  ::=  LocalModifier VariableDeclarators StatementTerminator
     ''' </summary>
-    Private Function ParseLocalDeclarationStatement(ByVal Parent As CodeBlock) As Generic.List(Of VariableDeclaration)
-        Dim result As Generic.List(Of VariableDeclaration)
+    Private Function ParseLocalDeclarationStatement(ByVal Parent As CodeBlock) As Generic.List(Of LocalVariableDeclaration)
+        Dim result As Generic.List(Of LocalVariableDeclaration)
 
         Dim m_Modifiers As Modifiers
 
         m_Modifiers = ParseModifiers(Parent, ModifierMasks.LocalModifiers)
 
-        result = ParseVariableDeclarators(Parent, m_Modifiers, New ParseAttributableInfo(Compiler, Nothing))
+        result = ParseLocalVariableDeclarators(Parent, m_Modifiers, New ParseAttributableInfo(Compiler, Nothing))
         If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         Return result
@@ -721,14 +722,31 @@ Partial Class Parser
     ''' <summary>
     ''' VariableMemberDeclaration  ::=	[  Attributes  ]  VariableModifier+  VariableDeclarators  StatementTerminator
     ''' </summary>
-    Private Function ParseVariableMemberDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo) As Generic.List(Of VariableDeclaration)
-        Dim result As Generic.List(Of VariableDeclaration)
+    Private Function ParseTypeVariableMemberDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo) As Generic.List(Of TypeVariableDeclaration)
+        Dim result As Generic.List(Of TypeVariableDeclaration)
 
         Dim m_VariableModifiers As Modifiers
 
         m_VariableModifiers = ParseModifiers(Parent, ModifierMasks.VariableModifiers)
 
-        result = ParseVariableDeclarators(Parent, m_VariableModifiers, Info)
+        result = ParseTypeVariableDeclarators(Parent, m_VariableModifiers, Info)
+
+        If tm.FindNewLineAndShowError() = False Then Helper.ErrorRecoveryNotImplemented()
+
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' VariableMemberDeclaration  ::=	[  Attributes  ]  VariableModifier+  VariableDeclarators  StatementTerminator
+    ''' </summary>
+    Private Function ParseLocalVariableMemberDeclaration(ByVal Parent As ParsedObject, ByVal Info As ParseAttributableInfo) As Generic.List(Of LocalVariableDeclaration)
+        Dim result As Generic.List(Of LocalVariableDeclaration)
+
+        Dim m_VariableModifiers As Modifiers
+
+        m_VariableModifiers = ParseModifiers(Parent, ModifierMasks.VariableModifiers)
+
+        result = ParseLocalVariableDeclarators(Parent, m_VariableModifiers, Info)
 
         If tm.FindNewLineAndShowError() = False Then Helper.ErrorRecoveryNotImplemented()
 
@@ -739,16 +757,45 @@ Partial Class Parser
     ''' VariableDeclarators  ::= VariableDeclarator  |	VariableDeclarators  ,  VariableDeclarator
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseVariableDeclarators(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of VariableDeclaration)
-        Dim result As New Generic.List(Of VariableDeclaration)
+    Private Function ParseLocalVariableDeclarators(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of LocalVariableDeclaration)
+        Dim result As New Generic.List(Of LocalVariableDeclaration)
 
         Do
-            Dim tmp As New Generic.List(Of VariableDeclaration)
-            tmp = ParseVariableDeclarator(Parent, Modifiers, Info)
+            Dim tmp As New Generic.List(Of LocalVariableDeclaration)
+            tmp = ParseLocalVariableDeclarator(Parent, Modifiers, Info)
             If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             result.AddRange(tmp)
         Loop While tm.Accept(KS.Comma)
 
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' VariableDeclarators  ::= VariableDeclarator  |	VariableDeclarators  ,  VariableDeclarator
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Function ParseTypeVariableDeclarators(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of TypeVariableDeclaration)
+        Dim result As New Generic.List(Of TypeVariableDeclaration)
+
+        Do
+            Dim tmp As New Generic.List(Of TypeVariableDeclaration)
+            tmp = ParseTypeVariableDeclarator(Parent, Modifiers, Info)
+            If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            result.AddRange(tmp)
+        Loop While tm.Accept(KS.Comma)
+
+        Return result
+    End Function
+
+    Private Function ParseLocalVariableDeclarator(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of LocalVariableDeclaration)
+        Dim result As New Generic.List(Of LocalVariableDeclaration)
+        If ParseVariableDeclarator(Parent, Modifiers, Info, result, True) = False Then Return Nothing
+        Return result
+    End Function
+
+    Private Function ParseTypeVariableDeclarator(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of TypeVariableDeclaration)
+        Dim result As New Generic.List(Of TypeVariableDeclaration)
+        If ParseVariableDeclarator(Parent, Modifiers, Info, result, False) = False Then Return Nothing
         Return result
     End Function
 
@@ -758,7 +805,7 @@ Partial Class Parser
     '''     VariableIdentifier   [  As  TypeName  ]  [  =  VariableInitializer  ]
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseVariableDeclarator(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo) As Generic.List(Of VariableDeclaration)
+    Private Function ParseVariableDeclarator(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal Info As ParseAttributableInfo, ByVal result As IList, ByVal local As Boolean) As Boolean
         Dim m_VariableIdentifiers As VariableIdentifiers
         Dim m_IsNew As Boolean
         Dim m_TypeName As TypeName
@@ -803,13 +850,19 @@ Partial Class Parser
             m_ArgumentList = Nothing
         End If
 
-        Dim result As New Generic.List(Of VariableDeclaration)
+        'result Dim result As New Generic.List(Of VariableDeclaration)
         For Each identifier As VariableIdentifier In m_VariableIdentifiers
-            result.Add(New VariableDeclaration(Parent, Info.Attributes, Modifiers, identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList))
+            Dim varD As VariableDeclaration
+            If local Then
+                varD = New LocalVariableDeclaration(Parent, Info.Attributes, Modifiers, identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
+            Else
+                varD = New TypeVariableDeclaration(Parent, Info.Attributes, Modifiers, identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
+            End If
+            result.Add(varD)
         Next
 
 
-        Return result
+        Return True
     End Function
 
     Private Function ParseInterfacePropertyMemberDeclaration(ByVal Parent As TypeDeclaration, ByVal Info As ParseAttributableInfo) As InterfacePropertyMemberDeclaration
@@ -824,6 +877,7 @@ Partial Class Parser
 
         m_Signature = ParseFunctionSignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        result.Signature = m_Signature
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 

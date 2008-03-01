@@ -28,9 +28,9 @@ Public Class TypeParameter
     Private m_Identifier As Token
     Private m_TypeParameterConstraints As TypeParameterConstraints
     Private m_GenericParameterPosition As Integer
-    Private m_GenericParameterConstraints() As Type
-    Private m_Builder As GenericTypeParameterBuilder
-    Private m_Descriptor As New TypeParameterDescriptor(Me)
+    Private m_GenericParameterConstraints() As Mono.Cecil.TypeReference
+    'Private m_Builder As GenericTypeParameterBuilder
+    'Private m_Descriptor As New TypeParameterDescriptor(Me)
 #If ENABLECECIL Then
     Private m_CecilBuilder As Mono.Cecil.GenericParameter
 #End If
@@ -67,9 +67,9 @@ Public Class TypeParameter
         Return result
     End Function
 
-    ReadOnly Property TypeDescriptor() As TypeParameterDescriptor
+    ReadOnly Property TypeDescriptor() As Mono.Cecil.TypeReference
         Get
-            Return m_Descriptor
+            Return m_CecilBuilder
         End Get
     End Property
 
@@ -79,11 +79,11 @@ Public Class TypeParameter
         End Get
     End Property
 
-    ReadOnly Property TypeParameterBuilder() As GenericTypeParameterBuilder
-        Get
-            Return m_Builder
-        End Get
-    End Property
+    'ReadOnly Property TypeParameterBuilder() As GenericTypeParameterBuilder
+    '    Get
+    '        Return m_Builder
+    '    End Get
+    'End Property
 
     ReadOnly Property Identifier() As Token
         Get
@@ -142,9 +142,9 @@ Public Class TypeParameter
         Return result
     End Function
 
-    ReadOnly Property GenericParameterAttributes() As GenericParameterAttributes
+    ReadOnly Property GenericParameterAttributes() As Mono.Cecil.GenericParameterAttributes
         Get
-            Dim result As GenericParameterAttributes
+            Dim result As Mono.Cecil.GenericParameterAttributes
 
             If m_TypeParameterConstraints IsNot Nothing Then
                 For Each constraint As Constraint In m_TypeParameterConstraints.Constraints
@@ -156,21 +156,21 @@ Public Class TypeParameter
         End Get
     End Property
 
-    Function DefineParameterConstraints(ByVal TypeParameterBuilder As GenericTypeParameterBuilder) As Boolean
+    Function DefineParameterConstraints() As Boolean
         Dim result As Boolean = True
 
-        m_Builder = TypeParameterBuilder
+        'm_Builder = TypeParameterBuilder
 
-        Dim attributes As GenericParameterAttributes
+        Dim attributes As Mono.Cecil.GenericParameterAttributes
 
         attributes = GenericParameterAttributes
 
         If m_TypeParameterConstraints IsNot Nothing Then
-            Dim interfaces As New Generic.List(Of Type)
-            Dim basetype As Type = Nothing
+            Dim interfaces As New Generic.List(Of Mono.Cecil.TypeReference)
+            Dim basetype As Mono.Cecil.TypeReference = Nothing
             For Each constraint As Constraint In m_TypeParameterConstraints.Constraints
                 If constraint.TypeName IsNot Nothing Then
-                    If constraint.TypeName.ResolvedType.IsInterface Then
+                    If Helper.IsInterface(Compiler, constraint.TypeName.ResolvedType) Then
                         interfaces.Add(constraint.TypeName.ResolvedType)
                     Else
                         If basetype IsNot Nothing Then
@@ -183,8 +183,8 @@ Public Class TypeParameter
                 End If
             Next
             If basetype IsNot Nothing Then
-                basetype = Helper.GetTypeOrTypeBuilder(basetype)
-                m_Builder.SetBaseTypeConstraint(basetype)
+                basetype = Helper.GetTypeOrTypeBuilder(Compiler, basetype)
+                'm_Builder.SetBaseTypeConstraint(basetype)
 #If ENABLECECIL Then
                 m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, basetype))
 #End If
@@ -193,8 +193,8 @@ Public Class TypeParameter
 #End If
             End If
             If interfaces.Count > 0 Then
-                Dim types As Type() = Helper.GetTypeOrTypeBuilders(interfaces.ToArray)
-                m_Builder.SetInterfaceConstraints(types)
+                Dim types As Mono.Cecil.TypeReference() = Helper.GetTypeOrTypeBuilders(Compiler, interfaces.ToArray)
+                'm_Builder.SetInterfaceConstraints(types)
 #If ENABLECECIL Then
                 For i As Integer = 0 To interfaces.Count - 1
                     m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, interfaces(i)))
@@ -210,7 +210,7 @@ Public Class TypeParameter
             m_GenericParameterConstraints = interfaces.ToArray
         End If
 
-        m_Builder.SetGenericParameterAttributes(attributes)
+        'm_Builder.SetGenericParameterAttributes(attributes)
 #If ENABLECECIL Then
         m_CecilBuilder.Attributes = CType(attributes, Mono.Cecil.GenericParameterAttributes)
 #End If
@@ -220,7 +220,7 @@ Public Class TypeParameter
         Return result
     End Function
 
-    Function GetGenericParameterConstraints() As Type()
+    Function GetGenericParameterConstraints() As Mono.Cecil.TypeReference()
         Return m_GenericParameterConstraints
     End Function
 

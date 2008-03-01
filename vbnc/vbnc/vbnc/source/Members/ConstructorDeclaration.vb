@@ -31,22 +31,21 @@ Public Class ConstructorDeclaration
     Inherits MethodBaseDeclaration
     Implements IConstructorMember
 
-    Private m_Descriptor As New ConstructorDescriptor(Me)
+    'Private m_Descriptor As New ConstructorDescriptor(Me)
 
     Public Const ConstructorName As String = ".ctor"
     Public Const SharedConstructorName As String = ".cctor"
 
-    Private m_ConstructorBuilder As ConstructorBuilder
+    'Private m_ConstructorBuilder As ConstructorBuilder
 
-#If ENABLECECIL Then
-    Private m_CecilBuilder As Mono.Cecil.MethodDefinition
+    'Private m_CecilBuilder As Mono.Cecil.MethodDefinition
     Private m_DefaultBaseConstructorCecil As Mono.Cecil.MethodReference
-#End If
+
     ''' <summary>
     ''' The default base constructor to call if no call is specified in the code.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_DefaultBaseConstructor As ConstructorInfo
+    Private m_DefaultBaseConstructor As Mono.Cecil.MethodReference
 
     ''' <summary>
     ''' The base/self constructor call in the code.
@@ -98,86 +97,32 @@ Public Class ConstructorDeclaration
         Return result
     End Function
 
-    ReadOnly Property ConstructorDescriptor() As ConstructorDescriptor Implements IConstructorMember.ConstructorDescriptor
-        Get
-            Return m_Descriptor
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property MethodDescriptor() As MethodBase
-        Get
-            Return m_Descriptor
-        End Get
-    End Property
-
-    Overrides ReadOnly Property MemberDescriptor() As MemberInfo
-        Get
-            Return m_Descriptor
-        End Get
-    End Property
-
-    ReadOnly Property ConstructorBuilder() As ConstructorBuilder Implements IConstructorMember.ConstructorBuilder
-        Get
-            Return m_ConstructorBuilder
-        End Get
-    End Property
-
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        ResolveFlags()
-
         result = MyBase.ResolveTypeReferences AndAlso result
 
+        UpdateDefinition()
 
         Return result
     End Function
-
-    Sub ResolveFlags()
-        If MethodAttributes.HasValue = False Then
-            Dim flags As MethodAttributes
-            flags = Reflection.MethodAttributes.SpecialName Or Reflection.MethodAttributes.RTSpecialName
-
-            'LAMESPEC: shared constructors have implicit public access.
-            'VBC: shared constructors defaults to private.
-            If Modifiers.IsAny(ModifierMasks.AccessModifiers) = False AndAlso Me.IsShared Then
-                flags = flags Or Reflection.MethodAttributes.Private
-            Else
-                flags = flags Or Me.Modifiers.GetMethodAttributeScope
-            End If
-
-            If Me.IsShared Then
-                flags = flags Or Reflection.MethodAttributes.Static
-            End If
-
-            Attributes = flags
-        End If
-
-        If MethodImplAttributes.HasValue = False Then
-            Me.SetImplementationFlags(Reflection.MethodImplAttributes.IL)
-        End If
-    End Sub
 
     Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
         result = MyBase.ResolveMember(Info) AndAlso result
 
-#If ENABLECECIL Then
-        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, CType(Me.MethodAttributes.Value, Mono.Cecil.MethodAttributes), Compiler.CecilTypeCache.System_Void)
-        DeclaringType.CecilType.Constructors.Add(m_CecilBuilder)
-#End If
+        UpdateDefinition()
 
         Return result
     End Function
 
-    ReadOnly Property ExplicitCtorCall() As ConstructorInfo
+    ReadOnly Property ExplicitCtorCall() As Mono.Cecil.MethodReference
         Get
             Dim firststatement As BaseObject
             Dim cs As CallStatement
             Dim ie As InvocationOrIndexExpression
-            Dim ctor As ConstructorInfo
+            Dim ctor As Mono.Cecil.MethodReference
 
             firststatement = Code.FirstStatement
             If firststatement Is Nothing Then Return Nothing
@@ -194,7 +139,7 @@ Public Class ConstructorDeclaration
 
             If Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.BaseType) Then
                 Return ctor
-            ElseIf Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.TypeDescriptor) Then
+            ElseIf Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.CecilType) Then
                 Return ctor
             Else
                 Return Nothing
@@ -235,39 +180,35 @@ Public Class ConstructorDeclaration
 
         result = MyBase.DefineMember AndAlso result
 
-        Dim declaringType As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
+        'Helper.SetTypeOrTypeBuilder(Compiler, ParameterTypes)
 
-        Helper.SetTypeOrTypeBuilder(ParameterTypes)
-
-        m_ConstructorBuilder = declaringType.TypeBuilder.DefineConstructor(Me.Attributes, CallingConventions.Standard, ParameterTypes)
-        m_ConstructorBuilder.SetImplementationFlags(Me.GetMethodImplementationFlags)
-#If ENABLECECIL Then
-        m_CecilBuilder.ImplAttributes = CType(Me.GetMethodImplementationFlags, Mono.Cecil.MethodImplAttributes)
-#End If
-        Compiler.TypeManager.RegisterReflectionMember(m_ConstructorBuilder, Me.MemberDescriptor)
-
-#If DEBUGREFLECTION Then
-        Helper.DebugReflection_AppendLine("{0} = {1}.DefineConstructor(CType({2}, System.Reflection.MethodAttributes), System.Reflection.CallingConventions.Standard, Nothing)", m_ConstructorBuilder, declaringType.TypeBuilder, CInt(Me.Attributes).ToString)
-        Helper.DebugReflection_AppendLine("{0}.SetImplementationFlags(CType({1}, System.Reflection.MethodImplAttributes))", m_ConstructorBuilder, CInt(Me.GetMethodImplementationFlags).ToString)
-#End If
-
-
-        For i As Integer = 0 To Signature.Parameters.Count - 1
-            result = Signature.Parameters(i).Define(Me.ConstructorBuilder) AndAlso result
-#If ENABLECECIL Then
-            result = Signature.Parameters(i).Define(m_CecilBuilder) AndAlso result
-#End If
-        Next
-
-        Compiler.Helper.DumpDefine(Me, m_ConstructorBuilder)
+        UpdateDefinition()
 
         Return result
     End Function
 
+    Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If Signature IsNot Nothing AndAlso Signature.Parameters IsNot Nothing Then
+            For i As Integer = 0 To Signature.Parameters.Count - 1
+                Signature.Parameters(i).UpdateDefinition()
+            Next
+        End If
+        CecilBuilder.Name = Name
+
+        MethodAttributes = Helper.GetAttributes(Me)
+        MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
+
+        If DeclaringType IsNot Nothing AndAlso DeclaringType.CecilType IsNot Nothing AndAlso DeclaringType.CecilType.Constructors.Contains(CecilBuilder) = False Then
+            DeclaringType.CecilType.Constructors.Add(CecilBuilder)
+        End If
+    End Sub
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        If CBool(MethodImplAttributes.Value And Reflection.MethodImplAttributes.Runtime) Then
+        If CBool(MethodImplAttributes And Mono.Cecil.MethodImplAttributes.Runtime) Then
             Return result
         End If
 
@@ -276,20 +217,20 @@ Public Class ConstructorDeclaration
         Info = New EmitInfo(Me)
 
 #If DEBUG Then
-        Info.ILGen.Emit(OpCodes.Nop)
+        Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Nop)
 #End If
 
-        Dim ParentType As Type
-        ParentType = parent.TypeBuilder
+        Dim ParentType As Mono.Cecil.TypeReference
+        ParentType = parent.CecilType
         If TypeOf parent Is StructureDeclaration AndAlso Me.IsShared = False Then
-            Emitter.EmitLoadMe(Info, parent.TypeBuilder)
-            Emitter.EmitInitObj(Info, parent.TypeBuilder)
+            Emitter.EmitLoadMe(Info, parent.CecilType)
+            Emitter.EmitInitObj(Info, parent.CecilType)
         ElseIf m_DefaultBaseConstructor IsNot Nothing Then
-            Dim params() As ParameterInfo = m_DefaultBaseConstructor.GetParameters
-            Emitter.EmitLoadMe(Info, ParentType.BaseType)
-            For i As Integer = 0 To params.Length - 1
+            Dim params As Mono.Cecil.ParameterDefinitionCollection = m_DefaultBaseConstructor.Parameters
+            Emitter.EmitLoadMe(Info, CecilHelper.FindDefinition(ParentType).BaseType)
+            For i As Integer = 0 To params.Count - 1
                 Helper.Assert(params(i).IsOptional)
-                Emitter.EmitLoadValue(Info.Clone(Me, True, False, params(i).ParameterType), params(i).DefaultValue)
+                Emitter.EmitLoadValue(Info.Clone(Me, True, False, params(i).ParameterType), params(i).Constant)
             Next
 
             Emitter.EmitCall(Info, m_DefaultBaseConstructor)
@@ -299,8 +240,8 @@ Public Class ConstructorDeclaration
             Helper.Assert(Me.IsShared)
         End If
 
-        Dim exCtorCall As ConstructorInfo = ExplicitCtorCall
-        If m_BaseCtorCall Is Nothing OrElse (exCtorCall IsNot Nothing AndAlso Helper.CompareType(exCtorCall.DeclaringType, Me.DeclaringType.TypeDescriptor) = False) Then
+        Dim exCtorCall As Mono.Cecil.MethodReference = ExplicitCtorCall
+        If m_BaseCtorCall Is Nothing OrElse (exCtorCall IsNot Nothing AndAlso Helper.CompareType(exCtorCall.DeclaringType, Me.DeclaringType.CecilType) = False) Then
             result = EmitVariableInitialization(Info) AndAlso result
 
             For Each arhs As AddOrRemoveHandlerStatement In Me.DeclaringType.AddHandlers
@@ -309,7 +250,7 @@ Public Class ConstructorDeclaration
         End If
 
 #If DEBUG Then
-        Info.ILGen.Emit(OpCodes.Nop)
+        Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Nop)
 #End If
 
         result = MyBase.GenerateCode(Info) AndAlso result
@@ -318,22 +259,22 @@ Public Class ConstructorDeclaration
     End Function
 
     Private Function EmitVariableInitialization(ByVal Info As EmitInfo) As Boolean
-        Dim variables As Generic.List(Of VariableDeclaration)
+        Dim variables As Generic.List(Of TypeVariableDeclaration)
         Dim parent As TypeDeclaration
         Dim result As Boolean = True
 
         parent = Me.DeclaringType
-        variables = parent.Members.GetSpecificMembers(Of VariableDeclaration)()
+        variables = parent.Members.GetSpecificMembers(Of TypeVariableDeclaration)()
 
-        For Each variable As VariableDeclaration In variables
+        For Each variable As TypeVariableDeclaration In variables
             If variable.HasInitializer AndAlso variable.IsShared = Me.IsShared Then
                 result = variable.EmitVariableInitializer(Info) AndAlso result
             End If
         Next
 
-        For Each variable As VariableDeclaration In parent.StaticVariables
+        For Each variable As LocalVariableDeclaration In parent.StaticVariables
             If variable.HasInitializer AndAlso variable.DeclaringMethod.IsShared = Me.IsShared Then
-                If Me.IsShared = False Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
+                If Me.IsShared = False Then Emitter.EmitLoadMe(Info, Me.DeclaringType.CecilType)
                 Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__ctor)
                 Emitter.EmitStoreField(Info, variable.StaticInitBuilder)
             End If
@@ -344,18 +285,18 @@ Public Class ConstructorDeclaration
     Private Sub CreateDefaultCtorCall()
         Dim type As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
         Dim classtype As ClassDeclaration = TryCast(type, ClassDeclaration)
-        Dim defaultctor As ConstructorInfo
+        Dim defaultctor As Mono.Cecil.MethodReference
         If classtype IsNot Nothing Then
             defaultctor = classtype.GetBaseDefaultConstructor()
-            If defaultctor IsNot Nothing AndAlso defaultctor.IsPrivate = False Then
-                If defaultctor.IsPrivate OrElse (defaultctor.IsFamilyOrAssembly AndAlso defaultctor.DeclaringType.Assembly IsNot Me.Compiler.AssemblyBuilder) Then
+            If defaultctor IsNot Nothing AndAlso Helper.IsPrivate(defaultctor) = False Then
+                If Helper.IsPrivate(defaultctor) OrElse (Helper.IsFriend(defaultctor) AndAlso Not Compiler.Assembly.IsDefinedHere(defaultctor.DeclaringType)) Then
                     Helper.AddError(Me, "Base class does not have an accessible default constructor")
                 Else
                     m_DefaultBaseConstructor = defaultctor
 
 #If DEBUG Then
                     Try
-                        For Each param As ParameterInfo In m_DefaultBaseConstructor.GetParameters
+                        For Each param As Mono.Cecil.ParameterDefinition In m_DefaultBaseConstructor.Parameters
                             Helper.Assert(param.IsOptional)
                         Next
                     Catch ex As Exception
@@ -384,7 +325,7 @@ Public Class ConstructorDeclaration
 
 #If DEBUG Then
                     Try
-                        For Each param As ParameterInfo In m_DefaultBaseConstructor.GetParameters
+                        For Each param As Mono.Cecil.ParameterDefinition In m_DefaultBaseConstructor.Parameters
                             Helper.Assert(param.IsOptional)
                         Next
                     Catch ex As Exception
@@ -408,23 +349,9 @@ Public Class ConstructorDeclaration
         Return tm.PeekToken(i + 1).Equals(KS.[New])
     End Function
 
-    Public Overrides ReadOnly Property MethodBuilder() As System.Reflection.Emit.MethodBuilder
-        Get
-            Throw New InternalException(Me)
-        End Get
-    End Property
-
-#If ENABLECECIL Then
-    Public Overrides ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition
-        Get
-            Return m_CecilBuilder
-        End Get
-    End Property
-#End If
-
-    Public Overrides ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator
-        Get
-            Return m_ConstructorBuilder.GetILGenerator
-        End Get
-    End Property
+    'Public Overrides ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator
+    '    Get
+    '        Throw New NotImplementedException 'Return m_ConstructorBuilder.GetILGenerator
+    '    End Get
+    'End Property
 End Class

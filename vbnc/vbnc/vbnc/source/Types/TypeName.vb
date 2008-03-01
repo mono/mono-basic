@@ -31,7 +31,7 @@ Public Class TypeName
     ''' <remarks></remarks>
     Private m_TypeName As ParsedObject
 
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject, Optional ByVal NonArrayTypeName As NonArrayTypeName = Nothing, Optional ByVal ArrayTypeName As ArrayTypeName = Nothing)
         MyBase.New(Parent)
@@ -44,7 +44,7 @@ Public Class TypeName
         End If
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Type As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal Type As Mono.Cecil.TypeReference)
         MyBase.New(Parent)
         m_ResolvedType = Type
     End Sub
@@ -57,7 +57,7 @@ Public Class TypeName
         m_TypeName = ArrayTypeName
     End Sub
 
-    Sub Init(ByVal Type As Type)
+    Sub Init(ByVal Type As Mono.Cecil.TypeReference)
         m_ResolvedType = Type
     End Sub
 
@@ -139,9 +139,8 @@ Public Class TypeName
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Public ReadOnly Property ResolvedType() As Type
+    Public ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
-            Helper.Assert(m_ResolvedType IsNot Nothing)
             Return m_ResolvedType
         End Get
     End Property

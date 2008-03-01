@@ -18,9 +18,9 @@
 ' 
 
 Public Class MyGroupData
-    Public TypeToCollect As Type
-    Public CreateInstanceMethod As MethodBase
-    Public DisposeInstanceMethod As MethodBase
+    Public TypeToCollect As Mono.Cecil.TypeReference
+    Public CreateInstanceMethod As Mono.Cecil.MethodReference
+    Public DisposeInstanceMethod As Mono.Cecil.MethodReference
     Public DefaultInstanceAlias As Expression
     Public ClassDeclaration As ClassDeclaration
 End Class

@@ -28,19 +28,25 @@ Public Class FunctionSignature
     Private m_ReturnTypeAttributes As Attributes
     Private m_TypeName As TypeName
 
-    Private m_ReturnType As Type
+    Private m_ReturnType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList, ByVal ReturnType As Type, ByVal Location As Span)
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList, ByVal ReturnType As Mono.Cecil.TypeReference, ByVal Location As Span)
         MyBase.New(Parent, Name, Parameters)
         m_ReturnType = ReturnType
         MyBase.Location = Location
     End Sub
 
-    Shadows Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As Type, ByVal Location As Span)
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList, ByVal ReturnType As TypeName, ByVal Location As Span)
+        MyBase.New(Parent, Name, Parameters)
+        m_TypeName = ReturnType
+        MyBase.Location = Location
+    End Sub
+
+    Shadows Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As Mono.Cecil.TypeReference, ByVal Location As Span)
         MyBase.Init(Identifier, TypeParameters, ParameterList)
 
         m_ReturnTypeAttributes = ReturnTypeAttributes
@@ -92,14 +98,14 @@ Public Class FunctionSignature
         End Get
     End Property
 
-    Overrides ReadOnly Property ReturnParameter() As ParameterInfo
-        Get
-            If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(ReturnType, 1, Me)
-            Return m_ReturnParameter
-        End Get
-    End Property
+    'Overrides ReadOnly Property ReturnParameter() As ParameterInfo
+    '    Get
+    '        If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(ReturnType, 1, Me)
+    '        Return m_ReturnParameter
+    '    End Get
+    'End Property
 
-    Public Overrides ReadOnly Property ReturnType() As Type
+    Public Overrides ReadOnly Property ReturnType() As Mono.Cecil.TypeReference
         Get
             'Helper.Assert(m_ReturnType IsNot Nothing)
             Return m_ReturnType

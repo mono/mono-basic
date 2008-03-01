@@ -30,9 +30,9 @@ Public Class CatchStatement
     Private m_TypeName As NonArrayTypeName
     Private m_When As Expression
 
-    Private m_ExceptionType As Type
+    Private m_ExceptionType As Mono.Cecil.TypeReference
 
-    Private m_VariableDeclaration As VariableDeclaration
+    Private m_VariableDeclaration As LocalVariableDeclaration
 
     ReadOnly Property Variable() As Token
         Get
@@ -145,7 +145,7 @@ Public Class CatchStatement
             m_ExceptionType = Compiler.TypeCache.System_Exception
         End If
         If Token.IsSomething(m_Variable) Then
-            m_VariableDeclaration = New VariableDeclaration(Me, Nothing, m_Variable, False, m_TypeName, Nothing, Nothing)
+            m_VariableDeclaration = New LocalVariableDeclaration(Me, Nothing, m_Variable, False, m_TypeName, Nothing, Nothing)
             result = m_VariableDeclaration.ResolveTypeReferences AndAlso result
             CodeBlock.Variables.Add(m_VariableDeclaration)
         End If

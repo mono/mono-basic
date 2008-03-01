@@ -35,8 +35,8 @@ Public Class MeExpression
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Emitter.EmitLoadMe(Info, Me.FindFirstParent(Of IType).TypeDescriptor)
-        If Info.DesiredType.IsValueType AndAlso Info.DesiredType.IsByRef = False Then
+        Emitter.EmitLoadMe(Info, Me.FindFirstParent(Of IType).CecilType)
+        If Info.DesiredType.IsValueType AndAlso CecilHelper.IsByRef(Info.DesiredType) = False Then
             Emitter.EmitLoadObject(Info, Info.DesiredType)
         End If
         Return True

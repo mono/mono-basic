@@ -73,9 +73,9 @@ Public Class SimpleNameExpression
         End Set
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-            Dim result As Type
+            Dim result As Mono.Cecil.TypeReference
             Select Case Classification.Classification
                 Case ExpressionClassification.Classifications.Value
                     result = Classification.AsValueClassification.Type
@@ -120,13 +120,13 @@ Public Class SimpleNameExpression
 
         If Info.IsRHS Then
             If Info.DesiredType IsNot Nothing Then
-                If Info.DesiredType.IsGenericParameter AndAlso Me.ExpressionType.IsGenericParameter Then
+                If CecilHelper.IsGenericParameter(Info.DesiredType) AndAlso CecilHelper.IsGenericParameter(Me.ExpressionType) Then
                     Helper.Assert(Me.Classification.CanBeValueClassification)
                     Dim tmp As Expression
                     tmp = Me.ReclassifyToValueExpression()
                     result = tmp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
                     result = tmp.GenerateCode(Info) AndAlso result
-                ElseIf Info.DesiredType.IsByRef = False AndAlso Me.ExpressionType.IsGenericParameter = False Then
+                ElseIf CecilHelper.IsByRef(Info.DesiredType) = False AndAlso CecilHelper.IsGenericParameter(Me.ExpressionType) = False Then
                     If Me.Classification.CanBeValueClassification Then
                         Dim tmp As Expression
                         tmp = Me.ReclassifyToValueExpression()
@@ -137,7 +137,7 @@ Public Class SimpleNameExpression
                     End If
                 Else
                     If Me.Classification.IsVariableClassification Then
-                        If Me.ExpressionType.IsByRef Then
+                        If CecilHelper.IsByRef(Me.ExpressionType) Then
                             Emitter.EmitLoadVariable(Info, Me.Classification.AsVariableClassification)
                         Else
                             Emitter.EmitLoadVariableLocation(Info, Me.Classification.AsVariableClassification)
@@ -372,10 +372,10 @@ Public Class SimpleNameExpression
             End If
 
             Dim cache As MemberCacheEntry
-            Dim members As Generic.List(Of MemberInfo)
-            cache = Compiler.TypeManager.GetCache(container.TypeDescriptor).LookupFlattened(Name)
+            Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+            cache = Compiler.TypeManager.GetCache(container.CecilType).LookupFlattened(Name)
             If cache Is Nothing Then
-                members = New Generic.List(Of MemberInfo)
+                members = New Generic.List(Of Mono.Cecil.MemberReference)
             Else
                 members = cache.Members
                 members = Helper.FilterExternalInaccessible(Compiler, members)
@@ -404,8 +404,8 @@ Public Class SimpleNameExpression
                 Dim hasNotInstanceExpression As Boolean
 
                 For i As Integer = 0 To members.Count - 1
-                    Dim member As MemberInfo = members(i)
-                    If member.MemberType = MemberTypes.TypeInfo OrElse member.MemberType = MemberTypes.NestedType Then
+                    Dim member As Mono.Cecil.MemberReference = members(i)
+                    If CecilHelper.GetMemberType(member) = MemberTypes.TypeInfo OrElse CecilHelper.GetMemberType(member) = MemberTypes.NestedType Then
                         hasNotInstanceExpression = True
                     ElseIf Helper.IsShared(member) Then
                         hasNotInstanceExpression = True
@@ -443,7 +443,7 @@ Public Class SimpleNameExpression
         Dim currentNS As String = Nothing
         If firstcontainer IsNot Nothing Then currentNS = firstcontainer.Namespace
         While currentNS IsNot Nothing
-            Dim foundType As Type
+            Dim foundType As Mono.Cecil.TypeReference
             foundType = Compiler.TypeManager.GetTypesByNamespace(currentNS).Item(Name)
             If foundType IsNot Nothing Then
                 Classification = New TypeClassification(Me, foundType)
@@ -463,7 +463,7 @@ Public Class SimpleNameExpression
             'result is exactly the same as a member access of the form M.E, where M is the standard module 
             'containing the matching member and E is the identifier. If the identifier matches accessible type 
             'members in more than one standard module, a compile-time error occurs.
-            Dim modulemembers As Generic.List(Of MemberInfo)
+            Dim modulemembers As Generic.List(Of Mono.Cecil.MemberReference)
             modulemembers = Helper.GetMembersOfTypes(Compiler, Compiler.TypeManager.GetModulesByNamespace(currentNS), Name)
             If modulemembers.Count = 1 Then
                 Return SetClassificationOfModuleMembers(modulemembers)
@@ -516,14 +516,14 @@ Public Class SimpleNameExpression
             parent_method = Me.FindFirstParent(Of MethodBaseDeclaration)()
 
             If method IsNot Nothing Then
-                Dim varD As VariableDeclaration
-                Dim varType As Type
+                Dim varD As LocalVariableDeclaration
+                Dim varType As Mono.Cecil.TypeReference
                 If m_Identifier.HasTypeCharacter Then
                     varType = TypeCharacters.TypeCharacterToType(Compiler, m_Identifier.TypeCharacter)
                 Else
                     varType = Compiler.TypeCache.System_Object
                 End If
-                varD = New VariableDeclaration(parent_method.Code, Nothing, Nothing, m_Identifier, False, Nothing, Nothing, Nothing)
+                varD = New LocalVariableDeclaration(parent_method.Code, Nothing, Nothing, m_Identifier, False, Nothing, Nothing, Nothing)
                 varD.Init(Nothing, Nothing, m_Identifier.Identifier, varType)
                 parent_method.Code.AddVariable(varD)
                 Me.Classification = New VariableClassification(Me, varD)
@@ -537,12 +537,12 @@ Public Class SimpleNameExpression
         Return False
     End Function
 
-    Private Function GetTypeClassification(ByVal members As Generic.List(Of MemberInfo), ByVal type As IType) As ExpressionClassification
+    Private Function GetTypeClassification(ByVal members As Generic.List(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
         'Otherwise, the result is exactly the same as a member access of the form T.E, where T is the 
         'type containing the matching member and E is the identifier. In this case, it is an error for the 
         'identifier to refer to a non-shared member.
 
-        Dim first As MemberInfo = members(0)
+        Dim first As Mono.Cecil.MemberReference = members(0)
         '* If E is a built-in type or an expression classified as a type, and I is the name of an accessible 
         '  member of E, then E.I is evaluated and classified as follows:
 
@@ -572,9 +572,10 @@ Public Class SimpleNameExpression
         '   outside the shared constructor of the type in which the variable is declared, then the result is the 
         '   value of the shared variable I in E. Otherwise, the result is the shared variable I in E.
         If Helper.IsFieldDeclaration(first) Then
-            Dim var As FieldInfo = TryCast(first, FieldInfo)
+            Dim var As Mono.Cecil.FieldReference = TryCast(first, Mono.Cecil.FieldReference)
+            Dim varD As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(var)
             Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
-            If var.IsStatic AndAlso var.IsInitOnly AndAlso _
+            If varD.IsStatic AndAlso varD.IsInitOnly AndAlso _
              (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                 Return New ValueClassification(Me, var, Nothing)
             Else
@@ -584,20 +585,21 @@ Public Class SimpleNameExpression
 
         '** If I identifies a shared event, the result is an event access with no associated instance expression.
         If Helper.IsEventDeclaration(first) Then
-            Dim red As EventInfo = DirectCast(first, EventInfo)
-            If red.GetAddMethod.IsStatic OrElse red.GetRemoveMethod.IsStatic Then
+            Dim red As Mono.Cecil.EventReference = DirectCast(first, Mono.Cecil.EventReference)
+            Dim redD As Mono.Cecil.EventDefinition = CecilHelper.FindDefinition(red)
+            If redD.AddMethod.IsStatic OrElse redD.RemoveMethod.IsStatic Then
                 Return New EventAccessClassification(Me, red, Nothing)
             End If
         End If
 
         '** If I identifies a constant, then the result is the value of that constant.
-        If first.MemberType = MemberTypes.Field AndAlso DirectCast(first, FieldInfo).IsLiteral Then
-            Return New ValueClassification(Me, DirectCast(first, FieldInfo), Nothing)
+        If CecilHelper.GetMemberType(first) = MemberTypes.Field AndAlso CecilHelper.FindDefinition(DirectCast(first, Mono.Cecil.FieldReference)).IsLiteral Then
+            Return New ValueClassification(Me, DirectCast(first, Mono.Cecil.FieldReference), Nothing)
         End If
 
         '** If I identifies an enumeration member, then the result is the value of that enumeration member.
-        If Helper.IsEnumFieldDeclaration(first) Then
-            Return New ValueClassification(Me, DirectCast(first, FieldInfo), Nothing)
+        If Helper.IsEnumFieldDeclaration(Compiler, first) Then
+            Return New ValueClassification(Me, DirectCast(first, Mono.Cecil.FieldReference), Nothing)
         End If
 
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
@@ -612,9 +614,9 @@ Public Class SimpleNameExpression
         Return result
     End Function
 
-    Private Function GetMeClassification(ByVal members As Generic.List(Of MemberInfo), ByVal type As IType) As ExpressionClassification
+    Private Function GetMeClassification(ByVal members As Generic.List(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
         Dim result As ExpressionClassification
-        Dim first As MemberInfo = members(0)
+        Dim first As Mono.Cecil.MemberReference = members(0)
 
         'Otherwise, if the type is the immediately enclosing type and the lookup identifies a non-shared 
         'type member, then the result is the same as a member access of the form Me.E, where E is 
@@ -646,7 +648,7 @@ Public Class SimpleNameExpression
         If members.Count > 1 Then
             Compiler.Report.WriteLine("Found " & members.Count & " members for SimpleNameExpression = " & Me.ToString & ", " & Me.Location.ToString(Compiler))
             For i As Integer = 0 To members.Count - 1
-                Compiler.Report.WriteLine(">#" & (i + 1).ToString & ".MemberType=" & members(i).MemberType.ToString & ",DeclaringType=" & members(i).DeclaringType.FullName)
+                Compiler.Report.WriteLine(">#" & (i + 1).ToString & ".MemberType=" & CecilHelper.GetMemberType(members(i)).ToString & ",DeclaringType=" & members(i).DeclaringType.FullName)
             Next
             Helper.Stop()
         End If
@@ -660,7 +662,8 @@ Public Class SimpleNameExpression
         '   Otherwise, if T is a value type and the expression E is classified 
         '   as a variable, the result is a variable; otherwise the result is a value.
         If Helper.IsFieldDeclaration(first) Then
-            Dim var As FieldInfo = DirectCast(first, FieldInfo)
+            Dim var As Mono.Cecil.FieldReference = DirectCast(first, Mono.Cecil.FieldReference)
+            Dim varD As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(var)
             Helper.Assert(Parent.FindFirstParent(Of EnumDeclaration)() Is Nothing)
 
             Dim ctorParent As ConstructorDeclaration
@@ -671,7 +674,7 @@ Public Class SimpleNameExpression
             methodParent = FindFirstParent(Of IMethod)()
             typeParent = FindFirstParent(Of TypeDeclaration)()
 
-            isNotInCtorAndReadOnly = var.IsInitOnly AndAlso (ctorParent Is Nothing OrElse ctorParent.Modifiers.Is(ModifierMasks.Shared) <> var.IsStatic) AndAlso (typeParent Is Nothing OrElse typeParent.IsShared <> var.IsStatic)
+            isNotInCtorAndReadOnly = varD.IsInitOnly AndAlso (ctorParent Is Nothing OrElse ctorParent.Modifiers.Is(ModifierMasks.Shared) <> varD.IsStatic) AndAlso (typeParent Is Nothing OrElse typeParent.IsShared <> varD.IsStatic)
 
             If isNotInCtorAndReadOnly Then ' >?? (Parent.FindFirstParent(Of IMethod).Modifiers.Is(KS.Shared) <> var.IsStatic) Then
                 Return New ValueClassification(Me, var, CreateMeExpression)
@@ -686,16 +689,16 @@ Public Class SimpleNameExpression
 
         '** If I identifies an event, the result is an event access with an associated instance expression of E.
         If Helper.IsEventDeclaration(first) Then
-            If TypeOf first Is EventInfo Then
-                Return New EventAccessClassification(Me, DirectCast(first, EventInfo), CreateMeExpression)
+            If TypeOf first Is Mono.Cecil.EventReference Then
+                Return New EventAccessClassification(Me, DirectCast(first, Mono.Cecil.EventReference), CreateMeExpression)
             Else
                 Throw New InternalException(Me)
             End If
         End If
 
         '** If I identifies a constant, then the result is the value of that constant.
-        If first.MemberType = MemberTypes.Field AndAlso DirectCast(first, FieldInfo).IsLiteral Then
-            Return New ValueClassification(Me, DirectCast(first, FieldInfo), Nothing)
+        If CecilHelper.GetMemberType(first) = MemberTypes.Field AndAlso CecilHelper.FindDefinition(DirectCast(first, Mono.Cecil.FieldReference)).IsLiteral Then
+            Return New ValueClassification(Me, DirectCast(first, Mono.Cecil.FieldReference), Nothing)
         End If
 
         '** If I identifies an enumeration member, then the result is the value of that enumeration member.
@@ -727,7 +730,7 @@ Public Class SimpleNameExpression
         '** unqualified name refers to that type or nested namespace.
         '---------------------------------------------------------------------------------------------------------
         Dim foundNamespace As [Namespace] = Nothing
-        Dim foundType As Type
+        Dim foundType As Mono.Cecil.TypeReference
 
         foundType = Compiler.TypeManager.TypesByNamespace("").Item(R)
         If foundType Is Nothing AndAlso Compiler.Assembly.Name <> "" Then
@@ -748,7 +751,7 @@ Public Class SimpleNameExpression
         If foundNamespace Is Nothing Then Return False
 
         Dim modules As TypeDictionary
-        Dim members As Generic.List(Of MemberInfo)
+        Dim members As Generic.List(Of Mono.Cecil.MemberReference)
         modules = Compiler.TypeManager.GetModulesByNamespace(foundNamespace.ToString)
         members = Helper.GetMembersOfTypes(Compiler, modules, R)
         If members.Count = 1 Then
@@ -794,8 +797,8 @@ Public Class SimpleNameExpression
         '   module containing the matching member and E is the identifier. If the identifier matches 
         '   accessible type members in more than one standard module, a compile-time error occurs.
         '---------------------------------------------------------------------------------------------------------
-        Dim impmembers As New Generic.List(Of MemberInfo)
-        Dim result As Generic.List(Of MemberInfo) = Nothing
+        Dim impmembers As New Generic.List(Of Mono.Cecil.MemberReference)
+        Dim result As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
         For Each imp As ImportsClause In imps
             If imp.IsNamespaceClause Then
                 If imp.AsNamespaceClause.IsNamespaceImport Then
@@ -834,7 +837,7 @@ Public Class SimpleNameExpression
                 Return True
             End If
             If Helper.IsFieldDeclaration(impmembers(0)) Then
-                Classification = New ValueClassification(Me, DirectCast(impmembers(0), FieldInfo), Nothing)
+                Classification = New ValueClassification(Me, DirectCast(impmembers(0), Mono.Cecil.FieldReference), Nothing)
                 Return True
             End If
             Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
@@ -858,7 +861,7 @@ Public Class SimpleNameExpression
         'module containing the matching member and E is the identifier. If the identifier matches 
         'accessible type members in more than one standard module, a compile-time error occurs.
         Dim modules As TypeList = imps.GetModules(Me)
-        Dim found As Generic.List(Of MemberInfo)
+        Dim found As Generic.List(Of Mono.Cecil.MemberReference)
         found = Helper.GetMembersOfTypes(Compiler, modules, Name)
         If SetClassificationOfModuleMembers(found) Then
             Return True
@@ -867,7 +870,7 @@ Public Class SimpleNameExpression
         Return False
     End Function
 
-    Private Function SetClassificationOfModuleMembers(ByVal found As Generic.List(Of MemberInfo)) As Boolean
+    Private Function SetClassificationOfModuleMembers(ByVal found As Generic.List(Of Mono.Cecil.MemberReference)) As Boolean
         If found.Count <= 0 Then
             Return False
         End If
@@ -883,16 +886,16 @@ Public Class SimpleNameExpression
             Classification = New TypeClassification(Me, found(0))
             Return True
         End If
-        Dim first As MemberInfo = found(0)
+        Dim first As Mono.Cecil.MemberReference = found(0)
         If Helper.IsFieldDeclaration(first) Then
-            Dim var As FieldInfo = DirectCast(first, FieldInfo)
+            Dim var As Mono.Cecil.FieldReference = DirectCast(first, Mono.Cecil.FieldReference)
             Helper.Assert(Parent.FindFirstParent(Of EnumDeclaration)() Is Nothing)
 
             Classification = New VariableClassification(Me, var, Nothing)
             Return True
         End If
         If Helper.IsPropertyDeclaration(first) Then
-            Dim var As PropertyInfo = DirectCast(first, PropertyInfo)
+            Dim var As Mono.Cecil.PropertyReference = DirectCast(first, Mono.Cecil.PropertyReference)
             Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
             Return True
         End If

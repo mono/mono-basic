@@ -624,7 +624,7 @@ Public Class TypeConverter
     End Function
 
 #If GENERATOR = False OrElse DEVGENERATOR Then
-    Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Type, ByVal op2 As Type) As TypeCode
+    Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Mono.Cecil.TypeReference, ByVal op2 As Mono.Cecil.TypeReference) As TypeCode
         Dim result As TypeCode
 
         result = GetBinaryOperandType(op, Helper.GetTypeCode(Compiler, op1), Helper.GetTypeCode(Compiler, op2))
@@ -816,14 +816,16 @@ Public Class TypeConverter
     ''' <param name="Destination"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function ConvertTo(ByVal Source As Object, ByVal Destination As Type) As Object
+    Public Shared Function ConvertTo(ByVal Compiler As Compiler, ByVal Source As Object, ByVal Destination As Mono.Cecil.TypeReference) As Object
         Dim result As Object
+
+        If Destination Is Nothing Then Return Source
 
         Helper.Assert(Source IsNot Nothing)
         Helper.Assert(Destination IsNot Nothing)
 
-        Dim dtc As TypeCode = Helper.GetTypeCode(Nothing, Destination)
-        Dim stc As TypeCode = Helper.GetTypeCode(Nothing, Source.GetType)
+        Dim dtc As TypeCode = Helper.GetTypeCode(Compiler, Destination)
+        Dim stc As TypeCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, Source))
 
         'Console.WriteLine("ConvertTo: from " & stc.ToString() & " to " & dtc.ToString)
 
@@ -1264,7 +1266,7 @@ Public Class TypeConverter
             Case TypeCode.DateTime
                 Throw New NotImplementedException
             Case TypeCode.DBNull
-                Throw New NotImplementedException
+                Return 0
             Case TypeCode.Decimal
                 Throw New NotImplementedException
             Case TypeCode.Double

@@ -86,22 +86,22 @@ Public MustInherit Class PartialTypeDeclaration
     End Property
 #End If
 
-    Public Overrides Property TypeBuilder() As System.Reflection.Emit.TypeBuilder
-        Get
-            Dim result As TypeBuilder
-            result = MyBase.TypeBuilder
-            If result Is Nothing AndAlso m_MainDeclaration IsNot Nothing AndAlso m_MainDeclaration IsNot Me Then
-                result = m_MainDeclaration.TypeBuilder
-            End If
+    'Public Overrides Property TypeBuilder() As System.Reflection.Emit.TypeBuilder
+    '    Get
+    '        Dim result As TypeBuilder
+    '        result = MyBase.TypeBuilder
+    '        If result Is Nothing AndAlso m_MainDeclaration IsNot Nothing AndAlso m_MainDeclaration IsNot Me Then
+    '            result = m_MainDeclaration.TypeBuilder
+    '        End If
 
-            'Helper.Assert(result IsNot Nothing)
+    '        'Helper.Assert(result IsNot Nothing)
 
-            Return result
-        End Get
-        Protected Set(ByVal value As System.Reflection.Emit.TypeBuilder)
-            MyBase.TypeBuilder = value
-        End Set
-    End Property
+    '        Return result
+    '    End Get
+    '    Protected Set(ByVal value As System.Reflection.Emit.TypeBuilder)
+    '        MyBase.TypeBuilder = value
+    '    End Set
+    'End Property
 
     ReadOnly Property PartialDeclarations() As Generic.List(Of PartialTypeDeclaration)
         Get
@@ -109,25 +109,29 @@ Public MustInherit Class PartialTypeDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Dim mods As Modifiers
-            Dim result As TypeAttributes
+    Private Function GetTypeAttributes() As Mono.Cecil.TypeAttributes
+        Dim mods As Modifiers
+        Dim result As Mono.Cecil.TypeAttributes
 
-            If m_PartialDeclarations IsNot Nothing AndAlso m_PartialDeclarations.Count > 1 Then
-                mods = New Modifiers()
-                For Each tp As PartialTypeDeclaration In m_PartialDeclarations
-                    mods.AddModifiers(tp.Modifiers.Mask)
-                Next
-            Else
-                mods = Modifiers
-            End If
+        If m_PartialDeclarations IsNot Nothing AndAlso m_PartialDeclarations.Count > 1 Then
+            mods = New Modifiers()
+            For Each tp As PartialTypeDeclaration In m_PartialDeclarations
+                mods.AddModifiers(tp.Modifiers.Mask)
+            Next
+        Else
+            mods = Modifiers
+        End If
 
-            result = Helper.getTypeAttributeScopeFromScope(mods, IsNestedType)
+        result = Helper.getTypeAttributeScopeFromScope(mods, IsNestedType)
 
-            Return result
-        End Get
-    End Property
+        Return result
+    End Function
+
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = GetTypeAttributes()
+    End Sub
 
     Public Sub AddPartialDeclaration(ByVal Declaration As PartialTypeDeclaration)
         Helper.Assert(Helper.CompareName(Me.Name, Declaration.Name) AndAlso Helper.CompareName(Me.Namespace, Declaration.Namespace))
@@ -206,10 +210,10 @@ Public MustInherit Class PartialTypeDeclaration
                 result = False
             End If
             If TypeOf Me Is ClassDeclaration Then
-                Dim inheritedTypes() As Type
+                Dim inheritedTypes() As Mono.Cecil.TypeReference
                 inheritedTypes = GetInheritedTypes()
                 If inheritedTypes.Length > 0 Then
-                    Dim tmpType As Type
+                    Dim tmpType As Mono.Cecil.TypeReference
                     tmpType = CheckUniqueType(inheritedTypes)
                     If tmpType Is Nothing Then
                         Return Helper.AddError(Me, "Partial classes must inherit from only one base class.")
@@ -244,6 +248,21 @@ Public MustInherit Class PartialTypeDeclaration
         Return result
     End Function
 
+    '''' <summary>
+    '''' Checks that all types are equal.
+    '''' Returns nothing if types are not equal.
+    '''' </summary>
+    '''' <param name="Types"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Private Function CheckUniqueType(ByVal Types() As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
+    '    Helper.Assert(Types.Length >= 1)
+    '    For i As Integer = 1 To Types.Length - 1
+    '        If Helper.CompareType(Types(0), Types(i)) = False Then Return Nothing
+    '    Next
+    '    Return Types(0)
+    'End Function
+
     ''' <summary>
     ''' Checks that all types are equal.
     ''' Returns nothing if types are not equal.
@@ -251,7 +270,7 @@ Public MustInherit Class PartialTypeDeclaration
     ''' <param name="Types"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function CheckUniqueType(ByVal Types() As Type) As Type
+    Private Function CheckUniqueType(ByVal Types() As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Helper.Assert(Types.Length >= 1)
         For i As Integer = 1 To Types.Length - 1
             If Helper.CompareType(Types(0), Types(i)) = False Then Return Nothing
@@ -266,14 +285,14 @@ Public MustInherit Class PartialTypeDeclaration
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GetInheritedTypes() As Type()
+    Private Function GetInheritedTypes() As Mono.Cecil.TypeReference()
         Helper.Assert(Me.IsPartial)
-        If TypeOf Me Is StructureDeclaration Then Return New Type() {}
-        Dim result As New Generic.List(Of Type)
+        If TypeOf Me Is StructureDeclaration Then Return New Mono.Cecil.TypeReference() {}
+        Dim result As New Generic.List(Of Mono.Cecil.TypeReference)
         For Each partialDeclaration As ClassDeclaration In m_PartialDeclarations
             If partialDeclaration.Inherits IsNot Nothing Then
-                Helper.Assert(partialDeclaration.Inherits.ResolvedType IsNot Nothing)
-                result.Add(partialDeclaration.Inherits.ResolvedType)
+                Helper.Assert(partialDeclaration.Inherits.ResolvedCecilType IsNot Nothing)
+                result.Add(partialDeclaration.Inherits.ResolvedCecilType)
             End If
         Next
         Return result.ToArray
@@ -291,7 +310,7 @@ Public MustInherit Class PartialTypeDeclaration
         Dim result As Boolean = True
 
         If m_TypeImplementsClauses IsNot Nothing Then
-            Dim tmp As New Generic.List(Of Type)
+            Dim tmp As New Generic.List(Of Mono.Cecil.TypeReference)
             For Each clause As NonArrayTypeName In m_TypeImplementsClauses.Clauses
                 tmp.Add(clause.ResolvedType)
                 'Dim type As Type

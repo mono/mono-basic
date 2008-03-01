@@ -1,0 +1,5 @@
+-r:System.dll
+-r:System.Windows.Forms.dll
+-r:System.Web.dll
+-imports:System
+-imports:Microsoft.VisualBasic

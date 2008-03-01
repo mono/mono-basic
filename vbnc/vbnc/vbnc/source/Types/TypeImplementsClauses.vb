@@ -49,8 +49,8 @@ Public Class TypeImplementsClauses
         Return tm.CurrentToken = KS.Implements
     End Function
 
-    Function GetTypes() As Type()
-        Dim result(m_Clauses.Count - 1) As Type
+    Function GetTypes() As Mono.Cecil.TypeReference()
+        Dim result(m_Clauses.Count - 1) As Mono.Cecil.TypeReference
         For i As Integer = 0 To result.GetUpperBound(0)
             result(i) = m_Clauses(i).ResolvedType
         Next

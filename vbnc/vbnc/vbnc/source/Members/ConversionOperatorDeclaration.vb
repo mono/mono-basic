@@ -37,7 +37,7 @@ Public Class ConversionOperatorDeclaration
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal [Operator] As Token, ByVal Operand As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
         Dim mySignature As New FunctionSignature(Me)
-        Dim parameters As New ParameterList(mySignature)
+        Dim parameters As New ParameterList(Me)
 
         parameters.Add(New Parameter(parameters, Operand.Name, Operand.TypeName))
 

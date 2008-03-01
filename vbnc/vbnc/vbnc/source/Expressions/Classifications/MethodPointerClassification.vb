@@ -35,8 +35,8 @@ Public Class MethodPointerClassification
 
     Private m_MethodGroup As MethodGroupClassification
 
-    Private m_ResolvedMethod As MethodBase
-    Private m_DelegateType As Type
+    Private m_ResolvedMethod As Mono.Cecil.MethodReference
+    Private m_DelegateType As Mono.Cecil.TypeReference
 
     Private m_Resolved As Boolean
 
@@ -68,8 +68,9 @@ Public Class MethodPointerClassification
 
         Emitter.EmitLoadVftn(Info, m_ResolvedMethod)
 
-        Dim ctor As ConstructorInfo
-        ctor = m_DelegateType.GetConstructor(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, New Type() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr}, Nothing)
+        Dim ctor As Mono.Cecil.MethodReference
+        Dim dT As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(m_DelegateType)
+        ctor = dT.Constructors.GetConstructor(False, New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr})
         Emitter.EmitNew(Info, ctor)
 
         Return result
@@ -80,7 +81,7 @@ Public Class MethodPointerClassification
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function Resolve(ByVal DelegateType As Type) As Boolean
+    Function Resolve(ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(DelegateType IsNot Nothing)
@@ -96,10 +97,10 @@ Public Class MethodPointerClassification
 
         If result = False Then Return result
 
-        Dim params() As ParameterInfo = Helper.GetDelegateArguments(Compiler, DelegateType)
-        Dim paramtypes() As Type = Helper.GetParameterTypes(params)
+        Dim params As Mono.Cecil.ParameterDefinitionCollection = Helper.GetDelegateArguments(Compiler, DelegateType)
+        Dim paramtypes() As Mono.Cecil.TypeReference = Helper.GetParameterTypes(params)
 
-        m_ResolvedMethod = CType(Helper.ResolveGroupExact(Me.Parent, m_MethodGroup.Group, paramtypes), MethodBase)
+        m_ResolvedMethod = CType(Helper.ResolveGroupExact(Me.Parent, m_MethodGroup.Group, paramtypes), Mono.Cecil.MethodReference)
         m_DelegateType = DelegateType
 
         result = m_ResolvedMethod IsNot Nothing AndAlso result
@@ -109,7 +110,7 @@ Public Class MethodPointerClassification
         Return result
     End Function
 
-    ReadOnly Property DelegateType() As Type
+    ReadOnly Property DelegateType() As Mono.Cecil.TypeReference
         Get
             Return m_DelegateType
         End Get
@@ -121,7 +122,7 @@ Public Class MethodPointerClassification
         End Get
     End Property
 
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_IntPtr
         End Get
@@ -133,9 +134,9 @@ Public Class MethodPointerClassification
         End Get
     End Property
 
-    ReadOnly Property Method() As MethodInfo
+    ReadOnly Property Method() As Mono.Cecil.MethodReference
         Get
-            Return DirectCast(m_ResolvedMethod, MethodInfo)
+            Return DirectCast(m_ResolvedMethod, Mono.Cecil.MethodReference)
         End Get
     End Property
 

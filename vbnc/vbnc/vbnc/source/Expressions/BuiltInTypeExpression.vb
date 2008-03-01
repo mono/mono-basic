@@ -39,7 +39,7 @@ Public Class BuiltInTypeExpression
         Return True
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
             'Return New TypeDescriptor(TypeResolution.BuiltInTypeToType(m_Type))

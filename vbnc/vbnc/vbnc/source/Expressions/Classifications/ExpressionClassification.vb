@@ -31,8 +31,6 @@ Public Class ExpressionClassification
 
     Private m_Classification As Classifications
 
-    Private m_ConstantValue As Object
-
     ReadOnly Property Parent() As ParsedObject
         Get
             Return m_Parent
@@ -54,34 +52,21 @@ Public Class ExpressionClassification
     Overridable ReadOnly Property IsConstant() As Boolean
         Get
             Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
-            Return m_ConstantValue IsNot Nothing
+            Return False
         End Get
     End Property
 
-    ''' <summary>
-    ''' Returns the constant value for this object if it has a constant value, 
-    ''' otherwise it throws an exception.
-    ''' Calls IsConstant before returning the value.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Property ConstantValue() As Object
+    Overridable ReadOnly Property ConstantValue() As Object
         Get
-            If Me.IsConstant Then
-                Helper.Assert(m_ConstantValue IsNot Nothing)
-                Return m_ConstantValue
-            Else
-                Throw New InternalException(Me)
-            End If
+            'IsConstant should have been called before ConstantValue
+            'and if a classification overrides IsConstant to return true,
+            'it should also override ConstantValue
+            Helper.Stop()
+            Return Nothing
         End Get
-        Protected Set(ByVal value As Object)
-            Helper.Assert(value IsNot Nothing)
-            m_ConstantValue = value
-        End Set
     End Property
 
-    Overloads Function [GetType](ByVal ThrowIfNoType As Boolean) As Type
+    Overloads Function [GetType](ByVal ThrowIfNoType As Boolean) As Mono.Cecil.TypeReference
         Select Case m_Classification
             Case Classifications.Value
                 Return AsValueClassification.Type

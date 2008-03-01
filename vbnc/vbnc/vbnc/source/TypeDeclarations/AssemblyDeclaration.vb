@@ -63,7 +63,7 @@ Public Class AssemblyDeclaration
     ''' All the types as an array of type descriptors
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Types() As TypeDescriptor
+    Private m_Types() As Mono.Cecil.TypeReference
 
     Private m_GroupedClasses As Generic.List(Of MyGroupData)
 
@@ -97,7 +97,7 @@ Public Class AssemblyDeclaration
 
         ReDim m_Types(m_TypeDeclarations.Length - 1)
         For i As Integer = 0 To m_Types.Length - 1
-            m_Types(i) = m_TypeDeclarations(i).TypeDescriptor
+            m_Types(i) = m_TypeDeclarations(i).CecilType
         Next
 
         Helper.Assert(m_Members.Count = m_TypeDeclarations.Length)
@@ -130,7 +130,7 @@ Public Class AssemblyDeclaration
     Private Function DefineMembers(ByVal Type As TypeDeclaration) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(Type.TypeBuilder IsNot Nothing OrElse Type.EnumBuilder IsNot Nothing)
+        Helper.Assert(Type.CecilType IsNot Nothing)
 
         For Each i As IMember In Type.Members.GetSpecificMembers(Of IMember)()
             If TypeOf i Is TypeDeclaration Then
@@ -175,17 +175,17 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Private Function CreateType(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
+    'Private Function CreateType(ByVal Type As TypeDeclaration) As Boolean
+    '    Dim result As Boolean = True
 
-        result = Type.CreateType AndAlso result
+    '    result = Type.CreateType AndAlso result
 
-        For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = CreateType(NestedType) AndAlso result
-        Next
+    '    For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
+    '        result = CreateType(NestedType) AndAlso result
+    '    Next
 
-        Return result
-    End Function
+    '    Return result
+    'End Function
 
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -523,41 +523,43 @@ Public Class AssemblyDeclaration
     End Function
 
     Sub SetAdditionalAttributes()
-        Dim cab As CustomAttributeBuilder
+        'Dim cab As CustomAttributeBuilder
 
         If Compiler.CommandLine.Define.IsDefined("DEBUG") Then
-            cab = New CustomAttributeBuilder(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes, New Object() {System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default})
-            Me.Compiler.AssemblyBuilder.SetCustomAttribute(cab)
+            Report.WriteLine("Throw New NotImplementedException(): SetAdditionalAttributes")
+            'cab = New CustomAttributeBuilder(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes, New Object() {System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default})
+            'Me.Compiler.AssemblyBuilder.SetCustomAttribute(cab)
         End If
     End Sub
 
     Sub SetFileVersion()
-        Dim product, productversion, company, copyright, trademark As String
-        Dim att() As Object
-        Dim product_att As Reflection.AssemblyProductAttribute = Nothing
-        Dim productversion_att As Reflection.AssemblyVersionAttribute = Nothing
-        Dim company_att As Reflection.AssemblyCompanyAttribute = Nothing
-        Dim copyright_att As Reflection.AssemblyCopyrightAttribute = Nothing
-        Dim trademark_att As Reflection.AssemblyTrademarkAttribute = Nothing
+        'Dim product, productversion, company, copyright, trademark As String
+        'Dim att() As Object
+        'Dim product_att As Reflection.AssemblyProductAttribute = Nothing
+        'Dim productversion_att As Reflection.AssemblyVersionAttribute = Nothing
+        'Dim company_att As Reflection.AssemblyCompanyAttribute = Nothing
+        'Dim copyright_att As Reflection.AssemblyCopyrightAttribute = Nothing
+        'Dim trademark_att As Reflection.AssemblyTrademarkAttribute = Nothing
 
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyProductAttribute, True)
-        If att.Length > 0 Then product_att = DirectCast(att(0), AssemblyProductAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute, True)
-        If att.Length > 0 Then productversion_att = DirectCast(att(0), AssemblyVersionAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute, True)
-        If att.Length > 0 Then company_att = DirectCast(att(0), AssemblyCompanyAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute, True)
-        If att.Length > 0 Then copyright_att = DirectCast(att(0), AssemblyCopyrightAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute, True)
-        If att.Length > 0 Then trademark_att = DirectCast(att(0), AssemblyTrademarkAttribute)
+        Report.WriteLine("Throw New NotImplementedException (): SetFileVersion")
+        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyProductAttribute, True)
+        'If att.Length > 0 Then product_att = DirectCast(att(0), AssemblyProductAttribute)
+        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute, True)
+        'If att.Length > 0 Then productversion_att = DirectCast(att(0), AssemblyVersionAttribute)
+        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute, True)
+        'If att.Length > 0 Then company_att = DirectCast(att(0), AssemblyCompanyAttribute)
+        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute, True)
+        'If att.Length > 0 Then copyright_att = DirectCast(att(0), AssemblyCopyrightAttribute)
+        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute, True)
+        'If att.Length > 0 Then trademark_att = DirectCast(att(0), AssemblyTrademarkAttribute)
 
-        If product_att IsNot Nothing Then product = product_att.Product Else product = ""
-        If productversion_att IsNot Nothing Then productversion = productversion_att.Version Else productversion = ""
-        If company_att IsNot Nothing Then company = company_att.Company Else company = ""
-        If copyright_att IsNot Nothing Then copyright = copyright_att.Copyright Else copyright = ""
-        If trademark_att IsNot Nothing Then trademark = trademark_att.Trademark Else trademark = ""
+        'If product_att IsNot Nothing Then product = product_att.Product Else product = ""
+        'If productversion_att IsNot Nothing Then productversion = productversion_att.Version Else productversion = ""
+        'If company_att IsNot Nothing Then company = company_att.Company Else company = ""
+        'If copyright_att IsNot Nothing Then copyright = copyright_att.Copyright Else copyright = ""
+        'If trademark_att IsNot Nothing Then trademark = trademark_att.Trademark Else trademark = ""
 
-        Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
+        'Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
     End Sub
 
 #If ENABLECECIL Then
@@ -579,7 +581,7 @@ Public Class AssemblyDeclaration
         End If
 
         For Each attri As Attribute In Me.Attributes
-            Dim attribType As Type
+            Dim attribType As Mono.Cecil.TypeReference
             attribType = attri.ResolvedType
 
             If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
@@ -603,46 +605,47 @@ Public Class AssemblyDeclaration
     End Function
 #End If
 
-    Public Function GetName() As AssemblyName
-        Dim result As New AssemblyName()
-        Dim keyfile As String = Nothing
-        Dim keyname As String = Nothing
-        Dim delaysign As Boolean = False
+    '    Public Function GetName() As AssemblyName
+    '        Dim result As New AssemblyName()
+    '        Dim keyfile As String = Nothing
+    '        Dim keyname As String = Nothing
+    '        Dim delaysign As Boolean = False
 
-        result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
+    '        result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
 
-#If DEBUGREFLECTION Then
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
-#End If
+    '#If DEBUGREFLECTION Then
+    '        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
+    '        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
+    '#End If
 
-        If Compiler.CommandLine.KeyFile <> String.Empty Then
-            keyfile = Compiler.CommandLine.KeyFile
-        End If
+    '        If Compiler.CommandLine.KeyFile <> String.Empty Then
+    '            keyfile = Compiler.CommandLine.KeyFile
+    '        End If
 
-        For Each attri As Attribute In Me.Attributes
-            Dim attribType As Type
-            attribType = attri.ResolvedType
+    '        For Each attri As Attribute In Me.Attributes
+    '            Dim attribType As Mono.Cecil.TypeReference
+    '            attribType = attri.ResolvedType
 
-            If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
-                SetVersion(result, attri, attri.Location)
-            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
-                If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
-            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
-                keyname = TryCast(attri.Arguments()(0), String)
-            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyDelaySignAttribute) Then
-                delaysign = CBool(attri.Arguments()(0))
-            End If
-        Next
+    '            If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
+    '                SetVersion(result, attri, attri.Location)
+    '            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
+    '                If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
+    '            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
+    '                keyname = TryCast(attri.Arguments()(0), String)
+    '            ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyDelaySignAttribute) Then
+    '                delaysign = CBool(attri.Arguments()(0))
+    '            End If
+    '        Next
 
-        If keyfile <> String.Empty Then
-            If SignWithKeyFile(result, keyfile, delaysign) = False Then
-                Return result
-            End If
-        End If
+    '        If keyfile <> String.Empty Then
+    '            If SignWithKeyFile(result, keyfile, delaysign) = False Then
+    '                Return result
+    '            End If
+    '        End If
 
-        Return result
-    End Function
+    '        Return result
+    '    End Function
+
 #If ENABLECECIL Then
     Private Function SignWithKeyFile(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
         Dim filename As String
@@ -680,48 +683,48 @@ Public Class AssemblyDeclaration
         Return True
     End Function
 #End If
-    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
-        Dim filename As String
+    '    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
+    '        Dim filename As String
 
-        filename = IO.Path.GetFullPath(KeyFile)
+    '        filename = IO.Path.GetFullPath(KeyFile)
 
-#If DEBUG Then
-        Compiler.Report.WriteLine("Signing with file: " & filename)
-#End If
+    '#If DEBUG Then
+    '        Compiler.Report.WriteLine("Signing with file: " & filename)
+    '#End If
 
-        If IO.File.Exists(filename) = False Then
-            Helper.AddError(Me, "Can't find keyfile: " & filename)
-            Return False
-        End If
+    '        If IO.File.Exists(filename) = False Then
+    '            Helper.AddError(Me, "Can't find keyfile: " & filename)
+    '            Return False
+    '        End If
 
-        Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
-            Dim snkeypair() As Byte
-            ReDim snkeypair(CInt(stream.Length - 1))
-            stream.Read(snkeypair, 0, snkeypair.Length)
+    '        Using stream As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+    '            Dim snkeypair() As Byte
+    '            ReDim snkeypair(CInt(stream.Length - 1))
+    '            stream.Read(snkeypair, 0, snkeypair.Length)
 
-            If Helper.IsOnMono Then
-                SignWithKeyFileMono(result, filename, DelaySign, snkeypair)
-            Else
-                If DelaySign Then
-                    result.SetPublicKey(snkeypair)
-                Else
-                    result.KeyPair = New StrongNameKeyPair(snkeypair)
-                End If
-            End If
+    '            If Helper.IsOnMono Then
+    '                SignWithKeyFileMono(result, filename, DelaySign, snkeypair)
+    '            Else
+    '                If DelaySign Then
+    '                    result.SetPublicKey(snkeypair)
+    '                Else
+    '                    result.KeyPair = New StrongNameKeyPair(snkeypair)
+    '                End If
+    '            End If
 
-        End Using
+    '        End Using
 
-        Return True
-    End Function
+    '        Return True
+    '    End Function
 
 #If ENABLECECIL Then
     Private Function SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
         Dim CryptoConvert As Type
-        Dim FromCapiKeyBlob As MethodInfo
-        Dim ToCapiPublicKeyBlob As MethodInfo
-        Dim FromCapiPrivateKeyBlob As MethodInfo
+        Dim FromCapiKeyBlob As System.Reflection.MethodInfo
+        Dim ToCapiPublicKeyBlob As System.Reflection.MethodInfo
+        Dim FromCapiPrivateKeyBlob As System.Reflection.MethodInfo
         Dim RSA As Type
-        Dim mscorlib As Assembly = GetType(Integer).Assembly
+        Dim mscorlib As System.Reflection.Assembly = GetType(Integer).Assembly
 
 #If DEBUG Then
         Compiler.Report.WriteLine("Signing on Mono")
@@ -730,9 +733,9 @@ Public Class AssemblyDeclaration
         Try
             RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
             CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
-            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
-            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
-            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
+            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
+            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
+            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
 
             If DelaySign Then
                 If blob.Length = 16 Then
@@ -770,57 +773,57 @@ Public Class AssemblyDeclaration
     End Function
 #End If
 
-    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
-        Dim CryptoConvert As Type
-        Dim FromCapiKeyBlob As MethodInfo
-        Dim ToCapiPublicKeyBlob As MethodInfo
-        Dim FromCapiPrivateKeyBlob As MethodInfo
-        Dim RSA As Type
-        Dim mscorlib As Assembly = GetType(Integer).Assembly
+    '    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
+    '        Dim CryptoConvert As Type
+    '        Dim FromCapiKeyBlob As MethodInfo
+    '        Dim ToCapiPublicKeyBlob As MethodInfo
+    '        Dim FromCapiPrivateKeyBlob As MethodInfo
+    '        Dim RSA As Type
+    '        Dim mscorlib As Assembly = GetType(Integer).Assembly
 
-#If DEBUG Then
-        Compiler.Report.WriteLine("Signing on Mono")
-#End If
+    '#If DEBUG Then
+    '        Compiler.Report.WriteLine("Signing on Mono")
+    '#End If
 
-        Try
-            RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
-            CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
-            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
-            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
-            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
+    '        Try
+    '            RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
+    '            CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
+    '            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
+    '            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
+    '            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
 
-            If DelaySign Then
-                If blob.Length = 16 Then
-                    result.SetPublicKey(blob)
-#If DEBUG Then
-                    Compiler.Report.WriteLine("Delay signed 1")
-#End If
-                Else
-                    Dim publickey() As Byte
-                    Dim fromCapiResult As Object
-                    Dim publicKeyHeader As Byte() = New Byte() {&H0, &H24, &H0, &H0, &H4, &H80, &H0, &H0, &H94, &H0, &H0, &H0}
-                    Dim encodedPublicKey() As Byte
+    '            If DelaySign Then
+    '                If blob.Length = 16 Then
+    '                    result.SetPublicKey(blob)
+    '#If DEBUG Then
+    '                    Compiler.Report.WriteLine("Delay signed 1")
+    '#End If
+    '                Else
+    '                    Dim publickey() As Byte
+    '                    Dim fromCapiResult As Object
+    '                    Dim publicKeyHeader As Byte() = New Byte() {&H0, &H24, &H0, &H0, &H4, &H80, &H0, &H0, &H94, &H0, &H0, &H0}
+    '                    Dim encodedPublicKey() As Byte
 
-                    fromCapiResult = FromCapiKeyBlob.Invoke(Nothing, New Object() {blob})
-                    publickey = CType(ToCapiPublicKeyBlob.Invoke(Nothing, New Object() {fromCapiResult}), Byte())
+    '                    fromCapiResult = FromCapiKeyBlob.Invoke(Nothing, New Object() {blob})
+    '                    publickey = CType(ToCapiPublicKeyBlob.Invoke(Nothing, New Object() {fromCapiResult}), Byte())
 
-                    ReDim encodedPublicKey(11 + publickey.Length)
-                    Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
-                    Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
-                    result.SetPublicKey(encodedPublicKey)
-#If DEBUG Then
-                    Compiler.Report.WriteLine("Delay signed 2")
-#End If
-                End If
-            Else
-                FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})
-                result.KeyPair = New StrongNameKeyPair(blob)
-            End If
-        Catch ex As Exception
-            Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
-        End Try
+    '                    ReDim encodedPublicKey(11 + publickey.Length)
+    '                    Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
+    '                    Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
+    '                    result.SetPublicKey(encodedPublicKey)
+    '#If DEBUG Then
+    '                    Compiler.Report.WriteLine("Delay signed 2")
+    '#End If
+    '                End If
+    '            Else
+    '                FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})
+    '                result.KeyPair = New StrongNameKeyPair(blob)
+    '            End If
+    '        Catch ex As Exception
+    '            Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
+    '        End Try
 
-    End Function
+    '    End Function
 
 #If ENABLECECIL Then
     Private Function SetVersion(ByVal Name As Mono.Cecil.AssemblyNameDefinition, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
@@ -879,139 +882,152 @@ Public Class AssemblyDeclaration
     End Function
 #End If
 
-    Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
-        Dim result As Version
-        Dim version As String = ""
+    'Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
+    '    Dim result As Version
+    '    Dim version As String = ""
 
-        If Attribute.Arguments IsNot Nothing AndAlso Attribute.Arguments.Length = 1 Then
-            version = TryCast(Attribute.Arguments()(0), String)
-        Else
-            Return ShowInvalidVersionMessage(version, Location)
-        End If
+    '    If Attribute.Arguments IsNot Nothing AndAlso Attribute.Arguments.Length = 1 Then
+    '        version = TryCast(Attribute.Arguments()(0), String)
+    '    Else
+    '        Return ShowInvalidVersionMessage(version, Location)
+    '    End If
 
-        Try
-            Dim parts() As String
-            Dim major, minor, build, revision As UShort
-            parts = version.Split("."c)
+    '    Try
+    '        Dim parts() As String
+    '        Dim major, minor, build, revision As UShort
+    '        parts = version.Split("."c)
 
-            If parts.Length > 4 Then
-                Return ShowInvalidVersionMessage(version, Location)
-            End If
+    '        If parts.Length > 4 Then
+    '            Return ShowInvalidVersionMessage(version, Location)
+    '        End If
 
-            If Not UShort.TryParse(parts(0), major) Then
-                Return ShowInvalidVersionMessage(version, Location)
-            End If
+    '        If Not UShort.TryParse(parts(0), major) Then
+    '            Return ShowInvalidVersionMessage(version, Location)
+    '        End If
 
-            If Not UShort.TryParse(parts(1), minor) Then
-                Return ShowInvalidVersionMessage(version, Location)
-            End If
+    '        If Not UShort.TryParse(parts(1), minor) Then
+    '            Return ShowInvalidVersionMessage(version, Location)
+    '        End If
 
-            If parts.Length < 3 Then
-                'Use 0
-            ElseIf parts(2) = "*" Then
-                build = CUShort((Date.Now - New Date(2000, 1, 1)).TotalDays)
-                revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
-            ElseIf Not UShort.TryParse(parts(2), build) Then
-                Return ShowInvalidVersionMessage(version, Location)
-            End If
+    '        If parts.Length < 3 Then
+    '            'Use 0
+    '        ElseIf parts(2) = "*" Then
+    '            build = CUShort((Date.Now - New Date(2000, 1, 1)).TotalDays)
+    '            revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+    '        ElseIf Not UShort.TryParse(parts(2), build) Then
+    '            Return ShowInvalidVersionMessage(version, Location)
+    '        End If
 
-            If parts.Length < 4 Then
-                'Use 0
-            ElseIf parts.Length > 3 Then
-                If parts(3) = "*" Then
-                    revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
-                ElseIf Not UShort.TryParse(parts(3), revision) Then
-                    Return ShowInvalidVersionMessage(version, Location)
-                End If
-            End If
+    '        If parts.Length < 4 Then
+    '            'Use 0
+    '        ElseIf parts.Length > 3 Then
+    '            If parts(3) = "*" Then
+    '                revision = CUShort((Date.Now.Hour * 3600 + Date.Now.Minute * 60 + Date.Now.Second) / 2)
+    '            ElseIf Not UShort.TryParse(parts(3), revision) Then
+    '                Return ShowInvalidVersionMessage(version, Location)
+    '            End If
+    '        End If
 
-            result = New Version(major, minor, build, revision)
-        Catch ex As Exception
-            Return ShowInvalidVersionMessage(version, Location)
-        End Try
+    '        result = New Version(major, minor, build, revision)
+    '    Catch ex As Exception
+    '        Return ShowInvalidVersionMessage(version, Location)
+    '    End Try
 
-        Name.Version = result
-        Return True
-    End Function
+    '    Name.Version = result
+    '    Return True
+    'End Function
 
     Private Function ShowInvalidVersionMessage(ByVal Version As String, ByVal Location As Span) As Boolean
         Compiler.Report.ShowMessage(Messages.VBNC30129, Location, "System.Reflection.AssemblyVersionAttribute", Version)
         Return False
     End Function
 
-    ''' <summary>
-    ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
-    ''' - Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function CreateTypes() As Boolean
-        Dim result As Boolean = True
-        Dim exs As New Generic.List(Of Exception)
-        Dim tps As New Generic.List(Of TypeDeclaration)
+    '    ''' <summary>
+    '    ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
+    '    ''' - Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
+    '    ''' </summary>
+    '    ''' <returns></returns>
+    '    ''' <remarks></remarks>
+    '    Function CreateTypes() As Boolean
+    '        Dim result As Boolean = True
+    '        Dim exs As New Generic.List(Of Exception)
+    '        Dim tps As New Generic.List(Of TypeDeclaration)
 
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Try
-                System.Console.ForegroundColor = ConsoleColor.Blue
-            Catch ex As Exception
+    '        For Each type As TypeDeclaration In m_TypeDeclarations
+    '#If EXTENDEDDEBUG Then
+    '            Dim iCount As Integer
+    '            iCount += 1
+    '            Try
+    '                System.Console.ForegroundColor = ConsoleColor.Blue
+    '            Catch ex As Exception
 
-            End Try
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "CreateType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-            Try
-                System.Console.ResetColor()
-            Catch ex As Exception
+    '            End Try
+    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "CreateType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
+    '            Try
+    '                System.Console.ResetColor()
+    '            Catch ex As Exception
 
-            End Try
-#End If
-#If EXTENDEDDEBUG Then
-            Try
-                result = CreateType(type) AndAlso result
-            Catch ex As Exception
-                Try
-                    System.Console.ForegroundColor = ConsoleColor.Red
-                Catch ex2 As Exception
-                End Try
-                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, ex.Message)
-                Threading.Thread.Sleep(500)
-                Try
-                    System.Console.ResetColor()
-                Catch ex2 As Exception
-                End Try
-                exs.Add(ex)
-                tps.Add(type)
-            End Try
-#Else
-            result = CreateType(type) AndAlso result
-#End If
-        Next
+    '            End Try
+    '#End If
+    '#If EXTENDEDDEBUG Then
+    '            Try
+    '                result = CreateType(type) AndAlso result
+    '            Catch ex As Exception
+    '                Try
+    '                    System.Console.ForegroundColor = ConsoleColor.Red
+    '                Catch ex2 As Exception
+    '                End Try
+    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, ex.Message)
+    '                Threading.Thread.Sleep(500)
+    '                Try
+    '                    System.Console.ResetColor()
+    '                Catch ex2 As Exception
+    '                End Try
+    '                exs.Add(ex)
+    '                tps.Add(type)
+    '            End Try
+    '#Else
+    '            result = CreateType(type) AndAlso result
+    '#End If
+    '        Next
 
-#If EXTENDEDDEBUG Then
-        If exs.Count > 0 Then
-            Dim msg As String = ""
+    '#If EXTENDEDDEBUG Then
+    '        If exs.Count > 0 Then
+    '            Dim msg As String = ""
 
-            msg = exs.Count.ToString & " types failed to be created." & VB.vbNewLine
-            For i As Integer = 0 To exs.Count - 1
-                msg &= VB.vbTab & tps(i).FullName & ": " & exs(i).Message & VB.vbNewLine
-            Next
-            Try
-                System.Console.ForegroundColor = ConsoleColor.Red
-            Catch ex2 As Exception
-            End Try
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, msg)
-            Try
-                System.Console.ResetColor()
-            Catch ex2 As Exception
-            End Try
+    '            msg = exs.Count.ToString & " types failed to be created." & VB.vbNewLine
+    '            For i As Integer = 0 To exs.Count - 1
+    '                msg &= VB.vbTab & tps(i).FullName & ": " & exs(i).Message & VB.vbNewLine
+    '            Next
+    '            Try
+    '                System.Console.ForegroundColor = ConsoleColor.Red
+    '            Catch ex2 As Exception
+    '            End Try
+    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, msg)
+    '            Try
+    '                System.Console.ResetColor()
+    '            Catch ex2 As Exception
+    '            End Try
 
-            Throw New InternalException(msg)
-        End If
-#End If
+    '            Throw New InternalException(msg)
+    '        End If
+    '#End If
 
-        Return result
-    End Function
+    '        Return result
+    '    End Function
+
+    '''' <summary>
+    '''' Checks whether the specified Type is defined in the current compiling assembly
+    '''' </summary>
+    '''' <param name="Type"></param>
+    '''' <returns></returns>
+    '''' <remarks></remarks>
+    'Function IsDefinedHere(ByVal Type As Mono.Cecil.TypeReference) As Boolean
+    '    Helper.Assert(Type IsNot Nothing)
+    '    If TypeOf Type Is TypeBuilder Then Return True
+    '    If TypeOf Type Is TypeDescriptor Then Return True
+    '    Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
+    'End Function
 
     ''' <summary>
     ''' Checks whether the specified Type is defined in the current compiling assembly
@@ -1019,11 +1035,19 @@ Public Class AssemblyDeclaration
     ''' <param name="Type"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function IsDefinedHere(ByVal Type As Type) As Boolean
+    Function IsDefinedHere(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Helper.Assert(Type IsNot Nothing)
-        If TypeOf Type Is TypeBuilder Then Return True
-        If TypeOf Type Is TypeDescriptor Then Return True
-        Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
+        Return Type.Module.Assembly Is Compiler.AssemblyBuilderCecil
+    End Function
+
+    ''' <summary>
+    ''' Checks whether the specified Type is defined in the current compiling assembly
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsDefinedHere(ByVal Member As Mono.Cecil.MemberReference) As Boolean
+        Helper.Assert(Member IsNot Nothing)
+        Return Member.DeclaringType.Module.Assembly Is Compiler.AssemblyBuilderCecil
     End Function
 
     Function FindType(ByVal FullName As String) As TypeDeclaration

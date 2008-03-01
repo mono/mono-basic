@@ -197,7 +197,7 @@ Namespace Microsoft.VisualBasic
             m_Exception = GetExceptionFromNumber(Number, Message)
         End Sub
         'according to the number, return an exception
-        Private Function GetExceptionFromNumber(ByVal Number As System.Int32, ByVal Message As String) As Exception
+        Friend Shared Function GetExceptionFromNumber(ByVal Number As System.Int32, ByVal Message As String) As Exception
 
             Select Case Number
                 Case 3, 20, 94, 100

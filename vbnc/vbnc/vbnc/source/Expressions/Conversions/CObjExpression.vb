@@ -37,7 +37,7 @@ Public Class CObjExpression
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
         'Dim expType As Type = SourceType
@@ -52,7 +52,7 @@ Public Class CObjExpression
 
         If Info.IsRHS Then
             result = Expression.GenerateCode(Info.Clone(Expression, True, False, Expression.ExpressionType)) AndAlso result
-            If Expression.ExpressionType.IsValueType OrElse Expression.ExpressionType.IsGenericParameter Then
+            If Expression.ExpressionType.IsValueType OrElse CecilHelper.IsGenericParameter(Expression.ExpressionType) Then
                 Emitter.EmitBox(Info, Expression.ExpressionType)
             End If
         Else
@@ -72,7 +72,7 @@ Public Class CObjExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Object
         End Get

@@ -32,7 +32,7 @@ Public Class ImportsNamespaceClause
     Private m_Object As BaseObject
 
     Private m_Namespace As [Namespace]
-    Private m_Type As Type
+    Private m_Type As Mono.Cecil.TypeReference
 
     ReadOnly Property [Object]() As BaseObject
         Get
@@ -59,7 +59,7 @@ Public Class ImportsNamespaceClause
         End Get
     End Property
 
-    ReadOnly Property TypeImported() As Type 'Descriptor
+    ReadOnly Property TypeImported() As Mono.Cecil.TypeReference 'Descriptor
         Get
             Return m_Type
         End Get
@@ -98,11 +98,11 @@ Public Class ImportsNamespaceClause
         If nri.FoundIs(Of [Namespace])() Then
             m_Namespace = nri.FoundAs(Of [Namespace])()
         ElseIf nri.FoundIs(Of TypeDeclaration)() Then
-            m_Type = nri.FoundAs(Of TypeDeclaration).TypeDescriptor
+            m_Type = nri.FoundAs(Of TypeDeclaration).CecilType
         ElseIf nri.FoundIs(Of Type)() Then
-            m_Type = nri.FoundAs(Of Type)()
-        ElseIf nri.FoundIs(Of TypeDescriptor)() Then
-            m_Type = nri.FoundAs(Of TypeDescriptor)()
+            m_Type = nri.FoundAs(Of Mono.Cecil.TypeReference)()
+        ElseIf nri.FoundIs(Of Mono.Cecil.TypeReference)() Then
+            m_Type = nri.FoundAs(Of Mono.Cecil.TypeReference)()
         Else
             Helper.AddError(Me)
         End If

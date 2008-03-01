@@ -27,14 +27,14 @@ Public Class DirectCastExpression
         MyBase.Init(Expression, DestinationType)
     End Sub
 
-    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Type)
+    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference)
         MyBase.Init(Expression, DestinationType)
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        If ExpressionType.IsGenericParameter Then
+        If CecilHelper.IsGenericParameter(ExpressionType) Then
             result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
             If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
                 Emitter.EmitUnbox_Any(Info, ExpressionType)
@@ -46,7 +46,7 @@ Public Class DirectCastExpression
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
-            ElseIf ExpressionType.IsGenericParameter = False AndAlso Expression.ExpressionType.IsClass AndAlso ExpressionType.IsValueType Then
+            ElseIf CecilHelper.IsGenericParameter(ExpressionType) = False AndAlso CecilHelper.IsClass(Expression.ExpressionType) AndAlso ExpressionType.IsValueType Then
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Emitter.EmitUnbox(Info, ExpressionType)
                 Emitter.EmitLoadObject(Info, ExpressionType)

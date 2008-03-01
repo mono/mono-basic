@@ -27,17 +27,19 @@ Imports System.Reflection.Emit
 Public Class VariableClassification
     Inherits ExpressionClassification
 
-    Private m_ParameterInfo As ParameterInfo
-    Private m_FieldInfo As FieldInfo
-    Private m_LocalBuilder As LocalBuilder
+    Private m_ParameterInfo As Mono.Cecil.ParameterDefinition
+    Private m_FieldInfo As Mono.Cecil.FieldReference
+    Private m_LocalBuilder As Mono.Cecil.Cil.VariableDefinition
 
     Private m_InstanceExpression As Expression
     Private m_Parameter As Parameter
     Private m_Variable As VariableDeclaration
+    Private m_LocalVariable As LocalVariableDeclaration
+    Private m_TypeVariable As TypeVariableDeclaration
     Private m_Method As IMethod
     Private m_Expression As Expression
 
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Private m_ArrayVariable As Expression
     Private m_Arguments As ArgumentList
@@ -66,37 +68,60 @@ Public Class VariableClassification
         End Get
     End Property
 
+    Public Overrides ReadOnly Property ConstantValue() As Object
+        Get
+            Helper.Assert(IsConstant)
+            If Me.FieldInfo IsNot Nothing Then
+                If Me.FieldInfo.IsLiteral Then
+                    If Me.FieldInfo.HasConstant = False Then
+                        Dim field As IFieldMember = TryCast(Me.FieldInfo.Annotations(Compiler), IFieldMember)
+                        Dim value As Object = Nothing
+                        If field.ResolveAndGetConstantValue(value) Then
+                            Return value
+                        Else
+                            Helper.Stop()
+                            Return Nothing
+                        End If
+                        Helper.Stop() 'Constant value hasn't been set yet
+                        Return Nothing
+                    Else
+                        Return Me.FieldInfo.Constant
+                    End If
+                ElseIf Me.FieldInfo.IsInitOnly Then
+                    Dim dec As Decimal, dt As Date
+                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldInfo, dec) Then
+                        Return dec
+                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldInfo, dt) Then
+                        Return dt
+                    Else
+                        Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
+                        Return Nothing
+                    End If
+                Else
+                    Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
+                    Return Nothing
+                End If
+            Else
+                Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
+                Return Nothing
+            End If
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             If Me.FieldInfo IsNot Nothing Then
-                If Me.FieldInfo.IsLiteral Then
-                    ConstantValue = Me.FieldInfo.GetValue(Nothing)
+                If FieldInfo.IsLiteral Then
                     Return True
-                ElseIf Me.FieldInfo.IsInitOnly Then
-                    Dim decAttrs() As Object
-
-                    Dim fD As FieldDescriptor = TryCast(Me.FieldInfo, FieldDescriptor)
-                    If fD IsNot Nothing Then
-                        If fD.Declaration.Modifiers.Is(ModifierMasks.Const) Then Return True
-                        If Helper.IsEnum(Compiler, fD.DeclaringType) Then Return True
+                ElseIf FieldInfo.IsInitOnly Then
+                    Dim dec As Decimal, dt As Date
+                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldInfo, dec) Then
+                        Return True
+                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldInfo, dt) Then
+                        Return True
+                    Else
                         Return False
                     End If
-
-                    decAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute, False)
-                    If decAttrs IsNot Nothing AndAlso decAttrs.Length = 1 Then
-                        ConstantValue = DirectCast(decAttrs(0), System.Runtime.CompilerServices.DecimalConstantAttribute).Value()
-                        Return True
-                    End If
-
-                    Dim dtAttrs() As Object
-                    dtAttrs = Me.FieldInfo.GetCustomAttributes(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute, False)
-                    If dtAttrs IsNot Nothing AndAlso dtAttrs.Length = 1 Then
-                        ConstantValue = DirectCast(dtAttrs(0), System.Runtime.CompilerServices.DateTimeConstantAttribute).Value()
-                        Return True
-                    End If
-
-
-                    Return False
                 Else
                     Return False
                 End If
@@ -106,28 +131,28 @@ Public Class VariableClassification
         End Get
     End Property
 
-    ReadOnly Property ParameterInfo() As ParameterInfo
+    ReadOnly Property ParameterInfo() As Mono.Cecil.ParameterDefinition
         Get
             Return m_ParameterInfo
         End Get
     End Property
 
-    ReadOnly Property LocalBuilder() As LocalBuilder
+    ReadOnly Property LocalBuilder() As Mono.Cecil.Cil.VariableDefinition
         Get
-            If m_Variable IsNot Nothing Then
-                Return m_Variable.LocalBuilder
+            If m_LocalVariable IsNot Nothing Then
+                Return m_LocalVariable.LocalBuilder
             Else
                 Return Nothing
             End If
         End Get
     End Property
 
-    ReadOnly Property FieldInfo() As FieldInfo
+    ReadOnly Property FieldInfo() As Mono.Cecil.FieldDefinition
         Get
-            If m_Variable IsNot Nothing AndAlso m_Variable.FieldBuilder IsNot Nothing Then
-                Return m_Variable.FieldBuilder
+            If m_TypeVariable IsNot Nothing AndAlso m_TypeVariable.FieldBuilder IsNot Nothing Then
+                Return m_TypeVariable.FieldBuilder
             Else
-                Return m_FieldInfo
+                Return CecilHelper.FindDefinition(m_FieldInfo)
             End If
         End Get
     End Property
@@ -175,9 +200,9 @@ Public Class VariableClassification
             Throw New InternalException(Me)
         End If
 
-        If Info.DesiredType.IsByRef Then
-            Dim elementType As Type = Info.DesiredType.GetElementType
-            Dim local As LocalBuilder
+        If CecilHelper.IsByRef(Info.DesiredType) Then
+            Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(Info.DesiredType)
+            Dim local As Mono.Cecil.Cil.VariableDefinition
             local = Emitter.DeclareLocal(Info, elementType)
 
             Emitter.EmitStoreVariable(Info, local)
@@ -203,16 +228,16 @@ Public Class VariableClassification
         Helper.Assert(Info.IsRHS AndAlso Info.RHSExpression Is Nothing OrElse Info.IsLHS AndAlso Info.RHSExpression IsNot Nothing)
 
         If m_InstanceExpression IsNot Nothing Then
-            Dim exp As Type = m_InstanceExpression.ExpressionType
-            If exp.IsValueType AndAlso exp.IsByRef = False Then
-                exp = exp.MakeByRefType
+            Dim exp As Mono.Cecil.TypeReference = m_InstanceExpression.ExpressionType
+            If exp.IsValueType AndAlso CecilHelper.IsByRef(exp) = False Then
+                exp = Compiler.TypeManager.MakeByRefType(Me.Parent, exp)
             End If
             result = m_InstanceExpression.GenerateCode(Info.Clone(Parent, True, False, exp)) AndAlso result
         End If
 
         If FieldInfo IsNot Nothing Then
             If Info.IsRHS Then
-                If Info.DesiredType.IsByRef Then
+                If CecilHelper.IsByRef(Info.DesiredType) Then
                     Emitter.EmitLoadVariableLocation(Info, FieldInfo)
                 Else
                     Emitter.EmitLoadVariable(Info, FieldInfo)
@@ -228,17 +253,17 @@ Public Class VariableClassification
                 Emitter.EmitStoreField(Info, FieldInfo)
             End If
         ElseIf LocalBuilder IsNot Nothing Then
-            result = VariableExpression.Emit(Info, m_Variable) AndAlso result
+            result = VariableExpression.Emit(Info, LocalBuilder) AndAlso result
         ElseIf ParameterInfo IsNot Nothing Then
             Dim isByRef As Boolean
             Dim isByRefStructure As Boolean
-            Dim paramType As Type
-            Dim paramElementType As Type = Nothing
+            Dim paramType As Mono.Cecil.TypeReference
+            Dim paramElementType As Mono.Cecil.TypeReference = Nothing
 
             paramType = ParameterInfo.ParameterType
-            isByRef = paramType.IsByRef
+            isByRef = CecilHelper.IsByRef(paramType)
             If isByRef Then
-                paramElementType = paramType.GetElementType
+                paramElementType = CecilHelper.GetElementType(paramType)
                 isByRefStructure = paramElementType.IsValueType
             End If
 
@@ -298,11 +323,11 @@ Public Class VariableClassification
 
                 Emitter.EmitConversion(Info.RHSExpression.ExpressionType, m_Variable.VariableType, Info)
 
-                If Helper.CompareType(m_Variable.LocalBuilder.LocalType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Compiler.TypeCache.System_Object) Then
+                If Helper.CompareType(m_Variable.VariableType, Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Compiler.TypeCache.System_Object) Then
                     Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 End If
 
-                Emitter.EmitStoreVariable(Info, m_Variable.LocalBuilder)
+                Emitter.EmitStoreVariable(Info, LocalBuilder)
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             End If
         ElseIf m_ArrayVariable IsNot Nothing Then
@@ -318,7 +343,7 @@ Public Class VariableClassification
             Else
                 Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
                 Helper.Assert(Info.RHSExpression.Classification.IsValueClassification)
-                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(parent, True, False, m_Method.DefaultReturnVariable.LocalType)) AndAlso result
+                result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(Parent, True, False, m_Method.DefaultReturnVariable.VariableType)) AndAlso result
                 Emitter.EmitStoreVariable(Info, m_Method.DefaultReturnVariable)
             End If
         Else
@@ -354,27 +379,29 @@ Public Class VariableClassification
     Sub New(ByVal Parent As ParsedObject, ByVal parameter As Parameter)
         MyBase.New(Classifications.Variable, Parent)
         m_Parameter = parameter
-        m_ParameterInfo = New ParameterDescriptor(m_Parameter)
+        m_ParameterInfo = parameter.CecilBuilder
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal variable As VariableDeclaration, Optional ByVal InstanceExpression As Expression = Nothing)
         MyBase.New(Classifications.Variable, Parent)
         m_Variable = variable
+        m_LocalVariable = TryCast(m_Variable, LocalVariableDeclaration)
+        m_TypeVariable = TryCast(m_Variable, TypeVariableDeclaration)
         m_InstanceExpression = InstanceExpression
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal ExpressionType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal ExpressionType As Mono.Cecil.TypeReference)
         MyBase.new(Classifications.Variable, Parent)
         m_Expression = Expression
         m_ExpressionType = ExpressionType
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal variable As FieldInfo, ByVal InstanceExpression As Expression)
+    Sub New(ByVal Parent As ParsedObject, ByVal variable As Mono.Cecil.FieldReference, ByVal InstanceExpression As Expression)
         MyBase.New(Classifications.Variable, Parent)
         m_FieldInfo = variable
         m_InstanceExpression = InstanceExpression
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
-        Helper.Assert((m_FieldInfo.IsStatic AndAlso m_InstanceExpression Is Nothing) OrElse (m_FieldInfo.IsStatic = False AndAlso m_InstanceExpression IsNot Nothing))
+        Helper.Assert((Helper.IsShared(variable) AndAlso m_InstanceExpression Is Nothing) OrElse (Helper.IsShared(variable) = False AndAlso m_InstanceExpression IsNot Nothing))
     End Sub
 
     ''' <summary>
@@ -391,9 +418,9 @@ Public Class VariableClassification
         Helper.Assert(Arguments IsNot Nothing)
     End Sub
 
-    ReadOnly Property Type() As Type 'Descriptor
+    ReadOnly Property Type() As Mono.Cecil.TypeReference 'Descriptor
         Get
-            Dim result As Type
+            Dim result As Mono.Cecil.TypeReference
             If m_ExpressionType IsNot Nothing Then
                 result = m_ExpressionType
             ElseIf m_Method IsNot Nothing Then
@@ -401,7 +428,7 @@ Public Class VariableClassification
             ElseIf m_Variable IsNot Nothing Then
                 result = m_Variable.VariableType
             ElseIf m_FieldInfo IsNot Nothing Then
-                If m_FieldInfo.DeclaringType.IsEnum Then
+                If Helper.IsEnum(Compiler, m_FieldInfo.DeclaringType) Then
                     result = m_FieldInfo.DeclaringType
                 Else
                     result = m_FieldInfo.FieldType
@@ -409,7 +436,7 @@ Public Class VariableClassification
             ElseIf m_Parameter IsNot Nothing Then
                 result = m_Parameter.ParameterType
             ElseIf m_ArrayVariable IsNot Nothing Then
-                result = m_ArrayVariable.ExpressionType.GetElementType
+                result = CecilHelper.GetElementType(m_ArrayVariable.ExpressionType)
             Else
                 Throw New InternalException(Me)
             End If

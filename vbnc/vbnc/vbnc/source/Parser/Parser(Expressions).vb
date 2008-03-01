@@ -925,7 +925,7 @@ Partial Class Parser
             ElseIf tm.CurrentToken.IsKeyword Then
                 Select Case tm.CurrentToken.Keyword
                     Case KS.Dim, KS.Static, KS.Const
-                        Dim newVariables As Generic.List(Of VariableDeclaration)
+                        Dim newVariables As Generic.List(Of LocalVariableDeclaration)
                         newVariables = ParseLocalDeclarationStatement(result)
                         If newVariables Is Nothing Then Helper.ErrorRecoveryNotImplemented()
                         result.AddVariables(newVariables)

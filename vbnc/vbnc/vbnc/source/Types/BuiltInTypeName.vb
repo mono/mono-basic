@@ -38,7 +38,7 @@ Public Class BuiltInTypeName
         Return New BuiltInTypeName(NewParent, m_TypeName)
     End Function
 
-    ReadOnly Property ResolvedType() As Type
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeResolution.KeywordToType(m_TypeName)
         End Get

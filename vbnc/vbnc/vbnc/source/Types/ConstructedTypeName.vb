@@ -27,9 +27,9 @@ Public Class ConstructedTypeName
     Private m_QualifiedIdentifier As QualifiedIdentifier
     Private m_TypeArgumentList As TypeArgumentList
 
-    Private m_ResolvedType As Type
-    Private m_OpenResolvedType As Type
-    Private m_ClosedResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
+    Private m_OpenResolvedType As mono.Cecil.TypeReference
+    Private m_ClosedResolvedType As mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
@@ -53,13 +53,13 @@ Public Class ConstructedTypeName
         Return result
     End Function
 
-    ReadOnly Property OpenResolvedType() As Type
+    ReadOnly Property OpenResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_OpenResolvedType
         End Get
     End Property
 
-    ReadOnly Property ClosedResolvedType() As Type
+    ReadOnly Property ClosedResolvedType() As mono.Cecil.TypeReference
         Get
             Return m_ClosedResolvedType
         End Get
@@ -77,7 +77,7 @@ Public Class ConstructedTypeName
         End Get
     End Property
 
-    ReadOnly Property ResolvedType() As Type
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType
         End Get
@@ -94,16 +94,17 @@ Public Class ConstructedTypeName
         If result = False Then Return result
 
         If nri.FoundOnlyOneObject Then
-            If nri.FoundIs(Of TypeDescriptor)() Then
-                m_OpenResolvedType = nri.FoundAs(Of TypeDescriptor)()
-            ElseIf nri.FoundIs(Of IType)() Then
-                m_OpenResolvedType = nri.FoundAs(Of IType).TypeDescriptor
-            ElseIf nri.FoundIs(Of Type)() Then
+            'If nri.FoundIs(Of TypeDescriptor)() Then
+            '    m_OpenResolvedType = nri.FoundAs(Of TypeDescriptor)()
+            'Else
+            If nri.FoundIs(Of IType)() Then
+                m_OpenResolvedType = nri.FoundAs(Of IType).CecilType
+            ElseIf nri.FoundIs(Of Mono.Cecil.TypeReference)() Then
                 m_OpenResolvedType = nri.FoundAsType
             Else
                 Helper.AddError(Me)
             End If
-            Dim GenericArguments() As Type
+            Dim GenericArguments() As Mono.Cecil.TypeReference
             GenericArguments = m_TypeArgumentList.AsTypeArray
             m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, GenericArguments)
             m_ResolvedType = m_ClosedResolvedType

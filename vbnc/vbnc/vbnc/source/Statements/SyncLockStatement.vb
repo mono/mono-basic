@@ -56,15 +56,15 @@ Public Class SyncLockStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim lockType As Type = Helper.GetTypeOrTypeBuilder(m_Lock.ExpressionType)
+        Dim lockType As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeBuilder(Compiler, m_Lock.ExpressionType)
 
-        Dim lockVariable As LocalBuilder
+        Dim lockVariable As Mono.Cecil.Cil.VariableDefinition
         lockVariable = Emitter.DeclareLocal(Info, lockType)
 
         result = m_Lock.GenerateCode(Info.Clone(Me, True, False, lockType)) AndAlso result
         Emitter.EmitStoreVariable(Info, lockVariable)
 
-        If Helper.CompareType(Compiler.TypeCache.System_Object, lockVariable.LocalType) Then
+        If Helper.CompareType(Compiler.TypeCache.System_Object, lockVariable.VariableType) Then
             Emitter.EmitLoadVariable(Info, lockVariable)
             Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ObjectFlowControl__CheckForSyncLockOnValueType_Object)
         End If

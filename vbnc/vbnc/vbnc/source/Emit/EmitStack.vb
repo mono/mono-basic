@@ -24,16 +24,16 @@
 #End If
 
 Public Class EmitStack
-    Inherits Generic.Stack(Of Type)
+    Inherits Generic.Stack(Of Mono.Cecil.TypeReference)
 
     Private m_Compiler As Compiler
 
-    Shadows Function Peek() As Type
+    Shadows Function Peek() As Mono.Cecil.TypeReference
         Return MyBase.Peek
     End Function
 
     '<Diagnostics.Conditional("DEBUG")> _
-    Public Sub SwitchHead(ByVal FromType As Type, ByVal ToType As Type)
+    Public Sub SwitchHead(ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference)
         Me.Pop(FromType)
         Me.Push(ToType)
     End Sub
@@ -66,7 +66,7 @@ Public Class EmitStack
     End Property
 
     '<Diagnostics.Conditional("DEBUG")> _
-    Shadows Sub Push(ByVal Type As Type)
+    Shadows Sub Push(ByVal Type As Mono.Cecil.TypeReference)
         MyBase.Push(Type)
 #If LOGDEBUGSTACKTYPES Then
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Pushed stack type ({1} left on the stack): {0,-30} Stack now: {2}", Type.ToString, Count.ToString, StackState))
@@ -87,7 +87,7 @@ Public Class EmitStack
     End Function
 
     '<Diagnostics.Conditional("DEBUG")> _
-    Shadows Sub Pop(ByVal Type As Type)
+    Shadows Sub Pop(ByVal Type As Mono.Cecil.TypeReference)
         Dim logStack As Boolean = False
 
 #If LOGDEBUGSTACKTYPES Then

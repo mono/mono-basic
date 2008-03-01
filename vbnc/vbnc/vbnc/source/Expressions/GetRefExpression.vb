@@ -25,7 +25,7 @@ Public Class GetRefExpression
     Inherits Expression
 
     Private m_Expression As Expression
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     ReadOnly Property Expression() As Expression
         Get
@@ -80,7 +80,7 @@ Public Class GetRefExpression
                     Emitter.EmitLoadVariableLocation(refInfo, varC.ParameterInfo)
                 ElseIf varC.FieldInfo IsNot Nothing Then
                     If varC.FieldInfo.IsLiteral Then
-                        Dim local As LocalBuilder
+                        Dim local As Mono.Cecil.Cil.VariableDefinition
                         local = Emitter.DeclareLocal(Info, varC.FieldInfo.FieldType)
                         Emitter.EmitLoadVariable(Info, varC.FieldInfo)
                         Emitter.EmitStoreVariable(Info, local)
@@ -89,13 +89,13 @@ Public Class GetRefExpression
                         Emitter.EmitLoadVariableLocation(refInfo, varC.FieldInfo)
                     End If
                 ElseIf varC.ArrayVariable IsNot Nothing Then
-                    Dim arrtype As Type = varC.ArrayVariable.ExpressionType
-                    Dim elementtype As Type = arrtype.GetElementType
-                    Dim isnonprimitivevaluetype As Boolean = elementtype.IsPrimitive = False AndAlso elementtype.IsValueType
+                    Dim arrtype As Mono.Cecil.TypeReference = varC.ArrayVariable.ExpressionType
+                    Dim elementtype As Mono.Cecil.TypeReference = CecilHelper.GetElementType(arrtype)
+                    Dim isnonprimitivevaluetype As Boolean = CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso elementtype.IsValueType
 
                     result = varC.ArrayVariable.GenerateCode(Info.Clone(Me, True, False, arrtype)) AndAlso result
 
-                    Dim methodtypes As New Generic.List(Of Type)
+                    Dim methodtypes As New Generic.List(Of Mono.Cecil.TypeReference)
 
                     Dim elementInfo As EmitInfo = Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)
                     For i As Integer = 0 To varC.Arguments.Count - 1
@@ -107,7 +107,7 @@ Public Class GetRefExpression
                     Dim rInfo As EmitInfo = Info.Clone(Me, True, False, elementtype)
                     methodtypes.Add(elementtype)
 
-                    If arrtype.GetArrayRank = 1 Then
+                    If CecilHelper.GetArrayRank(arrtype) = 1 Then
                         If isnonprimitivevaluetype Then
                             Emitter.EmitLoadElementAddress(Info, elementtype, arrtype)
                             'result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
@@ -130,7 +130,7 @@ Public Class GetRefExpression
                     End If
                 ElseIf varC.Expression IsNot Nothing Then
                     If TypeOf varC.Expression Is MeExpression Then
-                        Dim local As LocalBuilder
+                        Dim local As Mono.Cecil.Cil.VariableDefinition
                         local = Emitter.DeclareLocal(Info, varC.Expression.ExpressionType)
                         Emitter.EmitLoadMe(Info, varC.Expression.ExpressionType)
                         Emitter.EmitStoreVariable(Info, local)
@@ -146,7 +146,7 @@ Public Class GetRefExpression
             Case ExpressionClassification.Classifications.Value
                 result = m_Expression.GenerateCode(Info.Clone(Me, m_Expression.ExpressionType)) AndAlso result
 
-                Dim local As LocalBuilder
+                Dim local As Mono.Cecil.Cil.VariableDefinition
                 local = Emitter.DeclareLocal(Info, m_Expression.ExpressionType)
                 Emitter.EmitStoreVariable(Info, local)
                 Emitter.EmitLoadVariableLocation(Info, local)
@@ -161,7 +161,7 @@ Public Class GetRefExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

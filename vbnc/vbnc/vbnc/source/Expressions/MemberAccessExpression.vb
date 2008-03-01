@@ -149,7 +149,7 @@ Public Class MemberAccessExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Classification.GetType(True)
         End Get
@@ -251,7 +251,7 @@ Public Class MemberAccessExpression
         '* If E is the keyword Global, and I is the name of an accessible type in the global namespace, 
         '  then the result is that type.
         If TypeOf m_First Is GlobalExpression Then
-            Dim foundType As Type
+            Dim foundType As Mono.Cecil.TypeReference
             foundType = Compiler.TypeManager.GetTypesByNamespace("").Item(Name)
             If foundType IsNot Nothing Then
                 Classification = New TypeClassification(Me, foundType)
@@ -267,11 +267,11 @@ Public Class MemberAccessExpression
         '* If E is classified as a namespace and I is the name of an accessible member of that namespace, 
         '  then the result is that member. The result is classified as a namespace or a type depending on the member.
         If m_First.Classification.IsNamespaceClassification Then
-            Dim nstypes As Generic.List(Of Type) = Nothing
+            Dim nstypes As Generic.List(Of Mono.Cecil.TypeReference) = Nothing
             Dim ns As [Namespace] = m_First.Classification.AsNamespaceClassification.Namespace
             Dim nsname As String = ns.Name
             Dim foundns As [Namespace]
-            Dim foundType As Type
+            Dim foundType As Mono.Cecil.TypeReference
 
             foundns = Compiler.TypeManager.Namespaces.Item(ns, Name)
             foundType = Compiler.TypeManager.TypesByNamespace(nsname).Item(Name)
@@ -288,7 +288,7 @@ Public Class MemberAccessExpression
 
             'TODO: The spec is missing info about modules in namespaces. Doing check anyway.
             Dim modules As TypeDictionary = Compiler.TypeManager.GetModulesByNamespace(ns.ToString)
-            Dim members As Generic.List(Of MemberInfo) = Helper.GetMembersOfTypes(Compiler, modules, Name)
+            Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Helper.GetMembersOfTypes(Compiler, modules, Name)
             If members.Count > 0 Then
                 Dim first As Object = members(0)
                 If Helper.IsMethodDeclaration(first) Then
@@ -303,7 +303,7 @@ Public Class MemberAccessExpression
                     End If
                 ElseIf Helper.IsFieldDeclaration(first) Then
                     If members.Count = 1 Then
-                        Classification = New VariableClassification(Me, DirectCast(first, FieldInfo), Nothing)
+                        Classification = New VariableClassification(Me, DirectCast(first, Mono.Cecil.FieldReference), Nothing)
                         Return True
                     Else
                         Helper.AddError(Me)
@@ -337,21 +337,24 @@ Public Class MemberAccessExpression
                 '** If I is the keyword New, then a compile-time error occurs.
                 Helper.AddError(Me)
             End If
-            Dim members As Generic.List(Of MemberInfo)
+            Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
+            Dim entry As MemberCacheEntry
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
-            members = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name).Members
-
-            Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
-            withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
-            If withTypeArgs IsNot Nothing Then
-                members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+            entry = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name)
+            If entry IsNot Nothing Then
+                members = entry.Members
+                Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
+                withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
+                If withTypeArgs IsNot Nothing Then
+                    members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+                End If
+                members = Helper.FilterExternalInaccessible(Me.Compiler, members)
             End If
-            members = Helper.FilterExternalInaccessible(Me.Compiler, members)
 
-            Helper.StopIfDebugging(members.Count = 0)
+            Helper.StopIfDebugging(members Is Nothing OrElse members.Count = 0)
 
-            If members.Count > 0 Then
+            If members IsNot Nothing AndAlso members.Count > 0 Then
                 Dim first As Object = members(0)
                 '** If I identifies one or more methods, then the result is a method group with the associated 
                 '   type argument list and no associated instance expression.
@@ -378,15 +381,15 @@ Public Class MemberAccessExpression
                 '   outside the shared constructor of the type in which the variable is declared, then the result is the 
                 '   value of the shared variable I in E. Otherwise, the result is the shared variable I in E.
                 If Helper.IsFieldDeclaration(first) Then
-                    Dim fld As FieldInfo = TryCast(first, FieldInfo)
+                    Dim fld As Mono.Cecil.FieldReference = TryCast(first, Mono.Cecil.FieldReference)
                     If fld Is Nothing Then
-                        Dim var As VariableDeclaration = TryCast(first, VariableDeclaration)
+                        Dim var As TypeVariableDeclaration = TryCast(first, TypeVariableDeclaration)
                         Helper.Assert(var IsNot Nothing)
                         fld = var.FieldBuilder
                     End If
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
 
-                    If fld.IsStatic AndAlso CBool(fld.Attributes And FieldAttributes.InitOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
+                    If Helper.IsShared(fld) AndAlso CBool(CecilHelper.FindDefinition(fld).Attributes And Mono.Cecil.FieldAttributes.InitOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                         Classification = New ValueClassification(Me, fld, Nothing)
                         Return True
                     Else
@@ -398,11 +401,11 @@ Public Class MemberAccessExpression
                 '** If I identifies a shared event, the result is an event access with no associated instance expression.
                 If Helper.IsEventDeclaration(first) Then
                     Dim red As EventDeclaration = TryCast(first, EventDeclaration)
-                    Dim red2 As EventInfo = TryCast(first, EventInfo)
+                    Dim red2 As Mono.Cecil.EventDefinition = CecilHelper.FindDefinition(TryCast(first, Mono.Cecil.EventReference))
                     If red IsNot Nothing AndAlso red.Modifiers.Is(ModifierMasks.Shared) Then
                         Classification = New EventAccessClassification(Me, red.EventDescriptor, Nothing)
                         Return True
-                    ElseIf red2 IsNot Nothing AndAlso red2.GetAddMethod(True).IsStatic Then
+                    ElseIf red2 IsNot Nothing AndAlso red2.AddMethod.IsStatic Then
                         Classification = New EventAccessClassification(Me, red2, Nothing)
                         Return True
                     End If
@@ -452,7 +455,7 @@ Public Class MemberAccessExpression
         '   with an associated instance expression of E.
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
         If m_First.Classification.IsValueClassification OrElse m_First.Classification.IsVariableClassification OrElse m_First.Classification.CanBeValueClassification Then
-            Dim T As Type 'Descriptor
+            Dim T As Mono.Cecil.TypeReference 'Descriptor
 
             If m_First.Classification.IsValueClassification Then
                 T = m_First.Classification.AsValueClassification.Type
@@ -468,7 +471,7 @@ Public Class MemberAccessExpression
                 Throw New InternalException(Me)
             End If
 
-            If T.IsByRef Then
+            If CecilHelper.IsByRef(T) Then
                 m_First = m_First.DereferenceByRef()
                 T = m_First.ExpressionType
             End If
@@ -485,10 +488,10 @@ Public Class MemberAccessExpression
                 End If
             End If
 
-            Dim members As Generic.List(Of MemberInfo)
+            Dim members As Generic.List(Of Mono.Cecil.MemberReference)
             Dim member As MemberCacheEntry
 
-            member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, Me.FindFirstParent_IType.TypeDescriptor)
+            member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, Me.FindFirstParent_IType.CecilType)
             If member Is Nothing Then
                 If Me.File.IsOptionStrictOn = False AndAlso Helper.CompareType(T, Compiler.TypeCache.System_Object) Then
                     Classification = New LateBoundAccessClassification(Me, m_First, Nothing, Name)
@@ -545,7 +548,7 @@ Public Class MemberAccessExpression
                 '   Otherwise, if T is a value type and the expression E is classified as a variable, the result is 
                 '   a variable; otherwise the result is a value.
                 Dim var As VariableDeclaration = TryCast(first, VariableDeclaration)
-                Dim fld As FieldInfo = TryCast(first, FieldInfo)
+                Dim fld As Mono.Cecil.FieldReference = TryCast(first, Mono.Cecil.FieldReference)
 
                 If var IsNot Nothing Then
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
@@ -553,7 +556,7 @@ Public Class MemberAccessExpression
                     If var.Modifiers.Is(ModifierMasks.ReadOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> var.Modifiers.Is(ModifierMasks.Shared)) Then
                         Classification = New ValueClassification(Me, var)
                         Return True
-                    ElseIf T.IsClass Then
+                    ElseIf CecilHelper.FindDefinition(T).IsClass Then
                         Classification = New VariableClassification(Me, var)
                         Return True
                     ElseIf T.IsValueType Then
@@ -570,20 +573,21 @@ Public Class MemberAccessExpression
                         Throw New InternalException(Me)
                     End If
                 ElseIf fld IsNot Nothing Then
-                    If Helper.IsAccessible(Me, fld.Attributes, fld.DeclaringType, Me.FindFirstParent_IType.TypeDescriptor) = False Then
-                        Return Compiler.Report.ShowMessage(Messages.VBNC30390, Location, fld.DeclaringType.FullName, fld.Name, Helper.ToString(fld.Attributes))
+                    Dim fD As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(fld)
+                    If Helper.IsAccessible(Me, fD.Attributes, fld.DeclaringType, Me.FindFirstParent_IType.CecilType) = False Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30390, Location, fld.DeclaringType.FullName, fld.Name, Helper.ToString(fD.Attributes))
                     End If
 
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
-                    If fld.IsInitOnly AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> fld.IsStatic) Then
-                        If fld.IsStatic Then
+                    If fD.IsInitOnly AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> fD.IsStatic) Then
+                        If fD.IsStatic Then
                             Classification = New ValueClassification(Me, fld, Nothing)
                         Else
                             Classification = New ValueClassification(Me, fld, m_First)
                         End If
                         Return True
-                    ElseIf T.IsClass Then
-                        If fld.IsStatic Then
+                    ElseIf CecilHelper.FindDefinition(T).IsClass Then
+                        If fD.IsStatic Then
                             Classification = New VariableClassification(Me, fld, Nothing)
                         Else
                             Classification = New VariableClassification(Me, fld, m_First)
@@ -594,14 +598,14 @@ Public Class MemberAccessExpression
                             If Not TypeOf m_First Is InstanceExpression Then
                                 m_First = m_First.GetObjectReference
                             End If
-                            If fld.IsStatic Then
+                            If fD.IsStatic Then
                                 Classification = New VariableClassification(Me, fld, Nothing)
                             Else
                                 Classification = New VariableClassification(Me, fld, m_First)
                             End If
                             Return True
                         ElseIf m_First.Classification.IsValueClassification Then
-                            If fld.IsStatic Then
+                            If fD.IsStatic Then
                                 Classification = New ValueClassification(Me, fld, Nothing)
                             Else
                                 Classification = New ValueClassification(Me, fld, m_First)
@@ -611,7 +615,7 @@ Public Class MemberAccessExpression
                             m_First = m_First.ReclassifyToValueExpression
                             result = m_First.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
 
-                            If fld.IsStatic Then
+                            If fD.IsStatic Then
                                 Classification = New ValueClassification(Me, fld, Nothing)
                             Else
                                 Classification = New ValueClassification(Me, fld, m_First)
@@ -628,14 +632,14 @@ Public Class MemberAccessExpression
                 '** If I identifies an event, the result is an event access with an associated instance expression of E.
                 If Helper.IsEventDeclaration(first) Then
                     Dim red As EventDeclaration = TryCast(first, EventDeclaration)
-                    If red Is Nothing AndAlso TypeOf first Is EventDescriptor Then
-                        red = DirectCast(first, EventDescriptor).EventDeclaration
+                    If red Is Nothing AndAlso TypeOf first Is Mono.Cecil.EventReference Then
+                        red = DirectCast(CecilHelper.FindDefinition(DirectCast(first, Mono.Cecil.EventReference)).Annotations(Compiler), EventDeclaration)
                     End If
                     If red IsNot Nothing Then
                         Classification = New EventAccessClassification(Me, red.EventDescriptor, m_First)
                         Return True
                     End If
-                    Dim eInfo As EventInfo = TryCast(first, EventInfo)
+                    Dim eInfo As Mono.Cecil.EventReference = TryCast(first, Mono.Cecil.EventReference)
                     If eInfo IsNot Nothing Then
                         Classification = New EventAccessClassification(Me, eInfo, m_First)
                         Return True
@@ -650,9 +654,9 @@ Public Class MemberAccessExpression
                 End If
 
                 '** If I identifies an enumeration member, then the result is the value of that enumeration member.
-                If Helper.IsEnumFieldDeclaration(first) Then
+                If Helper.IsEnumFieldDeclaration(Compiler, first) Then
                     Dim em As EnumMemberDeclaration = TryCast(first, EnumMemberDeclaration)
-                    Dim emfld As FieldInfo = TryCast(first, FieldInfo)
+                    Dim emfld As Mono.Cecil.FieldReference = TryCast(first, Mono.Cecil.FieldReference)
                     If em IsNot Nothing Then
                         Classification = New ValueClassification(Me, em)
                         Return True
@@ -665,9 +669,8 @@ Public Class MemberAccessExpression
                 '** If T is Object, then the result is a late-bound member lookup classified as a late-bound access 
                 '   with an associated instance expression of E.
                 If T IsNot Nothing Then
-                    Dim td As TypeDescriptor = TryCast(T, TypeDescriptor)
-                    Dim compresult As Boolean = False
-                    If td Is Nothing Then compresult = Helper.CompareType(T, Compiler.TypeCache.System_Object)
+                    'Dim td As TypeDescriptor = TryCast(T, TypeDescriptor)
+                    Dim compresult As Boolean = Helper.CompareType(T, Compiler.TypeCache.System_Object)
                     If compresult Then
                         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     End If

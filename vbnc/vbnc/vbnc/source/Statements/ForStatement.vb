@@ -45,7 +45,7 @@ Public Class ForStatement
     Private m_NextExpressionList As ExpressionList
 
     Private m_NextIteration As Label
-    Private m_LoopType As Type
+    Private m_LoopType As Mono.Cecil.TypeReference
 
     Private m_IsLateBound As Boolean
     Private m_IsDecimal As Boolean
@@ -55,15 +55,15 @@ Public Class ForStatement
         Public Variable As Object
         Public InstanceExpression As Expression
 
-        ReadOnly Property FieldInfo() As FieldInfo
+        ReadOnly Property FieldInfo() As Mono.Cecil.FieldReference
             Get
-                Return DirectCast(Variable, FieldInfo)
+                Return DirectCast(Variable, Mono.Cecil.FieldReference)
             End Get
         End Property
 
-        ReadOnly Property LocalBuilder() As LocalBuilder
+        ReadOnly Property LocalBuilder() As Mono.Cecil.Cil.VariableDefinition
             Get
-                Return DirectCast(Variable, LocalBuilder)
+                Return DirectCast(Variable, Mono.Cecil.Cil.VariableDefinition)
             End Get
         End Property
 
@@ -246,10 +246,10 @@ Public Class ForStatement
         Dim conditionLabel As Label
         Dim startlabel As Label
         Dim loopCounter As LoopCounterData
-        Dim loopMax As LocalBuilder
-        Dim loopStart As LocalBuilder
-        Dim loopStep As LocalBuilder
-        Dim loopLateBoundObject As LocalBuilder = Nothing
+        Dim loopMax As Mono.Cecil.Cil.VariableDefinition
+        Dim loopStart As Mono.Cecil.Cil.VariableDefinition
+        Dim loopStep As Mono.Cecil.Cil.VariableDefinition
+        Dim loopLateBoundObject As Mono.Cecil.Cil.VariableDefinition = Nothing
         Dim loadInfo As EmitInfo
 
         conditionLabel = Emitter.DefineLabel(Info)
@@ -388,9 +388,9 @@ Public Class ForStatement
                 endCheck = Emitter.DefineLabel(Info)
 
                 Emitter.EmitLoadVariable(Info, loopStep)
-                Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
+                Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), TypeConverter.ConvertTo(Compiler, 0, m_LoopType))
                 Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
-                Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
+                Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brfalse_S, negativeLabel)
                 Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
                 Emitter.EmitLE(Info, m_LoopType) 'Positive check
                 Emitter.EmitBranch(Info, endCheck)
@@ -450,7 +450,7 @@ Public Class ForStatement
 
         If result = False Then Return result
 
-        Select Case Type.GetTypeCode(m_LoopType)
+        Select Case Helper.GetTypeCode(Compiler, m_LoopType)
             Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
                 result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
             Case TypeCode.Decimal

@@ -20,9 +20,9 @@
 Public Class ExpressionResolveInfo
     Inherits ResolveInfo
 
-    Public LHSType As Type
+    Public LHSType As Mono.Cecil.TypeReference
 
-    Sub New(ByVal Compiler As Compiler, ByVal LHSType As Type)
+    Sub New(ByVal Compiler As Compiler, ByVal LHSType As Mono.Cecil.TypeReference)
         MyBase.New(Compiler)
         Me.LHSType = LHSType
     End Sub

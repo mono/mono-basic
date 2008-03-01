@@ -31,7 +31,7 @@ Public Class PropertyGetDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
+    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
 
         Dim mySignature As FunctionSignature
 
@@ -54,7 +54,7 @@ Public Class PropertyGetDeclaration
             retTypeAttributes = Nothing
         End If
         If PropertySignature.Parameters IsNot Nothing Then
-            params = PropertySignature.Parameters.Clone(mySignature)
+            params = PropertySignature.Parameters.Clone(Me)
         Else
             params = Nothing
         End If

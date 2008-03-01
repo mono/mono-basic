@@ -57,7 +57,6 @@ Public Class CustomEventDeclaration
         Dim result As Boolean = True
 
         If m_Type IsNot Nothing Then
-            Helper.Assert(EventType Is Nothing)
             result = m_Type.ResolveTypeReferences AndAlso result
             EventType = m_Type.ResolvedType
         End If
