@@ -23,12 +23,12 @@ DISTFILES = \
 
 VERSION_VB=source/General/Version.vb
 
-version: source/Version.vb source/VersionAttribute.vb ../../configure
+version: $(VERSION_VB) ../../configure
 	-cat ../License\ FileHeader.txt > $(VERSION_VB)
 	-echo -n "<Assembly: AssemblyInformationalVersion (\"" >> $(VERSION_VB)
 	-echo -n `more ../../configure | grep VERSION | grep -v echo | sed 's/VERSION=//'` >> $(VERSION_VB)
 	-echo -n " - r" >> $(VERSION_VB)
-	-echo -n `svn info ../../ | grep Revision | sed 's/Revision: //'` >> $(VERSION_VB)
+	-echo -n `svn info . | grep Revision | sed 's/Revision: //'` >> $(VERSION_VB)
 	-echo -n "\")>" >> $(VERSION_VB)
 
 all-local: vbnc.Errors.resources vbnc.exe.sources version
