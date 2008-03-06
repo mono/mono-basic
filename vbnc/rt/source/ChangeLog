@@ -1,5 +1,9 @@
 2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Tests.vb: Order directories and files.
+
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* AssemblyInfo.vb: Updated.
 	* FileTabPage.vb: Handle unix-style eols too.
 

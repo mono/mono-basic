@@ -229,6 +229,7 @@ Public Class Tests
 
         'Get all the code files in the directory.
         Dim files() As String = IO.Directory.GetFiles(m_Path, "*.vb")
+        Array.Sort(files)
         For Each file As String In files
             Dim newTest, oldTest As Test
             newTest = New Test(file, Me)
@@ -249,6 +250,8 @@ Public Class Tests
     Function GetContainedTestDirectories() As Generic.List(Of String)
         Dim result As New Generic.List(Of String)
         Dim dirs() As String = IO.Directory.GetDirectories(m_Path)
+
+        Array.Sort(dirs)
 
         'Add all the subdirectories (only if they are neither hidden nor system directories and they 
         'must not be named "testoutput"
