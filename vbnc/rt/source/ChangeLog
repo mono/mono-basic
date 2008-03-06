@@ -1,3 +1,8 @@
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb: Updated.
+	* FileTabPage.vb: Handle unix-style eols too.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: Strip invalid characters from log filenames.
