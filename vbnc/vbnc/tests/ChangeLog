@@ -1,3 +1,7 @@
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-325331.vb: Added.
+
 2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SelfTest/SelfCompile.files.linux,
