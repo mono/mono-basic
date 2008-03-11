@@ -1,3 +1,8 @@
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CompileTime2/LessGeneric2.vb: Fix this test.
+	* CompileTime2/OptionStrict1.vb: Added.
+
 2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-325331.vb: Added.

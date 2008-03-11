@@ -405,7 +405,7 @@
   <data name="30568"><value>CHANGEME</value></data>
   <data name="30569"><value>CHANGEME</value></data>
   <data name="30572"><value>CHANGEME</value></data>
-  <data name="30574"><value>CHANGEME</value></data>
+  <data name="30574"><value>Late binding is not allowed when Option Strict On is in effect.</value></data>
   <data name="30576"><value>CHANGEME</value></data>
   <data name="30577"><value>CHANGEME</value></data>
   <data name="30578"><value>CHANGEME</value></data>
@@ -418,7 +418,7 @@
   <data name="30585"><value>CHANGEME</value></data>
   <data name="30587"><value>CHANGEME</value></data>
   <data name="30588"><value>CHANGEME</value></data>
-  <data name="30590"><value>CHANGEME</value></data>
+  <data name="30590"><value>Cannot find the event '{0}'.</value></data>
   <data name="30591"><value>CHANGEME</value></data>
   <data name="30593"><value>CHANGEME</value></data>
   <data name="30594"><value>CHANGEME</value></data>
@@ -593,6 +593,7 @@
   <data name="30789"><value>CHANGEME</value></data>
   <data name="30790"><value>CHANGEME</value></data>
   <data name="30791"><value>CHANGEME</value></data>
+  <data name="30796"><value>None of the accessible 'Main' methods with the appropriate signature found in '{0}' can be the startup method since they are all either generic or nested in generic types.</value></data>
   <data name="30800"><value>CHANGEME</value></data>
   <data name="30801"><value>CHANGEME</value></data>
   <data name="30802"><value>CHANGEME</value></data>

@@ -1,5 +1,11 @@
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* vbnc.snk: Deleted. was never needed.
+	* Resources/Errors.resx, Resources/Source.xml, General/Messages.vb: Updated
+	  with more error messages.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* vbnc9.sln, vbnc9.vbproj: Added VS2008 project/solution files.
 
 2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 

@@ -2634,7 +2634,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30572 = 30572
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Late binding is not allowed when Option Strict On is in effect."
     ''' VB   = "Option Strict On disallows late binding."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2725,7 +2725,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30588 = 30588
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Cannot find the event '{0}'."
     ''' VB   = "Event '|1' cannot be found."
     ''' </summary>
     ''' <remarks></remarks>
@@ -3948,6 +3948,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30791 = 30791
+
+    ''' <summary>
+    ''' VBNC = "None of the accessible 'Main' methods with the appropriate signature found in '{0}' can be the startup method since they are all either generic or nested in generic types."
+    ''' VB   = "None of the accessible 'Main' methods with the appropriate signatures found in '|1' can be the startup method since they are all either generic or nested in generic types."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC30796 = 30796
 
     ''' <summary>
     ''' VBNC = "CHANGEME"
