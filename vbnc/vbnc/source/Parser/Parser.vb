@@ -78,24 +78,25 @@ Partial Public Class Parser
         While tm.CurrentToken.Equals(KS.Option)
             If OptionExplicitStatement.IsMe(tm) Then
                 If m_OptionExplicit IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Explicit") AndAlso result
                 End If
                 m_OptionExplicit = ParseOptionExplicitStatement(CodeFile)
                 If m_OptionExplicit Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionStrictStatement.IsMe(tm) Then
                 If m_OptionStrict IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Strict") AndAlso result
                 End If
                 m_OptionStrict = ParseOptionStrictStatement(CodeFile)
                 If m_OptionStrict Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionCompareStatement.IsMe(tm) Then
                 If m_OptionCompare IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Compare") AndAlso result
                 End If
                 m_OptionCompare = ParseOptionCompareStatement(CodeFile)
                 If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC30206, tm.CurrentLocation) AndAlso result
+                tm.GotoNewline(False)
             End If
         End While
 
@@ -128,7 +129,8 @@ Partial Public Class Parser
         ElseIf tm.Accept("Binary") Then
             m_IsBinary = True
         Else
-            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+            Compiler.Report.ShowMessage(Messages.VBNC30207, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -154,9 +156,10 @@ Partial Public Class Parser
             m_Off = False
         ElseIf tm.Accept("Off") Then
             m_Off = True
+        ElseIf Not tm.AcceptEndOfStatement() Then
+            Compiler.Report.ShowMessage(Messages.VBNC30620, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
-
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Off)
 
@@ -178,9 +181,10 @@ Partial Public Class Parser
             m_Off = False
         ElseIf tm.Accept("Off") Then
             m_Off = True
+        ElseIf Not tm.AcceptEndOfStatement() Then
+            Compiler.Report.ShowMessage(Messages.VBNC30640, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
-
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Off)
         Return result
@@ -432,7 +436,7 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If iLastLocation.Equals(tm.CurrentLocation) AndAlso Compiler.Report.Errors = 0 Then
+            If iLastLocation.Equals(tm.CurrentLocation) Then
                 result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
             End If

@@ -195,7 +195,7 @@
   <data name="30203"><value>Not valid as identifier.</value></data>
   <data name="30204"><value>CHANGEME</value></data>
   <data name="30205"><value>Expected end of statement.</value></data>
-  <data name="30206"><value>'Option' must be followed by 'Explicit', 'Strict' or 'Compare'.</value></data>
+  <data name="30206"><value>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</value></data>
   <data name="30207"><value>'Option Compare' must be followed by 'Text' or 'Binary'.</value></data>
   <data name="30208"><value>CHANGEME</value></data>
   <data name="30209"><value>An 'As' clause is required if Option Strict is in effect.</value></data>
@@ -206,7 +206,7 @@
   <data name="30218"><value>CHANGEME</value></data>
   <data name="30220"><value>CHANGEME</value></data>
   <data name="30224"><value>CHANGEME</value></data>
-  <data name="30225"><value>CHANGEME</value></data>
+  <data name="30225"><value>Option {0} statement can only appear once per file.</value></data>
   <data name="30230"><value>CHANGEME</value></data>
   <data name="30231"><value>CHANGEME</value></data>
   <data name="30232"><value>CHANGEME</value></data>
@@ -548,7 +548,7 @@
   <data name="30734"><value>CHANGEME</value></data>
   <data name="30735"><value>CHANGEME</value></data>
   <data name="30736"><value>CHANGEME</value></data>
-  <data name="30737"><value>CHANGEME</value></data>
+  <data name="30737"><value>No accessible 'Main' method with an appropriate signature was found in '{0}'.</value></data>
   <data name="30738"><value>More than one 'Sub Main' was found in '{0}'.</value></data>
   <data name="30739"><value>CHANGEME</value></data>
   <data name="30741"><value>CHANGEME</value></data>

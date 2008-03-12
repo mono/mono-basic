@@ -1,5 +1,9 @@
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* vbnc.Errors.resources: Added more messages.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* vbnc.Errors.resources: Updated with more error messages.
 
 2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 

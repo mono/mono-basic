@@ -1,5 +1,15 @@
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Statements/OptionExplicitStatement.vb,
+	  Statements/OptionStrictStatement.vb: Don't require On/Off in IsMe.
+	* Statements/OptionCompareStatement.vb: Don't require Text/Binary in IsMe.
+	* Parser/Parser.vb: Add some error handling. Fixes #361412.
+	* General/Message.vb: Fix an IOORE.
+	* General/Messages.vb, Resources/Errors.resx, Resources/Source.xml: Added
+	  more messages.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* vbnc.snk: Deleted. was never needed.
 	* Resources/Errors.resx, Resources/Source.xml, General/Messages.vb: Updated
 	  with more error messages.

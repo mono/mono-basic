@@ -1164,7 +1164,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30205 = 30205
 
     ''' <summary>
-    ''' VBNC = "'Option' must be followed by 'Explicit', 'Strict' or 'Compare'."
+    ''' VBNC = "'Option' must be followed by 'Compare', 'Explicit', or 'Strict'."
     ''' VB   = "'Option' must be followed by 'Compare', 'Explicit', or 'Strict'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1241,7 +1241,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30224 = 30224
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Option {0} statement can only appear once per file."
     ''' VB   = "'Option |1' statement can only appear once per file."
     ''' </summary>
     ''' <remarks></remarks>
@@ -3635,7 +3635,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30736 = 30736
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "No accessible 'Main' method with an appropriate signature was found in '{0}'."
     ''' VB   = "No accessible 'Main' method with an appropriate signature was found in '|1'."
     ''' </summary>
     ''' <remarks></remarks>

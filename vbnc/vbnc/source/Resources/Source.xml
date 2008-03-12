@@ -824,7 +824,7 @@
 	</Message>
 	<Message id="30206" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>'Option' must be followed by 'Explicit', 'Strict' or 'Compare'.</VBNCValue>
+		<VBNCValue>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</VBNCValue>
 		<VBValue>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</VBValue>
 	</Message>
 	<Message id="30207" level="Error">
@@ -879,7 +879,7 @@
 	</Message>
 	<Message id="30225" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Option {0} statement can only appear once per file.</VBNCValue>
 		<VBValue>'Option |1' statement can only appear once per file.</VBValue>
 	</Message>
 	<Message id="30230" level="Error">
@@ -2589,7 +2589,7 @@
 	</Message>
 	<Message id="30737" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>No accessible 'Main' method with an appropriate signature was found in '{0}'.</VBNCValue>
 		<VBValue>No accessible 'Main' method with an appropriate signature was found in '|1'.</VBValue>
 	</Message>
 	<Message id="30738" level="Error">

@@ -1,5 +1,11 @@
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Errors/30206.vb, Errors/30207.vb, Errors/30225.vb, Errors/30225-1.vb,
+	  Errors/30225-2.vb, Errors/30574.vb, Errors/30620.vb, Errors/30640.vb:
+	  Added.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* CompileTime2/LessGeneric2.vb: Fix this test.
 	* CompileTime2/OptionStrict1.vb: Added.
 
