@@ -2361,7 +2361,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30505 = 30505
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Handles clause requires a variable declared with WithEvents."
     ''' VB   = "Handles clause requires a WithEvents variable."
     ''' </summary>
     ''' <remarks></remarks>

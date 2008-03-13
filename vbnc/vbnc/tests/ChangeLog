@@ -1,3 +1,9 @@
+2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Errors/30506-1.vb, Errors/30506-2.vb, Errors/30506-3.vb,
+	  Errors/30506-4.vb, Errors/30506-5.vb, Errors/30506-6.vb,
+	  Errors/30590.vb: Added.
+
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Errors/30206.vb, Errors/30207.vb, Errors/30225.vb, Errors/30225-1.vb,

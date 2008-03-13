@@ -461,6 +461,13 @@ Public Class MemberAccessExpression
             ElseIf m_First.Classification.CanBeValueClassification Then
                 m_First = m_First.ReclassifyToValueExpression
                 result = m_First.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+                If result = False Then
+                    If Info.IsEventResolution Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30506, Location)
+                    Else
+                        Helper.AddError(Compiler, Location, "Huh?")
+                    End If
+                End If
                 Helper.Assert(m_First.Classification IsNot Nothing)
                 Helper.Assert(m_First.Classification.AsValueClassification IsNot Nothing)
                 T = m_First.Classification.AsValueClassification.Type
@@ -497,7 +504,11 @@ Public Class MemberAccessExpression
 
                 member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, MemberVisibility.All)
                 If member Is Nothing OrElse member.Members.Count = 0 Then
-                    Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+                    If Helper.CompareType(T, Compiler.TypeCache.System_Object) Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30574, Me.Location) AndAlso result
+                    Else
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, T.FullName) AndAlso result
+                    End If
                 ElseIf member.Members.Count = 1 Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC30390, Me.Location, Name, T.FullName, Helper.GetVisibilityString(member.Members(0))) AndAlso result
                 Else

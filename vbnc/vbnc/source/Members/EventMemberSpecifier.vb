@@ -61,13 +61,15 @@ Public Class EventMemberSpecifier
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+        Dim eventInfo As ResolveInfo = ResolveInfo.Default(Compiler)
+        eventInfo.IsEventResolution = True
 
-        result = m_Expression.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
+        result = m_Expression.ResolveExpression(eventInfo) AndAlso result
 
-        If result = False Then Helper.ErrorRecoveryNotImplemented()
+        If result = False Then Return False
 
         If m_Expression.Classification.IsEventAccessClassification = False Then
-            result = Helper.AddError(Me, "Must handle an event: " & Location.ToString(Compiler)) AndAlso result
+            Return Compiler.Report.ShowMessage(Messages.VBNC30590, Me.Location, m_Second.Name)
         End If
 
         'Helper.NotImplementedYet("Variable must have WithEvents")
@@ -95,7 +97,11 @@ Public Class EventMemberSpecifier
             'Console.WriteLine(Me.Location.ToString(Compiler))
             Helper.Assert(sne IsNot Nothing)
             Dim propD As PropertyDescriptor
-            Helper.Assert(sne.Classification.IsPropertyGroupClassification)
+
+            If Not sne.Classification.IsPropertyGroupClassification Then
+                Return Compiler.Report.ShowMessage(Messages.VBNC30506, Me.Location)
+            End If
+
             Helper.Assert(sne.Classification.AsPropertyGroup.IsResolved)
             Helper.Assert(sne.Classification.AsPropertyGroup.ResolvedProperty IsNot Nothing)
 

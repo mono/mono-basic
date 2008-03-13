@@ -366,7 +366,7 @@
   <data name="30503"><value>CHANGEME</value></data>
   <data name="30504"><value>CHANGEME</value></data>
   <data name="30505"><value>CHANGEME</value></data>
-  <data name="30506"><value>CHANGEME</value></data>
+  <data name="30506"><value>Handles clause requires a variable declared with WithEvents.</value></data>
   <data name="30507"><value>CHANGEME</value></data>
   <data name="30508"><value>CHANGEME</value></data>
   <data name="30509"><value>CHANGEME</value></data>

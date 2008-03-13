@@ -1,3 +1,10 @@
+2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/MemberAccessExpression.vb, Members/EventMemberSpecifier.vb:
+	  Report 30574, 30590 and 30506.
+	* General/Messages.vb, Resources/Errors.resx, Resources/Source.xml: Updated.
+	* Infos/ResolveInfo.vb: Added IsEventResolution.
+
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Statements/OptionExplicitStatement.vb,

@@ -1679,7 +1679,7 @@
 	</Message>
 	<Message id="30506" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Handles clause requires a variable declared with WithEvents.</VBNCValue>
 		<VBValue>Handles clause requires a WithEvents variable.</VBValue>
 	</Message>
 	<Message id="30507" level="Error">
