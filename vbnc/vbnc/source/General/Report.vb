@@ -46,14 +46,6 @@ Public Class Report
     ''' <remarks></remarks>
     Private Shared m_Resources As ResourceManager
 
-    '#If DEBUG Then
-    '    ''' <summary>
-    '    ''' The filename for an xml-report.
-    '    ''' </summary>
-    '    ''' <remarks></remarks>
-    '    Private m_xmlFileName As String
-    '#End If
-
     ''' <summary>
     ''' A list of all the errors / warnings shown.
     ''' Messages are not added until they are shown
@@ -150,22 +142,6 @@ Public Class Report
         End Get
     End Property
 
-    '#If DEBUG Then
-    '    ''' <summary>
-    '    ''' The xml writer for this report.
-    '    ''' </summary>
-    '    ''' <value></value>
-    '    ''' <remarks></remarks>
-    '    Public Property XMLFileName() As String
-    '        Get
-    '            Return m_xmlFileName
-    '        End Get
-    '        Set(ByVal value As String)
-    '            m_xmlFileName = value
-    '        End Set
-    '    End Property
-    '#End If
-
     ''' <summary>
     ''' Creates a new default report.
     ''' </summary>
@@ -258,7 +234,8 @@ Public Class Report
     ''' and then a message is created with the corresponding SubsequentParameters() for every line after the 
     ''' first one.
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> Sub ShowMessageHelper(ByVal Message() As Messages, ByVal Location As Span, ByVal FirstParameters() As String, ByVal SubsequentParameters() As String)
+    <Diagnostics.DebuggerHidden()> _
+    Sub ShowMessageHelper(ByVal Message() As Messages, ByVal Location As Span, ByVal FirstParameters() As String, ByVal SubsequentParameters() As String)
         Dim msg() As Messages
         Dim params()() As String
 
