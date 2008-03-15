@@ -1,3 +1,7 @@
+2008-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/Helper.vb: Use our default base ctor even if it's protected.
+
 2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/Report.vb: Remove dead code.

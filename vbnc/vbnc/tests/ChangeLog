@@ -1,3 +1,8 @@
+2008-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-359234-ProtectedDefaultBaseCtor.response,
+	  Bugs/bug-359234-ProtectedDefaultBaseCtor.vb: Added.
+
 2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Errors/30506-1.vb, Errors/30506-2.vb, Errors/30506-3.vb,

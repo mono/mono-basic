@@ -1104,11 +1104,11 @@ Public Class Helper
 
         Dim openconstructor As ConstructorInfo
         If tn.ResolvedType.GetType.Name = "TypeBuilderInstantiation" Then
-            candidates = tn.OpenResolvedType.GetConstructors(BindingFlags.DeclaredOnly Or BindingFlags.Instance Or BindingFlags.Public)
+            candidates = tn.OpenResolvedType.GetConstructors(BindingFlags.DeclaredOnly Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
             openconstructor = GetDefaultConstructor(candidates)
             result = TypeBuilder.GetConstructor(tn.ClosedResolvedType, openconstructor)
         Else
-            candidates = tn.ClosedResolvedType.GetConstructors(BindingFlags.DeclaredOnly Or BindingFlags.Instance Or BindingFlags.Public)
+            candidates = tn.ClosedResolvedType.GetConstructors(BindingFlags.DeclaredOnly Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic)
             result = GetDefaultConstructor(candidates)
             ' result = New GenericConstructorDescriptor(tn, tn.ClosedResolvedType, result)
         End If
