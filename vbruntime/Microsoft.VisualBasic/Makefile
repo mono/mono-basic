@@ -13,8 +13,6 @@ LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
 endif
 endif
 
-NO_SIGN_ASSEMBLY = true
-
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 
 BUILT_FILES = strings1.resources strings2.resources

@@ -1,3 +1,7 @@
+2008-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Do sign Microsoft.VisualBasic.dll
+
 2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* strings1.resources, strings2.resources: Added.
