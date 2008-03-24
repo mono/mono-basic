@@ -1,3 +1,7 @@
+2008-03-24  Wade Berrier  <wberrier@novell.com>
+
+	* class/Makefile: add mono.snk to DIST to fix build
+
 2008-01-30  Wade Berrier  <wberrier@novell.com>
 
 	* configure: version bump -> 1.9
