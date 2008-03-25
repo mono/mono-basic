@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{368272FD-7864-4417-BE27-00563AF592FF}</ProjectGuid>
     <ProjectTypeGuids>{62D7A3B7-93C1-4279-9293-DA5F92EAB479};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
@@ -21,10 +21,7 @@
     <AdditionalClassPath>
     </AdditionalClassPath>
     <NoStdLib>true</NoStdLib>
-    <jarserver>ip2</jarserver>
-    <FileUpgradeFlags>40</FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>E:\Sources\Studio\GH\runtime\mcs\class\vbruntime\Microsoft.VisualBasic\Backup\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <CompilerResponseFile>2005VB.JavaEE.rsp</CompilerResponseFile>
@@ -217,6 +214,9 @@
     <Compile Include="Microsoft.VisualBasic\DueDate.vb" />
     <Compile Include="Microsoft.VisualBasic\ErrObject.vb" />
     <Compile Include="Microsoft.VisualBasic\FileAttribute.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileData.vb">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Microsoft.VisualBasic\FileSystem.vb" />
     <Compile Include="Microsoft.VisualBasic\Financial.vb" />
     <Compile Include="Microsoft.VisualBasic\FirstDayOfWeek.vb" />
@@ -253,7 +253,7 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>"$(DevEnvDir)\..\..\SDK\v3.5\Bin\resgen.exe" $(ProjectDir)\strings.txt</PreBuildEvent>
+    <PreBuildEvent>"..\..\..\..\..\..\tools\Visual Studio 2008 SDK\current\VisualStudioIntegration\Tools\Bin\resgen.exe" $(ProjectDir)\strings.txt</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="strings.resources" />
