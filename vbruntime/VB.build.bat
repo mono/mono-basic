@@ -85,7 +85,7 @@ echo on
 vbc -target:library -optionstrict+ -out:..\bin\Microsoft.VisualBasic.dll -novbruntimeref %VB_COMPILE_OPTIONS% %VB_COMPILE_OPTIONS_J2EE% %VB_COMPILE_REFERENCES% /res:strings.resources %VB_SOURCES% >>%BUILD_LOG% 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO EXCEPTION
 
-sn -q -R ..\bin\Microsoft.VisualBasic.dll ..\class\mono.snk
+sn -q -R ..\bin\Microsoft.VisualBasic.dll ..\..\class\mono.snk
 
 :FINALLY
 GOTO END
