@@ -275,7 +275,7 @@ Public Class GenericMethodDescriptor
                         Dim isOpenMethod As Boolean = False
                         Dim isGetMethodDefinitionAndThenTypeBuilder As Boolean = False
 
-                        Dim isMethodOnTypeBuilderInstantiation As Boolean = m_OpenMethod.GetType.Name = "MethodOnTypeBuilderInstantiation" 'OrElse m_OpenMethod.GetType.Name = "MonoMethod"
+                        Dim isMethodOnTypeBuilderInstantiation As Boolean = m_OpenMethod.GetType.Name.Contains("MethodOnTypeBuilderInst")
                         Dim isMethodBuilder As Boolean = TypeOf m_OpenMethod Is MethodBuilder
                         Dim isMethodBuilderOrInstantiation As Boolean = isMethodBuilder Or isMethodOnTypeBuilderInstantiation
                         Dim isTypeInstantiation As Boolean = m_ClosedType.GetType.Name = "TypeBuilderInstantiation" OrElse m_ClosedType.GetType.Name = "MonoGenericClass"
