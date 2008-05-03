@@ -318,7 +318,7 @@ Public Class Compiler
 
         assemblyName = Me.Assembly.GetName
 
-        AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
+        AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save Or CType(&H800, System.Reflection.Emit.AssemblyBuilderAccess), IO.Path.GetDirectoryName(m_OutFilename))
         ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
 
 #If DEBUGREFLECTION Then
