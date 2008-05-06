@@ -257,6 +257,7 @@ Public Class Tests
                 'Console.WriteLine("Added known failure: " & test)
                 m_KnownFailures.Add(test.Replace("\"c, IO.Path.DirectorySeparatorChar))
             Next
+            Console.WriteLine("Found " & m_KnownFailures.Count & " known failures in " & knownFailures)
         End If
 
         'Get all the code files in the directory.
