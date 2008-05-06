@@ -26,32 +26,11 @@ Public Class Tests
     Inherits TestList
 
     Private m_Path As String
-
+    Private m_Parent As Tests
     Private m_ContainedTests As New Generic.List(Of Tests)
     Private m_SkipCleanTests As Boolean
     Private m_Recursive As Boolean
-
-    'Sub WriteLinuxScript()
-    '    For Each nested As Tests In m_ContainedTests
-    '        nested.WriteLinuxScript()
-    '    Next
-    '    If Me.Count > 0 Then
-    '        Using writer As New IO.StreamWriter(System.IO.Path.Combine(m_Path, "all.sh"))
-    '            For Each test As Test In Me
-    '                test.CreateVerifications()
-    '                Dim cmd As String
-    '                cmd = test.VBNCVerification.Process.ExpandedCmdLine
-    '                cmd = cmd.Replace(m_Path & "\", "")
-    '                cmd = cmd.Replace("/", "-")
-    '                cmd = cmd.Replace("\", "/")
-    '                cmd = cmd.Replace("#", "\#")
-    '                cmd = "vbnc " & cmd & " >>all.log 2>&1"
-    '                writer.Write(cmd & vbLf)
-    '                'System.IO.File.WriteAllText(System.IO.Path.Combine(m_Path, test.Name) & ".sh", cmd)
-    '            Next
-    '        End Using
-    '    End If
-    'End Sub
+    Private m_KnownFailures As New Generic.List(Of String)
 
     ''' <summary>
     ''' The total time all tests have been executing.
@@ -104,6 +83,13 @@ Public Class Tests
         End Get
     End Property
 
+    Sub GetTestsCountRecursive(ByVal result() As Integer)
+        For Each item As Tests In m_ContainedTests
+            item.GetTestsCountRecursive(result)
+        Next
+        GetTestsCount(result)
+    End Sub
+
     ReadOnly Property GetGreenCount() As Integer
         Get
             Return Me.GetTestsCount(Test.Results.Success, Test.Results.Success)
@@ -154,14 +140,38 @@ Public Class Tests
     ''' <param name="Path">The path to the folders where the tests are.</param>
     ''' <param name="CompilerPath">The path to the compiler.</param>
     ''' <remarks></remarks>
-    Sub New(ByVal Path As String, ByVal CompilerPath As String, ByVal VBCPath As String, Optional ByVal Recursive As Boolean = True)
+    Sub New(ByVal Parent As Tests, ByVal Path As String, ByVal CompilerPath As String, ByVal VBCPath As String, Optional ByVal Recursive As Boolean = True)
         MyBase.New(CompilerPath, VBCPath)
-
+        'Console.WriteLine("Loading: " & Path)
+        'If Parent IsNot Nothing Then
+        '    Console.WriteLine(" Parent: " & Parent.Path)
+        'End If
+        'Console.WriteLine(Environment.StackTrace)
+        m_Parent = Parent
         m_Path = Path
         m_Recursive = Recursive
 
         Refresh()
     End Sub
+
+    Public Overrides Sub Add(ByVal Test As Test)
+        MyBase.Add(Test)
+        Test.KnownFailure = IsKnownFailure(Test.Name)
+    End Sub
+
+    Function IsKnownFailure(ByVal Name As String) As Boolean
+        'Console.WriteLine("Checking if " & Name & " is a known failure.")
+        If m_KnownFailures.Contains(Name) Then
+            'Console.WriteLine("YES")
+            'Console.WriteLine(Environment.StackTrace)
+            Return True
+        End If
+        If m_Parent IsNot Nothing Then
+            'Console.WriteLine("Checking in parent, path: " & m_Path)
+            Return m_Parent.IsKnownFailure(IO.Path.Combine(IO.Path.GetFileName(m_Path), Name))
+        End If
+        Return False
+    End Function
 
     Sub Update()
         'Get all the code files in the directory.
@@ -217,7 +227,7 @@ Public Class Tests
                 If oldTests IsNot Nothing Then
                     oldTests.Update()
                 Else
-                    m_ContainedTests.Add(New Tests(dir, MyBase.VBNCPath, MyBase.VBCPath))
+                    m_ContainedTests.Add(New Tests(Me, dir, MyBase.VBNCPath, MyBase.VBCPath))
                 End If
             Next
         End If
@@ -226,6 +236,28 @@ Public Class Tests
     Sub Refresh()
         Me.Clear()
         Me.m_ContainedTests.Clear()
+        m_KnownFailures.Clear()
+
+        'Get known failures
+        Dim knownFailures As String = IO.Path.Combine(m_Path, "KnownFailures.txt")
+        If IO.File.Exists(knownFailures) Then
+            Dim comment As String
+            Dim test As String
+            For Each line As String In IO.File.ReadAllLines(knownFailures)
+                line = line.Trim
+                If line.IndexOf("'"c) >= 0 Then
+                    comment = line.Substring(line.IndexOf("'"c) + 1)
+                    test = line.Substring(0, line.IndexOf("'"c))
+                Else
+                    test = line
+                End If
+                test = test.Trim
+                test = test.Replace("\"c, System.IO.Path.DirectorySeparatorChar)
+                If test = String.Empty Then Continue For
+                'Console.WriteLine("Added known failure: " & test)
+                m_KnownFailures.Add(test.Replace("\"c, IO.Path.DirectorySeparatorChar))
+            Next
+        End If
 
         'Get all the code files in the directory.
         Dim files() As String = IO.Directory.GetFiles(m_Path, "*.vb")
@@ -241,10 +273,12 @@ Public Class Tests
             End If
         Next
 
-        Dim dirs As Generic.List(Of String) = GetContainedTestDirectories()
-        For Each dir As String In dirs
-            m_ContainedTests.Add(New Tests(dir, MyBase.VBNCPath, MyBase.VBCPath))
-        Next
+        If m_Recursive Then
+            Dim dirs As Generic.List(Of String) = GetContainedTestDirectories()
+            For Each dir As String In dirs
+                m_ContainedTests.Add(New Tests(Me, dir, MyBase.VBNCPath, MyBase.VBCPath))
+            Next
+        End If
     End Sub
 
     Function GetContainedTestDirectories() As Generic.List(Of String)

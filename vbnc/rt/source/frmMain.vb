@@ -24,47 +24,12 @@ Class frmMain
     Private WithEvents m_TestExecutor As New TestExecutor
     Private m_TestView As New TestView(Me)
 
-    Private m_TransparentIndex, m_RedIndex, m_YellowIndex, m_GreenIndex, m_BlueIndex, m_IndigoIndex As Integer
-    Private m_TransparentIcon, m_RedIcon, m_YellowIcon, m_GreenIcon, m_BlueIcon, m_IndigoIcon As Icon
-
+    Private m_Indices() As Integer
+    Private m_Icons() As Icon
+    Private m_Colors() As Brush
+    
     Private Delegate Sub UpdateUIDelegate(ByVal test As Test, ByVal UpdateSummary As Boolean)
     Private Delegate Sub UpdateUIDelegate2()
-
-    ReadOnly Property TransparentIconIndex() As Integer
-        Get
-            Return m_TransparentIndex
-        End Get
-    End Property
-
-    ReadOnly Property RedIconIndex() As Integer
-        Get
-            Return m_RedIndex
-        End Get
-    End Property
-
-    ReadOnly Property YellowIconIndex() As Integer
-        Get
-            Return m_YellowIndex
-        End Get
-    End Property
-
-    ReadOnly Property GreenIconIndex() As Integer
-        Get
-            Return m_GreenIndex
-        End Get
-    End Property
-
-    ReadOnly Property IndigoIconIndex() As Integer
-        Get
-            Return m_IndigoIndex
-        End Get
-    End Property
-
-    ReadOnly Property BlueIconIndex() As Integer
-        Get
-            Return m_BlueIndex
-        End Get
-    End Property
 
     ReadOnly Property TestExecutor() As TestExecutor
         Get
@@ -78,55 +43,45 @@ Class frmMain
         End Get
     End Property
 
-    Private Sub CreateImages()
-        Dim imgTransparent, imgRed, imgYellow, imgGreen, imgBlue, imgIndigo As Bitmap
-        imgTransparent = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
-        imgRed = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
-        imgYellow = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
-        imgGreen = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
-        imgBlue = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
-        imgIndigo = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
+    Function GetIcon(ByVal Result As Test.Results) As Icon
+        Return m_Icons(Result)
+    End Function
 
+    Function GetIconIndex(ByVal Result As Test.Results) As Integer
+        Return m_Indices(Result)
+    End Function
+
+    Private Sub CreateImages()
+        Dim images() As Bitmap
         Dim bounds As New Rectangle(0, 0, 16, 16)
 
-        Using gr As Graphics = Graphics.FromImage(imgTransparent)
-            gr.FillEllipse(Brushes.Transparent, bounds)
-        End Using
-        Using gr As Graphics = Graphics.FromImage(imgRed)
-            gr.FillEllipse(Brushes.Red, bounds)
-        End Using
-        Using gr As Graphics = Graphics.FromImage(imgGreen)
-            gr.FillEllipse(Brushes.Green, bounds)
-        End Using
-        Using gr As Graphics = Graphics.FromImage(imgYellow)
-            gr.FillEllipse(Brushes.Yellow, bounds)
-        End Using
-        Using gr As Graphics = Graphics.FromImage(imgBlue)
-            gr.FillEllipse(Brushes.Blue, bounds)
-        End Using
-        Using gr As Graphics = Graphics.FromImage(imgIndigo)
-            gr.FillEllipse(Brushes.Indigo, bounds)
-        End Using
+        ReDim m_Colors(System.Enum.GetValues(GetType(Test.Results)).Length - 1)
 
-        m_TransparentIcon = System.Drawing.Icon.FromHandle(imgTransparent.GetHicon)
-        m_RedIcon = System.Drawing.Icon.FromHandle(imgRed.GetHicon)
-        m_YellowIcon = System.Drawing.Icon.FromHandle(imgYellow.GetHicon)
-        m_GreenIcon = System.Drawing.Icon.FromHandle(imgGreen.GetHicon)
-        m_BlueIcon = System.Drawing.Icon.FromHandle(imgBlue.GetHicon)
-        m_IndigoIcon = System.Drawing.Icon.FromHandle(imgIndigo.GetHicon)
+        For i As Integer = 0 To m_Colors.Length - 1
+            m_Colors(i) = Brushes.Chocolate
+        Next
+        m_Colors(Test.Results.Failed) = Brushes.Red
+        m_Colors(Test.Results.Running) = Brushes.Blue
+        m_Colors(Test.Results.Success) = Brushes.Green
+        m_Colors(Test.Results.KnownFailureSucceeded) = Brushes.GreenYellow
+        m_Colors(Test.Results.NotRun) = Brushes.Yellow
+        m_Colors(Test.Results.Regressed) = Brushes.Indigo
+        m_Colors(Test.Results.Skipped) = Brushes.Orange
+        m_Colors(Test.Results.KnownFailureFailed) = Brushes.Purple
 
-        lstImages.Images.Add(imgTransparent)
-        m_TransparentIndex = lstImages.Images.Count - 1
-        lstImages.Images.Add(imgRed)
-        m_RedIndex = lstImages.Images.Count - 1
-        lstImages.Images.Add(imgYellow)
-        m_YellowIndex = lstImages.Images.Count - 1
-        lstImages.Images.Add(imgGreen)
-        m_GreenIndex = lstImages.Images.Count - 1
-        lstImages.Images.Add(imgBlue)
-        m_BlueIndex = lstImages.Images.Count - 1
-        lstImages.Images.Add(imgIndigo)
-        m_IndigoIndex = lstImages.Images.Count - 1
+        ReDim images(m_Colors.Length - 1)
+        ReDim m_Indices(m_Colors.Length - 1)
+        ReDim m_Icons(m_Colors.Length - 1)
+
+        For i As Integer = 0 To m_Colors.Length - 1
+            images(i) = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
+            Using gr As Graphics = Graphics.FromImage(images(i))
+                gr.FillEllipse(m_Colors(i), bounds)
+            End Using
+            m_Icons(i) = System.Drawing.Icon.FromHandle(images(i).GetHicon)
+            lstImages.Images.Add(images(i))
+            m_Indices(i) = lstImages.Images.Count - 1
+        Next
     End Sub
 
     Sub New()
@@ -196,7 +151,7 @@ Class frmMain
                 m_Tests = Nothing
             End If
 
-            m_Tests = New Tests(cmbBasepath.Text, cmbCompiler.Text, cmbVBCCompiler.Text)
+            m_Tests = New Tests(Nothing, cmbBasepath.Text, cmbCompiler.Text, cmbVBCCompiler.Text)
             For Each test As Test In m_Tests
                 Dim item As ListViewItem
                 item = lstTests.Items.Add(test.Name)
@@ -233,7 +188,7 @@ Class frmMain
             If m_Tests IsNot Nothing AndAlso CheckForNewTestsOnly Then
                 m_Tests.Update()
             Else
-                m_Tests = New Tests(cmbBasepath.Text, cmbCompiler.Text, cmbVBCCompiler.Text)
+                m_Tests = New Tests(Nothing, cmbBasepath.Text, cmbCompiler.Text, cmbVBCCompiler.Text)
                 'm_Tests.WriteLinuxScript()
             End If
 
@@ -335,13 +290,13 @@ Class frmMain
             runcount = r + g
             notruncount = y
             If r > 0 Then
-                Me.Icon = m_RedIcon
+                Me.Icon = GetIcon(Test.Results.Failed)
             ElseIf g > 0 AndAlso y > 0 Then
-                Me.Icon = m_BlueIcon
+                Me.Icon = GetIcon(Test.Results.Running)
             ElseIf g = total Then
-                Me.Icon = m_GreenIcon
+                Me.Icon = GetIcon(Test.Results.Success)
             Else
-                Me.Icon = m_YellowIcon
+                Me.Icon = GetIcon(Test.Results.NotRun)
             End If
             Me.EnhancedProgressBar1.Value(0).PercentDone = r / total
             Me.EnhancedProgressBar1.Value(1).PercentDone = y / total
@@ -387,27 +342,24 @@ Class frmMain
         Dim tests As Tests = TryCast(Node.Tag, Tests)
 
         If tests IsNot Nothing Then
-            Dim g, r, t, i As Integer
+            Dim found As Boolean
+            Dim count(m_Colors.Length - 1) As Integer
+            Dim importance() As Test.Results = {Test.Results.Failed, Test.Results.Regressed, Test.Results.Running, Test.Results.Success, Test.Results.KnownFailureFailed, Test.Results.KnownFailureSucceeded, Test.Results.Skipped, Test.Results.NotRun}
 
-            t = tests.RecursiveCount
-            g = tests.GetGreenRecursiveCount
-            r = tests.GetRedRecursiveCount
-            i = tests.GetTestsCount(Test.Results.Regressed, Test.Results.Regressed)
+            tests.GetTestsCountRecursive(count)
 
-            If g + r + i = 0 Then
-                'no tests run
-                Node.ImageIndex = Me.YellowIconIndex
-            ElseIf r > 0 Then
-                'at least one red test.
-                Node.ImageIndex = Me.RedIconIndex
-            ElseIf g = t Then
-                'only green tests (of the run tests).
-                Node.ImageIndex = Me.GreenIconIndex
-            ElseIf i > 0 Then
-                'at least one regressed test
-                Node.ImageIndex = Me.IndigoIconIndex
-            Else 'working, but no red tests yet.
-                Node.ImageIndex = Me.BlueIconIndex
+            If count(Test.Results.NotRun) > 0 AndAlso count(Test.Results.NotRun) < tests.RecursiveCount Then count(Test.Results.Running) += 1
+
+            found = False
+            For i As Integer = 0 To importance.Length - 1
+                If count(importance(i)) > 0 Then
+                    Node.ImageIndex = GetIconIndex(importance(i))
+                    found = True
+                    Exit For
+                End If
+            Next
+            If Not found Then
+                Node.ImageIndex = GetIconIndex(Test.Results.NotRun)
             End If
             Node.SelectedImageIndex = Node.ImageIndex
             '(not implemnted in winforms yet)'Node.StateImageIndex = Node.ImageIndex
@@ -442,13 +394,7 @@ Class frmMain
             End If
 
             Dim newStateImageIndex As Integer
-            If test.Result = rt.Test.Results.NotRun Then
-                newStateImageIndex = m_YellowIndex
-            ElseIf test.Result >= rt.Test.Results.Success Then
-                newStateImageIndex = m_GreenIndex
-            Else
-                newStateImageIndex = m_RedIndex
-            End If
+            newStateImageIndex = GetIconIndex(test.Result)
             If item.StateImageIndex <> newStateImageIndex Then
                 '(not implemnted in winforms yet)'item.StateImageIndex = newStateImageIndex
             End If
@@ -1305,14 +1251,7 @@ Class frmMain
             Dim newItem As New ListViewItem(result.Result.ToString)
             newItem.SubItems.Add(result.Compiler)
             newItem.Tag = result
-            Select Case result.Result
-                Case rt.Test.Results.Failed
-                    newItem.ImageIndex = Me.RedIconIndex
-                Case rt.Test.Results.NotRun
-                    newItem.ImageIndex = Me.YellowIconIndex
-                Case rt.Test.Results.Success
-                    newItem.ImageIndex = Me.GreenIconIndex
-            End Select
+            newItem.ImageIndex = GetIconIndex(result.Result)
             oldResultsItem.Add(newItem)
         Next
         oldResultsItem.Reverse()
@@ -1400,5 +1339,44 @@ Class frmMain
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
         End Try
+    End Sub
+
+    Private Sub CreateKnownFailurestxtToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreateKnownFailurestxtToolStripMenuItem.Click
+        Try
+            Dim failures As New Generic.List(Of String)
+            ListKnownFailures(m_Tests, m_Tests, failures)
+
+            Dim tmp As String = IO.Path.GetTempFileName
+            IO.File.WriteAllLines(tmp, failures.ToArray)
+            Process.Start("notepad.exe", """" & tmp & """")
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Exclamation)
+        End Try
+    End Sub
+
+    Private Sub ListKnownFailures(ByVal Root As Tests, ByVal Tests As Tests, ByVal failures As Generic.List(Of String))
+        For Each t As Test In Tests
+            Select Case t.Result
+                Case Test.Results.Failed, Test.Results.KnownFailureFailed, Test.Results.Regressed
+                    Dim f As String
+                    f = t.Name
+                    If Root IsNot Tests Then
+                        f = IO.Path.Combine(Tests.Path.Substring(Root.Path.Length), f)
+                        If f.StartsWith(IO.Path.DirectorySeparatorChar) Then
+                            f = f.Substring(1)
+                        End If
+                    End If
+                    If t.FailedVerificationMessage <> "" Then
+                        f = f & " '" & Split(t.FailedVerificationMessage, vbNewLine)(0)
+                    End If
+                    failures.Add(f)
+                Case Test.Results.Success, Test.Results.KnownFailureSucceeded
+                Case Test.Results.Running, Test.Results.Skipped, Test.Results.NotRun
+            End Select
+        Next
+
+        For Each t As Tests In Tests.ContainedTests
+            ListKnownFailures(Root, t, failures)
+        Next
     End Sub
 End Class

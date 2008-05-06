@@ -370,21 +370,38 @@ Class rt_console
         Dim result As Boolean = True
         Dim start As Date = Date.Now
 
-        result = RunDirectory(m_BasePath) AndAlso result
+        result = RunDirectory(Nothing, m_BasePath) AndAlso result
 
         ShowSummary(Date.Now - start)
 
         Return result
     End Function
 
-    Private Function RunDirectory(ByVal Directory As String) As Boolean
+    Private Function RunDirectory(ByVal Parent As Tests, ByVal Directory As String) As Boolean
         Dim tests As Tests
         Dim result As Boolean = True
 
         If m_PrintStatus = False Then
-            Console.Write("Loading directory " & Directory & "... ")
+            Console.WriteLine("Loading directory " & Directory & "... ")
         End If
-        tests = New Tests(Directory, m_Compiler, m_VBC, False)
+
+        Try
+            If Parent IsNot Nothing Then Exit Try
+
+            Dim parentDir As String = IO.Path.GetDirectoryName(Directory)
+            If Directory.EndsWith(IO.Path.DirectorySeparatorChar) Then
+                parentDir = IO.Path.GetDirectoryName(parentDir)
+            End If
+            Dim knownFailures As String = IO.Path.Combine(parentDir, "KnownFailures.txt")
+            Console.WriteLine("Checking " & parentDir & " for KnownFailures.txt")
+            If IO.File.Exists(knownFailures) Then
+                Console.WriteLine(" Found KnownFailures.txt in parent directory (" & parentDir & "), loading that directory too...")
+                Parent = New Tests(Nothing, parentDir, m_Compiler, m_VBC, False)
+            End If
+        Catch ex As Exception
+        End Try
+
+        tests = New Tests(Parent, Directory, m_Compiler, m_VBC, False)
         If m_PrintStatus = False Then
             Console.WriteLine(tests.Count & " tests found.")
         End If
@@ -394,7 +411,7 @@ Class rt_console
 
         If m_Recursive Then
             For Each dir As String In tests.GetContainedTestDirectories
-                result = RunDirectory(dir) AndAlso result
+                result = RunDirectory(tests, dir) AndAlso result
             Next
         End If
 
@@ -433,14 +450,20 @@ Class rt_console
         Select Case result
             Case Test.Results.Failed
                 Console.ForegroundColor = ConsoleColor.Red
-            Case Test.Results.NotRun
-                Console.ForegroundColor = ConsoleColor.White
-            Case Test.Results.Regressed
-                Console.ForegroundColor = ConsoleColor.DarkRed
-            Case Test.Results.Skipped
-                Console.ForegroundColor = ConsoleColor.Gray
+            Case Test.Results.Running
+                Console.ForegroundColor = ConsoleColor.Blue
             Case Test.Results.Success
                 Console.ForegroundColor = ConsoleColor.Green
+            Case Test.Results.KnownFailureSucceeded
+                Console.ForegroundColor = ConsoleColor.DarkCyan 'GreenYellow
+            Case Test.Results.NotRun
+                Console.ForegroundColor = ConsoleColor.Yellow
+            Case Test.Results.Regressed
+                Console.ForegroundColor = ConsoleColor.Magenta 'Indigo
+            Case Test.Results.Skipped
+                Console.ForegroundColor = ConsoleColor.DarkYellow 'Orange
+            Case Test.Results.KnownFailureFailed
+                Console.ForegroundColor = ConsoleColor.DarkMagenta 'Purple
             Case Else
                 Console.ForegroundColor = ConsoleColor.White
         End Select

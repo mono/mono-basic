@@ -87,7 +87,7 @@ Public Class TestList
         Return m_Hashed.ContainsKey(TestName)
     End Function
 
-    Shadows Sub Add(ByVal Test As Test)
+    Overridable Shadows Sub Add(ByVal Test As Test)
         If Contains(Test) = False Then
             m_List.Add(Test)
             m_Hashed.Add(Test.Name, Test)
@@ -178,6 +178,12 @@ Public Class TestList
             Return result
         End Get
     End Property
+
+    Sub GetTestsCount(ByVal result() As Integer)
+        For Each t As Test In Me
+            result(t.Result) += 1
+        Next
+    End Sub
 
     Function GetTestsCount(ByVal MinResult As Test.Results, ByVal MaxResult As Test.Results) As Integer
         Dim result As Integer

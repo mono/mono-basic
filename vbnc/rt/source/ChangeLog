@@ -1,3 +1,8 @@
+2008-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Added support for having a list of known failures,
+	and ignoring the tests in it.
+
 2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Tests.vb: Order directories and files.
