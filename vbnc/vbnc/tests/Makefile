@@ -2,10 +2,10 @@ thisdir = vbnc/vbnc/tests
 SUBDIRS =
 include ../../../build/rules.make
 
-DISTFILES = Readme.txt KnownFailures.txt
-DISTFILES += $(wildcard */*.vb) $(wildcard */*.rsp) $(wildcard */*.response)  \
-             $(wildcard */*/*.vb) $(wildcard */*/*.rsp) $(wildcard */*/*.response)  \
-             $(wildcard */*/*/*.vb) $(wildcard */*/*/*.rsp) $(wildcard */*/*/*.response) 
+DISTFILES = Readme.txt KnownFailures.txt Resources/Resources3.binary
+DISTFILES += $(wildcard */*.vb) $(wildcard */*.rsp) $(wildcard */*.response) $(wildcard */*.resources) $(wildcard */*.resx)  \
+             $(wildcard */*/*.vb) $(wildcard */*/*.rsp) $(wildcard */*/*.response) $(wildcard */*/*.resources) $(wildcard */*/*.resx)  \
+             $(wildcard */*/*/*.vb) $(wildcard */*/*/*.rsp) $(wildcard */*/*/*.response) $(wildcard */*/*/*.resources) $(wildcard */*/*/*.resx)  \
 
 ifndef TEST_BASE_DIR
 TEST_BASE_DIR=./
