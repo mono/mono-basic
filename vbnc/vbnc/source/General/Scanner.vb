@@ -72,6 +72,7 @@ Public Class Scanner
 
     Private m_PreviousChar As Char
     Private m_CurrentChar As Char
+    Private m_EndOfFile As Boolean
     Private m_PeekedChars As New Generic.Queue(Of Char)
     Private m_Reader As System.IO.StreamReader
     Private m_Builder As New System.Text.StringBuilder
@@ -911,13 +912,14 @@ Public Class Scanner
                     'vbc accepts this...
                     Compiler.Report.ShowMessage(Messages.VBNC90003)
                     bEndOfString = True
-                Case nl0
-                    ' End of file
-                    Compiler.Report.ShowMessage(Messages.VBNC90004)
-                    'PreviousChar() 'Step back
-                    bEndOfString = True
                 Case Else
-                    m_Builder.Append(CurrentChar())
+                    If m_EndOfFile Then
+                        Compiler.Report.ShowMessage(Messages.VBNC90004)
+                        'PreviousChar() 'Step back
+                        bEndOfString = True
+                    Else
+                        m_Builder.Append(CurrentChar())
+                    End If
             End Select
         Loop While bEndOfString = False
         If CurrentChar() = "C"c OrElse CurrentChar() = "c"c Then
@@ -1272,7 +1274,12 @@ Public Class Scanner
             If m_Reader.EndOfStream Then
                 m_CurrentChar = nl0
             Else
-                m_CurrentChar = Convert.ToChar(m_Reader.Read())
+                If m_Reader.EndOfStream Then
+                    m_EndOfFile = True
+                    m_CurrentChar = nl0
+                Else
+                    m_CurrentChar = Convert.ToChar(m_Reader.Read())
+                End If
             End If
         End If
 
@@ -1576,6 +1583,7 @@ Public Class Scanner
         m_TokensSeenOnLine = 0
         m_CurrentChar = Nothing
         m_PreviousChar = Nothing
+        m_EndOfFile = False
         m_PeekedChars.Clear()
 
         If m_Files.Count > 0 Then
