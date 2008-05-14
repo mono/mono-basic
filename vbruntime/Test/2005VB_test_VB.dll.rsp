@@ -7,3 +7,4 @@
 -libpath:bin
 -optionstrict-
 -define:_MYTYPE=\"Empty\"
+-codepage:65001
