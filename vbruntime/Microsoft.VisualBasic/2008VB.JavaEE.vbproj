@@ -253,10 +253,11 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>"..\..\..\..\..\..\tools\Visual Studio 2008 SDK\current\VisualStudioIntegration\Tools\Bin\resgen.exe" $(ProjectDir)\strings.txt</PreBuildEvent>
+    <PreBuildEvent>"..\..\..\..\..\..\tools\Visual Studio 2008 SDK\current\VisualStudioIntegration\Tools\Bin\resgen.exe" $(ProjectDir)\strings.txt
+    copy $(ProjectDir)\strings.resources $(ProjectDir)\strings.resources.resources</PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="strings.resources" />
+    <EmbeddedResource Include="strings.resources.resources" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
