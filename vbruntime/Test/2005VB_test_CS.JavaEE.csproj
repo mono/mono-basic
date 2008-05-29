@@ -1,15 +1,15 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{12309B57-2BFF-4D7D-A289-BC7B6505C259}</ProjectGuid>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Microsoft.2005_VisualBasic_test</AssemblyName>
-    <JDKName>1.6</JDKName>
+    <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -19,11 +19,6 @@
     <jarserver>ip2</jarserver>
     <StartupObject>
     </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,11 +76,23 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-microsoft-visualbasic="repository:vmw:framework:2.0" REFS-JarPath-microsoft-visualbasic="" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-nunit-framework="..\nunit\nunit.framework.jar" REFS-RefInfo-nunit-core="j2il:" REFS-JarPath-nunit-core="..\nunit\nunit.core.jar" REFS-RefInfo-nunit-util="j2il:" REFS-JarPath-nunit-util="..\nunit\nunit.util.jar" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-nunit-util="..\nunit\nunit.util.jar" REFS-RefInfo-nunit-util="j2il:" REFS-JarPath-nunit-core="..\nunit\nunit.core.jar" REFS-RefInfo-nunit-core="j2il:" REFS-JarPath-nunit-framework="..\nunit\nunit.framework.jar" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-microsoft-visualbasic="" REFS-RefInfo-microsoft-visualbasic="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="nunit.core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.util.dll</HintPath>
+    </Reference>
     <Reference Include="rt" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
@@ -122,11 +129,5 @@
     <Compile Include="Microsoft.VisualBasic\InteractionTests.cs" />
     <Compile Include="Microsoft.VisualBasic\StringsTest.cs" />
     <Compile Include="Microsoft.VisualBasic\VBMathTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj">
-      <Project>{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}</Project>
-      <Name>nunit.framework.dll20.J2EE</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

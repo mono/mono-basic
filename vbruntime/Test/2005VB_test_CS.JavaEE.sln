@@ -1,9 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2005VB_test_CS.JavaEE", "2005VB_test_CS.JavaEE.csproj", "{12309B57-2BFF-4D7D-A289-BC7B6505C259}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20.J2EE", "..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,11 +10,9 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		Edit|Any CPU = Edit|Any CPU
 		Release_Java|Any CPU = Release_Java|Any CPU
-		Release_Java20|Any CPU = Release_Java20|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
@@ -25,23 +21,8 @@ Global
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Edit|Any CPU.Build.0 = Release_Java|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
-		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Release_Java20|Any CPU.ActiveCfg = Release_Java|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Release|Any CPU.ActiveCfg = Release_Java|Any CPU
 		{12309B57-2BFF-4D7D-A289-BC7B6505C259}.Release|Any CPU.Build.0 = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug|Any CPU.Build.0 = Debug_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Edit|Any CPU.ActiveCfg = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Edit|Any CPU.Build.0 = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java20|Any CPU.ActiveCfg = Release_Java20|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java20|Any CPU.Build.0 = Release_Java20|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release|Any CPU.ActiveCfg = Release_Java|Any CPU
-		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release|Any CPU.Build.0 = Release_Java|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
