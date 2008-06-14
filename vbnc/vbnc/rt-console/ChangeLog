@@ -1,3 +1,7 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* rt-console9.vbproj, rt-console9.sln: Merge with head.
+
 2007-07-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* source/MainModule.vb: Surround it all in a try-catch.

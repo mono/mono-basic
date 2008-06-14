@@ -60,7 +60,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Return Convert.ToInt64(DecimalType.FromString(value))
             Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + value + """ to type 'Long' is not valid.", ex)
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), value, "Long"), ex)
             End Try
 
         End Function

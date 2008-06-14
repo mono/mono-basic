@@ -21,7 +21,7 @@
 ''' All the keywords.
 ''' </summary>
 ''' <remarks></remarks>
-Public Enum KS As Byte
+Public Enum KS
     <KSEnumString("", "NONE")> None
 
     'First real keywords (on top modifiers, so that they can be used by Modifiers as bitshifts)
@@ -58,7 +58,7 @@ Public Enum KS As Byte
     <KSEnumString("WithEvents", Nothing, True, False)> [WithEvents]
     <KSEnumString("WriteOnly", Nothing, True, False)> [WriteOnly]
 
-    <KSEnumString("AddHandler", Nothing, True, False, KS.End_AddHandler)> [AddHandler]
+    <KSEnumString("AddHandler", Nothing, True, False)> [AddHandler]
     <KSEnumString("AddressOf", Nothing, True, False)> [AddressOf]
     <KSEnumString("AndAlso", Nothing, True, False)> [AndAlso]
     <KSEnumString("Alias", Nothing, True, False)> [Alias]
@@ -77,7 +77,7 @@ Public Enum KS As Byte
     <KSEnumString("CDbl", Nothing, True, False)> [CDbl]
     <KSEnumString("Char", Nothing, True, False)> [Char]
     <KSEnumString("CInt", Nothing, True, False)> [CInt]
-    <KSEnumString("Class", Nothing, True, False, KS.End_Class)> [Class]
+    <KSEnumString("Class", Nothing, True, False)> [Class]
     <KSEnumString("CLng", Nothing, True, False)> [CLng]
     <KSEnumString("CObj", Nothing, True, False)> [CObj]
     <KSEnumString("Continue", Nothing, True, False)> [Continue]
@@ -89,7 +89,7 @@ Public Enum KS As Byte
     <KSEnumString("CULng", Nothing, True, False)> [CULng]
     <KSEnumString("CUShort", Nothing, True, False)> [CUShort]
     <KSEnumString("CType", Nothing, True, False)> [CType]
-    <KSEnumString("Custom Event", Nothing, True, False)> [CustomEvent]
+    '<KSEnumString("Custom Event", Nothing, True, False)> [CustomEvent]
     <KSEnumString("Date", Nothing, True, False)> [Date]
     <KSEnumString("Decimal", Nothing, True, False)> [Decimal]
     <KSEnumString("Declare", Nothing, True, False)> [Declare]
@@ -101,26 +101,26 @@ Public Enum KS As Byte
     <KSEnumString("Else", Nothing, True, False)> [Else]
     <KSEnumString("ElseIf", Nothing, True, False)> [ElseIf]
     <KSEnumString("End", Nothing, True, False)> [End]
-    <KSEnumString("Enum", Nothing, True, False, KS.End_Enum)> [Enum]
+    <KSEnumString("Enum", Nothing, True, False)> [Enum]
     <KSEnumString("Erase", Nothing, True, False)> [Erase]
     <KSEnumString("Error", Nothing, True, False)> [Error]
-    <KSEnumString("Event", Nothing, True, False, KS.End_Event)> [Event]
+    <KSEnumString("Event", Nothing, True, False)> [Event]
     <KSEnumString("Exit", Nothing, True, False)> [Exit]
     <KSEnumString("False", Nothing, True, False)> [False]
     <KSEnumString("Finally", Nothing, True, False)> [Finally]
     <KSEnumString("For", Nothing, True, False)> [For]
-    <KSEnumString("Function", Nothing, True, False, KS.End_Function)> [Function]
-    <KSEnumString("Get", Nothing, True, False, KS.End_Get)> [Get]
+    <KSEnumString("Function", Nothing, True, False)> [Function]
+    <KSEnumString("Get", Nothing, True, False)> [Get]
     <KSEnumString("GetType", Nothing, True, False)> [GetType]
     <KSEnumString("Global", Nothing, True, False)> [Global]
     <KSEnumString("GoTo", Nothing, True, False)> [GoTo]
     <KSEnumString("Handles", Nothing, True, False)> [Handles]
-    <KSEnumString("If", Nothing, True, False, KS.End_If)> [If]
+    <KSEnumString("If", Nothing, True, False)> [If]
     <KSEnumString("Implements", Nothing, True, False)> [Implements]
     <KSEnumString("Imports", Nothing, True, False)> [Imports]
     <KSEnumString("In", Nothing, True, False)> [In]
     <KSEnumString("Integer", Nothing, True, False)> [Integer]
-    <KSEnumString("Interface", Nothing, True, False, KS.End_Interface)> [Interface]
+    <KSEnumString("Interface", Nothing, True, False)> [Interface]
     <KSEnumString("Is", Nothing, True, False)> [Is]
     <KSEnumString("IsNot", Nothing, True, False)> [IsNot]
     <KSEnumString("Let", Nothing, True, False)> [Let]
@@ -130,10 +130,10 @@ Public Enum KS As Byte
     <KSEnumString("Loop", Nothing, True, False)> [Loop]
     <KSEnumString("Me", Nothing, True, False)> [Me]
     <KSEnumString("Mod", Nothing, True, False)> [Mod]
-    <KSEnumString("Module", Nothing, True, False, KS.End_Module)> [Module]
+    <KSEnumString("Module", Nothing, True, False)> [Module]
     <KSEnumString("MyBase", Nothing, True, False)> [MyBase]
     <KSEnumString("MyClass", Nothing, True, False)> [MyClass]
-    <KSEnumString("Namespace", Nothing, True, False, KS.End_Namespace)> [Namespace]
+    <KSEnumString("Namespace", Nothing, True, False)> [Namespace]
     <KSEnumString("New", Nothing, True, False)> [New]
     <KSEnumString("Next", Nothing, True, False)> [Next]
     <KSEnumString("Not", Nothing, True, False)> [Not]
@@ -141,81 +141,45 @@ Public Enum KS As Byte
     <KSEnumString("Object", Nothing, True, False)> [Object]
     <KSEnumString("Of", Nothing, True, False)> [Of]
     <KSEnumString("On", Nothing, True, False)> [On]
-    <KSEnumString("Operator", Nothing, True, False, KS.End_Operator)> [Operator]
+    <KSEnumString("Operator", Nothing, True, False)> [Operator]
     <KSEnumString("Option", Nothing, True, False)> [Option]
     <KSEnumString("Or", Nothing, True, False)> [Or]
     <KSEnumString("OrElse", Nothing, True, False)> [OrElse]
-    <KSEnumString("Property", Nothing, True, False, KS.End_Property)> [Property]
-    <KSEnumString("RaiseEvent", Nothing, True, False, KS.End_RaiseEvent)> [RaiseEvent]
+    <KSEnumString("Property", Nothing, True, False)> [Property]
+    <KSEnumString("RaiseEvent", Nothing, True, False)> [RaiseEvent]
     <KSEnumString("ReDim", Nothing, True, False)> [ReDim]
     <KSEnumString("REM", Nothing, True, False)> [REM]
-    <KSEnumString("RemoveHandler", Nothing, True, False, KS.End_RemoveHandler)> [RemoveHandler]
+    <KSEnumString("RemoveHandler", Nothing, True, False)> [RemoveHandler]
     <KSEnumString("Resume", Nothing, True, False)> [Resume]
     <KSEnumString("Return", Nothing, True, False)> [Return]
     <KSEnumString("SByte", Nothing, True, False)> [SByte]
-    <KSEnumString("Select", Nothing, True, False, KS.End_Select)> [Select]
-    <KSEnumString("Set", Nothing, True, False, KS.End_Set)> [Set]
+    <KSEnumString("Select", Nothing, True, False)> [Select]
+    <KSEnumString("Set", Nothing, True, False)> [Set]
     <KSEnumString("Short", Nothing, True, False)> [Short]
     <KSEnumString("Single", Nothing, True, False)> [Single]
     <KSEnumString("Step", Nothing, True, False)> [Step]
     <KSEnumString("Stop", Nothing, True, False)> [Stop]
     <KSEnumString("String", Nothing, True, False)> [String]
-    <KSEnumString("Structure", Nothing, True, False, KS.End_Structure)> [Structure]
-    <KSEnumString("Sub", Nothing, True, False, KS.End_Sub)> [Sub]
-    <KSEnumString("SyncLock", Nothing, True, False, KS.End_SyncLock)> [SyncLock]
+    <KSEnumString("Structure", Nothing, True, False)> [Structure]
+    <KSEnumString("Sub", Nothing, True, False)> [Sub]
+    <KSEnumString("SyncLock", Nothing, True, False)> [SyncLock]
     <KSEnumString("Then", Nothing, True, False)> [Then]
     <KSEnumString("Throw", Nothing, True, False)> [Throw]
     <KSEnumString("To", Nothing, True, False)> [To]
     <KSEnumString("True", Nothing, True, False)> [True]
-    <KSEnumString("Try", Nothing, True, False, KS.End_Try)> [Try]
+    <KSEnumString("Try", Nothing, True, False)> [Try]
     <KSEnumString("TryCast", Nothing, True, False)> [TryCast]
     <KSEnumString("TypeOf", Nothing, True, False)> [TypeOf]
     <KSEnumString("UInteger", Nothing, True, False)> [UInteger]
     <KSEnumString("ULong", Nothing, True, False)> [ULong]
     <KSEnumString("UShort", Nothing, True, False)> [UShort]
-    <KSEnumString("Using", Nothing, True, False, KS.End_Using)> [Using]
+    <KSEnumString("Using", Nothing, True, False)> [Using]
     <KSEnumString("Until", Nothing, True, False)> [Until]
     <KSEnumString("Variant", Nothing, True, False)> [Variant]
     <KSEnumString("When", Nothing, True, False)> [When]
-    <KSEnumString("While", Nothing, True, False, KS.End_While)> [While]
-    <KSEnumString("With", Nothing, True, False, KS.End_With)> [With]
+    <KSEnumString("While", Nothing, True, False)> [While]
+    <KSEnumString("With", Nothing, True, False)> [With]
     <KSEnumString("Xor", Nothing, True, False)> [Xor]
-
-    'Semi keywords
-    <KSEnumString("#End", Nothing, False, False)> ConditionalEnd
-    <KSEnumString("#Const", Nothing, False, False)> ConditionalConst
-    <KSEnumString("#End If", Nothing, False, False, KS.ConditionalIf)> ConditionalEndIf
-    <KSEnumString("#End Region", Nothing, False, False, KS.ConditionalRegion)> ConditionalEndRegion
-    <KSEnumString("#End ExternalSource", Nothing, False, False, KS.ConditionalExternalSource)> ConditionalEndExternalSource
-    <KSEnumString("#Else", Nothing, False, False)> ConditionalElse
-    <KSEnumString("#ElseIf", Nothing, False, False)> ConditionalElseIf
-    <KSEnumString("#ExternalSource", Nothing, False, False, KS.ConditionalEndExternalSource)> ConditionalExternalSource
-    <KSEnumString("#If", Nothing, False, False, KS.ConditionalEndIf)> ConditionalIf
-    <KSEnumString("#Region", Nothing, False, False, KS.ConditionalEndRegion)> ConditionalRegion
-
-    <KSEnumString("End AddHandler", Nothing, False, False, KS.AddHandler)> End_AddHandler
-    <KSEnumString("End Class", Nothing, False, False, KS.Class)> End_Class
-    <KSEnumString("End Enum", Nothing, False, False, KS.Enum)> End_Enum
-    <KSEnumString("End Event", Nothing, False, False, KS.Event)> End_Event
-    <KSEnumString("End Function", Nothing, False, False, KS.Function)> End_Function
-    <KSEnumString("End Get", Nothing, False, False, KS.Get)> End_Get
-    <KSEnumString("End If", Nothing, False, False, KS.If)> End_If
-    <KSEnumString("End Interface", Nothing, False, False, KS.Interface)> End_Interface
-    <KSEnumString("End Module", Nothing, False, False, KS.Module)> End_Module
-    <KSEnumString("End Namespace", Nothing, False, False, KS.Namespace)> End_Namespace
-    <KSEnumString("End Operator", Nothing, False, False, KS.Operator)> End_Operator
-    <KSEnumString("End Property", Nothing, False, False, KS.Property)> End_Property
-    <KSEnumString("End RaiseEvent", Nothing, False, False, KS.RaiseEvent)> End_RaiseEvent
-    <KSEnumString("End RemoveHandler", Nothing, False, False, KS.RemoveHandler)> End_RemoveHandler
-    <KSEnumString("End Select", Nothing, False, False, KS.Select)> End_Select
-    <KSEnumString("End Set", Nothing, False, False, KS.Set)> End_Set
-    <KSEnumString("End Structure", Nothing, False, False, KS.Structure)> End_Structure
-    <KSEnumString("End Sub", Nothing, False, False, KS.Sub)> End_Sub
-    <KSEnumString("End SynckLock", Nothing, False, False, KS.SyncLock)> End_SyncLock
-    <KSEnumString("End Try", Nothing, False, False, KS.Try)> End_Try
-    <KSEnumString("End While", Nothing, False, False, KS.While)> End_While
-    <KSEnumString("End With", Nothing, False, False, KS.With)> End_With
-    <KSEnumString("End Using", Nothing, False, False, KS.Using)> End_Using
 
     'Real symbols
     <KSEnumString("<", Nothing, False, True)> LT

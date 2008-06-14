@@ -153,7 +153,9 @@ Public Class Message
         For i As Integer = 0 To m_Message.GetUpperBound(0)
             strMessages(i) = Report.LookupErrorCode(m_Message(i))
             Helper.Assert(m_Parameters(i) IsNot Nothing, "m_Parameters(" & i.ToString & ") Is Nothing")
-            strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
+			If m_Parameters IsNot Nothing AndAlso m_Parameters.Length > i Then
+            	strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
+			End If
             If i = 0 Then strMessages(i) = m_Message(i).ToString & ": " & strMessages(i)
         Next
         strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)

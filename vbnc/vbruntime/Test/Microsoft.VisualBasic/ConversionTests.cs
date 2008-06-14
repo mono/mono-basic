@@ -46,6 +46,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		[SetUp]
 		public void GetReady() 
 		{
+            Information.Err().Clear();
 		}
 
 		[TearDown]
@@ -57,7 +58,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 		[Test]
 		public void ErrorToString1() 
-		{
+		{            
 			Assert.AreEqual("Application-defined or object-defined error.",Conversion.ErrorToString(-1));
 			Assert.AreEqual("",Conversion.ErrorToString());
 			Assert.AreEqual("",Conversion.ErrorToString(0));

@@ -619,8 +619,9 @@ Public Class TypeNameResolutionInfo
         If declaringtype IsNot Nothing Then
             ns = declaringtype.Namespace
         Else
-            ns = String.Empty
+            ns = FromWhere.Compiler.CommandLine.RootNamespace
         End If
+        If ns Is Nothing Then ns = String.Empty
         Dim current As BaseObject = FromWhere
         'Dim dotR As String = "." & R
         'Dim nsDotR As String = ns & dotR

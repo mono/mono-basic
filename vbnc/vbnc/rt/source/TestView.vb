@@ -40,7 +40,7 @@ Friend Class TestView
         newItem.Text = Test.Name
         newItem.Tag = Test
 
-        newItem.ImageIndex = m_Form.TransparentIconIndex
+        newItem.ImageIndex = m_Form.GetIconIndex(rt.Test.Results.NotRun)
         newItem.SubItems.Add("")
         newItem.SubItems.Add("") 'Compiler
         newItem.SubItems.Add("") 'Result
@@ -69,7 +69,7 @@ Friend Class TestView
             Return
         End If
 
-        Item.ImageIndex = m_Form.BlueIconIndex
+        Item.ImageIndex = m_Form.GetIconIndex(Test.Result)
         Item.SubItems(1).Text = ""
         Item.SubItems(2).Text = "Running..."
         Item.SubItems(3).Text = ""
@@ -94,22 +94,9 @@ Friend Class TestView
             testresult = test.Result
         End If
         Item.SubItems(1).Text = ""
-        Select Case testresult
-            Case rt.Test.Results.NotRun
-                Item.ImageIndex = m_Form.YellowIconIndex
-                Item.SubItems(5).Text = ""
-            Case rt.Test.Results.Failed
-                Item.ImageIndex = m_Form.RedIconIndex
-                Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
-            Case rt.Test.Results.Success
-                Item.ImageIndex = m_Form.GreenIconIndex
-                Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
-            Case rt.Test.Results.Regressed
-                Item.ImageIndex = m_Form.IndigoIconIndex
-                Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
-        End Select
-
         Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
+        Item.ImageIndex = m_Form.GetIconIndex(testresult)
+
         If test.Run AndAlso test.VBNCVerification IsNot Nothing AndAlso test.VBNCVerification.Process IsNot Nothing AndAlso test.VBNCVerification.Process.FileVersion IsNot Nothing Then
             Item.SubItems(1).Text = test.VBNCVerification.Process.FileVersion.FileVersion & " (" & test.VBNCVerification.Process.LastWriteDate.ToString(datetimeformat) & ")"
         End If

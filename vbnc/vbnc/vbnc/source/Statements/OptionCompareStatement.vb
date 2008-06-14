@@ -47,6 +47,6 @@ Public Class OptionCompareStatement
     End Property
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
-        Return tm.PeekToken(0) = KS.Option AndAlso tm.PeekToken(1).Equals("Compare") AndAlso (tm.PeekToken(2).Equals("Text") OrElse tm.PeekToken(2).Equals("Binary"))
+        Return tm.PeekToken(0) = KS.Option AndAlso tm.PeekToken(1).Equals("Compare")
     End Function
 End Class

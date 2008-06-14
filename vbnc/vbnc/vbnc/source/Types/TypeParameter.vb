@@ -25,7 +25,7 @@ Public Class TypeParameter
     Inherits ParsedObject
     Implements INameable
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_TypeParameterConstraints As TypeParameterConstraints
     Private m_GenericParameterPosition As Integer
     Private m_GenericParameterConstraints() As Mono.Cecil.TypeReference
@@ -39,7 +39,7 @@ Public Class TypeParameter
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal TypeParameterConstraints As TypeParameterConstraints, ByVal GenericParameterPosition As Integer)
+    Sub Init(ByVal Identifier As Identifier, ByVal TypeParameterConstraints As TypeParameterConstraints, ByVal GenericParameterPosition As Integer)
         m_Identifier = Identifier
         m_TypeParameterConstraints = TypeParameterConstraints
         m_GenericParameterPosition = GenericParameterPosition
@@ -85,7 +85,7 @@ Public Class TypeParameter
     '    End Get
     'End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get

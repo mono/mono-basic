@@ -65,9 +65,9 @@ Public Class ConstructorDeclaration
 
         'If vbnc.Modifiers.IsNothing(Modifiers) = False AndAlso Modifiers.Is(ModifierMasks.Shared) Then
         If Modifiers.Is(ModifierMasks.Shared) OrElse FindTypeParent.IsModule Then
-            Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, SharedConstructorName), Signature.TypeParameters, Signature.Parameters)
+            Signature.Init(New Identifier(Signature, SharedConstructorName, Signature.Location, TypeCharacters.Characters.None), Signature.TypeParameters, Signature.Parameters)
         Else
-            Signature.Init(Token.CreateIdentifierToken(Signature.Identifier, ConstructorName), Signature.TypeParameters, Signature.Parameters)
+            Signature.Init(New Identifier(Signature, ConstructorName, Signature.Location, TypeCharacters.Characters.None), Signature.TypeParameters, Signature.Parameters)
         End If
 
         MyBase.Init(Attributes, Modifiers, Signature, Block)

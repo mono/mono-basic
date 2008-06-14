@@ -56,14 +56,23 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\BooleanTypeTest.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\ByteTypeTest.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\ConversionsTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DateTypeTest.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DecimalTypeTest.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DoubleTypeTest.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\IntegerTypeTest.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests2.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests3.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests4.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests5.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\LateBindingTests6.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\LongTypeTest.vb" />
     <Compile Include="Microsoft.VisualBasic.CompilerServices\OperatorsTests.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\ShortTypeTest.vb" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\SingleTypeTest.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ComputerInfoTests.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ComputerTests.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ClockTests.vb" />
@@ -77,7 +86,9 @@
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemTest.vb" />
     <Compile Include="Microsoft.VisualBasic\ErrObjectTests.vb" />
     <Compile Include="Microsoft.VisualBasic\ExceptionFilteringTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileSystemTestGenerated.vb" />
     <Compile Include="Microsoft.VisualBasic\FileSystemTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileSystemTests2.vb" />
     <Compile Include="Microsoft.VisualBasic\GlobalsTests.vb" />
     <Compile Include="Microsoft.VisualBasic\Helper.vb">
     </Compile>

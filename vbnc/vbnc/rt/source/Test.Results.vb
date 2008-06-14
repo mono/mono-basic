@@ -25,6 +25,11 @@ Partial Class Test
         ''' <remarks></remarks>
         NotRun
         ''' <summary>
+        ''' The test is running
+        ''' </summary>
+        ''' <remarks></remarks>
+        Running
+        ''' <summary>
         ''' Test failed.
         ''' </summary>
         ''' <remarks></remarks>
@@ -40,9 +45,19 @@ Partial Class Test
         ''' <remarks></remarks>
         Success
         ''' <summary>
+        ''' Test is marked as known failure, but succeeded
+        ''' </summary>
+        ''' <remarks></remarks>
+        KnownFailureSucceeded
+        ''' <summary>
         ''' The test was skipped (doesn't apply for the current platform for instance)
         ''' </summary>
         ''' <remarks></remarks>
         Skipped
+        ''' <summary>
+        ''' Test is marked as known failure, and failed
+        ''' </summary>
+        ''' <remarks></remarks>
+        KnownFailureFailed
     End Enum
 End Class

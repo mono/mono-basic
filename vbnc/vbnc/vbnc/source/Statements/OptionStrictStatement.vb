@@ -41,6 +41,6 @@ Public Class OptionStrictStatement
     End Property
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
-        Return tm.PeekToken(0) = KS.Option AndAlso tm.PeekToken(1).Equals("Strict") AndAlso (tm.PeekToken(2).Equals(KS.On) OrElse tm.PeekToken(2).Equals("Off"))
+        Return tm.PeekToken(0) = KS.Option AndAlso tm.PeekToken(1).Equals("Strict")
     End Function
 End Class

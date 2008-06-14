@@ -4,7 +4,6 @@ source/../tests/Generated/Operators.vb
 source/AutoGen/ZCompilerCodeGenerator.vb
 source/Code/CodeBlock.vb
 source/Code/ImplicitCodeBlock.vb
-source/ConditionalCompilation/ConditionalCompilation.vb
 source/ConditionalCompilation/ConditionalConstant.vb
 source/ConditionalCompilation/ConditionalConstants.vb
 source/ConditionalCompilation/ConditionalExpression.vb
@@ -86,10 +85,10 @@ source/General/NothingType.vb
 source/General/TypeDictionary.vb
 source/General/TypeList.vb
 source/Descriptors/GenericMethodDescriptor.vb
+source/General/Version.vb
 source/Infos/ExpressionResolveInfo.vb
 source/Interfaces/IHasImplicitMembers.vb
 source/Interfaces/IHasImplicitTypes.vb
-source/Interfaces/ITokenReader.vb
 source/Members/EventHandlerDeclaration.vb
 source/Members/EventDeclaration.vb
 source/Members/MemberDeclaration.vb
@@ -290,7 +289,6 @@ source/General/Namespace.vb
 source/General/Namespaces.vb
 source/General/TooManyErrorsException.vb
 source/General/vbncException.vb
-source/Members/AttributeMember.vb
 source/General/Index.vb
 source/General/Message.vb
 source/General/MessageAttribute.vb
@@ -379,7 +377,6 @@ source/Enums/Enums.vb
 source/Expressions/Expression.vb
 source/General/Helper.vb
 source/General/Main.vb
-source/Members/AttributeMembers.vb
 source/Members/EnumMemberDeclaration.vb
 source/Members/PropertyGetDeclaration.vb
 source/Members/PropertySetDeclaration.vb

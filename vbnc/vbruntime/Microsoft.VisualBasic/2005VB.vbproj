@@ -35,11 +35,16 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
     <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
     <OutputPath>..\bin\</OutputPath>
     <RootNamespace>
     </RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <VBDOC-commentprefix>'</VBDOC-commentprefix>
+    <Compilerversion />
+    <generatexmldocumentation>false</generatexmldocumentation>
+    <imports />
+    <additionalParameters />
+    <VBDOC-filestoparse />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CompilerResponseFile>2005VB.rsp</CompilerResponseFile>
@@ -59,16 +64,20 @@
     <OptionStrict>On</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
     <OutputPath>..\bin\</OutputPath>
     <RootNamespace>
     </RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Compilerversion />
+    <additionalParameters />
+    <VBDOC-filestoparse />
+    <VBDOC-commentprefix>'</VBDOC-commentprefix>
+    <generatexmldocumentation>false</generatexmldocumentation>
+    <imports />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
     <RootNamespace>dummy_root</RootNamespace>
     <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
     <OutputPath>..\bin\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -78,6 +87,14 @@
     <WarningLevel>4</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
+    <DebugType>full</DebugType>
+    <generatexmldocumentation>false</generatexmldocumentation>
+    <VBDOC-filestoparse />
+    <VBDOC-commentprefix>'</VBDOC-commentprefix>
+    <additionalParameters />
+    <imports />
+    <NoWarn />
+    <Compilerversion />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -96,8 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb" />
-    <Compile Include="Helper.vb">
-    </Compile>
+    <Compile Include="Helper.vb" />
     <Compile Include="Microsoft.VisualBasic.ApplicationServices\ApplicationBase.vb" />
     <Compile Include="Microsoft.VisualBasic.ApplicationServices\AssemblyInfo.vb" />
     <Compile Include="Microsoft.VisualBasic.ApplicationServices\AuthenticationMode.vb" />
@@ -165,13 +181,11 @@
     <Compile Include="Microsoft.VisualBasic.Devices\Keyboard.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Mouse.vb" />
-    <Compile Include="Microsoft.VisualBasic.Devices\MyWebClient.vb">
-    </Compile>
+    <Compile Include="Microsoft.VisualBasic.Devices\MyWebClient.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Network.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventArgs.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\NetworkAvailableEventHandler.vb" />
-    <Compile Include="Microsoft.VisualBasic.Devices\MyProgressDialog.vb">
-    </Compile>
+    <Compile Include="Microsoft.VisualBasic.Devices\MyProgressDialog.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Ports.jvm.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\Ports.vb" />
     <Compile Include="Microsoft.VisualBasic.Devices\ServerComputer.jvm.vb" />
@@ -180,10 +194,8 @@
     <Compile Include="Microsoft.VisualBasic.FileIO\FieldType.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystem.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperation.vb" />
-    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUI.vb">
-    </Compile>
-    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUIQuestion.vb">
-    </Compile>
+    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUI.vb" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\FileSystemOperationUIQuestion.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineException.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\RecycleOption.vb" />
     <Compile Include="Microsoft.VisualBasic.FileIO\SearchOption.vb" />
@@ -215,6 +227,7 @@
     <Compile Include="Microsoft.VisualBasic\ControlChars.vb" />
     <Compile Include="Microsoft.VisualBasic\Conversion.vb" />
     <Compile Include="Microsoft.VisualBasic\AudioPlayMode.vb" />
+    <Compile Include="Microsoft.VisualBasic\FileData.vb" />
     <Compile Include="Microsoft.VisualBasic\Globals.vb" />
     <Compile Include="Microsoft.VisualBasic\SpcInfo.vb" />
     <Compile Include="Microsoft.VisualBasic\TabInfo.vb" />
@@ -233,9 +246,7 @@
     <Compile Include="Microsoft.VisualBasic\FirstWeekOfYear.vb" />
     <Compile Include="Microsoft.VisualBasic\HideModuleNameAttribute.vb" />
     <Compile Include="Microsoft.VisualBasic\Information.vb" />
-    <Compile Include="Microsoft.VisualBasic\Interaction.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Microsoft.VisualBasic\Interaction.vb" />
     <Compile Include="Microsoft.VisualBasic\MsgBoxResult.vb" />
     <Compile Include="Microsoft.VisualBasic\MsgBoxStyle.vb" />
     <Compile Include="Microsoft.VisualBasic\OpenAccess.vb" />
@@ -250,10 +261,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="msfinal.pub" />
-    <None Include="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
+    <None Include="My Project\Application.myapp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="strings.resources" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

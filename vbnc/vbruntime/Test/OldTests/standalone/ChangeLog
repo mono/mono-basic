@@ -1,3 +1,11 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ChangeLog, Changelog: Merge with head.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Changelog, ChangeLog: Rename Changelog to ChangeLog to avoid confusing MD.
+
 2006-08-31  Rafael Mizrahi <rafim@mainsoft.com>
 	* removed tests which where moved into NUnit tests.
 

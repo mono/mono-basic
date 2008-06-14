@@ -37,16 +37,18 @@ Public Class ConditionalConstants
         Return New ConditionalConstants(Me)
     End Function
 
+#If DEBUG Then
     ReadOnly Property AsString() As String
         Get
-            Dim result As String = ""
+            Dim result As String = String.Empty
             For Each item As Generic.KeyValuePair(Of String, ConditionalConstant) In Me
-                If result <> "" Then result &= ";"
+                If result <> String.Empty Then result &= ";"
                 result &= item.Key & "=" & CStr(item.Value.Value)
             Next
             Return result
         End Get
     End Property
+#End If
 
     ''' <summary>
     ''' Adds the constant to the collection. 

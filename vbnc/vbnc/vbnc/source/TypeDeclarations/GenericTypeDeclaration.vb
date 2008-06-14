@@ -27,7 +27,7 @@ Public MustInherit Class GenericTypeDeclaration
         MyBase.new(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal TypeParameters As TypeParameters)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
         Dim TypeArgumentCount As Integer
         If TypeParameters IsNot Nothing Then
             TypeArgumentCount = TypeParameters.Parameters.Count

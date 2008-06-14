@@ -40,7 +40,7 @@ Partial Class Parser
 
         Dim m_Attributes As Attributes
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeParameters As TypeParameters
         Dim m_Inherits As NonArrayTypeName
         Dim m_TypeImplementsClauses As TypeImplementsClauses
@@ -55,7 +55,8 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Class) 'ClassDeclaration should not be created if no "Class" is found...
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.AcceptEndOfStatement = False Then
             m_TypeParameters = ParseTypeParameters(result)
@@ -83,7 +84,7 @@ Partial Class Parser
         m_Members = ParseTypeMembers(result)
         If m_Members Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Class) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Class) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(attributes, m_Modifiers, m_DeclaringType, m_Members, m_Identifier, m_TypeParameters, m_Inherits, m_TypeImplementsClauses)
@@ -139,7 +140,7 @@ Partial Class Parser
         Dim newConst As EnumMemberDeclaration
         Dim constAttributes As Attributes
 
-        Do Until tm.CurrentToken.Equals(KS.End_Enum)
+        Do Until tm.CurrentToken.Equals(KS.End, KS.Enum)
             constAttributes = New Attributes(Parent)
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, constAttributes) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -165,7 +166,7 @@ Partial Class Parser
     Private Function ParseEnumDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As EnumDeclaration
         Dim result As New EnumDeclaration(Parent, [Namespace])
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_QualifiedName As KS = KS.Integer
         Dim m_Members As MemberDeclarations
 
@@ -173,7 +174,8 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Enum)
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.As) Then
             If tm.CurrentToken.Equals(Enums.IntegralTypeNames) Then
@@ -188,7 +190,7 @@ Partial Class Parser
         m_Members = ParseEnumMembers(result)
         If m_Members Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        tm.AcceptIfNotInternalError(KS.End_Enum)
+        If tm.AcceptIfNotError(KS.End, KS.Enum) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(attributes, m_Modifiers, m_Members, m_Identifier, m_QualifiedName)
@@ -208,7 +210,7 @@ Partial Class Parser
         Dim result As New InterfaceDeclaration(Parent, [Namespace])
 
         Dim m_Modifiers As Modifiers
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeParameters As TypeParameters
         Dim m_InterfaceBases As InterfaceBases
         Dim m_Members As MemberDeclarations
@@ -217,7 +219,8 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Interface)
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.AcceptEndOfStatement = False Then
             m_TypeParameters = ParseTypeParameters(result)
@@ -237,7 +240,7 @@ Partial Class Parser
         m_Members = ParseInterfaceMembers(result)
         If m_Members Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Interface) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Interface) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(attributes, m_Modifiers, m_Members, m_Identifier, m_TypeParameters, m_InterfaceBases)
@@ -257,20 +260,21 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
         Dim m_Members As MemberDeclarations
-        Dim m_Name As Token = Nothing
+        Dim m_Name As Identifier
 
         m_Modifiers = ParseModifiers(result, ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Module)
 
-        If tm.AcceptIdentifier(m_Name) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Name = ParseIdentifier(result)
+        If m_Name Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         m_Members = ParseTypeMembers(result)
         If m_Members Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Module) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Module) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Attributes, m_Modifiers, m_Members, m_Name, 0)
@@ -291,7 +295,7 @@ Partial Class Parser
 
         Dim m_Modifiers As Modifiers
         Dim m_Members As MemberDeclarations
-        Dim m_Name As Token = Nothing
+        Dim m_Name As Identifier
         Dim m_TypeParameters As TypeParameters
         Dim m_Implements As TypeImplementsClauses
 
@@ -299,7 +303,8 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Structure)
 
-        If tm.AcceptIdentifier(m_Name) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Name = ParseIdentifier(result)
+        If m_Name Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.AcceptEndOfStatement = False Then
             m_TypeParameters = ParseTypeParameters(result)
@@ -315,7 +320,7 @@ Partial Class Parser
         m_Members = ParseTypeMembers(result)
         If m_Members Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Structure) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Structure) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Attributes, m_Modifiers, m_Members, m_Name, m_TypeParameters, m_Implements)

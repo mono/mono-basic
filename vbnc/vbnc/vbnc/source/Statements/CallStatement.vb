@@ -56,7 +56,7 @@ Public Class CallStatement
 
         If method Is Nothing Then Return False
 
-        Return Compiler.ConditionalCompiler.IsConditionallyExcluded(method, Me.Location)
+        Return Compiler.Scanner.IsConditionallyExcluded(method, Me.Location)
     End Function
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean

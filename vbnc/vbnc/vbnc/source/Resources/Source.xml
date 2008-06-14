@@ -824,7 +824,7 @@
 	</Message>
 	<Message id="30206" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>'Option' must be followed by 'Explicit', 'Strict' or 'Compare'.</VBNCValue>
+		<VBNCValue>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</VBNCValue>
 		<VBValue>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</VBValue>
 	</Message>
 	<Message id="30207" level="Error">
@@ -879,7 +879,7 @@
 	</Message>
 	<Message id="30225" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Option {0} statement can only appear once per file.</VBNCValue>
 		<VBValue>'Option |1' statement can only appear once per file.</VBValue>
 	</Message>
 	<Message id="30230" level="Error">
@@ -1679,7 +1679,7 @@
 	</Message>
 	<Message id="30506" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Handles clause requires a variable declared with WithEvents.</VBNCValue>
 		<VBValue>Handles clause requires a WithEvents variable.</VBValue>
 	</Message>
 	<Message id="30507" level="Error">
@@ -1874,7 +1874,7 @@
 	</Message>
 	<Message id="30574" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Late binding is not allowed when Option Strict On is in effect.</VBNCValue>
 		<VBValue>Option Strict On disallows late binding.</VBValue>
 	</Message>
 	<Message id="30576" level="Error">
@@ -1939,7 +1939,7 @@
 	</Message>
 	<Message id="30590" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Cannot find the event '{0}'.</VBNCValue>
 		<VBValue>Event '|1' cannot be found.</VBValue>
 	</Message>
 	<Message id="30591" level="Error">
@@ -2589,7 +2589,7 @@
 	</Message>
 	<Message id="30737" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>No accessible 'Main' method with an appropriate signature was found in '{0}'.</VBNCValue>
 		<VBValue>No accessible 'Main' method with an appropriate signature was found in '|1'.</VBValue>
 	</Message>
 	<Message id="30738" level="Error">
@@ -2812,6 +2812,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>'Declare' statements in a structure cannot be declared '|1'.</VBValue>
 	</Message>
+  <Message id="30796" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>None of the accessible 'Main' methods with the appropriate signature found in '{0}' can be the startup method since they are all either generic or nested in generic types.</VBNCValue>
+    <VBValue>None of the accessible 'Main' methods with the appropriate signatures found in '|1' can be the startup method since they are all either generic or nested in generic types.</VBValue>
+  </Message>
 	<Message id="30800" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

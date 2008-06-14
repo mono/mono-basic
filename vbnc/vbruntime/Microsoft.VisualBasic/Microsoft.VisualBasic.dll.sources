@@ -113,6 +113,7 @@ Microsoft.VisualBasic/Constants.vb
 Microsoft.VisualBasic/ControlChars.vb
 Microsoft.VisualBasic/Conversion.vb
 Microsoft.VisualBasic/AudioPlayMode.vb
+Microsoft.VisualBasic/FileData.vb
 Microsoft.VisualBasic/Globals.vb
 Microsoft.VisualBasic/SpcInfo.vb
 Microsoft.VisualBasic/TabInfo.vb

@@ -28,7 +28,7 @@ Public Class ConstantDeclaration
 
     'Private m_Descriptor As New FieldDescriptor(Me)
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_TypeName As TypeName
     Private m_ConstantExpression As Expression
 
@@ -48,7 +48,7 @@ Public Class ConstantDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Token, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
         MyBase.Init(Attributes, Modifiers, Identifier.Name)
         m_Identifier = Identifier
         m_TypeName = TypeName
@@ -238,7 +238,7 @@ Public Class ConstantDeclaration
         End Get
     End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get

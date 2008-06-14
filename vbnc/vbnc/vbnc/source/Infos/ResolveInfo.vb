@@ -23,6 +23,7 @@ Public Class ResolveInfo
     Private Const c_CanFail As Integer = 1
     Private Const c_CanBeLateCall As Integer = 2
     Private Const c_CanBeImplicitSimpleName As Integer = 3
+    Private Const c_EventResolution As Integer = 4
 
     Public Compiler As Compiler
 
@@ -76,6 +77,15 @@ Public Class ResolveInfo
         End Get
         Set(ByVal value As Boolean)
             m_Bits(c_CanFail) = value
+        End Set
+    End Property
+
+    Public Property IsEventResolution() As Boolean
+        Get
+            Return m_Bits(c_EventResolution)
+        End Get
+        Set(ByVal value As Boolean)
+            m_Bits(c_EventResolution) = value
         End Set
     End Property
 End Class

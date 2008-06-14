@@ -393,7 +393,7 @@ Partial Public Class Parser
         m_Code = ParseCodeBlock(result, IsOneLiner)
         If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_While) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.While) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Condition, m_Code)
 
@@ -423,7 +423,7 @@ Partial Public Class Parser
 
         If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.Accept(KS.End_With) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.With) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Code, m_WithExpression)
 
@@ -441,7 +441,7 @@ Partial Public Class Parser
     Private Function ParseUsingDeclarator(ByVal Parent As ParsedObject) As UsingDeclarator
         Dim result As New UsingDeclarator(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_IsNew As Boolean
         Dim m_IsVariableDeclaration As Boolean
         Dim m_TypeName As NonArrayTypeName
@@ -449,7 +449,8 @@ Partial Public Class Parser
         Dim m_ArgumentList As ArgumentList = Nothing
         Dim m_VariableDeclaration As LocalVariableDeclaration
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.As) Then
             m_IsVariableDeclaration = True
@@ -535,7 +536,7 @@ Partial Public Class Parser
             Next
         End If
 
-        If tm.Accept(KS.End_Using) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Using) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_UsingResources, m_Code)
 
@@ -565,7 +566,7 @@ Partial Public Class Parser
         m_Code = ParseCodeBlock(result, IsOneLiner)
         If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.Accept(KS.End_SyncLock) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.SyncLock) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Lock, m_Code)
 
@@ -683,7 +684,7 @@ Partial Public Class Parser
             m_FinallyBlock = Nothing
         End If
 
-        If tm.Accept(KS.End_Try) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Try) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Catches, m_TryCode, m_FinallyBlock)
 
@@ -700,14 +701,15 @@ Partial Public Class Parser
         Dim result As New CatchStatement(Parent)
 
         Dim m_Code As CodeBlock
-        Dim m_Variable As Token = Nothing
+        Dim m_Variable As Identifier = Nothing
         Dim m_When As Expression = Nothing
         Dim m_TypeName As NonArrayTypeName = Nothing
 
         tm.AcceptIfNotInternalError(KS.Catch)
 
         If tm.AcceptEndOfStatement(IsOneLiner) = False Then
-            If tm.AcceptIdentifier(m_Variable) Then
+            m_Variable = ParseIdentifier(result)
+            If m_Variable IsNot Nothing Then
                 If tm.AcceptIfNotError(KS.As) = False Then Helper.ErrorRecoveryNotImplemented()
                 m_TypeName = ParseNonArrayTypeName(result)
                 If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -795,7 +797,7 @@ Partial Public Class Parser
             m_FalseCode = Nothing
         End If
 
-        If m_OneLiner = False Then tm.AcceptIfNotError(KS.End_If)
+        If m_OneLiner = False Then tm.AcceptIfNotError(KS.End, KS.If)
 
         result.Init(m_Condition, m_FalseCode, m_TrueCode, m_OneLiner, m_ElseIfs)
 
@@ -870,7 +872,7 @@ Partial Public Class Parser
             m_Cases.Add(newCase)
         End While
 
-        If tm.Accept(KS.End_Select) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Select) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Test, m_Cases)
 
@@ -1023,7 +1025,7 @@ Partial Public Class Parser
         If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If tm.Accept(KS.Next) = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30084, tm.CurrentToken.Location)
+            Compiler.Report.ShowMessage(Messages.VBNC30084, tm.CurrentLocation)
             Return result
         End If
 

@@ -94,7 +94,7 @@ Public Class Test
 
     Private m_Tag As Object
     Private m_DontExecute As Boolean
-
+    Private m_KnownFailure As Boolean
     Private m_IsNegativeTest As Boolean
     Private m_IsWarning As Boolean
     Private m_NegativeError As Integer
@@ -110,6 +110,15 @@ Public Class Test
     Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
     Private Shared m_FileCacheTime As Date = Date.MinValue
     Public Shared DirectoriesToSkip As String()
+
+    Property KnownFailure() As Boolean
+        Get
+            Return m_KnownFailure
+        End Get
+        Set(ByVal value As Boolean)
+            m_KnownFailure = value
+        End Set
+    End Property
 
     Property AC() As String
         Get
@@ -873,13 +882,14 @@ Public Class Test
     End Function
 
     Sub DoTest()
-	If BasePath <> "" Then
-	        Environment.CurrentDirectory = BasePath
-	End If
+        If BasePath <> "" Then
+            Environment.CurrentDirectory = BasePath
+        End If
         If CreateVerifications() = False Then
             Return
         End If
 
+        m_Result = Results.Running
         RaiseEvent Executing(Me)
 
         Dim StartTime, EndTime As Date
@@ -899,8 +909,17 @@ Public Class Test
         m_TestDuration = EndTime - StartTime
         m_LastRun = StartTime
 
-        If m_Result = Results.NotRun Then
+        If m_Result = Results.Running Then
             m_Result = Results.Success
+        End If
+        If m_KnownFailure Then
+            If m_Result = Results.Success Then
+                m_Result = Results.KnownFailureSucceeded
+            ElseIf m_Result = Results.Failed Then
+                m_Result = Results.KnownFailureFailed
+            Else
+                m_Result = Results.KnownFailureFailed
+            End If
         End If
 
         SaveTest()

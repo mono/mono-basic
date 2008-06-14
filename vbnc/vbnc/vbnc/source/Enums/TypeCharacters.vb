@@ -23,7 +23,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class TypeCharacters
-    Public Enum Characters As Byte
+    Public Enum Characters
         None '= -1
         ''' <summary>
         ''' %

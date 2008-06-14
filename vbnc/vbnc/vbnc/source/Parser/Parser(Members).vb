@@ -72,7 +72,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Sub) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Block)
@@ -139,7 +139,7 @@ Partial Class Parser
             End If
         Loop
 
-        If tm.AcceptIfNotError(KS.End_Property) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Property) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
@@ -198,7 +198,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Set) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Set) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
 
@@ -233,7 +233,7 @@ Partial Class Parser
         m_Block = ParseCodeBlock(result, False)
         If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
-        If tm.AcceptIfNotError(KS.End_Get) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Get) = False Then Helper.ErrorRecoveryNotImplemented()
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block)
@@ -251,14 +251,15 @@ Partial Class Parser
     ''' <param name="m_ParameterList">Input/Output parameter, must not be nothing on entry.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function ParseSubSignature(ByVal Parent As ParsedObject, ByRef m_Identifier As Token, ByRef m_TypeParameters As TypeParameters, ByVal m_ParameterList As ParameterList) As Boolean
+    Private Function ParseSubSignature(ByVal Parent As ParsedObject, ByRef m_Identifier As Identifier, ByRef m_TypeParameters As TypeParameters, ByVal m_ParameterList As ParameterList) As Boolean
         Dim result As Boolean = True
 
         'Helper.Assert(m_Identifier Is Nothing)
         Helper.Assert(m_TypeParameters Is Nothing)
         Helper.Assert(m_ParameterList IsNot Nothing)
 
-        result = tm.AcceptIdentifier(m_Identifier) AndAlso result
+        m_Identifier = ParseIdentifier(Parent)
+        result = m_Identifier IsNot Nothing AndAlso result
 
         If vbnc.TypeParameters.IsMe(tm) Then
             m_TypeParameters = ParseTypeParameters(Parent)
@@ -284,7 +285,7 @@ Partial Class Parser
     Private Function ParseSubSignature(ByVal Parent As ParsedObject) As SubSignature
         Dim result As New SubSignature(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier = Nothing
         Dim m_TypeParameters As TypeParameters = Nothing
         Dim m_ParameterList As New ParameterList(result)
 
@@ -304,7 +305,7 @@ Partial Class Parser
     Private Function ParseFunctionSignature(ByVal Parent As ParsedObject) As FunctionSignature
         Dim result As New FunctionSignature(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier = Nothing
         Dim m_TypeParameters As TypeParameters = Nothing
         Dim m_ParameterList As New ParameterList(result)
         Dim m_ReturnTypeAttributes As New Attributes(result)
@@ -324,7 +325,7 @@ Partial Class Parser
             If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
         End If
 
-        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.PeekToken(-1).Location))
+        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation))
 
         Return result
     End Function
@@ -364,7 +365,7 @@ Partial Class Parser
 
         Helper.Assert(TypeOf Parent Is TypeParameterList)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_TypeParameterConstraints As TypeParameterConstraints
         Dim GenericParameterPosition As Integer
 
@@ -373,7 +374,8 @@ Partial Class Parser
         parentList = DirectCast(Parent, TypeParameterList)
         GenericParameterPosition = parentList.Count + 1
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If TypeParameterConstraints.CanBeMe(tm) Then
             m_TypeParameterConstraints = ParseTypeParameterConstraints(result)
@@ -490,10 +492,11 @@ Partial Class Parser
     Private Function ParseParameterIdentifier(ByVal Parent As Parameter) As ParameterIdentifier
         Dim result As New ParameterIdentifier(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_ArrayNameModifier As ArrayNameModifier = Nothing
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         If vbnc.ArrayNameModifier.CanBeMe(tm) Then
             m_ArrayNameModifier = ParseArrayNameModifier(result)

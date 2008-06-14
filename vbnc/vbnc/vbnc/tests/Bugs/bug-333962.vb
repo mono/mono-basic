@@ -3,14 +3,19 @@ Imports System.Windows.Forms
 
 Class Program
     Shared Function Main As Integer
-	Dim f As New Form1 ()
-        If f.b1 Is Nothing Then
-		Console.WriteLine ("Failed") 
-		Return 1
-	Else
-		Console.WriteLine ("Success")
+	Try
+		Dim f As New Form1 ()
+		If f.b1 Is Nothing Then
+			Console.WriteLine ("Failed") 
+			Return 1
+		Else
+			Console.WriteLine ("Success")
+			Return 0
+		End If
+	Catch ex As System.TypeInitializationException
+		Console.WriteLine ("Ignored, got exception, we're probably running on a headless server")
 		Return 0
-	End If
+	End Try
     End Function
 End Class
 

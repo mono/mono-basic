@@ -1,3 +1,12 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ChangeLog, misc/RedimPreserve.vb, misc/ctest.vb, misc/test3.vb: Merge
+	  with head.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* misc/ctest.vb, misc/RedimPreserve.vb, misc/test3.vb: Fix line endings.
+
 2005-10-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* in all versions of test-mbas.make at every depth added line:
 		RUNTIME_FLAGS = --debug

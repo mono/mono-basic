@@ -53,12 +53,12 @@ Public Class LocalVariableDeclaration
         MyBase.New(Parent, Attributes, Modifiers, VariableIdentifier, IsNew, TypeName, VariableInitializer, ArgumentList)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Token, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent, Attributes, Modifiers, VariableIdentifier, IsNew, TypeName, VariableInitializer, ArgumentList)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As Token, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent, Attributes, Identifier, IsNew, TypeName, VariableInitializer, ArgumentList)
     End Sub

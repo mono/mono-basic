@@ -112,7 +112,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Try
                 Return FromString(Value, Nothing)
             Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + Value + """ to type 'Decimal' is not valid.", ex)
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), Value, "Decimal"))
             End Try
         End Function
         Public Shared Function FromString(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Decimal

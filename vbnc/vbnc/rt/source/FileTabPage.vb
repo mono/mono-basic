@@ -36,7 +36,7 @@ Public Class FileTabPage
         m_FileName = Filename
         Try
             If IO.File.Exists(m_FileName) Then
-                txtFile.Text = IO.File.ReadAllText(m_FileName)
+                txtFile.Text = Join(IO.File.ReadAllText(m_FileName).Split(New String() {vbCrLf, vbCr, vbLf}, StringSplitOptions.None), vbCrLf)
             Else
                 txtFile.Text = "File not found: " & m_FileName
             End If

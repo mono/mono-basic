@@ -1,3 +1,36 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Microsoft.VisualBasic.dll.sources, 2005VB.sln, makefile.build,
+	  2008VB.JavaEE.vbproj, Makefile, 2005VB.vbproj, strings1.resources,
+	  strings2.resources, ChangeLog, vbruntime1.rsp, vbruntime2.rsp,
+	  Microsoft.VisualBasic.dll.sources.win, strings.resources,
+	  strings-only1.txt, strings-only2.txt, vbruntime.rsp: Merge with
+	  head.
+
+2008-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: Do sign Microsoft.VisualBasic.dll
+
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* strings1.resources, strings2.resources: Added.
+
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile: don't extract resources from the vbproj file.
+	* Microsoft.VisualBasic.dll.sources.win, strings.resources: Updated.
+
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* strings-only1.txt, strings-only2.txt: Added.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Makefile, vbruntime1.rsp, vbruntime2.rsp, vbruntime.rsp: Implement
+	  building different resources for 1.1 and 2.0 profiles.
+	* 2005VB.vbproj, Microsoft.VisualBasic.dll.sources.win, strings.resources,
+	  2005VB.sln: Updated.
+
 2007-12-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	

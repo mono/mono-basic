@@ -25,7 +25,19 @@
 #Const EXTENDED = False
 
 Public Class Scanner
-    Implements ITokenReader
+    Inherits BaseObject
+
+    'Useful constants.
+    Private Const nl0 As Char = Microsoft.VisualBasic.ChrW(0)
+    Private Const nlA As Char = Microsoft.VisualBasic.ChrW(&HA)
+    Private Const nlD As Char = Microsoft.VisualBasic.ChrW(&HD)
+    Private Const nl2028 As Char = Microsoft.VisualBasic.ChrW(&H2028)
+    Private Const nl2029 As Char = Microsoft.VisualBasic.ChrW(&H2029)
+    Private Const nlTab As Char = Microsoft.VisualBasic.ChrW(9)
+
+    Private Const COMMENTCHAR1 As Char = "'"c
+    Private Const COMMENTCHAR2 As Char = Microsoft.VisualBasic.ChrW(&H2018)
+    Private Const COMMENTCHAR3 As Char = Microsoft.VisualBasic.ChrW(&H2019)
 
     ''' <summary>
     ''' The total number of lines scanned.
@@ -60,6 +72,7 @@ Public Class Scanner
 
     Private m_PreviousChar As Char
     Private m_CurrentChar As Char
+    Private m_EndOfFile As Boolean
     Private m_PeekedChars As New Generic.Queue(Of Char)
     Private m_Reader As System.IO.StreamReader
     Private m_Builder As New System.Text.StringBuilder
@@ -73,23 +86,443 @@ Public Class Scanner
 
     Private m_Files As Generic.Queue(Of CodeFile)
 
-    Private m_Compiler As Compiler
-
     Private m_Peeked As Token
-    Private m_PeekedExact As Token
+
+    'Data about the current token
+    Private m_LastWasNewline As Boolean
     Private m_Current As Token
+    Private m_CurrentTypeCharacter As TypeCharacters.Characters
+    Private m_CurrentTokenType As TokenType
+    Private m_CurrentData As Object
 
-    'Useful constants.
-    Private Const nl0 As Char = Microsoft.VisualBasic.ChrW(0)
-    Private Const nlA As Char = Microsoft.VisualBasic.ChrW(&HA)
-    Private Const nlD As Char = Microsoft.VisualBasic.ChrW(&HD)
-    Private Const nl2028 As Char = Microsoft.VisualBasic.ChrW(&H2028)
-    Private Const nl2029 As Char = Microsoft.VisualBasic.ChrW(&H2029)
-    Private Const nlTab As Char = Microsoft.VisualBasic.ChrW(9)
+#Region "Conditional Compilation"
+    'Data related to conditional compilation
+    Private m_ProjectConstants As New ConditionalConstants
+    Private m_CurrentConstants As ConditionalConstants
+    Private m_Evaluator As New ConditionalExpression(Me)
 
-    Private Const COMMENTCHAR1 As Char = "'"c
-    Private Const COMMENTCHAR2 As Char = Microsoft.VisualBasic.ChrW(&H2018)
-    Private Const COMMENTCHAR3 As Char = Microsoft.VisualBasic.ChrW(&H2019)
+    ''' <summary>
+    ''' 0 if condition is false and has never been true
+    ''' 1 if condition is true
+    ''' -1 if condition has been true
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_ConditionStack As New Generic.List(Of Integer)
+
+    Private m_Methods As New Generic.Dictionary(Of Mono.Cecil.MethodReference, Mono.Cecil.CustomAttributeCollection)
+
+    Function IsConditionallyExcluded(ByVal CalledMethod As Mono.Cecil.MethodReference, ByVal AtLocation As Span) As Boolean
+        Dim attribs As Mono.Cecil.CustomAttributeCollection
+
+        If m_Methods.ContainsKey(CalledMethod) Then
+            attribs = m_Methods(CalledMethod)
+        Else
+            attribs = CecilHelper.FindDefinition(CalledMethod).CustomAttributes
+            m_Methods.Add(CalledMethod, attribs)
+        End If
+
+        If attribs Is Nothing Then Return False
+
+        For Each attrib As Object In attribs
+            Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
+
+            conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
+            If conditionalAttrib Is Nothing Then Continue For
+
+            If Not IsDefinedAtLocation(conditionalAttrib.ConditionString, AtLocation) Then Return True
+        Next
+
+        Return False
+    End Function
+
+    ''' <summary>
+    ''' Checks if the specified symbol is defined at the specified location.
+    ''' </summary>
+    ''' <param name="Symbol"></param>
+    ''' <param name="Location"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsDefinedAtLocation(ByVal Symbol As String, ByVal Location As Span) As Boolean
+        Dim constants As ConditionalConstants
+
+        constants = Location.File(Compiler).GetConditionalConstants(Location.Line)
+
+        If constants IsNot Nothing AndAlso constants.ContainsKey(Symbol) Then
+            Return constants(Symbol).IsDefined
+        End If
+
+        If m_ProjectConstants.ContainsKey(Symbol) Then
+            Return m_ProjectConstants(Symbol).IsDefined
+        End If
+
+        Return False
+    End Function
+
+    ReadOnly Property IfdOut() As Boolean
+        Get
+            For i As Integer = 0 To m_ConditionStack.Count - 1
+                If Not m_ConditionStack(i) > 0 Then Return True
+            Next
+            Return False
+        End Get
+    End Property
+
+    ReadOnly Property CurrentConstants() As ConditionalConstants
+        Get
+            Return m_CurrentConstants
+        End Get
+    End Property
+
+    Private Sub LoadProjectConstants()
+        'Set the project level defines
+        Dim Constant As ConditionalConstant
+        For Each def As Define In Compiler.CommandLine.Define
+            Constant = New ConditionalConstant(def.Symbol, def.ObjectValue)
+            m_ProjectConstants.Add(Constant)
+        Next
+
+        ResetCurrentConstants()
+    End Sub
+
+    Private Sub ResetCurrentConstants()
+        m_CurrentConstants = New ConditionalConstants(m_ProjectConstants)
+    End Sub
+
+#Region "Const"
+    Private Sub ParseConst()
+        Dim name As String
+        Dim value As Object = Nothing
+
+        If m_Current <> KS.Const Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'Const'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current.IsIdentifier = False Then
+            Compiler.Report.ShowMessage(Messages.VBNC30203)
+            Me.EatLine(False)
+            Return
+        End If
+        name = m_Current.Identifier
+        Me.NextUnconditionally()
+
+        If m_Current <> KS.Equals Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected '='")
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        m_Evaluator.Parse(value)
+
+        If Me.IfdOut = False Then
+            m_CurrentConstants.Add(New ConditionalConstant(name, value))
+            GetLocation.File(Compiler).AddConditionalConstants(GetLocation.Line, m_CurrentConstants)
+        End If
+
+        ParseEndOfLine()
+    End Sub
+#End Region
+
+#Region "If"
+    Private Sub ParseIf()
+        Dim theExpression As ConditionalExpression
+        Dim expression As Object = Nothing
+
+        If Not m_Current = KS.If Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'If'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        theExpression = New ConditionalExpression(Me)
+        If Not theExpression.Parse(expression) Then
+            EatLine(False)
+            Return
+        End If
+
+        If m_Current = KS.Then Then
+            Me.NextUnconditionally()
+        End If
+
+        ParseEndOfLine()
+
+        If CBool(expression) Then
+            m_ConditionStack.Add(1)
+        Else
+            m_ConditionStack.Add(0)
+        End If
+    End Sub
+
+    Private Sub ParseElseIf()
+        If Not CheckEmtpyStack(Messages.VBNC30014) Then Return
+
+        Dim theExpression As New ConditionalExpression(Me)
+        Dim expression As Object = Nothing
+
+        If m_Current <> KS.ElseIf Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'ElseIf'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If theExpression.Parse(expression) = False Then
+            EatLine(False)
+            Return
+        End If
+
+        If m_Current = KS.Then Then
+            Me.NextUnconditionally()
+        End If
+
+        ParseEndOfLine()
+
+        If m_ConditionStack(m_ConditionStack.Count - 1) = 1 Then
+            m_ConditionStack(m_ConditionStack.Count - 1) = -1
+        ElseIf m_ConditionStack(m_ConditionStack.Count - 1) = 0 AndAlso CBool(expression) Then
+            m_ConditionStack(m_ConditionStack.Count - 1) = 1
+        End If
+    End Sub
+
+    Private Sub ParseElse()
+        If m_Current <> KS.Else Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'Else'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If Not CheckEmtpyStack() Then Return
+
+        If m_ConditionStack(m_ConditionStack.Count - 1) = 0 Then
+            m_ConditionStack(m_ConditionStack.Count - 1) = 1
+        ElseIf m_ConditionStack(m_ConditionStack.Count - 1) = 1 Then
+            m_ConditionStack(m_ConditionStack.Count - 1) = -1
+        End If
+        ParseEndOfLine()
+    End Sub
+
+    Private Sub ParseEndIf()
+        If m_Current <> KS.If Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'If'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If Not CheckEmtpyStack() Then Return
+
+        m_ConditionStack.RemoveAt(m_ConditionStack.Count - 1)
+        ParseEndOfLine()
+    End Sub
+
+    Private Function CheckEmtpyStack(Optional ByVal Msg As Messages = Messages.VBNC30013) As Boolean
+        If m_ConditionStack.Count > 0 Then Return True
+
+        Compiler.Report.ShowMessage(Msg, GetCurrentLocation)
+        EatLine(False)
+
+        Return False
+    End Function
+#End Region
+
+#Region "Region"
+    Private Sub ParseRegion()
+        If m_Current.Equals("Region") = False Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'Region'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If Not m_Current.IsStringLiteral Then
+            Helper.AddError(Me, "Expected string literal")
+            EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        ParseEndOfLine()
+    End Sub
+
+    Private Sub ParseEndRegion()
+        If m_Current.Equals("Region") = False Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'Region'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        ParseEndOfLine()
+    End Sub
+#End Region
+
+#Region "External Source"
+    Private Sub ParseExternalSource()
+        If m_Current.Equals("ExternalSource") = False Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'ExternalSource'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current <> KS.LParenthesis Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected '('")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current.IsStringLiteral = False Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected string literal")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current <> KS.Comma Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected ','")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current.IsIntegerLiteral = False Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected integer literal")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current <> KS.RParenthesis Then
+            Helper.AddError(Compiler, GetCurrentLocation, "Expected ')'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        ParseEndOfLine()
+    End Sub
+
+    Private Sub ParseEndExternalSource()
+        If m_Current.Equals("ExternalSource") = False Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'ExternalSource'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        ParseEndOfLine()
+    End Sub
+#End Region
+
+    Private Sub ParseEndOfLine()
+        If m_Current.IsEndOfLine = False Then
+            Helper.AddError(Me.Compiler, GetCurrentLocation, "Expected end of line")
+            EatLine(False)
+            Return
+        End If
+        'Me.NextUnconditionally()
+    End Sub
+
+    Private Sub ParseEnd()
+        If m_Current <> KS.End Then
+            Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'End'")
+            Me.EatLine(False)
+            Return
+        End If
+        Me.NextUnconditionally()
+
+        If m_Current = KS.If Then
+            ParseEndIf()
+        ElseIf m_Current.Equals("ExternalSource") Then
+            ParseEndExternalSource()
+        ElseIf m_Current.Equals("Region") Then
+            ParseEndRegion()
+        Else
+            Helper.AddError(Me, "'End' what?")
+            Me.EatLine(False)
+            Return
+        End If
+    End Sub
+
+    Public Function [Next]() As Token
+        Do
+            NextUnconditionally()
+
+            If m_Current.IsEndOfCode Then
+                m_Peeked = m_Current
+                Return m_Current
+            End If
+
+            If m_Current.IsEndOfFile Then
+                ResetCurrentConstants()
+                Return m_Current
+            End If
+
+            If TokensSeenOnLine = 1 AndAlso m_Current = KS.Numeral Then
+                Me.NextUnconditionally()
+                If m_Current = KS.If Then
+                    ParseIf()
+                ElseIf m_Current = KS.Else Then
+                    ParseElse()
+                ElseIf m_Current = KS.ElseIf Then
+                    ParseElseIf()
+                ElseIf m_Current = KS.Const Then
+                    ParseConst()
+                ElseIf m_Current.Equals("ExternalSource") Then
+                    ParseExternalSource()
+                ElseIf m_Current.Equals("Region") Then
+                    ParseRegion()
+                ElseIf m_Current = KS.End Then
+                    ParseEnd()
+                Else
+                    Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'If', 'ElseIf', 'Else', 'Const' or 'Region'.")
+                    EatLine(False)
+                End If
+            ElseIf IfdOut Then
+                If m_Current.IsEndOfLine = False Then EatLine(False)
+                Continue Do
+            Else
+                If m_Current.IsEndOfLineOnly AndAlso m_LastWasNewline Then
+                    Continue Do
+                End If
+                m_LastWasNewline = m_Current.IsEndOfLineOnly
+                Return m_Current
+            End If
+        Loop While m_Current.IsEndOfCode = False AndAlso m_Current.IsEndOfFile = False
+        Return m_Current
+    End Function
+
+    Public Function Peek() As Token
+        If Token.IsSomething(m_Peeked) Then Return m_Peeked
+        m_Peeked = Me.Next
+        Return m_Peeked
+    End Function
+#End Region
+
+    Private Structure Data
+        Public Type As TokenType
+        Public Symbol As KS
+        Public Data As Object
+        Public TypeCharacter As TypeCharacters.Characters
+
+        Public Sub Clear()
+            Type = vbnc.TokenType.None
+            Symbol = KS.None
+            Data = Nothing
+            TypeCharacter = TypeCharacters.Characters.None
+        End Sub
+    End Structure
+
+    ReadOnly Property TokensSeenOnLine() As Integer
+        Get
+            Return m_TokensSeenOnLine
+        End Get
+    End Property
 
     ReadOnly Property TotalLineCount() As UInteger
         Get
@@ -100,12 +533,6 @@ Public Class Scanner
     ReadOnly Property TotalCharCount() As Integer
         Get
             Return m_TotalCharCount
-        End Get
-    End Property
-
-    ReadOnly Property Compiler() As Compiler
-        Get
-            Return m_Compiler
         End Get
     End Property
 
@@ -247,10 +674,10 @@ Public Class Scanner
         '  < Unicode line separator character (0x2028) > |
         '  < Unicode paragraph separator character (0x2029) >
 
-        Dim ch As Char
-        Do
+        Dim ch As Char = m_CurrentChar
+        Do Until IsNewLine(ch)
             ch = NextChar()
-        Loop Until IsNewLine(ch)
+        Loop
 
         If NewLineCharAlso Then
             EatNewLine()
@@ -456,13 +883,15 @@ Public Class Scanner
         Dim canstartidentifier As Boolean = Me.IsLastChar = False AndAlso (IsAlphaCharacter(PeekChar) OrElse IsUnderscoreCharacter(PeekChar))
         If TypeCharacters.IsTypeCharacter(CurrentChar, typecharacter) AndAlso (canstartidentifier = False OrElse typecharacter <> TypeCharacters.Characters.SingleTypeCharacter) Then
             NextChar()
-            Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent, typecharacter, Escaped)
+            m_CurrentTypeCharacter = typecharacter
+            Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
         Else
             Dim keyword As KS
             If Escaped = False AndAlso Token.IsKeyword(strIdent, keyword) Then
                 Return Token.CreateKeywordToken(GetCurrentLocation, keyword)
             Else
-                Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent, typecharacter, Escaped)
+                m_CurrentTypeCharacter = typecharacter
+                Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
             End If
         End If
     End Function
@@ -483,13 +912,15 @@ Public Class Scanner
                     'vbc accepts this...
                     Compiler.Report.ShowMessage(Messages.VBNC90003)
                     bEndOfString = True
-                Case nl0
-                    ' End of file
-                    Compiler.Report.ShowMessage(Messages.VBNC90004)
-                    'PreviousChar() 'Step back
-                    bEndOfString = True
                 Case Else
-                    m_Builder.Append(CurrentChar())
+                    If m_EndOfFile Then
+                        Compiler.Report.ShowMessage(Messages.VBNC90004)
+                        'PreviousChar() 'Step back
+                        bEndOfString = True
+                    Else
+                        m_Builder.Append(CurrentChar())
+                    End If
+
             End Select
         Loop While bEndOfString = False
         If CurrentChar() = "C"c OrElse CurrentChar() = "c"c Then
@@ -631,11 +1062,11 @@ Public Class Scanner
                     End If
                     Select Case tp
                         Case BuiltInDataTypes.Decimal
-                            GetNumber = Token.CreateDecimalToken(GetCurrentLocation, Decimal.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateDecimalToken(GetCurrentLocation, Decimal.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Double
-                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, Double.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, Double.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Single
-                            GetNumber = Token.CreateSingleToken(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture), typeCharacter)
+                            GetNumber = Token.CreateSingleToken(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Integer, BuiltInDataTypes.Long, BuiltInDataTypes.Short, BuiltInDataTypes.UInteger, BuiltInDataTypes.ULong, BuiltInDataTypes.UShort
                             If bReal Then
                                 Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
@@ -669,14 +1100,14 @@ Public Class Scanner
                             GetNumber = GetIntegralToken(ULong.Parse(strResult, Helper.USCulture), Base, typeCharacter)
                         Case Else
                             Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
-                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                            GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                     End Select
                 Catch ex As System.OverflowException
                     Compiler.Report.ShowMessage(Messages.VBNC30036)
-                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 Catch ex As Exception
                     Compiler.Report.ShowMessage(Messages.VBNC90005)
-                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0, LiteralTypeCharacters_Characters.None)
+                    GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 End Try
 #If EXTENDED Then
             Case IntegerBase.Binary
@@ -723,17 +1154,17 @@ Public Class Scanner
 
         Select Case case_type
             Case BuiltInDataTypes.Integer
-                Return Token.CreateInt32Token(GetCurrentLocation, ExtractInt(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt32Token(GetCurrentLocation, ExtractInt(Value, Base))
             Case BuiltInDataTypes.UInteger
-                Return Token.CreateUInt32Token(GetCurrentLocation, ExtractUInt(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt32Token(GetCurrentLocation, ExtractUInt(Value, Base))
             Case BuiltInDataTypes.Long
-                Return Token.CreateInt64Token(GetCurrentLocation, ExtractLong(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt64Token(GetCurrentLocation, ExtractLong(Value, Base))
             Case BuiltInDataTypes.ULong
-                Return Token.CreateUInt64Token(GetCurrentLocation, ExtractULong(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt64Token(GetCurrentLocation, ExtractULong(Value, Base))
             Case BuiltInDataTypes.Short
-                Return Token.CreateInt16Token(GetCurrentLocation, ExtractShort(Value, Base), Base, TypeCharacter)
+                Return Token.CreateInt16Token(GetCurrentLocation, ExtractShort(Value, Base))
             Case BuiltInDataTypes.UShort
-                Return Token.CreateUInt16Token(GetCurrentLocation, ExtractUShort(Value, Base), Base, TypeCharacter)
+                Return Token.CreateUInt16Token(GetCurrentLocation, ExtractUShort(Value, Base))
             Case Else
                 Throw New InternalException("")
         End Select
@@ -821,6 +1252,12 @@ Public Class Scanner
         Return New Span(m_CodeFileIndex, m_CurrentLine, m_CurrentColumn)
     End Function
 
+    ReadOnly Property CurrentLocation() As Span
+        Get
+            Return GetCurrentLocation()
+        End Get
+    End Property
+
     Private ReadOnly Property CurrentChar() As Char
         Get
             Return m_CurrentChar
@@ -838,7 +1275,12 @@ Public Class Scanner
             If m_Reader.EndOfStream Then
                 m_CurrentChar = nl0
             Else
-                m_CurrentChar = Convert.ToChar(m_Reader.Read())
+                If m_Reader.EndOfStream Then
+                    m_EndOfFile = True
+                    m_CurrentChar = nl0
+                Else
+                    m_CurrentChar = Convert.ToChar(m_Reader.Read())
+                End If
             End If
         End If
 
@@ -1116,102 +1558,21 @@ Public Class Scanner
         Return Result
     End Function
 
-    Function SetMultiKeywords(ByVal current As Token) As Token
-        Dim peeked As Token
-
-        If current.Equals(KS.ConditionalEnd) Then
-            peeked = Me.PeekExactToken()
-
-            If peeked.Equals(KS.If) Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndIf)
-            End If
-
-            If Not peeked.IsIdentifier Then Return current
-
-            If peeked.Equals("Region") Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndRegion)
-            ElseIf peeked.Equals("ExternalSource") Then
-                peeked = Me.NextExactToken
-                Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndExternalSource)
-            Else
-                Return current
-            End If
-        End If
-
-        If current.Equals(KS.End) Then
-            peeked = Me.PeekExactToken()
-            If Not peeked.IsKeyword Then Return current
-
-            Dim attrib As KSEnumStringAttribute
-            attrib = Enums.GetKSStringAttribute(peeked.Keyword)
-            If Not attrib.IsMultiKeyword Then Return current
-
-            peeked = Me.NextExactToken
-            Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), attrib.MultiKeyword)
-        End If
-
-        If current.Equals(KS.Numeral) AndAlso m_TokensSeenOnLine = 1 Then
-            peeked = Me.PeekExactToken
-            If peeked.IsKeyword Then
-                Select Case peeked.Keyword
-                    Case KS.If
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalIf)
-                    Case KS.Else
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalElse)
-                    Case KS.ElseIf
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalElseIf)
-                    Case KS.Const
-                        peeked = Me.NextExactToken
-                        Return SetMultiKeywords(Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalConst))
-                    Case KS.End
-                        peeked = Me.NextExactToken
-                        Return SetMultiKeywords(Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEnd))
-                    Case KS.End_If
-                        peeked = Me.NextExactToken
-                        Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalEndIf)
-                    Case Else
-                        Return current
-                End Select
-            ElseIf peeked.IsIdentifier Then
-                If peeked.Equals("Region") Then
-                    peeked = Me.NextExactToken
-                    Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalRegion)
-                ElseIf peeked.Equals("ExternalSource") Then
-                    peeked = Me.NextExactToken
-                    Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.ConditionalExternalSource)
-                Else
-                    Return current
-                End If
-            End If
-        End If
-
-        If current.IsIdentifier AndAlso current.Equals("Custom") Then
-            If Not Me.PeekExactToken.Equals(KS.Event) Then Return current
-            peeked = Me.Next()
-            Return Token.CreateKeywordToken(New Span(current.Location, peeked.Location), KS.CustomEvent)
-        End If
-
-        Return current
-    End Function
-
     Public Sub New(ByVal Compiler As Compiler)
-        m_Compiler = Compiler
-        m_Files = New Generic.Queue(Of CodeFile)(m_Compiler.CommandLine.Files)
+        MyBase.New(Compiler)
+        m_Files = New Generic.Queue(Of CodeFile)(Compiler.CommandLine.Files)
         NextFile()
+        LoadProjectConstants()
     End Sub
 
     Public Sub New(ByVal Compiler As Compiler, ByVal Code As String)
-        m_Compiler = Compiler
+        MyBase.New(Compiler)
         m_Files = New Generic.Queue(Of CodeFile)()
         Dim cf As New CodeFile("<Internal>", "", Compiler, Code)
         m_Files.Enqueue(cf)
         Compiler.CommandLine.Files.Add(cf)
         NextFile()
+        LoadProjectConstants()
     End Sub
 
     Private Sub NextFile()
@@ -1223,6 +1584,7 @@ Public Class Scanner
         m_TokensSeenOnLine = 0
         m_CurrentChar = Nothing
         m_PreviousChar = Nothing
+        m_EndOfFile = False
         m_PeekedChars.Clear()
 
         If m_Files.Count > 0 Then
@@ -1237,76 +1599,69 @@ Public Class Scanner
         End If
     End Sub
 
-    Private Function NextExactToken() As Token
-        Dim result As Token
-
-        If Token.IsSomething(m_PeekedExact) Then
-            result = m_PeekedExact
-            m_PeekedExact = Nothing
-            Return result
-        End If
-
-        Return GetNextToken()
-    End Function
-
-    Private Function PeekExactToken() As Token
-        If Token.IsSomething(m_PeekedExact) = False Then
-            m_PeekedExact = NextExactToken()
-        End If
-
-        Return m_PeekedExact
-    End Function
-
-    Public Function [Next]() As Token Implements ITokenReader.Next
-        Dim result As Token
+    Public Sub NextUnconditionally()
 
         If Token.IsSomething(m_Peeked) Then
             m_Current = m_Peeked
             m_Peeked = Nothing
-            Return m_Current
+            Return
         End If
 
-        If m_CodeFile Is Nothing Then
-            result = Token.CreateEndOfCodeToken
-            m_Current = result
-            Return result
-        End If
-
-        result = NextExactToken()
-
-        'Console.WriteLine("Scanned token: " & result.FriendlyString())
-
-        result = SetMultiKeywords(result)
-
-        If result.IsEndOfLineOnly Then
-            Do While PeekExactToken().IsEndOfLineOnly
-                result = Me.NextExactToken() 'Eat all posterior newlines
-            Loop
-        End If
-
-        If result.IsEndOfFile() Then
-            If Token.IsSomething(m_Current) AndAlso Not m_Current.IsEndOfLineOnly Then
-                m_Peeked = result
-                result = Token.CreateEndOfLineToken(m_Peeked.Location)
-            End If
+        If Token.IsSomething(m_Current) AndAlso m_Current.IsEndOfFile Then
             NextFile()
         End If
 
-        m_Current = result
+        If m_CodeFile Is Nothing Then
+            m_Current = Token.CreateEndOfCodeToken
+            Return
+        End If
 
-        'Console.WriteLine("Returning token: " & result.FriendlyString)
+        m_CurrentTypeCharacter = TypeCharacters.Characters.None
+        m_Current = GetNextToken()
 
-        Return result
-    End Function
+        'Console.WriteLine("Scanned token: " & result.FriendlyString())
 
-    Public Function Peek() As Token Implements ITokenReader.Peek
-        If Token.IsSomething(m_Peeked) Then Return m_Peeked
-        m_Peeked = [Next]()
-        Return m_Peeked
-    End Function
+        'If m_Current.IsEndOfFile() Then
+        '    If Token.IsSomething(m_Current) AndAlso Not m_Current.IsEndOfLineOnly Then
+        '        m_Peeked = m_Current
+        '        m_Current = Token.CreateEndOfLineToken(Me.GetCurrentLocation)
+        '    End If
+        '    'NextFile()
+        'End If
 
-    Public Function Current() As Token Implements ITokenReader.Current
-        Return m_Current
-    End Function
+        m_CurrentTokenType = m_Current.m_TokenType
+        m_CurrentData = m_Current.m_TokenObject
+
+    End Sub
+
+    Public ReadOnly Property Current() As Token
+        Get
+            Return m_Current
+        End Get
+    End Property
+
+    Public ReadOnly Property CurrentTypeCharacter() As TypeCharacters.Characters
+        Get
+            Return m_CurrentTypeCharacter
+        End Get
+    End Property
+
+    Public ReadOnly Property GetLocation() As Span
+        Get
+            Return Me.GetCurrentLocation
+        End Get
+    End Property
+
+    Public ReadOnly Property TokenData() As Object
+        Get
+            Return m_CurrentData
+        End Get
+    End Property
+
+    Public ReadOnly Property TokenType() As TokenType
+        Get
+            Return m_CurrentTokenType
+        End Get
+    End Property
 End Class
 

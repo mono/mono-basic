@@ -31,7 +31,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Visual Basic.Net Compiler")> 
 <Assembly: AssemblyCompany("Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyProduct("Visual Basic.Net Compiler")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2004-2007 Rolf Bjarne Kvinge. All rights reserved.")> 
+<Assembly: AssemblyCopyright("Copyright (C) 2004-2008 Rolf Bjarne Kvinge. All rights reserved.")> 
 <Assembly: AssemblyTrademark("")> 
 <Assembly: CLSCompliant(False)> 
 
@@ -49,4 +49,4 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("0.0.0.5852")> 
+<Assembly: AssemblyVersion("0.0.0.5904")>

@@ -61,6 +61,14 @@ Public Class InvocationOrIndexExpression
     ''' <remarks></remarks>
     Private m_InvocationMethod As Mono.Cecil.MethodReference
 
+    Private m_IsLateBoundArray As Boolean
+
+    ReadOnly Property IsLateBoundArray() As Boolean
+        Get
+            Return m_IsLateBoundArray
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property AsString() As String
         Get
             Return m_Expression.AsString & "(" & m_ArgumentList.AsString & ")"
@@ -144,6 +152,11 @@ Public Class InvocationOrIndexExpression
 
         If m_InvocationMethod IsNot Nothing Then
             result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_Expression, m_ArgumentList, m_InvocationMethod) AndAlso result
+            Return True
+        End If
+
+        If m_IsLateBoundArray Then
+            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             Return True
         End If
 
@@ -326,6 +339,8 @@ Public Class InvocationOrIndexExpression
 
         If CecilHelper.IsArray(VariableType) Then
             result = ResolveArrayInvocation(Context, VariableType) AndAlso result
+        ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Array) Then
+            result = ResolveLateboundArrayInvocation(Context) AndAlso result
         ElseIf Helper.IsDelegate(Compiler, VariableType) Then
             'This is an invocation expression (the classification can be reclassified as value and the expression is a delegate expression)
             result = ResolveDelegateInvocation(Context, VariableType)
@@ -345,6 +360,16 @@ Public Class InvocationOrIndexExpression
         Else
             result = Compiler.Report.ShowMessage(Messages.VBNC30471, Location) AndAlso result
         End If
+
+        Return result
+    End Function
+
+    Private Function ResolveLateBoundArrayInvocation(ByVal Context As ParsedObject) As Boolean
+        Dim result As Boolean = True
+
+        Classification = New LateBoundAccessClassification(Me, Expression, Nothing, Nothing)
+
+        m_IsLateBoundArray = True
 
         Return result
     End Function

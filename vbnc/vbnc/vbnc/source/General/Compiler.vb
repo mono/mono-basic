@@ -102,11 +102,12 @@ Public Class Compiler
 
     Public ModuleBuilderCecil As Mono.Cecil.ModuleDefinition
 
-    ''' <summary>
-    ''' Represents the conditinal compiler.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_ConditionalCompiler As ConditionalCompiler
+    '''' <summary>
+    '''' Represents the conditinal compiler.
+    '''' </summary>
+    '''' <remarks></remarks>
+    'Private m_ConditionalCompiler As ConditionalCompiler
+
 
     Private m_TypeCache As CecilTypeCache
 
@@ -205,11 +206,11 @@ Public Class Compiler
         End Get
     End Property
 
-    Friend ReadOnly Property ConditionalCompiler() As ConditionalCompiler
-        Get
-            Return m_ConditionalCompiler
-        End Get
-    End Property
+    'Friend ReadOnly Property ConditionalCompiler() As ConditionalCompiler
+    '    Get
+    '        Return m_ConditionalCompiler
+    '    End Get
+    'End Property
 
     Friend ReadOnly Property Helper() As Helper
         Get
@@ -319,6 +320,13 @@ Public Class Compiler
 
         'AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
         'ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
+        'If Helper.IsOnMono Then
+        '    AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save Or CType(&H800, System.Reflection.Emit.AssemblyBuilderAccess), IO.Path.GetDirectoryName(m_OutFilename))
+        'Else
+        '    AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
+        'End If
+        '
+        'ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
 
         '#If DEBUGREFLECTION Then
         '        vbnc.Helper.DebugReflection_AppendLine("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", AssemblyBuilder, assemblyName, IO.Path.GetDirectoryName(m_OutFilename))
@@ -361,8 +369,8 @@ Public Class Compiler
         End If
 
         m_Scanner = New Scanner(Me)
-        m_ConditionalCompiler = New ConditionalCompiler(Me, m_Scanner)
-        m_tm = New tm(Me, m_ConditionalCompiler)
+        'm_ConditionalCompiler = New ConditionalCompiler(Me, m_Scanner)
+        m_tm = New tm(Me, m_Scanner)
         m_Parser = New Parser(Me)
 
 
@@ -375,7 +383,7 @@ Public Class Compiler
             Throw
         Catch ex As Exception
             If Token.IsSomething(tm.CurrentToken) Then
-                Report.ShowMessage(Messages.VBNC99999, tm.CurrentToken.Location, "vbnc crashed nearby this location in the source code.")
+                Report.ShowMessage(Messages.VBNC99999, tm.CurrentLocation, "vbnc crashed nearby this location in the source code.")
             End If
             Throw
         End Try
@@ -769,11 +777,24 @@ EndOfCompilation:
         Get
             Dim result As New System.Text.StringBuilder
             Dim FileVersion As Diagnostics.FileVersionInfo = Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            Dim Version As AssemblyInformationalVersionAttribute = Nothing
+            Dim attrs() As Object = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(GetType(AssemblyInformationalVersionAttribute), False)
+            Dim msg As String
+
+            If attrs IsNot Nothing AndAlso attrs.Length > 0 Then
+                Version = TryCast(attrs(0), AssemblyInformationalVersionAttribute)
+            End If
+
+            msg = FileVersion.ProductName & " version " & FileVersion.FileVersion
+            If Version IsNot Nothing Then
+                msg &= " (Mono " & Version.InformationalVersion & ")"
+            End If
+
 #If DEBUG Then
-            result.AppendLine(FileVersion.ProductName & " version " & FileVersion.FileVersion & " (last write time: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss") & ")")
-#Else
-            result.AppendLine(FileVersion.ProductName & " version " & FileVersion.FileVersion)
+            msg &= " Last Write: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss")
 #End If
+
+            result.AppendLine(msg)
             result.AppendLine(FileVersion.LegalCopyright)
             result.AppendLine()
 
@@ -1084,34 +1105,4 @@ EndOfCompilation:
         Throw New InternalException("Cannot compute the system directory.")
         Return ""
     End Function
-
-    '#Region " IDisposable Support "
-    '    Private disposed As Boolean
-
-    '    ' IDisposable
-    '    Private Overloads Sub Dispose(ByVal disposing As Boolean)
-    '        If Not Me.disposed Then
-    '            If disposing Then
-    '                '#If DEBUG Then
-    '                '                Report.Flush()
-    '                '#End If
-    '            End If
-    '        End If
-    '        Me.disposed = True
-    '    End Sub
-
-    '    ' This code added by Visual Basic to correctly implement the disposable pattern.
-    '    Public Overloads Sub Dispose() Implements IDisposable.Dispose
-    '        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-    '        Dispose(True)
-    '        GC.SuppressFinalize(Me)
-    '    End Sub
-
-    '    Protected Overrides Sub Finalize()
-    '        ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-    '        Dispose(False)
-    '        MyBase.Finalize()
-    '    End Sub
-    '#End Region
-
 End Class

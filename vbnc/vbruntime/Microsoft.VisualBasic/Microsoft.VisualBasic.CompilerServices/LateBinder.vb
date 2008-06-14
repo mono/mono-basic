@@ -181,6 +181,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Overrides Sub ReorderArgumentArray(ByRef args() As Object, ByVal state As Object)
+			If state Is Nothing Or args Is Nothing Then
+				Return
+			End If
             Dim bstate As BState = CType(state, BState)
             Dim mapping() As Integer = bstate.mapping
             Dim parameters() As ParameterInfo = bstate.parameters

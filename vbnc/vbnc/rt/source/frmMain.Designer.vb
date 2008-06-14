@@ -140,6 +140,7 @@ Partial Class frmMain
         Me.chkDontTestIfNothingHasChanged = New System.Windows.Forms.CheckBox
         Me.cmdSelfTest = New System.Windows.Forms.Button
         Me.worker = New System.ComponentModel.BackgroundWorker
+        Me.CreateKnownFailurestxtToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.cmnuTree.SuspendLayout()
@@ -462,9 +463,9 @@ Partial Class frmMain
         '
         'cmnuTree
         '
-        Me.cmnuTree.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunTestsToolStripMenuItem, Me.CreateNewTestInThisFolderToolStripMenuItem, Me.OnlyRefreshToolStripMenuItem})
+        Me.cmnuTree.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunTestsToolStripMenuItem, Me.CreateNewTestInThisFolderToolStripMenuItem, Me.OnlyRefreshToolStripMenuItem, Me.CreateKnownFailurestxtToolStripMenuItem})
         Me.cmnuTree.Name = "cmnuTree"
-        Me.cmnuTree.Size = New System.Drawing.Size(215, 70)
+        Me.cmnuTree.Size = New System.Drawing.Size(215, 114)
         '
         'RunTestsToolStripMenuItem
         '
@@ -1015,6 +1016,11 @@ Partial Class frmMain
         'worker
         '
         '
+        '
+        Me.CreateKnownFailurestxtToolStripMenuItem.Name = "CreateKnownFailurestxtToolStripMenuItem"
+        Me.CreateKnownFailurestxtToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me.CreateKnownFailurestxtToolStripMenuItem.Text = "Create KnownFailures.txt"
+        '
         'frmMain
         '
         Me.ClientSize = New System.Drawing.Size(940, 621)
@@ -1154,4 +1160,5 @@ Partial Class frmMain
     Friend WithEvents cmdSelfTest As System.Windows.Forms.Button
     Friend WithEvents worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents MakeErrorTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CreateKnownFailurestxtToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class

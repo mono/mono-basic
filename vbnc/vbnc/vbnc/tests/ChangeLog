@@ -1,3 +1,58 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ChangeLog, CompileTime2/LessGeneric1.vb, CompileTime2/NullChar.vb,
+	  CompileTime2/LessGeneric2.vb, CompileTime2/OptionStrict1.vb,
+	  SelfTest/SelfCompile.files.linux,
+	  Bugs/bug-359234-ProtectedDefaultBaseCtor.vb,
+	  Bugs/bug-359234-ProtectedDefaultBaseCtor.response,
+	  Bugs/bug-325331.vb, Bugs/bug-333962.vb, KnownFailures.txt,
+	  CompileTime/ConditionalCompilation1.vb,
+	  VBRunTime/Microsoft.VisualBasic.files.windows,
+	  VBRunTime/Microsoft.VisualBasic.files.linux, Errors/30225.vb,
+	  Errors/30506-1.vb, Errors/30506-5.vb, Errors/30590.vb,
+	  Errors/30574.vb, Errors/30620.vb, Errors/30225-2.vb,
+	  Errors/30640.vb, Errors/30506-4.vb, Errors/30225-1.vb,
+	  Errors/30207.vb, Errors/30506-3.vb, Errors/30206.vb,
+	  Errors/30506-2.vb, Errors/30506-6.vb, Makefile: Merge with head.
+
+2008-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-359234-ProtectedDefaultBaseCtor.response,
+	  Bugs/bug-359234-ProtectedDefaultBaseCtor.vb: Added.
+
+2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Errors/30506-1.vb, Errors/30506-2.vb, Errors/30506-3.vb,
+	  Errors/30506-4.vb, Errors/30506-5.vb, Errors/30506-6.vb,
+	  Errors/30590.vb: Added.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Errors/30206.vb, Errors/30207.vb, Errors/30225.vb, Errors/30225-1.vb,
+	  Errors/30225-2.vb, Errors/30574.vb, Errors/30620.vb, Errors/30640.vb:
+	  Added.
+
+2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CompileTime2/LessGeneric2.vb: Fix this test.
+	* CompileTime2/OptionStrict1.vb: Added.
+
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-325331.vb: Added.
+
+2008-03-01  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/SelfCompile.files.linux,
+	  VBRunTime/Microsoft.VisualBasic.files.windows,
+	  VBRunTime/Microsoft.VisualBasic.files.linux: Updated.
+	* CompileTime/ConditionalCompilation1.vb: Added.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/SelfCompile.files.linux: Updated.
+	* CompileTime2/LessGeneric2.vb, CompileTime2/LessGeneric1.vb: Added.
+
 2007-11-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-333962.vb: Added.

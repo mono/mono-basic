@@ -14,23 +14,25 @@ rem Build the vbruntime first without signing it, this way it will be linked to 
 rem Then build it signed, so that we can test against the MS vbruntime.
 rem 
 cd ..
+echo Building the vbruntime without signing it
 SET EXTRA_VBRUNTIME_FLAGS=/define:DONTSIGN=true
-CALL Make.cmd
-IF NOT "%COMPILATIONERROR%"=="" GOTO ENDOFFILE
+CALL Make.cmd %1
+rem IF NOT "%COMPILATIONERROR%"=="" GOTO ENDOFFILE
 copy Microsoft.VisualBasic\Microsoft.VisualBasic.dll Test\Microsoft.VisualBasic.NOTSIGNED.dll
+echo Building the vbruntime signing it
 SET EXTRA_VBRUNTIME_FLAGS=
-CALL Make.cmd
-IF NOT "%COMPILATIONERROR%"=="" GOTO ENDOFFILE
+CALL Make.cmd %1
+rem IF NOT "%COMPILATIONERROR%"=="" GOTO ENDOFFILE
 copy Microsoft.VisualBasic\Microsoft.VisualBasic.dll Test\Microsoft.VisualBasic.SIGNED.dll
 popd
 
 IF %ERRORLEVEL%==1 GOTO ENDOFFILE
 
-
+echo Running the vbruntime tests with the signed vbruntime
 copy Microsoft.VisualBasic.SIGNED.dll Microsoft.VisualBasic.dll
 CALL :EXECUTEVBTEST
 CALL :EXECUTETEST
-IF NOT "%ERRORLEVEL%"=="0" GOTO ENDOFFILE
+echo Running the vbruntime tests with the unsigned vbruntime
 copy Microsoft.VisualBasic.NOTSIGNED.dll Microsoft.VisualBasic.dll
 CALL :EXECUTEVBTEST
 CALL :EXECUTETEST
@@ -100,7 +102,7 @@ GOTO ENDSETDEFINES
 	SET VBDEFINES=-define:NET_VER=1.1
 	GOTO ENDSETDEFINES
 :SETDEFINES1_0
-	SET VBDEFINES=-define:NET_VER=1_0
+	SET VBDEFINES=-define:NET_VER=1.0
 	GOTO ENDSETDEFINES
 :ENDSETDEFINES
 

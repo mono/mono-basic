@@ -28,7 +28,7 @@
 Public Class UsingDeclarator
     Inherits ParsedObject
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_IsNew As Boolean
     Private m_TypeName As NonArrayTypeName
     Private m_ArgumentList As ArgumentList
@@ -51,7 +51,7 @@ Public Class UsingDeclarator
         End Get
     End Property
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
@@ -79,7 +79,7 @@ Public Class UsingDeclarator
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList, ByVal VariableInitializer As VariableInitializer, ByVal IsVariableDeclaration As Boolean, ByVal VariableDeclaration As LocalVariableDeclaration)
+    Sub Init(ByVal Identifier As Identifier, ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList, ByVal VariableInitializer As VariableInitializer, ByVal IsVariableDeclaration As Boolean, ByVal VariableDeclaration As LocalVariableDeclaration)
         m_Identifier = Identifier
         m_IsNew = IsNew
         m_TypeName = TypeName

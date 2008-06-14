@@ -38,8 +38,15 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
 
         Public Shared Function FromString(ByVal value As String) As Byte
-            Return Byte.Parse(value)
+            Try
+                If value Is Nothing Then Return 0
+
+                Return Byte.Parse(value)
+            Catch ex As FormatException
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), value, "Byte"), ex)
+            End Try
         End Function
+
         Public Shared Function FromObject(ByVal Value As Object) As Byte
             If Value Is Nothing Then
                 Return 0

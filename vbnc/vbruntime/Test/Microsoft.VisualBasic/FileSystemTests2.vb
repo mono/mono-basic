@@ -33,15 +33,15 @@ Imports System.Text
 Imports System.Collections
 Imports System.Threading
 Imports Microsoft.VisualBasic
-
-<Category("Broken"), TestFixture(), Category("MayFailOnSharedDrived"), Ignore("Not implemented yet")> _
+', Ignore("Not implemented yet")> _
+<Category("Broken"), TestFixture(), Category("MayFailOnSharedDrived")> _
 Public Class FileSystemTests2
     Private DATA_DIR As String
 
     Sub New()
         DATA_DIR = Environment.GetEnvironmentVariable("DATA_DIR")
         If DATA_DIR Is Nothing OrElse DATA_DIR = String.Empty Then
-            DATA_DIR = Path.Combine(Directory.GetCurrentDirectory(), "FileSystemTests2")
+            DATA_DIR = Path.Combine(Path.GetTempPath, "FileSystemTests2")
         End If
     End Sub
 
@@ -59,14 +59,19 @@ Public Class FileSystemTests2
     End Function
 
 
+    Private Sub Initialize(ByVal FilenameToCreate As String, ByVal Contents As Byte())
+        Initialize()
+        Helper.WriteAllBytes(FilenameToCreate, Contents)
+    End Sub
+
     Private Sub Initialize(ByVal FilenameToCreate As String, ByVal Contents As String)
         Initialize()
-        IO.File.WriteAllText(FilenameToCreate, Contents, System.Text.ASCIIEncoding.ASCII)
+        Helper.WriteAllText(FilenameToCreate, Contents)
     End Sub
 
     Private Sub Initialize(ByVal FilenameToCreate As String)
         Initialize()
-        IO.File.WriteAllBytes(FilenameToCreate, New Byte() {})
+        Helper.WriteAllBytes(FilenameToCreate, New Byte() {})
     End Sub
 
     Private Sub Initialize()
@@ -109,6 +114,163 @@ Public Class FileSystemTests2
     End Sub
 #End Region
 
+#Region "Array tests"
+    <Test()> _
+    Public Sub BinaryPutArrayTest1()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        Try
+            Dim value As String = Nothing
+            Dim arr As Array = New Integer() {1, 2, 3}
+            Initialize()
+            FileOpen(1, filename, OpenMode.Binary)
+            FilePut(1, arr, , False)
+            FileClose(1)
+            'Debug.WriteLine(Helper.CreateCode(File.ReadAllBytes(filename)))
+            Helper.CompareBytes(New Byte() {1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0}, Helper.ReadAllBytes(filename), filename)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+    <Test()> _
+    Public Sub BinaryPutArrayTest2()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        Try
+            Dim value As String = Nothing
+            Dim arr As Array = New Integer() {1, 2, 3}
+            Initialize()
+            FileOpen(1, filename, OpenMode.Binary)
+            FilePut(1, arr, , True)
+            FileClose(1)
+            Helper.CompareBytes(New Byte() {1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0}, Helper.ReadAllBytes(filename), filename)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+    <Test()> _
+    Public Sub RandomPutArrayTest1()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        Try
+            Dim value As String = Nothing
+            Dim arr As Array = New Integer() {1, 2, 3}
+            Initialize()
+            FileOpen(1, filename, OpenMode.Random)
+            FilePut(1, arr, , False)
+            FileClose(1)
+            Helper.CompareBytes(New Byte() {1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0}, Helper.ReadAllBytes(filename), filename)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+    <Test()> _
+    Public Sub RandomPutArrayTest2()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        Try
+            Dim value As String = Nothing
+            Dim arr As Array = New Integer() {1, 2, 3}
+            Initialize()
+            FileOpen(1, filename, OpenMode.Random)
+            FilePut(1, arr, , True)
+            FileClose(1)
+            Helper.CompareBytes(New Byte() {1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0}, Helper.ReadAllBytes(filename), filename)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+#End Region
+
+    <Test()> _
+    Sub InputStringWeirdTest1()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        Try
+            Dim value As String = Nothing
+            Initialize()
+            Helper.WriteAllBytes(filename, New Byte() {255, 255})
+            FileOpen(1, filename, OpenMode.Append)
+            value = InputString(1, 2)
+            FileClose(1)
+            Assert.Fail("Expected System.NullReferenceException ('Object reference not set to an instance of an object.')", filename)
+        Catch ex As NUnit.Framework.AssertionException
+            Throw
+        Catch ex As Exception
+#If NET_VER >= 2.0 Then
+            Assert.AreEqual("System.NullReferenceException", ex.GetType.FullName, filename)
+            Assert.AreEqual("Object reference not set to an instance of an object.", ex.Message, filename)
+            'NRE with InnerException??
+            Assert.IsNotNull(ex.InnerException, filename)
+            Assert.AreSame(GetType(IOException), ex.InnerException.GetType, filename)
+            Assert.AreEqual("File is not opened for read access.", ex.InnerException.Message, filename)
+#Else
+            Assert.AreEqual("System.IO.IOException", ex.GetType.FullName, filename)
+            Assert.AreEqual("Bad file mode.", ex.Message, filename)
+#End If
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+
+    <Test()> _
+    Sub RandomDefaultRecordLength()
+        Dim filename As String = Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+        For i As Integer = 0 To 128
+            Try
+                Dim value As String = New String("-", 129)
+                Initialize()
+                Helper.WriteAllBytes(filename, New Byte() {i, 0})
+                Helper.AppendAllText(filename, New String("-"c, 128))
+                FileOpen(1, filename, OpenMode.Random)
+                FileGet(1, value)
+                Assert.IsTrue(i < 127, filename)
+                FileClose(1)
+            Catch ex As NUnit.Framework.AssertionException
+                Throw
+            Catch ex As Exception
+                Assert.IsTrue(i >= 127, filename)
+                Assert.AreEqual("System.IO.IOException", ex.GetType.FullName, filename)
+                Assert.AreEqual("Bad record length.", ex.Message, filename)
+            Finally
+                CleanUp()
+            End Try
+        Next
+    End Sub
+
+    Public Sub SeekTest1()
+        Try
+            Dim filename As String = IO.Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+            Initialize()
+            FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Default)
+            Seek(1, -1)
+            Assert.AreEqual(1, Seek(1), "#01")
+            FileClose(1)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+
+    Public Sub SeekTest2()
+        Try
+            Dim filename As String = IO.Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+            Initialize()
+            FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Default)
+            Seek(1, 0)
+            Assert.AreEqual(1, Seek(1), "#01")
+            FileClose(1)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
+
+    Public Sub SeekTest3()
+        Try
+            Dim filename As String = IO.Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
+            Initialize()
+            FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Default)
+            Seek(1, 2)
+            Assert.AreEqual(2, Seek(1), "#01")
+            FileClose(1)
+        Finally
+            CleanUp()
+        End Try
+    End Sub
 #Region "FileOpen"
     <Test()> _
     Public Sub FileOpenTestRandom1()
@@ -118,7 +280,7 @@ Public Class FileSystemTests2
             Initialize()
 
             'Default access and share
-            FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Default)
+            FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Shared)
             data = "abc"
             FilePut(1, data) 'We can write
             FileGet(1, data) 'We can read
@@ -127,6 +289,7 @@ Public Class FileSystemTests2
             FileGet(1, data)
             Assert.AreEqual("abc", data, "#02")
             FileClose(1)
+            Helper.CompareBytes(New Byte() {3, 0, 97, 98, 99}, Helper.ReadAllBytes(filename), filename)
         Finally
             CleanUp()
         End Try
@@ -143,7 +306,7 @@ Public Class FileSystemTests2
             FileOpen(1, filename, OpenMode.Random, OpenAccess.Default, OpenShare.Default)
             data = "abc"
             FilePut(1, data)
-            data = IO.File.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
+            data = Helper.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
         Finally
             CleanUp()
         End Try
@@ -266,7 +429,7 @@ Public Class FileSystemTests2
 
             'Default access and share
             FileOpen(1, filename, OpenMode.Input, OpenAccess.Default, OpenShare.Default)
-            data = IO.File.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
+            data = Helper.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
         Finally
             CleanUp()
         End Try
@@ -376,7 +539,7 @@ Public Class FileSystemTests2
             'data = LineInput(1) 'We can read
             'Assert.AreEqual("abc", data, "#01")
             FileClose(1)
-            Assert.AreEqual("abc", File.ReadAllText(filename))
+            Assert.AreEqual("abc", Helper.ReadAllText(filename))
         Finally
             CleanUp()
         End Try
@@ -394,7 +557,7 @@ Public Class FileSystemTests2
             Assert.IsTrue(File.Exists(filename), "exists")
             data = "abc"
             Write(1, data)
-            data = IO.File.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
+            data = Helper.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
         Finally
             CleanUp()
         End Try
@@ -413,7 +576,7 @@ Public Class FileSystemTests2
             data = "abc"
             Write(1, data) 'We can write
             FileClose(1)
-            Assert.AreEqual("""abc"",", File.ReadAllText(filename))
+            Assert.AreEqual("""abc"",", Helper.ReadAllText(filename))
         Finally
             CleanUp()
         End Try
@@ -474,7 +637,7 @@ Public Class FileSystemTests2
             FileOpen(1, filename, OpenMode.Append, OpenAccess.Default, OpenShare.Default)
             Print(1, "def") 'We can write
             FileClose(1)
-            Assert.AreEqual("abcdef", File.ReadAllText(filename), "#01")
+            Assert.AreEqual("abcdef", Helper.ReadAllText(filename), "#01")
         Finally
             CleanUp()
         End Try
@@ -489,7 +652,7 @@ Public Class FileSystemTests2
 
             'Default access and share
             FileOpen(1, filename, OpenMode.Append, OpenAccess.Default, OpenShare.Default)
-            data = IO.File.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
+            data = Helper.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
         Finally
             CleanUp()
         End Try
@@ -506,7 +669,7 @@ Public Class FileSystemTests2
             FileOpen(1, filename, OpenMode.Append, OpenAccess.Write, OpenShare.Default)
             Print(1, "def") 'We can write
             FileClose(1)
-            Assert.AreEqual("abcdef", File.ReadAllText(filename), "#01")
+            Assert.AreEqual("abcdef", Helper.ReadAllText(filename), "#01")
         Finally
             CleanUp()
         End Try
@@ -514,12 +677,18 @@ Public Class FileSystemTests2
 
     <Test(), ExpectedException(GetType(ArgumentException), "Argument 'Access' is not valid. Valid values for Append mode are 'OpenAccess.Write' and 'OpenAccess.Default'.")> _
     Public Sub FileOpenTestAppend3()
+        Dim filename As String = IO.Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
         Try
-            Dim filename As String = IO.Path.Combine(DATA_DIR, System.Reflection.MethodInfo.GetCurrentMethod.Name)
             Initialize(filename)
 
             'Read access and default share
             FileOpen(1, filename, OpenMode.Append, OpenAccess.Read, OpenShare.Default)
+            Assert.Fail("Expected System.ArgumentException ('Argument 'Access' is not valid. Valid values for Append mode are 'OpenAccess.Write' and 'OpenAccess.Default'.')", filename)
+        Catch ex As NUnit.Framework.AssertionException
+            Throw
+        Catch ex As Exception
+            Assert.AreEqual("System.ArgumentException", ex.GetType.FullName, filename)
+            Assert.AreEqual("Argument 'Access' is not valid. Valid values for Append mode are 'OpenAccess.Write' and 'OpenAccess.Default'.", ex.Message.Replace("Acess", "Access"), filename)
         Finally
             CleanUp()
         End Try
@@ -536,7 +705,7 @@ Public Class FileSystemTests2
             Seek(1, 1)
             Print(1, "def") 'We can write
             FileClose(1)
-            Assert.AreEqual("def", File.ReadAllText(filename), "#01")
+            Assert.AreEqual("def", Helper.ReadAllText(filename), "#01")
         Finally
             CleanUp()
         End Try
@@ -586,8 +755,8 @@ Public Class FileSystemTests2
             Assert.AreEqual(Asc("a"), b, "#01")
             FilePut(1, "def") 'We can write
             FileClose(1)
-            Assert.AreEqual("adef", File.ReadAllText(filename), "#02")
-            Assert.AreEqual("61-64-65-66", JoinBytes(File.ReadAllBytes(filename)), "#03")
+            Assert.AreEqual("adef", Helper.ReadAllText(filename), "#02")
+            Assert.AreEqual("61-64-65-66", JoinBytes(Helper.ReadAllBytes(filename)), "#03")
         Finally
             CleanUp()
         End Try
@@ -602,7 +771,7 @@ Public Class FileSystemTests2
 
             'Default access and share
             FileOpen(1, filename, OpenMode.Binary, OpenAccess.Default, OpenShare.Default)
-            data = IO.File.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
+            data = Helper.ReadAllText(filename) 'Default share is none at all, so this should throw an exception
         Finally
             CleanUp()
         End Try
@@ -623,7 +792,7 @@ Public Class FileSystemTests2
             Seek(1, 2) 'We can seek
             FilePut(1, "ghi")
             FileClose(1)
-            Assert.AreEqual("aghi", File.ReadAllText(filename), "#02")
+            Assert.AreEqual("aghi", Helper.ReadAllText(filename), "#02")
         Finally
             CleanUp()
         End Try
@@ -675,7 +844,7 @@ Public Class FileSystemTests2
             Seek(1, 1) 'We can seek
             FilePut(1, "ghi")
             FileClose(1)
-            Assert.AreEqual("ghibc", File.ReadAllText(filename), "#02")
+            Assert.AreEqual("ghibc", Helper.ReadAllText(filename), "#02")
         Finally
             CleanUp()
         End Try

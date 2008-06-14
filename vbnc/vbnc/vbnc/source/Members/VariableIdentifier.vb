@@ -25,10 +25,10 @@ Public Class VariableIdentifier
     Inherits ParsedObject
     Implements INameable
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_ArrayNameModifier As ArrayNameModifier
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
@@ -38,16 +38,16 @@ Public Class VariableIdentifier
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Token)
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Identifier)
         MyBase.New(Parent)
         m_Identifier = Identifier
+        If Identifier.Identifier Is Nothing Then Throw New InternalException("No identifier: " & Identifier.Location.ToString(Compiler))
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal ArrayNameModifier As ArrayNameModifier)
+    Sub Init(ByVal Identifier As Identifier, ByVal ArrayNameModifier As ArrayNameModifier)
         m_Identifier = Identifier
         m_ArrayNameModifier = ArrayNameModifier
 
-        If Identifier.IsIdentifier = False Then Throw New InternalException("Not an identifier")
         If Identifier.Identifier Is Nothing Then Throw New InternalException("No identifier: " & Identifier.Location.ToString(Compiler))
     End Sub
 

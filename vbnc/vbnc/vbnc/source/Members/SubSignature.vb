@@ -31,7 +31,7 @@ Public Class SubSignature
     ''' Should never be nothing once initialized.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     ''' <summary>
     ''' The type parameters of the signature.
     ''' Might be nothing.
@@ -53,7 +53,7 @@ Public Class SubSignature
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.ParameterReference())
         MyBase.New(Parent)
-        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
         m_ParameterList = New ParameterList(Me)
         For i As Integer = 0 To Parameters.GetUpperBound(0)
             m_ParameterList.Add(Parameters(i).Name, Parameters(i).ParameterType)
@@ -64,7 +64,7 @@ Public Class SubSignature
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList)
         MyBase.New(Parent)
-        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
         If Parameters Is Nothing Then
             m_ParameterList = New ParameterList(Me)
         Else
@@ -74,7 +74,7 @@ Public Class SubSignature
 
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.TypeReference())
         MyBase.New(Parent)
-        m_Identifier = Token.CreateIdentifierToken(Nothing, Name, TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
         If Parameters Is Nothing Then
             m_ParameterList = New ParameterList(Me)
         Else
@@ -82,7 +82,7 @@ Public Class SubSignature
         End If
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
+    Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
         If ParameterList Is Nothing Then
@@ -93,7 +93,7 @@ Public Class SubSignature
     End Sub
 
     Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
-        Me.Init(Token.CreateIdentifierToken(Nothing, Identifier, TypeCharacters.Characters.None, False), TypeParameters, ParameterList)
+        Me.Init(New Identifier(Me, Identifier, Nothing, TypeCharacters.Characters.None), TypeParameters, ParameterList)
     End Sub
 
     Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As SubSignature
@@ -109,7 +109,7 @@ Public Class SubSignature
         If m_ParameterList IsNot Nothing Then ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
     End Sub
 
-    ReadOnly Property Identifier() As Token
+    ReadOnly Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get

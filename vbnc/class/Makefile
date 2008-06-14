@@ -6,6 +6,7 @@ lib/bootstrap lib/vbnc:
 	$(MKINSTALLDIRS) $@
 
 DISTFILES = \
+	mono.snk	\
 	lib/bootstrap/Microsoft.VisualBasic.dll lib/bootstrap/vbnc.exe lib/bootstrap/vbnc.rsp	
 
 dist-default: lib/bootstrap/Microsoft.VisualBasic.dll lib/bootstrap/vbnc.exe lib/bootstrap/vbnc.rsp

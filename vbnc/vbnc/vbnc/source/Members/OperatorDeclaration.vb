@@ -35,7 +35,7 @@
 Public Class OperatorDeclaration
     Inherits FunctionDeclaration
 
-    Private m_Operator As Token
+    'Private m_Operator As Token
     Private m_Operand1 As Operand
     Private m_Operand2 As Operand
 
@@ -43,7 +43,22 @@ Public Class OperatorDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal [Operator] As Token, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="Attributes"></param>
+    ''' <param name="Modifiers"></param>
+    ''' <param name="Identifier">non-null if set</param>
+    ''' <param name="Symbol">None if not set</param>
+    ''' <param name="Operand1"></param>
+    ''' <param name="Operand2"></param>
+    ''' <param name="ReturnTypeAttributes"></param>
+    ''' <param name="TypeName"></param>
+    ''' <param name="Block"></param>
+    ''' <remarks></remarks>
+    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As String, ByVal Symbol As KS, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
+
+        Helper.Assert(Identifier Is Nothing Xor Symbol = KS.None)
 
         Dim mySignature As New FunctionSignature(Me)
         Dim parameters As New ParameterList(Me)
@@ -55,9 +70,9 @@ Public Class OperatorDeclaration
         End If
 
 
-        If [Operator].IsIdentifier Then
+        If Identifier IsNot Nothing Then
             Dim opname As String
-            opname = [Operator].Name
+            opname = Identifier
             If Helper.CompareName(opname, "IsTrue") Then
                 name = "op_True"
             ElseIf Helper.CompareName(opname, "IsFalse") Then
@@ -65,7 +80,8 @@ Public Class OperatorDeclaration
             Else
                 Throw New InternalException(Me)
             End If
-        Else : Select Case [Operator].AsSpecial
+        Else
+            Select Case Symbol
                 Case KS.Add
                     If Operand2 IsNot Nothing Then
                         name = "op_Addition"
@@ -123,7 +139,7 @@ Public Class OperatorDeclaration
         Helper.Assert(name <> "")
         mySignature.Init(name, Nothing, parameters, ReturnTypeAttributes, TypeName, Me.Location)
 
-        m_Operator = [Operator]
+        'm_Operator = [Operator]
         m_Operand1 = Operand1
         m_Operand2 = Operand2
 
@@ -143,11 +159,11 @@ Public Class OperatorDeclaration
         End Get
     End Property
 
-    ReadOnly Property [Operator]() As token
-        Get
-            Return m_Operator
-        End Get
-    End Property
+    'ReadOnly Property [Operator]() As token
+    '    Get
+    '        Return m_Operator
+    '    End Get
+    'End Property
 
     ''' <summary>
     ''' OverloadableBinaryOperator  ::=

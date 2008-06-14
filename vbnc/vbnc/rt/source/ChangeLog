@@ -1,3 +1,24 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* TestList.vb, OldResult.vb, Test.vb, frmMain.vb, AssemblyInfo.vb,
+	  Tests.vb, FileTabPage.vb, rt9.vbproj, TestView.vb, Test.Results.vb,
+	  ChangeLog, frmMain.Designer.vb, TestExecutor.vb,
+	  ExternalProcessExecutor.vb: Merge with head.
+
+2008-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Added support for having a list of known failures,
+	and ignoring the tests in it.
+
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Tests.vb: Order directories and files.
+
+2008-03-07  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb: Updated.
+	* FileTabPage.vb: Handle unix-style eols too.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Test.vb: Strip invalid characters from log filenames.

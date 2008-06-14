@@ -26,7 +26,7 @@
 Public Class CatchStatement
     Inherits BlockStatement
 
-    Private m_Variable As Token
+    Private m_Variable As Identifier
     Private m_TypeName As NonArrayTypeName
     Private m_When As Expression
 
@@ -34,7 +34,7 @@ Public Class CatchStatement
 
     Private m_VariableDeclaration As LocalVariableDeclaration
 
-    ReadOnly Property Variable() As Token
+    ReadOnly Property Variable() As Identifier
         Get
             Return m_Variable
         End Get
@@ -56,7 +56,7 @@ Public Class CatchStatement
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Variable As Token, ByVal TypeName As NonArrayTypeName, ByVal [When] As Expression, ByVal Block As CodeBlock)
+    Shadows Sub Init(ByVal Variable As Identifier, ByVal TypeName As NonArrayTypeName, ByVal [When] As Expression, ByVal Block As CodeBlock)
         MyBase.Init(Block)
 
         m_Variable = Variable
@@ -144,7 +144,7 @@ Public Class CatchStatement
         ElseIf m_When Is Nothing Then
             m_ExceptionType = Compiler.TypeCache.System_Exception
         End If
-        If Token.IsSomething(m_Variable) Then
+        If m_Variable IsNot Nothing Then 'Token.IsSomething(m_Variable) Then
             m_VariableDeclaration = New LocalVariableDeclaration(Me, Nothing, m_Variable, False, m_TypeName, Nothing, Nothing)
             result = m_VariableDeclaration.ResolveTypeReferences AndAlso result
             CodeBlock.Variables.Add(m_VariableDeclaration)

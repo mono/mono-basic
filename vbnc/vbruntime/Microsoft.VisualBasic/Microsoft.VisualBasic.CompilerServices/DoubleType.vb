@@ -67,28 +67,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function FromString(ByVal Value As String) As Double
-
-            'implicit casting of Nothing to Double returns 0
-            If (Value = Nothing) Then
-                Return 0
-            End If
-
-            Try
-                Return DoubleType.FromString(Value, Nothing)
-            Catch ex As Exception
-                Throw New InvalidCastException("Cast from string """ + Value + """ to type 'Double' is not valid.", ex)
-            End Try
-
+            Return DoubleType.FromString(Value, Nothing)
         End Function
+
         Public Shared Function FromString(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Double
-            Return DoubleType.Parse(Value, NumberFormat)
+            Try
+                If NumberFormat Is Nothing Then NumberFormat = Threading.Thread.CurrentThread.CurrentCulture.NumberFormat
+                Return DoubleType.Parse(Value, NumberFormat)
+            Catch ex As Exception
+                Throw New InvalidCastException(String.Format(Utils.GetResourceString("CastFromStringToType"), Value, "Double"), ex)
+            End Try
         End Function
+
         Public Shared Function Parse(ByVal Value As String) As Double
             Return DoubleType.Parse(Value, Nothing)
         End Function
+
         Public Shared Function Parse(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Double
+            'implicit casting of Nothing to Double returns 0
+            If (Value Is Nothing) Then
+                Return 0
+            End If
+
             Return Double.Parse(Value, NumberFormat)
         End Function
+
         Friend Shared Function TryParse(ByVal value As String, <OutAttribute()> ByRef result As Double) As Boolean
             'Grasshopper still does not support Double.TryParse
 #If NET_VER >= 2.0 And TARGET_JVM = False Then

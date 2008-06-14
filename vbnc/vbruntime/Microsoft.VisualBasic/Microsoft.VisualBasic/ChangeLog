@@ -1,3 +1,14 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileData.vb, FileSystem.vb, ChangeLog, Information.vb: Merge with
+	  head.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileData.vb: Lots of fixes.
+	* FileSystem.vb: Implement file io.
+	* Information.vb: Added helper method.
+
 2007-12-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileData.vb: Added, contains code for the missing fileio support. Not

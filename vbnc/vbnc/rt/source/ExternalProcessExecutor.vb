@@ -23,7 +23,8 @@ Public Class ExternalProcessExecutor
     Private m_UnexpandedCmdLine As String
     Private m_ExpandedCmdLine As String
 
-    Private m_StdOut As String
+    Private m_StdOut As New System.Text.StringBuilder
+    Private m_StdErr As New System.Text.StringBuilder
     Private m_TimeOut As Integer
     Private m_TimedOut As Boolean
     Private m_ExitCode As Integer
@@ -116,7 +117,7 @@ Public Class ExternalProcessExecutor
     ''' <remarks></remarks>
     ReadOnly Property StdOut() As String
         Get
-            Return m_StdOut
+            Return m_StdOut.ToString & vbNewLine & m_StdErr.ToString
         End Get
     End Property
 
@@ -174,11 +175,16 @@ Public Class ExternalProcessExecutor
 
     Private Sub OutputReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         Try
-            m_StdOut &= e.Data & vbNewLine
+            m_StdOut.AppendLine(e.Data)
         Catch ex As OutOfMemoryException
-            m_StdOut = ex.Message
+            m_StdOut.AppendLine(ex.Message)
         End Try
     End Sub
+
+    Private Sub ErrorReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
+        m_StdErr.AppendLine(e.Data)
+    End Sub
+
 
     Public Function RunProcess() As Boolean
         Dim process As New Process
@@ -193,13 +199,14 @@ Public Class ExternalProcessExecutor
                 process.StartInfo.Arguments = m_ExpandedCmdLine
             End If
             process.StartInfo.RedirectStandardOutput = True
+            process.StartInfo.RedirectStandardError = True
             process.StartInfo.UseShellExecute = False
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
             process.StartInfo.CreateNoWindow = True
             process.StartInfo.WorkingDirectory = m_WorkingDirectory
 
             If IO.File.Exists(m_Executable) = False Then
-                m_StdOut = "Executable '" & m_Executable & "' does not exist."
+                m_StdOut.Append("Executable '" & m_Executable & "' does not exist.")
                 Return False
             End If
 
@@ -255,7 +262,9 @@ Public Class ExternalProcessExecutor
             End Try
 
             AddHandler process.OutputDataReceived, AddressOf OutputReader
+            AddHandler process.ErrorDataReceived, AddressOf ErrorReader
             process.BeginOutputReadLine()
+            process.BeginErrorReadLine()
 
             m_TimedOut = Not process.WaitForExit(m_TimeOut)
             If m_TimedOut Then
@@ -279,7 +288,9 @@ Public Class ExternalProcessExecutor
             End If
         Catch ex As Exception
             m_ExitCode = Integer.MinValue
-            m_StdOut = "Exception while executing process: " & Environment.NewLine & ex.Message & Environment.NewLine & ex.StackTrace
+            m_StdOut.AppendLine("Exception while executing process: ")
+            m_StdOut.AppendLine(ex.Message)
+            m_StdOut.AppendLine(ex.StackTrace)
         Finally
             If process IsNot Nothing Then process.Dispose()
             If filesToDelete IsNot Nothing Then

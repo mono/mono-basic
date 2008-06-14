@@ -127,8 +127,8 @@ Public MustInherit Class BaseObject
     ''' </summary>
     Protected Sub New(ByVal Parent As BaseObject)
         m_Parent = Parent
-        If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentToken.Location
-        'If m_Parent IsNot Nothing AndAlso tm IsNot Nothing Then m_Location = tm.CurrentToken.Location
+        If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentLocation
+        'If m_Parent IsNot Nothing AndAlso tm IsNot Nothing Then m_Location = tm.CurrentLocation
 #If DEBUG Then
         Helper.Assert(Parent IsNot Me)
         Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler)

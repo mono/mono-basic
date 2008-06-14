@@ -94,31 +94,35 @@ Friend Class TestExecutor
     ''' <remarks></remarks>
     Private Sub Runner()
         While disposedValue = False
-            Dim test As Test
-            SyncLock m_Queue
-                If m_Queue.Count > 0 Then
-                    Dim theFirst As Generic.LinkedListNode(Of Test)
-                    theFirst = m_Queue.First
-                    test = theFirst.Value
-                    m_Queue.RemoveFirst()
+            Try
+                Dim test As Test
+                SyncLock m_Queue
+                    If m_Queue.Count > 0 Then
+                        Dim theFirst As Generic.LinkedListNode(Of Test)
+                        theFirst = m_Queue.First
+                        test = theFirst.Value
+                        m_Queue.RemoveFirst()
+                    Else
+                        test = Nothing
+                    End If
+                End SyncLock
+
+                If test IsNot Nothing Then
+                    m_RunningTest = test
+                    RaiseEvent BeforeExecute(test)
+                    Run(test)
+                    RaiseEvent AfterExecute(test)
+                    m_RunningTest = Nothing
+
+                    If m_Queue.Count = 0 Then
+                        RaiseEvent Finished()
+                    End If
                 Else
-                    test = Nothing
+                    Threading.Thread.Sleep(100)
                 End If
-            End SyncLock
-
-            If test IsNot Nothing Then
-                m_RunningTest = test
-                RaiseEvent BeforeExecute(test)
-                Run(test)
-                RaiseEvent AfterExecute(test)
-                m_RunningTest = Nothing
-
-                If m_Queue.Count = 0 Then
-                    RaiseEvent Finished()
-                End If
-            Else
-                Threading.Thread.Sleep(100)
-            End If
+            Catch ex As Exception
+                Debug.WriteLine("Exception while executing test: " & ex.Message & vbNewLine & ex.StackTrace)
+            End Try
         End While
     End Sub
 

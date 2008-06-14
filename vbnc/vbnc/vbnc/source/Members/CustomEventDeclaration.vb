@@ -44,7 +44,7 @@ Public Class CustomEventDeclaration
         While tm.PeekToken(i).Equals(ModifierMasks.EventModifiers)
             i += 1
         End While
-        Return tm.PeekToken(i).Equals(KS.CustomEvent)
+        Return tm.PeekToken(i).Equals("Custom") AndAlso tm.PeekToken(i + 1).Equals(KS.Event)
     End Function
 
     ReadOnly Property Type() As NonArrayTypeName

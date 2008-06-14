@@ -92,7 +92,9 @@ Public Class ImportsNamespaceClause
         result = nri.Resolve AndAlso result
 
         If nri.FoundOnlyOneObject = False Then
-            Return Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
+            'Do not propage error condition here, since this message is a warning
+			Compiler.Report.ShowMessage(Messages.VBNC40056, Location, Name)
+            Return True
         End If
 
         If nri.FoundIs(Of [Namespace])() Then

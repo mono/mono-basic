@@ -41,7 +41,7 @@ Public Class EnumDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Token, ByVal EnumType As KS)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal EnumType As KS)
         MyBase.Init(CustomAttributes, Modifiers, Members, Name, 0)
         m_QualifiedName = EnumType
     End Sub

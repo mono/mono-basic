@@ -246,7 +246,6 @@
     <Compile Include="AutoGen\ZCompilerCodeGenerator.vb" />
     <Compile Include="Code\CodeBlock.vb" />
     <Compile Include="Code\ImplicitCodeBlock.vb" />
-    <Compile Include="ConditionalCompilation\ConditionalCompilation.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
     <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
@@ -329,10 +328,10 @@
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
     <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
+    <Compile Include="General\Version.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
-    <Compile Include="Interfaces\ITokenReader.vb" />
     <Compile Include="Members\EventHandlerDeclaration.vb" />
     <Compile Include="Members\EventDeclaration.vb" />
     <Compile Include="Members\MemberDeclaration.vb" />
@@ -652,7 +651,6 @@
     <Compile Include="General\Namespaces.vb" />
     <Compile Include="General\TooManyErrorsException.vb" />
     <Compile Include="General\vbncException.vb" />
-    <Compile Include="Members\AttributeMember.vb" />
     <Compile Include="General\Index.vb" />
     <Compile Include="General\Message.vb" />
     <Compile Include="General\MessageAttribute.vb" />
@@ -758,7 +756,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Notes.txt" />
-    <Compile Include="Members\AttributeMembers.vb" />
     <Compile Include="Members\EnumMemberDeclaration.vb" />
     <Compile Include="Members\PropertyGetDeclaration.vb" />
     <Compile Include="Members\PropertySetDeclaration.vb" />

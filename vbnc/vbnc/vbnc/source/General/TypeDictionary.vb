@@ -29,7 +29,7 @@ Public Class TypeDictionary
     Shadows Sub Add(ByVal Type As Mono.Cecil.TypeReference)
         Dim name As String = Type.Name
         If MyBase.ContainsKey(name) Then
-            System.Console.WriteLine("Already added type: " & Type.FullName)
+            'System.Console.WriteLine("Already added type: " & Type.FullName)
         Else
             MyBase.Add(name, Type)
         End If

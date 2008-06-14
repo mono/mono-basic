@@ -4,6 +4,9 @@ Imports NUnit.Framework
 #If NET_VER >= 2.0 Then
 <TestFixture()> _
 Public Class OperatorsTests
+    Sub New()
+        Helper.SetThreadCulture()
+    End Sub
 
     <Test()> _
     Sub TestOperatorsCompareEqual1()

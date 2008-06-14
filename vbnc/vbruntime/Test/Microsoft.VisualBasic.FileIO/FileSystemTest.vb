@@ -36,7 +36,8 @@ Public Class FileSystemTest
         Private SLOWFILESIZE As Integer = 10000000
 
         Sub New()
-
+            Threading.Thread.CurrentThread.CurrentUICulture = New Globalization.CultureInfo("en-US")
+            Threading.Thread.CurrentThread.CurrentCulture = Threading.Thread.CurrentThread.CurrentUICulture
         End Sub
 
         <SetUp()> _

@@ -194,6 +194,52 @@ Namespace Microsoft.VisualBasic
                     Return Nothing
             End Select
         End Function
+
+        Friend Function VBName(ByVal tp As Type) As String
+            Select Case Type.GetTypeCode(tp)
+                Case TypeCode.Boolean
+                    Return "Boolean"
+                Case TypeCode.Byte
+                    Return "Byte"
+                Case TypeCode.Char
+                    Return "Char"
+                Case TypeCode.DateTime
+                    Return "Date"
+                Case TypeCode.Decimal
+                    Return "Decimal"
+                Case TypeCode.Double
+                    Return "Double"
+                Case TypeCode.Int16
+                    Return "Short"
+                Case TypeCode.Int32
+                    Return "Integer"
+                Case TypeCode.Int64
+                    Return "Long"
+                Case TypeCode.Object
+                    If tp Is GetType(Object) Then
+                        Return "Object"
+                    Else
+                        Return tp.Name
+                    End If
+                Case TypeCode.SByte
+                    Return "SByte"
+                Case TypeCode.Single
+                    Return "Single"
+                Case TypeCode.String
+                    Return "String"
+#If NET_VER >= 2.0 Then
+                Case TypeCode.UInt16
+                    Return "UShort"
+                Case TypeCode.UInt32
+                    Return "UInteger"
+                Case TypeCode.UInt64
+                    Return "ULong"
+#End If
+                Case Else
+                    Return tp.Name
+            End Select
+        End Function
+
         Public Function TypeName(ByVal VarName As Object) As String
 
             Dim TmpObjType1, TmpObjType2, tmpstr As String

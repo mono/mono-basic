@@ -30,14 +30,14 @@
 Public Class SimpleNameExpression
     Inherits Expression
 
-    Private m_Identifier As Token
+    Private m_Identifier As Identifier
     Private m_TypeArgumentList As TypeArgumentList
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Token, ByVal TypeArgumentList As TypeArgumentList)
+    Sub Init(ByVal Identifier As Identifier, ByVal TypeArgumentList As TypeArgumentList)
         m_Identifier = Identifier
         m_TypeArgumentList = TypeArgumentList
     End Sub
@@ -64,11 +64,11 @@ Public Class SimpleNameExpression
         Return result
     End Function
 
-    Property Identifier() As Token
+    Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
-        Set(ByVal value As Token)
+        Set(ByVal value As Identifier)
             m_Identifier = value
         End Set
     End Property

@@ -14,7 +14,7 @@ Public Class OldResult
 
             Dim iEnd As Integer
             iEnd = file.LastIndexOf("."c)
-            If iEnd + 11 > file.Length Then
+            If iEnd > 0 AndAlso System.Enum.IsDefined(GetType(Test.Results), file.Substring(iEnd + 1)) Then
                 tmp = file.Substring(iEnd + 1)
             Else
                 Dim xml As New Xml.XPath.XPathDocument(m_Filename)

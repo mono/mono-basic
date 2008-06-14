@@ -1,3 +1,15 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ChangeLog, Changelog, LateBinding12.vb: Merge with head.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBinding12.vb: Fix line endings.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Changelog, ChangeLog: Rename Changelog to ChangeLog to avoid confusing MD.
+
 2005-09-15  Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	    Alexandre Rocha Lima e Marcondes
 	    <alexandre@psl-pr.softwarelivre.org>

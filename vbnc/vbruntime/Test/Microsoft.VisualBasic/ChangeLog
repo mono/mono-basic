@@ -1,3 +1,24 @@
+2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Helper.vb, ChangeLog, FileSystemTests2.vb,
+	  FileSystemTestGenerator.vb, FileSystemTestGenerated.vb,
+	  ConversionTests.cs: Merge with head.
+
+2008-02-15  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* FileSystemTestGenerated.vb: Added.
+
+2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* FileSystemTestGenerator.vb: Make this 1.1 compatible.
+	* FileSystemTests2.vb: Make this 1.1 compatible, add a few more tests.
+	* Helper.vb: Make this 1.1 compatible, add Read/Write/AppendAllBytes/Text.
+
+2008-01-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Helper.vb: Added a few helper methods.
+	* FileSystemTestGenerator.vb: Added, a FileSystem test generator.
+
 2007-12-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileSystemTests2.vb: Added, contains code for the missing fileio support.

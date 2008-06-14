@@ -25,35 +25,61 @@
 Public Class Identifier
     Inherits ParsedObject
 
-    Private m_Identifier As Token
+    'Private m_Identifier As Token
+    Private m_Name As String
+    Private m_TypeCharacter As TypeCharacters.Characters = TypeCharacters.Characters.None
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Token)
-        MyBase.new(Parent)
-        m_Identifier = Identifier
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As String, ByVal Location As Span, ByVal TypeCharacter As TypeCharacters.Characters)
+        MyBase.new(Parent, Location)
+        m_Name = Identifier
+        m_TypeCharacter = TypeCharacter
     End Sub
 
-    Sub Init(ByVal Identifier As Token)
-        m_Identifier = Identifier
+    Sub Init(ByVal Identifier As String, ByVal Location As Span, ByVal TypeCharacter As TypeCharacters.Characters)
+        Me.Location = Location
+        m_Name = Identifier
+        m_TypeCharacter = TypeCharacter
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Identifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Return New Identifier(NewParent, m_Identifier)
-    End Function
-
-    ReadOnly Property Token() As Token
+    ReadOnly Property Identifier() As String
         Get
-            Return m_Identifier
+            Return m_Name
         End Get
     End Property
 
+    ReadOnly Property TypeCharacter() As TypeCharacters.Characters
+        Get
+            Return m_TypeCharacter
+        End Get
+    End Property
+
+    ReadOnly Property HasTypeCharacter() As Boolean
+        Get
+            Return m_TypeCharacter <> TypeCharacters.Characters.None
+        End Get
+    End Property
+
+    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Identifier
+        Dim result As Identifier
+        If NewParent Is Nothing Then NewParent = Me.Parent
+        result = New Identifier(NewParent)
+        result.Init(m_Name, Location, m_TypeCharacter)
+        Return result
+    End Function
+
+    'ReadOnly Property Token() As Token
+    '    Get
+    '        Return m_Identifier
+    '    End Get
+    'End Property
+
     ReadOnly Property Name() As String
         Get
-            Return m_Identifier.Identifier
+            Return m_Name
         End Get
     End Property
 

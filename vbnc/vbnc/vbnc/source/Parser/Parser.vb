@@ -45,7 +45,7 @@ Partial Public Class Parser
         Helper.Assert(tm IsNot Nothing)
     End Sub
 
-    Public Sub New(ByVal Compiler As Compiler, ByVal TokenReader As ITokenReader)
+    Public Sub New(ByVal Compiler As Compiler, ByVal TokenReader As Scanner)
         m_Compiler = Compiler
         tm = New tm(Compiler, TokenReader)
         tm.NextToken()
@@ -78,24 +78,25 @@ Partial Public Class Parser
         While tm.CurrentToken.Equals(KS.Option)
             If OptionExplicitStatement.IsMe(tm) Then
                 If m_OptionExplicit IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Explicit") AndAlso result
                 End If
                 m_OptionExplicit = ParseOptionExplicitStatement(CodeFile)
                 If m_OptionExplicit Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionStrictStatement.IsMe(tm) Then
                 If m_OptionStrict IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Strict") AndAlso result
                 End If
                 m_OptionStrict = ParseOptionStrictStatement(CodeFile)
                 If m_OptionStrict Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             ElseIf OptionCompareStatement.IsMe(tm) Then
                 If m_OptionCompare IsNot Nothing Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Compare") AndAlso result
                 End If
                 m_OptionCompare = ParseOptionCompareStatement(CodeFile)
                 If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented()
             Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC30206, tm.CurrentLocation) AndAlso result
+                tm.GotoNewline(False)
             End If
         End While
 
@@ -128,7 +129,8 @@ Partial Public Class Parser
         ElseIf tm.Accept("Binary") Then
             m_IsBinary = True
         Else
-            Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
+            Compiler.Report.ShowMessage(Messages.VBNC30207, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
@@ -153,11 +155,11 @@ Partial Public Class Parser
         If tm.Accept(KS.On) Then
             m_Off = False
         ElseIf tm.Accept("Off") Then
-            Compiler.Report.ShowMessage(Messages.VBNC99998, tm.PeekToken(-1).Location, "Option Strict Off will probably fail.")
             m_Off = True
+        ElseIf Not tm.AcceptEndOfStatement() Then
+            Compiler.Report.ShowMessage(Messages.VBNC30620, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
-
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Off)
 
@@ -179,9 +181,10 @@ Partial Public Class Parser
             m_Off = False
         ElseIf tm.Accept("Off") Then
             m_Off = True
+        ElseIf Not tm.AcceptEndOfStatement() Then
+            Compiler.Report.ShowMessage(Messages.VBNC30640, tm.CurrentLocation)
+            tm.GotoNewline(False)
         End If
-
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
 
         result.Init(m_Off)
         Return result
@@ -293,13 +296,13 @@ Partial Public Class Parser
     Private Shared Function ParseImportsAliasClause(ByVal Parent As ParsedObject, ByVal str As String) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_Second As ImportsNamespaceClause = Nothing
 
         Dim values() As String = str.Split("="c)
         If values.Length <> 2 Then Return Nothing
 
-        m_Identifier = Token.CreateIdentifierToken(Span.CommandLineSpan, values(0), TypeCharacters.Characters.None, False)
+        m_Identifier = New Identifier(result, values(0), Span.CommandLineSpan, TypeCharacters.Characters.None)
 
         m_Second = ParseImportsNamespaceClause(result, values(1))
         If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
@@ -321,10 +324,11 @@ Partial Public Class Parser
     Private Function ParseImportsAliasClause(ByVal Parent As ParsedObject) As ImportsAliasClause
         Dim result As New ImportsAliasClause(Parent)
 
-        Dim m_Identifier As Token = Nothing
+        Dim m_Identifier As Identifier
         Dim m_Second As ImportsNamespaceClause = Nothing
 
-        If tm.AcceptIdentifier(m_Identifier) = False Then Helper.ErrorRecoveryNotImplemented()
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
 
         tm.AcceptIfNotInternalError(KS.Equals)
 
@@ -392,8 +396,8 @@ Partial Public Class Parser
 
     Private Function ParseAssemblyDeclaration(ByVal RootNamespace As String, ByVal assembly As AssemblyDeclaration) As Boolean
         Dim result As Boolean = True
-        'Dim assembly As New AssemblyDeclaration(m_Compiler)
-        Dim iLastToken As Token
+
+        Dim iLastLocation As Span
 
         Dim AssemblyAttributes As New Attributes(assembly)
         Dim AssemblyTypes As New MemberDeclarations(assembly)
@@ -407,20 +411,21 @@ Partial Public Class Parser
             iTotalFiles = Me.Compiler.CommandLine.Files.Count
             Me.Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Parsing file " & tm.CurrentToken.Location.File.FileName & " (" & iFileCount & " of " & iTotalFiles & " files)")
 #End If
-            iLastToken = tm.CurrentToken
+            iLastLocation = tm.CurrentLocation
+
             While tm.AcceptNewLine
 
             End While
             '[  OptionStatement+  ]
             '[  ImportsStatement+  ]
 
-            If Me.ParseFileHeader(tm.CurrentToken.Location.File(Compiler), assembly) = False Then
+            If Me.ParseFileHeader(tm.CurrentLocation.File(Compiler), assembly) = False Then
                 Helper.ErrorRecoveryNotImplemented()
             End If
             ''	[  AttributesStatement+  ]
             'If vbnc.Attributes.IsMe(tm) Then
             '    If Me.ParseAttributes(result, AssemblyAttributes) = False Then
-            '        Helper.ErrorRecoveryNotImplemented()
+            '        Helper.ErrorRecoveryNot    Implemented()
             '    End If
             'End If
 
@@ -431,8 +436,8 @@ Partial Public Class Parser
 
             End While
             tm.AcceptEndOfFile()
-            If Token.IsSomething(iLastToken) = Token.IsSomething(tm.CurrentToken) AndAlso iLastToken.Location.Equals(tm.CurrentToken.Location) Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentToken.Location) AndAlso result
+            If iLastLocation.Equals(tm.CurrentLocation) Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
             End If
         Loop
@@ -604,7 +609,7 @@ Partial Public Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseList(Of T)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
-        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentToken.Location.ToString(Compiler))
+        Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentLocation.ToString(Compiler))
         Do
             Dim newObject As T
             newObject = ParseMethod(Parent)
@@ -751,7 +756,7 @@ Partial Public Class Parser
             Return Nothing
         End If
         If ArrayNameModifier.CanBeMe(tm) = False Then
-            If ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC90007, tm.CurrentToken.Location, tm.CurrentToken.ToString)
+            If ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC90007, tm.CurrentLocation, tm.CurrentToken.ToString)
             Return Nothing
         End If
 
@@ -1176,12 +1181,11 @@ Partial Public Class Parser
         ElseIf first.Length > 7 AndAlso Helper.CompareName(first.Substring(1, 7), "Global.") Then
             m_First = New GlobalExpression(result)
         Else
-            Dim i As Token = Token.CreateIdentifierToken(Parent.Location, first, TypeCharacters.Characters.None, False)
-            m_First = New Identifier(result, i)
+            m_First = New Identifier(Parent, first, Parent.Location, TypeCharacters.Characters.None)
         End If
 
         If second IsNot Nothing Then
-            m_Second = Token.CreateIdentifierToken(Span.CommandLineSpan, second, TypeCharacters.Characters.None, False)
+            m_Second = Token.CreateIdentifierToken(Span.CommandLineSpan, second)
         End If
 
         result.Init(m_First, m_Second)
@@ -1232,7 +1236,7 @@ Partial Public Class Parser
         Dim result As Identifier
 
         If tm.CurrentToken.IsIdentifier Then
-            result = New Identifier(Parent, tm.CurrentToken)
+            result = New Identifier(Parent, tm.CurrentToken.Identifier, tm.CurrentLocation, tm.CurrentTypeCharacter)
             tm.NextToken()
         Else
             result = Nothing
@@ -1492,7 +1496,7 @@ Partial Public Class Parser
                     currentNameSpace &= currentNamespaces(currentNamespaces.Count - 1).Name
                 End If
                 If tm.AcceptNewLine(True, True, True) = False Then Helper.ErrorRecoveryNotImplemented()
-            ElseIf tm.Accept(KS.End_Namespace) Then
+            ElseIf tm.Accept(KS.End, KS.Namespace) Then
                 If tm.AcceptNewLine(True, False, True) = False Then Helper.ErrorRecoveryNotImplemented()
                 If currentNamespaces.Count >= 1 Then
                     currentNamespaces.RemoveAt(currentNamespaces.Count - 1)
