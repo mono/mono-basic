@@ -1,3 +1,8 @@
+2008-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/ConstantDeclaration.vb: Print better output when constant 
+	  conversion fails.
+
 2008-04-18  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Tokens/Token.vb: Introduce again the workaround for #324807.
