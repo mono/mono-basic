@@ -111,7 +111,16 @@ Public Class ConstantDeclaration
                 If m_TypeName Is Nothing Then
                     m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
                 Else
-                    m_ConstantValue = TypeConverter.ConvertTo(m_ConstantValue, m_TypeName.ResolvedType)
+                    Try
+                        m_ConstantValue = TypeConverter.ConvertTo(m_ConstantValue, m_TypeName.ResolvedType)
+                    Catch ex As Exception
+                        If m_ConstantValue Is Nothing Then
+                            Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Conversion from " & m_ConstantValue.GetType().FullName & " to " & m_TypeName.ResolvedType.FullName & " failed.")
+                        Else
+                            Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Conversion from Nothing to " & m_TypeName.ResolvedType.FullName & " failed.")
+                        End If
+                        Throw
+                    End Try
                 End If
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
