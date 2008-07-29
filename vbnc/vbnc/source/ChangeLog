@@ -1,5 +1,10 @@
 2008-07-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/Expression.vb: Catch any exceptions during code emission of
+	  expressions, and print an error with the code location of the expression.
+
+2008-07-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/MethodDeclaration.vb: Don't call MethodBuilder.SetReturnType
 	  with Nothing, use System.Void. Works around a mono bug.
 

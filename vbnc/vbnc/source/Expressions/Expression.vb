@@ -179,19 +179,25 @@ Public MustInherit Class Expression
     Friend NotOverridable Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        If Me.IsConstant Then
-            If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Nothing) Then
-                Emitter.EmitLoadValue(Info, Me.ConstantValue)
-            ElseIf Info.DesiredType IsNot Nothing AndAlso Info.DesiredType.IsByRef Then
-                Emitter.EmitLoadValueAddress(Info, Me.ConstantValue)
+        Try
+
+            If Me.IsConstant Then
+                If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Nothing) Then
+                    Emitter.EmitLoadValue(Info, Me.ConstantValue)
+                ElseIf Info.DesiredType IsNot Nothing AndAlso Info.DesiredType.IsByRef Then
+                    Emitter.EmitLoadValueAddress(Info, Me.ConstantValue)
+                Else
+                    Emitter.EmitLoadValue(Info.Clone(Me, Me.ExpressionType), Me.ConstantValue)
+                End If
+            ElseIf TypeOf Me.Classification Is MethodGroupClassification Then
+                result = Me.Classification.AsMethodGroupClassification.GenerateCode(Info) AndAlso result
             Else
-                Emitter.EmitLoadValue(Info.Clone(Me, Me.ExpressionType), Me.ConstantValue)
+                result = GenerateCodeInternal(Info) AndAlso result
             End If
-        ElseIf TypeOf Me.Classification Is MethodGroupClassification Then
-            result = Me.Classification.AsMethodGroupClassification.GenerateCode(Info) AndAlso result
-        Else
-            result = GenerateCodeInternal(Info) AndAlso result
-        End If
+        Catch ex As Exception
+            Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "There was an exception during code generation.")
+            Throw
+        End Try
 
         Return result
     End Function
