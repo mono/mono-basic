@@ -1,3 +1,8 @@
+2008-07-29  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Descriptors/GenericMethodDescriptor.vb: Remove mono-specific workaround which 
+	  breaks now that mono is even more MS-compatible.
+
 2008-07-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/Expression.vb: Catch any exceptions during code emission of

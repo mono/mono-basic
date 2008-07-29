@@ -305,12 +305,7 @@ Public Class GenericMethodDescriptor
                         Console.WriteLine(">typeIsGenericType:                      " & typeIsGenericType)
 #End If
 
-                        If Helper.IsOnMono AndAlso typeIsGenericType AndAlso methodHasGenericParameters AndAlso methodDeclaringTypeIsGenericDefinition Then
-#If EXTENDEDDEBUG Then
-                            Console.WriteLine(">#0")
-#End If
-                            isTypeBuilderGetMethod = True
-                        ElseIf isTypeInstantiation AndAlso typeIsGenericType AndAlso typeIsGenericDefinition = False AndAlso isTypeBuilderOrInstantiation AndAlso methodIsGeneric = False AndAlso methodIsGenericDefinition = False AndAlso methodHasGenericParameters = False AndAlso isMethodOnTypeBuilderInstantiation = False Then
+                        If isTypeInstantiation AndAlso typeIsGenericType AndAlso typeIsGenericDefinition = False AndAlso isTypeBuilderOrInstantiation AndAlso methodIsGeneric = False AndAlso methodIsGenericDefinition = False AndAlso methodHasGenericParameters = False AndAlso isMethodOnTypeBuilderInstantiation = False Then
 #If EXTENDEDDEBUG Then
                             Console.WriteLine(">#1")
 #End If
