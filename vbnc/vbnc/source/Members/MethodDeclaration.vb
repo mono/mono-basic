@@ -129,7 +129,11 @@ Public MustInherit Class MethodDeclaration
                 Compiler.Report.WriteLine("$>Setting return type to:" & ReturnType.FullName)
             End If
 #End If
-        m_MethodBuilder.SetReturnType(ReturnType)
+        If ReturnType Is Nothing Then
+            m_MethodBuilder.SetReturnType(Compiler.TypeCache.System_Void)
+        Else
+            m_MethodBuilder.SetReturnType(ReturnType)
+        End If
 
         Helper.SetTypeOrTypeBuilder(ParameterTypes)
         m_MethodBuilder.SetParameters(ParameterTypes)
