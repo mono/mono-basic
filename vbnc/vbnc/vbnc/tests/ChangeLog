@@ -1,5 +1,9 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Generated/ZCompilerCodeGenerator.vb: Delete old cruft.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* External, External/testoutput, External/PrivateScope1.response,
 	  External/PrivateScope1.il, External/PrivateScope1.bat,
 	  External/PrivateScope1.vb, External/ReadMe.txt,

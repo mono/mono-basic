@@ -1,5 +1,9 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* AutoGen, AutoGen/ZCompilerCodeGenerator.vb: Delete old cruft.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* vbnc9.vbproj, vbnc9+cecil.sln, vbnc.vbproj, My Project, My
 	  Project/app.manifest, vbnc9.sln: Converted all projects and
 	  solutions to VS9 format, removed some old files.

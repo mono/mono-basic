@@ -1,1 +1,0 @@
-vbnc /codepage:65001 /out:.\bootstrap.exe @..\tests\SelfTest\bootstrap.rsp

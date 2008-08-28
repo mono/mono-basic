@@ -1,5 +1,9 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* CheckLicense.vbs: Delete old cruft.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* progress.txt, vbnc.sln, all.sln, clean.bat: Converted all projects
 	  and solutions to VS9 format, removed some old files.
 
