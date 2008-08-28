@@ -17,7 +17,6 @@ Mono\PropertyL 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\CDateConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\CDecConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\DecimalConstant1 'VBNC Compile failed, process exited with exit code -1
-SelfTest\SelfCompileWindows 'VBNC Compile failed, process exited with exit code 1
 Unfixable\GenericNestedType1 'VBNC Compile failed, process exited with exit code -1
 Unfixable\NestedInterfaceInheritance1 'VBNC Compile failed, process exited with exit code -1
 Unfixable\NoVBRuntimeRef1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
