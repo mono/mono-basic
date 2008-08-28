@@ -34,6 +34,7 @@ namespace Mono.Cecil {
 	public sealed class GenericInstanceType : TypeSpecification, IGenericInstance {
 
 		private GenericArgumentCollection m_genArgs;
+		string cached_fullname;
 
 		public GenericArgumentCollection GenericArguments {
 			get {
@@ -50,6 +51,9 @@ namespace Mono.Cecil {
 
 		public override string FullName {
 			get {
+				if (cached_fullname != null)
+					return cached_fullname;
+
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (base.FullName);
 				sb.Append ("<");
@@ -59,7 +63,8 @@ namespace Mono.Cecil {
 					sb.Append (this.GenericArguments [i].FullName);
 				}
 				sb.Append (">");
-				return sb.ToString ();
+				cached_fullname = sb.ToString ();
+				return cached_fullname;
 			}
 		}
 

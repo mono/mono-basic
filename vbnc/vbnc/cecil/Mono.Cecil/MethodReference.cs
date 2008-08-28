@@ -40,6 +40,7 @@ namespace Mono.Cecil {
 		MethodCallingConvention m_callConv;
 		protected GenericParameterCollection m_genparams;
 		public MethodReference OriginalMethod;
+		string cached_tostring;
 
 		public virtual ParameterDefinitionCollection ResolvedParameters {
 			get { 
@@ -128,6 +129,9 @@ namespace Mono.Cecil {
 
 		public override string ToString ()
 		{
+			if (cached_tostring != null)
+				return cached_tostring;
+
 			int sentinel = GetSentinel ();
 
 			StringBuilder sb = new StringBuilder ();
@@ -145,7 +149,8 @@ namespace Mono.Cecil {
 				sb.Append (this.Parameters [i].ParameterType.FullName);
 			}
 			sb.Append (")");
-			return sb.ToString ();
+			cached_tostring = sb.ToString ();
+			return cached_tostring;
 		}
 	}
 }
