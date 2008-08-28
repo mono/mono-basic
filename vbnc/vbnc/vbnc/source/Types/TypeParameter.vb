@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -27,37 +27,49 @@ Public Class TypeParameter
 
     Private m_Identifier As Identifier
     Private m_TypeParameterConstraints As TypeParameterConstraints
+    Private m_Defined As Boolean
     Private m_GenericParameterPosition As Integer
-    Private m_GenericParameterConstraints() As Mono.Cecil.TypeReference
-    'Private m_Builder As GenericTypeParameterBuilder
-    'Private m_Descriptor As New TypeParameterDescriptor(Me)
-#If ENABLECECIL Then
     Private m_CecilBuilder As Mono.Cecil.GenericParameter
-#End If
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Identifier, ByVal TypeParameterConstraints As TypeParameterConstraints, ByVal GenericParameterPosition As Integer)
-        m_Identifier = Identifier
-        m_TypeParameterConstraints = TypeParameterConstraints
-        m_GenericParameterPosition = GenericParameterPosition
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
 
+        Helper.Assert(m_Identifier IsNot Nothing)
 
-#If ENABLECECIL Then
-        m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, Nothing)
-#End If
+        If m_CecilBuilder Is Nothing Then
+            Dim p As BaseObject = Me.Parent
+            Dim owner As Mono.Cecil.IGenericParameterProvider = Nothing
+            While p IsNot Nothing AndAlso owner Is Nothing
+                Dim tD As TypeDeclaration = TryCast(p, TypeDeclaration)
+                Dim mD As MethodBaseDeclaration = TryCast(p, MethodBaseDeclaration)
 
+                If tD IsNot Nothing Then
+                    owner = tD.CecilType
+                    Exit While
+                ElseIf mD IsNot Nothing Then
+                    owner = mD.CecilBuilder
+                    Exit While
+                Else
+                    p = p.Parent
+                End If
+            End While
+            Helper.Assert(owner IsNot Nothing)
+            m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, owner)
+            m_CecilBuilder.Position = owner.GenericParameters.Count
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
+            owner.GenericParameters.Add(m_CecilBuilder)
+        End If
     End Sub
 
-#If ENABLECECIL Then
     ReadOnly Property CecilBuilder() As Mono.Cecil.GenericParameter
         Get
             Return m_CecilBuilder
         End Get
     End Property
-#End If
 
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeParameter
         If NewParent Is Nothing Then NewParent = Me.Parent
@@ -67,34 +79,44 @@ Public Class TypeParameter
         Return result
     End Function
 
-    ReadOnly Property TypeDescriptor() As Mono.Cecil.TypeReference
-        Get
-            Return m_CecilBuilder
-        End Get
-    End Property
-
-    ReadOnly Property GenericParameterPosition() As Integer
-        Get
-            Return m_GenericParameterPosition
-        End Get
-    End Property
-
-    'ReadOnly Property TypeParameterBuilder() As GenericTypeParameterBuilder
-    '    Get
-    '        Return m_Builder
-    '    End Get
-    'End Property
-
-    ReadOnly Property Identifier() As Identifier
+    Property Identifier() As Identifier
         Get
             Return m_Identifier
         End Get
+        Set(ByVal value As Identifier)
+            Helper.Assert(value IsNot Nothing)
+            Helper.Assert(m_Identifier Is Nothing)
+            m_Identifier = value
+        End Set
     End Property
 
-    ReadOnly Property TypeParameterConstraints() As TypeParameterConstraints
+    ReadOnly Property TypeParameterConstraintsNullable() As TypeParameterConstraints
         Get
             Return m_TypeParameterConstraints
         End Get
+    End Property
+
+    Property TypeParameterConstraints() As TypeParameterConstraints
+        Get
+            If m_TypeParameterConstraints Is Nothing Then
+                m_TypeParameterConstraints = New TypeParameterConstraints(Me)
+            End If
+            Return m_TypeParameterConstraints
+        End Get
+        Set(ByVal value As TypeParameterConstraints)
+            Helper.Assert(value IsNot Nothing)
+            Helper.Assert(m_TypeParameterConstraints Is Nothing)
+            m_TypeParameterConstraints = value
+        End Set
+    End Property
+
+    Property GenericParameterPosition() As Integer
+        Get
+            Return m_GenericParameterPosition
+        End Get
+        Set(ByVal value As Integer)
+            m_GenericParameterPosition = value
+        End Set
     End Property
 
     Public ReadOnly Property Name() As String Implements INameable.Name
@@ -109,35 +131,14 @@ Public Class TypeParameter
         Me.CheckTypeReferencesNotResolved()
         If m_TypeParameterConstraints IsNot Nothing Then
             result = m_TypeParameterConstraints.ResolveTypeReferences AndAlso result
+            result = DefineParameterConstraints() AndAlso result
         End If
-
-#If ENABLECECIL Then
-        If m_CecilBuilder.Owner Is Nothing Then
-            Dim parent As Mono.Cecil.IGenericParameterProvider
-
-            Dim method As IBaseObject = FindMethod()
-            Dim imethod As IMethod = TryCast(method, IMethod)
-
-            If imethod IsNot Nothing Then
-                parent = imethod.CecilBuilder
-            Else
-                parent = FindFirstParent(Of TypeDeclaration)().CecilType
-            End If
-
-            If parent IsNot Nothing Then
-                m_CecilBuilder.Owner = parent
-                m_CecilBuilder.Position = parent.GenericParameters.Count
-                parent.GenericParameters.Add(m_CecilBuilder)
-            End If
-        End If
-#End If
-            Return result
+        Return result
     End Function
 
-    <Obsolete("No code to resolve here.")> Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+    <Obsolete("No code to resolve here.")> _
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
-
-        'If m_TypeParameterConstraints IsNot Nothing Then result = m_TypeParameterConstraints.ResolveCode AndAlso result
 
         Return result
     End Function
@@ -147,8 +148,8 @@ Public Class TypeParameter
             Dim result As Mono.Cecil.GenericParameterAttributes
 
             If m_TypeParameterConstraints IsNot Nothing Then
-                For Each constraint As Constraint In m_TypeParameterConstraints.Constraints
-                    result = result Or constraint.SpecialConstraintAttribute
+                For i As Integer = 0 To m_TypeParameterConstraints.Constraints.Count - 1
+                    result = result Or m_TypeParameterConstraints.Constraints(i).SpecialConstraintAttribute
                 Next
             End If
 
@@ -158,10 +159,10 @@ Public Class TypeParameter
 
     Function DefineParameterConstraints() As Boolean
         Dim result As Boolean = True
-
-        'm_Builder = TypeParameterBuilder
-
         Dim attributes As Mono.Cecil.GenericParameterAttributes
+
+        If m_Defined Then Return True
+        m_Defined = True
 
         attributes = GenericParameterAttributes
 
@@ -184,45 +185,17 @@ Public Class TypeParameter
             Next
             If basetype IsNot Nothing Then
                 basetype = Helper.GetTypeOrTypeBuilder(Compiler, basetype)
-                'm_Builder.SetBaseTypeConstraint(basetype)
-#If ENABLECECIL Then
                 m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, basetype))
-#End If
-#If DEBUGREFLECTION Then
-                Helper.DebugReflection_AppendLine("{0}.SetBaseTypeConstraint({1})", m_Builder, basetype)
-#End If
             End If
             If interfaces.Count > 0 Then
-                Dim types As Mono.Cecil.TypeReference() = Helper.GetTypeOrTypeBuilders(Compiler, interfaces.ToArray)
-                'm_Builder.SetInterfaceConstraints(types)
-#If ENABLECECIL Then
                 For i As Integer = 0 To interfaces.Count - 1
                     m_CecilBuilder.Constraints.Add(Helper.GetTypeOrTypeReference(Compiler, interfaces(i)))
                 Next
-#End If
-#If DEBUGREFLECTION Then
-                types = Helper.DebugReflection_BuildArray(Of Type)(types)
-                Helper.DebugReflection_AppendLine("{0}.SetInterfaceConstraints({1})", m_Builder, types)
-#End If
             End If
-
-            If basetype IsNot Nothing Then interfaces.Add(basetype)
-            m_GenericParameterConstraints = interfaces.ToArray
         End If
 
-        'm_Builder.SetGenericParameterAttributes(attributes)
-#If ENABLECECIL Then
         m_CecilBuilder.Attributes = CType(attributes, Mono.Cecil.GenericParameterAttributes)
-#End If
-#If DEBUGREFLECTION Then
-        Helper.DebugReflection_AppendLine("{0}.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes.{1})", m_Builder, attributes.ToString)
-#End If
         Return result
     End Function
-
-    Function GetGenericParameterConstraints() As Mono.Cecil.TypeReference()
-        Return m_GenericParameterConstraints
-    End Function
-
 
 End Class

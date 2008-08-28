@@ -1,3 +1,12 @@
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/rt.windows.files.rsp, SelfTest/SelfCompileWindows.vb,
+	  SelfTest/rt.updatesources.sh, SelfTest/rt.linux.files.rsp,
+	  SelfTest/SelfCompile.files.windows, SelfTest/rt.general.response,
+	  SelfTest/updatesources.sh, SelfTest/rerun.bat,
+	  SelfTest/SelfCompile.files.linux, SelfTest/rerun.sh,
+	  SelfTest/SelfCompile.general.response: Backup selfhosted code.
+
 2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ChangeLog, CompileTime2/LessGeneric1.vb, CompileTime2/NullChar.vb,

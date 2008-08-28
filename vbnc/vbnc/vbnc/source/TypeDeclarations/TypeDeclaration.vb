@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -41,13 +41,9 @@ Public MustInherit Class TypeDeclaration
     'Private m_TypeDescriptor As TypeDescriptor
 
     'Information collected during parse phase.
-    Private m_Members As MemberDeclarations
+    Private m_Members As New MemberDeclarations(Me)
     Private m_Namespace As String
     Private m_Name As Identifier
-
-    'Information collected during resolve phase.
-    'Private m_BaseType As Type
-    Private m_ImplementedTypes As Mono.Cecil.TypeReference()
 
     Private m_DefaultInstanceConstructor As ConstructorDeclaration
     Private m_DefaultSharedConstructor As ConstructorDeclaration
@@ -56,16 +52,18 @@ Public MustInherit Class TypeDeclaration
 
     'Information collected during define phase.
     Private m_CecilType As Mono.Cecil.TypeDefinition
-    'Private m_CecilBaseType As Mono.Cecil.TypeReference
-    'Private m_TypeBuilder As TypeBuilder
-    ''Another hack for another bug in the ms runtime: you cannot create an attribute when the attribute's constructor has a enum parameter and the enum parameter is defined with a typebuilder, it only works if the enum parameter's type is defined with an enumbuilder.
-    'Private m_EnumBuilder As EnumBuilder
-
-    'Private m_FinalType As Type
 
     Private m_FullName As String
 
     Private m_AddHandlers As New Generic.List(Of AddOrRemoveHandlerStatement)
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        For Each member As MemberDeclaration In m_Members
+            member.Initialize(Me)
+        Next
+    End Sub
 
     ReadOnly Property DescriptiveType() As String
         Get
@@ -103,19 +101,22 @@ Public MustInherit Class TypeDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
         MyBase.Init(CustomAttributes, Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
 
-        m_Members = Members
         m_Name = Name
 
         Helper.Assert(DeclaringType IsNot Nothing OrElse TypeOf Me.Parent Is AssemblyDeclaration)
-        Helper.Assert(m_Members IsNot Nothing)
         Helper.Assert(m_Namespace IsNot Nothing)
         'Helper.Assert(m_Name IsNot Nothing)
 
         UpdateDefinition()
 
+    End Sub
+
+    Sub SetName(ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
+        m_Name = Name
+        MyBase.Name = Helper.CreateGenericTypename(Name.Name, TypeArgumentCount)
     End Sub
 
     Overrides Sub UpdateDefinition()
@@ -127,6 +128,7 @@ Public MustInherit Class TypeDeclaration
             Else
                 m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Me.Namespace, 0, Nothing)
             End If
+            m_CecilType.Annotations.Add(Compiler, Me)
         End If
         m_CecilType.Name = Name
 
@@ -144,6 +146,7 @@ Public MustInherit Class TypeDeclaration
         End Get
         Set(ByVal value As Boolean)
             m_BeforeFieldInit = value
+            UpdateDefinition()
         End Set
     End Property
 
@@ -198,14 +201,9 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Property ImplementedTypes() As Mono.Cecil.TypeReference()
-        Get
-            Return m_ImplementedTypes
-        End Get
-        Protected Set(ByVal value As Mono.Cecil.TypeReference())
-            m_ImplementedTypes = value
-        End Set
-    End Property
+    Sub AddInterface(ByVal Type As Mono.Cecil.TypeReference)
+        m_CecilType.Interfaces.Add(Type)
+    End Sub
 
     ReadOnly Property Identifier() As Identifier
         Get
@@ -264,17 +262,7 @@ Public MustInherit Class TypeDeclaration
         End Set
     End Property
 
-    Public Property Members() As MemberDeclarations
-        Get
-            Return m_Members
-        End Get
-        Protected Set(ByVal value As MemberDeclarations)
-            Helper.Assert(TypeOf Me Is PartialTypeDeclaration AndAlso DirectCast(Me, PartialTypeDeclaration).IsPartial)
-            m_Members = value
-        End Set
-    End Property
-
-    Private ReadOnly Property Members2() As MemberDeclarations Implements IType.Members
+    Public ReadOnly Property Members() As MemberDeclarations Implements IType.Members
         Get
             Return m_Members
         End Get
@@ -348,18 +336,6 @@ Public MustInherit Class TypeDeclaration
             m_CecilType.DeclaringType = DeclaringType.CecilType
         End If
 
-        If m_ImplementedTypes IsNot Nothing Then
-            For Each Type As Mono.Cecil.TypeReference In m_ImplementedTypes
-                Type = Helper.GetTypeOrTypeBuilder(Compiler, Type)
-                Helper.Assert(Helper.IsInterface(Compiler, Type))
-#If EXTENDEDDEBUG Then
-                Compiler.Report.WriteLine("Setting implement," & FullName & " now implements " & Type.FullName)
-#End If
-
-                CecilType.Interfaces.Add(Helper.GetTypeOrTypeReference(Compiler, Type))
-            Next
-        End If
-
         Return result
     End Function
 
@@ -393,6 +369,7 @@ Public MustInherit Class TypeDeclaration
         Me.CheckCodeNotResolved()
 
         result = MyBase.ResolveCode(Info) AndAlso result
+        Compiler.VerifyConsistency(result, Location.AsString(Compiler))
         result = m_Members.ResolveCode(Info) AndAlso result
         'vbnc.Helper.Assert(result = (Compiler.Report.Errors = 0))
 
@@ -401,10 +378,6 @@ Public MustInherit Class TypeDeclaration
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-
-        For Each var As LocalVariableDeclaration In m_StaticVariables
-            result = var.DefineStaticMember AndAlso result
-        Next
 
         result = MyBase.GenerateCode(Info) AndAlso result
 
@@ -423,6 +396,7 @@ Public MustInherit Class TypeDeclaration
         End Get
         Set(ByVal value As Mono.Cecil.TypeAttributes)
             m_CecilType.Attributes = value
+            If m_BeforeFieldInit Then m_CecilType.IsBeforeFieldInit = True
         End Set
     End Property
 

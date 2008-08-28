@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -125,11 +125,12 @@ Public Class Compiler
 
     Public Sub VerifyConsistency(ByVal result As Boolean, Optional ByVal Location As String = "")
         If Report.Errors = 0 AndAlso result = False Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "No errors, but compilation failed? " & Location)
+            Report.WriteLine(vbnc.Report.ReportLevels.Debug, Location & " No errors, but compilation failed? ")
+            Helper.StopIfDebugging()
             Throw New InternalException("Consistency check failed")
         ElseIf Report.Errors > 0 AndAlso result Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, Report.Errors.ToString & " errors, but compilation succeeded? " & Location)
-            Throw New InternalException("Consistency check failed")
+            'Report.WriteLine(vbnc.Report.ReportLevels.Debug, Report.Errors.ToString & " errors, but compilation succeeded? " & Location)
+            'Throw New InternalException("Consistency check failed")
         End If
     End Sub
 
@@ -377,6 +378,7 @@ Public Class Compiler
         Try
             theAss = New AssemblyDeclaration(Me)
             result = Parser.Parse(RootNamespace, theAss) AndAlso result
+            theAss.Initialize(Me)
         Catch ex As TooManyErrorsException
             Throw
         Catch ex As vbncException
@@ -391,15 +393,6 @@ Public Class Compiler
         SequenceTime(CompilerSequence.Parsed) = DateTime.Now
 
         VerifyConsistency(result)
-
-#If DEBUG AndAlso False Then
-        Dim xml As Xml.XmlTextWriter
-        xml = New Xml.XmlTextWriter(CreateTestOutputFilename(m_OutFilename, "parsedtree"), Text.Encoding.UTF8)
-        xml.Formatting = System.Xml.Formatting.Indented
-        DumperXML.Dump(theAss, xml)
-        xml.Close()
-        xml = Nothing
-#End If
 
         Return result
     End Function
@@ -430,10 +423,7 @@ Public Class Compiler
         VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result
 
-        'm_TypeCache.InitInternalVBMembers()
-#If ENABLECECIL Then
         m_TypeCache.InitInternalVBMembers()
-#End If
 
         result = theAss.CreateImplicitMembers AndAlso result
         VerifyConsistency(result, "CreateImplicitMembers")
@@ -447,25 +437,8 @@ Public Class Compiler
 
         VerifyConsistency(result, "FinishedResolve")
 
-#If DEBUG AndAlso False Then
-        Dim xml As Xml.XmlTextWriter
-        xml = New Xml.XmlTextWriter(CreateTestOutputFilename(m_OutFilename, "typetree"), Text.Encoding.UTF8)
-        xml.Formatting = System.Xml.Formatting.Indented
-        DumperXML.Dump(theAss, xml)
-        xml.Close()
-        xml = Nothing
-#End If
-
         Return result
     End Function
-#If DEBUG Then
-    Private m_Dumper As Dumper
-    ReadOnly Property Dumper() As Dumper
-        Get
-            Return m_Dumper
-        End Get
-    End Property
-#End If
 
     Function GenerateMy() As Boolean
         Dim result As Boolean = True
@@ -482,16 +455,11 @@ Public Class Compiler
     ''' <remarks></remarks>
     Function Compile() As Integer
         Dim result As Boolean = True
-
+        BaseObject.ClearCache()
         Try
             SequenceTime(CompilerSequence.Start) = DateTime.Now
 
 #If DEBUG Then
-            'Dump the commandline
-            If CommandLine.Dumping Then
-                CommandLine.Dump()
-            End If
-
             If CommandLine.Verbose Then
                 Console.WriteLine("Runtime loaded from: " & GetType(Microsoft.VisualBasic.Financial).Assembly.Location)
             End If
@@ -672,10 +640,8 @@ EndOfCompilation:
         Catch ex As Exception
             ShowExceptionInfo(ex)
             Return -1
-#If DEBUGREFLECTION Then
         Finally
-            IO.File.WriteAllText("DebugReflection.vb", vbnc.Helper.DebugReflection_Dump(Me))
-#End If
+            BaseObject.ClearCache()
         End Try
         vbnc.Helper.Assert(False, "End of program reached!")
         Return 1
@@ -704,10 +670,11 @@ EndOfCompilation:
             For i As Integer = 0 To strLines.GetUpperBound(0)
                 strLine = strLines(i)
                 'Remove -at-
-                strLine = strLine.Substring(strLine.IndexOf("at ") + 3)
-                If strLine.StartsWith("vbnc.", True, Nothing) Then
-                    strLine = strLine.Substring(strLine.IndexOf(" in ") + 4)
+                strLine = strLine.Substring(strLine.IndexOf("en ") + 3)
+                If strLine.StartsWith("vbnc.", True, Nothing) OrElse strLine.Contains("Cecil") Then
+                    strLine = strLine.Substring(strLine.IndexOf(" en ") + 4)
                     strLine = strLine.Replace(":line ", "(")
+                    strLine = strLine.Replace(":línea ", "(")
                     strLine &= "): " & ex.Message
                     Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, strLine)
                 End If
@@ -723,27 +690,6 @@ EndOfCompilation:
         Next
         Compiler.Report.Unindent()
         Compiler.Report.WriteLine(ex.Message)
-
-        Dim xml As Xml.XmlTextWriter
-        Try
-            xml = New Xml.XmlTextWriter(CreateTestOutputFilename(m_OutFilename, "exceptions"), System.Text.Encoding.UTF8)
-            xml.Formatting = System.Xml.Formatting.Indented
-            xml.WriteStartElement("Sequence")
-
-            For i As Integer = CompilerSequence.Start To CompilerSequence.End
-                xml.WriteStartElement(CType(i, CompilerSequence).ToString)
-                xml.WriteString(SequenceTime(i).ToLongTimeString())
-                xml.WriteEndElement()
-            Next
-
-            xml.WriteEndElement()
-
-            InternalException.Dump(xml, ex, False)
-            xml.Close()
-            xml = Nothing
-        Catch
-            'Just do nothing.
-        End Try
 #Else
         Compiler.Report.ShowMessage (Messages.VBNC99999, "Unexpected error: " & ex.Message & vb.vbNewLine & ex.StackTrace)
 #End If
@@ -776,27 +722,37 @@ EndOfCompilation:
     ReadOnly Property Logo() As String
         Get
             Dim result As New System.Text.StringBuilder
-            Dim FileVersion As Diagnostics.FileVersionInfo = Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)
+            Dim FileVersion As Diagnostics.FileVersionInfo = Nothing
             Dim Version As AssemblyInformationalVersionAttribute = Nothing
             Dim attrs() As Object = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(GetType(AssemblyInformationalVersionAttribute), False)
-            Dim msg As String
+            Dim msg As String = ""
+
+            If System.Reflection.Assembly.GetExecutingAssembly.Location <> String.Empty Then
+                FileVersion = Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location)
+            End If
 
             If attrs IsNot Nothing AndAlso attrs.Length > 0 Then
                 Version = TryCast(attrs(0), AssemblyInformationalVersionAttribute)
             End If
 
-            msg = FileVersion.ProductName & " version " & FileVersion.FileVersion
+            If FileVersion IsNot Nothing Then
+                msg = FileVersion.ProductName & " version " & FileVersion.FileVersion
+            End If
             If Version IsNot Nothing Then
                 msg &= " (Mono " & Version.InformationalVersion & ")"
             End If
 
 #If DEBUG Then
-            msg &= " Last Write: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss")
+            If FileVersion IsNot Nothing Then
+                msg &= " Last Write: " & IO.File.GetLastWriteTime(FileVersion.FileName).ToString("dd/MM/yyyy HH:mm:ss")
+            End If
 #End If
 
             result.AppendLine(msg)
-            result.AppendLine(FileVersion.LegalCopyright)
-            result.AppendLine()
+            If FileVersion IsNot Nothing Then
+                result.AppendLine(FileVersion.LegalCopyright)
+                result.AppendLine()
+            End If
 
             Return result.ToString
         End Get
@@ -866,9 +822,6 @@ EndOfCompilation:
             result.AppendLine("/netcf                 Specifies the .NET Compact Framework as the target. *Not supported*.")
             result.AppendLine("/sdkpath:<path>        where the .Net Framework (mscorlib.dll) is located.")
             result.AppendLine("/utf8output[+|-]       Emit the output from the compiler in UTF8 encoding. *Not supported yet*")
-#If DEBUG Then
-            result.AppendLine("/dump                  Dump the various outputs. Only avaliable in debug builds.")
-#End If
 
             Return result.ToString
         End Get
@@ -990,20 +943,11 @@ EndOfCompilation:
                 formConstructor = mainClass.DefaultInstanceConstructor
 
                 If formConstructor IsNot Nothing Then
-                    'TODO: If the class has a My default instance, use that default instance.
-                    'mainBuilder = mainClass.TypeBuilder.DefineMethod("Main", MethodAttributes.Public Or MethodAttributes.Static Or MethodAttributes.HideBySig, Nothing, Type.EmptyTypes)
-                    'ilGen = mainBuilder.GetILGenerator()
-                    'ilGen.Emit(OpCodes.Newobj, formConstructor.ConstructorBuilder)
-                    'ilGen.Emit(OpCodes.Call, TypeCache.System_Windows_Forms_Application__Run)
-                    'ilGen.Emit(OpCodes.Ret)
-                    'lstMethods.Add(mainBuilder)
-#If ENABLECECIL Then
                     mainCecil = New Mono.Cecil.MethodDefinition("Main", Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.Static Or Mono.Cecil.MethodAttributes.HideBySig, Helper.GetTypeOrTypeReference(Me, TypeCache.System_Void))
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Newobj, formConstructor.CecilBuilder)
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Ret)
                     mainClass.CecilType.Methods.Add(mainCecil)
-#End If
                 End If
             End If
 

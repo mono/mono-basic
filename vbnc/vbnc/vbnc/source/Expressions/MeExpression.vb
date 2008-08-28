@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -36,15 +36,9 @@ Public Class MeExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Emitter.EmitLoadMe(Info, Me.FindFirstParent(Of IType).CecilType)
-        If Info.DesiredType.IsValueType AndAlso CecilHelper.IsByRef(Info.DesiredType) = False Then
+        If CecilHelper.IsValueType(Info.DesiredType) AndAlso CecilHelper.IsByRef(Info.DesiredType) = False Then
             Emitter.EmitLoadObject(Info, Info.DesiredType)
         End If
         Return True
     End Function
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Me")
-    End Sub
-#End If
 End Class

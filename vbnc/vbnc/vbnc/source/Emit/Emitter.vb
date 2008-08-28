@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -450,25 +450,10 @@ Partial Public Class Emitter
     ''' <param name="Constructor"></param>
     ''' <remarks></remarks>
     Shared Sub EmitNew(ByVal Info As EmitInfo, ByVal Constructor As Mono.Cecil.MethodReference)
-        Dim OriginalConstructor As Mono.Cecil.MethodReference = Constructor
+        Dim vOriginalConstructor As Mono.Cecil.MethodReference = Constructor
         Helper.Assert(Constructor IsNot Nothing)
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Constructor))
         Constructor = Helper.GetCtorOrCtorBuilder(Info.Compiler, Constructor)
-        Info.ILGen.Emit(OpCodes.Newobj, Constructor)
-        Info.Stack.Push(Constructor.DeclaringType)
-    End Sub
-
-    ''' <summary>
-    ''' Emit a newobj.
-    ''' </summary>
-    ''' <param name="Info"></param>
-    ''' <param name="Constructor"></param>
-    ''' <remarks></remarks>
-    Shared Sub EmitNew(ByVal Info As EmitInfo, ByVal Constructor As Mono.Cecil.MethodReference, ByVal ParameterTypes() As Mono.Cecil.TypeReference)
-        Dim OriginalConstructor As Mono.Cecil.MethodReference = Constructor
-        Helper.Assert(Constructor IsNot Nothing)
-        PopParameters(Info, ParameterTypes)
-        Constructor = Helper.GetMethodOrMethodBuilder(Info.Compiler, Constructor)
         Info.ILGen.Emit(OpCodes.Newobj, Constructor)
         Info.Stack.Push(Constructor.DeclaringType)
     End Sub
@@ -488,7 +473,7 @@ Partial Public Class Emitter
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
         Info.Stack.Pop(FromType)
-        Info.ILGen.Emit(OpCodes.Isinst, toOriginal)
+        Info.ILGen.Emit(OpCodes.Isinst, ToType)
         Info.Stack.Push(ToType)
     End Sub
 
@@ -857,8 +842,8 @@ Partial Public Class Emitter
                 If Info.IsExplicitConversion = False Then
                     Helper.AddError(Info.Context)
                 Else
-                    Emitter.EmitUnbox(Info, Info.Compiler.TypeCache.System_Int32)
-                    Emitter.EmitLdobj(Info, Info.Compiler.TypeCache.System_Int32)
+                    Emitter.EmitUnbox(Info, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Int32))
+                    Emitter.EmitLdobj(Info, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Int32))
                     converted = True
                 End If
 
@@ -891,12 +876,12 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Conv_R4)
                 converted = True
             Case TypeCombinations.Decimal_Single
-                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert__ToSingle_Decimal)
+                Info.ILGen.Emit(OpCodes.Call, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Convert__ToSingle_Decimal))
                 converted = True
 
                 'ToDouble conversions
             Case TypeCombinations.Decimal_Double
-                Info.ILGen.Emit(OpCodes.Call, Info.Compiler.TypeCache.System_Convert__ToDouble_Decimal)
+                Info.ILGen.Emit(OpCodes.Call, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Convert__ToDouble_Decimal))
                 converted = True
             Case TypeCombinations.SByte_Double, _
                   TypeCombinations.Byte_Double, _
@@ -915,72 +900,72 @@ Partial Public Class Emitter
              TypeCombinations.SByte_Decimal, _
              TypeCombinations.Int16_Decimal
                 Info.ILGen.Emit(OpCodes.Conv_I4)
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
+                Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_Int32))
                 converted = True
             Case TypeCombinations.UInt16_Decimal, _
                TypeCombinations.UInt32_Decimal
                 Info.ILGen.Emit(OpCodes.Conv_I8)
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int64)
+                Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_Int64))
                 converted = True
             Case TypeCombinations.Int32_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int32)
+                Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_Int32))
                 converted = True
             Case TypeCombinations.UInt64_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_UInt64)
+                Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_UInt64))
                 converted = True
             Case TypeCombinations.Int64_Decimal
-                Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_Decimal__ctor_Int64)
+                Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_Int64))
                 converted = True
 
                 'ToObject conversions
             Case TypeCombinations.SByte_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_SByte)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_SByte))
                 converted = True
             Case TypeCombinations.Byte_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Byte)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Byte))
                 converted = True
             Case TypeCombinations.Int16_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int16)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Int16))
                 converted = True
             Case TypeCombinations.UInt16_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt16)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_UInt16))
                 converted = True
             Case TypeCombinations.Int32_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int32)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Int32))
                 converted = True
             Case TypeCombinations.UInt32_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt32)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_UInt32))
                 converted = True
             Case TypeCombinations.Int64_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Int64)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Int64))
                 converted = True
             Case TypeCombinations.UInt64_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_UInt64)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_UInt64))
                 converted = True
             Case TypeCombinations.Single_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Single)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Single))
                 converted = True
             Case TypeCombinations.Double_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Double)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Double))
                 converted = True
             Case TypeCombinations.String_Object
                 converted = True
             Case TypeCombinations.Decimal_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Decimal)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal))
                 converted = True
             Case TypeCombinations.DateTime_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_DateTime)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_DateTime))
                 converted = True
             Case TypeCombinations.Boolean_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Boolean)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Boolean))
                 converted = True
             Case TypeCombinations.Char_Object
-                Info.ILGen.Emit(OpCodes.Box, Info.Compiler.TypeCache.System_Char)
+                Info.ILGen.Emit(OpCodes.Box, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Char))
                 converted = True
             Case TypeCombinations.DBNull_Object
                 converted = True 'Nothing to object
             Case TypeCombinations.Object_String
-                Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.System_Object, Info.Compiler.TypeCache.System_String)
+                Emitter.EmitCastClass(Info, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Object), Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_String))
                 converted = True
             Case Else
                 Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Missed option: " & Switch.ToString)
@@ -1004,29 +989,12 @@ Partial Public Class Emitter
     Shared Sub EmitLoadMe(ByVal Info As EmitInfo, ByVal TypeOfMe As Mono.Cecil.TypeReference)
         TypeOfMe = Helper.GetTypeOrTypeBuilder(Info.Compiler, TypeOfMe)
         Info.ILGen.Emit(OpCodes.Ldarg_0)
-        If TypeOfMe.IsValueType Then
+        If CecilHelper.IsValueType(TypeOfMe) Then
             Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), TypeOfMe))
         Else
             Info.Stack.Push(TypeOfMe)
         End If
     End Sub
-
-    'Shared Sub EmitCall(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
-    '    Dim OriginalMethod As MethodBase = Method
-
-    '    Helper.Assert(Method IsNot Nothing)
-
-    '    Dim minfo As MethodInfo = TryCast(Method, MethodInfo)
-    '    Dim cinfo As ConstructorInfo = TryCast(Method, ConstructorInfo)
-
-    '    If minfo IsNot Nothing Then
-    '        Emitter.EmitCall(Info, minfo)
-    '    ElseIf cinfo IsNot Nothing Then
-    '        Emitter.EmitCall(Info, cinfo)
-    '    Else
-    '        Helper.Stop()
-    '    End If
-    'End Sub
 
     Shared Sub EmitCall(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
         Dim OriginalMethod As Mono.Cecil.MethodReference = Method
@@ -1035,15 +1003,18 @@ Partial Public Class Emitter
 
         Dim minfo As Mono.Cecil.MethodReference
         Dim mD As Mono.Cecil.MethodDefinition
-        minfo = Helper.GetMethodOrMethodBuilder(Info.Compiler, Method)
 
-        minfo = SwitchVersionedMethods(Info, minfo)
+        minfo = SwitchVersionedMethods(Info, Method)
+        minfo = Helper.GetMethodOrMethodBuilder(Info.Compiler, minfo)
+
         mD = CecilHelper.FindDefinition(minfo)
+
+        minfo = CecilHelper.MakeEmittable(minfo)
 
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
         If mD.IsStatic Then
             Info.ILGen.Emit(OpCodes.Call, minfo)
-        ElseIf Method.DeclaringType.IsValueType Then
+        ElseIf CecilHelper.IsValueType(Method.DeclaringType) Then
             Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Method.DeclaringType))
             Info.ILGen.Emit(OpCodes.Call, minfo)
         Else
@@ -1057,23 +1028,10 @@ Partial Public Class Emitter
 
     End Sub
 
-    'Shared Sub EmitCallOrCallVirt(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
-    '    Dim minfo As MethodInfo = TryCast(Method, MethodInfo)
-    '    Dim cinfo As ConstructorInfo = TryCast(Method, ConstructorInfo)
-
-    '    If Method.Name = ConstructorBuilder.ConstructorName OrElse Method.Name = ConstructorBuilder.TypeConstructorName Then
-    '        EmitCall(Info, cinfo)
-    '    ElseIf cinfo IsNot Nothing Then
-    '        EmitCallOrCallVirt(Info, minfo)
-    '    Else
-    '        Helper.Stop()
-    '    End If
-    'End Sub
-
     Shared Sub EmitCallOrCallVirt(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
         Helper.Assert(Method IsNot Nothing)
         Dim mD As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(Method)
-        If mD.IsStatic OrElse Method.DeclaringType.IsValueType Then
+        If mD.IsStatic OrElse CecilHelper.IsValueType(Method.DeclaringType) Then
             EmitCall(Info, Method)
         Else
             EmitCallVirt(Info, Method)
@@ -1113,15 +1071,6 @@ Partial Public Class Emitter
         EmitCallVirt(Info, Method)
     End Sub
 
-    'Shared Sub EmitCallVirt(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
-    '    Select Case Method.MemberType
-    '        Case MemberTypes.Method
-    '            EmitCallVirt(Info, DirectCast(Method, MethodInfo))
-    '        Case Else
-    '            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
-    '    End Select
-    'End Sub
-
     ''' <summary>
     ''' Emits a callvirt instructions. 
     ''' Throws an exception if the method is a shared method.
@@ -1131,23 +1080,16 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub EmitCallVirt(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
         Dim OriginalMethod As Mono.Cecil.MethodReference = Method
+        Dim mD As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(Method)
 
-        Helper.Assert(Method IsNot Nothing)
+        If mD IsNot Nothing Then
+            Method = Helper.GetMethodOrMethodBuilder(Info.Compiler, Method)
+            Method = SwitchVersionedMethods(Info, Method)
+            Method = CecilHelper.MakeEmittable(Method)
+        End If
 
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
 
-        Method = Helper.GetMethodOrMethodBuilder(Info.Compiler, OriginalMethod)
-        Method = SwitchVersionedMethods(Info, Method)
-
-#If DEBUG Then
-        If Method.GetType.Name <> "SymbolMethod" Then
-            If CecilHelper.FindDefinition(Method).IsStatic Then
-                Throw New InternalException("")
-            ElseIf Method.DeclaringType.IsValueType Then
-                Throw New InternalException("")
-            End If
-        End If
-#End If
         Info.Stack.Pop(Method.DeclaringType)
         Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
 
@@ -1155,29 +1097,6 @@ Partial Public Class Emitter
             Info.Stack.Push(OriginalMethod.ReturnType.ReturnType)
         End If
     End Sub
-
-    '''' <summary>
-    '''' Emits a call to a constructor (not a new expression) 
-    '''' Throws an exception if the method is a shared method.
-    '''' </summary>
-    '''' <param name="Info"></param>
-    '''' <param name="Method"></param>
-    '''' <remarks></remarks>
-    'Shared Sub EmitCall(ByVal Info As EmitInfo, ByVal Method As ConstructorInfo)
-    '    Helper.Assert(Method IsNot Nothing)
-
-    '    PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
-    '    Method = Helper.GetCtorOrCtorBuilder(Method)
-
-    '    If Method.IsStatic Then
-    '        Throw New InternalException("")
-    '    Else
-    '        Method = Helper.GetCtorOrCtorBuilder(Method)
-
-    '        Info.Stack.Pop(Method.DeclaringType)
-    '        Info.ILGen.Emit(OpCodes.Call, Method)
-    '    End If
-    'End Sub
 
     Shared Sub EmitNewArr(ByVal Info As EmitInfo, ByVal Type As Mono.Cecil.TypeReference)
         Type = Helper.GetTypeOrTypeBuilder(Info.Compiler, Type)
@@ -1220,7 +1139,7 @@ Partial Public Class Emitter
             Case TypeCode.Double
                 Info.ILGen.Emit(OpCodes.Ldelem_R8)
             Case TypeCode.Object, TypeCode.String, TypeCode.DateTime, TypeCode.Decimal
-                If ElementType.IsValueType Then
+                If CecilHelper.IsValueType(ElementType) Then
                     Throw New InternalException("")
                 Else
                     Info.ILGen.Emit(OpCodes.Ldelem_Ref)
@@ -1296,7 +1215,7 @@ Partial Public Class Emitter
             Case TypeCode.String
                 Info.ILGen.Emit(OpCodes.Stelem_Ref)
             Case TypeCode.Object
-                If ElementType.IsValueType Then
+                If CecilHelper.IsValueType(ElementType) Then
                     Info.ILGen.Emit(OpCodes.Stobj, ElementType)
                 ElseIf CecilHelper.IsGenericParameter(ElementType) Then
                     Info.ILGen.Emit(OpCodes.Stelem_Any, ElementType)
@@ -1488,7 +1407,7 @@ Partial Public Class Emitter
                 Return True
             Case TypeCode.Object
                 EmitLoadI4Value(tmp, Value)
-                EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
+                'EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
                 Return True
         End Select
         Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
@@ -1587,17 +1506,6 @@ Partial Public Class Emitter
         End Select
         Return False
     End Function
-
-    '''' <summary>
-    '''' Loads the integer onto the stack.
-    '''' </summary>
-    '''' <param name="Info"></param>
-    '''' <param name="Value"></param>
-    '''' <remarks></remarks>
-    'Shared Sub EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Integer)
-    '    EmitLoadI4Value(Info, Value)
-    '    Info.Stack.Push(Info.Compiler.TypeCache.Integer)
-    'End Sub
 
     ''' <summary>
     ''' Loads the integer onto the stack.
@@ -1762,7 +1670,7 @@ Partial Public Class Emitter
         ElseIf CecilHelper.IsClass(Info.DesiredType) OrElse CecilHelper.IsInterface(Info.DesiredType) Then
             Info.ILGen.Emit(OpCodes.Ldnull)
             Info.Stack.Push(Info.DesiredType)
-        ElseIf Info.DesiredType.IsValueType Then
+        ElseIf CecilHelper.IsValueType(Info.DesiredType) Then
             Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
             Select Case DesiredTypeCode
                 Case TypeCode.Boolean
@@ -1805,7 +1713,7 @@ Partial Public Class Emitter
         Dim emitLong As EmitInfo = Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Int64)
         EmitLoadI8Value(emitLong, DateValue.Ticks)
         Info.Stack.Pop(Info.Compiler.TypeCache.System_Int64)
-        Info.ILGen.Emit(OpCodes.Newobj, Info.Compiler.TypeCache.System_DateTime__ctor_Int64)
+        Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_DateTime__ctor_Int64))
         Info.Stack.Push(Info.Compiler.TypeCache.System_DateTime)
     End Sub
 
@@ -1826,21 +1734,21 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub EmitLoadDecimalValue(ByVal Info As EmitInfo, ByVal decimalValue As DecimalFields)
         If decimalValue.Value = -1 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__MinusOne)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__MinusOne))
             Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 0 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__Zero)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__Zero))
             Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 1 Then
-            Info.ILGen.Emit(OpCodes.Ldsfld, Info.Compiler.TypeCache.System_Decimal__One)
+            Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__One))
             Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         Else
             EmitLoadI4Value(Info, decimalValue.Lo)
             EmitLoadI4Value(Info, decimalValue.Mid)
             EmitLoadI4Value(Info, decimalValue.Hi)
-            EmitLoadI4Value(Info, CInt(decimalValue.SignAsBit), Info.Compiler.TypeCache.System_Boolean)
-            EmitLoadI4Value(Info, CInt(decimalValue.Scale), Info.Compiler.TypeCache.System_Byte)
-            Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_Decimal__ctor_Int32_Int32_Int32_Boolean_Byte)
+            EmitLoadI4Value(Info, CInt(decimalValue.SignAsBit), Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Boolean))
+            EmitLoadI4Value(Info, CInt(decimalValue.Scale), Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Byte))
+            Emitter.EmitNew(Info, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__ctor_Int32_Int32_Int32_Boolean_Byte))
         End If
     End Sub
 
@@ -1895,7 +1803,9 @@ Partial Public Class Emitter
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Field As Mono.Cecil.FieldReference)
         Dim emittableField As Mono.Cecil.FieldReference
         Dim fD As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(Field)
-        emittableField = Helper.GetFieldOrFieldBuilder(Info.Compiler, Field)
+
+        emittableField = Emitter.GetFieldRef(Field)
+        emittableField = Helper.GetFieldOrFieldBuilder(Info.Compiler, emittableField)
 
         If fD.IsLiteral Then
             EmitLoadValueAddress(Info, fD.Constant)
@@ -2125,9 +2035,24 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Nop)
     End Sub
 
+    Private Shared Function GetFieldRef(ByVal field As Mono.Cecil.FieldReference) As Mono.Cecil.FieldReference
+        Dim gFD As Mono.Cecil.FieldDefinition = TryCast(field, Mono.Cecil.FieldDefinition)
+
+        If gFD IsNot Nothing AndAlso gFD.DeclaringType.GenericParameters.Count > 0 Then
+            Dim declType As Mono.Cecil.GenericInstanceType
+            declType = New Mono.Cecil.GenericInstanceType(gFD.DeclaringType)
+            For i As Integer = 0 To gFD.DeclaringType.GenericParameters.Count - 1
+                declType.GenericArguments.Add(gFD.DeclaringType.GenericParameters(i))
+            Next
+            Return New Mono.Cecil.FieldReference(field.Name, declType, field.FieldType)
+        End If
+        Return field
+    End Function
+
     Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.FieldReference)
         Dim fD As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(Variable)
 
+        Variable = Emitter.GetFieldRef(Variable)
         Variable = Helper.GetFieldOrFieldReference(Info.Compiler, Variable)
         If fD.IsStatic Then
             If fD.IsLiteral Then
@@ -2142,11 +2067,6 @@ Partial Public Class Emitter
             Info.Stack.Push(Variable.FieldType)
         End If
     End Sub
-
-    'Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As LocalBuilder)
-    '    Info.ILGen.Emit(OpCodes.Stloc, Variable)
-    '    Info.Stack.Pop(Variable.LocalType)
-    'End Sub
 
     Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Stloc, Variable)
@@ -2188,7 +2108,7 @@ Partial Public Class Emitter
             Case TypeCode.DateTime, TypeCode.Decimal
                 Info.ILGen.Emit(OpCodes.Stobj, elementtype)
             Case TypeCode.Object
-                If elementtype.IsValueType Then
+                If CecilHelper.IsValueType(elementtype) Then
                     Info.ILGen.Emit(OpCodes.Stobj, elementtype)
                 Else
                     Info.ILGen.Emit(OpCodes.Stind_Ref)
@@ -2223,8 +2143,9 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitStoreField(ByVal Info As EmitInfo, ByVal Field As Mono.Cecil.FieldReference)
-        Dim Field2 As Mono.Cecil.FieldReference
-        Field2 = Helper.GetFieldOrFieldBuilder(Info.Compiler, Field)
+        Dim Field2 As Mono.Cecil.FieldReference = Field
+        Field2 = Emitter.GetFieldRef(Field2)
+        Field2 = Helper.GetFieldOrFieldBuilder(Info.Compiler, Field2)
         If CecilHelper.IsStatic(Field) Then
             Info.Stack.Pop(Field.FieldType)
             Info.ILGen.Emit(OpCodes.Stsfld, Field2)
@@ -2234,15 +2155,6 @@ Partial Public Class Emitter
             Info.ILGen.Emit(OpCodes.Stfld, Field2)
         End If
     End Sub
-
-    'Shared Sub EmitBox(ByVal Info As EmitInfo)
-    '    Dim tp As Type = Info.Stack.Peek
-    '    Helper.Assert(tp.IsValueType OrElse tp.IsGenericParameter)
-    '    If tp.IsValueType OrElse tp.IsGenericParameter Then
-    '        EmitBox(Info, tp)
-    '    End If
-    'End Sub
-
 
     ''' <summary>
     ''' Emits a box instruction, no checks are done.
@@ -2285,11 +2197,41 @@ Partial Public Class Emitter
     Shared Function SwitchVersionedMethods(ByVal Info As EmitInfo, ByVal UnversionedMethod As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
         If Info.Compiler.CommandLine.VBVersion <> CommandLine.VBVersions.V8 Then Return UnversionedMethod
 
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__IsNumeric Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__IsNumeric
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__SystemTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__SystemTypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__VbTypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__VbTypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Information__TypeName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__TypeName
-        If UnversionedMethod Is Info.Compiler.TypeCache.MS_VB_Interaction__CallByName Then Return Info.Compiler.TypeCache.MS_VB_CS_Versioned__CallByName
+        Dim tc As CecilTypeCache = Info.Compiler.TypeCache
+        Dim check(4) As Mono.Cecil.MethodDefinition
+        Dim replace(4) As Mono.Cecil.MethodDefinition
+        Dim unv(4) As Mono.Cecil.MethodDefinition
+
+        check(0) = tc.MS_VB_Information__IsNumeric
+        check(1) = tc.MS_VB_Information__SystemTypeName
+        check(2) = tc.MS_VB_Information__TypeName
+        check(3) = tc.MS_VB_Information__VbTypeName
+        check(4) = tc.MS_VB_Interaction__CallByName
+
+        replace(0) = tc.MS_VB_CS_Versioned__IsNumeric
+        replace(1) = tc.MS_VB_CS_Versioned__SystemTypeName
+        replace(2) = tc.MS_VB_CS_Versioned__TypeName
+        replace(3) = tc.MS_VB_CS_Versioned__VbTypeName
+        replace(4) = tc.MS_VB_CS_Versioned__CallByName
+
+        For i As Integer = 0 To check.Length - 1
+            If check(i) Is UnversionedMethod Then Return replace(i)
+        Next
+
+        For i As Integer = 0 To check.Length - 1
+            unv(i) = CecilHelper.FindDefinition(UnversionedMethod)
+            If check(i) Is unv(i) Then Return replace(i)
+        Next
+
+        For i As Integer = 0 To check.Length - 1
+            If unv(i) Is Nothing Then Continue For
+            If Helper.CompareName(unv(i).Name, check(i).Name) = False Then Continue For
+            If Helper.CompareName(unv(i).DeclaringType.Name, check(i).DeclaringType.Name) = False Then Continue For
+            If Helper.CompareName(unv(i).DeclaringType.Namespace, check(i).DeclaringType.Namespace) = False Then Continue For
+            'There shouldn't be any need to check parameters, since these methods aren't overloaded
+            Return replace(i)
+        Next
+
 
 #If ENABLECECIL Then
         'Check if the object comparison above is true for cecil as well (that is if same method may have multiple object references)

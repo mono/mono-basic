@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -62,11 +62,4 @@ Public MustInherit Class OperatorExpression
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
-
-#If DEBUG Then
-    Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-
-    End Sub
-#End If
-
 End Class

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 Public MustInherit Class MethodDeclaration
     Inherits MethodBaseDeclaration
+    Private added As Boolean
 
     Protected Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
@@ -42,32 +43,6 @@ Public MustInherit Class MethodDeclaration
         End Get
     End Property
 
-    'Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
-    '    Get
-    '        Return m_CecilBuilder
-    '    End Get
-    'End Property
-
-    'Public Overrides ReadOnly Property MethodBuilder() As Mono.Cecil.MethodDefinition
-    '    Get
-    '        Return m_CecilBuilder
-    '    End Get
-    'End Property
-
-    '#If ENABLECECIL Then
-    '    Public Overrides ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition
-    '        Get
-    '            Return m_CecilBuilder
-    '        End Get
-    '    End Property
-    '#End If
-
-    '    Public Overrides ReadOnly Property MethodDescriptor() As Mono.Cecil.MethodDefinition
-    '        Get
-    '            Return m_CecilBuilder
-    '        End Get
-    '    End Property
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -80,18 +55,11 @@ Public MustInherit Class MethodDeclaration
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
         MyBase.Init(Attributes, Modifiers, Signature)
-
-        '#If ENABLECECIL Then
-        '        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Compiler.CecilTypeCache.System_Void)
-        '#End If
         UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
         MyBase.Init(Attributes, Modifiers, Signature, Code)
-        '#If ENABLECECIL Then
-        '        m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Compiler.CecilTypeCache.System_Void)
-        '#End If
         UpdateDefinition()
     End Sub
 
@@ -106,7 +74,9 @@ Public MustInherit Class MethodDeclaration
     Overrides Sub UpdateDefinition()
         MyBase.UpdateDefinition()
 
-        If CecilBuilder.DeclaringType Is Nothing AndAlso DeclaringType.CecilType.Methods.Contains(CecilBuilder) = False Then
+        If Not added Then
+            added = True
+            'If DeclaringType.Name = "Emitter" Then Helper.StopIfDebugging()
             DeclaringType.CecilType.Methods.Add(CecilBuilder)
         End If
 
@@ -185,7 +155,6 @@ Public MustInherit Class MethodDeclaration
         '#End If
         '        End If
 
-        '        Compiler.Helper.DumpDefine(Compiler, m_MethodBuilder)
 
         Return result
     End Function

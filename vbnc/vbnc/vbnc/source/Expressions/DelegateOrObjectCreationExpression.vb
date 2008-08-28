@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -161,7 +161,7 @@ Public Class DelegateOrObjectCreationExpression
             End If
         Else
             Dim resolvedType As Mono.Cecil.TypeReference = m_ResolvedType
-            If resolvedType.IsValueType AndAlso m_ArgumentList.Count = 0 Then
+            If CecilHelper.IsValueType(resolvedType) AndAlso m_ArgumentList.Count = 0 Then
                 'Nothing to resolve. A structure with no parameters can always be created.
                 m_IsValueTypeInitializer = True
             ElseIf CecilHelper.IsGenericParameter(resolvedType) Then
@@ -172,10 +172,10 @@ Public Class DelegateOrObjectCreationExpression
                     Return Compiler.Report.ShowMessage(Messages.VBNC32046, Me.Location)
                 End If
                 m_IsGenericConstructor = True
-            ElseIf CecilHelper.IsClass(resolvedType) OrElse resolvedType.IsValueType Then
-                Dim ctors As Mono.Cecil.ConstructorCollection
-                Dim finalArguments As Generic.List(Of Argument) = Nothing
-                ctors = CecilHelper.FindDefinition(resolvedType).Constructors
+            ElseIf CecilHelper.IsClass(resolvedType) OrElse CecilHelper.IsValueType(resolvedType) Then
+                Dim ctors As Mono.Cecil.MemberReferenceCollection
+                Dim finalArguments As Generic.List(Of Argument) = m_ArgumentList.Arguments
+                ctors = CecilHelper.GetConstructors(resolvedType)
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
                 result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, finalArguments) AndAlso result
                 If result = False Then
@@ -193,15 +193,4 @@ Public Class DelegateOrObjectCreationExpression
 
         Return result
     End Function
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("New ")
-        Compiler.Dumper.Dump(m_NonArrayTypeName)
-        Dumper.Write("(")
-        Compiler.Dumper.Dump(m_ArgumentList)
-        Dumper.Write(")")
-    End Sub
-#End If
-
 End Class

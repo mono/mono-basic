@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,66 @@ Public MustInherit Class BaseObject
     ''' <remarks></remarks>
     Private m_Location As Span
 
-    Private Shared m_Compiler As Compiler
+    ''' <summary>
+    ''' Don't use this one!
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Shared m_Compiler As Compiler
+
+    Protected Sub New()
+
+    End Sub
+
+    ''' <summary>
+    ''' Create a new base object with the specified Parent.
+    ''' </summary>
+    Protected Sub New(ByVal Parent As BaseObject)
+        m_Parent = Parent
+        Helper.Assert(Not (TypeOf m_Parent Is ClassDeclaration AndAlso TypeOf Me Is FunctionSignature))
+        If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentLocation
+#If DEBUG Then
+        Helper.Assert(Parent IsNot Me)
+        'Make sure there aren't any circular references.
+        Dim tmp As IBaseObject = Parent
+        Do While tmp IsNot Nothing
+            tmp = tmp.Parent
+            Helper.Assert(tmp IsNot Me)
+        Loop
+#End If
+    End Sub
+
+    ''' <summary>
+    ''' Create a new base object with the specified Parent.
+    ''' </summary>
+    Protected Sub New(ByVal Parent As BaseObject, ByVal Location As Span)
+        m_Parent = Parent
+        Helper.Assert(Not (TypeOf m_Parent Is ClassDeclaration AndAlso TypeOf Me Is FunctionSignature))
+        m_Location = Location
+#If DEBUG Then
+        Helper.Assert(Parent IsNot Me)
+        'Make sure there aren't any circular references.
+        Dim tmp As IBaseObject = Parent
+        Do While tmp IsNot Nothing
+            tmp = tmp.Parent
+            Helper.Assert(tmp IsNot Me)
+        Loop
+#End If
+    End Sub
+
+    Public Initialized As Boolean
+    Public Overridable Sub Initialize(ByVal Parent As BaseObject)
+        If Parent Is Nothing Then Throw New InternalException(Me.Location.AsString(Compiler))
+        If Initialized Then
+            'Throw New InternalException(Me.Location.AsString(Compiler))
+        End If
+        m_Parent = Parent
+        Initialized = True
+    End Sub
+
+    Public Shared Sub ClearCache()
+        m_compiler = Nothing
+    End Sub
+
     ''' <summary>
     ''' The location in the source of this object.
     ''' </summary>
@@ -123,68 +182,17 @@ Public MustInherit Class BaseObject
     End Function
 
     ''' <summary>
-    ''' Create a new base object with the specified Parent.
-    ''' </summary>
-    Protected Sub New(ByVal Parent As BaseObject)
-        m_Parent = Parent
-        If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentLocation
-        'If m_Parent IsNot Nothing AndAlso tm IsNot Nothing Then m_Location = tm.CurrentLocation
-#If DEBUG Then
-        Helper.Assert(Parent IsNot Me)
-        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler)
-        'Make sure there aren't any circular references.
-        Dim tmp As IBaseObject = Parent
-        Do While tmp IsNot Nothing
-            tmp = tmp.Parent
-            Helper.Assert(tmp IsNot Me)
-        Loop
-#End If
-    End Sub
-
-    ''' <summary>
-    ''' Create a new base object with the specified Parent.
-    ''' </summary>
-    Protected Sub New(ByVal Parent As BaseObject, ByVal Location As Span)
-        m_Parent = Parent
-        m_Location = Location
-#If DEBUG Then
-        Helper.Assert(Parent IsNot Me)
-        Helper.Assert(Parent IsNot Nothing OrElse TypeOf Me Is Compiler)
-        'Make sure there aren't any circular references.
-        Dim tmp As IBaseObject = Parent
-        Do While tmp IsNot Nothing
-            tmp = tmp.Parent
-            Helper.Assert(tmp IsNot Me)
-        Loop
-#End If
-    End Sub
-
-    Property Parent() As BaseObject
-        Get
-            Return DirectCast(Me.pParent, BaseObject)
-        End Get
-        Set(ByVal value As BaseObject)
-            m_Parent = value
-        End Set
-    End Property
-
-    ''' <summary>
     ''' The parent of this type. Is nothing if this type is an assembly.
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    Private Property pParent() As BaseObject Implements IBaseObject.Parent
+    Public Property Parent() As BaseObject Implements IBaseObject.Parent
         Get
-            Dim tmpPTD As PartialTypeDeclaration = TryCast(m_Parent, PartialTypeDeclaration)
-            If tmpPTD IsNot Nothing AndAlso tmpPTD.IsPartial AndAlso tmpPTD.IsMainPartialDeclaration = False Then
-                Helper.Assert(tmpPTD.MainPartialDeclaration IsNot Nothing)
-                m_Parent = tmpPTD.MainPartialDeclaration
-                'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Parent of " & Me.GetType.ToString & " set to " & CObj(m_Parent).GetType.ToString)
-            End If
             Return m_Parent
         End Get
         Set(ByVal value As BaseObject)
             m_Parent = value
+            Helper.Assert(Not (TypeOf m_Parent Is ClassDeclaration AndAlso TypeOf Me Is FunctionSignature))
         End Set
     End Property
 
@@ -302,11 +310,6 @@ Public MustInherit Class BaseObject
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "The class " & Me.GetType.ToString & " does not implement Define()")
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
-
-    '#If DEBUG Then
-    'Overridable Sub Dump(ByVal Dumper As IndentedTextWriter) Implements IBaseObject.Dump
-    '    Dumper.WriteLine("Dump of " & Me.GetType.ToString & "!")
-    'End Sub
 
     Private m_ObjectID As Integer = NewID()
     Public Shared ObjectIDStop As Integer

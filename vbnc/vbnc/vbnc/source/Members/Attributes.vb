@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ Public Class Attributes
         Dim result As Boolean = False
 
         For Each att As Attribute In Me
+            If AttributeType Is Nothing Then Return False
             If Helper.CompareType(att.AttributeType, AttributeType) Then
                 result = True
                 Exit For

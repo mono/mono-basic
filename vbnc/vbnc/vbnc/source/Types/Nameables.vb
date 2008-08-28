@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public Class Nameables(Of T)
+Public Class Nameables(Of T As INameable)
     Inherits BaseObjects(Of T)
 
     ''' <summary>
@@ -59,7 +59,7 @@ Public Class Nameables(Of T)
     ''' <value></value>
     ''' <remarks></remarks>
     ''' <exception cref="IndexOutOfRangeException">If the Index is invalid.</exception>
-    Shadows ReadOnly Property Item(ByVal Index As Integer) As T
+    Default Shadows ReadOnly Property Item(ByVal Index As Integer) As T
         Get
             Return DirectCast(MyBase.Item(Index), T)
         End Get
@@ -80,31 +80,11 @@ Public Class Nameables(Of T)
     ''' </summary>
     ''' <param name="Base"></param>
     ''' <remarks></remarks>
-    Shadows Sub Add(ByVal Base As INameable)
+    Shadows Sub Add(ByVal Base As T)
 #If DEBUG Then
         If Base.Name = "" Then Throw New InternalException(Base)
 #End If
-        MyBase.Add(CType(Base, T))
+        MyBase.Add(Base)
         m_Index.Add(Base)
-    End Sub
-
-    ''' <summary>
-    ''' Overriden.
-    ''' </summary>
-    ''' <param name="c"></param>
-    ''' <remarks></remarks>
-    Public Shadows Sub AddRange(ByVal c As System.Collections.Generic.ICollection(Of T))
-        'Public Shadows Sub AddRange(ByVal c As ICollection) 'System.Collections.Generic.ICollection(Of T))
-        For Each base As Object In c
-            Proxy_Nameables.N_Add(Of T)(Me, DirectCast(base, INameable))
-            'm_Index = Nothing 'AddRange(Nothing)
-        Next
-    End Sub
-
-End Class
-
-Class Proxy_Nameables
-    Shared Sub N_Add(Of T)(ByVal this As Nameables(Of T), ByVal arg As INameable)
-        this.Add(arg)
     End Sub
 End Class

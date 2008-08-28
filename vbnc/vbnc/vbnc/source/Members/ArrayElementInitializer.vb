@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -148,7 +148,7 @@ Public Class ArrayElementInitializer
             For j As Integer = 0 To indices.Count - 1
                 Emitter.EmitLoadI4Value(indexInfo, indices(j))
             Next
-            If elementtype.IsValueType AndAlso CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso Helper.IsEnum(Compiler, elementtype) = False Then
+            If CecilHelper.IsValueType(elementtype) AndAlso CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso Helper.IsEnum(Compiler, elementtype) = False Then
                 Emitter.EmitLoadElementAddress(Info, elementtype, arraytype)
             End If
             'Get the element expression.
@@ -183,16 +183,13 @@ Public Class ArrayElementInitializer
         Dim result As Mono.Cecil.MethodReference
         Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
         Dim ranks As Integer = CecilHelper.GetArrayRank(ArrayType)
-        Dim methodtypes As Mono.Cecil.TypeReference() = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Compiler.TypeCache.System_Int32, ranks)
-
-        If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
-            Throw New NotImplementedException
-            'ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
-            'elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
-            'result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Get", CallingConventions.HasThis Or CallingConventions.Standard, elementType, methodtypes)
-        Else
-            result = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Get", methodtypes)
-        End If
+        
+        ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
+        elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
+        result = New Mono.Cecil.MethodReference("Get", ArrayType, elementType, True, False, Mono.Cecil.MethodCallingConvention.Default)
+        For i As Integer = 1 To ranks
+            result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int32)))
+        Next
 
         Return result
     End Function

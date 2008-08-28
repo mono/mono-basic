@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -68,17 +68,6 @@ Public Class ResumeStatement
 
         Return result
     End Function
-
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_IsResumeNext Then
-            Dumper.WriteLine("Resume Next")
-        Else
-            Dumper.WriteLine("Resume")
-        End If
-    End Sub
-#End If
 
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True

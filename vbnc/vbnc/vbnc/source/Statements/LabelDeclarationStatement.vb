@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -74,15 +74,4 @@ Public Class LabelDeclarationStatement
             Return m_Label
         End Get
     End Property
-
-
-    '#If DEBUG Then
-    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        Dim tmp As Integer = Dumper.IndentLevel
-    '        Dumper.IndentLevel = 0
-    '        m_Label.Dump(Dumper)
-    '        Dumper.WriteLine(":")
-    '        dumper.IndentLevel = tmp
-    '    End Sub
-    '#End If
 End Class

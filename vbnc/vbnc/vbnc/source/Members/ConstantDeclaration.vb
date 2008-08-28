@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -105,7 +105,9 @@ Public Class ConstantDeclaration
         Dim decAttrs As Mono.Cecil.CustomAttributeCollection
         decAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute)
         If decAttrs IsNot Nothing AndAlso decAttrs.Count = 1 Then
-            value = DirectCast(decAttrs(0).Properties("Value"), Decimal)
+            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Always, "Not implemented getting decimal values from attribute")
+            'value = DirectCast(decAttrs(0).Properties("Value"), Decimal)
+            value = 0
             Return True
         End If
         Return False

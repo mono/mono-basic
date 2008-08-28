@@ -302,12 +302,4 @@ Public MustInherit Class BinaryExpression
     Protected MustOverride Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
 #End If
     MustOverride ReadOnly Property Keyword() As KS
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_LeftExpression.Dump(Dumper)
-        Dumper.Write(" " & Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue & " ")
-        m_RightExpression.Dump(Dumper)
-    End Sub
-#End If
 End Class

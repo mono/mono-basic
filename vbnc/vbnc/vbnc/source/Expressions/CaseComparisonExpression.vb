@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -28,15 +28,6 @@ Public Class CaseComparisonExpression
         m_Test = Test
         m_Operator = [Operator]
     End Sub
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Is ")
-        Dumper.Write(Enums.GetKSStringAttribute(m_Operator).FriendlyValue)
-        Dumper.Write(" ")
-        m_Test.Dump(Dumper)
-    End Sub
-#End If
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)

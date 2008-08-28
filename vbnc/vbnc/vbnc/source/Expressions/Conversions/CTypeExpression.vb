@@ -164,7 +164,7 @@ Public Class CTypeExpression
                 Else
                     Helper.AddError(Me)
                 End If
-            ElseIf DestinationType.IsValueType Then
+            ElseIf CecilHelper.IsValueType(DestinationType) Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf Helper.IsInterface(Compiler, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
@@ -233,7 +233,7 @@ Public Class CTypeExpression
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             ElseIf CecilHelper.IsInterface(DestinationType) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
-            ElseIf DestinationType.IsValueType Then
+            ElseIf CecilHelper.IsValueType(DestinationType) Then
                 Emitter.EmitUnbox(Info, DestinationType)
                 Emitter.EmitLdobj(Info, DestinationType)
             ElseIf Helper.IsEnum(Compiler, DestinationType) Then
@@ -243,7 +243,7 @@ Public Class CTypeExpression
             Else
                 Throw New InternalException(Me)
             End If
-        ElseIf SourceType.IsValueType Then
+        ElseIf CecilHelper.IsValueType(SourceType) Then
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
             If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
@@ -264,7 +264,7 @@ Public Class CTypeExpression
                 'Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 'Emitter.EmitCall(Info, methodD)
             ElseIf Helper.DoesTypeImplementInterface(Me, DestinationType, SourceType) Then
-                If DestinationType.IsValueType Then
+                If CecilHelper.IsValueType(DestinationType) Then
                     Emitter.EmitUnbox(Info, DestinationType)
                     Emitter.EmitLdobj(Info, DestinationType)
                 Else
@@ -390,14 +390,4 @@ Public Class CTypeExpression
         End Get
     End Property
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(Enums.GetKSStringAttribute(GetKeyword).FriendlyValue)
-        Dumper.Write("(")
-        Expression.Dump(Dumper)
-        Dumper.Write(" ,")
-        Compiler.Dumper.Dump(m_DestinationType)
-        Dumper.Write(")")
-    End Sub
-#End If
 End Class

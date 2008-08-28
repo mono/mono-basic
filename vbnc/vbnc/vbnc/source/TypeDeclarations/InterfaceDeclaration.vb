@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -34,8 +34,8 @@ Public Class InterfaceDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters)
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
+        MyBase.Init(CustomAttributes, Modifiers, Name, TypeParameters)
         m_InterfaceBases = InterfaceBases
     End Sub
 
@@ -62,7 +62,9 @@ Public Class InterfaceDeclaration
 
         If m_InterfaceBases IsNot Nothing Then
             result = m_InterfaceBases.ResolveTypeReferences AndAlso result
-            MyBase.ImplementedTypes = m_InterfaceBases.AsTypes
+            For i As Integer = 0 To m_InterfaceBases.Bases.Length - 1
+                AddInterface(m_InterfaceBases.Bases(i).ResolvedType)
+            Next
         End If
 
         result = MyBase.ResolveType AndAlso result

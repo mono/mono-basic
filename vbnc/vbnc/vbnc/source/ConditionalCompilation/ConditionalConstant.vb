@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -96,10 +96,6 @@ Public Class ConditionalConstant
     Sub New(ByVal Name As String, ByVal Value As Object)
         Me.Name = Name
         Me.Value = Value
-    End Sub
-
-    Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine(Name & " = " & Helper.ValueToCodeConstant(Value))
     End Sub
 
     ''' <summary>

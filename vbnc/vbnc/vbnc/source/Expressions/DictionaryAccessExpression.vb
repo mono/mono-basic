@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -147,14 +147,4 @@ Public Class DictionaryAccessExpression
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
         Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_FirstPart IsNot Nothing Then m_FirstPart.Dump(Dumper)
-        Dumper.Write("!")
-        Compiler.Dumper.Dump(m_SecondPart)
-    End Sub
-#End If
-
 End Class

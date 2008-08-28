@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,18 @@ Public MustInherit Class GenericTypeDeclaration
         MyBase.new(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
+    End Sub
+
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
         Dim TypeArgumentCount As Integer
         If TypeParameters IsNot Nothing Then
             TypeArgumentCount = TypeParameters.Parameters.Count
         End If
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeArgumentCount)
+        MyBase.Init(CustomAttributes, Modifiers, Name, TypeArgumentCount)
         m_TypeParameters = TypeParameters
     End Sub
 
@@ -67,6 +73,8 @@ Public MustInherit Class GenericTypeDeclaration
 
     Public Overrides Function DefineTypeParameters() As Boolean
         Dim result As Boolean = True
+
+        result = MyBase.DefineTypeParameters AndAlso result
 
         If m_TypeParameters IsNot Nothing Then
             result = m_TypeParameters.Parameters.DefineGenericParameters(CecilType) AndAlso result

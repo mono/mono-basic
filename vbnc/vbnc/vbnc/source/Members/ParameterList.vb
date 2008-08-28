@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -53,12 +53,6 @@ Public Class ParameterList
         Next
         Return result
     End Function
-
-    'Sub DefineParameters(ByVal MethodBuilder As MethodBuilder)
-    '    For i As Integer = 0 To Count - 1
-    '        MethodBuilder.DefineParameter(i + 1, ParameterAttributes.None, Item(i).Name)
-    '    Next
-    'End Sub
 
     Overloads Function Add(ByVal Name As String, ByVal Type As Mono.Cecil.TypeReference) As Parameter
         Return MyBase.Add(New Parameter(Me, Name, Type))

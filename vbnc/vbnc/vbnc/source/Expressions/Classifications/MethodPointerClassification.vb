@@ -71,6 +71,7 @@ Public Class MethodPointerClassification
         Dim ctor As Mono.Cecil.MethodReference
         Dim dT As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(m_DelegateType)
         ctor = dT.Constructors.GetConstructor(False, New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr})
+        ctor = CecilHelper.GetCorrectMember(ctor, m_DelegateType)
         Emitter.EmitNew(Info, ctor)
 
         Return result

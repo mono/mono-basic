@@ -53,6 +53,18 @@ Public Class ValueClassification
         End Get
     End Property
 
+    Public Overrides ReadOnly Property ConstantValue() As Object
+        Get
+            If ReclassifiedClassification IsNot Nothing Then
+                Return ReclassifiedClassification.ConstantValue
+            ElseIf m_Value IsNot Nothing Then
+                Return m_Value.ConstantValue
+            Else
+                Return MyBase.ConstantValue
+            End If
+        End Get
+    End Property
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

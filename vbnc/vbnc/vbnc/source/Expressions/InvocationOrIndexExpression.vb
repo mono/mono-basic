@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -407,7 +407,8 @@ Public Class InvocationOrIndexExpression
             End If
         Next
 
-        m_ExpressionType = CecilHelper.GetElementType(ArrayType)
+        Dim aT As Mono.Cecil.ArrayType = DirectCast(ArrayType, Mono.Cecil.ArrayType)
+        m_ExpressionType = aT.ElementType
 
         Classification = New VariableClassification(Me, Me.m_Expression, m_ArgumentList)
 
@@ -547,7 +548,7 @@ Public Class InvocationOrIndexExpression
                 End If
             End If
 
-            If methodInfo.ReturnType Is Nothing Then
+            If methodInfo.ReturnType Is Nothing OrElse Helper.CompareType(methodInfo.ReturnType.ReturnType, Compiler.TypeCache.System_Void) Then
                 Classification = New VoidClassification(Me)
             Else
                 Classification = New ValueClassification(Me, methodInfo.ReturnType.ReturnType)
@@ -571,15 +572,4 @@ Public Class InvocationOrIndexExpression
             Return m_ArgumentList
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_Expression.Dump(Dumper)
-        If m_ArgumentList IsNot Nothing Then
-            Dumper.Write("(")
-            Compiler.Dumper.Dump(m_ArgumentList)
-            Dumper.Write(")")
-        End If
-    End Sub
-#End If
 End Class

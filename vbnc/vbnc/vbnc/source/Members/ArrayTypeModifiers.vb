@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ Public Class ArrayTypeModifiers
     End Function
 
     Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
-        Dim result As Mono.Cecil.TypeReference = OriginalType
+        Dim result As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeReference(Compiler, OriginalType)
         Dim mods() As ArrayTypeModifier = m_ArrayTypeModifiers
         For i As Integer = mods.GetUpperBound(0) To 0 Step -1
             result = Helper.MakeArrayType(result, mods(i).Ranks)

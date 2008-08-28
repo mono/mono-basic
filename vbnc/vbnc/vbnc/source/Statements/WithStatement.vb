@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -85,7 +85,7 @@ Public Class WithStatement
         result = m_WithExpression.ResolveExpression(Info) AndAlso result
 
         If result Then
-            If m_WithExpression.ExpressionType.IsValueType AndAlso m_WithExpression.Classification.IsVariableClassification Then
+            If CecilHelper.IsValueType(m_WithExpression.ExpressionType) AndAlso m_WithExpression.Classification.IsVariableClassification Then
                 m_WithVariableExpression = m_WithExpression
             Else
                 m_WithVariableExpression = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateVariableCode), m_WithExpression.ExpressionType)

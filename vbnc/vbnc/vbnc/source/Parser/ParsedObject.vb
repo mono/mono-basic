@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,22 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+#If DEBUG Then
+#Const EXTENDEDDEBUG = 0
+#End If
+
 Public MustInherit Class ParsedObject
     Inherits BaseObject
 
     Private m_HasErrors As Boolean
 
-#If DEBUG Then
+#If EXTENDEDDEBUG Then
     Private m_TypeReferencesResolved As Diagnostics.StackTrace
     Private m_CodeResolved As Diagnostics.StackTrace
 #End If
 
-    <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Sub CheckTypeReferencesNotResolved()
-#If DEBUG Then
+    <Diagnostics.Conditional("EXTENDEDDEBUG"), Diagnostics.DebuggerHidden()> Sub CheckTypeReferencesNotResolved()
+#If EXTENDEDDEBUG Then
         If m_TypeReferencesResolved IsNot Nothing Then
             Compiler.Report.WriteLine("ResolveTypeReferences called multiple times:")
             Compiler.Report.WriteLine(m_TypeReferencesResolved.ToString)
@@ -38,8 +42,8 @@ Public MustInherit Class ParsedObject
 #End If
     End Sub
 
-    <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Sub CheckCodeNotResolved()
-#If DEBUG Then
+    <Diagnostics.Conditional("EXTENDEDDEBUG"), Diagnostics.DebuggerHidden()> Sub CheckCodeNotResolved()
+#If EXTENDEDDEBUG Then
         If m_CodeResolved IsNot Nothing Then
             Compiler.Report.WriteLine("ResolveCode called multiple times:")
             Compiler.Report.WriteLine(m_CodeResolved.ToString)
@@ -51,19 +55,21 @@ Public MustInherit Class ParsedObject
 
     ReadOnly Property CodeResolved() As Boolean
         <Diagnostics.DebuggerHidden()> Get
-#If DEBUG Then
+#If EXTENDEDDEBUG Then
 
             Return m_CodeResolved IsNot Nothing
 #End If
+            Return True
         End Get
     End Property
 
     ReadOnly Property TypeReferencesResolved() As Boolean
         <Diagnostics.DebuggerHidden()> Get
-#If DEBUG Then
+#If EXTENDEDDEBUG Then
 
             Return m_TypeReferencesResolved IsNot Nothing
 #End If
+            Return True
         End Get
     End Property
 
@@ -77,6 +83,10 @@ Public MustInherit Class ParsedObject
 
     Protected Sub New(ByVal Parent As Compiler)
         MyBase.new(Parent)
+    End Sub
+
+    Protected Sub New()
+        MyBase.New()
     End Sub
 
     Property HasErrors() As Boolean

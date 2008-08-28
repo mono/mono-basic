@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9D92F531-6418-47AA-BBE5-BE458CD46BE8}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -251,20 +251,6 @@
     <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
     <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
-    <Compile Include="Descriptors\ArrayTypeDescriptor.vb" />
-    <Compile Include="Descriptors\ByRefTypeDescriptor.vb" />
-    <Compile Include="Descriptors\ConstructorDescriptor.vb" />
-    <Compile Include="Descriptors\EventDescriptor.vb" />
-    <Compile Include="Descriptors\FieldDescriptor.vb" />
-    <Compile Include="Descriptors\GenericConstructorDescriptor.vb" />
-    <Compile Include="Descriptors\GenericFieldDescriptor.vb" />
-    <Compile Include="Descriptors\GenericParameterDescriptor.vb" />
-    <Compile Include="Descriptors\GenericPropertyDescriptor.vb" />
-    <Compile Include="Descriptors\GenericTypeDescriptor.vb" />
-    <Compile Include="Descriptors\MethodDescriptor.vb" />
-    <Compile Include="Descriptors\ParameterDescriptor.vb" />
-    <Compile Include="Descriptors\PropertyDescriptor.vb" />
-    <Compile Include="Descriptors\TypeParameterDescriptor.vb" />
     <Compile Include="Emit\EmitInfo.vb" />
     <Compile Include="Emit\EmitStack.vb" />
     <Compile Include="Emit\Emitter.DecimalFields.vb" />
@@ -318,9 +304,6 @@
     <Compile Include="Expressions\VariableExpression.vb" />
     <Compile Include="Expressions\VariableToValueExpression.vb" />
     <Compile Include="General\CecilHelper.vb" />
-    <Compile Include="General\Dumper.vb" />
-    <Compile Include="General\DumperXML.vb" />
-    <Compile Include="General\IndentedTextWriter.vb" />
     <Compile Include="General\MemberCache.vb" />
     <Compile Include="General\MethodBaseDeclaration.vb" />
     <Compile Include="General\MyGenerator.vb" />
@@ -329,7 +312,6 @@
     <Compile Include="General\NothingType.vb" />
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
-    <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
@@ -416,7 +398,6 @@
     <Compile Include="Members\InterfaceBases.vb" />
     <Compile Include="Members\InterfaceEventMemberDeclaration.vb" />
     <Compile Include="Members\InterfaceFunctionDeclaration.vb" />
-    <Compile Include="Members\InterfaceMemberDeclarations.vb" />
     <Compile Include="Members\InterfaceMemberSpecifier.vb" />
     <Compile Include="Members\InterfaceMethodMemberDeclaration.vb" />
     <Compile Include="Members\InterfacePropertyMemberDeclaration.vb" />
@@ -609,8 +590,6 @@
     <Compile Include="Expressions\UnaryExpressions\UnaryExpression.vb" />
     <Compile Include="General\AssemblyInfo.vb" />
     <Compile Include="General\TypeCache.vb" />
-    <Compile Include="Members\MemberParameter.vb" />
-    <Compile Include="Members\MemberParameters.vb" />
     <Compile Include="General\BaseObject.vb" />
     <Compile Include="General\BaseObjects`1.vb" />
     <Compile Include="General\CodeFile.vb" />
@@ -628,9 +607,7 @@
     <Compile Include="Tokens\Span.vb" />
     <Compile Include="Tokens\Token.vb" />
     <Compile Include="TypeDeclarations\AssemblyDeclaration.vb" />
-    <Compile Include="Types\AttributeBaseType.vb" />
     <Compile Include="Members\AttributeBlock.vb" />
-    <Compile Include="Members\BaseMember.vb" />
     <Compile Include="TypeDeclarations\ClassDeclaration.vb" />
     <Compile Include="Members\ConstructorDeclaration.vb" />
     <Compile Include="TypeDeclarations\DelegateDeclaration.vb" />
@@ -653,7 +630,6 @@
     <Compile Include="Types\TokenManager.vb" />
     <Compile Include="Types\TypeArgumentList.vb" />
     <Compile Include="Types\ConstraintList.vb" />
-    <Compile Include="Descriptors\TypeDescriptor.vb" />
     <Compile Include="Types\TypeImplementsClauses.vb" />
     <Compile Include="Types\TypeName.vb" />
     <Compile Include="Types\TypeParameter.vb" />
@@ -704,6 +680,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cecil\Mono.Cecil.VB.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil.VB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
       <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
@@ -722,5 +704,10 @@
   <ProjectExtensions>
     <VisualStudio>
     </VisualStudio>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo gtkVersion="2.12.2" />
+      </Properties>
+    </MonoDevelop>
   </ProjectExtensions>
 </Project>

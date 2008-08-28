@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -34,144 +34,6 @@ Public Class Helper
     Private Shared m_SharedCompilers As New Generic.List(Of Compiler)
 
     Public Shared LOGMETHODRESOLUTION As Boolean = False
-
-    'Public Const ALLMEMBERS As BindingFlags = BindingFlags.FlattenHierarchy Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
-
-    'Public Const ALLNOBASEMEMBERS As BindingFlags = BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance Or BindingFlags.Static
-
-#If DEBUGREFLECTION Then
-    Private Shared object_ids As New ArrayList()
-    Private Shared object_nameshash As New Generic.Dictionary(Of String, Object)
-    Private Shared object_names As New Generic.List(Of String)
-
-    Private Shared m_DebugReflection As System.Text.StringBuilder
-    Private Shared m_DebugReflectionFinalized As Boolean
-
-    Shared ReadOnly Property DebugReflectionOutput() As System.Text.StringBuilder
-        Get
-            If m_DebugReflection Is Nothing Then
-                m_DebugReflection = New System.Text.StringBuilder()
-                DebugReflection_Init()
-            End If
-
-            Return m_DebugReflection
-        End Get
-    End Property
-
-    Shared Function DebugReflection_Dump(ByVal Compiler As Compiler) As String
-        DebugReflection_Finalize(Compiler)
-        Return m_DebugReflection.ToString
-    End Function
-
-    Shared Sub DebugReflection_Init()
-        m_DebugReflection.AppendLine("Imports System")
-        m_DebugReflection.AppendLine("Imports System.Reflection")
-        m_DebugReflection.AppendLine("Imports System.Reflection.Emit")
-        m_DebugReflection.AppendLine("Class DebugReflection")
-        m_DebugReflection.AppendLine("    Shared Sub Main ()")
-    End Sub
-
-    Shared Sub DebugReflection_Finalize(ByVal Compiler As Compiler)
-        If m_DebugReflectionFinalized Then Return
-
-        m_DebugReflection.AppendLine(String.Format("        {0}.Save(""{1}"")", GetObjectName(Compiler.AssemblyBuilder), IO.Path.GetFileName(Compiler.OutFileName)))
-        m_DebugReflection.AppendLine("    End Sub")
-        m_DebugReflection.AppendLine("End Class")
-
-        m_DebugReflectionFinalized = True
-    End Sub
-
-    Shared Function DebugReflection_BuildArray(Of T)(ByVal Array As T()) As T()
-        Dim arr() As T
-        ReDim arr(Array.Length - 1)
-        System.Array.Copy(Array, arr, Array.Length)
-        For i As Integer = 0 To Array.Length - 1
-            Helper.DebugReflection_AppendLine("{0}({1}) = {2}", arr, i, arr(i))
-        Next
-        Return arr
-    End Function
-
-    Shared Sub DebugReflection_AppendLine(ByVal Line As String, ByVal ParamArray objects() As Object)
-        Dim strs() As String
-
-        If objects.Length > 0 Then
-            ReDim strs(objects.Length - 1)
-            For i As Integer = 0 To objects.Length - 1
-                strs(i) = GetObjectName(objects(i))
-            Next
-            Select Case strs.Length
-                Case 1
-                    Line = String.Format(Line, strs(0))
-                Case 2
-                    Line = String.Format(Line, strs(0), strs(1))
-                Case 3
-                    Line = String.Format(Line, strs(0), strs(1), strs(2))
-                Case 4
-                    Line = String.Format(Line, strs(0), strs(1), strs(2), strs(3))
-                Case 5
-                    Line = String.Format(Line, strs(0), strs(1), strs(2), strs(3), strs(4))
-                Case Else
-                    Line = String.Format(Line, strs)
-            End Select
-        End If
-        DebugReflectionOutput.AppendLine("        " & Line)
-    End Sub
-
-    Shared Function GetObjectName(ByVal obj As Object) As String
-        If obj Is Nothing Then Return "Nothing"
-        If TypeOf obj Is String Then Return CStr(obj)
-        If TypeOf obj Is EmitLog Then obj = DirectCast(obj, EmitLog).TheRealILGenerator
-
-        For i As Integer = 0 To object_ids.Count - 1
-            If object_ids(i) Is obj Then Return object_names(i)
-        Next
-
-        Dim type As Type = obj.GetType
-        Dim name As String
-        Dim typename As String
-
-        If type.FullName = "System.Reflection.Emit.TypeBuilderInstantiation" Then type = type.BaseType
-        If type.FullName = "System.RuntimeType" Then type = type.BaseType
-        If type.FullName = "System.Reflection.MonoGenericClass" Then type = type.BaseType
-        If type.FullName = "System.MonoType" Then type = type.BaseType
-
-        Dim counter As Integer = 1
-        For i As Integer = 0 To object_ids.Count - 1
-            If object_ids(i).GetType Is type Then counter += 1 : Continue For
-            If type.IsArray AndAlso object_ids(i).GetType Is type.GetElementType Then counter += 1 : Continue For
-        Next
-        If type.IsArray Then
-            name = type.GetElementType.Name & "Array_" & counter
-            typename = type.GetElementType.FullName & "()"
-        Else
-            name = obj.GetType.Name & "_" & counter
-            typename = type.FullName
-        End If
-
-        Helper.DebugReflection_AppendLine("Dim " & name & " As " & typename)
-
-        object_ids.Add(obj)
-        object_names.Add(name)
-        object_nameshash.Add(name, obj)
-
-        Return name
-    End Function
-#End If
-
-#If DEBUG Then
-    Shared Function ShowDebugFor(ByVal name As String) As Boolean
-        Static args As Hashtable
-        If args Is Nothing Then
-            args = New Hashtable(System.StringComparer.OrdinalIgnoreCase)
-            Dim env As String = Environment.GetEnvironmentVariable("VBNC_LOG")
-            If env Is Nothing Then Return False
-            For Each arg As String In env.Split(","c, ":"c, ";"c)
-                args.Add(arg, arg)
-            Next
-        End If
-        Return args.ContainsKey(name)
-    End Function
-#End If
 
 #Region "Helper"
 
@@ -377,7 +239,7 @@ Public Class Helper
                 ElseIf Helper.CompareType(m_Declaration.FieldType, Compiler.TypeCache.System_DateTime) Then
                     result = result Or Mono.Cecil.FieldAttributes.InitOnly
                 Else
-                    result = result Or Mono.Cecil.FieldAttributes.Literal
+                    result = result Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault
                 End If
             End If
         End If
@@ -442,6 +304,7 @@ Public Class Helper
         ElseIf Expression.Classification.CanBeValueClassification Then
             Expression = Expression.ReclassifyToValueExpression
             result = Expression.ResolveExpression(Info) AndAlso result
+            Helper.StopIfDebugging(result = False)
         Else
             Helper.AddError(Expression)
             result = False
@@ -580,6 +443,8 @@ Public Class Helper
         Dim params As Mono.Cecil.ParameterDefinitionCollection = GetParameters(Context, member)
         Dim result() As Mono.Cecil.TypeReference
 
+        If params Is Nothing Then Return Nothing
+
         ReDim result(params.Count - 1)
 
         For i As Integer = 0 To params.Count - 1
@@ -614,7 +479,11 @@ Public Class Helper
     '    Return result
     'End Function
 
-    Shared Function GetGenericParameterConstraints(ByVal Context As BaseObject, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference()
+    Shared Function GetGenericParameterConstraints(ByVal Context As BaseObject, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.ConstraintCollection
+        Dim tG As Mono.Cecil.GenericParameter = TryCast(Type, Mono.Cecil.GenericParameter)
+
+        If tG IsNot Nothing Then Return tG.Constraints
+
         Dim tD As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(Type)
         If CecilHelper.IsGenericParameter(Type) = False Then Throw New InternalException("")
         Throw New NotImplementedException
@@ -680,7 +549,7 @@ Public Class Helper
         ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Decimal) Then
             Return TypeCode.Decimal
         ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Double) Then
-            Return TypeCode.DateTime
+            Return TypeCode.Double
         ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Int16) Then
             Return TypeCode.Int16
         ElseIf Helper.CompareType(Type, Compiler.TypeCache.System_Int32) Then
@@ -784,6 +653,9 @@ Public Class Helper
     End Function
 
     Shared Function IsInterface(ByVal Context As BaseObject, ByVal Type As Mono.Cecil.TypeReference) As Boolean
+        If TypeOf Type Is Mono.Cecil.GenericParameter Then Return False
+        If TypeOf Type Is Mono.Cecil.ArrayType Then Return False
+        If TypeOf Type Is Mono.Cecil.ReferenceType Then Return False
         Return CecilHelper.FindDefinition(Type).IsInterface
         'Dim tmpTP As Type
         'Dim Compiler As Compiler = Context.Compiler
@@ -807,6 +679,7 @@ Public Class Helper
 
     Shared Function IsEnum(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Boolean
         If TypeOf Type Is Mono.Cecil.GenericParameter Then Return False
+        If TypeOf Type Is Mono.Cecil.ArrayType Then Return False
         Return CecilHelper.FindDefinition(Type).IsEnum
     End Function
 
@@ -892,10 +765,11 @@ Public Class Helper
 
     Shared Function GetInstanceConstructors(ByVal type As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
         Dim result As New Generic.List(Of Mono.Cecil.MethodReference)
-        Dim ctors As Mono.Cecil.ConstructorCollection = CecilHelper.FindDefinition(type).Constructors
+        Dim ctors As Mono.Cecil.MemberReferenceCollection = CecilHelper.GetConstructors(type)
 
         For i As Integer = 0 To ctors.Count - 1
-            If ctors(i).IsStatic = False Then result.Add(ctors(i))
+            Dim ctor As Mono.Cecil.MethodReference = DirectCast(ctors(i), Mono.Cecil.MethodReference)
+            If Helper.IsShared(ctor) = False Then result.Add(ctor)
         Next
 
         Return result
@@ -912,7 +786,7 @@ Public Class Helper
 
         For i As Integer = 0 To Members.Count - 1
             Dim member As Mono.Cecil.MemberReference = Members(i)
-            If (IsPrivate(member) OrElse IsFriend(member)) AndAlso Compiler.Assembly.IsDefinedHere(member.DeclaringType) = False Then
+            If (IsPrivate(member) OrElse IsFriend(member)) AndAlso Compiler.Assembly.IsDefinedHere(CecilHelper.FindDefinition(member.DeclaringType)) = False Then
                 Continue For
             End If
             result.Add(member)
@@ -1023,39 +897,12 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function IsProtected(ByVal Member As Mono.Cecil.MemberReference) As Boolean
         Return GetAccessibility(Member) = ModifierMasks.Protected
-        'Helper.Assert(Member IsNot Nothing)
-        'Select Case Member.MemberType
-        '    Case MemberTypes.Constructor
-        '        Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
-        '        Return ctor.IsFamily
-        '    Case MemberTypes.Event
-        '        Dim eventM As EventInfo = DirectCast(Member, EventInfo)
-        '        Dim access As MethodAttributes = Helper.GetEventAccess(eventM)
-        '        Return access = MethodAttributes.Family
-        '    Case MemberTypes.Field
-        '        Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
-        '        Return fieldI.IsFamily
-        '    Case MemberTypes.NestedType
-        '        Dim type As Type = DirectCast(Member, Type)
-        '        Return type.IsNestedFamily
-        '    Case MemberTypes.Method
-        '        Dim method As MethodInfo = DirectCast(Member, MethodInfo)
-        '        Return method.IsFamily
-        '    Case MemberTypes.Property
-        '        Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
-        '        Dim access As MethodAttributes = Helper.GetPropertyAccess(propM)
-        '        Return access = MethodAttributes.Family
-        '    Case MemberTypes.TypeInfo
-        '        Dim tp As Type = DirectCast(Member, Type)
-        '        Return tp.IsNotPublic OrElse tp.IsNested AndAlso (tp.IsNestedFamily)
-        '    Case Else
-        '        Throw New InternalException("")
-        'End Select
     End Function
 
     Shared Function GetVisibility(ByVal Attributes As Mono.Cecil.MethodAttributes) As ModifierMasks
-        Select Case Attributes And Mono.Cecil.MethodAttributes.MemberAccessMask
-            Case Mono.Cecil.MethodAttributes.Private
+        Dim attrib As Mono.Cecil.MethodAttributes = Attributes And Mono.Cecil.MethodAttributes.MemberAccessMask
+        Select Case attrib
+            Case Mono.Cecil.MethodAttributes.Private, Mono.Cecil.MethodAttributes.Compilercontrolled
                 Return ModifierMasks.Private
             Case Mono.Cecil.MethodAttributes.FamANDAssem
                 Throw New NotImplementedException
@@ -1068,7 +915,7 @@ Public Class Helper
             Case Mono.Cecil.MethodAttributes.Public
                 Return ModifierMasks.Public
             Case Else
-                Throw New InternalException
+                Throw New InternalException(String.Format("Attributes: {0} = {1}", attrib, CInt(attrib)))
         End Select
     End Function
 
@@ -1139,31 +986,6 @@ Public Class Helper
         Else
             Throw New NotImplementedException
         End If
-        'Select Case Member.MemberType
-        '    Case MemberTypes.Constructor
-        '        Dim ctor As ConstructorInfo = DirectCast(Member, ConstructorInfo)
-        '        Return ctor.IsAssembly
-        '    Case MemberTypes.Event
-        '        Dim eventM As EventInfo = DirectCast(Member, EventInfo)
-        '        Return CBool(Helper.GetEventAccess(eventM) = MethodAttributes.Assembly)
-        '    Case MemberTypes.Field
-        '        Dim fieldI As FieldInfo = DirectCast(Member, FieldInfo)
-        '        Return fieldI.IsAssembly
-        '    Case MemberTypes.NestedType
-        '        Dim type As Type = DirectCast(Member, Type)
-        '        Return type.IsNestedAssembly
-        '    Case MemberTypes.Method
-        '        Dim method As MethodInfo = DirectCast(Member, MethodInfo)
-        '        Return method.IsAssembly
-        '    Case MemberTypes.Property
-        '        Dim propM As PropertyInfo = DirectCast(Member, PropertyInfo)
-        '        Return Helper.GetPropertyAccess(propM) = MethodAttributes.Assembly
-        '    Case MemberTypes.TypeInfo
-        '        Dim tp As Type = DirectCast(Member, Type)
-        '        Return tp.IsNotPublic OrElse tp.IsNested AndAlso tp.IsNestedAssembly
-        '    Case Else
-        '        Throw New InternalException("")
-        'End Select
     End Function
     ''' <summary>
     ''' Checks if the member is Friend (not Protected Friend)
@@ -1332,7 +1154,7 @@ Public Class Helper
             If minfo IsNot Nothing Then
                 If CecilHelper.GetGenericArguments(minfo).Length = argCount Then
                     If argCount > 0 Then
-                        member = TypeArguments.Parent.Compiler.TypeManager.MakeGenericMethod(TypeArguments.Parent, minfo, CecilHelper.GetGenericArguments(minfo), TypeArguments.AsTypeArray)
+                        member = TypeArguments.Parent.Compiler.TypeManager.MakeGenericMethod(TypeArguments.Parent, minfo, CecilHelper.GetGenericArguments(minfo), TypeArguments.ArgumentCollection)
                         result.Add(member)
                     Else
                         result.Add(member)
@@ -1457,74 +1279,25 @@ Public Class Helper
         Return result
     End Function
 
-    '''' <summary>
-    '''' Finds a non-private, non-shared constructor with no parameters in the array.
-    '''' If nothing found, returns nothing.
-    '''' </summary>
-    '''' <param name="Constructors"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Function GetDefaultConstructor(ByVal Constructors() As ConstructorInfo) As ConstructorInfo
-    '    For i As Integer = 0 To Constructors.GetUpperBound(0)
-    '        If HasParameters(Constructors(i)) = False OrElse HasOnlyOptionalParameters(Constructors(i)) Then
-    '            If Constructors(i).IsStatic = False AndAlso Constructors(i).IsPrivate = False Then
-    '                Return Constructors(i)
-    '            End If
-    '        End If
-    '    Next
-    '    Return Nothing
-    'End Function
-
-    'Function HasOnlyOptionalParameters(ByVal Constructor As ConstructorInfo) As Boolean
-    '    Helper.Assert(HasParameters(Constructor))
-    '    Return Constructor.GetParameters(0).IsOptional
-    'End Function
-
-    '''' <summary>
-    '''' Returns true if this constructor has any parameter, default or normal parameter.
-    '''' </summary>
-    '''' <param name="Constructor"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Shared Function HasParameters(ByVal Constructor As ConstructorInfo) As Boolean
-    '    Return Constructor.GetParameters().Length > 0
-    'End Function
-
-    '''' <summary>
-    '''' Finds a public, non-shared constructor with no parameters of the type.
-    '''' If nothing found, returns nothing.
-    '''' </summary>
-    '''' <param name="tp"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Function GetDefaultConstructor(ByVal tp As Type) As ConstructorInfo
-    '    Return GetDefaultConstructor(GetConstructors(tp))
-    'End Function
-
-    Function GetDefaultGenericConstructor(ByVal tn As ConstructedTypeName) As Mono.Cecil.MethodReference
+    Function GetDefaultGenericConstructor(ByVal closedResolvedType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
         Dim candidates As Mono.Cecil.ConstructorCollection
 
-        'Dim openconstructor As ConstructorInfo
-        'If tn.ResolvedType.GetType.Name = "TypeBuilderInstantiation" Then
-        '    candidates = CecilHelper.FindDefinition(tn.OpenResolvedType).Constructors
-        '    openconstructor = GetDefaultConstructor(candidates)
-        '    result = TypeBuilder.GetConstructor(tn.ClosedResolvedType, openconstructor)
-        'Else
-        candidates = CecilHelper.FindDefinition(tn.ClosedResolvedType).Constructors
+        candidates = CecilHelper.FindDefinition(closedResolvedType).Constructors
         result = GetDefaultConstructor(candidates)
-        ' result = New GenericConstructorDescriptor(tn, tn.ClosedResolvedType, result)
-        'End If
+
+        If result IsNot Nothing Then
+            result = CecilHelper.GetCorrectMember(result, closedResolvedType)
+        End If
 
         Return result
     End Function
-
-#If ENABLECECIL Then
 
     Function HasOnlyOptionalParameters(ByVal Constructor As Mono.Cecil.MethodDefinition) As Boolean
         Helper.Assert(HasParameters(Constructor))
         Return Constructor.Parameters(0).IsOptional
     End Function
+
     ''' <summary>
     ''' Returns true if this constructor has any parameter, default or normal parameter.
     ''' </summary>
@@ -1594,19 +1367,6 @@ Public Class Helper
 
     '    Return result
     'End Function
-#End If
-
-    '''' <summary>
-    '''' Returns all the constructors of the type descriptor. (instance + static + public + nonpublic)
-    '''' </summary>
-    '''' <param name="tp"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Function GetConstructors(ByVal tp As Type) As ConstructorInfo()
-    '    Helper.Assert(tp IsNot Nothing)
-    '    Helper.Assert(TypeOf tp Is TypeBuilder = False AndAlso tp.GetType.Name <> "TypeBuilderInstantiation")
-    '    Return tp.GetConstructors(BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Static Or BindingFlags.DeclaredOnly)
-    'End Function
 
     Shared Function GetParameterTypes(ByVal Parameters As Mono.Cecil.ParameterReference()) As Mono.Cecil.TypeReference()
         Dim result() As Mono.Cecil.TypeReference
@@ -1658,15 +1418,10 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function IsModule(ByVal Compiler As Compiler, ByVal type As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean
-        'If TypeOf type Is TypeDescriptor Then
-        '    Return IsModule(Compiler, DirectCast(type, TypeDescriptor))
-        'Else
-        result = CecilHelper.FindDefinition(type).IsClass AndAlso Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso type.CustomAttributes.IsDefined(Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
 
-        'Compiler.Report.WriteLine("IsModule: type=" & type.FullName & ", result=" & result.ToString)
-        'If type.Name = "Constants" Then Stop
+        result = CecilHelper.IsClass(type) AndAlso Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso CecilHelper.IsDefined(type.CustomAttributes, Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
+
         Return result
-        'End If
     End Function
 #End If
 
@@ -1809,7 +1564,7 @@ Public Class Helper
         Dim result As Boolean = True
         Dim ArrayType As Mono.Cecil.TypeReference = ArrayVariable.ExpressionType
         Dim ElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
-        Dim isNonPrimitiveValueType As Boolean = CecilHelper.IsPrimitive(Info.Compiler, ElementType) = False AndAlso ElementType.IsValueType
+        Dim isNonPrimitiveValueType As Boolean = CecilHelper.IsPrimitive(Info.Compiler, ElementType) = False AndAlso CecilHelper.IsValueType(ElementType)
         Dim isArraySetValue As Boolean = CecilHelper.GetArrayRank(ArrayType) > 1
         Dim newValue As Expression = Info.RHSExpression
 
@@ -1820,7 +1575,7 @@ Public Class Helper
 
         If isArraySetValue Then
             result = newValue.GenerateCode(Info.Clone(Info.Context, True, False, ElementType)) AndAlso result
-            If ElementType.IsValueType Then
+            If CecilHelper.IsValueType(ElementType) Then
                 Emitter.EmitBox(Info, ElementType)
             End If
             result = EmitIntegerArray(Info, Arguments) AndAlso result
@@ -1853,7 +1608,7 @@ Public Class Helper
         Dim result As Boolean = True
         Dim ArrayType As Mono.Cecil.TypeReference = ArrayVariable.ExpressionType
         Dim ElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
-        Dim isNonPrimitiveValueType As Boolean = CecilHelper.IsPrimitive(Info.Compiler, ElementType) = False AndAlso ElementType.IsValueType
+        Dim isNonPrimitiveValueType As Boolean = CecilHelper.IsPrimitive(Info.Compiler, ElementType) = False AndAlso CecilHelper.IsValueType(ElementType)
         Dim isArrayGetValue As Boolean = CecilHelper.GetArrayRank(ArrayType) > 1
 
         result = ArrayVariable.GenerateCode(Info) AndAlso result
@@ -1914,7 +1669,7 @@ Public Class Helper
                 ieDesiredType = InstanceExpression.ExpressionType
             Else
                 ieDesiredType = Method.DeclaringType
-                If ieDesiredType.IsValueType Then
+                If CecilHelper.IsValueType(ieDesiredType) Then
                     ieDesiredType = Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ieDesiredType)
                 End If
             End If
@@ -1926,7 +1681,7 @@ Public Class Helper
                 result = derefExp.Expression.GenerateCode(Info.Clone(Info.Context, True, False, derefExp.Expression.ExpressionType)) AndAlso result
             Else
                 Dim getRef As GetRefExpression = TryCast(InstanceExpression, GetRefExpression)
-                If getRef IsNot Nothing AndAlso getRef.Expression.ExpressionType.IsValueType AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) Then
+                If getRef IsNot Nothing AndAlso CecilHelper.IsValueType(getRef.Expression.ExpressionType) AndAlso Helper.CompareType(Method.DeclaringType, Info.Compiler.TypeCache.System_Object) Then
                     result = getRef.Expression.GenerateCode(ieInfo) AndAlso result
                     Emitter.EmitBox(Info, getRef.Expression.ExpressionType)
                 Else
@@ -2019,9 +1774,9 @@ Public Class Helper
 
     Shared Function GetInvokeMethod(ByVal Compiler As Compiler, ByVal DelegateType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
         Helper.Assert(IsDelegate(Compiler, DelegateType), "The type '" & DelegateType.FullName & "' is not a delegate.")
-        Dim results As Mono.Cecil.MethodDefinition() = CecilHelper.FindDefinition(DelegateType).Methods.GetMethod(DelegateDeclaration.STR_Invoke)
-        If results IsNot Nothing AndAlso results.Length = 1 Then
-            Return results(0)
+        Dim results As Generic.List(Of Mono.Cecil.MemberReference) = Compiler.TypeManager.GetCache(DelegateType).Lookup(DelegateDeclaration.STR_Invoke).Members
+        If results IsNot Nothing AndAlso results.Count = 1 AndAlso TypeOf results(0) Is Mono.Cecil.MethodReference Then
+            Return DirectCast(results(0), Mono.Cecil.MethodReference)
         Else
             Throw New NotImplementedException
         End If
@@ -2034,62 +1789,50 @@ Public Class Helper
     ''' <summary>
     ''' Returns true if the type has a default property
     ''' </summary>
-    ''' <param name="DefaultProperties"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Shared Function HasDefaultProperty(ByVal Context As BaseObject, ByVal tp As Mono.Cecil.TypeReference, ByRef DefaultProperties As Generic.List(Of Mono.Cecil.PropertyReference)) As Boolean
-        'Dim attrib As Reflection.DefaultMemberAttribute
+    Shared Function HasDefaultProperty(ByVal Context As BaseObject, ByVal tp As Mono.Cecil.TypeReference, ByRef properties As Generic.List(Of Mono.Cecil.PropertyReference)) As Boolean
         Dim Compiler As Compiler = Context.Compiler
-        Dim Type As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(tp)
+        Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+        Dim defaultName As String = Nothing
 
-        'If tD Is Nothing Then
-        '    Dim members As New Generic.List(Of Mono.Cecil.MemberReference)
-        '    Dim properties As New Generic.List(Of Mono.Cecil.PropertyReference)
+        properties = New Generic.List(Of Mono.Cecil.PropertyReference)
+        members = Compiler.TypeManager.GetCache(tp).FlattenedCache.GetAllMembers()
 
-        '    Helper.Assert(Type IsNot Nothing)
-        '    attrib = CType(System.Attribute.GetCustomAttribute(Type, GetType(DefaultMemberAttribute), True), DefaultMemberAttribute)
+        For i As Integer = 0 To members.Count - 1
+            Dim p As Mono.Cecil.PropertyReference = TryCast(members(i), Mono.Cecil.PropertyReference)
+            Dim pD As PropertyDeclaration
+            If p Is Nothing Then Continue For
 
-        '    If attrib Is Nothing Then Return False
-
-        '    'members = Helper.FilterByName(Type.GetMembers(), attrib.MemberName)
-        '    members = Compiler.TypeManager.GetCache(Type).LookupFlattenedMembers(attrib.MemberName)
-
-        '    If members IsNot Nothing Then
-        '        For Each member As MemberInfo In members
-        '            If member.MemberType = MemberTypes.Property Then
-        '                properties.Add(DirectCast(member, PropertyInfo))
-        '            Else
-        '                Throw New InternalException("")
-        '            End If
-        '        Next
-        '    End If
-        '    DefaultProperties = properties
-        '    Return True
-        'Else
-        Dim members As New Generic.List(Of Mono.Cecil.MemberReference)
-        Dim properties As New Generic.List(Of Mono.Cecil.PropertyReference)
-        'members.AddRange(tD.GetMembers())
-        members.AddRange(Compiler.TypeManager.GetCache(Type).Cache.GetAllMembers)
-        For Each member As Mono.Cecil.MemberReference In members
-            Dim prop As Mono.Cecil.PropertyReference = TryCast(member, Mono.Cecil.PropertyReference)
-            If prop IsNot Nothing AndAlso CecilHelper.IsDefault(Compiler, prop) Then properties.Add(prop)
-            'If propD IsNot Nothing Then
-            '    If propD.IsDefault Then properties.Add(propD)
-            'ElseIf prop IsNot Nothing Then
-            '    Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location) 'I don't know if this is a possibility with generic types.
-            'End If
-        Next
-        If properties.Count = 0 Then
-            If Type.BaseType IsNot Nothing Then
-                Return Helper.HasDefaultProperty(Context, Type.BaseType, DefaultProperties)
-            Else
-                Return False
+            If p.Annotations.Contains(Compiler) Then
+                pD = DirectCast(p.Annotations(Compiler), PropertyDeclaration)
+                If pD.Modifiers.Is(ModifierMasks.Default) Then
+                    properties.Add(p)
+                End If
+                Continue For
             End If
-        Else
-            DefaultProperties = properties
-            Return True
-        End If
-        'End If
+
+            Dim p2 As Mono.Cecil.PropertyReference = CecilHelper.FindDefinition(p)
+            If p2.Annotations.Contains(Compiler) Then
+                pD = DirectCast(p2.Annotations(Compiler), PropertyDeclaration)
+                If pD.Modifiers.Is(ModifierMasks.Default) Then
+                    properties.Add(p)
+                End If
+                Continue For
+            End If
+
+            'OPTIMIZATION: cache default attribute per type
+            Dim pDef As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(p.DeclaringType)
+            Dim defaultAttribute As Mono.Cecil.CustomAttribute = Helper.GetDefaultMemberAttribute(Compiler, pDef)
+            If defaultAttribute Is Nothing Then Continue For
+            If defaultAttribute.ConstructorParameters.Count <> 1 Then Continue For
+            If TypeOf defaultAttribute.ConstructorParameters(0) Is String = False Then Continue For
+            defaultName = DirectCast(defaultAttribute.ConstructorParameters(0), String)
+
+            If Helper.CompareNameOrdinal(p.Name, defaultName) Then properties.Add(p)
+        Next
+
+        Return properties.Count > 0
     End Function
 
     Shared Function GetDefaultMemberAttribute(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.CustomAttribute
@@ -2233,6 +1976,7 @@ Public Class Helper
         If Compiler.Assembly.IsDefinedHere(Type) Then
             Return Type
         Else
+            'System.Diagnostics.Debug.WriteLine("Importing: " & Type.FullName)
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
         End If
     End Function
@@ -2333,7 +2077,7 @@ Public Class Helper
             args = CecilHelper.GetGenericArguments(minfo)
 
             If args.Length = TypeArguments.Count Then
-                result = TypeArguments.Compiler.TypeManager.MakeGenericMethod(TypeArguments.Parent, minfo, args, TypeArguments.AsTypeArray)
+                result = TypeArguments.Compiler.TypeManager.MakeGenericMethod(TypeArguments.Parent, minfo, args, TypeArguments.ArgumentCollection)
             Else
                 result = Nothing
             End If
@@ -2363,7 +2107,7 @@ Public Class Helper
             Helper.Assert(result IsNot Nothing)
         ElseIf CecilHelper.IsGenericType(OpenType) Then
             Dim typeParams() As Mono.Cecil.TypeReference
-            Dim typeArgs As New Generic.List(Of Mono.Cecil.TypeReference)
+            Dim typeArgs As New Mono.Cecil.GenericArgumentCollection(Nothing)
 
             typeParams = CecilHelper.GetGenericArguments(OpenType)
 
@@ -2379,7 +2123,7 @@ Public Class Helper
 
             Helper.Assert(typeArgs.Count = typeParams.Length AndAlso typeArgs.Count > 0)
 
-            result = Parent.Compiler.TypeManager.MakeGenericType(Parent, OpenType, typeArgs.ToArray)
+            result = Parent.Compiler.TypeManager.MakeGenericType(Parent, OpenType, typeArgs)
         ElseIf CecilHelper.IsGenericTypeDefinition(OpenType) Then
             Parent.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         ElseIf CecilHelper.ContainsGenericParameters(OpenType) Then
@@ -2722,7 +2466,7 @@ Public Class Helper
         ElseIf isProtected Then
             'Protected, but not Friend
             'CallerType must inherit from CalledType.
-            Return Helper.IsSubclassOf(CallerType, CalledType)
+            Return Helper.IsSubclassOf(CalledType, CallerType)
         End If
 
         Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location) '("No accessibility??")
@@ -2776,7 +2520,8 @@ Public Class Helper
     End Function
 
     Shared Function GetDelegateArguments(ByVal Compiler As Compiler, ByVal delegateType As Mono.Cecil.TypeReference) As Mono.Cecil.ParameterDefinitionCollection
-        Return GetParameters(Compiler, GetInvokeMethod(Compiler, delegateType))
+        Dim invoke As Mono.Cecil.MethodReference = GetInvokeMethod(Compiler, delegateType)
+        Return GetParameters(Compiler, invoke)
     End Function
 
     ''' <summary>
@@ -2834,68 +2579,22 @@ Public Class Helper
         'Return result
     End Function
 
-    '    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As MethodBuilder)
-    '        Dim Compiler As Compiler = Context.Compiler
-    '        Dim rettype As Type = Method.ReturnType
-    '        Dim strrettype As String
-    '        If rettype IsNot Nothing Then
-    '            If rettype.FullName Is Nothing Then
-    '                strrettype = rettype.Name
-    '            Else
-    '                strrettype = rettype.FullName
-    '            End If
-    '        Else
-    '            strrettype = ""
-    '        End If
-    '        Dim tp As Type = Method.DeclaringType
-    '        Dim paramstypes As Type() = Helper.GetParameterTypes(Context, Method)
-    '        Dim attribs As MethodAttributes = Method.Attributes
-    '        Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
-    '        Dim name As String = tp.FullName & ":" & Method.Name
-
-    '#If EXTENDEDDEBUG Then
-    '        Try
-    '            System.Console.ForegroundColor = ConsoleColor.Red
-    '        Catch ex As Exception
-
-    '        End Try
-
-    '        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined method '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
-
-    '        Try
-    '            System.Console.ResetColor()
-    '        Catch ex As Exception
-
-    '        End Try
-    '#End If
-    '    End Sub
-
-    '    <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As ConstructorBuilder)
-    '        Dim rettype As Type = Nothing
-    '        Dim strrettype As String
-    '        If rettype IsNot Nothing Then
-    '            strrettype = rettype.FullName
-    '        Else
-    '            strrettype = ""
-    '        End If
-    '        Dim tp As Type = Method.DeclaringType
-    '        Dim paramstypes As Type() = Helper.GetParameterTypes(Context, Method)
-    '        Dim attribs As MethodAttributes = Method.Attributes
-    '        Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
-    '        Dim name As String = tp.FullName & ":" & Method.Name
-
-    '#If EXTENDEDDEBUG Then
-    '        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined ctor '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
-    '#End If
-
-    '    End Sub
-
     Shared Function IsTypeConvertibleToAny(ByVal TypesToSearch As Mono.Cecil.TypeReference(), ByVal TypeToFind As Mono.Cecil.TypeReference) As Boolean
-        For Each t As Mono.Cecil.TypeReference In TypesToSearch
+        For i As Integer = 0 To TypesToSearch.Length - 1
+            Dim t As Mono.Cecil.TypeReference = TypesToSearch(i)
             If Helper.CompareType(t, TypeToFind) OrElse Helper.IsSubclassOf(t, TypeToFind) Then Return True
         Next
         Return False
     End Function
+
+    Shared Function IsTypeConvertibleToAny(ByVal TypesToSearch As Mono.Cecil.ConstraintCollection, ByVal TypeToFind As Mono.Cecil.TypeReference) As Boolean
+        For i As Integer = 0 To TypesToSearch.Count - 1
+            Dim t As Mono.Cecil.TypeReference = TypesToSearch(i)
+            If Helper.CompareType(t, TypeToFind) OrElse Helper.IsSubclassOf(t, TypeToFind) Then Return True
+        Next
+        Return False
+    End Function
+
 
     Shared Function IsNothing(Of T)(ByVal Value As T) As Boolean
         Return Value Is Nothing
@@ -2929,10 +2628,16 @@ Public Class Helper
         Helper.AssertNotNothing(Collection)
         For Each obj As BaseObject In Collection
             result = obj.ResolveCode(Info) AndAlso result
-            'Helper.Assert(result = (obj.Compiler.Report.Errors = 0))
+            obj.Compiler.VerifyConsistency(result, obj.Location.AsString(obj.Compiler))
         Next
         Return result
     End Function
+
+    Shared Sub InitializeCollection(ByVal Collection As IEnumerable, ByVal Parent As BaseObject)
+        For Each obj As BaseObject In Collection
+            obj.Initialize(Parent)
+        Next
+    End Sub
 
     Shared Function ResolveTypeReferencesCollection(ByVal Collection As IEnumerable) As Boolean
         Dim result As Boolean = True
@@ -3094,8 +2799,10 @@ Public Class Helper
         Return True
     End Function
 
-    <Diagnostics.DebuggerHidden()> Shared Sub ErrorRecoveryNotImplemented()
-        Console.WriteLine("Error recovery not implemented yet.")
+    <Diagnostics.DebuggerHidden()> _
+    Shared Sub ErrorRecoveryNotImplemented(ByVal Location As Span)
+        Console.WriteLine("{0}: Compiler error around this location, the compiler hasn't implemented the error message, nor error recovery, so the compiler will probably crash soon.", Location.AsString(BaseObject.m_Compiler))
+        Console.WriteLine(New System.Diagnostics.StackTrace().ToString())
     End Sub
 
     <Diagnostics.DebuggerHidden()> Private Shared Sub IndirectedStop()
@@ -3341,49 +3048,6 @@ Public Class Helper
         Next
     End Function
 
-    '#If DEBUG Then
-    '    ''' <summary>
-    '    ''' Invokes Dump of all objects in the collection, but not the object ifself
-    '    ''' </summary>
-    '    ''' <param name="obj"></param>
-    '    ''' <remarks></remarks>
-    '    Shared Sub DumpCollection(ByVal obj As IList, ByVal Dumper As IndentedTextWriter, Optional ByVal Delimiter As String = "")
-    '        Dim tmpDelimiter As String = ""
-    '        For Each o As BaseObject In obj
-    '            Dumper.Write(tmpDelimiter)
-    '            o.Dump(Dumper)
-    '            tmpDelimiter = Delimiter
-    '        Next
-    '    End Sub
-
-    '    ''' <summary>
-    '    ''' Invokes Dump of all objects in the collection, but not the object ifself
-    '    ''' </summary>
-    '    ''' <param name="obj"></param>
-    '    ''' <remarks></remarks>
-    '    Shared Sub DumpCollection(ByVal obj As IList, ByVal Dumper As IndentedTextWriter, ByVal Prefix As String, ByVal Postfix As String)
-    '        For Each o As BaseObject In obj
-    '            Dumper.Write(Prefix)
-    '            o.Dump(Dumper)
-    '            Dumper.Write(Postfix)
-    '        Next
-    '    End Sub
-
-    '    ''' <summary>
-    '    ''' Invokes Dump of all objects in the collection, but not the object ifself
-    '    ''' </summary>
-    '    ''' <param name="obj"></param>
-    '    ''' <remarks></remarks>
-    '    Shared Sub DumpCollection(ByVal obj As IEnumerable, ByVal Dumper As IndentedTextWriter, Optional ByVal Delimiter As String = "")
-    '        Dim tmpDelimiter As String = ""
-    '        For Each o As BaseObject In obj
-    '            Dumper.Write(tmpDelimiter)
-    '            o.Dump(Dumper)
-    '            tmpDelimiter = Delimiter
-    '        Next
-    '    End Sub
-    '#End If
-
     ''' <summary>
     ''' Returns a sequence number, incremented in 1 on every call
     ''' </summary>
@@ -3476,6 +3140,11 @@ Public Class Helper
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
         Helper.Assert(Method IsNot Nothing)
         Helper.Assert(Method.DeclaringType IsNot Nothing)
+
+        If Method.Annotations.Contains("MemberInReflection") Then
+            Return GetMethodOrMethodReference(Compiler, DirectCast(Method.Annotations("MemberInReflection"), Mono.Cecil.MethodReference))
+        End If
+
         Dim upper As Mono.Cecil.TypeReference
         upper = Method.DeclaringType
         While upper.DeclaringType IsNot Nothing
@@ -3490,58 +3159,10 @@ Public Class Helper
         End If
     End Function
 
-    'Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As ConstructorInfo) As Mono.Cecil.MethodReference
-    '    Dim cD As ConstructorDescriptor
-    '    cD = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, Method), ConstructorDescriptor)
-
-    '    If cD IsNot Nothing Then
-    '        If cD Is Nothing Then
-    '            Throw New NotImplementedException("")
-    '        End If
-    '        Return cD.MethodInCecil
-    '    Else
-    '        Return Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
-    '    End If
-    'End Function
-
-    'Private Shared m_MethodRefCache As New Generic.Dictionary(Of MethodInfo, Mono.Cecil.MethodReference)
-
-    'Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As MethodInfo) As Mono.Cecil.MethodReference
-    '    Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, Method), MethodDescriptor)
-    '    If mD IsNot Nothing Then
-    '        Return mD.MethodInCecil
-    '    Else
-    '        Dim result As Mono.Cecil.MethodReference = Nothing
-    '        If m_MethodRefCache.TryGetValue(Method, result) = False Then
-    '            Try
-    '                If TypeOf Method Is MethodBuilder Then Helper.Stop()
-    '                If Method.GetType().FullName.Contains("System.Reflection.Emit") AndAlso Method.DeclaringType.GetElementType IsNot Nothing AndAlso Method.DeclaringType.IsArray Then
-    '                    'Stop
-    '                    Dim retType As Mono.Cecil.TypeReference = Nothing
-    '                    If Method.Name = "Get" Then
-    '                        retType = Helper.GetTypeOrTypeReference(Compiler, Method.DeclaringType.GetElementType)
-    '                    End If
-    '                    result = New Mono.Cecil.MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler, Method.DeclaringType), retType, True, False, Mono.Cecil.MethodCallingConvention.Default)
-    '                    result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Compiler.AssemblyBuilderCecil.MainModule.Import(Compiler.TypeCache.System_Int32)))
-    '                    result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Compiler.AssemblyBuilderCecil.MainModule.Import(Compiler.TypeCache.System_Int32)))
-    '                    Return result
-    '                End If
-    '                result = Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
-    '            Catch ex As TargetInvocationException
-    '                Dim ex2 As Exception = ex.InnerException
-    '                Do Until ex2 Is Nothing
-    '                    Console.WriteLine(ex2.ToString)
-    '                    ex2 = ex2.InnerException
-    '                Loop
-    '            End Try
-    '            m_MethodRefCache.Add(Method, result)
-    '        End If
-    '        Return result
-    '    End If
-    'End Function
-
     Shared Function GetFieldOrFieldReference(ByVal Compiler As Compiler, ByVal field As Mono.Cecil.FieldReference) As Mono.Cecil.FieldReference
-        If Compiler.AssemblyBuilderCecil Is field.DeclaringType.Module.Assembly Then
+        If field.Annotations.Contains("MemberInReflection") Then
+            Return DirectCast(field.Annotations("MemberInReflection"), Mono.Cecil.FieldReference)
+        ElseIf Compiler.AssemblyBuilderCecil Is field.DeclaringType.Module.Assembly Then
             Return field
         Else
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(field)
@@ -3632,6 +3253,8 @@ Public Class Helper
             Return True
         ElseIf Helper.CompareType(FromType, Compiler.TypeCache.Nothing) Then
             Return True
+        ElseIf Helper.CompareType(FromType, ToType) Then
+            Return True
         ElseIf CecilHelper.IsArray(FromType) = True AndAlso CecilHelper.IsArray(ToType) = True AndAlso FromType.FullName Is Nothing AndAlso ToType.FullName Is Nothing AndAlso FromType.Name.Equals(ToType.Name, StringComparison.Ordinal) Then
             Return True
         ElseIf CompareType(ToType, Compiler.TypeCache.System_Object) Then
@@ -3649,12 +3272,14 @@ Public Class Helper
             '    'ElseIf TypeOf ToType Is TypeDescriptor = False AndAlso TypeOf FromType Is TypeDescriptor = False AndAlso ToType.IsAssignableFrom(FromType) Then
             '    '    Return True
         ElseIf IsInterface(Context, ToType) Then
-            Dim ifaces As Mono.Cecil.InterfaceCollection = CecilHelper.GetInterfaces(FromType)
-            For Each iface As Mono.Cecil.TypeReference In ifaces
-                If Helper.IsAssignable(Context, iface, ToType) Then Return True
-                If Helper.CompareType(iface, ToType) Then Return True
-                If Helper.IsSubclassOf(ToType, iface) Then Return True
-            Next
+            Dim ifaces As Mono.Cecil.InterfaceCollection = CecilHelper.GetInterfaces(FromType, True)
+            If ifaces IsNot Nothing Then
+                For Each iface As Mono.Cecil.TypeReference In ifaces
+                    If Helper.CompareType(iface, ToType) Then Return True
+                    If Helper.IsAssignable(Context, iface, ToType) Then Return True
+                    If Helper.IsSubclassOf(ToType, iface) Then Return True
+                Next
+            End If
             If IsInterface(Context, FromType) AndAlso CecilHelper.IsGenericType(FromType) AndAlso CecilHelper.IsGenericType(ToType) Then
                 Dim baseFromI, baseToI As Mono.Cecil.TypeReference
                 baseFromI = CecilHelper.GetGenericTypeDefinition(FromType)
@@ -3680,18 +3305,20 @@ Public Class Helper
             Return True
         ElseIf Helper.CompareType(FromType, Compiler.TypeCache.System_Object) Then
             Return False
-        ElseIf Helper.IsSubclassOf(ToType, FromType) Then
+        ElseIf TypeOf FromType Is Mono.Cecil.ArrayType AndAlso Helper.Compare(ToType, Compiler.TypeCache.System_Array) Then
             Return True
-        ElseIf Helper.IsSubclassOf(FromType, ToType) Then
-            Return False
         ElseIf CecilHelper.IsArray(FromType) AndAlso CecilHelper.IsArray(ToType) Then
             Dim fromElement As Mono.Cecil.TypeReference = CecilHelper.GetElementType(FromType)
             Dim toElement As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ToType)
-            If fromElement.IsValueType Xor toElement.IsValueType Then
+            If CecilHelper.IsValueType(fromElement) Xor CecilHelper.IsValueType(toElement) Then
                 Return False
             Else
                 Return Helper.IsAssignable(Context, fromElement, toElement)
             End If
+        ElseIf Helper.IsSubclassOf(ToType, FromType) Then
+            Return True
+        ElseIf Helper.IsSubclassOf(FromType, ToType) Then
+            Return False
         Else
             'Helper.NotImplementedYet("Don't know if it possible to convert from " & FromType.Name & " to " & ToType.Name)
             Return False
@@ -3731,7 +3358,7 @@ Public Class Helper
     End Function
 
     Shared Function IsNullableType(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Boolean
-        If Type.IsValueType = False Then Return False
+        If CecilHelper.IsValueType(Type) = False Then Return False
         If CompareType(Type, Compiler.TypeCache.System_Nullable1) Then Return True
 
         If CecilHelper.IsGenericTypeDefinition(Type) Then Return False
@@ -3741,6 +3368,8 @@ Public Class Helper
     End Function
 
     Shared Function IsSubclassOf(ByVal BaseClass As Mono.Cecil.TypeReference, ByVal DerivedClass As Mono.Cecil.TypeReference) As Boolean
+        If TypeOf BaseClass Is Mono.Cecil.GenericParameter Xor TypeOf DerivedClass Is Mono.Cecil.GenericParameter Then Return False
+        If TypeOf BaseClass Is Mono.Cecil.ArrayType Or TypeOf DerivedClass Is Mono.Cecil.ArrayType Then Return False
         Dim base As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(BaseClass)
         Dim derived As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(DerivedClass)
         Dim current As Mono.Cecil.TypeReference = derived.BaseType
@@ -3754,7 +3383,7 @@ Public Class Helper
 
     Shared Function DoesTypeImplementInterface(ByVal Context As BaseObject, ByVal Type As Mono.Cecil.TypeReference, ByVal [Interface] As Mono.Cecil.TypeReference) As Boolean
         Dim ifaces As Mono.Cecil.InterfaceCollection
-        ifaces = CecilHelper.GetInterfaces(Type)
+        ifaces = CecilHelper.GetInterfaces(Type, True)
         For Each iface As Mono.Cecil.TypeReference In ifaces
             If Helper.IsAssignable(Context, iface, [Interface]) Then Return True
         Next
@@ -3828,7 +3457,7 @@ Public Class Helper
             'do nothing
         ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_Enum) AndAlso Helper.IsEnum(Parent.Compiler, fromExpr.ExpressionType) Then
             fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
-        ElseIf CompareType(fromExpr.ExpressionType, DestinationType) = False Then
+        ElseIf CompareType(fromExpr.ExpressionType, DestinationType) = False AndAlso IsAssignable(Parent, fromExpr.ExpressionType, DestinationType) = False Then
             Dim CTypeExp As Expression
 
             If CecilHelper.IsByRef(fromExpr.ExpressionType) Then
@@ -3838,6 +3467,13 @@ Public Class Helper
             CTypeExp = ConversionExpression.GetTypeConversion(Parent, fromExpr, DestinationType)
             result = CTypeExp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
             fromExpr = CTypeExp
+        ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_Object) AndAlso CecilHelper.IsValueType(fromExpr.ExpressionType) Then
+            fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
+        ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_Object) AndAlso CecilHelper.IsGenericParameter(fromExpr.ExpressionType) Then
+            fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
+        ElseIf CecilHelper.IsGenericType(fromExpr.ExpressionType) Then
+            'fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
+            fromExpr = New CTypeExpression(Parent, fromExpr, DestinationType)
         End If
 
 #If EXTENDEDDEBUG Then
@@ -3878,6 +3514,38 @@ Public Class Helper
         If g1 IsNot Nothing AndAlso g2 IsNot Nothing Then
             Return Helper.CompareNameOrdinal(g1.Name, g2.Name) AndAlso Helper.Compare(g1.Owner, g2.Owner)
         ElseIf g1 IsNot Nothing Xor g2 IsNot Nothing Then
+            Return False
+        End If
+
+        Dim gi1 As Mono.Cecil.GenericInstanceType = TryCast(t1, Mono.Cecil.GenericInstanceType)
+        Dim gi2 As Mono.Cecil.GenericInstanceType = TryCast(t2, Mono.Cecil.GenericInstanceType)
+
+        If gi1 IsNot Nothing AndAlso gi2 IsNot Nothing Then
+            If gi1 Is gi2 Then Return True
+            If Not Helper.CompareType(gi1.GetOriginalType, gi2.GetOriginalType) Then Return False
+            If gi1.GenericArguments.Count <> gi2.GenericArguments.Count Then Return False
+            For i As Integer = 0 To gi1.GenericArguments.Count - 1
+                If Helper.CompareType(gi1.GenericArguments(i), gi2.GenericArguments(i)) = False Then
+                    Return False
+                End If
+            Next
+            Helper.Assert(gi1.FullName = gi2.FullName)
+            Return True
+        ElseIf gi1 IsNot Nothing Xor gi2 IsNot Nothing Then
+            Return False
+        End If
+
+        Dim a1 As Mono.Cecil.ArrayType = TryCast(t1, Mono.Cecil.ArrayType)
+        Dim a2 As Mono.Cecil.ArrayType = TryCast(t2, Mono.Cecil.ArrayType)
+        If a1 IsNot Nothing AndAlso a2 IsNot Nothing Then
+            If a1.Dimensions.Count <> a2.Dimensions.Count Then Return False
+            For i As Integer = 0 To a1.Dimensions.Count - 1
+                If a1.Dimensions(i).LowerBound <> a2.Dimensions(i).LowerBound Then Return False
+                If a1.Dimensions(i).UpperBound <> a2.Dimensions(i).UpperBound Then Return False
+            Next
+            Return CompareType(a1.ElementType, a2.ElementType)
+        ElseIf a1 IsNot Nothing Xor a2 IsNot Nothing Then
+            'Only one of them is an array
             Return False
         End If
 
@@ -4006,7 +3674,7 @@ Public Class Helper
     Shared Function IsParamArrayParameter(ByVal Context As BaseObject, ByVal Parameter As Mono.Cecil.ParameterReference) As Boolean
         Dim result As Boolean
         Dim pD As Mono.Cecil.ParameterDefinition = CecilHelper.FindDefinition(Parameter)
-        result = pD.CustomAttributes.IsDefined(Context.Compiler.TypeCache.System_ParamArrayAttribute)
+        result = CecilHelper.IsDefined(pD.CustomAttributes, Context.Compiler.TypeCache.System_ParamArrayAttribute)
         LogResolutionMessage(Context.Compiler, "IsParamArrayParameter: result=" & result & ", ParamArrayAttribute=" & Context.Compiler.TypeCache.System_ParamArrayAttribute.FullName)
         Return result
     End Function
@@ -4015,11 +3683,13 @@ Public Class Helper
         Dim result As String = ""
         Dim sep As String = ""
 
-        For Each t As Mono.Cecil.TypeReference In Types
-            Helper.Assert(t IsNot Nothing)
-            result &= sep & t.ToString
-            sep = ", "
-        Next
+        If Types IsNot Nothing Then
+            For Each t As Mono.Cecil.TypeReference In Types
+                Helper.Assert(t IsNot Nothing)
+                result &= sep & t.ToString
+                sep = ", "
+            Next
+        End If
 
         Return "{" & result & "}"
     End Function
@@ -4152,7 +3822,7 @@ Public Class Helper
             'If an Object parameter does not specify a default value, then the expression 
             'System.Reflection.Missing.Value is used. 
             result = New LoadFieldExpression(Parent, Parent.Compiler.TypeCache.System_Reflection_Missing__Value)
-        ElseIf Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.System_Int32) AndAlso Parameter.CustomAttributes.IsDefined(Parent.Compiler.TypeCache.MS_VB_CS_OptionCompareAttribute) Then
+        ElseIf Helper.CompareType(Parameter.ParameterType, Parent.Compiler.TypeCache.System_Int32) AndAlso CecilHelper.IsDefined(Parameter.CustomAttributes, Parent.Compiler.TypeCache.MS_VB_CS_OptionCompareAttribute) Then
             'If an optional Integer parameter 
             'has the Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute attribute, 
             'then the literal 1 is supplied for text comparisons and the literal 0 otherwise
@@ -4269,7 +3939,7 @@ Public Class Helper
             isNByte = Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
             isNShort = isNByte = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt16)
             isNInteger = isNByte = False AndAlso isNShort = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt32)
-            isNLong = isNByte = False AndAlso isNShort = False AndAlso isNInteger = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_uInt64)
+            isNLong = isNByte = False AndAlso isNShort = False AndAlso isNInteger = False AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_UInt64)
 
             ''*	Mj is Byte and Nj is SByte, or
             'isByte = Helper.CompareType(MTypes(i), Compiler.TypeCache.System_Byte) AndAlso Helper.CompareType(NTypes(i), Compiler.TypeCache.System_SByte)
@@ -4417,8 +4087,8 @@ Public Class Helper
         Dim getM, setM As Mono.Cecil.MethodDefinition
         Dim prop As Mono.Cecil.PropertyDefinition = CecilHelper.FindDefinition([Property])
 
-        getM = prop.GetMethod
-        setM = prop.SetMethod
+        getM = CecilHelper.FindDefinition(prop.GetMethod)
+        setM = CecilHelper.FindDefinition(prop.SetMethod)
 
         Helper.Assert(getM IsNot Nothing OrElse setM IsNot Nothing)
 
@@ -4502,16 +4172,25 @@ Public Class Helper
 
     Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As Mono.Cecil.ParameterDefinitionCollection
         Dim mR As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
-        If mR IsNot Nothing Then Return CecilHelper.FindDefinition(mR).Parameters
+        If mR IsNot Nothing Then Return mR.ResolvedParameters
 
         Dim pR As Mono.Cecil.PropertyReference = TryCast(Member, Mono.Cecil.PropertyReference)
         If pR IsNot Nothing Then Return CecilHelper.FindDefinition(pR).Parameters
+
+        Dim tR As Mono.Cecil.TypeReference = TryCast(Member, Mono.Cecil.TypeReference)
+        If tR IsNot Nothing Then Return Nothing
+
+        Dim fR As Mono.Cecil.FieldReference = TryCast(Member, Mono.Cecil.FieldReference)
+        If fR IsNot Nothing Then Return Nothing
+
+        Dim eR As Mono.Cecil.EventReference = TryCast(Member, Mono.Cecil.EventReference)
+        If eR IsNot Nothing Then Return CecilHelper.FindDefinition(eR).InvokeMethod.Parameters()
 
         Throw New NotImplementedException
     End Function
 
     Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MethodReference) As Mono.Cecil.ParameterDefinitionCollection
-        Return CecilHelper.FindDefinition(Member).Parameters
+        Return Member.ResolvedParameters
     End Function
 
     'Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Members As Generic.IList(Of MemberInfo)) As ParameterInfo()()

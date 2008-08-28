@@ -1,5 +1,6 @@
-../../../rt/source/AssemblyCompare.vb
 ../../../rt/source/AssemblyInfo.vb
+../../../rt/source/CecilCompare.vb
+../../../rt/source/CecilComparer.vb
 ../../../rt/source/CommandLine.vb
 ../../../rt/source/CompilerHelper.vb
 ../../../rt/source/EnhancedProgressBar.Designer.vb
@@ -20,6 +21,7 @@
 ../../../rt/source/frmTestEditor.Designer.vb
 ../../../rt/source/frmTestEditor.vb
 ../../../rt/source/Helper.vb
+../../../rt/source/HostedCompiler.vb
 ../../../rt/source/ListViewItemComparer.vb
 ../../../rt/source/Main.vb
 ../../../rt/source/OldResult.vb

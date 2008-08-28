@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.DecimalLiteral
         result.m_TokenObject = Value
-        '        result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
@@ -96,7 +95,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.SingleLiteral
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
@@ -104,7 +102,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.DoubleLiteral
         result.m_TokenObject = Value
-        ' result.m_TokenData1 = TypeCharacter
         Return result
     End Function
 
@@ -112,8 +109,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int16Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 
@@ -121,8 +116,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int32Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 
@@ -130,8 +123,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.Int64Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 
@@ -139,8 +130,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt16Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 
@@ -148,8 +137,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt32Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 
@@ -157,8 +144,6 @@ Public Class Token
         Dim result As New Token(Location)
         result.m_TokenType = TokenType.UInt64Literal
         result.m_TokenObject = Value
-        'result.m_TokenData1 = TypeCharacter
-        'result.m_TokenData2 = base
         Return result
     End Function
 

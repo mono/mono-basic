@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -346,8 +346,16 @@ Public Class MemberAccessExpression
                 members = entry.Members
                 Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
                 withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
-                If withTypeArgs IsNot Nothing Then
+                If withTypeArgs IsNot Nothing AndAlso withTypeArgs.TypeArguments IsNot Nothing Then
                     members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+                    'For i As Integer = 0 To members.Count - 1
+                    '    Dim mR As Mono.Cecil.MethodReference = TryCast(members(i), Mono.Cecil.MethodReference)
+                    '    If mR Is Nothing Then
+                    '        Helper.StopIfDebugging()
+                    '        Continue For
+                    '    End If
+                    '    members(i) = CecilHelper.GetCorrectMember(mR, withTypeArgs.TypeArguments.ArgumentCollection)
+                    'Next
                 End If
                 members = Helper.FilterExternalInaccessible(Me.Compiler, members)
             End If
@@ -567,10 +575,10 @@ Public Class MemberAccessExpression
                     If var.Modifiers.Is(ModifierMasks.ReadOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) <> var.Modifiers.Is(ModifierMasks.Shared)) Then
                         Classification = New ValueClassification(Me, var)
                         Return True
-                    ElseIf CecilHelper.FindDefinition(T).IsClass Then
+                    ElseIf CecilHelper.IsClass(T) Then
                         Classification = New VariableClassification(Me, var)
                         Return True
-                    ElseIf T.IsValueType Then
+                    ElseIf CecilHelper.IsValueType(T) Then
                         If m_First.Classification.IsVariableClassification Then
                             Classification = New VariableClassification(Me, var)
                             Return True
@@ -597,14 +605,14 @@ Public Class MemberAccessExpression
                             Classification = New ValueClassification(Me, fld, m_First)
                         End If
                         Return True
-                    ElseIf CecilHelper.FindDefinition(T).IsClass Then
+                    ElseIf CecilHelper.IsClass(T) Then
                         If fD.IsStatic Then
                             Classification = New VariableClassification(Me, fld, Nothing)
                         Else
                             Classification = New VariableClassification(Me, fld, m_First)
                         End If
                         Return True
-                    ElseIf T.IsValueType Then
+                    ElseIf CecilHelper.IsValueType(T) Then
                         If m_First.Classification.IsVariableClassification Then
                             If Not TypeOf m_First Is InstanceExpression Then
                                 m_First = m_First.GetObjectReference
@@ -729,13 +737,4 @@ Public Class MemberAccessExpression
             Return m_First.ToString & "." & m_Second.Name
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_First IsNot Nothing Then m_First.Dump(Dumper)
-        Dumper.Write(".")
-        Compiler.Dumper.Dump(m_Second)
-        'If m_TypeArguments IsNot Nothing Then m_TypeArguments.Dump(Dumper)
-    End Sub
-#End If
 End Class

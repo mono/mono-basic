@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -79,7 +79,7 @@ Public Class GetRefExpression
                 ElseIf varC.ParameterInfo IsNot Nothing Then
                     Emitter.EmitLoadVariableLocation(refInfo, varC.ParameterInfo)
                 ElseIf varC.FieldInfo IsNot Nothing Then
-                    If varC.FieldInfo.IsLiteral Then
+                    If varC.FieldDefinition.IsLiteral Then
                         Dim local As Mono.Cecil.Cil.VariableDefinition
                         local = Emitter.DeclareLocal(Info, varC.FieldInfo.FieldType)
                         Emitter.EmitLoadVariable(Info, varC.FieldInfo)
@@ -91,7 +91,7 @@ Public Class GetRefExpression
                 ElseIf varC.ArrayVariable IsNot Nothing Then
                     Dim arrtype As Mono.Cecil.TypeReference = varC.ArrayVariable.ExpressionType
                     Dim elementtype As Mono.Cecil.TypeReference = CecilHelper.GetElementType(arrtype)
-                    Dim isnonprimitivevaluetype As Boolean = CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso elementtype.IsValueType
+                    Dim isnonprimitivevaluetype As Boolean = CecilHelper.IsPrimitive(Compiler, elementtype) = False AndAlso CecilHelper.IsValueType(elementtype)
 
                     result = varC.ArrayVariable.GenerateCode(Info.Clone(Me, True, False, arrtype)) AndAlso result
 

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -60,31 +60,14 @@
 Public Class MemberDeclarations
     Inherits Nameables(Of IMember)
 
-    Shadows Sub Add(ByVal Item As IMember)
-        Dim ptd As PartialTypeDeclaration = TryCast(Item, PartialTypeDeclaration)
-        If ptd IsNot Nothing AndAlso Me.ContainsName(Item.Name) Then
-            Dim mainDeclaration As PartialTypeDeclaration
-            Dim items As Generic.List(Of INameable)
+    Shadows Sub Add(ByVal Value As IMember)
+        Dim pD As PartialTypeDeclaration = TryCast(Value, PartialTypeDeclaration)
 
-            items = Me.Index.Item(Item.Name)
-            If items Is Nothing OrElse items.Count <> 1 Then
-                Helper.AddError(Parent)
-                Return
-            End If
-
-            mainDeclaration = TryCast(items(0), PartialTypeDeclaration)
-            If mainDeclaration Is Nothing Then
-                Helper.AddError(Parent)
-                Return
-            End If
-
-            If Helper.CompareName(mainDeclaration.Namespace, ptd.Namespace) Then
-                mainDeclaration.AddPartialDeclaration(ptd)
-                Return
-            End If
+        If pD IsNot Nothing AndAlso pD.IsPartial Then
+            Helper.Assert(MyBase.Index.Item(pD.Name) IsNot Nothing)
+        Else
+            MyBase.Add(Value)
         End If
-
-        MyBase.Add(Item)
     End Sub
 
     ReadOnly Property Declarations() As Nameables(Of IMember)
@@ -102,26 +85,6 @@ Public Class MemberDeclarations
             Return result
         End Get
     End Property
-
-    'Function GetMethod(ByVal Name As String, ByVal bindingAttr As BindingFlags, ByVal types As Mono.Cecil.TypeReference()) As Mono.Cecil.MethodReference
-    '    Dim result As Mono.Cecil.MethodReference = Nothing
-    '    Dim methods As Generic.List(Of MethodDeclaration)
-
-    '    methods = GetSpecificMembers(Of MethodDeclaration)()
-    '    For Each method As MethodDeclaration In methods
-    '        If Helper.CompareName(method.Name, Name) Then
-    '            If Helper.CompareTypes(method.Signature.Parameters.ToTypeArray, types) Then
-    '                result = method.MethodDescriptor 'New MethodDescriptor(method)
-    '                Exit For
-    '            End If
-    '        End If
-    '    Next
-
-    '    If result Is Nothing AndAlso CBool(bindingAttr And BindingFlags.FlattenHierarchy) Then
-    '        result = Parent.FindFirstParent(Of IType).CecilBaseType.GetMethod(Name, bindingAttr, Nothing, types, Nothing)
-    '    End If
-    '    Return result
-    'End Function
 
     Function GetSpecificMembers(Of T)() As Generic.List(Of T)
         Dim result As New Generic.List(Of T)

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,11 @@ Public MustInherit Class MemberDeclaration
 
     Overridable Sub UpdateDefinition()
 
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+        m_CustomAttributes.initialize(Me)
     End Sub
 
     ReadOnly Property GeneratedCode() As Boolean
@@ -118,10 +123,19 @@ Public MustInherit Class MemberDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property Name() As String Implements INameable.Name
+    Private ReadOnly Property Name2() As String Implements INameable.Name
         Get
             Return m_Name
         End Get
+    End Property
+
+    Public Property Name() As String
+        Get
+            Return m_Name
+        End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean

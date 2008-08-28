@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -137,7 +137,7 @@ Public Class SimpleNameExpression
                     End If
                 Else
                     If Me.Classification.IsVariableClassification Then
-                        If CecilHelper.IsByRef(Me.ExpressionType) Then
+                        If CecilHelper.IsByRef(Me.ExpressionType) OrElse CecilHelper.IsArray(Me.ExpressionType) Then
                             Emitter.EmitLoadVariable(Info, Me.Classification.AsVariableClassification)
                         Else
                             Emitter.EmitLoadVariableLocation(Info, Me.Classification.AsVariableClassification)
@@ -902,16 +902,4 @@ Public Class SimpleNameExpression
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Return True
     End Function
-
-    '#If DEBUG Then
-    '    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        m_Identifier.Dump(Dumper)
-    '        If m_TypeArgumentList IsNot Nothing Then
-    '            Dumper.Write("(Of ")
-    '            Compiler.Dumper.Dump(m_TypeArgumentList)
-    '            Dumper.Write(")")
-    '        End If
-    '    End Sub
-    '#End If
-
 End Class

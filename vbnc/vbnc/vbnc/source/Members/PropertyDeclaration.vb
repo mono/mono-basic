@@ -1,6 +1,6 @@
 ' ''
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -172,6 +172,12 @@ Public Class PropertyDeclaration
         Return result
     End Function
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        UpdateDefinition()
+    End Sub
+
     Public Overrides Sub UpdateDefinition()
         MyBase.UpdateDefinition()
 
@@ -243,12 +249,6 @@ Public Class PropertyDeclaration
 
         Helper.SetTypeOrTypeBuilder(Compiler, parameterTypes)
         returnType = Helper.GetTypeOrTypeBuilder(Compiler, returnType)
-
-        'm_Builder = DeclaringType.TypeBuilder.DefineProperty(name, attributes, returnType, parameterTypes)
-        'Compiler.TypeManager.RegisterReflectionMember(m_Builder, Me.MemberDescriptor)
-
-        'If m_Set IsNot Nothing Then m_Builder.SetSetMethod(m_Set.MethodBuilder)
-        'If m_Get IsNot Nothing Then m_Builder.SetGetMethod(m_Get.MethodBuilder)
 
         UpdateDefinition()
 

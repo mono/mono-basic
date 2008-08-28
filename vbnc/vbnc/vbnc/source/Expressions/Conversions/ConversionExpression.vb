@@ -137,11 +137,4 @@ Public MustInherit Class ConversionExpression
 
         Return result
     End Function
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("C" & ExpressionType.Name)
-        m_Expression.Dump(Dumper)
-    End Sub
-#End If
 End Class

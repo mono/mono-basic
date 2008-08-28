@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,12 @@ Public Class SubDeclaration
         MyBase.Init(Nothing, New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
         MyBase.MethodAttributes = MethodAttributes
         UpdateDefinition()
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_HandlesOrImplements IsNot Nothing Then m_HandlesOrImplements.Initialize(Me)
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)

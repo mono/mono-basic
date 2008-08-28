@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ Public Class VariableToValueExpression
 
         If m_Variable.InstanceExpression IsNot Nothing Then
             Dim exp As Mono.Cecil.TypeReference = m_Variable.InstanceExpression.ExpressionType
-            If exp.IsValueType AndAlso CecilHelper.IsByRef(exp) = False Then
+            If CecilHelper.IsValueType(exp) AndAlso CecilHelper.IsByRef(exp) = False Then
                 exp = CecilHelper.MakeByRefType(exp)
             End If
             result = m_Variable.InstanceExpression.GenerateCode(Info.Clone(Me, exp)) AndAlso result

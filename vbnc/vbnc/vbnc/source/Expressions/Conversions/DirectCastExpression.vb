@@ -40,13 +40,13 @@ Public Class DirectCastExpression
                 Emitter.EmitUnbox_Any(Info, ExpressionType)
             End If
         Else
-            If Expression.ExpressionType.IsValueType Then
+            If CecilHelper.IsValueType(Expression.ExpressionType) Then
                 If Helper.CompareType(ExpressionType, Expression.ExpressionType) Then
                     result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
-            ElseIf CecilHelper.IsGenericParameter(ExpressionType) = False AndAlso CecilHelper.IsClass(Expression.ExpressionType) AndAlso ExpressionType.IsValueType Then
+            ElseIf CecilHelper.IsGenericParameter(ExpressionType) = False AndAlso CecilHelper.IsClass(Expression.ExpressionType) AndAlso CecilHelper.IsValueType(ExpressionType) Then
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Emitter.EmitUnbox(Info, ExpressionType)
                 Emitter.EmitLoadObject(Info, ExpressionType)

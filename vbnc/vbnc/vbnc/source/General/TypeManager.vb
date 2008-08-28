@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -27,41 +27,18 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class TypeManager
-#If ENABLECECIL Then
     Private m_CecilAssemblies As New Generic.List(Of Mono.Cecil.AssemblyDefinition)
     Private m_CecilTypes As New TypeList
     Private m_CecilModuleTypes As New TypeList
     Private m_CecilTypesByNamespace As New NamespaceDictionary
-    Private m_CecilModulesByNamespace As New NamespaceDictionary
-#End If
-    '''' <summary>
-    '''' All the referenced assemblies
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_Assemblies As New Generic.List(Of System.Reflection.Assembly)
-
-    '''' <summary>
-    '''' All the types available.
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_Types As New TypeList
-
-    '''' <summary>
-    '''' All the types indexed by namespace.
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_TypesByNamespace As New NamespaceDictionary
-
+    
     Private m_TypesByNamespaceAndName As New Generic.Dictionary(Of String, Generic.List(Of Mono.Cecil.MemberReference))
-
-    'Private m_TypesByName As New Generic.Dictionary(Of String, Generic.List(Of Mono.Cecil.TypeReference))(Helper.StringComparer)
-    'Private m_TypesByFullName As New Generic.Dictionary(Of String, Generic.List(Of Type))(Helper.StringComparer)
 
     ''' <summary>
     ''' All the modules indexed by namespace.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_ModulesByNamespace As New NamespaceDictionary
+    Private m_CecilModulesByNamespace As New NamespaceDictionary
 
     ''' <summary>
     ''' All the namespaces available.
@@ -77,18 +54,7 @@ Public Class TypeManager
 
     Private m_Compiler As Compiler
 
-
     Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, Mono.Cecil.GenericInstanceType)(vbnc.Helper.StringComparer)
-    'Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
-    'Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
-
-    'Private Shared m_TypeDescriptorsOfTypesBuilders As New Generic.List(Of Mono.Cecil.TypeReference)
-    'Private Shared m_TypeDescriptorsOfTypesDescriptors As New Generic.List(Of TypeDescriptor)
-
-    'Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
-    'Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
-    'Private Shared m_MemberDescriptorsOfMembersBuilders As New Generic.List(Of Mono.Cecil.MemberReference)
-    'Private Shared m_MemberDescriptorsOfMembersDescriptors As New Generic.List(Of Mono.Cecil.MemberReference)
 
     Public MemberCache As New Generic.Dictionary(Of Mono.Cecil.TypeReference, MemberCache)(New TypeComparer)
 
@@ -103,28 +69,6 @@ Public Class TypeManager
         Return Nothing
     End Function
 
-    'Function IsTypeNamed(ByVal Type As Mono.Cecil.TypeReference, ByVal Name As String) As Boolean
-    '    Return Helper.CompareName(Type.Name, Name)
-    '    'If TypeOf Type Is TypeDescriptor Then Return Helper.CompareName(Type.Name, Name)
-    '    'Dim types As Generic.List(Of Type) = Nothing
-    '    'If m_TypesByName.TryGetValue(Name, types) = False Then Return False
-    '    'Return types.Contains(Type)
-    'End Function
-
-    'Function IsTypeFullnamed(ByVal Type As Mono.Cecil.TypeReference, ByVal FullName As String) As Boolean
-    '    Return Helper.CompareName(Type.FullName, FullName)
-    '    'If TypeOf Type Is TypeDescriptor Then Return Helper.CompareName(Type.FullName, FullName)
-    '    'Dim types As Generic.List(Of Type) = Nothing
-    '    'If m_TypesByFullName.TryGetValue(FullName, types) = False Then Return False
-    '    'Return types.Contains(Type)
-    'End Function
-
-    'ReadOnly Property TypesByName() As Generic.Dictionary(Of String, Generic.List(Of Mono.Cecil.TypeReference))
-    '    Get
-    '        Return m_TypesByName
-    '    End Get
-    'End Property
-
     Function GetCache(ByVal Type As Mono.Cecil.TypeReference) As MemberCache
         If MemberCache.ContainsKey(Type) Then
             Return MemberCache(Type)
@@ -136,17 +80,7 @@ Public Class TypeManager
     Function ContainsCache(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return MemberCache.ContainsKey(Type)
     End Function
-    '''' <summary>
-    '''' All the referenced assemblies
-    '''' </summary>
-    '''' <remarks></remarks>
-    'ReadOnly Property Assemblies() As Generic.List(Of System.Reflection.Assembly)
-    '    Get
-    '        Return m_Assemblies
-    '    End Get
-    'End Property
 
-#If ENABLECECIL Then
     ReadOnly Property CecilAssemblies() As Generic.List(Of Mono.Cecil.AssemblyDefinition)
         Get
             Return m_CecilAssemblies
@@ -158,7 +92,6 @@ Public Class TypeManager
             Return m_CecilTypes
         End Get
     End Property
-#End If
 
     ''' <summary>
     ''' All the non-nested types available.
@@ -253,7 +186,7 @@ Public Class TypeManager
                 Compiler.Report.WriteLine("Discarded type: " & tp.Name)
 #End If
             End If
-            result.AddRange(Me.GetType(Name, CecilHelper.getnestedtypes(tp), OnlyCreatedTypes))
+            result.AddRange(Me.GetType(Name, CecilHelper.GetNestedTypes(tp), OnlyCreatedTypes))
         Next
         Return result
     End Function
@@ -355,14 +288,14 @@ Public Class TypeManager
         Dim refAss As Mono.Cecil.AssemblyDefinition
         '  Try
         If IO.File.Exists(Filename) Then
-            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename)
+            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename, True)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
 
-        If IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
+        If Reflection.Assembly.GetExecutingAssembly.Location <> String.Empty AndAlso IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
             Filename = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
-            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename)
+            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename, True)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
@@ -372,7 +305,7 @@ Public Class TypeManager
             Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
             Try
                 If IO.File.Exists(strFullPath) Then
-                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath)
+                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath, True)
                     'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
                     Return refAss
                 End If
@@ -441,7 +374,7 @@ Public Class TypeManager
         'If it is a module add it to the list of all modules and to the list of modules by namespace.
         If Helper.IsModule(Compiler, Type) Then
             m_CecilModuleTypes.Add(Type)
-            m_cecilModulesByNamespace.AddType(Type)
+            m_CecilModulesByNamespace.AddType(Type)
         End If
 
     End Sub
@@ -464,7 +397,7 @@ Public Class TypeManager
         For Each ass As Mono.Cecil.AssemblyDefinition In CecilAssemblies
             Dim types As Mono.Cecil.TypeDefinitionCollection = ass.MainModule.Types
             For Each type As Mono.Cecil.TypeDefinition In types
-                If type.ispublic Then
+                If type.IsPublic Then
                     LoadType(type)
                 End If
             Next
@@ -493,8 +426,8 @@ Public Class TypeManager
     Function GetModulesByNamespace(ByVal [Namespace] As String) As TypeDictionary
         If [Namespace] Is Nothing Then [Namespace] = ""
         If [Namespace].StartsWith("Global.") Then [Namespace] = [Namespace].Substring(7)
-        If m_ModulesByNamespace.ContainsKey([Namespace]) Then
-            Return m_ModulesByNamespace([Namespace])
+        If m_CecilModulesByNamespace.ContainsKey([Namespace]) Then
+            Return m_CecilModulesByNamespace([Namespace])
         Else
             Return New TypeDictionary()
         End If
@@ -643,40 +576,23 @@ Public Class TypeManager
     ''' <param name="TypeArguments"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function MakeGenericMethod(ByVal Parent As ParsedObject, ByVal OpenMethod As Mono.Cecil.MethodReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments() As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
-        Dim result As Mono.Cecil.GenericInstanceMethod
-
-        'result = New GenericMethodDescriptor(Parent, OpenMethod, TypeParameters, TypeArguments)
-
-        result = New Mono.Cecil.GenericInstanceMethod(OpenMethod)
-        For i As Integer = 0 To TypeParameters.Length - 1
-            Dim g As Mono.Cecil.GenericParameter = TryCast(TypeParameters(i), Mono.Cecil.GenericParameter)
-            Helper.Assert(g IsNot Nothing)
-            result.GenericParameters.Add(g)
-        Next
-        For i As Integer = 0 To TypeArguments.Length - 1
-            result.GenericArguments.Add(TypeArguments(i))
-        Next
-
-        Return result
-    End Function
-
-    Function MakeGenericConstructor(ByVal Parent As ParsedObject, ByVal OpenConstructor As Mono.Cecil.MethodReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments() As Mono.Cecil.TypeReference, ByVal ClosedType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
+    Function MakeGenericMethod(ByVal Parent As ParsedObject, ByVal OpenMethod As Mono.Cecil.MethodReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments As Mono.Cecil.GenericArgumentCollection) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
+        Dim genM As Mono.Cecil.GenericInstanceMethod
 
-        'result = New GenericConstructorDescriptor(Parent, OpenConstructor, TypeParameters, TypeArguments, ClosedType)
-        result = Nothing : Helper.Stop()
+        result = CecilHelper.GetCorrectMember(OpenMethod, TypeArguments)
 
-        Return result
-    End Function
+        If OpenMethod.GenericParameters.Count = 0 Then Return result
 
-    Function MakeGenericProperty(ByVal Parent As ParsedObject, ByVal OpenProperty As Mono.Cecil.PropertyReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments() As Mono.Cecil.TypeReference, ByVal ClosedType As Mono.Cecil.TypeReference) As Mono.Cecil.PropertyReference
-        Dim result As Mono.Cecil.PropertyReference
+        Helper.Assert(OpenMethod.GenericParameters.Count = TypeArguments.Count)
 
-        'result = New GenericPropertyDescriptor(Parent, OpenProperty, TypeParameters, TypeArguments, ClosedType)
-        result = Nothing : Helper.Stop()
+        genM = New Mono.Cecil.GenericInstanceMethod(result)
+        genM.OriginalMethod = CecilHelper.FindDefinition(OpenMethod)
+        For i As Integer = 0 To OpenMethod.GenericParameters.Count - 1
+            genM.GenericArguments.Add(Helper.GetTypeOrTypeReference(Parent.Compiler, TypeArguments(i)))
+        Next
 
-        Return result
+        Return genM
     End Function
 
     Function MakeGenericParameter(ByVal Parent As ParsedObject, ByVal OpenParameter As Mono.Cecil.ParameterReference, ByVal ParameterType As Mono.Cecil.TypeReference) As Mono.Cecil.ParameterReference
@@ -688,21 +604,15 @@ Public Class TypeManager
         Return result
     End Function
 
-    Function MakeGenericType(ByVal Parent As ParsedObject, ByVal OpenType As Mono.Cecil.TypeReference, ByVal GenericArguments As Mono.Cecil.TypeReference()) As Mono.Cecil.TypeReference
+    Function MakeGenericType(ByVal Parent As ParsedObject, ByVal OpenType As Mono.Cecil.TypeReference, ByVal GenericArguments As Mono.Cecil.GenericArgumentCollection) As Mono.Cecil.TypeReference
         Dim result As Mono.Cecil.GenericInstanceType
-        Dim genericArgumentList As New Generic.List(Of Mono.Cecil.TypeReference)
-        Dim genericParameterList As New Generic.List(Of Mono.Cecil.TypeReference)
-        Dim genericParameters() As Mono.Cecil.TypeReference
 
-        genericArgumentList.AddRange(GenericArguments)
-        genericParameterList.AddRange(CecilHelper.GetGenericArguments(OpenType))
-
-        Helper.Assert(genericArgumentList.Count = genericParameterList.Count)
-
-        genericParameters = genericParameterList.ToArray
-        GenericArguments = genericArgumentList.ToArray
-        result = New Mono.Cecil.GenericInstanceType(OpenType)
+        result = New Mono.Cecil.GenericInstanceType(Helper.GetTypeOrTypeReference(Parent.Compiler, OpenType))
         'result = New GenericTypeDescriptor(Parent, OpenType, genericParameters, GenericArguments)
+
+        For i As Integer = 0 To GenericArguments.Count - 1
+            result.GenericArguments.Add(Helper.GetTypeOrTypeReference(Parent.Compiler, GenericArguments(i)))
+        Next
 
         'Needs to add this to a cache, otherwise two otherwise equal types might be created with two different 
         'type instances, which is not good as any type comparison would fail.

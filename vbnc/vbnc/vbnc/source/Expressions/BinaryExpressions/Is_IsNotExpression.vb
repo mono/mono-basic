@@ -52,10 +52,10 @@ Public Class Is_IsNotExpression
 
         ValidateBeforeGenerateCode(Info)
 
-        If m_LeftExpression.ExpressionType.IsValueType Then
+        If CecilHelper.IsValueType(m_LeftExpression.ExpressionType) Then
             Throw New InternalException(Me)
         End If
-        If m_RightExpression.ExpressionType.IsValueType Then
+        If CecilHelper.IsValueType(m_RightExpression.ExpressionType) Then
             Throw New InternalException(Me)
         End If
 

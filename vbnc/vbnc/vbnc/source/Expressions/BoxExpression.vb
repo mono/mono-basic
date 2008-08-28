@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -38,11 +38,12 @@ Public Class BoxExpression
         Helper.Assert(m_DestinationType IsNot Nothing)
         Helper.Assert(m_Expression IsNot Nothing)
         Helper.Assert(m_Expression.IsResolved)
+        Helper.Assert(TypeOf Expression Is BoxExpression = False)
 
         Classification = New ValueClassification(Me, m_DestinationType)
 
         If MyBase.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(Me.Location)
         End If
 
     End Sub

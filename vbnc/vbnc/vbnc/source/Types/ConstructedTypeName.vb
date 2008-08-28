@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,8 @@ Public Class ConstructedTypeName
     Private m_TypeArgumentList As TypeArgumentList
 
     Private m_ResolvedType As Mono.Cecil.TypeReference
-    Private m_OpenResolvedType As mono.Cecil.TypeReference
-    Private m_ClosedResolvedType As mono.Cecil.TypeReference
+    Private m_OpenResolvedType As Mono.Cecil.TypeReference
+    Private m_ClosedResolvedType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
@@ -49,7 +49,7 @@ Public Class ConstructedTypeName
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ConstructedTypeName
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New ConstructedTypeName(NewParent)
-        result.Init(m_QualifiedIdentifier.Clone(result), m_TypeArgumentList.clone(result))
+        result.Init(m_QualifiedIdentifier.Clone(result), m_TypeArgumentList.Clone(result))
         Return result
     End Function
 
@@ -59,7 +59,7 @@ Public Class ConstructedTypeName
         End Get
     End Property
 
-    ReadOnly Property ClosedResolvedType() As mono.Cecil.TypeReference
+    ReadOnly Property ClosedResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ClosedResolvedType
         End Get
@@ -104,9 +104,7 @@ Public Class ConstructedTypeName
             Else
                 Helper.AddError(Me)
             End If
-            Dim GenericArguments() As Mono.Cecil.TypeReference
-            GenericArguments = m_TypeArgumentList.AsTypeArray
-            m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, GenericArguments)
+            m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, m_TypeArgumentList.ArgumentCollection)
             m_ResolvedType = m_ClosedResolvedType
         Else
             Helper.AddError(Me)

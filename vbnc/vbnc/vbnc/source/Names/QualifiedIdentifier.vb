@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -33,18 +33,15 @@ Public Class QualifiedIdentifier
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        ' Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Location As Span)
         MyBase.New(Parent, location)
-        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal First As ParsedObject, ByVal Second As Token)
         MyBase.new(Parent)
         Me.Init(First, Second)
-        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub Init(ByVal First As ParsedObject, ByVal Second As Token)
@@ -126,7 +123,6 @@ Public Class QualifiedIdentifier
             Return m_Second
         End Get
         Set(ByVal value As Token)
-            'Helper.Assert(value Is Nothing)
             m_Second = value
         End Set
     End Property

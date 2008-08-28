@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -77,5 +77,9 @@ Public Class BaseObjects(Of T)
     Function ResolveTypeReferences() As Boolean
         Return Helper.ResolveTypeReferencesCollection(Me)
     End Function
+
+    Sub Initialize(ByVal Parent As BaseObject)
+        Helper.InitializeCollection(Me, Parent)
+    End Sub
 
 End Class

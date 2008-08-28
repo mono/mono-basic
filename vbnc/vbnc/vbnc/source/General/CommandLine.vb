@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -136,11 +136,6 @@ Public Class CommandLine
             Return m_Compiler
         End Get
     End Property
-
-#If DEBUG Then
-    Private m_bDumping As Boolean
-    Private m_StopAfter As String
-#End If
 
 #Region "Properties"
 
@@ -726,19 +721,6 @@ Public Class CommandLine
         End Get
     End Property
 
-#If DEBUG Then
-    ReadOnly Property Dumping() As Boolean
-        Get
-            Return m_bDumping
-        End Get
-    End Property
-    ReadOnly Property StopAfter() As String
-        Get
-            If m_StopAfter Is Nothing Then m_StopAfter = ""
-            Return m_StopAfter
-        End Get
-    End Property
-#End If
 #End Region
 
     ReadOnly Property AllArgumentsAsArray() As String()
@@ -786,9 +768,14 @@ Public Class CommandLine
             result = ParseInternal(CommandLine) AndAlso result
 
             If m_bNoConfig = False Then
-                Dim defaultrspfile As String
-                defaultrspfile = IO.Path.Combine(IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly.Location), "vbnc.rsp")
-                If IO.File.Exists(defaultrspfile) = False Then
+                Dim defaultrspfile As String = Nothing
+                Dim compiler_path As String = System.Reflection.Assembly.GetExecutingAssembly.Location
+                If compiler_path = String.Empty Then
+                    compiler_path = System.Reflection.Assembly.GetEntryAssembly.Location
+                End If
+                defaultrspfile = IO.Path.Combine(IO.Path.GetDirectoryName(compiler_path), "vbnc.rsp")
+
+                If defaultrspfile Is Nothing OrElse IO.File.Exists(defaultrspfile) = False Then
                     Try
                         Using resources As System.IO.Stream = Reflection.Assembly.GetExecutingAssembly.GetManifestResourceStream("vbnc.vbnc.rsp")
                             If resources IsNot Nothing Then
@@ -1068,11 +1055,6 @@ Public Class CommandLine
                 m_bUTF8Output = True
             Case "utf8output-"
                 m_bUTF8Output = False
-#If DEBUG Then
-            Case "dump"
-                m_bDumping = True
-                m_StopAfter = strValue
-#End If
             Case "novbruntimeref"
                 m_NoVBRuntimeRef = True
             Case "errorreport"
@@ -1236,21 +1218,6 @@ Public Class CommandLine
             Return m_lstAllArgs
         End Get
     End Property
-
-#If DEBUG Then
-    Sub Dump()
-        Compiler.Report.WriteLine("Commandline dump:")
-        Compiler.Report.WriteLine(" FileNames:")
-        For Each file As CodeFile In m_lstFileNames
-            Compiler.Report.WriteLine("  " & file.FileName)
-        Next
-        Compiler.Report.WriteLine(" Arguments:")
-        For Each s As String In m_lstAllArgs
-            Compiler.Report.WriteLine("  " & s)
-        Next
-        Compiler.Report.WriteLine("End of commandline dump.")
-    End Sub
-#End If
 End Class
 
 

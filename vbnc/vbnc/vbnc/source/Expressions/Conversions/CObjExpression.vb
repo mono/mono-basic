@@ -52,7 +52,7 @@ Public Class CObjExpression
 
         If Info.IsRHS Then
             result = Expression.GenerateCode(Info.Clone(Expression, True, False, Expression.ExpressionType)) AndAlso result
-            If Expression.ExpressionType.IsValueType OrElse CecilHelper.IsGenericParameter(Expression.ExpressionType) Then
+            If CecilHelper.IsValueType(Expression.ExpressionType) OrElse CecilHelper.IsGenericParameter(Expression.ExpressionType) Then
                 Emitter.EmitBox(Info, Expression.ExpressionType)
             End If
         Else

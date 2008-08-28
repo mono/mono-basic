@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -60,15 +60,11 @@ Public Class ArgumentList
     End Function
 
     Function VerifyArguments(ByVal Method As Mono.Cecil.PropertyReference) As Boolean
-        Dim parameters As Mono.Cecil.ParameterDefinitionCollection
-        parameters = Helper.GetParameters(Compiler, Method)
-        Return VerifyArguments(parameters)
+        Return VerifyArguments(Method.Parameters)
     End Function
 
     Function VerifyArguments(ByVal Method As Mono.Cecil.MethodReference) As Boolean
-        Dim parameters As Mono.Cecil.ParameterDefinitionCollection
-        parameters = Helper.GetParameters(Compiler, Method)
-        Return VerifyArguments(parameters)
+        Return VerifyArguments(Method.Parameters)
     End Function
 
     ''' <summary>
@@ -104,7 +100,7 @@ Public Class ArgumentList
                 m_Arguments(i).Expression = del
             End If
 
-            If CecilHelper.IsByRef(par.ParameterType) AndAlso CecilHelper.IsByRef(arg.Expression.ExpressionType) = False AndAlso CecilHelper.GetElementType(par.ParameterType).IsValueType = False Then
+            If CecilHelper.IsByRef(par.ParameterType) AndAlso CecilHelper.IsByRef(arg.Expression.ExpressionType) = False AndAlso CecilHelper.IsValueType(CecilHelper.GetElementType(par.ParameterType)) = False Then
                 If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
                     exp = New GetRefExpression(Me, arg.Expression)
                 Else

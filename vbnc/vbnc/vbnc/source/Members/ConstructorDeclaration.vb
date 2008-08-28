@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,7 @@ Public Class ConstructorDeclaration
     ''' </summary>
     ''' <remarks></remarks>
     Private m_BaseCtorCall As Statement
+    Private m_Added As Boolean
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
@@ -78,8 +79,9 @@ Public Class ConstructorDeclaration
 
         result.Init(New Attributes(result), New Modifiers(ModifierMasks.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
 
+        result.UpdateDefinition()
         If result.ResolveTypeReferences() = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(Parent.Location)
         End If
 
         Return result
@@ -91,7 +93,7 @@ Public Class ConstructorDeclaration
         result.Init(New Attributes(result), New Modifiers(), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         If result.ResolveTypeReferences() = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(Parent.Location)
         End If
 
         Return result
@@ -200,7 +202,8 @@ Public Class ConstructorDeclaration
         MethodAttributes = Helper.GetAttributes(Me)
         MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
 
-        If DeclaringType IsNot Nothing AndAlso DeclaringType.CecilType IsNot Nothing AndAlso DeclaringType.CecilType.Constructors.Contains(CecilBuilder) = False Then
+        If DeclaringType IsNot Nothing AndAlso DeclaringType.CecilType IsNot Nothing AndAlso m_Added = False Then
+            m_Added = True
             DeclaringType.CecilType.Constructors.Add(CecilBuilder)
         End If
     End Sub
@@ -276,7 +279,7 @@ Public Class ConstructorDeclaration
             If variable.HasInitializer AndAlso variable.DeclaringMethod.IsShared = Me.IsShared Then
                 If Me.IsShared = False Then Emitter.EmitLoadMe(Info, Me.DeclaringType.CecilType)
                 Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__ctor)
-                Emitter.EmitStoreField(Info, variable.StaticInitBuilder)
+                Emitter.EmitStoreField(Info, CecilHelper.GetCorrectMember(variable.StaticInitBuilder, variable.StaticInitBuilder.DeclaringType))
             End If
         Next
         Return result
@@ -309,7 +312,7 @@ Public Class ConstructorDeclaration
             End If
         End If
     End Sub
-#If ENABLECECIL Then
+
     Private Sub CreateDefaultCtorCallCecil()
         Dim type As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
         Dim classtype As ClassDeclaration = TryCast(type, ClassDeclaration)
@@ -338,7 +341,6 @@ Public Class ConstructorDeclaration
             End If
         End If
     End Sub
-#End If
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer

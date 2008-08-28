@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ Partial Class Parser
         Dim result As New VariableIdentifiers(Parent)
 
         If ParseList(Of VariableIdentifier)(result, New ParseDelegate_Parent(Of VariableIdentifier)(AddressOf ParseVariableIdentifier), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         Return result
@@ -51,7 +51,7 @@ Partial Class Parser
         Dim m_Signature As SubSignature
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, ModifierMasks.ConstructorModifiers)
+        m_Modifiers = ParseModifiers(ModifierMasks.ConstructorModifiers)
 
         tm.AcceptIfNotInternalError(KS.Sub)
         tm.AcceptIfNotInternalError(KS.[New])
@@ -59,21 +59,21 @@ Partial Class Parser
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
                 If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), m_ParameterList) = False Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
-                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         End If
 
         m_Signature = New SubSignature(result, "", m_ParameterList)
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Block = ParseCodeBlock(result, False)
-        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Block)
 
@@ -98,18 +98,18 @@ Partial Class Parser
         Dim m_Get As PropertyGetDeclaration = Nothing
         Dim m_Set As PropertySetDeclaration = Nothing
 
-        m_Modifiers = ParseModifiers(result, ModifierMasks.PropertyModifiers)
+        m_Modifiers = ParseModifiers(ModifierMasks.PropertyModifiers)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
         m_Signature = ParseFunctionSignature(result)
-        If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
 
         If tm.AcceptEndOfStatement() = False Then
             m_ImplementsClause = ParseImplementsClause(result)
-            If m_ImplementsClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+            If m_ImplementsClause Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_ImplementsClause = Nothing
         End If
@@ -121,14 +121,14 @@ Partial Class Parser
                     Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Get Property.")
                 End If
                 m_Get = ParsePropertyGetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
-                If m_Get Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_Get Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 m_Attributes = Nothing
             ElseIf PropertySetDeclaration.IsMe(tm) Then
                 If m_Set IsNot Nothing Then
                     Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Set Property.")
                 End If
                 m_Set = ParsePropertySetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
-                If m_Set Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_Set Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 m_Attributes = Nothing
             Else
                 If m_Attributes IsNot Nothing AndAlso m_Attributes.Count > 0 Then
@@ -139,8 +139,8 @@ Partial Class Parser
             End If
         Loop
 
-        If tm.AcceptIfNotError(KS.End, KS.Property) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Property) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
             Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
@@ -178,7 +178,7 @@ Partial Class Parser
         Dim m_ParameterList As New ParameterList(result)
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, ModifierMasks.AccessModifiers)
+        m_Modifiers = ParseModifiers(ModifierMasks.AccessModifiers)
         If m_Modifiers.Empty = False Then
             m_Modifiers.AddModifiers(ParentModifiers And (Not ModifierMasks.AccessModifiers))
         Else
@@ -188,18 +188,18 @@ Partial Class Parser
 
         If tm.Accept(KS.LParenthesis) Then
             If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), m_ParameterList) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
-            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Block = ParseCodeBlock(result, False)
-        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.End, KS.Set) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Set) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
 
         result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block, m_ParameterList)
@@ -220,7 +220,7 @@ Partial Class Parser
         Dim m_Modifiers As Modifiers
         Dim m_Block As CodeBlock
 
-        m_Modifiers = ParseModifiers(result, ModifierMasks.AccessModifiers)
+        m_Modifiers = ParseModifiers(ModifierMasks.AccessModifiers)
         If m_Modifiers.Empty = False Then
             m_Modifiers.AddModifiers(ParentModifiers And (Not ModifierMasks.AccessModifiers))
         Else
@@ -228,13 +228,13 @@ Partial Class Parser
         End If
 
         tm.AcceptIfNotInternalError(KS.Get)
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Block = ParseCodeBlock(result, False)
-        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Block Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.End, KS.Get) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.Get) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block)
 
@@ -267,7 +267,7 @@ Partial Class Parser
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
                 If ParseList(Of Parameter)(m_ParameterList, New ParseDelegate_Parent(Of Parameter)(AddressOf ParseParameter), m_ParameterList) = False Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
                 result = tm.AcceptIfNotError(KS.RParenthesis) AndAlso result
             End If
@@ -290,7 +290,7 @@ Partial Class Parser
         Dim m_ParameterList As New ParameterList(result)
 
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_Identifier, m_TypeParameters, m_ParameterList)
@@ -312,17 +312,17 @@ Partial Class Parser
         Dim m_TypeName As TypeName = Nothing
 
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         If tm.Accept(KS.As) Then
             If Attributes.IsMe(tm) Then
                 If ParseAttributes(result, m_ReturnTypeAttributes) = False Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
             End If
             m_TypeName = ParseTypeName(result)
-            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation))
@@ -338,20 +338,16 @@ Partial Class Parser
     ''' <remarks></remarks>
     ''' 
     Private Function ParseTypeParameters(ByVal Parent As ParsedObject) As TypeParameters
-        Dim result As New TypeParameters(Parent)
+        Dim result As New TypeParameters()
 
-        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptIfNotError(KS.Of) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptIfNotError(KS.Of) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        Dim m_TypeParameters As New TypeParameterList(result)
-
-        If ParseList(Of TypeParameter)(m_TypeParameters, New ParseDelegate_Parent(Of TypeParameter)(AddressOf ParseTypeParameter), m_TypeParameters) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+        If ParseList(Of TypeParameter)(result.Parameters, New ParseDelegate_Parent(Of TypeParameter)(AddressOf ParseTypeParameter), result.Parameters) = False Then
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
-
-        result.Init(m_TypeParameters)
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         Return result
     End Function
@@ -362,29 +358,29 @@ Partial Class Parser
     ''' <remarks></remarks>
     Private Function ParseTypeParameter(ByVal Parent As ParsedObject) As TypeParameter
         Dim result As New TypeParameter(Parent)
+        Dim m_Identifier As Identifier
+        Dim m_TypeParameterConstraints As TypeParameterConstraints
+        Dim parentList As TypeParameterList
 
         Helper.Assert(TypeOf Parent Is TypeParameterList)
 
-        Dim m_Identifier As Identifier
-        Dim m_TypeParameterConstraints As TypeParameterConstraints
-        Dim GenericParameterPosition As Integer
-
-        Dim parentList As TypeParameterList
-
         parentList = DirectCast(Parent, TypeParameterList)
-        GenericParameterPosition = parentList.Count + 1
+        result.GenericParameterPosition = parentList.Count + 1
 
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        Else
+            result.Identifier = m_Identifier
+        End If
 
         If TypeParameterConstraints.CanBeMe(tm) Then
             m_TypeParameterConstraints = ParseTypeParameterConstraints(result)
-            If m_TypeParameterConstraints Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeParameterConstraints Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            result.TypeParameterConstraints = m_TypeParameterConstraints
         Else
             m_TypeParameterConstraints = Nothing
         End If
-
-        result.Init(m_Identifier, m_TypeParameterConstraints, GenericParameterPosition)
 
         Return result
     End Function
@@ -402,9 +398,9 @@ Partial Class Parser
 
         If tm.Accept(KS.LBrace) Then
             If ParseList(Of Constraint)(m_ConstraintList, New ParseDelegate_Parent(Of Constraint)(AddressOf ParseConstraint), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
-            If tm.AcceptIfNotError(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             Dim tmpConstraint As Constraint = Nothing
             tmpConstraint = ParseConstraint(result)
@@ -433,7 +429,7 @@ Partial Class Parser
             tm.NextToken()
         Else
             m_TypeName = ParseTypeName(result)
-            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_TypeName, m_Special)
@@ -461,21 +457,21 @@ Partial Class Parser
             ParseAttributes(result, m_Attributes)
         End If
 
-        m_Modifiers = ParseModifiers(result, ModifierMasks.ParameterModifiers)
+        m_Modifiers = ParseModifiers(ModifierMasks.ParameterModifiers)
 
         m_ParameterIdentifier = ParseParameterIdentifier(result)
-        If m_ParameterIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_ParameterIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.As) Then
             m_TypeName = ParseTypeName(result)
-            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_TypeName = Nothing
         End If
 
         If tm.Accept(KS.Equals) Then
             m_ConstantExpression = ParseExpression(result)
-            If m_ConstantExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_ConstantExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_ConstantExpression = Nothing
         End If
@@ -496,11 +492,11 @@ Partial Class Parser
         Dim m_ArrayNameModifier As ArrayNameModifier = Nothing
 
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If vbnc.ArrayNameModifier.CanBeMe(tm) Then
             m_ArrayNameModifier = ParseArrayNameModifier(result)
-            If m_ArrayNameModifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_ArrayNameModifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_Identifier, m_ArrayNameModifier)
@@ -516,7 +512,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Implements)
 
         If ParseList(Of InterfaceMemberSpecifier)(m_ImplementsList, New ParseDelegate_Parent(Of InterfaceMemberSpecifier)(AddressOf ParseInterfaceMemberSpecifier), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_ImplementsList)
@@ -536,7 +532,7 @@ Partial Class Parser
         If tm.Accept(KS.Dot) Then
             m_1 = m_NonArrayTypeName
             m_2 = ParseIdentifierOrKeyword(result)
-            If m_2 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_2 Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf m_NonArrayTypeName.IsSimpleTypeName AndAlso m_NonArrayTypeName.AsSimpleTypeName.IsQualifiedIdentifier Then
             Dim stn As SimpleTypeName = m_NonArrayTypeName.AsSimpleTypeName
             Dim qi As QualifiedIdentifier = stn.AsQualifiedIdentifier

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -74,7 +74,7 @@ Public Class MethodGroupToValueExpression
 
         Helper.Assert(m_MethodGroup.Resolved)
 
-        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, New ArgumentList(Me.Parent, m_MethodGroup.Parameters), m_MethodGroup.ResolvedMethod)
+        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, New ArgumentList(Me.Parent, m_MethodGroup.Parameters), Helper.GetMethodOrMethodReference(Compiler, m_MethodGroup.ResolvedMethod))
 
         Return result
     End Function

@@ -61,7 +61,7 @@ Public Class ExpressionClassification
             'IsConstant should have been called before ConstantValue
             'and if a classification overrides IsConstant to return true,
             'it should also override ConstantValue
-            Helper.Stop()
+            Helper.StopIfDebugging()
             Return Nothing
         End Get
     End Property

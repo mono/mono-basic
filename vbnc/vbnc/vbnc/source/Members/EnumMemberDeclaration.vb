@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,7 @@ Public Class EnumMemberDeclaration
     Public Property ConstantValue() As Object
         Get
             If m_ResolvedMember = False Then
-                Helper.StopIfDebugging()
+                'Helper.StopIfDebugging()
                 ResolveMember(ResolveInfo.Default(Compiler))
             End If
             Return m_FieldBuilderCecil.Constant

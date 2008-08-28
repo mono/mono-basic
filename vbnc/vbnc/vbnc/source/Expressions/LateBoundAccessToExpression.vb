@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -116,7 +116,7 @@ Public MustInherit Class LateBoundAccessToExpression
                 Emitter.EmitLoadVariable(Info, Info.Compiler.TypeCache.System_Reflection_Missing__Value)
             Else
                 result = arg.GenerateCode(Info.Clone(Info.Context, True, False, arg.Expression.ExpressionType)) AndAlso result
-                If arg.Expression.ExpressionType.IsValueType Then
+                If CecilHelper.IsValueType(arg.Expression.ExpressionType) Then
                     Emitter.EmitBox(Info, arg.Expression.ExpressionType)
                 End If
             End If
@@ -127,7 +127,7 @@ Public MustInherit Class LateBoundAccessToExpression
             Emitter.EmitLoadVariable(Info, arguments)
             Emitter.EmitLoadI4Value(Info, elementCount - 1)
             result = Info.RHSExpression.GenerateCode(Info.Clone(Info.Context, True, False, Info.RHSExpression.ExpressionType)) AndAlso result
-            If Info.RHSExpression.ExpressionType.IsValueType Then
+            If CecilHelper.IsValueType(Info.RHSExpression.ExpressionType) Then
                 Emitter.EmitBox(Info, Info.RHSExpression.ExpressionType)
             End If
             Emitter.EmitStoreElement(Info, Info.Compiler.TypeCache.System_Object, Info.Compiler.TypeCache.System_Object_Array)
@@ -210,9 +210,9 @@ Public MustInherit Class LateBoundAccessToExpression
                                 Dim fD As IFieldMember = TryCast(varC.FieldInfo.Annotations(Info.Compiler), IFieldMember)
                                 If fD IsNot Nothing Then
                                     'TODO: Is the copyback done for readonly fields inside constructors?
-                                    copyBack = varC.FieldInfo.IsLiteral = False AndAlso fD.Modifiers.Is(ModifierMasks.ReadOnly) = False
+                                    copyBack = varC.FieldDefinition.IsLiteral = False AndAlso fD.Modifiers.Is(ModifierMasks.ReadOnly) = False
                                 Else
-                                    copyBack = varC.FieldInfo.IsLiteral = False
+                                    copyBack = varC.FieldDefinition.IsLiteral = False
                                 End If
                             Else
                                 copyBack = False

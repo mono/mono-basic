@@ -4,7 +4,7 @@
 /r:Microsoft.VisualBasic.dll
 /r:System.Xml.dll
 /r:System.Windows.Forms.dll
-/r:Mono.Cecil.dll
+/r:Mono.Cecil.VB.dll
 /define:DEBUG=0,ENABLECECIL=True
 #/define:DEBUG=1
 /imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit

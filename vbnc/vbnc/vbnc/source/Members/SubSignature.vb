@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -45,8 +45,6 @@ Public Class SubSignature
     ''' <remarks></remarks>
     Private m_ParameterList As ParameterList
 
-    'Protected m_ReturnParameter As ParameterInfo
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
@@ -82,6 +80,16 @@ Public Class SubSignature
         End If
     End Sub
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        Helper.Assert(TypeOf Parent Is ClassDeclaration = False)
+
+        If m_Identifier IsNot Nothing Then m_Identifier.Initialize(Me)
+        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
+        If m_ParameterList IsNot Nothing Then m_ParameterList.Initialize(Me)
+    End Sub
+
     Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
@@ -105,8 +113,14 @@ Public Class SubSignature
 
     Sub CloneTo(ByVal ClonedSignature As SubSignature)
         ClonedSignature.m_Identifier = m_Identifier
-        If m_TypeParameters IsNot Nothing Then ClonedSignature.m_TypeParameters = m_TypeParameters.Clone(ClonedSignature)
-        If m_ParameterList IsNot Nothing Then ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
+        If m_TypeParameters IsNot Nothing Then
+            ClonedSignature.m_TypeParameters = m_TypeParameters.Clone()
+            ClonedSignature.m_TypeParameters.Initialize(ClonedSignature)
+        End If
+        If m_ParameterList IsNot Nothing Then
+            ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
+            ClonedSignature.m_ParameterList.Initialize(ClonedSignature)
+        End If
     End Sub
 
     ReadOnly Property Identifier() As Identifier

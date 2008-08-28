@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@ Public Class DelegateDeclaration
     Public Const STR_BeginInvoke As String = "BeginInvoke"
 
     Private m_Signature As SubSignature
+    Private m_ImplicitElementsCreated As Boolean
 
     Private m_Constructor As ConstructorDeclaration
     Private m_Invoke As SubDeclaration
@@ -56,12 +57,17 @@ Public Class DelegateDeclaration
         Else
             m_Signature = New FunctionSignature(Me, Name, Parameters, ReturnType, Parent.Location)
         End If
-
         Me.Init(New Attributes(Me), Modifiers, m_Signature)
     End Sub
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
+    End Sub
+
     Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(CustomAttributes, Modifiers, New MemberDeclarations(Me), Signature.Identifier, Signature.TypeParameters)
+        MyBase.Init(CustomAttributes, Modifiers, Signature.Identifier, Signature.TypeParameters)
         m_Signature = Signature
     End Sub
 
@@ -69,6 +75,9 @@ Public Class DelegateDeclaration
         Dim result As Boolean = True
         Dim ReturnType As TypeName
         Dim Parameters As ParameterList = m_Signature.Parameters
+
+        If m_ImplicitElementsCreated Then Return True
+        m_ImplicitElementsCreated = True
 
         Helper.Assert(Me.Members.Count = 0)
 
@@ -162,6 +171,10 @@ Public Class DelegateDeclaration
         Members.Add(m_BeginInvoke)
         Members.Add(m_EndInvoke)
         Members.Add(m_Invoke)
+
+        m_BeginInvoke.Initialize(Me)
+        m_EndInvoke.Initialize(Me)
+        m_Invoke.Initialize(Me)
 
         Return result
     End Function

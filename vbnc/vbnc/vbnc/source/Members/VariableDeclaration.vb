@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -35,13 +35,7 @@ Public MustInherit Class VariableDeclaration
     Private m_VariableInitializer As VariableInitializer
     Private m_ArgumentList As ArgumentList
 
-    Private m_Name As String
-    Private m_VariableType As Mono.Cecil.TypeReference 'TODO: Rename to m_VariableType
-
-    'Private m_LocalBuilder As Mono.Cecil.Cil.VariableDefinition
-
-    'Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
-    'Private m_FieldBuilderStaticCecil As Mono.Cecil.FieldDefinition
+    Private m_VariableType As Mono.Cecil.TypeReference
 
     Private m_WithEventsRedirect As PropertyDeclaration
     Private m_HandledEvents As New Generic.List(Of Mono.Cecil.EventReference)
@@ -59,7 +53,6 @@ Public MustInherit Class VariableDeclaration
         m_TypeName = TypeName
         m_VariableInitializer = VariableInitializer
         m_ArgumentList = ArgumentList
-        m_Name = m_VariableIdentifier.Name
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Identifier, _
@@ -71,40 +64,36 @@ Public MustInherit Class VariableDeclaration
         m_TypeName = TypeName
         m_VariableInitializer = VariableInitializer
         m_ArgumentList = ArgumentList
-        m_Name = m_VariableIdentifier.Name
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
         MyBase.Init(Attributes, New Modifiers(), Identifier.Name)
-        'CreateMember()
+
         m_VariableIdentifier = New VariableIdentifier(Me, Identifier)
         m_IsNew = IsNew
         m_TypeName = New TypeName(Me, TypeName)
         m_VariableInitializer = VariableInitializer
         m_ArgumentList = ArgumentList
-        m_Name = m_VariableIdentifier.Name
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As Mono.Cecil.TypeReference)
         MyBase.Init(Attributes, Modifiers, Name)
-        'CreateMember()
-        m_Name = Name
         m_VariableType = VariableType
 
-        Helper.Assert(m_Name <> "")
-        'Helper.Assert(FieldType IsNot Nothing)
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As TypeName)
         MyBase.Init(Attributes, Modifiers, Name)
-        'CreateMember()
-        m_Name = Name
         m_TypeName = VariableType
 
-        Helper.Assert(m_Name <> "")
         Helper.Assert(m_TypeName IsNot Nothing)
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
     End Sub
 
     ReadOnly Property DeclaringMethod() As MethodDeclaration
@@ -119,85 +108,17 @@ Public MustInherit Class VariableDeclaration
         End Get
     End Property
 
-    'ReadOnly Property LocalBuilder() As Mono.Cecil.Cil.VariableDefinition
-    '    Get
-    '        Return m_LocalBuilder
-    '    End Get
-    'End Property
-
-    'ReadOnly Property StaticInitBuilder() As Mono.Cecil.FieldDefinition
-    '    Get
-    '        Return m_FieldBuilderStaticCecil
-    '    End Get
-    'End Property
-
-    'ReadOnly Property FieldBuilderCecil() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldBuilderCecil
-    '    Get
-    '        Return m_FieldBuilderCecil
-    '    End Get
-    'End Property
-
-    'ReadOnly Property FieldBuilder() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldBuilder
-    '    Get
-    '        Return m_FieldBuilderCecil
-    '    End Get
-    'End Property
-
     Public ReadOnly Property VariableType() As Mono.Cecil.TypeReference
         Get
             Return m_VariableType
         End Get
     End Property
 
-    '    Get
-    '        Return FieldType
-    '    End Get
-    'End Property
-
     ReadOnly Property VariableTypeOrTypeBuilder() As Mono.Cecil.TypeReference
         Get
             Return Helper.GetTypeOrTypeBuilder(Compiler, VariableType)
         End Get
     End Property
-
-    'ReadOnly Property IsLocalVariable() As Boolean
-    '    Get
-    '        Return Me.Modifiers.Is(ModifierMasks.Static) = False AndAlso Me.FindFirstParent(Of CodeBlock)() IsNot Nothing
-    '    End Get
-    'End Property
-
-    'ReadOnly Property IsFieldVariable() As Boolean
-    '    Get
-    '        Return Not IsLocalVariable
-    '    End Get
-    'End Property
-
-    'ReadOnly Property IsStaticVariable() As Boolean
-    '    Get
-    '        Return Me.Modifiers.Is(ModifierMasks.Static)
-    '    End Get
-    'End Property
-
-    'Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
-    '    Get
-    '        Return m_FieldBuilderCecil
-    '    End Get
-    'End Property
-
-    'Property FieldType() As Mono.Cecil.TypeReference
-    '    Get
-    '        Return m_FieldBuilderCecil.FieldType
-    '    End Get
-    '    Set(ByVal value As Mono.Cecil.TypeReference)
-    '        m_FieldBuilderCecil.FieldType = value
-    '    End Set
-    'End Property
-
-    'Private ReadOnly Property FieldType2() As Mono.Cecil.TypeReference Implements IFieldMember.FieldType
-    '    Get
-    '        Return m_FieldBuilderCecil.FieldType
-    '    End Get
-    'End Property
 
     ReadOnly Property TypeName() As TypeName
         Get
@@ -279,14 +200,6 @@ Public MustInherit Class VariableDeclaration
         Return result
     End Function
 
-    'Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
-    '    Dim result As Boolean = True
-
-    '    Helper.Assert(m_FieldType IsNot Nothing)
-
-    '    Return result
-    'End Function
-
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -303,66 +216,6 @@ Public MustInherit Class VariableDeclaration
 
         Return result
     End Function
-
-    'Private Function CreateMember() As Boolean
-    '    Dim result As Boolean = True
-
-    '    If IsLocalVariable Then
-    '        'Local builder will be defined in GenerateCode
-    '    Else
-    '        If m_FieldBuilderCecil IsNot Nothing Then
-    '            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetTypeOrTypeReference(Compiler, FieldType), Helper.GetAttributes(Compiler, Me))
-    '            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
-    '        End If
-    '    End If
-
-    '    Return result
-    'End Function
-
-    'Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
-    '    Dim result As Boolean = True
-
-    '    Return result
-    'End Function
-
-    '    Friend Function DefineStaticMember() As Boolean
-    '        Dim result As Boolean = True
-
-    '        If FieldBuilder Is Nothing Then
-
-    '            Dim staticName As String
-    '            staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
-    '            'm_FieldBuilder = Me.DeclaringType.TypeBuilder.DefineField(staticName, VariableTypeOrTypeBuilder, m_Descriptor.Attributes)
-    '            'Compiler.TypeManager.RegisterReflectionMember(m_FieldBuilder, Me.FieldDescriptor)
-    '            If Me.HasInitializer Then
-    '                'm_StaticInitBuilder = Me.DeclaringType.TypeBuilder.DefineField(m_FieldBuilder.Name & "$Init", Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag, m_FieldBuilder.Attributes)
-    '#If ENABLECECIL Then
-    '                m_FieldBuilderStaticCecil = New Mono.Cecil.FieldDefinition(staticName & "$Init", Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag), Helper.GetAttributes(Compiler, Me))
-    '                DeclaringType.CecilType.Fields.Add(m_FieldBuilderStaticCecil)
-    '#End If
-    '            End If
-    '#If ENABLECECIL Then
-    '            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(staticName, Helper.GetTypeOrTypeReference(Compiler, FieldType), Helper.GetAttributes(Compiler, Me))
-    '            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
-    '#End If
-    '        End If
-
-    '        Return result
-    '    End Function
-
-    'Friend Function DefineLocalVariable(ByVal Info As EmitInfo) As Boolean
-    '    Dim result As Boolean = True
-
-    '    If Me.IsStaticVariable Then Return result
-
-    '    Helper.Assert(IsLocalVariable)
-
-    '    If m_LocalBuilder Is Nothing Then
-    '        m_LocalBuilder = Emitter.DeclareLocal(Info, VariableTypeOrTypeBuilder, Me.Name)
-    '    End If
-
-    '    Return result
-    'End Function
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
@@ -385,83 +238,6 @@ Public MustInherit Class VariableDeclaration
 
         Return result
     End Function
-
-    'Private Sub EmitStore(ByVal Info As EmitInfo)
-    '    If m_LocalBuilder IsNot Nothing Then
-    '        Emitter.EmitStoreVariable(Info, m_LocalBuilder)
-    '    ElseIf FieldBuilder IsNot Nothing Then
-    '        Emitter.EmitStoreField(Info, FieldBuilder)
-    '    Else
-    '        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-    '    End If
-    'End Sub
-
-    'Private Sub EmitThisIfNecessary(ByVal Info As EmitInfo)
-    '    If FieldBuilder IsNot Nothing AndAlso FieldBuilder.IsStatic = False Then
-    '        Emitter.EmitLoadMe(Info, FieldBuilder.DeclaringType)
-    '    End If
-    'End Sub
-
-    'Private Function EmitStaticInitializer(ByVal Info As EmitInfo) As Boolean
-    '    Dim result As Boolean = True
-
-    '    Dim elseIfLabel As Label
-    '    Dim endIfLabel As Label
-
-    '    If Me.HasInitializer = False Then Return result
-
-    '    elseIfLabel = Emitter.DefineLabel(Info)
-    '    endIfLabel = Emitter.DefineLabel(Info)
-
-    '    'Monitor.Enter(initvar)
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Enter_Object)
-    '    'Try
-    '    Dim exBlock As Label
-    '    exBlock = Emitter.EmitBeginExceptionBlock(Info)
-    '    '   If initvar.State = 0 Then
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
-    '    Emitter.EmitLoadI4Value(Info, 0I)
-    '    Info.ILGen.Emit(OpCodes.Bne_Un_S, elseIfLabel)
-    '    '       initvar.State = 2
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitLoadI4Value(Info, 2I)
-    '    Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
-    '    '       (initalization)
-    '    result = EmitVariableInitializer(Info) AndAlso result
-    '    Emitter.EmitBranch(Info, endIfLabel)
-    '    '   ElseIf initvar.State = 2 Then
-    '    Emitter.MarkLabel(Info, elseIfLabel)
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitLoadVariable(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
-    '    Emitter.EmitLoadI4Value(Info, 2I)
-    '    Info.ILGen.Emit(OpCodes.Bne_Un_S, endIfLabel)
-    '    '       Throw New IncompleteInitializationException
-    '    Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_IncompleteInitialization__ctor)
-    '    Emitter.EmitThrow(Info)
-    '    '   End If
-    '    Emitter.MarkLabel(Info, endIfLabel)
-    '    Emitter.EmitLeave(Info, exBlock)
-    '    'Finally
-    '    Info.ILGen.BeginFinallyBlock()
-    '    '   initvar.State = 1
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitLoadI4Value(Info, 1I)
-    '    Emitter.EmitStoreField(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__State)
-    '    '   Monitor.Exit(initvar)
-    '    If Not m_FieldBuilderStaticCecil.IsStatic Then Emitter.EmitLoadMe(Info, Me.DeclaringType.TypeDescriptor)
-    '    Emitter.EmitLoadVariable(Info, m_FieldBuilderStaticCecil)
-    '    Emitter.EmitCall(Info, Compiler.TypeCache.System_Threading_Monitor__Exit_Object)
-    '    'End Try
-    '    Info.ILGen.EndExceptionBlock()
-    '    Return result
-    'End Function
 
     Protected MustOverride Sub EmitThisIfNecessary(ByVal Info As EmitInfo)
     Protected MustOverride Sub EmitStore(ByVal Info As EmitInfo)
@@ -506,35 +282,4 @@ Public MustInherit Class VariableDeclaration
         End While
         Return i > 0 AndAlso tm.PeekToken(i).IsIdentifier
     End Function
-
-    'Public ReadOnly Property FieldDescriptor() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldDescriptor
-    '    Get
-    '        Return FieldBuilderCecil
-    '    End Get
-    'End Property
-
-    'Public Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
-    '    Dim result As Boolean = True
-
-    '    If Me.Modifiers.Is(ModifierMasks.WithEvents) = False Then Return result
-
-    '    Dim parentType As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
-    '    Dim propertyAccessor As New PropertyDeclaration(parentType)
-    '    Dim modifiers As New Modifiers(ModifierMasks.Private)
-
-    '    If Me.Modifiers.Is(ModifierMasks.Shared) Then
-    '        modifiers.AddModifiers(ModifierMasks.Shared)
-    '    End If
-    '    modifiers.AddModifiers(Me.Modifiers.Mask And ModifierMasks.AccessModifiers)
-
-    '    propertyAccessor.Init(New Attributes(propertyAccessor), modifiers, Name, m_TypeName)
-    '    result = propertyAccessor.ResolveTypeReferences() AndAlso result
-    '    propertyAccessor.HandlesField = Me
-
-    '    Rename("_" & Name)
-
-    '    parentType.Members.Add(propertyAccessor)
-
-    '    Return result
-    'End Function
 End Class

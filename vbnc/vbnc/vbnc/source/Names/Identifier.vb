@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@
 Public Class Identifier
     Inherits ParsedObject
 
-    'Private m_Identifier As Token
     Private m_Name As String
     Private m_TypeCharacter As TypeCharacters.Characters = TypeCharacters.Characters.None
 
@@ -45,16 +44,22 @@ Public Class Identifier
         m_TypeCharacter = TypeCharacter
     End Sub
 
-    ReadOnly Property Identifier() As String
+    Property Identifier() As String
         Get
             Return m_Name
         End Get
+        Set
+            m_Name = Value
+        End Set
     End Property
 
-    ReadOnly Property TypeCharacter() As TypeCharacters.Characters
+    Property TypeCharacter() As TypeCharacters.Characters
         Get
             Return m_TypeCharacter
         End Get
+        Set
+            m_TypeCharacter = Value
+        End Set
     End Property
 
     ReadOnly Property HasTypeCharacter() As Boolean
@@ -70,12 +75,6 @@ Public Class Identifier
         result.Init(m_Name, Location, m_TypeCharacter)
         Return result
     End Function
-
-    'ReadOnly Property Token() As Token
-    '    Get
-    '        Return m_Identifier
-    '    End Get
-    'End Property
 
     ReadOnly Property Name() As String
         Get

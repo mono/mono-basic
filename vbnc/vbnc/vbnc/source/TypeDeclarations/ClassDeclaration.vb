@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -35,24 +35,25 @@ Public Class ClassDeclaration
     Inherits PartialTypeDeclaration
     Implements IHasImplicitMembers
 
-    Private m_Inherits As NonArrayTypeName
+    'Due to partial classes there may be more than one inherits clause per class
+    Private m_InheritsClauses As Generic.List(Of NonArrayTypeName)
+    Private m_InheritsType As Mono.Cecil.TypeReference
     Private m_CreatedImplicitMembers As Boolean
 
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters, TypeImplementsClauses)
-        m_Inherits = [Inherits]
+    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
+        MyBase.Init(CustomAttributes, Modifiers, Name, TypeParameters, TypeImplementsClauses)
     End Sub
 
-    ReadOnly Property [Inherits]() As NonArrayTypeName
-        Get
-            Return m_Inherits
-        End Get
-    End Property
-
+    Sub AddInheritsClause(ByVal Clause As NonArrayTypeName)
+        If m_InheritsClauses Is Nothing Then
+            m_InheritsClauses = New Generic.List(Of NonArrayTypeName)
+        End If
+        m_InheritsClauses.Add(Clause)
+    End Sub
 
     Function CreateBaseImplicitMembers() As Boolean
         Dim tD As Mono.Cecil.TypeDefinition
@@ -74,8 +75,7 @@ Public Class ClassDeclaration
     ''' <remarks></remarks>
     Function GetBaseDefaultConstructor() As Mono.Cecil.MethodReference
         If CecilHelper.IsGenericType(Me.BaseType) Then
-            Helper.Assert(Me.m_Inherits.IsConstructedTypeName)
-            Return Compiler.Helper.GetDefaultGenericConstructor(Me.m_Inherits.AsConstructedTypeName)
+            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
             Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
         End If
@@ -88,8 +88,7 @@ Public Class ClassDeclaration
     ''' <remarks></remarks>
     Function GetBaseDefaultConstructorCecil() As Mono.Cecil.MethodReference
         If CecilHelper.IsGenericType(Me.BaseType) Then
-            Helper.Assert(Me.m_Inherits.IsConstructedTypeName)
-            Return Compiler.Helper.GetDefaultGenericConstructor(Me.m_Inherits.AsConstructedTypeName)
+            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
             Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
         End If
@@ -124,19 +123,27 @@ Public Class ClassDeclaration
     Overrides Function ResolveType() As Boolean
         Dim result As Boolean = True
 
-        If m_Inherits IsNot Nothing Then
-            result = m_Inherits.ResolveTypeReferences AndAlso result
-            If result = False Then Return result
-            BaseType = m_Inherits.ResolvedCecilType
+        Helper.Assert(m_InheritsClauses Is Nothing OrElse m_InheritsClauses.Count > 0) 'Perf check
+
+        If m_InheritsClauses IsNot Nothing AndAlso m_InheritsClauses.Count > 0 Then
+            For i As Integer = 0 To m_InheritsClauses.Count - 1
+                result = m_InheritsClauses(i).ResolveTypeReferences AndAlso result
+            Next
+            If result = False Then Return False
+
+            For i As Integer = 1 To m_InheritsClauses.Count - 1
+                If Helper.CompareType(m_InheritsClauses(0).ResolvedType, m_InheritsClauses(i).ResolvedType) = False Then
+                    Helper.AddError(Compiler, Me.Location, "Class specifies different base classes")
+                    result = False
+                End If
+            Next
+            If result = False Then Return False
+            BaseType = m_InheritsClauses(0).ResolvedType
         Else
             BaseType = Compiler.TypeCache.System_Object
-#If DEBUGREFLECTION Then
-            Helper.DebugReflection_AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
-#End If
         End If
-        result = MyBase.ResolveType AndAlso result
 
-        Helper.Assert(BaseType IsNot Nothing)
+        result = MyBase.ResolveType AndAlso result
 
         'Find the default constructors for this class
         Me.FindDefaultConstructors()
@@ -335,8 +342,8 @@ Public Class ClassDeclaration
                 If tn Is Nothing Then Continue For
                 If Not Helper.CompareType(tn.ResolvedType, groupData.TypeToCollect) Then Continue For
 
-                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.TypeDescriptor) = False Then Continue For
-                If Helper.CompareType(mi.Signature.ReturnType, T.TypeDescriptor) = False Then Continue For
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.CecilBuilder) = False Then Continue For
+                If Helper.CompareType(mi.Signature.ReturnType, T.CecilBuilder) = False Then Continue For
 
 
                 If groupData.CreateInstanceMethod IsNot Nothing Then Continue For
@@ -350,7 +357,7 @@ Public Class ClassDeclaration
                 If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
                 If Not Helper.CompareType(T.TypeParameterConstraints.Constraints(0).TypeName.ResolvedType, groupData.TypeToCollect) Then Continue For
 
-                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, Compiler.TypeManager.MakeByRefType(Me, T.TypeDescriptor)) = False Then Continue For
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, Compiler.TypeManager.MakeByRefType(Me, T.CecilBuilder)) = False Then Continue For
 
                 If groupData.DisposeInstanceMethod IsNot Nothing Then Continue For
                 groupData.DisposeInstanceMethod = mi.CecilBuilder

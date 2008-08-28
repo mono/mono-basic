@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ Public Structure Span
     Private m_EndColumn As Byte
     Private m_FileIndex As UShort
 
-    Public Shared ReadOnly CommandLineSpan As Span '= New Span(UShort.MaxValue, 0, 0, 0)
+    Public Shared ReadOnly CommandLineSpan As Span
 
     Overloads Function Equals(ByVal Location As Span) As Boolean
         Return m_Line = Location.m_Line AndAlso m_Column = Location.m_Column AndAlso m_EndColumn = Location.m_EndColumn AndAlso m_FileIndex = Location.m_FileIndex

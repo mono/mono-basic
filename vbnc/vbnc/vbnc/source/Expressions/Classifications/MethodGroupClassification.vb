@@ -43,7 +43,6 @@ Public Class MethodGroupClassification
     ''' <remarks></remarks>
     Private m_InstanceExpression As Expression
     Private m_Parameters As Expression()
-    Private m_TypeArguments As Mono.Cecil.TypeReference()
 
     ''' <summary>
     ''' The group of possible methods.
@@ -270,6 +269,17 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
+    Private Sub SetMethods(ByVal lst As Mono.Cecil.MemberReferenceCollection)
+        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
+        For i As Integer = 0 To lst.Count - 1
+            Dim member As Mono.Cecil.MemberReference = lst(i)
+            m_Group.Add(member)
+        Next
+#If DEBUG Then
+        m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
+#End If
+    End Sub
+
     Private Sub SetMethods(ByVal lst As Generic.IList(Of Mono.Cecil.MemberReference))
         m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         For i As Integer = 0 To lst.Count - 1
@@ -448,14 +458,6 @@ Public Class MethodGroupClassification
         Return result
     End Function
 
-    ''' <summary>
-    ''' Removes methods that are nothing from the group
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub ShrinkGroup()
-        m_Group.RemoveAll(New Predicate(Of Mono.Cecil.MemberReference)(AddressOf Helper.IsNothing(Of Mono.Cecil.MemberReference)))
-    End Sub
-
     Function IsAccessible(ByVal Caller As Mono.Cecil.TypeReference, ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Return Helper.IsAccessible(Compiler, Caller, Method)
     End Function
@@ -493,6 +495,13 @@ Public Class MethodGroupClassification
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of Mono.Cecil.MethodReference))
+        Me.new(Parent, InstanceExpression, Parameters)
+        SetMethods(Methods)
+        Helper.Assert(Methods.Count > 0)
+        Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Cecil.MemberReferenceCollection)
         Me.new(Parent, InstanceExpression, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)

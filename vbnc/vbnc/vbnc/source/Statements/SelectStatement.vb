@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -89,7 +89,10 @@ Public Class SelectStatement
         Dim result As Boolean = True
 
         result = m_Test.ResolveExpression(Info) AndAlso result
+        If result = False Then Return False
+
         result = Helper.VerifyValueClassification(m_Test, Info) AndAlso result
+        If result = False Then Return False
 
         m_CachedTest = New CachedExpression(m_Test, m_Test)
 

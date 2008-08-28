@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -32,15 +32,17 @@ Public Class ReturnStatement
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim isSub As Boolean
 
-        If Info.Method.Signature.ReturnType Is Nothing Then
+        isSub = Info.Method.Signature.ReturnType Is Nothing OrElse Helper.CompareType(Info.Method.Signature.ReturnType, Compiler.TypeCache.System_Void)
+        If isSub Then
             Helper.Assert(m_Expression Is Nothing)
         Else
             Helper.Assert(m_Expression IsNot Nothing)
             result = m_Expression.GenerateCode(Info.Clone(Me, True, , Info.Method.Signature.ReturnType)) AndAlso result
         End If
 
-        Emitter.EmitRetOrLeave(Info, Me, m_Expression IsNot Nothing)
+        Emitter.EmitRetOrLeave(Info, Me, Not isSub)
 
         Return result
     End Function
@@ -71,12 +73,4 @@ Public Class ReturnStatement
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression Is Nothing OrElse m_Expression.ResolveTypeReferences()
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        dumper.Write("Return ")
-        If m_Expression IsNot Nothing Then m_Expression.Dump(dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
 End Class

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -149,6 +149,7 @@ Public Class Parameter
             Return m_ParameterBuilderCecil.ParameterType
         End Get
         Set(ByVal value As Mono.Cecil.TypeReference)
+            If value.FullName.Contains("Void") Then Stop
             If m_ParameterBuilderCecil Is Nothing Then UpdateDefinition()
             m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, value)
             UpdateDefinition()
@@ -222,6 +223,9 @@ Public Class Parameter
             'm_ParameterBuilderCecil.Constant = TypeConverter.ConvertTo(Compiler, m_ConstantValue, ParameterType)
             m_ParameterBuilderCecil.HasDefault = True
         End If
+        If m_ParameterBuilderCecil.ParameterType Is Nothing Then
+            m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
+        End If
     End Sub
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
@@ -268,27 +272,27 @@ Public Class Parameter
 
         If result = False Then Return result
 
-        If ParameterType Is Nothing Then
-            If m_TypeName IsNot Nothing Then
-                ParameterType = m_TypeName.ResolvedType
-                If m_ParameterIdentifier.ArrayNameModifier IsNot Nothing Then
-                    If m_TypeName.IsArrayTypeName Then
-                        Helper.AddError(Me)
-                    Else
-                        ParameterType = m_ParameterIdentifier.ArrayNameModifier.CreateArrayType(ParameterType)
-                    End If
-                End If
-            ElseIf m_ParameterIdentifier.Identifier.HasTypeCharacter Then
-                ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
-            Else
-                If Me.Location.File(Compiler).IsOptionStrictOn Then
-                    Helper.AddError(Me, "Parameter type must be specified.")
+        'If ParameterType Is Nothing Then
+        If m_TypeName IsNot Nothing Then
+            ParameterType = m_TypeName.ResolvedType
+            If m_ParameterIdentifier.ArrayNameModifier IsNot Nothing Then
+                If m_TypeName.IsArrayTypeName Then
+                    Helper.AddError(Me)
                 Else
-                    Helper.AddWarning("Parameter type should be specified.")
+                    ParameterType = m_ParameterIdentifier.ArrayNameModifier.CreateArrayType(ParameterType)
                 End If
-                ParameterType = Compiler.TypeCache.System_Object
             End If
+        ElseIf m_ParameterIdentifier.Identifier.HasTypeCharacter Then
+            ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
+        ElseIf ParameterType Is Nothing Then
+            If Me.Location.File(Compiler).IsOptionStrictOn Then
+                Helper.AddError(Me, "Parameter type must be specified.")
+            Else
+                Helper.AddWarning("Parameter type should be specified.")
+            End If
+            ParameterType = Compiler.TypeCache.System_Object
         End If
+        'End If
         Helper.Assert(ParameterType IsNot Nothing)
         If m_Modifiers.Is(ModifierMasks.ByRef) Then
             ParameterType = Compiler.TypeManager.MakeByRefType(Me, ParameterType)

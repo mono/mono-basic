@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge (RKvinge@novell.com)
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge (RKvinge@novell.com)
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,7 @@ Public Class MemberCache
     Sub New(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference)
         m_Compiler = Compiler
         m_Type = Type
+
         Reload()
         Compiler.TypeManager.MemberCache.Add(Type, Me)
     End Sub
@@ -84,8 +85,10 @@ Public Class MemberCache
             Else
                 Console.WriteLine(" Access: " & access.ToString & " has " & entries.Count & " entries.")
             End If
-            For Each str As String In entries.Keys
-                Console.WriteLine("  Entry: " & str)
+            Dim keys As New Generic.List(Of String)(entries.Keys)
+            keys.Sort()
+            For Each str As String In keys
+                Console.WriteLine("  {0}", str)
                 Dim entry As MemberCacheEntry = entries(str)
                 For Each member As Mono.Cecil.MemberReference In entry.Members
                     Console.WriteLine("   " & CecilHelper.GetMemberType(member).ToString & ": " & member.DeclaringType.FullName & "." & member.Name & Helper.ToString(Helper.GetParameterTypes(Nothing, member)))
@@ -128,7 +131,6 @@ Public Class MemberCache
         Dim members As Mono.Cecil.MemberReferenceCollection
 
         Log("Caching type: " & m_Type.Name)
-        'If m_Type.Name = "ParameterList" Then Helper.StopIfDebugging()
         members = CecilHelper.GetMembers(m_Type)
 
         m_Cache = New MemberCacheEntries()
@@ -165,8 +167,11 @@ Public Class MemberCache
         m_Cache2.Add(MemberVisibility.PublicFriend, publicFriendEntries)
         m_Cache2.Add(MemberVisibility.Public, publicEntries)
 
-        For Each member As Mono.Cecil.MemberReference In members
+        For m As Integer = 0 To members.Count - 1
+            Dim member As Mono.Cecil.MemberReference = members(m)
             Dim isPublic, isFriend, isProtected, isPrivate As Boolean
+
+            Log(String.Format(" Name: {0}, DeclaringType: {1}", member.Name, member.DeclaringType.FullName))
 
             isPublic = Helper.IsPublic(member)
             isPrivate = Helper.IsPrivate(member)
@@ -208,7 +213,7 @@ Public Class MemberCache
                 Dim ifaces As Mono.Cecil.InterfaceCollection
                 Dim icaches() As MemberCache
 
-                ifaces = CecilHelper.GetInterfaces(m_Type)
+                ifaces = CecilHelper.GetInterfaces(m_Type, True)
 
                 ReDim icaches(ifaces.Count - 1)
                 m_ShadowedInterfaceMembers = New Generic.List(Of Mono.Cecil.MemberReference)
@@ -325,8 +330,7 @@ Public Class MemberCache
     End Sub
 
     Private Sub LogExtended(ByVal Msg As String)
-        Return
-        Compiler.Report.WriteLine(Msg)
+        'Compiler.Report.WriteLine(Msg)
     End Sub
 
     Private Function IsHidden(ByVal baseMember As Mono.Cecil.MemberReference, ByVal Visibility As MemberVisibility) As Boolean
@@ -393,9 +397,13 @@ Public Class MemberCache
     Function GetBaseCache() As MemberCache
         If m_Base IsNot Nothing Then Return m_Base
 
+        If TypeOf m_Type Is Mono.Cecil.GenericParameter Then Return Nothing
+
         Dim base As Mono.Cecil.TypeReference
         base = CecilHelper.FindDefinition(m_Type).BaseType
         If base Is Nothing Then Return Nothing
+
+        base = CecilHelper.InflateType(base, m_Type)
 
         If m_Compiler.TypeManager.MemberCache.ContainsKey(base) = False Then
             m_Base = New MemberCache(m_Compiler, base)

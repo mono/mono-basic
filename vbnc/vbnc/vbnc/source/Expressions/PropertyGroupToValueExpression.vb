@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -76,6 +76,7 @@ Public Class PropertyGroupToValueExpression
         Dim method As Mono.Cecil.MethodReference
 
         method = CecilHelper.FindDefinition(m_PropertyGroup.ResolvedProperty).GetMethod
+        method = CecilHelper.GetCorrectMember(method, m_PropertyGroup.ResolvedProperty.DeclaringType)
 
         result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_PropertyGroup.InstanceExpression, m_PropertyGroup.Parameters, method) AndAlso result
 

@@ -77,9 +77,9 @@ Public Class PropertyAccessClassification
         Helper.Assert(m_Property IsNot Nothing)
 
         If Info.IsLHS Then
-            method = CecilHelper.FindDefinition(m_Property).SetMethod
+            method = CecilHelper.GetCorrectMember(CecilHelper.FindDefinition(m_Property).SetMethod, m_Property.DeclaringType)
         Else
-            method = CecilHelper.FindDefinition(m_Property).GetMethod
+            method = CecilHelper.GetCorrectMember(CecilHelper.FindDefinition(m_Property).GetMethod, m_Property.DeclaringType)
         End If
 
         'If m_InstanceExpression IsNot Nothing Then

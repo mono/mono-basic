@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -55,20 +55,4 @@ Public Class InterfaceBases
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken = KS.Inherits
     End Function
-
-    ''' <summary>
-    ''' Returns the interface bases as an array of types.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property AsTypes() As Mono.Cecil.TypeReference()
-        Get
-            Dim result(m_Bases.GetUpperBound(0)) As Mono.Cecil.TypeReference
-            For i As Integer = 0 To m_Bases.GetUpperBound(0)
-                result(i) = m_Bases(i).ResolvedType
-            Next
-            Return result
-        End Get
-    End Property
-
 End Class

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 ' 
 #Const DEBUGRESOLVE = True
 #If DEBUG Then
-#Const EXTENDEDDEBUG = 1
+#Const EXTENDEDDEBUG = 0
 #End If
 
 Imports System.Reflection.Emit
@@ -51,19 +51,13 @@ Public Class AssemblyDeclaration
     ''' All the non-nested types in this assembly.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Members As MemberDeclarations
+    Private m_Members As New MemberDeclarations(Me)
 
     ''' <summary>
     ''' All the types as an array of type declarations.
     ''' </summary>
     ''' <remarks></remarks>
     Private m_TypeDeclarations() As TypeDeclaration
-
-    ''' <summary>
-    ''' All the types as an array of type descriptors
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Types() As Mono.Cecil.TypeReference
 
     Private m_GroupedClasses As Generic.List(Of MyGroupData)
 
@@ -76,6 +70,12 @@ Public Class AssemblyDeclaration
         End Set
     End Property
 
+    ReadOnly Property Members() As MemberDeclarations
+        Get
+            Return m_Members
+        End Get
+    End Property
+
     ReadOnly Property TypeDeclarations() As TypeDeclaration()
         Get
             Return m_TypeDeclarations
@@ -86,19 +86,13 @@ Public Class AssemblyDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Types As MemberDeclarations, ByVal Attributes As Attributes)
+    Sub Init(ByVal Attributes As Attributes)
         If m_Attributes Is Nothing Then
             m_Attributes = Attributes
         Else
             m_Attributes.AddRange(Attributes)
         End If
-        m_Members = Types
         m_TypeDeclarations = m_Members.GetSpecificMembers(Of TypeDeclaration).ToArray
-
-        ReDim m_Types(m_TypeDeclarations.Length - 1)
-        For i As Integer = 0 To m_Types.Length - 1
-            m_Types(i) = m_TypeDeclarations(i).CecilType
-        Next
 
         Helper.Assert(m_Members.Count = m_TypeDeclarations.Length)
     End Sub
@@ -175,18 +169,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    'Private Function CreateType(ByVal Type As TypeDeclaration) As Boolean
-    '    Dim result As Boolean = True
-
-    '    result = Type.CreateType AndAlso result
-
-    '    For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-    '        result = CreateType(NestedType) AndAlso result
-    '    Next
-
-    '    Return result
-    'End Function
-
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -207,12 +189,10 @@ Public Class AssemblyDeclaration
             End Try
 #End If
             result = type.ResolveCode(Info) AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
+            Compiler.VerifyConsistency(result, type.Location.AsString(Compiler))
         Next
 
         result = m_Attributes.ResolveCode(Info) AndAlso result
-
-        'vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         Return result
     End Function
@@ -276,6 +256,14 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        For i As Integer = 0 To m_TypeDeclarations.Length - 1
+            m_TypeDeclarations(i).Initialize(Me)
+        Next
+    End Sub
+
     Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -286,11 +274,9 @@ Public Class AssemblyDeclaration
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveTypeReferences " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
 #End If
             result = ResolveTypeReferences(type) AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         result = m_Attributes.ResolveTypeReferences AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         Return result
     End Function
@@ -299,7 +285,6 @@ Public Class AssemblyDeclaration
         Dim result As Boolean = True
 
         result = Type.ResolveTypeReferences AndAlso result
-        'vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         If result = False Then Return result
 
@@ -311,7 +296,6 @@ Public Class AssemblyDeclaration
                 result = Member.ResolveTypeReferences() AndAlso result
             End If
             If result = False Then Return result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         Return result
@@ -498,7 +482,7 @@ Public Class AssemblyDeclaration
         result = EmitAttributes() AndAlso result
 
         For Each type As TypeDeclaration In m_TypeDeclarations
-            '#If EXTENDEDDEBUG Then
+#If EXTENDEDDEBUG Then
             Dim iCount As Integer
             iCount += 1
             Try
@@ -512,7 +496,7 @@ Public Class AssemblyDeclaration
             Catch ex As Exception
 
             End Try
-'#End If
+#End If
             result = Emit(type) AndAlso result
         Next
 
@@ -562,7 +546,6 @@ Public Class AssemblyDeclaration
         'Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
     End Sub
 
-#If ENABLECECIL Then
     Public Function SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition) As Boolean
         Dim result As Boolean = True
         Dim keyfile As String = Nothing
@@ -570,11 +553,6 @@ Public Class AssemblyDeclaration
         Dim delaysign As Boolean = False
 
         Name.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
-
-#If DEBUGREFLECTION Then
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
-#End If
 
         If Compiler.CommandLine.KeyFile <> String.Empty Then
             keyfile = Compiler.CommandLine.KeyFile
@@ -603,7 +581,6 @@ Public Class AssemblyDeclaration
 
         Return result
     End Function
-#End If
 
     '    Public Function GetName() As AssemblyName
     '        Dim result As New AssemblyName()
@@ -646,7 +623,6 @@ Public Class AssemblyDeclaration
     '        Return result
     '    End Function
 
-#If ENABLECECIL Then
     Private Function SignWithKeyFile(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
         Dim filename As String
 
@@ -682,7 +658,7 @@ Public Class AssemblyDeclaration
 
         Return True
     End Function
-#End If
+    
     '    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
     '        Dim filename As String
 
@@ -717,7 +693,6 @@ Public Class AssemblyDeclaration
     '        Return True
     '    End Function
 
-#If ENABLECECIL Then
     Private Function SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
         Dim CryptoConvert As Type
         Dim FromCapiKeyBlob As System.Reflection.MethodInfo
@@ -771,8 +746,7 @@ Public Class AssemblyDeclaration
         End Try
 
     End Function
-#End If
-
+    
     '    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
     '        Dim CryptoConvert As Type
     '        Dim FromCapiKeyBlob As MethodInfo
@@ -825,7 +799,6 @@ Public Class AssemblyDeclaration
 
     '    End Function
 
-#If ENABLECECIL Then
     Private Function SetVersion(ByVal Name As Mono.Cecil.AssemblyNameDefinition, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
         Dim result As Version
         Dim version As String = ""
@@ -880,7 +853,6 @@ Public Class AssemblyDeclaration
         Name.Version = result
         Return True
     End Function
-#End If
 
     'Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
     '    Dim result As Version
@@ -942,93 +914,6 @@ Public Class AssemblyDeclaration
         Return False
     End Function
 
-    '    ''' <summary>
-    '    ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
-    '    ''' - Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
-    '    ''' </summary>
-    '    ''' <returns></returns>
-    '    ''' <remarks></remarks>
-    '    Function CreateTypes() As Boolean
-    '        Dim result As Boolean = True
-    '        Dim exs As New Generic.List(Of Exception)
-    '        Dim tps As New Generic.List(Of TypeDeclaration)
-
-    '        For Each type As TypeDeclaration In m_TypeDeclarations
-    '#If EXTENDEDDEBUG Then
-    '            Dim iCount As Integer
-    '            iCount += 1
-    '            Try
-    '                System.Console.ForegroundColor = ConsoleColor.Blue
-    '            Catch ex As Exception
-
-    '            End Try
-    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "CreateType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-    '            Try
-    '                System.Console.ResetColor()
-    '            Catch ex As Exception
-
-    '            End Try
-    '#End If
-    '#If EXTENDEDDEBUG Then
-    '            Try
-    '                result = CreateType(type) AndAlso result
-    '            Catch ex As Exception
-    '                Try
-    '                    System.Console.ForegroundColor = ConsoleColor.Red
-    '                Catch ex2 As Exception
-    '                End Try
-    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, ex.Message)
-    '                Threading.Thread.Sleep(500)
-    '                Try
-    '                    System.Console.ResetColor()
-    '                Catch ex2 As Exception
-    '                End Try
-    '                exs.Add(ex)
-    '                tps.Add(type)
-    '            End Try
-    '#Else
-    '            result = CreateType(type) AndAlso result
-    '#End If
-    '        Next
-
-    '#If EXTENDEDDEBUG Then
-    '        If exs.Count > 0 Then
-    '            Dim msg As String = ""
-
-    '            msg = exs.Count.ToString & " types failed to be created." & VB.vbNewLine
-    '            For i As Integer = 0 To exs.Count - 1
-    '                msg &= VB.vbTab & tps(i).FullName & ": " & exs(i).Message & VB.vbNewLine
-    '            Next
-    '            Try
-    '                System.Console.ForegroundColor = ConsoleColor.Red
-    '            Catch ex2 As Exception
-    '            End Try
-    '            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, msg)
-    '            Try
-    '                System.Console.ResetColor()
-    '            Catch ex2 As Exception
-    '            End Try
-
-    '            Throw New InternalException(msg)
-    '        End If
-    '#End If
-
-    '        Return result
-    '    End Function
-
-    '''' <summary>
-    '''' Checks whether the specified Type is defined in the current compiling assembly
-    '''' </summary>
-    '''' <param name="Type"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Function IsDefinedHere(ByVal Type As Mono.Cecil.TypeReference) As Boolean
-    '    Helper.Assert(Type IsNot Nothing)
-    '    If TypeOf Type Is TypeBuilder Then Return True
-    '    If TypeOf Type Is TypeDescriptor Then Return True
-    '    Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
-    'End Function
-
     ''' <summary>
     ''' Checks whether the specified Type is defined in the current compiling assembly
     ''' </summary>
@@ -1037,6 +922,21 @@ Public Class AssemblyDeclaration
     ''' <remarks></remarks>
     Function IsDefinedHere(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Helper.Assert(Type IsNot Nothing)
+        If TypeOf Type Is Mono.Cecil.ArrayType Then
+            Return IsDefinedHere(DirectCast(Type, Mono.Cecil.ArrayType).ElementType)
+        ElseIf TypeOf Type Is Mono.Cecil.GenericParameter Then
+            Dim gp As Mono.Cecil.GenericParameter = DirectCast(Type, Mono.Cecil.GenericParameter)
+            If TypeOf gp.Owner Is Mono.Cecil.TypeDefinition Then
+                Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.TypeDefinition))
+            ElseIf TypeOf gp.Owner Is Mono.Cecil.MethodDefinition Then
+                Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.MethodDefinition))
+            Else
+                Throw New NotImplementedException
+            End If
+        ElseIf TypeOf Type Is Mono.Cecil.ReferenceType Then
+            Dim tR As Mono.Cecil.ReferenceType = DirectCast(Type, Mono.Cecil.ReferenceType)
+            Return IsDefinedHere(tR.ElementType)
+        End If
         Return Type.Module.Assembly Is Compiler.AssemblyBuilderCecil
     End Function
 
@@ -1053,6 +953,15 @@ Public Class AssemblyDeclaration
     Function FindType(ByVal FullName As String) As TypeDeclaration
         For Each type As TypeDeclaration In Me.Types
             If Helper.CompareName(type.FullName, FullName) Then Return type
+        Next
+        Return Nothing
+    End Function
+
+    Function FindTypeWithName(ByVal Name As String) As TypeDeclaration
+        For i As Integer = 0 To m_Members.Count - 1
+            Dim tD As TypeDeclaration = TryCast(m_Members(i), TypeDeclaration)
+            If td Is Nothing Then Continue For
+            If Helper.CompareName(tD.Name, Name) Then Return tD
         Next
         Return Nothing
     End Function

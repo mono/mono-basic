@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -30,10 +30,10 @@ Public Class ResolveInfo
     Private Shared DefaultInfo As ResolveInfo
 
     Shared Function [Default](ByVal Compiler As Compiler) As ResolveInfo
-        If DefaultInfo Is Nothing Then
+        If DefaultInfo Is Nothing OrElse Compiler Is DefaultInfo.Compiler = False Then
             DefaultInfo = New ResolveInfo(Compiler)
         End If
-        Helper.Assert(Compiler Is DefaultInfo.Compiler)
+
         Return DefaultInfo
     End Function
 

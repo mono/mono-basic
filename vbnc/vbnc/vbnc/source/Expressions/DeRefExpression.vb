@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -31,12 +31,17 @@ Public Class DeRefExpression
     ''' <remarks></remarks>
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression)
         MyBase.new(Parent)
+
+        Dim refType As Mono.Cecil.ReferenceType = TryCast(Expression.ExpressionType, Mono.Cecil.ReferenceType)
+
+        If refType Is Nothing Then Throw New InternalException
+
         m_Expression = Expression
-        m_ExpressionType = CecilHelper.GetElementType(Expression.ExpressionType)
+        m_ExpressionType = refType.ElementType
 
         Classification = New VariableClassification(Me, Expression, m_ExpressionType)
 
-        If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then Helper.ErrorRecoveryNotImplemented()
+        If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
     End Sub
 
     ReadOnly Property Expression() As Expression

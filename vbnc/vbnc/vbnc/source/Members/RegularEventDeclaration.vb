@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -143,7 +143,7 @@ Public Class RegularEventDeclaration
         ElseIf m_Parameters IsNot Nothing Then
             m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
             m_ImplicitEventDelegate.Init(Nothing, New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
-            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented()
+            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
 
             EventType = m_ImplicitEventDelegate.CecilType
         ElseIf m_Type IsNot Nothing Then

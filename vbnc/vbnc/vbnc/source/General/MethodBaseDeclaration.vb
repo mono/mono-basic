@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -24,11 +24,6 @@ Public MustInherit Class MethodBaseDeclaration
     Private m_Signature As SubSignature
     Private m_Code As CodeBlock
 
-    'Private m_MethodAttributes As Nullable(Of Mono.Cecil.MethodAttributes)
-    'Private m_MethodImplAttributes As Nullable(Of Mono.Cecil.MethodImplAttributes)
-
-    'Private m_ReturnType As Mono.Cecil.TypeReference
-    'Private m_ParameterTypes() As Mono.Cecil.TypeReference
     Private m_DefaultReturnVariable As Mono.Cecil.Cil.VariableDefinition
 
     Private m_MethodOverrides As Mono.Cecil.MethodReference
@@ -47,6 +42,13 @@ Public MustInherit Class MethodBaseDeclaration
     Protected Sub New(ByVal Parent As EventDeclaration)
         MyBase.new(Parent)
         UpdateDefinition()
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
+        If m_Code IsNot Nothing Then m_Code.Initialize(Me)
     End Sub
 
     Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
@@ -83,15 +85,6 @@ Public MustInherit Class MethodBaseDeclaration
         MethodAttributes = Helper.GetAttributes(Me)
         MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
     End Sub
-
-    'Property ParameterTypes() As Mono.Cecil.TypeReference()
-    '    Get
-    '        Return m_ParameterTypes
-    '    End Get
-    '    Set(ByVal value As Mono.Cecil.TypeReference())
-    '        m_ParameterTypes = value
-    '    End Set
-    'End Property
 
     Property ReturnType() As Mono.Cecil.TypeReference
         Get

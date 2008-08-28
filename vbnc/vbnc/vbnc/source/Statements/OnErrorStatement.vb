@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -107,21 +107,4 @@ Public Class OnErrorStatement
 
         Return result
     End Function
-
-    '#If DEBUG Then
-    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        dumper.Write("On Error ")
-    '        If m_IsGotoMinusOne Then
-    '            Dumper.Write("Goto -1")
-    '        ElseIf m_IsGotoZero Then
-    '            Dumper.Write("Goto 0")
-    '        ElseIf m_IsResumeNext Then
-    '            Dumper.Write("Resume Next")
-    '        Else
-    '            Dumper.Write("Goto ")
-    '            m_Label.Dump(dumper)
-    '        End If
-    '        Dumper.WriteLine("")
-    '    End Sub
-    '#End If
 End Class

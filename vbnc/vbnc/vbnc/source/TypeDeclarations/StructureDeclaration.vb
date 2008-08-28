@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,6 @@ Public Class StructureDeclaration
     Public Overrides Sub UpdateDefinition()
         MyBase.UpdateDefinition()
 
-        TypeAttributes = MyBase.typeattributes Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
+        TypeAttributes = MyBase.TypeAttributes Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
     End Sub
 End Class

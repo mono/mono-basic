@@ -72,8 +72,8 @@ Public Class VariableClassification
         Get
             Helper.Assert(IsConstant)
             If Me.FieldInfo IsNot Nothing Then
-                If Me.FieldInfo.IsLiteral Then
-                    If Me.FieldInfo.HasConstant = False Then
+                If Me.FieldDefinition.IsLiteral Then
+                    If Me.FieldDefinition.HasConstant = False Then
                         Dim field As IFieldMember = TryCast(Me.FieldInfo.Annotations(Compiler), IFieldMember)
                         Dim value As Object = Nothing
                         If field.ResolveAndGetConstantValue(value) Then
@@ -85,13 +85,13 @@ Public Class VariableClassification
                         Helper.Stop() 'Constant value hasn't been set yet
                         Return Nothing
                     Else
-                        Return Me.FieldInfo.Constant
+                        Return Me.FieldDefinition.Constant
                     End If
-                ElseIf Me.FieldInfo.IsInitOnly Then
+                ElseIf Me.FieldDefinition.IsInitOnly Then
                     Dim dec As Decimal, dt As Date
-                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldInfo, dec) Then
+                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
                         Return dec
-                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldInfo, dt) Then
+                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
                         Return dt
                     Else
                         Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
@@ -111,13 +111,13 @@ Public Class VariableClassification
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             If Me.FieldInfo IsNot Nothing Then
-                If FieldInfo.IsLiteral Then
+                If FieldDefinition.IsLiteral Then
                     Return True
-                ElseIf FieldInfo.IsInitOnly Then
+                ElseIf FieldDefinition.IsInitOnly Then
                     Dim dec As Decimal, dt As Date
-                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldInfo, dec) Then
+                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
                         Return True
-                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldInfo, dt) Then
+                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
                         Return True
                     Else
                         Return False
@@ -147,12 +147,26 @@ Public Class VariableClassification
         End Get
     End Property
 
-    ReadOnly Property FieldInfo() As Mono.Cecil.FieldDefinition
+    ReadOnly Property FieldDefinition() As Mono.Cecil.FieldDefinition
         Get
             If m_TypeVariable IsNot Nothing AndAlso m_TypeVariable.FieldBuilder IsNot Nothing Then
                 Return m_TypeVariable.FieldBuilder
+            ElseIf m_LocalVariable IsNot Nothing AndAlso m_LocalVariable.FieldBuilder IsNot Nothing Then
+                Return m_LocalVariable.FieldBuilder
             Else
                 Return CecilHelper.FindDefinition(m_FieldInfo)
+            End If
+        End Get
+    End Property
+
+    ReadOnly Property FieldInfo() As Mono.Cecil.FieldReference
+        Get
+            If m_TypeVariable IsNot Nothing AndAlso m_TypeVariable.FieldBuilder IsNot Nothing Then
+                Return m_TypeVariable.FieldBuilder
+            ElseIf m_LocalVariable IsNot Nothing AndAlso m_LocalVariable.FieldBuilder IsNot Nothing Then
+                Return m_LocalVariable.FieldBuilder
+            Else
+                Return m_FieldInfo
             End If
         End Get
     End Property
@@ -229,7 +243,7 @@ Public Class VariableClassification
 
         If m_InstanceExpression IsNot Nothing Then
             Dim exp As Mono.Cecil.TypeReference = m_InstanceExpression.ExpressionType
-            If exp.IsValueType AndAlso CecilHelper.IsByRef(exp) = False Then
+            If CecilHelper.IsValueType(exp) AndAlso CecilHelper.IsByRef(exp) = False Then
                 exp = Compiler.TypeManager.MakeByRefType(Me.Parent, exp)
             End If
             result = m_InstanceExpression.GenerateCode(Info.Clone(Parent, True, False, exp)) AndAlso result
@@ -264,7 +278,7 @@ Public Class VariableClassification
             isByRef = CecilHelper.IsByRef(paramType)
             If isByRef Then
                 paramElementType = CecilHelper.GetElementType(paramType)
-                isByRefStructure = paramElementType.IsValueType
+                isByRefStructure = CecilHelper.IsValueType(paramElementType)
             End If
 
             Helper.Assert(m_InstanceExpression Is Nothing)

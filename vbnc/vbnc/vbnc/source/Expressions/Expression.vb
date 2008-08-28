@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -79,14 +79,6 @@ Public MustInherit Class Expression
     ''' </summary>
     ''' <remarks></remarks>
     Private m_Classification As ExpressionClassification
-
-#If DEBUG Then
-    ReadOnly Property Where() As String
-        Get
-            Return Location.ToString(Compiler)
-        End Get
-    End Property
-#End If
 
     ''' <summary>
     ''' First finds a code block, then finds the specified type in the code block.
@@ -327,12 +319,12 @@ Public MustInherit Class Expression
             Return Me
         ElseIf TypeOf Me Is InstanceExpression Then
             Return Me
-        ElseIf ExpressionType.IsValueType Then
+        ElseIf CecilHelper.IsValueType(ExpressionType) Then
             If TypeOf Me Is DeRefExpression Then
                 Dim derefExp As DeRefExpression = DirectCast(Me, DeRefExpression)
                 result = derefExp.Expression
             ElseIf Helper.CompareType(CecilHelper.FindDefinition(Me.ExpressionType).BaseType, Compiler.TypeCache.System_Enum) Then
-                result = New BoxExpression(Me, Me, Me.ExpressionType)
+                result = New BoxExpression(Me, Me, CecilHelper.MakeByRefType(Me.ExpressionType))
                 'ElseIf Me.ExpressionType.IsValueType AndAlso Helper.IsNullableType(Compiler, Me.ExpressionType) = False Then
                 '    result = New BoxExpression(Me, Me, Me.ExpressionType)
             Else
@@ -459,32 +451,10 @@ Public MustInherit Class Expression
 
 
 #End Region
-    '#If DEBUG Then
-    '    Protected Overrides Sub Finalize()
-    '        If m_Resolving Then
-    '            If Location IsNot Nothing Then
-    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving: " & Me.Location.ToString)
-    '            Else
-    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving. (Location is lost already).")
-    '            End If
-    '        End If
-    '    End Sub
-    '#End If
-#If DEBUG Then
-    Overridable Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("<Dump of '" & Me.GetType.Name & "'>")
-    End Sub
-#End If
 
     Overridable ReadOnly Property AsString() As String
         Get
             Return "<String representation of " & Me.GetType.FullName & " not implemented>"
         End Get
     End Property
-
-    'ReadOnly Property IsUnresolved() As Boolean
-    '    Get
-    '        Return
-    '    End Get
-    'End Property
 End Class

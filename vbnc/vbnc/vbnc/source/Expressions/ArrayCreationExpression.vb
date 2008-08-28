@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -143,19 +143,12 @@ Public Class ArrayCreationExpression
         If Ranks <= 1 Then
             Emitter.EmitNewArr(Info, CecilHelper.GetElementType(ArrayType))
         Else
-            Dim ctor As Mono.Cecil.MethodReference
-            Dim types() As Mono.Cecil.TypeReference = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Info.Compiler.TypeCache.System_Int32, Ranks)
-
-            ctor = CecilHelper.FindDefinition(ArrayType).Constructors.GetConstructor(False, types)
-
-            If ctor IsNot Nothing Then
-                Emitter.EmitNew(Info, ctor)
-            Else
-                Throw New NotImplementedException
-                'Dim minfo As Mono.Cecil.MethodReference
-                'minfo = Info.Compiler.ModuleBuilder.GetArrayMethod(ArrayType, ".ctor", CallingConventions.HasThis Or CallingConventions.Standard, Nothing, types)
-                'Emitter.EmitNew(Info, minfo, types)
-            End If
+            Dim minfo As Mono.Cecil.MethodReference
+            minfo = New Mono.Cecil.MethodReference(".ctor", ArrayType, Info.Compiler.TypeCache.System_Void, True, False, Mono.Cecil.MethodCallingConvention.Default)
+            For i As Integer = 1 To Ranks
+                minfo.Parameters.Add(New Mono.Cecil.ParameterDefinition(Info.Compiler.TypeCache.System_Int32))
+            Next
+            Emitter.EmitNew(Info, minfo)
         End If
     End Sub
 
@@ -201,7 +194,7 @@ Public Class ArrayCreationExpression
             For i As Integer = 0 To Indices.Count - 1
                 Emitter.EmitLoadValue(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32), Indices(i))
             Next
-            If elementType.IsValueType AndAlso CecilHelper.IsPrimitive(Compiler, elementType) = False AndAlso Helper.IsEnum(Compiler, elementType) = False Then
+            If CecilHelper.IsValueType(elementType) AndAlso CecilHelper.IsPrimitive(Compiler, elementType) = False AndAlso Helper.IsEnum(Compiler, elementType) = False Then
                 Emitter.EmitLoadElementAddress(Info, elementType, ArrayType)
             End If
 

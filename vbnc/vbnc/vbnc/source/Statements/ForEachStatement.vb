@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ Public Class ForEachStatement
     Function GenerateCode_LoadCurrentLoopVariable(ByVal Info As EmitInfo) As Boolean
         Dim varType As Mono.Cecil.TypeReference = m_LoopControlVariable.VariableType
         Dim isGenericParameter As Boolean = CecilHelper.IsGenericParameter(varType)
-        Dim isValueType As Boolean = isGenericParameter = False AndAlso varType.IsValueType
+        Dim isValueType As Boolean = isGenericParameter = False AndAlso CecilHelper.IsValueType(varType)
         Dim isClass As Boolean = isGenericParameter = False AndAlso CecilHelper.IsClass(varType)
 
         Emitter.EmitLoadVariable(Info, m_Enumerator)
@@ -129,7 +129,7 @@ Public Class ForEachStatement
 
         result = m_LoopControlVariable.GenerateCode(Info) AndAlso result 'Creates the localbuilder if necessary
 
-        m_Enumerator = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_Collections_IEnumerator)
+        m_Enumerator = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator))
         EndLabel = Emitter.DefineLabel(Info)
         m_NextIteration = Emitter.DefineLabel(Info)
         startIteration = Emitter.DefineLabel(Info)
@@ -141,8 +141,8 @@ Public Class ForEachStatement
 
         'Load the container variable and get the enumerator
         result = m_InExpression.GenerateCode(Info.Clone(Me, True, False, m_InExpression.ExpressionType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator)
+        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable))
+        Emitter.EmitCallVirt(Info, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator))
         Emitter.EmitStoreVariable(Info, m_Enumerator)
 
         'Jump to the next iteration
@@ -161,7 +161,7 @@ Public Class ForEachStatement
         Emitter.MarkLabel(Info, m_NextIteration)
         Emitter.EmitNop(Info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__MoveNext)
+        Emitter.EmitCallVirt(Info, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator__MoveNext))
         'Jump to the code for the next element
         Emitter.EmitBranchIfTrue(Info, startIteration)
         'End of try code.
@@ -171,10 +171,10 @@ Public Class ForEachStatement
         Emitter.EmitBeginFinallyBlock(Info)
         Dim EndFinally As Label = Emitter.DefineLabel(info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
+        Emitter.EmitIsInst(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator), Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_IDisposable))
         Emitter.EmitBranchIfFalse(Info, EndFinally)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
+        Emitter.EmitIsInst(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator), Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_IDisposable))
         Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_IDisposable__Dispose)
         Emitter.MarkLabel(info, EndFinally)
         Emitter.EmitEndExceptionBlock(Info)

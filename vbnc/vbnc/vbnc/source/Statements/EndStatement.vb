@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -44,10 +44,4 @@ Public Class EndStatement
         Compiler.Helper.AddCheck("End statements may not be used in programs that are not executable (for example, DLLs). ")
         Return True
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        dumper.WriteLine("End")
-    End Sub
-#End If
 End Class

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -901,7 +901,7 @@ Public Class MemberCandidate
         Helper.AssertNotNothing(m_TypesInInvokedOrder)
 
         If ResolveUnresolvedExpressions() = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(Parent.Location)
         End If
 
         Return True 'Method is applicable!!
@@ -939,7 +939,7 @@ Public Class MemberCandidate
             ace = ParamArrayExpression ' TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)
             If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Count - 1)) Then
                 If ace.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(Parent.Location)
                 End If
             End If
         End If

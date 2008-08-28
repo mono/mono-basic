@@ -45,15 +45,4 @@ Public Class Expressions
             Return Count
         End Get
     End Property
-
-#If DEBUG Then
-    Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dim sep As String = ""
-        For Each e As Expression In Me
-            Dumper.Write(sep)
-            e.Dump(Dumper)
-            sep = ", "
-        Next
-    End Sub
-#End If
 End Class
