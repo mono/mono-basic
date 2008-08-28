@@ -1,6 +1,6 @@
 ' 
-' Visual Basic.Net COmpiler
-' Copyright (C) 2004 - 2006 Rolf Bjarne Kvinge, rbjarnek at users.sourceforge.net
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,8 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+Imports System.IO
+
 Class frmMain
     Inherits Windows.Forms.Form
 
@@ -30,6 +32,8 @@ Class frmMain
     
     Private Delegate Sub UpdateUIDelegate(ByVal test As Test, ByVal UpdateSummary As Boolean)
     Private Delegate Sub UpdateUIDelegate2()
+
+    Private m_FilesToDelete As New Generic.List(Of String)
 
     ReadOnly Property TestExecutor() As TestExecutor
         Get
@@ -619,6 +623,14 @@ Class frmMain
             m_TestExecutor.Dispose()
             m_TestExecutor = Nothing
         End If
+
+        For Each file As String In m_FilesToDelete
+            Try
+                IO.File.Delete(file)
+            Catch ex As Exception
+                Debug.WriteLine("Unable to delete the file: " & file & ": " & ex.Message)
+            End Try
+        Next
     End Sub
 
     Private Sub frmMain_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles MyBase.FormClosing
@@ -887,6 +899,18 @@ Class frmMain
         End If
         If path <> "" Then
             SaveSetting(Application.ProductName, Me.Name, "Reflector", path)
+        End If
+        Return path
+    End Function
+
+    Private Function GetIldasmPath() As String
+        Dim path As String
+        path = GetSetting(Application.ProductName, Me.Name, "Ildasm", Environment.ExpandEnvironmentVariables("%PROGRAMFILES%\Microsoft SDKs\Windows\v6.0A\bin\Ildasm.exe"))
+        If IO.File.Exists(path) = False Then
+            path = InputBox("Path of ildasm.exe: ")
+        End If
+        If path <> "" Then
+            SaveSetting(Application.ProductName, Me.Name, "Ildasm", path)
         End If
         Return path
     End Function
@@ -1378,5 +1402,36 @@ Class frmMain
         For Each t As Tests In Tests.ContainedTests
             ListKnownFailures(Root, t, failures)
         Next
+    End Sub
+
+    Private Sub mnuIldasmBoth_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuIldasmBoth.Click
+        Try
+            Dim test As Test = GetSelectedTest()
+            If test Is Nothing Then
+                MsgBox("Select a test")
+                Return
+            End If
+
+            Dim vbc As String = Path.GetTempFileName()
+            Dim vbnc As String = Path.GetTempFileName
+
+            IO.File.Delete(vbc)
+            IO.File.Delete(vbnc)
+
+            vbc = Path.Combine(Path.GetDirectoryName(vbc), "vbc_" & Path.GetFileName(vbc))
+            vbnc = Path.Combine(Path.GetDirectoryName(vbnc), "vbnc_" & Path.GetFileName(vbnc))
+
+            m_FilesToDelete.Add(vbc)
+            m_FilesToDelete.Add(vbnc)
+
+            IO.File.Copy(test.GetOutputVBCAssembly, vbc, True)
+            IO.File.Copy(test.GetOutputAssembly, vbnc, True)
+
+            Process.Start(GetIldasmPath, """" & vbc & """")
+            Process.Start(GetIldasmPath, """" & vbnc & """")
+
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
     End Sub
 End Class

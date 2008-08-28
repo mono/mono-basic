@@ -1,6 +1,6 @@
 ' 
-' Visual Basic.Net COmpiler
-' Copyright (C) 2004 - 2006 Rolf Bjarne Kvinge, rbjarnek at users.sourceforge.net
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -91,6 +91,7 @@ Partial Class frmMain
         Me.RunTestsToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem
         Me.CreateNewTestInThisFolderToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.OnlyRefreshToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.CreateKnownFailurestxtToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.tabMain = New System.Windows.Forms.TabControl
         Me.pageSummary = New System.Windows.Forms.TabPage
         Me.TableLayoutPanel2 = New System.Windows.Forms.TableLayoutPanel
@@ -140,7 +141,8 @@ Partial Class frmMain
         Me.chkDontTestIfNothingHasChanged = New System.Windows.Forms.CheckBox
         Me.cmdSelfTest = New System.Windows.Forms.Button
         Me.worker = New System.ComponentModel.BackgroundWorker
-        Me.CreateKnownFailurestxtToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuIldasm = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuIldasmBoth = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.cmnuTree.SuspendLayout()
@@ -172,33 +174,33 @@ Partial Class frmMain
         'mnuToolsChangeOutputToVerified
         '
         Me.mnuToolsChangeOutputToVerified.Name = "mnuToolsChangeOutputToVerified"
-        Me.mnuToolsChangeOutputToVerified.Size = New System.Drawing.Size(284, 22)
+        Me.mnuToolsChangeOutputToVerified.Size = New System.Drawing.Size(295, 22)
         Me.mnuToolsChangeOutputToVerified.Text = "Change output xml files to verified xml files."
         '
         'cmnuViewCode
         '
         Me.cmnuViewCode.Name = "cmnuViewCode"
-        Me.cmnuViewCode.Size = New System.Drawing.Size(284, 22)
+        Me.cmnuViewCode.Size = New System.Drawing.Size(295, 22)
         Me.cmnuViewCode.Text = "View code"
         '
         'mnuToolsRefresh
         '
         Me.mnuToolsRefresh.Name = "mnuToolsRefresh"
         Me.mnuToolsRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5
-        Me.mnuToolsRefresh.Size = New System.Drawing.Size(284, 22)
+        Me.mnuToolsRefresh.Size = New System.Drawing.Size(295, 22)
         Me.mnuToolsRefresh.Text = "&Refresh"
         '
         'NewTestToolStripMenuItem
         '
         Me.NewTestToolStripMenuItem.Name = "NewTestToolStripMenuItem"
         Me.NewTestToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(284, 22)
+        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(295, 22)
         Me.NewTestToolStripMenuItem.Text = "New test"
         '
         'ViewQueuedTestsToolStripMenuItem
         '
         Me.ViewQueuedTestsToolStripMenuItem.Name = "ViewQueuedTestsToolStripMenuItem"
-        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(284, 22)
+        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(295, 22)
         Me.ViewQueuedTestsToolStripMenuItem.Text = "View queued tests"
         '
         'lstImages
@@ -252,108 +254,108 @@ Partial Class frmMain
         '
         'cmnuTest
         '
-        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.cmnuOutputToVerified, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.CreateNewTestCopyingThisTestToolStripMenuItem, Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem, Me.MakeErrorTestToolStripMenuItem})
+        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.cmnuOutputToVerified, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.CreateNewTestCopyingThisTestToolStripMenuItem, Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem, Me.MakeErrorTestToolStripMenuItem})
         Me.cmnuTest.Name = "cmnuTest"
-        Me.cmnuTest.Size = New System.Drawing.Size(368, 264)
+        Me.cmnuTest.Size = New System.Drawing.Size(379, 308)
         '
         'cmnuRunTest
         '
         Me.cmnuRunTest.Name = "cmnuRunTest"
-        Me.cmnuRunTest.Size = New System.Drawing.Size(367, 22)
+        Me.cmnuRunTest.Size = New System.Drawing.Size(378, 22)
         Me.cmnuRunTest.Text = "Run this test"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(364, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(375, 6)
         '
         'cmnuViewCodeAndDebugTest
         '
         Me.cmnuViewCodeAndDebugTest.Name = "cmnuViewCodeAndDebugTest"
-        Me.cmnuViewCodeAndDebugTest.Size = New System.Drawing.Size(367, 22)
+        Me.cmnuViewCodeAndDebugTest.Size = New System.Drawing.Size(378, 22)
         Me.cmnuViewCodeAndDebugTest.Text = "&View Code (external editor) and Set this test to be debugged"
         '
         'cmnuViewCode2
         '
         Me.cmnuViewCode2.Name = "cmnuViewCode2"
-        Me.cmnuViewCode2.Size = New System.Drawing.Size(367, 22)
+        Me.cmnuViewCode2.Size = New System.Drawing.Size(378, 22)
         Me.cmnuViewCode2.Text = "View code (external editor)"
         '
         'cmnuDebugTest
         '
         Me.cmnuDebugTest.Name = "cmnuDebugTest"
-        Me.cmnuDebugTest.Size = New System.Drawing.Size(367, 22)
+        Me.cmnuDebugTest.Size = New System.Drawing.Size(378, 22)
         Me.cmnuDebugTest.Text = "&Set this test to be debugged"
         '
         'EditThisTestToolStripMenuItem
         '
         Me.EditThisTestToolStripMenuItem.Name = "EditThisTestToolStripMenuItem"
-        Me.EditThisTestToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.EditThisTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.EditThisTestToolStripMenuItem.Text = "Edit this test (internal editor)"
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(364, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(375, 6)
         '
         'cmnuOutputToVerified
         '
         Me.cmnuOutputToVerified.Name = "cmnuOutputToVerified"
-        Me.cmnuOutputToVerified.Size = New System.Drawing.Size(367, 22)
+        Me.cmnuOutputToVerified.Size = New System.Drawing.Size(378, 22)
         Me.cmnuOutputToVerified.Text = "Change output files to verified files"
         '
         'ReflectToolStripMenuItem
         '
         Me.ReflectToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.VBNCAssemblyToolStripMenuItem, Me.VBCAssemblyToolStripMenuItem, Me.BothAssembliesToolStripMenuItem})
         Me.ReflectToolStripMenuItem.Name = "ReflectToolStripMenuItem"
-        Me.ReflectToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.ReflectToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.ReflectToolStripMenuItem.Text = "Reflect"
         '
         'VBNCAssemblyToolStripMenuItem
         '
         Me.VBNCAssemblyToolStripMenuItem.Name = "VBNCAssemblyToolStripMenuItem"
-        Me.VBNCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(150, 22)
+        Me.VBNCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
         Me.VBNCAssemblyToolStripMenuItem.Text = "VBNC assembly"
         '
         'VBCAssemblyToolStripMenuItem
         '
         Me.VBCAssemblyToolStripMenuItem.Name = "VBCAssemblyToolStripMenuItem"
-        Me.VBCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(150, 22)
+        Me.VBCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
         Me.VBCAssemblyToolStripMenuItem.Text = "VBC assembly"
         '
         'BothAssembliesToolStripMenuItem
         '
         Me.BothAssembliesToolStripMenuItem.Name = "BothAssembliesToolStripMenuItem"
-        Me.BothAssembliesToolStripMenuItem.Size = New System.Drawing.Size(150, 22)
+        Me.BothAssembliesToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
         Me.BothAssembliesToolStripMenuItem.Text = "Both assemblies"
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(364, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(375, 6)
         '
         'CreateNewTestToolStripMenuItem
         '
         Me.CreateNewTestToolStripMenuItem.Name = "CreateNewTestToolStripMenuItem"
-        Me.CreateNewTestToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.CreateNewTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.CreateNewTestToolStripMenuItem.Text = "Create new test"
         '
         'CreateNewTestCopyingThisTestToolStripMenuItem
         '
         Me.CreateNewTestCopyingThisTestToolStripMenuItem.Name = "CreateNewTestCopyingThisTestToolStripMenuItem"
-        Me.CreateNewTestCopyingThisTestToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.CreateNewTestCopyingThisTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.CreateNewTestCopyingThisTestToolStripMenuItem.Text = "Create new test copying this test"
         '
         'CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem
         '
         Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Name = "CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem"
-        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Text = "Create new test using this test as base name"
         '
         'MakeErrorTestToolStripMenuItem
         '
         Me.MakeErrorTestToolStripMenuItem.Name = "MakeErrorTestToolStripMenuItem"
-        Me.MakeErrorTestToolStripMenuItem.Size = New System.Drawing.Size(367, 22)
+        Me.MakeErrorTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.MakeErrorTestToolStripMenuItem.Text = "Make error test"
         '
         'cmdPause
@@ -465,56 +467,62 @@ Partial Class frmMain
         '
         Me.cmnuTree.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunTestsToolStripMenuItem, Me.CreateNewTestInThisFolderToolStripMenuItem, Me.OnlyRefreshToolStripMenuItem, Me.CreateKnownFailurestxtToolStripMenuItem})
         Me.cmnuTree.Name = "cmnuTree"
-        Me.cmnuTree.Size = New System.Drawing.Size(215, 114)
+        Me.cmnuTree.Size = New System.Drawing.Size(226, 92)
         '
         'RunTestsToolStripMenuItem
         '
         Me.RunTestsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AllTestsToolStripMenuItem, Me.FailedTestsToolStripMenuItem, Me.SucceededTestsToolStripMenuItem, Me.NotRunTestsToolStripMenuItem, Me.RunTestsToolStripMenuItem1})
         Me.RunTestsToolStripMenuItem.Name = "RunTestsToolStripMenuItem"
-        Me.RunTestsToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me.RunTestsToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
         Me.RunTestsToolStripMenuItem.Text = "&Run tests"
         '
         'AllTestsToolStripMenuItem
         '
         Me.AllTestsToolStripMenuItem.Name = "AllTestsToolStripMenuItem"
-        Me.AllTestsToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.AllTestsToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
         Me.AllTestsToolStripMenuItem.Text = "&All tests"
         '
         'FailedTestsToolStripMenuItem
         '
         Me.FailedTestsToolStripMenuItem.Name = "FailedTestsToolStripMenuItem"
-        Me.FailedTestsToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.FailedTestsToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
         Me.FailedTestsToolStripMenuItem.Text = "&Failed tests"
         '
         'SucceededTestsToolStripMenuItem
         '
         Me.SucceededTestsToolStripMenuItem.Name = "SucceededTestsToolStripMenuItem"
-        Me.SucceededTestsToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.SucceededTestsToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
         Me.SucceededTestsToolStripMenuItem.Text = "&Succeeded tests"
         '
         'NotRunTestsToolStripMenuItem
         '
         Me.NotRunTestsToolStripMenuItem.Name = "NotRunTestsToolStripMenuItem"
-        Me.NotRunTestsToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.NotRunTestsToolStripMenuItem.Size = New System.Drawing.Size(164, 22)
         Me.NotRunTestsToolStripMenuItem.Text = "&Not run tests"
         '
         'RunTestsToolStripMenuItem1
         '
         Me.RunTestsToolStripMenuItem1.Name = "RunTestsToolStripMenuItem1"
-        Me.RunTestsToolStripMenuItem1.Size = New System.Drawing.Size(153, 22)
+        Me.RunTestsToolStripMenuItem1.Size = New System.Drawing.Size(164, 22)
         Me.RunTestsToolStripMenuItem1.Text = "&Run tests"
         '
         'CreateNewTestInThisFolderToolStripMenuItem
         '
         Me.CreateNewTestInThisFolderToolStripMenuItem.Name = "CreateNewTestInThisFolderToolStripMenuItem"
-        Me.CreateNewTestInThisFolderToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me.CreateNewTestInThisFolderToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
         Me.CreateNewTestInThisFolderToolStripMenuItem.Text = "Create new test in this folder"
         '
         'OnlyRefreshToolStripMenuItem
         '
         Me.OnlyRefreshToolStripMenuItem.Name = "OnlyRefreshToolStripMenuItem"
-        Me.OnlyRefreshToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me.OnlyRefreshToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
         Me.OnlyRefreshToolStripMenuItem.Text = "Only refresh"
+        '
+        'CreateKnownFailurestxtToolStripMenuItem
+        '
+        Me.CreateKnownFailurestxtToolStripMenuItem.Name = "CreateKnownFailurestxtToolStripMenuItem"
+        Me.CreateKnownFailurestxtToolStripMenuItem.Size = New System.Drawing.Size(225, 22)
+        Me.CreateKnownFailurestxtToolStripMenuItem.Text = "Create KnownFailures.txt"
         '
         'tabMain
         '
@@ -1016,10 +1024,18 @@ Partial Class frmMain
         'worker
         '
         '
+        'mnuIldasm
         '
-        Me.CreateKnownFailurestxtToolStripMenuItem.Name = "CreateKnownFailurestxtToolStripMenuItem"
-        Me.CreateKnownFailurestxtToolStripMenuItem.Size = New System.Drawing.Size(214, 22)
-        Me.CreateKnownFailurestxtToolStripMenuItem.Text = "Create KnownFailures.txt"
+        Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth})
+        Me.mnuIldasm.Name = "mnuIldasm"
+        Me.mnuIldasm.Size = New System.Drawing.Size(378, 22)
+        Me.mnuIldasm.Text = "Ildasm"
+        '
+        'mnuIldasmBoth
+        '
+        Me.mnuIldasmBoth.Name = "mnuIldasmBoth"
+        Me.mnuIldasmBoth.Size = New System.Drawing.Size(161, 22)
+        Me.mnuIldasmBoth.Text = "Both assemblies"
         '
         'frmMain
         '
@@ -1161,4 +1177,6 @@ Partial Class frmMain
     Friend WithEvents worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents MakeErrorTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateKnownFailurestxtToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuIldasm As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents mnuIldasmBoth As System.Windows.Forms.ToolStripMenuItem
 End Class

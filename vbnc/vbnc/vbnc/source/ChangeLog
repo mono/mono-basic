@@ -1,5 +1,10 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/AssemblyInfo.vb: Updated test harness to compare assemblies
+	  using cecil (thereby killing ac).
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Interfaces/IMemberDescriptor.vb, Interfaces/IPropertyMember.vb,
 	  Interfaces/IEventMemberDeclaration.vb,
 	  Interfaces/ICreatableType.vb, Interfaces/ITypeContainer.vb,

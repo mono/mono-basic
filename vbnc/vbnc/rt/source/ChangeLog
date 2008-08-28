@@ -1,7 +1,16 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
-	* rt.vbproj, rt9.sln, rt9.vbproj, rt.sln: Converted all projects and
-	  solutions to VS9 format, removed some old files.
+	* TestList.vb, keyfile.snk, VerificationBase.vb, frmDiff.vb, Test.vb,
+	  EnhancedProgressBar.vb, rt.vbproj, ExternalProcessVerification.vb,
+	  frmMain.vb, TestStatistics.vb, AssemblyInfo.vb, frmTestEditor.vb,
+	  XMLVerifier.vb, frmNewTest.vb, Settings.vb, Tests.vb,
+	  FileTabPage.vb, XmlCompare.vb, FileComparer.vb, TestView.vb,
+	  CompilerHelper.vb, rt.sln, frmDiff.Designer.vb, frmAssemblyDiff.vb,
+	  ListViewItemComparer.vb, Test.Results.vb, ChangeLog, Main.vb,
+	  CommandLine.vb, frmMain.Designer.vb, TestExecutor.vb,
+	  ExternalProcessExecutor.vb, FileTabPage.Designer.vb,
+	  CecilCompare.vb, CecilComparer.vb, HostedCompiler.vb: Updated test
+	  harness to compare assemblies using cecil (thereby killing ac).
 
 2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 

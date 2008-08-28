@@ -1,4 +1,4 @@
-' 
+﻿' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -17,34 +17,39 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public Class FileTabPage
-    Inherits TabPage
+Public Class HostedCompiler
+    Inherits VerificationBase
 
-    Private m_FileName As String
+    Private Shared Helper As CompilerHelper
+    Private m_Compilation As Compilation
 
-    ReadOnly Property FileName() As String
+    Sub New(ByVal Test As Test)
+        MyBase.New(Test)
+    End Sub
+
+    Friend ReadOnly Property Compilation() As Compilation
         Get
-            Return m_FileName
+            Return m_Compilation
         End Get
     End Property
 
-    Sub New(ByVal Filename As String)
-        MyBase.New(IO.Path.GetFileName(Filename))
-        
-        Me.InitializeComponent()
+    Protected Overrides Function RunVerification() As Boolean
+        Dim compilation As Compilation
 
-        m_FileName = Filename
+        If Helper Is Nothing Then
+            Helper = New CompilerHelper(Test.Parent.VBNCPath)
+        End If
+
         Try
-            If IO.File.Exists(m_FileName) Then
-                txtFile.Text = Join(IO.File.ReadAllText(m_FileName).Split(New String() {vbCrLf, vbCr, vbLf}, StringSplitOptions.None), vbCrLf)
-            Else
-                txtFile.Text = "File not found: " & m_FileName
-            End If
-        Catch ex As Security.SecurityException
-            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
-        Catch ex As IO.IOException
-            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+            compilation = Helper.Compile(Test.GetTestCommandLineArguments(False), Test)
+        Catch ex As Exception
+            Return False
         End Try
-    End Sub
 
+        m_Compilation = compilation
+
+        DescriptiveMessage = m_Compilation.CompilerHelper.ConsoleOutput
+
+        Return compilation.ExitCode = 0
+    End Function
 End Class

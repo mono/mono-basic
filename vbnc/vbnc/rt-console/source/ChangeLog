@@ -1,3 +1,8 @@
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MainModule.vb: Updated test harness to compare assemblies using cecil
+	  (thereby killing ac).
+
 2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MainModule.vb, ChangeLog: Merge with head.

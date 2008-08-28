@@ -1,6 +1,6 @@
 ' 
-' Visual Basic.Net COmpiler
-' Copyright (C) 2004 - 2006 Rolf Bjarne Kvinge, rbjarnek at users.sourceforge.net
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 <Serializable()> _
 Public Class Test
     Private Const PEVerifyPath As String = "%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe"
+    Private Const PEVerifyPath2 As String = "%programfiles%\Microsoft SDKs\Windows\v6.0A\bin\PEVerify.exe"
     ''' <summary>
     ''' The files that contains this test.
     ''' </summary>
@@ -76,7 +77,7 @@ Public Class Test
     ''' The compilation using our compiler.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Compilation As ExternalProcessVerification
+    Private m_Compilation As VerificationBase
 
     Public Const OutputExtension As String = ".output.xml"
     Public Const VerifiedExtension As String = ".verified.xml"
@@ -214,7 +215,7 @@ Public Class Test
         xml.WriteElementString("ResponseFile", m_ResponseFile)
         xml.WriteElementString("ExitCode", ExitCode.ToString)
         xml.WriteElementString("Result", m_Result.ToString)
-        xml.WriteElementString("StdOut", m_Compilation.Process.StdOut)
+        xml.WriteElementString("StdOut", Me.StdOut)
         If Statistics IsNot Nothing Then Statistics.WriteToXML(xml)
         xml.WriteEndElement()
     End Sub
@@ -250,10 +251,12 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property Statistics() As TestStatistics
         Get
-            If m_Compilation Is Nothing OrElse m_Compilation.Process Is Nothing Then
+            Dim external As ExternalProcessVerification = TryCast(m_Compilation, ExternalProcessVerification)
+
+            If external Is Nothing OrElse external.Process Is Nothing Then
                 Return Nothing
             End If
-            Return m_Compilation.Process.Statistics
+            Return external.Process.Statistics
         End Get
     End Property
 
@@ -321,11 +324,16 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property StdOut() As String
         Get
-            If m_Compilation IsNot Nothing Then
-                Return m_Compilation.Process.StdOut
-            Else
-                Return ""
+            Dim external As ExternalProcessVerification = TryCast(m_Compilation, ExternalProcessVerification)
+            Dim hosted As HostedCompiler = TryCast(m_Compilation, HostedCompiler)
+
+            If external IsNot Nothing Then
+                If external.Process IsNot Nothing Then Return external.Process.StdOut
+            ElseIf hosted IsNot Nothing Then
+                If hosted.Compilation IsNot Nothing Then Return hosted.Compilation.CompilerHelper.ConsoleOutput
             End If
+
+            Return String.Empty
         End Get
     End Property
 
@@ -335,10 +343,18 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property ExitCode() As Integer
         Get
-            If m_Compilation Is Nothing OrElse m_Compilation.Process Is Nothing Then
+            Dim external As ExternalProcessVerification = TryCast(m_Compilation, ExternalProcessVerification)
+            Dim hosted As HostedCompiler = TryCast(m_Compilation, HostedCompiler)
+
+            If external IsNot Nothing Then
+                If external.Process Is Nothing Then Return 0
+                Return external.Process.ExitCode
+            ElseIf hosted IsNot Nothing Then
+                If hosted.Compilation Is Nothing Then Return 0
+                Return hosted.Compilation.ExitCode
+            Else
                 Return 0
             End If
-            Return m_Compilation.Process.ExitCode
         End Get
     End Property
 
@@ -717,9 +733,14 @@ Public Class Test
         If Me.Parent IsNot Nothing Then
             vbccompiler = Me.Parent.VBCPath
         End If
-        If vbccompiler <> String.Empty AndAlso vbccmdline.Length > 0 Then
+
+       If vbccompiler <> String.Empty AndAlso vbccmdline.Length > 0 Then
             vbc = New ExternalProcessVerification(Me, vbccompiler, Join(vbccmdline, " "))
             vbc.Process.WorkingDirectory = m_BasePath
+            vbc = vbc
+        End If
+
+        If vbc IsNot Nothing Then
             vbc.Name = "VBC Compile (verifies that the test itself is correct)"
             If m_IsNegativeTest Then vbc.NegativeError = m_NegativeError
             If m_IsWarning Then vbc.Warning = m_NegativeError
@@ -733,8 +754,17 @@ Public Class Test
             Throw New Exception("No compiler specified.")
         End If
 
-        m_Compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
-        m_Compilation.Process.WorkingDirectory = m_BasePath
+        Dim hosted_compilation As HostedCompiler = Nothing
+        Dim external_compilation As ExternalProcessVerification = Nothing
+
+        If False Then
+            hosted_compilation = New HostedCompiler(Me)
+            m_Compilation = hosted_compilation
+        Else
+            external_compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
+            external_compilation.Process.WorkingDirectory = m_BasePath
+            m_Compilation = external_compilation
+        End If
         m_Compilation.Name = "VBNC Compile"
         'm_Compilation.Process.UseTemporaryExecutable = True
         If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
@@ -753,6 +783,7 @@ Public Class Test
 
             Dim peverify As String
             peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
+            If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
             If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
                 Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
                 peV.Name = "Type Safety and Security Verification"
@@ -761,15 +792,22 @@ Public Class Test
                 m_Verifications.Add(peV)
             End If
 
-            Dim ac As String
-            ac = GetACPath
-            If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
-                Dim cmdLine As String = "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"
-                Dim acV As New ExternalProcessVerification(Me, GetACPath, cmdLine)
-                acV.Name = "Assembly Comparison Verification"
-                acV.Process.DependentFiles.AddRange(m_References)
-                acV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
-                m_Verifications.Add(acV)
+            'Dim ac As String
+            'ac = GetACPath
+            'If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
+            '    Dim cmdLine As String = "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"
+            '    Dim acV As New ExternalProcessVerification(Me, GetACPath, cmdLine)
+            '    acV.Name = "Assembly Comparison Verification"
+            '    acV.Process.DependentFiles.AddRange(m_References)
+            '    acV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
+            '    m_Verifications.Add(acV)
+            'End If
+
+            Dim cc As CecilCompare
+            If vbccompiler <> String.Empty AndAlso IO.File.Exists(vbccompiler) AndAlso GetOutputVBCAssembly() IsNot Nothing Then
+                cc = New CecilCompare(Me)
+                cc.Name = "Cecil Assembly Compare"
+                m_Verifications.Add(cc)
             End If
 
             If Me.m_Target = "exe" AndAlso m_DontExecute = False Then
@@ -805,18 +843,22 @@ Public Class Test
 
     Sub SaveTest()
         Const DATETIMEFORMAT As String = "yyyy-MM-dd HHmm"
-        Dim compiler As String
+        Dim compiler As String = ""
         Dim filename As String
 
         Try
-            compiler = "(" & VBNCVerification.Process.FileVersion.FileVersion & " " & VBNCVerification.Process.LastWriteDate.ToString(DATETIMEFORMAT) & ")"
+            Dim vbnc As ExternalProcessVerification = DirectCast(VBNCVerification, ExternalProcessVerification)
+            If vbnc IsNot Nothing Then
+                compiler = "(" & vbnc.Process.FileVersion.FileVersion & " " & vbnc.Process.LastWriteDate.ToString(DATETIMEFORMAT) & ")"
+            End If
+
             compiler &= "." & m_Result.ToString
-	
+
             Dim i As Integer
-            i = compiler.IndexOfAny (IO.Path.GetInvalidPathChars)
+            i = compiler.IndexOfAny(IO.Path.GetInvalidPathChars)
             If i >= 0 Then
                 For Each c As Char In IO.Path.GetInvalidPathChars
-                    compiler = compiler.Replace (c.ToString (), "")
+                    compiler = compiler.Replace(c.ToString(), "")
                 Next
             End If
 
@@ -929,11 +971,11 @@ Public Class Test
         RaiseEvent Executed(Me)
     End Sub
 
-    ReadOnly Property VBNCVerification() As ExternalProcessVerification
+    ReadOnly Property VBNCVerification() As VerificationBase
         Get
             For Each ver As VerificationBase In m_Verifications
                 If ver.Name.Contains("VBNC Compile") Then
-                    Return DirectCast(ver, ExternalProcessVerification)
+                    Return ver
                 End If
             Next
             Return Nothing

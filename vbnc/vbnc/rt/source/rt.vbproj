@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C24CC77B-ED7F-4A02-9206-B9EB480EFB7D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -26,8 +26,9 @@
     <ApplicationRevision>0</ApplicationRevision>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>keyfile.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
@@ -80,6 +81,11 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil.VB, Version=0.6.8.8607, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vbnc\bin\Mono.Cecil.VB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -96,8 +102,9 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyCompare.vb" />
     <Compile Include="AssemblyInfo.vb" />
+    <Compile Include="CecilCompare.vb" />
+    <Compile Include="CecilComparer.vb" />
     <Compile Include="CommandLine.vb" />
     <Compile Include="CompilerHelper.vb" />
     <Compile Include="EnhancedProgressBar.Designer.vb">
@@ -147,6 +154,7 @@
     </Compile>
     <Compile Include="Helper.vb">
     </Compile>
+    <Compile Include="HostedCompiler.vb" />
     <Compile Include="ListViewItemComparer.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="OldResult.vb" />
@@ -190,7 +198,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="keyfile.snk" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Project\" />

@@ -1,6 +1,6 @@
 ' 
-' Visual Basic.Net COmpiler
-' Copyright (C) 2004 - 2006 Rolf Bjarne Kvinge, rbjarnek at users.sourceforge.net
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.0.0.276")>
+<Assembly: AssemblyVersion("0.0.0.290")>
 
 <Assembly: AssemblyFileVersion("0.0.0.1")> 
