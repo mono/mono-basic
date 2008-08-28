@@ -599,7 +599,6 @@
     <Compile Include="Members\PropertySetDeclaration.vb" />
     <Compile Include="General\Report.vb" />
     <Compile Include="General\Scanner.vb" />
-    <Compile Include="Testing\Testing.vb" />
     <Compile Include="Tokens\Span.vb" />
     <Compile Include="Tokens\Token.vb" />
     <Compile Include="TypeDeclarations\AssemblyDeclaration.vb" />

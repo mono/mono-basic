@@ -1,5 +1,10 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* bin/vbnc.vbnc.rsp, bin/vbnc.rsp, bin/vbnc.Errors.resources: Remove
+	  more cruft.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* bin/bootstrap.bat, bin/test-module, bin/bootstrap-vbnc.exe,
 	  bin/bootstrap.mono, bin/test-decl, bin/stresstest.bat,
 	  bin/Makefile, bin/test-one: Delete old cruft.

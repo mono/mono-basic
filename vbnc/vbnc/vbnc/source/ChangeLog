@@ -1,5 +1,19 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Interfaces/IMemberDescriptor.vb, Interfaces/IPropertyMember.vb,
+	  Interfaces/IEventMemberDeclaration.vb,
+	  Interfaces/ICreatableType.vb, Interfaces/ITypeContainer.vb,
+	  vbnc.vbproj, Members/MemberParameter.vb,
+	  Members/InterfaceMemberDeclarations.vb,
+	  Members/MemberParameters.vb, Members/BaseMember.vb,
+	  Types/AttributeBaseType.vb, General/IndentedTextWriter.vb,
+	  General/Dumper.vb, General/DumperXML.vb,
+	  General/TypeCache.Generated.vb, Testing,
+	  Infos/DelegateResolveInfo.vb, Testing/Testing.vb: Remove more
+	  cruft.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* AutoGen, AutoGen/ZCompilerCodeGenerator.vb: Delete old cruft.
 
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
