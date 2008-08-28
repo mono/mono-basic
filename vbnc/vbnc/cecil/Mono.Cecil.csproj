@@ -244,11 +244,14 @@
     <Compile Include="Mono.Cecil\DefaultImporter.cs" />
     <Compile Include="Mono.Cecil\EmbeddedResource.cs" />
     <Compile Include="Mono.Cecil\EventAttributes.cs" />
+    <Compile Include="Mono.Cecil\EventDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\EventDefinition.cs" />
     <Compile Include="Mono.Cecil\EventDefinitionCollection.cs" />
     <Compile Include="Mono.Cecil\EventReference.cs" />
+    <Compile Include="Mono.Cecil\ExtendedMetadata.cs" />
     <Compile Include="Mono.Cecil\ExternTypeCollection.cs" />
     <Compile Include="Mono.Cecil\FieldAttributes.cs" />
+    <Compile Include="Mono.Cecil\FieldDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\FieldDefinition.cs" />
     <Compile Include="Mono.Cecil\FieldDefinitionCollection.cs" />
     <Compile Include="Mono.Cecil\FieldReference.cs" />
@@ -284,13 +287,16 @@
     <Compile Include="Mono.Cecil\IReflectionVisitable.cs" />
     <Compile Include="Mono.Cecil\IReflectionVisitor.cs" />
     <Compile Include="Mono.Cecil\IRequireResolving.cs" />
+    <Compile Include="Mono.Cecil\LazyReflectionReader.cs" />
     <Compile Include="Mono.Cecil\LinkedResource.cs" />
     <Compile Include="Mono.Cecil\ManifestResourceAttributes.cs" />
     <Compile Include="Mono.Cecil\MarshalSpec.cs" />
     <Compile Include="Mono.Cecil\MemberReference.cs" />
     <Compile Include="Mono.Cecil\MemberReferenceCollection.cs" />
+    <Compile Include="Mono.Cecil\MetadataResolver.cs" />
     <Compile Include="Mono.Cecil\MethodAttributes.cs" />
     <Compile Include="Mono.Cecil\MethodCallingConvention.cs" />
+    <Compile Include="Mono.Cecil\MethodDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\MethodDefinition.cs" />
     <Compile Include="Mono.Cecil\MethodDefinitionCollection.cs" />
     <Compile Include="Mono.Cecil\MethodImplAttributes.cs" />
@@ -307,6 +313,7 @@
     <Compile Include="Mono.Cecil\NestedTypeCollection.cs" />
     <Compile Include="Mono.Cecil\NullReferenceImporter.cs" />
     <Compile Include="Mono.Cecil\OverrideCollection.cs" />
+    <Compile Include="Mono.Cecil\ParamDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\ParameterAttributes.cs" />
     <Compile Include="Mono.Cecil\ParameterDefinition.cs" />
     <Compile Include="Mono.Cecil\ParameterDefinitionCollection.cs" />
@@ -318,6 +325,7 @@
     <Compile Include="Mono.Cecil\PropertyAttributes.cs" />
     <Compile Include="Mono.Cecil\PropertyDefinition.cs" />
     <Compile Include="Mono.Cecil\PropertyDefinitionCollection.cs" />
+    <Compile Include="Mono.Cecil\PropertyDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\PropertyReference.cs" />
     <Compile Include="Mono.Cecil\ReferenceType.cs" />
     <Compile Include="Mono.Cecil\ReflectionController.cs" />
@@ -337,6 +345,7 @@
     <Compile Include="Mono.Cecil\TableComparers.cs" />
     <Compile Include="Mono.Cecil\TargetRuntime.cs" />
     <Compile Include="Mono.Cecil\TypeAttributes.cs" />
+    <Compile Include="Mono.Cecil\TypeDefExtendedTable.cs" />
     <Compile Include="Mono.Cecil\TypeDefinition.cs" />
     <Compile Include="Mono.Cecil\TypeDefinitionCollection.cs" />
     <Compile Include="Mono.Cecil\TypeReference.cs" />

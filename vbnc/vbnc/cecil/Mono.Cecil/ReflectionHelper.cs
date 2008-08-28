@@ -200,10 +200,13 @@ namespace Mono.Cecil {
 					elementType = new ArrayType (elementType, t.GetArrayRank ());
 				else if (t.IsByRef)
 					elementType = new ReferenceType (elementType);
-				else if (IsGenericTypeSpec (t))
-					elementType = GetGenericType (t, elementType, context);
-				else
-					throw new ReflectionException ("Unknown element type");
+                else if (IsGenericTypeSpec(t)) {
+					TypeReference ctx = context.GenericContext.Type;
+					context.GenericContext.Type = elementType;
+                    elementType = GetGenericType(t, elementType, context);
+					context.GenericContext.Type = ctx;
+                } else
+                    throw new ReflectionException("Unknown element type");
 			}
 
 			return elementType;
@@ -342,15 +345,15 @@ namespace Mono.Cecil {
 				MethodCallingConvention.Default); // TODO: get the real callconv
 			meth.DeclaringType = ImportSystemType (originalDecType, context);
 
+            context.GenericContext.Method = meth;
+            context.GenericContext.Type = ImportSystemType(declaringTypeDef, context);
+
 			if (IsGenericMethod (mb))
 				foreach (Type genParam in GetGenericArguments (mb as SR.MethodInfo))
 					meth.GenericParameters.Add (new GenericParameter (genParam.Name, meth));
 
 			TypeReference contextType = context.GenericContext.Type;
 			MethodReference contextMethod = context.GenericContext.Method;
-
-			context.GenericContext.Method = meth;
-			context.GenericContext.Type = ImportSystemType (declaringTypeDef, context);
 
 			meth.ReturnType.ReturnType = ImportSystemType (retType, context);
 

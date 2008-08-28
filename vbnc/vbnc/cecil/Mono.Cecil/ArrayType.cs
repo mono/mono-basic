@@ -95,6 +95,15 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public ArrayType (TypeReference elementType, ArrayDimensionCollection dimensions)
+			: base (elementType) {
+			
+			m_dimensions = new ArrayDimensionCollection (this);
+			for (int i = 0; i < dimensions.Count; i++) {
+				m_dimensions.Add (new ArrayDimension (dimensions [i].LowerBound, dimensions [i].UpperBound));
+			}
+		}
+
 		public ArrayType (TypeReference elementType, int rank) : base (elementType)
 		{
 			m_dimensions = new ArrayDimensionCollection (this);

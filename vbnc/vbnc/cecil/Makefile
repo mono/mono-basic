@@ -1,12 +1,5 @@
-thisdir = class/Mono.Cecil
-include ../../build/rules.make
+default: */*.cs */*/*.cs
+	gmcs @Mono.Cecil.VB.dll.sources /r:System.dll /target:library /out:Mono.Cecil.VB.dll
 
-LIBRARY = Mono.Cecil.dll
-LIBRARY_SNK = ../mono.snk
-LIBRARY_PACKAGE = none
-
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll -keyfile:$(LIBRARY_SNK)
-
-NO_TEST = yes
-
-include ../../build/library.make
+install: default
+	mv Mono.Cecil.VB.dll ../../class/vbnc

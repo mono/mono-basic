@@ -109,7 +109,7 @@ namespace Mono.Cecil {
 
 		void Attach (MemberReference member)
 		{
-			if (member.DeclaringType != null)
+			if (member.DeclaringType != null && m_container != member.DeclaringType)
 				throw new ReflectionException ("Member already attached, clone it instead");
 
 			member.DeclaringType = m_container;

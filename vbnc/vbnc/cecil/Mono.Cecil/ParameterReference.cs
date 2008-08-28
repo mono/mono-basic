@@ -60,7 +60,7 @@ namespace Mono.Cecil {
 			set { m_token = value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
+		public IDictionary Annotations {
 			get {
 				if (m_annotations == null)
 					m_annotations = new Hashtable ();

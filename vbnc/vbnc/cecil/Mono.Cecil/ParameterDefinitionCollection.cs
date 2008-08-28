@@ -40,6 +40,14 @@ namespace Mono.Cecil {
 
 		IMemberReference m_container;
 
+#if DEBUG
+		public object [] ToArray {
+			get {
+				return new ArrayList (this).ToArray ();
+			}
+		}
+#endif
+
 		public ParameterDefinition this [int index] {
 			get { return List [index] as ParameterDefinition; }
 			set { List [index] = value; }
@@ -88,6 +96,28 @@ namespace Mono.Cecil {
 		public void Accept (IReflectionVisitor visitor)
 		{
 			visitor.VisitParameterDefinitionCollection (this);
+		}
+
+		public ParameterDefinitionCollection ResolveGenericTypes (GenericParameterCollection gen_params, GenericArgumentCollection gen_args)
+		{
+			ParameterDefinitionCollection result;
+			bool any_resolved = false;
+			result = new ParameterDefinitionCollection (this.m_container);
+			for (int i = 0; i < Count; i++) {
+				ParameterDefinition p = this [i];
+				TypeReference resolved = MemberReference.ResolveType (p.ParameterType, gen_params, gen_args);
+				if (resolved != p.ParameterType) {
+					result.Add (new ParameterDefinition (p.Name, p.Sequence, p.Attributes, resolved));
+					any_resolved = true;
+				} else {
+					result.Add (p);
+				}
+			}
+
+			if (!any_resolved)
+				return this;
+
+			return result;
 		}
 	}
 }

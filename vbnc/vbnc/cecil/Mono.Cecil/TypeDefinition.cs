@@ -45,6 +45,43 @@ namespace Mono.Cecil {
 		EventDefinitionCollection m_events;
 		PropertyDefinitionCollection m_properties;
 		SecurityDeclarationCollection m_secDecls;
+		bool m_declaringTypeInitialized;		
+
+		public override TypeReference DeclaringType {
+			get {
+				if (IsDelayedMode && !m_declaringTypeInitialized) {
+					base.DeclaringType = MetaResolver.ResolveDeclaringType (MetadataToken);
+					m_declaringTypeInitialized = true;
+				}
+				return base.DeclaringType;
+			}
+			set {
+				m_declaringTypeInitialized = true;
+				base.DeclaringType = value;
+			}
+		}
+
+		public override CustomAttributeCollection CustomAttributes {
+			get {
+				if (m_customAttrs == null) {
+					m_customAttrs = new CustomAttributeCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveCustomAttributes (MetadataToken, m_customAttrs);					
+				}
+				return m_customAttrs;
+			}
+		}
+
+		public override GenericParameterCollection GenericParameters {
+			get {
+				if (m_genparams == null) {
+					m_genparams = new GenericParameterCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveGenericParameters (MetadataToken, m_genparams);					
+				}
+				return m_genparams;
+			}
+		}
 
 		public TypeAttributes Attributes {
 			get { return m_attributes; }
@@ -52,7 +89,11 @@ namespace Mono.Cecil {
 		}
 
 		public TypeReference BaseType {
-			get { return m_baseType; }
+			get {
+				if (m_baseType == null && IsDelayedMode)
+					m_baseType = MetaResolver.ResolveBaseType (MetadataToken);
+				return m_baseType;
+			}
 			set { m_baseType = value; }
 		}
 
@@ -78,8 +119,11 @@ namespace Mono.Cecil {
 
 		public InterfaceCollection Interfaces {
 			get {
-				if (m_interfaces == null)
+				if (m_interfaces == null) {
 					m_interfaces = new InterfaceCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveInterfaces (MetadataToken, m_interfaces);											
+				}
 
 				return m_interfaces;
 			}
@@ -87,17 +131,22 @@ namespace Mono.Cecil {
 
 		public NestedTypeCollection NestedTypes {
 			get {
-				if (m_nestedTypes == null)
-					m_nestedTypes = new NestedTypeCollection (this);
-
+				if (m_nestedTypes == null) {
+					m_nestedTypes = new NestedTypeCollection (this);														
+				}
 				return m_nestedTypes;
 			}
 		}
 
 		public MethodDefinitionCollection Methods {
 			get {
-				if (m_methods == null)
+				if (m_methods == null) {
 					m_methods = new MethodDefinitionCollection (this);
+					if (IsDelayedMode) {
+						m_ctors = new ConstructorCollection (this);
+						InitMethods ();
+					}
+				}
 
 				return m_methods;
 			}
@@ -105,17 +154,31 @@ namespace Mono.Cecil {
 
 		public ConstructorCollection Constructors {
 			get {
-				if (m_ctors == null)
+				if (m_ctors == null) {
 					m_ctors = new ConstructorCollection (this);
+					if (IsDelayedMode) {
+						m_methods = new MethodDefinitionCollection (this);
+						InitMethods ();
+					}
+
+				}
 
 				return m_ctors;
 			}
 		}
 
+		private void InitMethods ()
+		{
+			MetaResolver.ResolveMethods (MetadataToken, m_methods, m_ctors);			
+		}
+
 		public FieldDefinitionCollection Fields {
 			get {
-				if (m_fields == null)
+				if (m_fields == null) {
 					m_fields = new FieldDefinitionCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveFields (MetadataToken, m_fields);						
+				}
 
 				return m_fields;
 			}
@@ -123,29 +186,63 @@ namespace Mono.Cecil {
 
 		public EventDefinitionCollection Events {
 			get {
-				if (m_events == null)
+				if (m_events == null) {
 					m_events = new EventDefinitionCollection (this);
-
+					if (IsDelayedMode) {
+						MetaResolver.ResolveEvents (MetadataToken, m_events);
+					}
+				}
 				return m_events;
 			}
 		}
 
 		public PropertyDefinitionCollection Properties {
 			get {
-				if (m_properties == null)
+				if (m_properties == null) {
 					m_properties = new PropertyDefinitionCollection (this);
-
+					if (IsDelayedMode)
+						MetaResolver.ResolveProperties (MetadataToken, m_properties);
+				}
 				return m_properties;
 			}
 		}
 
 		public SecurityDeclarationCollection SecurityDeclarations {
 			get {
-				if (m_secDecls == null)
+				if (m_secDecls == null) {
 					m_secDecls = new SecurityDeclarationCollection (this);
-
+					if (IsDelayedMode)
+						MetaResolver.ResolveSecurityDeclarations (MetadataToken, m_secDecls);					
+				}
 				return m_secDecls;
 			}
+		}
+
+		internal void FullLoad () {
+			foreach (MethodDefinition m in Methods) {
+				m.FullLoad ();
+			}
+
+			foreach (MethodDefinition c in Constructors) {
+				c.FullLoad ();
+			}
+
+			if (IsDelayedMode) {
+				foreach (FieldDefinition f in Fields) {
+					f.FullLoad ();
+				}
+				object resolved = null;
+				resolved = this.CustomAttributes;
+				resolved = this.SecurityDeclarations;
+				resolved = BaseType;
+				resolved = DeclaringType;
+				resolved = Events;
+				resolved = GenericParameters;
+				resolved = Interfaces;
+				resolved = NestedTypes;
+				resolved = Properties;
+			}
+
 		}
 
 		#region TypeAttributes
@@ -271,6 +368,9 @@ namespace Mono.Cecil {
 			}
 		}
 
+		/// <summary>
+		/// This does not work as in System.Reflection
+		/// </summary>
 		public bool IsClass {
 			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Class; }
 			set {
@@ -409,13 +509,13 @@ namespace Mono.Cecil {
 		#endregion
 
 		public bool IsEnum {
-			get { return m_baseType != null && m_baseType.FullName == Constants.Enum; }
+			get { return BaseType != null && BaseType.FullName == Constants.Enum; }
 		}
 
 		public override bool IsValueType {
 			get {
-				return m_baseType != null && (
-					this.IsEnum || (m_baseType.FullName == Constants.ValueType && this.FullName != Constants.Enum));
+				return BaseType != null && (
+					this.IsEnum || (BaseType.FullName == Constants.ValueType && this.FullName != Constants.Enum));
 			}
 		}
 

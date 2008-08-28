@@ -74,16 +74,27 @@ namespace Mono.Cecil {
 			if (original is PointerType) {
 				typeSpec = new PointerType (elementType);
 			} else if (original is ArrayType) { // deal with complex arrays
-				typeSpec = new ArrayType (elementType);
+				typeSpec = new ArrayType (elementType, ((ArrayType) original).Dimensions);
 			} else if (original is ReferenceType) {
 				typeSpec = new ReferenceType (elementType);
 			} else if (original is GenericInstanceType) {
 				GenericInstanceType git = original as GenericInstanceType;
 				GenericInstanceType genElemType = new GenericInstanceType (elementType);
-
+				
 				context.GenericContext.CheckProvider (genElemType.GetOriginalType (), git.GenericArguments.Count);
-				foreach (TypeReference arg in git.GenericArguments)
+				context.GenericContext.Type = elementType;
+				foreach (TypeReference arg in git.GenericArguments) {
+					GenericParameter gp = arg as GenericParameter;
+					if (gp != null) {
+						if (gp.Owner is TypeReference)
+							context.GenericContext.Type = (TypeReference) gp.Owner;
+						else if (gp.Owner is MethodReference)
+							context.GenericContext.Method = (MethodReference) gp.Owner;
+						else
+							throw new NotImplementedException ();
+					}
 					genElemType.GenericArguments.Add (ImportTypeReference (arg, context));
+				}
 
 				typeSpec = genElemType;
 			} else if (original is ModifierOptional) {
@@ -115,15 +126,7 @@ namespace Mono.Cecil {
 
 		static GenericParameter GetGenericParameter (GenericParameter gp, ImportContext context)
 		{
-			GenericParameter p;
-			if (gp.Owner is TypeReference)
-				p = context.GenericContext.Type.GenericParameters [gp.Position];
-			else if (gp.Owner is MethodReference)
-				p = context.GenericContext.Method.GenericParameters [gp.Position];
-			else
-				throw new NotSupportedException ();
-
-			return p;
+			return gp;
 		}
 
 		public virtual TypeReference ImportTypeReference (TypeReference t, ImportContext context)
@@ -138,32 +141,39 @@ namespace Mono.Cecil {
 				return GetGenericParameter (t as GenericParameter, context);
 
 			TypeReference type = m_module.TypeReferences [t.FullName];
-			if (type != null)
-				return type;
+			if (type == null)
+			{
+				AssemblyNameReference asm;
+				if (t.Scope is AssemblyNameReference)
+					asm = ImportAssembly((AssemblyNameReference)t.Scope);
+				else if (t.Scope is ModuleDefinition)
+					asm = ImportAssembly(((ModuleDefinition)t.Scope).Assembly.Name);
+				else
+					throw new NotImplementedException();
 
-			AssemblyNameReference asm;
-			if (t.Scope is AssemblyNameReference)
-				asm = ImportAssembly ((AssemblyNameReference) t.Scope);
-			else if (t.Scope is ModuleDefinition)
-				asm = ImportAssembly (((ModuleDefinition) t.Scope).Assembly.Name);
+				if (t.DeclaringType != null)
+				{
+					type = new TypeReference(t.Name, string.Empty, asm, t.IsValueType);
+					type.DeclaringType = ImportTypeReference(t.DeclaringType, context);
+				}
+				else
+					type = new TypeReference(t.Name, t.Namespace, asm, t.IsValueType);
+
+				TypeReference contextType = context.GenericContext.Type;
+
+				context.GenericContext.Type = type;
+
+				GenericParameter.CloneInto(t, type, context);
+
+				context.GenericContext.Type = contextType;
+
+				m_module.TypeReferences.Add(type);
+			}
 			else
-				throw new NotImplementedException ();
+			{
+				context.GenericContext.Type = type;
 
-			if (t.DeclaringType != null) {
-				type = new TypeReference (t.Name, string.Empty, asm, t.IsValueType);
-				type.DeclaringType = ImportTypeReference (t.DeclaringType, context);
-			} else
-				type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
-
-			TypeReference contextType = context.GenericContext.Type;
-
-			context.GenericContext.Type = type;
-
-			GenericParameter.CloneInto (t, type, context);
-
-			context.GenericContext.Type = contextType;
-
-			m_module.TypeReferences.Add (type);
+			}
 			return type;
 		}
 

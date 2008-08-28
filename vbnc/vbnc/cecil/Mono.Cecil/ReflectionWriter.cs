@@ -717,7 +717,7 @@ namespace Mono.Cecil {
 		}
 
 		void WriteSemantic (MethodSemanticsAttributes attrs,
-			IMetadataTokenProvider member, MethodDefinition meth)
+			IMetadataTokenProvider member, MethodReference meth)
 		{
 			MethodSemanticsTable msTable = m_tableWriter.GetMethodSemanticsTable ();
 			MethodSemanticsRow msRow = m_rowWriter.CreateMethodSemanticsRow (
@@ -1270,7 +1270,7 @@ namespace Mono.Cecil {
 			MethodCallingConvention mcc;
 			ParameterDefinitionCollection parameters = prop.Parameters;
 
-			MethodDefinition meth;
+			MethodReference meth;
 			if (prop.GetMethod != null)
 				meth = prop.GetMethod;
 			else if (prop.SetMethod != null)

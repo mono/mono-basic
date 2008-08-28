@@ -134,16 +134,16 @@ namespace Mono.Cecil {
 		}
 
 		public ModuleDefinition (string name, AssemblyDefinition asm) :
-			this (name, asm, null, false)
+			this (name, asm, null, false, false)
 		{
 		}
 
 		public ModuleDefinition (string name, AssemblyDefinition asm, bool main) :
-			this (name, asm, null, main)
+			this (name, asm, null, main, false)
 		{
 		}
 
-		internal ModuleDefinition (string name, AssemblyDefinition asm, StructureReader reader, bool main) : base (name)
+		internal ModuleDefinition (string name, AssemblyDefinition asm, StructureReader reader, bool main, bool lazy) : base (name)
 		{
 			if (asm == null)
 				throw new ArgumentNullException ("asm");
@@ -169,7 +169,7 @@ namespace Mono.Cecil {
 			m_refs = new TypeReferenceCollection (this);
 			m_members = new MemberReferenceCollection (this);
 
-			m_controller = new ReflectionController (this);
+			m_controller = new ReflectionController (this, lazy);
 		}
 
 		public IMetadataTokenProvider LookupByToken (MetadataToken token)
@@ -416,10 +416,7 @@ namespace Mono.Cecil {
 				m_controller.Reader.VisitModuleDefinition (this);
 
 			foreach (TypeDefinition type in this.Types) {
-				foreach (MethodDefinition meth in type.Methods)
-					meth.LoadBody ();
-				foreach (MethodDefinition ctor in type.Constructors)
-					ctor.LoadBody ();
+				type.FullLoad();				
 			}
 
 			if (m_controller.Reader.SymbolReader == null)

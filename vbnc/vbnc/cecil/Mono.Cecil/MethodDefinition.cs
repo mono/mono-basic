@@ -49,7 +49,9 @@ namespace Mono.Cecil {
 		RVA m_rva;
 		OverrideCollection m_overrides;
 		PInvokeInfo m_pinvoke;
-		readonly ParameterDefinition m_this;
+		bool m_pinvokeInitialized;
+		readonly ParameterDefinition m_this;		
+		bool m_declaringTypeInitialized;
 
 		public MethodAttributes Attributes {
 			get { return m_attributes; }
@@ -67,8 +69,15 @@ namespace Mono.Cecil {
 		}
 
 		public override TypeReference DeclaringType {
-			get { return base.DeclaringType; }
+			get {
+				if (IsDelayedMode && !m_declaringTypeInitialized) {
+					base.DeclaringType = MetaResolver.ResolveDeclaringType (MetadataToken);
+					m_declaringTypeInitialized = true;
+				}
+				return base.DeclaringType;
+			}
 			set {
+				m_declaringTypeInitialized = true;
 				base.DeclaringType = value;
 				TypeDefinition t = value as TypeDefinition;
 				if (t != null)
@@ -76,10 +85,45 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public override MethodReturnType ReturnType {
+			get {
+				if (IsDelayedMode && (base.ReturnType == null || base.ReturnType.ReturnType == null))
+					base.ReturnType = MetaResolver.ResolveMethodReturnType (this);
+				return base.ReturnType;
+			}
+			set { base.ReturnType = value; }
+		}
+
+		public override ParameterDefinitionCollection Parameters {
+			get {
+				if (m_parameters == null) {
+					m_parameters = new ParameterDefinitionCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveParameters (MetadataToken, m_parameters);											
+				}
+				return m_parameters;
+			}
+		}
+
+		public override GenericParameterCollection GenericParameters {
+			get {
+				if (m_genparams == null) {
+					m_genparams = new GenericParameterCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveGenericParameters (MetadataToken, m_genparams);											
+				}
+				return m_genparams;
+			}
+		}
+
 		public SecurityDeclarationCollection SecurityDeclarations {
 			get {
 				if (m_secDecls == null)
+				{
 					m_secDecls = new SecurityDeclarationCollection (this);
+					if (IsDelayedMode)
+						MetaResolver.ResolveSecurityDeclarations (MetadataToken, m_secDecls);						
+				}
 
 				return m_secDecls;
 			}
@@ -88,8 +132,11 @@ namespace Mono.Cecil {
 		public CustomAttributeCollection CustomAttributes {
 			get {
 				if (m_customAttrs == null)
+				{
 					m_customAttrs = new CustomAttributeCollection (this);
-
+					if (IsDelayedMode)					
+						MetaResolver.ResolveCustomAttributes (MetadataToken, m_customAttrs);						
+				}
 				return m_customAttrs;
 			}
 		}
@@ -108,15 +155,27 @@ namespace Mono.Cecil {
 		}
 
 		public PInvokeInfo PInvokeInfo {
-			get { return m_pinvoke; }
-			set { m_pinvoke = value; }
+			get {
+				if (IsDelayedMode && !m_pinvokeInitialized)
+				{
+					m_pinvoke = MetaResolver.ResolvePInvoke (MetadataToken);
+					m_pinvokeInitialized = true;
+				}
+				return m_pinvoke; 
+			}
+			set {
+				m_pinvokeInitialized = true; 
+				m_pinvoke = value;
+			}
 		}
 
 		public OverrideCollection Overrides {
 			get {
-				if (m_overrides == null)
+				if (m_overrides == null) {
 					m_overrides = new OverrideCollection (this);
-
+					if (IsDelayedMode)
+						MetaResolver.ResolveOverrides (MetadataToken, m_overrides);						
+				}
 				return m_overrides;
 			}
 		}
@@ -538,7 +597,7 @@ namespace Mono.Cecil {
 			this.HasThis = !this.IsStatic;
 			if (!IsStatic)
 				m_this = new ParameterDefinition ("this", 0, (ParameterAttributes) 0, null);
-		}
+		}		
 
 		public MethodDefinition (string name, MethodAttributes attrs, TypeReference returnType) :
 			this (name, attrs)
@@ -552,6 +611,20 @@ namespace Mono.Cecil {
 				m_body = new MethodBody (this);
 				if (m_module != null && m_rva != RVA.Zero)
 					m_module.Controller.Reader.Code.VisitMethodBody (m_body);
+			}
+		}
+
+		internal void FullLoad () {
+			LoadBody ();
+			if (IsDelayedMode) {
+				object resolved = null;
+				resolved = CustomAttributes;
+				resolved = SecurityDeclarations;
+				resolved = GenericParameters;
+				resolved = Overrides;
+				resolved = Parameters;
+				resolved = PInvokeInfo;				
+				resolved = ReturnType;
 			}
 		}
 

@@ -1,3 +1,25 @@
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Mono.Cecil.csproj, Mono.Cecil/ArrayType.cs,
+	  Mono.Cecil/ReflectionHelper.cs,
+	  Mono.Cecil/ParameterDefinitionCollection.cs,
+	  Mono.Cecil/EventDefinitionCollection.cs,
+	  Mono.Cecil/FieldDefinitionCollection.cs,
+	  Mono.Cecil/FieldDefinition.cs, Mono.Cecil/TypeReference.cs,
+	  Mono.Cecil/GenericInstanceMethod.cs,
+	  Mono.Cecil/ReflectionReader.cs, Mono.Cecil/MethodReturnType.cs,
+	  Mono.Cecil/TypeDefinition.cs, Mono.Cecil/DefaultImporter.cs,
+	  Mono.Cecil/AssemblyFactory.cs, Mono.Cecil/StructureReader.cs,
+	  Mono.Cecil/MethodDefinition.cs, Mono.Cecil/ReflectionController.cs,
+	  Mono.Cecil/ModuleDefinition.cs, Mono.Cecil/MethodReference.cs,
+	  Mono.Cecil/MemberReference.cs, Mono.Cecil/ReflectionWriter.cs,
+	  Mono.Cecil/MethodDefinitionCollection.cs,
+	  Mono.Cecil/MethodAttributes.cs, Mono.Cecil/PropertyDefinition.cs,
+	  Mono.Cecil/ParameterReference.cs,
+	  Mono.Cecil/NestedTypeCollection.cs,
+	  Mono.Cecil/ConstructorCollection.cs, Makefile: Save my cecil
+	  changes.
+
 2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.dll.sources

@@ -40,9 +40,9 @@ namespace Mono.Cecil {
 		{
 		}
 
-		static AssemblyDefinition GetAssembly (ImageReader irv, bool manifestOnly)
+		static AssemblyDefinition GetAssembly (ImageReader irv, bool manifestOnly, bool lazy)
 		{
-			StructureReader srv = new StructureReader (irv, manifestOnly);
+			StructureReader srv = new StructureReader (irv, manifestOnly, lazy);
 			AssemblyDefinition asm = new AssemblyDefinition (
 				new AssemblyNameDefinition (), srv);
 
@@ -50,10 +50,15 @@ namespace Mono.Cecil {
 			return asm;
 		}
 
+		static AssemblyDefinition GetAssembly (ImageReader reader, bool manifestOnly)
+		{
+			return GetAssembly (reader, manifestOnly, false);
+		}
+
 		static AssemblyDefinition GetAssembly (ImageReader reader)
 		{
-			return GetAssembly (reader, false);
-		}
+			return GetAssembly (reader, false, false);
+		}		
 
 		static AssemblyDefinition GetAssemblyManifest (ImageReader reader)
 		{
@@ -63,6 +68,11 @@ namespace Mono.Cecil {
 		public static AssemblyDefinition GetAssembly (string file)
 		{
 			return GetAssembly (ImageReader.Read (file));
+		}
+
+		public static AssemblyDefinition GetAssembly (string file, bool lazy)
+		{
+			return GetAssembly (ImageReader.Read (file), false,lazy);
 		}
 
 		public static AssemblyDefinition GetAssembly (byte [] assembly)

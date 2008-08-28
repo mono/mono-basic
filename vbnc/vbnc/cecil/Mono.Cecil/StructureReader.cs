@@ -44,6 +44,7 @@ namespace Mono.Cecil {
 		MetadataStreamCollection m_streams;
 		TablesHeap m_tHeap;
 		MetadataTableReader m_tableReader;
+		bool m_lazyLoad;
 
 		public bool ManifestOnly {
 			get { return m_manifestOnly; }
@@ -72,6 +73,13 @@ namespace Mono.Cecil {
 		public StructureReader (ImageReader ir, bool manifestOnly) : this (ir)
 		{
 			m_manifestOnly = manifestOnly;
+		}
+
+		public StructureReader (ImageReader ir, bool manifestOnly, bool lazy)
+			: this (ir)
+		{
+			m_manifestOnly = manifestOnly;
+			m_lazyLoad = lazy;
 		}
 
 		byte [] ReadBlob (uint pointer)
@@ -206,7 +214,7 @@ namespace Mono.Cecil {
 
 			ModuleRow mr = mt [0];
 			string name = ReadString (mr.Name);
-			ModuleDefinition main = new ModuleDefinition (name, m_asmDef, this, true);
+			ModuleDefinition main = new ModuleDefinition (name, m_asmDef, this, true, m_lazyLoad);
 			main.Mvid = m_streams.GuidHeap [mr.Mvid];
 			main.MetadataToken = new MetadataToken (TokenType.Module, 1);
 			modules.Add (main);
@@ -235,7 +243,7 @@ namespace Mono.Cecil {
 
 					mr = mt [0];
 					ModuleDefinition modext = new ModuleDefinition (name, m_asmDef,
-						new StructureReader (module, m_manifestOnly), false);
+						new StructureReader (module, m_manifestOnly), false,m_lazyLoad);
 					modext.Mvid = module.Image.MetadataRoot.Streams.GuidHeap [mr.Mvid];
 
 					modules.Add (modext);

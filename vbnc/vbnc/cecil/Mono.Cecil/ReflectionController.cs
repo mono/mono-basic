@@ -51,9 +51,12 @@ namespace Mono.Cecil {
 			get { return m_importer; }
 		}
 
-		public ReflectionController (ModuleDefinition module)
+		public ReflectionController (ModuleDefinition module, bool lazy)
 		{
-			m_reader = new AggressiveReflectionReader (module);
+			if (lazy)
+				m_reader = new LazyReflectionReader (module);
+			else 
+				m_reader = new AggressiveReflectionReader(module);			
 			m_writer = new ReflectionWriter (module);
 			m_helper = new ReflectionHelper (module);
 			m_importer = new DefaultImporter (module);

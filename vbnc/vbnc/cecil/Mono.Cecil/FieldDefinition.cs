@@ -42,12 +42,29 @@ namespace Mono.Cecil {
 		uint m_offset;
 
 		RVA m_rva;
+		private bool m_rvaInitialized;
 		byte [] m_initVal;
 
 		bool m_hasConstant;
 		object m_const;
-
+		bool m_constantInitialized;
 		MarshalSpec m_marshalDesc;
+		bool m_declaringTypeInitialized;
+		bool m_initialValueInitialized;
+
+		public override TypeReference DeclaringType {
+			get {
+				if (IsDelayedMode && !m_declaringTypeInitialized) {
+					base.DeclaringType = MetaResolver.ResolveDeclaringType (MetadataToken);
+					m_declaringTypeInitialized = true;
+				}
+				return base.DeclaringType;
+			}
+			set {
+				m_declaringTypeInitialized = true;
+				base.DeclaringType = value;
+			}
+		}
 
 		public bool HasLayoutInfo {
 			get { return m_hasInfo; }
@@ -62,13 +79,31 @@ namespace Mono.Cecil {
 		}
 
 		public RVA RVA {
-			get { return m_rva; }
-			set { m_rva = value; }
+			get {
+				if (!m_rvaInitialized && IsDelayedMode) {
+					m_rva = MetaResolver.ResolveFieldRVA (MetadataToken);
+					m_rvaInitialized = true;
+				}
+				return m_rva;
+			}
+			set {
+				m_rvaInitialized = true;
+				m_rva = value;
+			}
 		}
 
 		public byte [] InitialValue {
-			get { return m_initVal; }
-			set { m_initVal = value; }
+			get {
+				if (!m_initialValueInitialized && IsDelayedMode && RVA != RVA.Zero) {
+					m_initialValueInitialized = true;
+					m_initVal = MetaResolver.ResolveFieldInitialValue (MetadataToken);
+				}
+				return m_initVal;
+			}
+			set {
+				m_initialValueInitialized = true;
+				m_initVal = value;
+			}
 		}
 
 		public FieldAttributes Attributes {
@@ -77,22 +112,42 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasConstant {
-			get { return m_hasConstant; }
+			get {
+				if (IsDelayedMode && !m_constantInitialized)
+					InitConstant ();				
+				return m_hasConstant; 
+			}
 		}
 
 		public object Constant {
-			get { return m_const; }
+			get {
+				if (IsDelayedMode && !m_constantInitialized) {
+					InitConstant ();
+				}
+				return m_const;
+			}
 			set {
 				m_hasConstant = true;
+				m_constantInitialized = true;
 				m_const = value;
 			}
 		}
 
+		private void InitConstant ()
+		{
+			m_hasConstant = MetaResolver.HasConstant (MetadataToken);			
+			if (m_hasConstant)
+				m_const = MetaResolver.ResolveConstant (MetadataToken);							
+			m_constantInitialized = true;
+		}
+
 		public CustomAttributeCollection CustomAttributes {
 			get {
-				if (m_customAttrs == null)
+				if (m_customAttrs == null) {
 					m_customAttrs = new CustomAttributeCollection (this);
-
+					if (IsDelayedMode)
+						MetaResolver.ResolveCustomAttributes (MetadataToken, m_customAttrs);						
+				}
 				return m_customAttrs;
 			}
 		}
@@ -105,6 +160,17 @@ namespace Mono.Cecil {
 					m_attributes |= FieldAttributes.HasFieldMarshal;
 				else
 					m_attributes &= FieldAttributes.HasFieldMarshal;
+			}
+		}
+
+		public void FullLoad () {
+			if (IsDelayedMode) {
+				object resolved = this.Constant;
+				resolved = this.CustomAttributes;
+				resolved = this.DeclaringType;
+				resolved = this.FieldType;
+				resolved = this.RVA;
+				resolved = this.MarshalSpec;
 			}
 		}
 
@@ -273,7 +339,7 @@ namespace Mono.Cecil {
 			FieldAttributes attrs) : base (name, fieldType)
 		{
 			m_attributes = attrs;
-		}
+		}		
 
 		public FieldDefinition Clone ()
 		{

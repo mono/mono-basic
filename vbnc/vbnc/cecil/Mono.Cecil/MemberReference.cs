@@ -38,6 +38,22 @@ namespace Mono.Cecil {
 		TypeReference m_decType;
 		MetadataToken m_token;
 		IDictionary m_annotations;
+		private MetadataResolver m_metaResolver;
+
+		internal MetadataResolver MetaResolver {
+			get {
+				return m_metaResolver;
+			}
+			set {
+				m_metaResolver = value;
+			}
+		}
+
+		protected bool IsDelayedMode {
+			get {
+				return m_metaResolver != null;
+			}
+		}
 
 		public virtual string Name {
 			get { return m_name; }
@@ -54,7 +70,7 @@ namespace Mono.Cecil {
 			set { m_token = value; }
 		}
 
-		IDictionary IAnnotationProvider.Annotations {
+		public IDictionary Annotations {
 			get {
 				if (m_annotations == null)
 					m_annotations = new Hashtable ();
@@ -77,6 +93,57 @@ namespace Mono.Cecil {
 
 		public virtual void Accept (IReflectionVisitor visitor)
 		{
+		}
+
+		internal static TypeReference ResolveType (TypeReference original, GenericParameterCollection parameters, GenericArgumentCollection arguments)
+		{
+			TypeSpecification spec = original as TypeSpecification;
+			ArrayType array = original as ArrayType;
+			ReferenceType reference = original as ReferenceType;
+			GenericInstanceType genericType = original as GenericInstanceType;
+
+			if (parameters.Count != arguments.Count)
+				throw new System.ArgumentException ("Parameters and Arguments must have the same number of elements.");
+
+			if (spec != null) {
+				TypeReference resolved = ResolveType (spec.ElementType, parameters, arguments);
+
+				if (genericType != null) {
+					GenericInstanceType result = new GenericInstanceType (genericType.ElementType);
+					bool found;
+					for (int i = 0; i < genericType.ElementType.GenericParameters.Count; i++) {
+						found = false;
+						for (int k = 0; k < parameters.Count; k++) {
+							if (genericType.ElementType.GenericParameters [i].Name == parameters [k].Name) {
+								found = true;
+								result.GenericArguments.Add (arguments [k]);
+								break;
+							}
+						}
+						if (!found)
+							result.GenericArguments.Add (genericType.ElementType.GenericParameters [i]);
+					}
+					return result;
+				}
+
+				if (resolved == spec.ElementType)
+					return spec;
+
+				if (array != null) {
+					return new ArrayType (resolved, array.Dimensions);
+				} else if (reference != null) {
+					return new ReferenceType (resolved);
+				} else {
+					throw new System.NotImplementedException ();
+				}
+			} else {
+				for (int i = 0; i < parameters.Count; i++) {
+					if (parameters [i] == original) {
+						return arguments [i];
+					}
+				}
+				return original;
+			}
 		}
 	}
 }

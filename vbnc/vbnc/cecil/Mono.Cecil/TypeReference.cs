@@ -37,8 +37,8 @@ namespace Mono.Cecil {
 		IMetadataScope m_scope;
 		ModuleDefinition m_module;
 
-		CustomAttributeCollection m_customAttrs;
-		GenericParameterCollection m_genparams;
+		protected CustomAttributeCollection m_customAttrs;
+		protected GenericParameterCollection m_genparams;
 
 		public override string Name {
 			get { return base.Name; }
@@ -66,7 +66,8 @@ namespace Mono.Cecil {
 			set { m_module = value; }
 		}
 
-		public CustomAttributeCollection CustomAttributes {
+		public virtual CustomAttributeCollection CustomAttributes
+		{
 			get {
 				if (m_customAttrs == null)
 					m_customAttrs = new CustomAttributeCollection (this);
@@ -75,7 +76,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public GenericParameterCollection GenericParameters {
+		public virtual GenericParameterCollection GenericParameters {
 			get {
 				if (m_genparams == null)
 					m_genparams = new GenericParameterCollection (this);

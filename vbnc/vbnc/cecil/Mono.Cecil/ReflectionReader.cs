@@ -40,7 +40,7 @@ namespace Mono.Cecil {
 	internal abstract class ReflectionReader : BaseReflectionReader {
 
 		ModuleDefinition m_module;
-		ImageReader m_reader;
+		protected ImageReader m_reader;
 		SecurityDeclarationReader m_secReader;
 		protected MetadataTableReader m_tableReader;
 		protected MetadataRoot m_root;
@@ -129,7 +129,7 @@ namespace Mono.Cecil {
 			return m_typeDefs [rid - 1];
 		}
 
-		public TypeReference GetTypeRefAt (uint rid)
+		public virtual TypeReference GetTypeRefAt (uint rid)
 		{
 			if (rid > m_typeRefs.Length)
 				return null;
@@ -158,7 +158,7 @@ namespace Mono.Cecil {
 			return tspec;
 		}
 
-		public FieldDefinition GetFieldDefAt (uint rid)
+		public virtual FieldDefinition GetFieldDefAt (uint rid)
 		{
 			if (rid > m_fields.Length)
 				return null;
@@ -166,7 +166,7 @@ namespace Mono.Cecil {
 			return m_fields [rid - 1];
 		}
 
-		public MethodDefinition GetMethodDefAt (uint rid)
+		public virtual MethodDefinition GetMethodDefAt (uint rid)
 		{
 			if (rid > m_meths.Length)
 				return null;
@@ -292,7 +292,7 @@ namespace Mono.Cecil {
 			param.ParameterType = new SentinelType (param.ParameterType);
 		}
 
-		public PropertyDefinition GetPropertyDefAt (uint rid)
+		public virtual PropertyDefinition GetPropertyDefAt (uint rid)
 		{
 			if (rid > m_properties.Length)
 				return null;
@@ -300,7 +300,7 @@ namespace Mono.Cecil {
 			return m_properties [rid - 1];
 		}
 
-		public EventDefinition GetEventDefAt (uint rid)
+		public virtual EventDefinition GetEventDefAt (uint rid)
 		{
 			if (rid > m_events.Length)
 				return null;
@@ -308,7 +308,7 @@ namespace Mono.Cecil {
 			return m_events [rid - 1];
 		}
 
-		public ParameterDefinition GetParamDefAt (uint rid)
+		public virtual ParameterDefinition GetParamDefAt (uint rid)
 		{
 			if (rid > m_parameters.Length)
 				return null;
@@ -316,7 +316,7 @@ namespace Mono.Cecil {
 			return m_parameters [rid - 1];
 		}
 
-		public GenericParameter GetGenericParameterAt (uint rid)
+		public virtual GenericParameter GetGenericParameterAt (uint rid)
 		{
 			if (rid > m_genericParameters.Length)
 				return null;
@@ -511,7 +511,7 @@ namespace Mono.Cecil {
 			ReadMemberReferences ();
 		}
 
-		void AddTypeRef (TypeRefTable typesRef, int i)
+		protected void AddTypeRef (TypeRefTable typesRef, int i)
 		{
 			// Check if index has been already added.
 			if (m_typeRefs [i] != null)
@@ -1160,7 +1160,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		static object GetConstantLittleEndian (ElementType elemType, byte [] constant)
+		private object GetConstantLittleEndian (ElementType elemType, byte[] constant)
 		{
 			switch (elemType) {
 			case ElementType.Char :
@@ -1186,7 +1186,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		static object GetConstantBigEndian (ElementType elemType, byte [] constant)
+		private object GetConstantBigEndian (ElementType elemType, byte[] constant)
 		{
 			// BinaryReader always read it's data in LE format
 			// note: this could be further optimized (even without unsafe code)
