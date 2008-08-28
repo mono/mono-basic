@@ -1,5 +1,17 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Mono.Cecil.VB.csproj, Mono.Cecil.VB.dll.sources, Mono.Cecil.VB.sln,
+	  Mono.Cecil/EventDefExtendedTable.cs,
+	  Mono.Cecil/ExtendedMetadata.cs,
+	  Mono.Cecil/FieldDefExtendedTable.cs,
+	  Mono.Cecil/LazyReflectionReader.cs, Mono.Cecil/MetadataResolver.cs,
+	  Mono.Cecil/MethodDefExtendedTable.cs,
+	  Mono.Cecil/ParamDefExtendedTable.cs,
+	  Mono.Cecil/PropertyDefExtendedTable.cs,
+	  Mono.Cecil/TypeDefExtendedTable.cs: Commit new files too.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Mono.Cecil.csproj, Mono.Cecil/ArrayType.cs,
 	  Mono.Cecil/ReflectionHelper.cs,
 	  Mono.Cecil/ParameterDefinitionCollection.cs,
