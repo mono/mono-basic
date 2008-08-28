@@ -1,7 +1,3 @@
-..\..\source\..\tests\Generated\Constants.vb
-..\..\source\..\tests\Generated\Conversions.vb
-..\..\source\..\tests\Generated\Operators.vb
-..\..\source\AutoGen\ZCompilerCodeGenerator.vb
 ..\..\source\Code\CodeBlock.vb
 ..\..\source\Code\ImplicitCodeBlock.vb
 ..\..\source\ConditionalCompilation\ConditionalConstant.vb
@@ -256,7 +252,6 @@
 ..\..\source\General\CommandLine.OptionExplicitTypes.vb
 ..\..\source\General\CommandLine.OptionStrictTypes.vb
 ..\..\source\General\CommandLine.Targets.vb
-..\..\source\General\Compiler.CompilerSequence.vb
 ..\..\source\General\Compiler.vb
 ..\..\source\General\Define.vb
 ..\..\source\General\Defines.vb
@@ -359,7 +354,6 @@
 ..\..\source\Members\PropertySetDeclaration.vb
 ..\..\source\General\Report.vb
 ..\..\source\General\Scanner.vb
-..\..\source\Testing\Testing.vb
 ..\..\source\Tokens\Span.vb
 ..\..\source\Tokens\Token.vb
 ..\..\source\TypeDeclarations\AssemblyDeclaration.vb

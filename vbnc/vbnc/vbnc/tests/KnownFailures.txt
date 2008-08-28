@@ -67,3 +67,285 @@ Mono\VariablesA
 Mono\VariablesB
 Mono\VariablesC
 VBRunTime\Microsoft.VisualBasic.linux
+
+'The following fail since cecil was introduced. Should be fixed asap.
+1Declarations\EventDelegate1 'Type Safety and Security Verification failed, process exited with exit code 1
+1Declarations\Events2 'Type Safety and Security Verification failed, process exited with exit code 1
+1Declarations\GenericMember2 'Type Safety and Security Verification failed, process exited with exit code 1
+1Declarations\GenericMember4 'Type Safety and Security Verification failed, process exited with exit code 1
+1Declarations\GenericType3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+1Declarations\MultiInterface1 'Type Safety and Security Verification failed, process exited with exit code 1
+1Declarations\Partial5 'Type Safety and Security Verification failed, process exited with exit code 1
+Bugs\30420-bug-74955 'VBNC Compile failed spectacularly. 
+Bugs\30420-bug-74955-2 'VBNC Compile failed spectacularly. 
+Bugs\aspnet1 'VBNC Compile failed, process exited with exit code -1
+Bugs\aspnet2 'VBNC Compile failed, process exited with exit code -1
+Bugs\aspnet3 'VBNC Compile failed, process exited with exit code 1
+Bugs\bug-320964 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-325331 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-325332 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-325339 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-325346 'VBNC Compile failed, process exited with exit code 1
+Bugs\bug-325976 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-325976-2 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-327596 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-332868 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-333403 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-333962 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-359234-ProtectedDefaultBaseCtor 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-74955 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80750 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80752 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80833 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80967 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80968 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80989 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80990 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-80995 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81009 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81016 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81055 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81059 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81119 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81162 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-81243 'VBNC Compile failed, process exited with exit code -1
+Bugs\bug-82382 'VBNC Compile failed, process exited with exit code -1
+Bugs\ia64-1 'VBNC Compile failed, process exited with exit code -1
+CompileTime\ArrayCreationExpression3 'VBNC Compile failed, process exited with exit code -1
+CompileTime\ArrayCreationExpression5 'VBNC Compile failed, process exited with exit code -1
+CompileTime\ArrayInitializer2 'VBNC Compile failed, process exited with exit code -1
+CompileTime\DataSet1 'VBNC Compile failed, process exited with exit code -1
+CompileTime\DictionaryLookupExpression1 'VBNC Compile failed, process exited with exit code 1
+CompileTime\DictionaryLookupExpression2 'VBNC Compile failed, process exited with exit code 1
+CompileTime\Enumerator1 'VBNC Compile failed, process exited with exit code -1
+CompileTime\EventMember6 'Type Safety and Security Verification failed, process exited with exit code 1
+CompileTime\For2 'VBNC Compile failed, process exited with exit code -1
+CompileTime\PropertyAccess5 'VBNC Compile failed, process exited with exit code 1
+CompileTime\RaiseEvent1 'VBNC Compile failed, process exited with exit code -1
+CompileTime\RaiseEvent2 'VBNC Compile failed, process exited with exit code -1
+CompileTime\SingleLineIfWithNonBlockStatements1 'VBNC Compile failed, process exited with exit code -1
+CompileTime\TypeNameResolution2 'VBNC Compile failed, process exited with exit code 1
+CompileTime\UsingStatement1 'Type Safety and Security Verification failed, process exited with exit code 1
+CompileTime\UsingStatement2 'Type Safety and Security Verification failed, process exited with exit code 1
+CompileTime\UsingStatement4 'Type Safety and Security Verification failed, process exited with exit code 1
+CompileTime2\AddHandler3 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\Attribute2 'Only 'Attribute2' has the attribute 'System.SerializableAttribute()' on the member 'Attribute2.Test'.
+CompileTime2\ConditionalAttribute1 'Output executable verification failed, process exited with exit code 196
+CompileTime2\Constraint1 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\Generic6 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\GenericEnumerator2 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\GenericFieldAccess2 'VBNC Compile failed, process exited with exit code 1
+CompileTime2\GenericMethod8 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\GenericParameterAccess1 'VBNC Compile failed, process exited with exit code 1
+CompileTime2\GenericType3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\GetEnumerator1 'Type Safety and Security Verification failed, process exited with exit code 1
+CompileTime2\MethodInvocation19 ''MethodInvocation19.Tester' has the attributes 'AutoLayout, AnsiClass, Class, Public', while 'MethodInvocation19.Tester' has the attributes 'NotPublic'
+CompileTime2\MethodInvocation21 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation22 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation23 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation6 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation8 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocation9 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodInvocations 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution6 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution7 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MethodResolution8 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MissingParameter1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MultipleExpression1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MultipleExpression2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\MyBase1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\NoOutDir1 'VBNC Compile failed, process exited with exit code -1
+CompileTime2\NothingComparison1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\NothingValueType1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Nullable1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\NullChar 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Operator1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Optional1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OptionalParameters1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OptionalParameters2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OptionalParameters4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OptionCompareText1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OptionStrict1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OverrideImplementedMethod1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\OverridenProperty1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArray6 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArrayResolution1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParamArrayResolution2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParameterAttributes1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParameterAttributes2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ParenthesizedExpression1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PartialAccess1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccess1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccess2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccess3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccess4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccessExpression1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccessExpression2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccessExpression3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccessExpression4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\PropertyAccessExpression5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ReadOnly1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Redim2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ReturnVariable1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Select1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SelectCase1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SelectCase2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SelectCase3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SelectCase5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SelectCase6 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\ShadowedProperty1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Shadows1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\SingleLineStatement1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StaticVariable1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StaticVariable2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StaticVariable3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StaticVariable4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StaticVariable5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StringComparison1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StringHandling1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers6 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers7 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\StructureMembers8 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\Throw3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TryCatch1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TryCatch2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TryCatch3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TryCatch4 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TryReturn1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TypeOf1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TypeParameterExpression1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TypeParameterExpression2 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\TypeParameterExpression3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\UserConversion1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\UsingStatement5 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+CompileTime2\VariableInitializer3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+Errors\30064 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30068 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30074 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30074-1 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30108 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30311 'VBNC Compile failed spectacularly. 
+Errors\30337 'VBNC Compile failed spectacularly. 
+Errors\30337-2 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30506-1 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30506-2 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30506-3 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30506-4 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30590 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\31509 'VBC Compile (verifies that the test itself is correct) succeeded unexpectedly.
+Errors\32046 'VBNC Compile failed spectacularly. 
+Errors\32085 'VBNC Compile failed spectacularly. 
+Errors\32105 'VBNC Compile failed spectacularly. 
+Errors\32106 'VBNC Compile failed spectacularly. 
+Errors\42024 'VBC Compile (verifies that the test itself is correct) succeeded correctly, but didn't give the expected error code.
+External\PrivateScope1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
+Generated\Constants 'VBNC Compile failed, process exited with exit code -1
+Generated\ZCompilerCodeGenerator 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+Mono\ArrayA 'VBNC Compile failed, process exited with exit code -1
+Mono\ArrayB 'VBNC Compile failed, process exited with exit code -1
+Mono\ArrayF 'VBNC Compile failed, process exited with exit code -1
+Mono\ArrayG 'VBNC Compile failed, process exited with exit code -1
+Mono\ConstantA 'VBNC Compile failed, process exited with exit code -1
+Mono\DefaultPropC 'VBNC Compile failed, process exited with exit code 1
+Mono\DefaultPropE 'VBNC Compile failed, process exited with exit code -1
+Mono\Delegate_exe 'VBNC Compile failed, process exited with exit code -1
+Mono\EnumB 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\EnumConversionA 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\EnumConversionB 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\Event_dll 'VBNC Compile failed, process exited with exit code -1
+Mono\Event_exe 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
+Mono\EventA 'VBNC Compile failed, process exited with exit code -1
+Mono\EventB 'VBNC Compile failed, process exited with exit code -1
+Mono\EventC 'VBNC Compile failed, process exited with exit code -1
+Mono\EventD 'VBNC Compile failed, process exited with exit code -1
+Mono\EventE 'VBNC Compile failed, process exited with exit code -1
+Mono\EventF 'VBNC Compile failed, process exited with exit code -1
+Mono\EventG 'VBNC Compile failed, process exited with exit code -1
+Mono\EventJ 'VBNC Compile failed, process exited with exit code -1
+Mono\EventK 'VBNC Compile failed, process exited with exit code -1
+Mono\EventM 'VBNC Compile failed, process exited with exit code -1
+Mono\EventN 'VBNC Compile failed, process exited with exit code -1
+Mono\ExplicitConversionEnumToIntA 'VBNC Compile failed, process exited with exit code -1
+Mono\ExplicitConversionEnumToIntB 'VBNC Compile failed, process exited with exit code -1
+Mono\ExpressionInstanceMyBaseA 'VBNC Compile failed, process exited with exit code -1
+Mono\ExpressionInstanceMyClassA 'VBNC Compile failed, process exited with exit code 1
+Mono\ExpressionSimpleNameAddressOfA 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\ExpressionSimpleNameTypeOfA 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\InterfaceA 'VBNC Compile failed, process exited with exit code -1
+Mono\InterfaceH 'VBNC Compile failed, process exited with exit code -1
+Mono\LocalDeclarationA 'VBNC Compile failed, process exited with exit code -1
+Mono\MethodDeclarationA 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\NameSpaceE 'Only 'NameSpaceE_vbc' has the type 'A.Default.If.C'.
+Mono\NameSpaceG 'VBNC Compile failed, process exited with exit code 1
+Mono\Override_exe 'VBNC Compile failed, process exited with exit code -1
+Mono\PropertyI 'VBNC Compile failed, process exited with exit code -1
+Mono\PropertyL 'Type Safety and Security Verification failed, process exited with exit code 1
+Mono\ScopeA 'VBNC Compile failed, process exited with exit code 1
+Mono\TypeMembersF 'VBNC Compile failed, process exited with exit code -1
+Mono\VariablesI 'VBNC Compile failed, process exited with exit code -1
+My\bug-333403 'VBNC Compile failed, process exited with exit code 1
+My\Console 'VBNC Compile failed, process exited with exit code -1
+My\Custom 'Only 'Custom_vbc' has the type 'My.MyProject/ThreadSafeObjectProvider`1+ThreadSafeObjectProvider`1(Of T)'.
+My\DefaultInstances1 'VBNC Compile failed, process exited with exit code 1
+My\DefinedSymbols 'VBNC Compile failed, process exited with exit code -1
+My\EmptyString 'VBNC Compile failed, process exited with exit code -1
+My\My.Application1 'VBNC Compile failed, process exited with exit code 1
+My\My.Forms1 'VBNC Compile failed, process exited with exit code 1
+My\None 'VBNC Compile failed, process exited with exit code -1
+My\Web 'VBNC Compile failed, process exited with exit code -1
+My\WebControl 'VBNC Compile failed, process exited with exit code -1
+My\Windows 'VBNC Compile failed, process exited with exit code -1
+My\WindowsForms 'VBNC Compile failed, process exited with exit code 1
+My\WindowsForms_exe 'VBNC Compile failed, process exited with exit code 1
+My\WindowsForms_library 'VBNC Compile failed, process exited with exit code 1
+My\WindowsForms_module 'VBNC Compile failed, process exited with exit code 1
+My\WindowsForms_winexe 'VBNC Compile failed, process exited with exit code 1
+NotImplementedYet\CDateConstantExpression1 'VBNC Compile failed, process exited with exit code -1
+NotImplementedYet\CDecConstantExpression1 'VBNC Compile failed, process exited with exit code -1
+NotImplementedYet\DecimalConstant1 'VBNC Compile failed, process exited with exit code -1
+NotImplementedYet\DelegateAsMethodParameter1 'Type Safety and Security Verification failed, process exited with exit code 1
+NotImplementedYet\MethodOverload1 'Only 'MethodOverload1_vbc' has the Method 'MethodOverload1.Test.F(Of )(System.Int32)'.
+NUnitTests\ArrayCreation1 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\ArrayIndexExpressions 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\ArrayStore 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\Assignment 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\BinaryAdd.Generated 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\BinaryAdd1 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\BinaryAdd2 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\ExplicitConversions 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\FunctionCall 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\ImplicitConversions 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\MethodCall1 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\MethodCall2 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\MethodCall3 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\MethodCall4 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\MethodOverload1 'VBNC Compile failed, process exited with exit code -1
+NUnitTests\NUnit1 'VBNC Compile failed, process exited with exit code -1
+RunTime\ArrayElements4 'VBNC Compile failed, process exited with exit code -1
+RunTime\CType_TypeParameter1 'VBNC Compile failed, process exited with exit code -1
+RunTime\CType_TypeParameter2 'VBNC Compile failed, process exited with exit code 1
+RunTime\CType_TypeParameter4 'VBNC Compile failed, process exited with exit code -1
+SelfTest\rt.windows 'VBNC Compile failed, process exited with exit code 1
+Unfixable\GenericNestedType1 'VBNC Compile failed, process exited with exit code -1
+Unfixable\NestedInterfaceInheritance1 'VBNC Compile failed, process exited with exit code -1
+Unfixable\NoVBRuntimeRef1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
+VBRunTime\Microsoft.VisualBasic.linux
+VBRunTime\Microsoft.VisualBasic.windows 'VBNC Compile failed, process exited with exit code -1

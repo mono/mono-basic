@@ -1,3 +1,10 @@
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* KnownFailures.txt: Add tests which are failing due to cecil changes,
+	  to properly detect regressions from now on.
+	* SelfTest/SelfCompile.files.linux, SelfTest/SelfCompile.files.windows,
+	  SelfTest/updatesources.sh: Regenerate.
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Generated/ZCompilerCodeGenerator.vb: Delete old cruft.
