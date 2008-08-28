@@ -53,13 +53,4 @@ Public Class TypeParameterList
         Next
         Return result
     End Function
-
-    Function DefineGenericParameters(ByVal TypeBuilder As Mono.Cecil.TypeDefinition) As Boolean
-        Dim result As Boolean = True
-
-        If Me.Count = 0 Then Return result
-
-        Return result
-    End Function
-
 End Class

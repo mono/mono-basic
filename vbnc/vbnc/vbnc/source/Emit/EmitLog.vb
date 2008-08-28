@@ -20,7 +20,6 @@
 Imports System.Reflection
 Imports System.Reflection.Emit
 
-#If DEBUG Or ENABLECECIL Then
 #Const DEBUGEMIT = 0
 
 Public Structure Label
@@ -385,4 +384,3 @@ Public Class EmitLog
         CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Throw, excType)
     End Sub
 End Class
-#End If

@@ -1,3 +1,25 @@
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* ConditionalCompilation/ConditionalExpression.vb, Emit/EmitInfo.vb,
+	  Emit/EmitLog.vb, Expressions/ArgumentList.vb,
+	  Expressions/ConstantExpression.vb, Expressions/DeRefExpression.vb,
+	  Expressions/NothingConstantExpression.vb, General/AssemblyInfo.vb,
+	  General/BaseObject.vb, General/BaseObjects`1.vb,
+	  General/CecilHelper.vb, General/CodeFile.vb, General/CodeFiles.vb,
+	  General/Compiler.CompilerSequence.vb, General/Compiler.vb,
+	  General/Helper.vb, General/Scanner.vb,
+	  Members/AttributeArgumentExpression.vb, Members/BaseList~1.vb,
+	  Members/BoundList.vb, Members/ConstructorDeclaration.vb,
+	  Members/EventAccessorDeclarations.vb, Members/MemberDeclaration.vb,
+	  Members/MethodResolver.vb, Members/Parameter.vb,
+	  Members/ParemeterIdentifier.vb, Members/SubSignature.vb,
+	  Parser/ParsedObject.vb, Parser/Parser(Expressions).vb,
+	  Statements/CaseClauses.vb, TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/GenericTypeDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb, Types/TypeParameter.vb,
+	  Types/TypeParameterList.vb, vbnc.vbproj: Remove dead code, cruft,
+	  etc.
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/AssemblyInfo.vb: Updated test harness to compare assemblies

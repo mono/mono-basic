@@ -55,8 +55,6 @@ Public Class ParameterIdentifier
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        Me.CheckTypeReferencesNotResolved()
-
         If m_ArrayNameModifier IsNot Nothing Then result = m_ArrayNameModifier.ResolveTypeReferences AndAlso result
 
         Return result

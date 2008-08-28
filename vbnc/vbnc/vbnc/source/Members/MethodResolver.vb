@@ -134,8 +134,8 @@ Public Class MethodResolver
     ReadOnly Property CandidatesLeft() As Integer
         Get
             Dim result As Integer
-            For Each member As MemberCandidate In m_Candidates
-                If member IsNot Nothing Then result += 1
+            For i As Integer = 0 To m_Candidates.Count - 1
+                If m_Candidates(i) IsNot Nothing Then result += 1
             Next
             Return result
         End Get

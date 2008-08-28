@@ -154,8 +154,6 @@ Public Class SubSignature
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Me.CheckCodeNotResolved()
-
         Helper.Assert(m_ParameterList IsNot Nothing)
 
         result = m_ParameterList.ResolveCode(info) AndAlso result

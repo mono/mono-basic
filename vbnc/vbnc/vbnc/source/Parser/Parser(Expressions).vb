@@ -702,7 +702,7 @@ Partial Class Parser
     Private Function ParseArgumentList(ByVal Parent As ParsedObject) As ArgumentList
         Dim result As New ArgumentList(Parent)
 
-        Dim m_Arguments As New Generic.List(Of Argument)
+        Dim m_Arguments As New BaseObjects(Of Argument)(result)
 
         'First parse positional arguments
         Do

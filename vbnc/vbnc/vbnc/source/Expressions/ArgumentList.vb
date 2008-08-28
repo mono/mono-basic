@@ -34,7 +34,7 @@
 Public Class ArgumentList
     Inherits ParsedObject
 
-    Private m_Arguments As New Generic.List(Of Argument)
+    Private m_Arguments As New BaseObjects(Of Argument)(Me)
 
     Sub ReplaceArguments(ByVal NewArguments As Generic.List(Of Argument))
         m_Arguments.Clear()
@@ -213,7 +213,7 @@ Public Class ArgumentList
         End If
     End Sub
 
-    Sub Init(ByVal Arguments As Generic.List(Of Argument))
+    Sub Init(ByVal Arguments As BaseObjects(Of Argument))
         m_Arguments = Arguments
     End Sub
 
@@ -312,9 +312,7 @@ Public Class ArgumentList
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = Helper.ResolveCodeCollection(m_Arguments, Info) AndAlso result
-
-        'Helper.Assert(result = (Compiler.Report.Errors = 0))
+        result = m_Arguments.ResolveCode(Info) AndAlso result
 
         Return result
     End Function

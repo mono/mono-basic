@@ -35,12 +35,6 @@ Public Class ConditionalExpression
         m_Scanner = Scanner
     End Sub
 
-    'ReadOnly Property Reader() As Scanner
-    '    Get
-    '        Return m_Compiler
-    '    End Get
-    'End Property
-
     Sub NextToken()
         m_Scanner.NextUnconditionally()
     End Sub

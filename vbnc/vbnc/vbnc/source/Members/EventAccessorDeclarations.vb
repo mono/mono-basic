@@ -87,6 +87,10 @@ Public Class EventAccessorDeclarations
     End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(m_Handlers, info)
+        Dim result As Boolean = True
+        For i As Integer = 0 To m_Handlers.Length - 1
+            result = m_Handlers(i).ResolveCode(Info) AndAlso result
+        Next
+        Return result
     End Function
 End Class

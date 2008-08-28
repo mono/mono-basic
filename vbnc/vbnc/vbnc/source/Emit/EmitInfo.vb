@@ -64,12 +64,9 @@ Public Class EmitInfo
 
     Private m_InExceptionFilter As Boolean
 
-#If ENABLECECIL Then
     Private m_CilBody As Mono.Cecil.Cil.MethodBody
-#End If
     Private m_Context As ParsedObject
 
-#If ENABLECECIL Then
     ReadOnly Property CilBody() As Mono.Cecil.Cil.MethodBody
         Get
             If m_CilBody Is Nothing Then
@@ -80,7 +77,6 @@ Public Class EmitInfo
             Return m_CilBody
         End Get
     End Property
-#End If
 
     ReadOnly Property Context() As ParsedObject
         Get
@@ -163,8 +159,6 @@ Public Class EmitInfo
         End Get
     End Property
 
-#If DEBUGEMISSION Or ENABLECECIL Then
-
     Private m_FakeGenerator As EmitLog
     ''' <summary>
     ''' The ILGenerator used to emit the code.
@@ -176,26 +170,11 @@ Public Class EmitInfo
         Get
             If m_FakeGenerator Is Nothing Then
                 m_FakeGenerator = New EmitLog(Compiler)
-#If ENABLECECIL Then
                 m_FakeGenerator.CilBody = CilBody
-#End If
             End If
             Return m_FakeGenerator
         End Get
     End Property
-#Else
-    ''' <summary>
-    ''' The ILGenerator used to emit the code.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property ILGen() As ILGenerator
-        Get
-            Return m_Method.ILGenerator
-        End Get
-    End Property
-#End If
 
     ReadOnly Property Stack() As EmitStack
         Get

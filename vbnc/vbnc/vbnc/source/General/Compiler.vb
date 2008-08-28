@@ -84,48 +84,31 @@ Public Class Compiler
     ''' <remarks></remarks>
     Friend theAss As AssemblyDeclaration
 
-    '''' <summary>
-    '''' The created assembly
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Public AssemblyBuilder As System.Reflection.Emit.AssemblyBuilder
-
-#If ENABLECECIL Then
+    ''' <summary>
+    ''' The created assembly
+    ''' </summary>
+    ''' <remarks></remarks>
     Public AssemblyBuilderCecil As Mono.Cecil.AssemblyDefinition
-#End If
 
-    '''' <summary>
-    '''' The one and only module in the assembly
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Public ModuleBuilder As System.Reflection.Emit.ModuleBuilder
-
+    ''' <summary>
+    ''' The one and only module in the assembly
+    ''' </summary>
+    ''' <remarks></remarks>
     Public ModuleBuilderCecil As Mono.Cecil.ModuleDefinition
-
-    '''' <summary>
-    '''' Represents the conditinal compiler.
-    '''' </summary>
-    '''' <remarks></remarks>
-    'Private m_ConditionalCompiler As ConditionalCompiler
-
 
     Private m_TypeCache As CecilTypeCache
 
-    'Private SequenceCompleted(CompilerSequence.Finished) As Boolean
-    Private SequenceTime(CompilerSequence.End) As DateTime
-
     Private m_TypeResolver As TypeResolution
-
-    'Private m_SymbolWriter As System.Diagnostics.SymbolStore.ISymbolWriter
 
     Sub New()
         MyBase.New(Nothing)
         CurrentCompiler = Me
     End Sub
 
-    Public Sub VerifyConsistency(ByVal result As Boolean, Optional ByVal Location As String = "")
+    Public Sub VerifyConsistency(ByVal result As Boolean, ByVal where As String)
+        Console.WriteLine("Verifying consistency: {0}", where)
         If Report.Errors = 0 AndAlso result = False Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, Location & " No errors, but compilation failed? ")
+            Report.WriteLine(vbnc.Report.ReportLevels.Debug, where & ": No errors, but compilation failed? ")
             Helper.StopIfDebugging()
             Throw New InternalException("Consistency check failed")
         ElseIf Report.Errors > 0 AndAlso result Then
@@ -133,6 +116,18 @@ Public Class Compiler
             'Throw New InternalException("Consistency check failed")
         End If
     End Sub
+
+    Public Sub VerifyConsistency(ByVal result As Boolean, ByVal Location As Span)
+        If Report.Errors = 0 AndAlso result = False Then
+            Report.WriteLine(vbnc.Report.ReportLevels.Debug, Location.AsString(Compiler) & " No errors, but compilation failed? ")
+            Helper.StopIfDebugging()
+            Throw New InternalException("Consistency check failed")
+        ElseIf Report.Errors > 0 AndAlso result Then
+            'Report.WriteLine(vbnc.Report.ReportLevels.Debug, Report.Errors.ToString & " errors, but compilation succeeded? " & Location)
+            'Throw New InternalException("Consistency check failed")
+        End If
+    End Sub
+
 
     ReadOnly Property OutFileName() As String
         Get
@@ -242,10 +237,6 @@ Public Class Compiler
             Return m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None
         End Get
     End Property
-
-    Function HasPassedSequencePoint(ByVal Point As CompilerSequence) As Boolean
-        Return SequenceTime(Point) > #1/1/1900#
-    End Function
 
     Private Function CreateTestOutputFilename(ByVal Filename As String, ByVal TestType As String) As String
         Dim dir As String
@@ -390,9 +381,7 @@ Public Class Compiler
             Throw
         End Try
 
-        SequenceTime(CompilerSequence.Parsed) = DateTime.Now
-
-        VerifyConsistency(result)
+        VerifyConsistency(result, "Parse")
 
         Return result
     End Function
@@ -400,9 +389,6 @@ Public Class Compiler
     Private Function Compile_Resolve() As Boolean
         Dim result As Boolean = True
 
-#If EXTENDEDDEBUG Then
-        Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Resolve")
-#End If
         result = CommandLine.Imports.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
         VerifyConsistency(result, "ResolveCode")
         If result = False Then Return result
@@ -433,8 +419,6 @@ Public Class Compiler
         VerifyConsistency(result, "ResolveMembers")
         result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
 
-        SequenceTime(CompilerSequence.Resolved) = DateTime.Now
-
         VerifyConsistency(result, "FinishedResolve")
 
         Return result
@@ -457,14 +441,6 @@ Public Class Compiler
         Dim result As Boolean = True
         BaseObject.ClearCache()
         Try
-            SequenceTime(CompilerSequence.Start) = DateTime.Now
-
-#If DEBUG Then
-            If CommandLine.Verbose Then
-                Console.WriteLine("Runtime loaded from: " & GetType(Microsoft.VisualBasic.Financial).Assembly.Location)
-            End If
-#End If
-
             'Show help if asked to
             If CommandLine.Help = True Then
                 If CommandLine.NoLogo = False Then
@@ -476,10 +452,6 @@ Public Class Compiler
 
             'Show logo, unless asked not to
             If CommandLine.NoLogo = False Then ShowLogo()
-
-#If ENABLECECIL Then
-            Console.WriteLine("Compiled with Cecil support.")
-#End If
 
             If Report.ShowSavedMessages Then
                 Return 1
@@ -523,28 +495,17 @@ Public Class Compiler
 
             'Create the assembly and module builders
             result = Compile_CreateAssemblyAndModuleBuilders() AndAlso result
+            VerifyConsistency(result, "CreateAssemblyAndModuleBuilders")
 
             'Parse the code into the type tree
-#If DEBUG Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Parse")
-#End If
             result = Compile_Parse() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
-
 
             m_TypeManager.LoadCompiledTypes()
 
             If CommandLine.NoVBRuntimeRef Then
-                'm_TypeCache.InitInternalVB()
-#If ENABLECECIL Then
                 m_TypeCache.InitInternalVB()
-#End If
             End If
-
-            'Resolve the code
-#If DEBUG Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Resolve")
-#End If
 
             result = Compile_Resolve() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
@@ -555,63 +516,31 @@ Public Class Compiler
             result = AddResources() AndAlso result
             If result = False Then GoTo ShowErrors
 
-            'AddHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
-
             'Passed this step no errors should be found...
-#If DEBUG Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Define")
-#End If
 
             result = theAss.DefineTypes AndAlso result
-            vbnc.Helper.Assert(result, "DefineTypes failed somehow!")
-
-            result = theAss.DefineTypeParameters AndAlso result
-            vbnc.Helper.Assert(result, "DefineTypeParameters failed somehow!")
+            VerifyConsistency(result, "DefineTypes")
 
             result = theAss.DefineTypeHierarchy AndAlso result
-            vbnc.Helper.Assert(result, "DefineTypeHierarcht failed somehow!")
+            VerifyConsistency(result, "DefineTypeHierarchy")
 
             result = theAss.DefineMembers AndAlso result
-            vbnc.Helper.Assert(result, "DefineMembers failed somehow!")
-
-#If DEBUG Then
-            Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Starting Emit")
-#End If
+            VerifyConsistency(result, "DefineMembers")
 
             result = theAss.Emit AndAlso result
-            vbnc.Helper.Assert(result, "Emit failed somehow")
+            VerifyConsistency(result, "Emit")
 
             'Set the main function / entry point
             result = SetMain() AndAlso result
             If result = False Then GoTo ShowErrors
-
-            'Create the assembly types
-            'result = theAss.CreateTypes AndAlso result
-            'vbnc.Helper.Assert(result)
-
-            'RemoveHandler AppDomain.CurrentDomain.TypeResolve, New ResolveEventHandler(AddressOf Me.TypeResolver.TypeResolver)
 
             If result = False Then
                 Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Error creating the assembly!")
                 GoTo ShowErrors
             End If
 
-#If DEBUGREFLECTION Then
-            'Since the assembly save crashes quite often, the finally won't get executed, so dump here as well.
-            IO.File.WriteAllText("DebugReflection.vb", vbnc.Helper.DebugReflection_Dump(Me))
-#End If
-
-            'Save the assembly
-            'AssemblyBuilder.Save(IO.Path.GetFileName(m_OutFilename))
-            'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilder.FullName, m_OutFilename))
-
-#If ENABLECECIL Then
-
             Mono.Cecil.AssemblyFactory.SaveAssembly(AssemblyBuilderCecil, m_OutFilename)
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename))
-#End If
-
-            SequenceTime(CompilerSequence.End) = DateTime.Now
 
 ShowErrors:
             VerifyConsistency(result, "ShowErrors")

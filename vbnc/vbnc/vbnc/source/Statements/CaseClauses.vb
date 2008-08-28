@@ -32,6 +32,6 @@ Public Class CaseClauses
     End Sub
 
     Function ResolveStatements(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(Me, info)
+        Return ResolveCode(Info)
     End Function
 End Class

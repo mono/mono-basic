@@ -71,18 +71,6 @@ Public MustInherit Class GenericTypeDeclaration
         Return result
     End Function
 
-    Public Overrides Function DefineTypeParameters() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.DefineTypeParameters AndAlso result
-
-        If m_TypeParameters IsNot Nothing Then
-            result = m_TypeParameters.Parameters.DefineGenericParameters(CecilType) AndAlso result
-        End If
-
-        Return result
-    End Function
-
     Public Overrides Function DefineTypeHierarchy() As Boolean
         Dim result As Boolean = True
 

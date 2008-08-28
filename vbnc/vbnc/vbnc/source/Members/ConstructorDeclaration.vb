@@ -158,8 +158,6 @@ Public Class ConstructorDeclaration
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Me.CheckCodeNotResolved()
-
         result = MyBase.ResolveCode(Info) AndAlso result
 
         If result = False Then Return result

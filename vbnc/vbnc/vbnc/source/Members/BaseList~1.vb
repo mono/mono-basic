@@ -36,7 +36,11 @@ Public Class BaseList(Of T As BaseObject)
     End Sub
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(m_List, Info)
+        Dim result As Boolean = True
+        For i As Integer = 0 To m_List.Count - 1
+            result = m_List(i).ResolveCode(Info) AndAlso result
+        Next
+        Return result
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean

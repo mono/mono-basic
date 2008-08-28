@@ -66,14 +66,6 @@ Public Class DeRefExpression
         Return result
     End Function
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        Me.CheckTypeReferencesNotResolved()
-
-        Return result
-    End Function
-
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType

@@ -2622,17 +2622,6 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function ResolveCodeCollection(ByVal Collection As IEnumerable, ByVal Info As ResolveInfo) As Boolean
-        Dim result As Boolean = True
-        If Info Is Nothing Then Info = ResolveInfo.Default(Info.Compiler)
-        Helper.AssertNotNothing(Collection)
-        For Each obj As BaseObject In Collection
-            result = obj.ResolveCode(Info) AndAlso result
-            obj.Compiler.VerifyConsistency(result, obj.Location.AsString(obj.Compiler))
-        Next
-        Return result
-    End Function
-
     Shared Sub InitializeCollection(ByVal Collection As IEnumerable, ByVal Parent As BaseObject)
         For Each obj As BaseObject In Collection
             obj.Initialize(Parent)

@@ -128,7 +128,6 @@ Public Class TypeParameter
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        Me.CheckTypeReferencesNotResolved()
         If m_TypeParameterConstraints IsNot Nothing Then
             result = m_TypeParameterConstraints.ResolveTypeReferences AndAlso result
             result = DefineParameterConstraints() AndAlso result

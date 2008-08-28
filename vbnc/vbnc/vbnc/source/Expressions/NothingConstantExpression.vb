@@ -20,14 +20,6 @@
 Public Class NothingConstantExpression
     Inherits ConstantExpression
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        Me.CheckTypeReferencesNotResolved()
-
-        Return result
-    End Function
-
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

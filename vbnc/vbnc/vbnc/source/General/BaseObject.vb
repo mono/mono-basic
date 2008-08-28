@@ -43,6 +43,10 @@ Public MustInherit Class BaseObject
     ''' <remarks></remarks>
     Public Shared m_Compiler As Compiler
 
+    ''' <summary>
+    ''' An empty constructor
+    ''' </summary>
+    ''' <remarks></remarks>
     Protected Sub New()
 
     End Sub
@@ -260,7 +264,6 @@ Public MustInherit Class BaseObject
             Return result.ToArray
         End Get
     End Property
-#End If
     ReadOnly Property ParentLocationTree() As String
         Get
             Dim result As String = ""
@@ -278,6 +281,7 @@ Public MustInherit Class BaseObject
             Return result
         End Get
     End Property
+#End If
 
     ''' <summary>
     ''' Get the token manager used for quick token management.
@@ -329,6 +333,5 @@ Public MustInherit Class BaseObject
 
         Return NextID
     End Function
-    '#End If
 End Class
 

@@ -121,15 +121,19 @@ Public Class Scanner
             m_Methods.Add(CalledMethod, attribs)
         End If
 
-        If attribs Is Nothing Then Return False
+        If attribs Is Nothing OrElse attribs.Count = 0 Then Return False
 
-        For Each attrib As Object In attribs
-            Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
+        For i As Integer = 0 To attribs.Count - 1
+            Dim attrib As Mono.Cecil.CustomAttribute = attribs(i)
+            Dim identifier As String
 
-            conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
-            If conditionalAttrib Is Nothing Then Continue For
+            If attrib.ConstructorParameters.Count <> 1 Then
+                Continue For
+            End If
+            identifier = TryCast(attrib.ConstructorParameters(0), String)
+            If identifier = String.Empty Then Continue For
 
-            If Not IsDefinedAtLocation(conditionalAttrib.ConditionString, AtLocation) Then Return True
+            If Not IsDefinedAtLocation(identifier, AtLocation) Then Return True
         Next
 
         Return False

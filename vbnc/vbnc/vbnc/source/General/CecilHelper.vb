@@ -16,7 +16,6 @@
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-#If ENABLECECIL Then
 
 Imports Mono.Cecil
 Imports System.Diagnostics
@@ -756,7 +755,8 @@ Public Class CecilHelper
     Public Shared Function GetCustomAttributes(ByVal Attributes As Mono.Cecil.CustomAttributeCollection, ByVal AttributeType As Mono.Cecil.TypeReference) As Mono.Cecil.CustomAttributeCollection
         Dim result As Mono.Cecil.CustomAttributeCollection = Nothing
 
-        For Each attrib As Mono.Cecil.CustomAttribute In Attributes
+        For i As Integer = 0 To Attributes.Count - 1
+            Dim attrib As CustomAttribute = Attributes(i)
             If Helper.CompareType(AttributeType, attrib.Constructor.DeclaringType) Then
                 If result Is Nothing Then result = New Mono.Cecil.CustomAttributeCollection(Attributes.Container)
                 result.Add(attrib)
@@ -767,7 +767,8 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function IsDefined(ByVal CustomAttributes As CustomAttributeCollection, ByVal Type As TypeReference) As Boolean
-        For Each Attribute As CustomAttribute In CustomAttributes
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            Dim Attribute As CustomAttribute = CustomAttributes(i)
             If Helper.CompareType(Attribute.Constructor.DeclaringType, Type) Then Return True
         Next
         Return False
@@ -775,7 +776,8 @@ Public Class CecilHelper
 
     Public Shared Function GetAttributes(ByVal CustomAttributes As CustomAttributeCollection, ByVal Type As TypeReference) As CustomAttributeCollection
         Dim result As CustomAttributeCollection = Nothing
-        For Each Attribute As CustomAttribute In CustomAttributes
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            Dim Attribute As CustomAttribute = CustomAttributes(i)
             If Helper.CompareType(Attribute.Constructor.DeclaringType, Type) Then
                 If result Is Nothing Then result = New CustomAttributeCollection(CustomAttributes.Container)
                 result.Add(Attribute)
@@ -1119,15 +1121,6 @@ Public Class CecilHelper
             If CecilHelper.AreSame(reference, item) Then Return item
         Next
         Return Nothing
-        'While type IsNot Nothing
-        '    Dim method As MethodDefinition = GetMethod(type.Methods, reference)
-        '    If method Is Nothing Then
-        '        type = FindDefinition(type.BaseType)
-        '    Else
-        '        Return method
-        '    End If
-        'End While
-        'Return Nothing
     End Function
 
     Public Shared Function GetMethod(ByVal type As TypeDefinition, ByVal reference As MethodReference) As MethodDefinition
@@ -1194,5 +1187,3 @@ Public Class CecilHelper
     End Function
 
 End Class
-
-#End If

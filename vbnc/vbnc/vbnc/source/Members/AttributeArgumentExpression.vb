@@ -55,8 +55,6 @@ Public Class AttributeArgumentExpression
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        Me.CheckTypeReferencesNotResolved()
-
         result = m_Expression.ResolveTypeReferences AndAlso result
 
         Return result

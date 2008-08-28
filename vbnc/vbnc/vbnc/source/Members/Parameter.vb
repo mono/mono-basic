@@ -231,8 +231,6 @@ Public Class Parameter
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Me.CheckCodeNotResolved()
-
         If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveCode(Info) AndAlso result
 
         If m_ConstantExpression IsNot Nothing Then
@@ -264,8 +262,6 @@ Public Class Parameter
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
-
-        Me.CheckTypeReferencesNotResolved()
 
         result = Helper.ResolveTypeReferences(m_ConstantExpression, m_TypeName, m_ParameterIdentifier) AndAlso result
         If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveTypeReferences AndAlso result

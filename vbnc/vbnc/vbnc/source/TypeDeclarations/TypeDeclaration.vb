@@ -240,10 +240,6 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Overridable Function DefineTypeParameters() As Boolean
-        Return True
-    End Function
-
     ''' <summary>
     ''' 
     ''' </summary>
@@ -329,8 +325,6 @@ Public MustInherit Class TypeDeclaration
             If Me.IsInterface = False Then
                 m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
             End If
-        Else
-            'm_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, CecilBaseType)
         End If
         If DeclaringType IsNot Nothing Then
             m_CecilType.DeclaringType = DeclaringType.CecilType
@@ -366,10 +360,8 @@ Public MustInherit Class TypeDeclaration
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Me.CheckCodeNotResolved()
-
         result = MyBase.ResolveCode(Info) AndAlso result
-        Compiler.VerifyConsistency(result, Location.AsString(Compiler))
+        Compiler.VerifyConsistency(result, Location)
         result = m_Members.ResolveCode(Info) AndAlso result
         'vbnc.Helper.Assert(result = (Compiler.Report.Errors = 0))
 

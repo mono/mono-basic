@@ -145,18 +145,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Private Function DefineTypeParameters(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        result = Type.DefineTypeParameters AndAlso result
-
-        For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = DefineTypeParameters(NestedType) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     Friend Function Emit(ByVal Type As TypeDeclaration) As Boolean
         Dim result As Boolean = True
 
@@ -189,7 +177,7 @@ Public Class AssemblyDeclaration
             End Try
 #End If
             result = type.ResolveCode(Info) AndAlso result
-            Compiler.VerifyConsistency(result, type.Location.AsString(Compiler))
+            Compiler.VerifyConsistency(result, type.Location)
         Next
 
         result = m_Attributes.ResolveCode(Info) AndAlso result
@@ -409,21 +397,6 @@ Public Class AssemblyDeclaration
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "DefineTypeHierarchy " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
 #End If
             result = DefineTypeHierarchy(type) AndAlso result
-        Next
-
-        Return result
-    End Function
-
-    Function DefineTypeParameters() As Boolean
-        Dim result As Boolean = True
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "DefineTypeParameters " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-#End If
-            result = DefineTypeParameters(type) AndAlso result
         Next
 
         Return result

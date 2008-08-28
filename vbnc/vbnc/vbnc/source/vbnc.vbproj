@@ -496,7 +496,6 @@
     <Compile Include="General\CommandLine.OptionExplicitTypes.vb" />
     <Compile Include="General\CommandLine.OptionStrictTypes.vb" />
     <Compile Include="General\CommandLine.Targets.vb" />
-    <Compile Include="General\Compiler.CompilerSequence.vb" />
     <Compile Include="General\Compiler.vb" />
     <Compile Include="General\Define.vb" />
     <Compile Include="General\Defines.vb" />

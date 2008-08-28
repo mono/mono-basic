@@ -87,12 +87,4 @@ Public Class ConstantExpression
             Return True
         End Get
     End Property
-
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        Me.CheckTypeReferencesNotResolved()
-
-        Return result
-    End Function
 End Class

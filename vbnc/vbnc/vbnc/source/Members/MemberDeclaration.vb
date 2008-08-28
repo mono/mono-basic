@@ -141,8 +141,6 @@ Public MustInherit Class MemberDeclaration
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        Me.CheckTypeReferencesNotResolved()
-
         result = m_CustomAttributes.ResolveTypeReferences AndAlso result
 
         Return result

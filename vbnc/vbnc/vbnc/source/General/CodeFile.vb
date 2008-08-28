@@ -116,17 +116,8 @@ Public Class CodeFile
         End Set
     End Property
 
-    'ReadOnly Property SymbolDocument() As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
-    '    Get
-    '        If m_SymbolDocument Is Nothing AndAlso Compiler.SymbolWriter IsNot Nothing Then
-    '            m_SymbolDocument = Compiler.SymbolWriter.DefineDocument(Me.FileName, Nothing, Nothing, Nothing)
-    '        End If
-    '        Return m_SymbolDocument
-    '    End Get
-    'End Property
-
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(m_Imports, Info)
+        Return m_Imports.ResolveCode(Info)
     End Function
 
     ReadOnly Property OptionExplicit() As OptionExplicitStatement

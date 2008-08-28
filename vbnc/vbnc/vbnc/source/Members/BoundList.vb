@@ -49,7 +49,11 @@ Public Class BoundList
     End Property
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(m_Expressions, info)
+        Dim result As Boolean = True
+        For i As Integer = 0 To m_Expressions.Length - 1
+            result = m_Expressions(i).ResolveExpression(Info) AndAlso result
+        Next
+        Return result
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean
