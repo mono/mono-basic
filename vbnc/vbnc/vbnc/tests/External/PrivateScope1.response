@@ -1,0 +1,1 @@
+/r:PrivateScope1.dll /define:_MYTYPE=\"Empty\"

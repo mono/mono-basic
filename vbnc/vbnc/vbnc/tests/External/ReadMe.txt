@@ -1,0 +1,1 @@
+This directory contains tests which require external compilers, tools, etc, since it's not possible to create all kinds of IL with VB.

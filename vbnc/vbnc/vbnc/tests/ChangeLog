@@ -1,5 +1,29 @@
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* External, External/testoutput, External/PrivateScope1.response,
+	  External/PrivateScope1.il, External/PrivateScope1.bat,
+	  External/PrivateScope1.vb, External/ReadMe.txt,
+	  External/PrivateScope1.sh, CompileTime2/Generic7.vb,
+	  CompileTime2/FieldAccess2.vb, CompileTime2/GenericMethod6.vb,
+	  CompileTime2/Generic8.vb, CompileTime2/Generic3.vb,
+	  CompileTime2/GenericFieldAccess3.vb,
+	  CompileTime2/GenericMethod2.vb, CompileTime2/Generic9.vb,
+	  CompileTime2/Generic4.vb, CompileTime2/ParamArray6.vb,
+	  CompileTime2/GenericFieldAccess4.vb,
+	  CompileTime2/GenericMethod8.vb, CompileTime2/NothingValueType1.vb,
+	  CompileTime2/Enum5.vb, CompileTime2/Generic5.vb,
+	  CompileTime2/GenericFieldAccess5.vb, CompileTime2/GenericType3.vb,
+	  CompileTime2/GenericMethod9.vb, CompileTime2/LessGeneric2.vb,
+	  CompileTime2/Generic6.vb, CompileTime2/Box1.vb,
+	  1Declarations/ByRef1.vb, 1Declarations/CustomEvent2.vb,
+	  1Declarations/DefaultProperty2.vb, 1Declarations/GenericType3.vb,
+	  1Declarations/GenericProperty1.vb, 1Declarations/GenericMember9.vb,
+	  1Declarations/CustomEvent1.vb, 1Declarations/ArrayType11.vb,
+	  1Declarations/GenericMethod2.vb, CompileTime/GenericInterface3.vb,
+	  CompileTime/StaticVariable1.vb: Added more tests.
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* SelfTest/rt.windows.files.rsp, SelfTest/SelfCompileWindows.vb,
 	  SelfTest/rt.updatesources.sh, SelfTest/rt.linux.files.rsp,
 	  SelfTest/SelfCompile.files.windows, SelfTest/rt.general.response,
