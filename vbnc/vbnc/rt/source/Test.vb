@@ -106,7 +106,6 @@ Public Class Test
     Public Event Changed(ByVal Sender As Test)
 
     Private m_Compiler As String
-    Private m_AC As String
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
     Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
     Private Shared m_FileCacheTime As Date = Date.MinValue
@@ -118,15 +117,6 @@ Public Class Test
         End Get
         Set(ByVal value As Boolean)
             m_KnownFailure = value
-        End Set
-    End Property
-
-    Property AC() As String
-        Get
-            Return m_AC
-        End Get
-        Set(ByVal value As String)
-            m_AC = value
         End Set
     End Property
 
@@ -645,7 +635,6 @@ Public Class Test
             If Parent.VBNCPath <> "" Then filesToCheck.Add(Parent.VBNCPath)
             If Parent.VBCPath <> "" Then filesToCheck.Add(Parent.VBCPath)
             If PEVerifyPath <> "" Then filesToCheck.Add(PEVerifyPath)
-            If GetACPath <> "" Then filesToCheck.Add(GetACPath)
 
             For Each item As String In filesToCheck
                 fileDate = IO.File.GetLastWriteTime(item)
@@ -698,13 +687,6 @@ Public Class Test
                 End If
             Next
             Return lastDate
-        End Get
-    End Property
-
-    Private ReadOnly Property GetACPath() As String
-        Get
-            If m_AC <> String.Empty Then Return m_AC
-            Return IO.Path.GetFullPath("..\..\..\ac\bin\ac.exe".Replace("\", IO.Path.DirectorySeparatorChar))
         End Get
     End Property
 

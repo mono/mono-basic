@@ -1,3 +1,9 @@
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb, HostedCompiler.vb, Test.vb: Completely remove AC.
+	  Tried to host vbnc inside the rt process, but we're still leaking
+	  something somewhere, memory just goes up.
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* TestList.vb, keyfile.snk, VerificationBase.vb, frmDiff.vb, Test.vb,

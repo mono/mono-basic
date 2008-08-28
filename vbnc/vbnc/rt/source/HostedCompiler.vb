@@ -42,6 +42,7 @@ Public Class HostedCompiler
 
         Try
             compilation = Helper.Compile(Test.GetTestCommandLineArguments(False), Test)
+            GC.Collect()
         Catch ex As Exception
             Return False
         End Try
