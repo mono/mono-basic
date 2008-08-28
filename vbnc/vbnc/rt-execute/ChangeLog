@@ -1,3 +1,8 @@
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* rt-execute.vbproj: Converted all projects and solutions to VS9
+	  format, removed some old files.
+
 2007-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* rt-execute.vb: Add better exception message for TargetInvokeExceptions.

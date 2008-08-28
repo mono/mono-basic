@@ -1,16 +1,18 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9D92F531-6418-47AA-BBE5-BE458CD46BE8}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug|AnyCPU</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ApplicationIcon>
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>vbnc</AssemblyName>
-    <AssemblyOriginatorKeyFile>vbnc.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
@@ -25,9 +27,12 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <FallbackCulture>en-US</FallbackCulture>
     <UpdateUrlEnabled>false</UpdateUrlEnabled>
-    <ApplicationRevision>0</ApplicationRevision>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <SignAssembly>false</SignAssembly>
+    <OptionStrict>On</OptionStrict>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <PublishUrl>http://localhost/vbnc</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -38,11 +43,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>0.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\bin\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
@@ -68,7 +74,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>GENERATOR,DEVGENERATOR,ENABLECECIL=FALSE,DEBUGREFLECTION=false</DefineConstants>
+    <DefineConstants>ENABLECECIL=TRUE,DEBUGREFLECTION=false</DefineConstants>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
@@ -168,7 +174,7 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
@@ -188,7 +194,7 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Self Compile|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -207,7 +213,7 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RuntimeTests|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -230,39 +236,17 @@
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Reflection" />
-    <Import Include="System.Reflection.Emit" />
     <Import Include="VB=Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\tests\Generated\Constants.vb">
-      <Link>AutoGen\Constants.vb</Link>
-    </Compile>
-    <Compile Include="..\tests\Generated\Conversions.vb">
-      <Link>AutoGen\Conversions.vb</Link>
-    </Compile>
-    <Compile Include="..\tests\Generated\Operators.vb">
-      <Link>AutoGen\Operators.vb</Link>
-    </Compile>
-    <Compile Include="AutoGen\ZCompilerCodeGenerator.vb" />
+    <!--    
+	 <Compile Include="General\Emitter.vb" />
+-->
     <Compile Include="Code\CodeBlock.vb" />
     <Compile Include="Code\ImplicitCodeBlock.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
     <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
-    <Compile Include="Descriptors\ArrayTypeDescriptor.vb" />
-    <Compile Include="Descriptors\ByRefTypeDescriptor.vb" />
-    <Compile Include="Descriptors\ConstructorDescriptor.vb" />
-    <Compile Include="Descriptors\EventDescriptor.vb" />
-    <Compile Include="Descriptors\FieldDescriptor.vb" />
-    <Compile Include="Descriptors\GenericConstructorDescriptor.vb" />
-    <Compile Include="Descriptors\GenericFieldDescriptor.vb" />
-    <Compile Include="Descriptors\GenericParameterDescriptor.vb" />
-    <Compile Include="Descriptors\GenericPropertyDescriptor.vb" />
-    <Compile Include="Descriptors\GenericTypeDescriptor.vb" />
-    <Compile Include="Descriptors\MethodDescriptor.vb" />
-    <Compile Include="Descriptors\ParameterDescriptor.vb" />
-    <Compile Include="Descriptors\PropertyDescriptor.vb" />
-    <Compile Include="Descriptors\TypeParameterDescriptor.vb" />
     <Compile Include="Emit\EmitInfo.vb" />
     <Compile Include="Emit\EmitStack.vb" />
     <Compile Include="Emit\Emitter.DecimalFields.vb" />
@@ -315,11 +299,8 @@
     <Compile Include="Expressions\SimpleExpression.vb" />
     <Compile Include="Expressions\VariableExpression.vb" />
     <Compile Include="Expressions\VariableToValueExpression.vb" />
-    <Compile Include="General\Dumper.vb" />
-    <Compile Include="General\DumperXML.vb" />
-    <Compile Include="General\IndentedTextWriter.vb" />
-    <Compile Include="General\MemberCache.vb">
-    </Compile>
+    <Compile Include="General\CecilHelper.vb" />
+    <Compile Include="General\MemberCache.vb" />
     <Compile Include="General\MethodBaseDeclaration.vb" />
     <Compile Include="General\MyGenerator.vb" />
     <Compile Include="General\MyGroupData.vb" />
@@ -327,18 +308,19 @@
     <Compile Include="General\NothingType.vb" />
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
-    <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
-    <Compile Include="General\Version.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
+    <Compile Include="Interfaces\ITokenReader.vb" />
     <Compile Include="Members\EventHandlerDeclaration.vb" />
     <Compile Include="Members\EventDeclaration.vb" />
+    <Compile Include="Members\LocalVariableDeclaration.vb" />
     <Compile Include="Members\MemberDeclaration.vb" />
     <Compile Include="Members\MethodDeclaration.vb" />
     <Compile Include="Members\MethodResolver.vb" />
     <Compile Include="Members\PropertyDeclaration.vb" />
     <Compile Include="Members\PropertyHandlerDeclaration.vb" />
+    <Compile Include="Members\TypeVariableDeclaration.vb" />
     <Compile Include="Names\Identifier.vb" />
     <Compile Include="Parser\ParsedObject.vb" />
     <Compile Include="Parser\Parser%28Events%29.vb" />
@@ -355,41 +337,18 @@
     <Compile Include="General\TypeCombinations.vb" />
     <Compile Include="General\TypeConverter.vb" />
     <Compile Include="Interfaces\IConstructorMember.vb" />
-    <Compile Include="Interfaces\ICreatableType.vb" />
     <Compile Include="Interfaces\IFieldMember.vb" />
-    <Compile Include="Interfaces\IMemberDescriptor.vb" />
-    <Compile Include="Interfaces\IAttributableDeclaration.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IAttributableNamedDeclaration.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IBaseObject.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IDefinableType.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Interfaces\IAttributableDeclaration.vb" />
+    <Compile Include="Interfaces\IAttributableNamedDeclaration.vb" />
+    <Compile Include="Interfaces\IBaseObject.vb" />
+    <Compile Include="Interfaces\IDefinableType.vb" />
     <Compile Include="Interfaces\IEmittable.vb" />
-    <Compile Include="Interfaces\IEventMemberDeclaration.vb">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Interfaces\IDefinableMember.vb" />
     <Compile Include="Interfaces\IMember.vb" />
-    <Compile Include="Interfaces\IMethod.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\INameable.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Interfaces\IMethod.vb" />
+    <Compile Include="Interfaces\INameable.vb" />
     <Compile Include="Interfaces\INonTypeMember.vb" />
-    <Compile Include="Interfaces\IPropertyMember.vb" />
-    <Compile Include="Interfaces\IType.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITypeContainer.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Interfaces\IType.vb" />
     <Compile Include="Members\BaseList.vb" />
     <Compile Include="Members\NamedBaseList.vb" />
     <Compile Include="Members\RegularEventHandlerDeclaration.vb" />
@@ -435,7 +394,6 @@
     <Compile Include="Members\InterfaceBases.vb" />
     <Compile Include="Members\InterfaceEventMemberDeclaration.vb" />
     <Compile Include="Members\InterfaceFunctionDeclaration.vb" />
-    <Compile Include="Members\InterfaceMemberDeclarations.vb" />
     <Compile Include="Members\InterfaceMemberSpecifier.vb" />
     <Compile Include="Members\InterfaceMethodMemberDeclaration.vb" />
     <Compile Include="Members\InterfacePropertyMemberDeclaration.vb" />
@@ -471,156 +429,58 @@
     <Compile Include="Types\TypeArityList.vb" />
     <Compile Include="Types\TypeNameResolutionInfo.vb" />
     <Compile Include="Names\QualifiedIdentifier.vb" />
-    <Compile Include="Statements\AddOrRemoveHandlerStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\AddAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\AssignmentStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\ConcatAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\DivisionAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\IntDivisionAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\LShiftAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\MidAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\MultiplicationAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\PowerAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\RShiftAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\AssignStatements\SubtractionAssignStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\CallStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Statements\AddOrRemoveHandlerStatement.vb" />
+    <Compile Include="Statements\AssignStatements\AddAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\AssignmentStatement.vb" />
+    <Compile Include="Statements\AssignStatements\ConcatAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\DivisionAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\IntDivisionAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\LShiftAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\MidAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\MultiplicationAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\PowerAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\RShiftAssignStatement.vb" />
+    <Compile Include="Statements\AssignStatements\SubtractionAssignStatement.vb" />
+    <Compile Include="Statements\CallStatement.vb" />
     <Compile Include="Statements\CaseClause.vb" />
     <Compile Include="Statements\CaseClauses.vb" />
-    <Compile Include="Statements\CaseStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\CatchStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ContinueStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\DoStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ElseIfStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\EndStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\EraseStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ErrorStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ExitStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ExpressionList.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ForEachStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ForStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\GotoStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\IfStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\LabelDeclarationStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\LoopControlVariable.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\OnErrorStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\OptionCompareStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\OptionExplicitStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\OptionStrictStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\RaiseEventStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\RedimClause.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Statements\CaseStatement.vb" />
+    <Compile Include="Statements\CatchStatement.vb" />
+    <Compile Include="Statements\ContinueStatement.vb" />
+    <Compile Include="Statements\DoStatement.vb" />
+    <Compile Include="Statements\ElseIfStatement.vb" />
+    <Compile Include="Statements\EndStatement.vb" />
+    <Compile Include="Statements\EraseStatement.vb" />
+    <Compile Include="Statements\ErrorStatement.vb" />
+    <Compile Include="Statements\ExitStatement.vb" />
+    <Compile Include="Statements\ExpressionList.vb" />
+    <Compile Include="Statements\ForEachStatement.vb" />
+    <Compile Include="Statements\ForStatement.vb" />
+    <Compile Include="Statements\GotoStatement.vb" />
+    <Compile Include="Statements\IfStatement.vb" />
+    <Compile Include="Statements\LabelDeclarationStatement.vb" />
+    <Compile Include="Statements\LoopControlVariable.vb" />
+    <Compile Include="Statements\OnErrorStatement.vb" />
+    <Compile Include="Statements\OptionCompareStatement.vb" />
+    <Compile Include="Statements\OptionExplicitStatement.vb" />
+    <Compile Include="Statements\OptionStrictStatement.vb" />
+    <Compile Include="Statements\RaiseEventStatement.vb" />
+    <Compile Include="Statements\RedimClause.vb" />
     <Compile Include="Statements\RedimClauses.vb" />
-    <Compile Include="Statements\ReDimStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ResumeStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ReturnStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\SelectStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\Statement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\StopStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\SyncLockStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\ThrowStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\TryStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\UsingDeclaration.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\UsingDeclarator.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\UsingStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\WhileStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Statements\WithStatement.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Statements\ReDimStatement.vb" />
+    <Compile Include="Statements\ResumeStatement.vb" />
+    <Compile Include="Statements\ReturnStatement.vb" />
+    <Compile Include="Statements\SelectStatement.vb" />
+    <Compile Include="Statements\Statement.vb" />
+    <Compile Include="Statements\StopStatement.vb" />
+    <Compile Include="Statements\SyncLockStatement.vb" />
+    <Compile Include="Statements\ThrowStatement.vb" />
+    <Compile Include="Statements\TryStatement.vb" />
+    <Compile Include="Statements\UsingDeclaration.vb" />
+    <Compile Include="Statements\UsingDeclarator.vb" />
+    <Compile Include="Statements\UsingStatement.vb" />
+    <Compile Include="Statements\WhileStatement.vb" />
+    <Compile Include="Statements\WithStatement.vb" />
     <Compile Include="Types\ArrayTypeName.vb" />
     <Compile Include="Types\BuiltInTypeName.vb" />
     <Compile Include="Types\Constraint.vb" />
@@ -641,9 +501,6 @@
     <Compile Include="General\Define.vb" />
     <Compile Include="General\Defines.vb" />
     <Compile Include="Emit\EmitLog.vb" />
-    <!--    
-	 <Compile Include="General\Emitter.vb" />
--->
     <Compile Include="General\GlobalNamespace.vb" />
     <Compile Include="General\Index.IndexList.vb" />
     <Compile Include="General\InternalException.vb" />
@@ -727,58 +584,26 @@
     <Compile Include="Expressions\UnaryExpressions\UnaryMinusExpression.vb" />
     <Compile Include="Expressions\UnaryExpressions\UnaryPlusExpression.vb" />
     <Compile Include="Expressions\UnaryExpressions\UnaryExpression.vb" />
-    <Compile Include="General\AssemblyInfo.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <None Include="app.config" />
+    <Compile Include="General\AssemblyInfo.vb" />
     <Compile Include="General\TypeCache.vb" />
-    <Compile Include="Members\MemberParameter.vb" />
-    <Compile Include="Members\MemberParameters.vb" />
     <Compile Include="General\BaseObject.vb" />
     <Compile Include="General\BaseObjects`1.vb" />
-    <Compile Include="General\CodeFile.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="General\CommandLine.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Enums\Enums.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <EmbeddedResource Include="Resources\Errors.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Expressions\Expression.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="General\CodeFile.vb" />
+    <Compile Include="General\CommandLine.vb" />
+    <Compile Include="Enums\Enums.vb" />
+    <Compile Include="Expressions\Expression.vb" />
     <Compile Include="General\Helper.vb" />
-    <Compile Include="General\Main.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Content Include="Notes.txt" />
+    <Compile Include="General\Main.vb" />
     <Compile Include="Members\EnumMemberDeclaration.vb" />
     <Compile Include="Members\PropertyGetDeclaration.vb" />
     <Compile Include="Members\PropertySetDeclaration.vb" />
-    <Compile Include="General\Report.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="General\Scanner.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Testing\Testing.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <None Include="General\TypeCache.in" />
-    <None Include="Resources\Source.xml" />
-    <Content Include="Todo.txt" />
+    <Compile Include="General\Report.vb" />
+    <Compile Include="General\Scanner.vb" />
+    <Compile Include="Testing\Testing.vb" />
     <Compile Include="Tokens\Span.vb" />
-    <Compile Include="Tokens\Token.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Tokens\Token.vb" />
     <Compile Include="TypeDeclarations\AssemblyDeclaration.vb" />
-    <Compile Include="Types\AttributeBaseType.vb" />
     <Compile Include="Members\AttributeBlock.vb" />
-    <Compile Include="Members\BaseMember.vb" />
     <Compile Include="TypeDeclarations\ClassDeclaration.vb" />
     <Compile Include="Members\ConstructorDeclaration.vb" />
     <Compile Include="TypeDeclarations\DelegateDeclaration.vb" />
@@ -801,20 +626,21 @@
     <Compile Include="Types\TokenManager.vb" />
     <Compile Include="Types\TypeArgumentList.vb" />
     <Compile Include="Types\ConstraintList.vb" />
-    <Compile Include="Descriptors\TypeDescriptor.vb" />
     <Compile Include="Types\TypeImplementsClauses.vb" />
     <Compile Include="Types\TypeName.vb" />
     <Compile Include="Types\TypeParameter.vb" />
     <Compile Include="Types\TypeParameterConstraints.vb" />
     <Compile Include="Types\TypeParameterList.vb" />
     <Compile Include="Types\TypeParameters.vb" />
-    <Compile Include="General\TypeResolution.vb">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="General\TypeResolution.vb" />
     <Compile Include="Expressions\Classifications\ExpressionClassification.Classifications.vb" />
-    <None Include="My Project\app.manifest" />
+    <EmbeddedResource Include="Resources\Errors.resx" />
     <EmbeddedResource Include="vbnc.rsp" />
-    <None Include="vbnc.snk" />
+    <Content Include="Notes.txt" />
+    <Content Include="Todo.txt" />
+    <None Include="app.config" />
+    <None Include="General\TypeCache.in" />
+    <None Include="Resources\Source.xml" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Application\" />
@@ -833,17 +659,40 @@
     </BootstrapperFile>
   </ItemGroup>
   <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0</ProductName>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
       <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
+    <ProjectReference Include="..\..\cecil\Mono.Cecil.VB.csproj">
       <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
-      <Name>Mono.Cecil</Name>
+      <Name>Mono.Cecil.VB</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="My Project\" />
   </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
@@ -863,5 +712,10 @@
   <ProjectExtensions>
     <VisualStudio>
     </VisualStudio>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo gtkVersion="2.12.2" />
+      </Properties>
+    </MonoDevelop>
   </ProjectExtensions>
 </Project>
