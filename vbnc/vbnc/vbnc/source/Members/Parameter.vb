@@ -157,7 +157,7 @@ Public Class Parameter
         End Set
     End Property
 
-    Public Property Name() As String
+    Public Property Name() As String Implements INameable.Name
         Get
             If m_ParameterIdentifier Is Nothing Then Return Nothing
             Return m_ParameterIdentifier.Name
@@ -175,12 +175,6 @@ Public Class Parameter
         Set(ByVal value As Modifiers)
             m_Modifiers = value
         End Set
-    End Property
-
-    Private ReadOnly Property ImplName() As String Implements INameable.Name
-        Get
-            Return Name
-        End Get
     End Property
 
     ReadOnly Property TypeName() As TypeName

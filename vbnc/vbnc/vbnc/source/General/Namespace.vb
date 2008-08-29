@@ -24,10 +24,13 @@ Public Class [Namespace]
     Private m_Name As String
     Protected m_Global As Boolean
 
-    ReadOnly Property Name() As String Implements INameable.Name
+    Property Name() As String Implements INameable.Name
         Get
             Return m_Name
         End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
     ReadOnly Property [Global]() As Boolean

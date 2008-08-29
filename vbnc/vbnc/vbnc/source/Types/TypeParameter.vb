@@ -119,10 +119,13 @@ Public Class TypeParameter
         End Set
     End Property
 
-    Public ReadOnly Property Name() As String Implements INameable.Name
+    Public Property Name() As String Implements INameable.Name
         Get
             Return m_Identifier.Name
         End Get
+        Set(ByVal value As String)
+            m_Identifier.Name = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean

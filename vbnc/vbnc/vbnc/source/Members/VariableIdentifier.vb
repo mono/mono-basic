@@ -63,10 +63,13 @@ Public Class VariableIdentifier
         End Get
     End Property
 
-    Public ReadOnly Property Name() As String Implements INameable.Name
+    Public Property Name() As String Implements INameable.Name
         Get
             Return m_Identifier.Identifier
         End Get
+        Set(ByVal value As String)
+            m_Identifier.Identifier = value
+        End Set
     End Property
 End Class
 

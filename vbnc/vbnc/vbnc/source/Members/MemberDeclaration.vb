@@ -121,13 +121,7 @@ Public MustInherit Class MemberDeclaration
         End Set
     End Property
 
-    Private ReadOnly Property Name2() As String Implements INameable.Name
-        Get
-            Return m_Name
-        End Get
-    End Property
-
-    Public Property Name() As String
+    Public Property Name() As String Implements INameable.Name
         Get
             Return m_Name
         End Get

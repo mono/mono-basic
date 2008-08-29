@@ -1,5 +1,14 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/Namespace.vb, Interfaces/INameable.vb,
+	  Members/MemberDeclaration.vb, Members/Operand.vb,
+	  Members/Parameter.vb, Members/ParemeterIdentifier.vb,
+	  Members/SubSignature.vb, Members/VariableIdentifier.vb,
+	  Names/Identifier.vb, Types/ImportsClause.vb,
+	  Types/TypeParameter.vb: Make Name property rw instead of ro.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/ArgumentList.vb, Expressions/SimpleNameExpression.vb,
 	  Interfaces/IType.vb, Interfaces/IAttributableDeclaration.vb,
 	  Statements/LoopControlVariable.vb, Statements/CatchStatement.vb,
