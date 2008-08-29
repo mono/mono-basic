@@ -35,26 +35,26 @@ Public Class PropertyDeclaration
         MyBase.new(Parent)
     End Sub
 
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
-        Me.Init(Attributes, Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
+        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
     End Sub
 
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Mono.Cecil.TypeReference)
-        Me.Init(Attributes, Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Mono.Cecil.TypeReference)
+        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
     End Sub
 
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, Optional ByVal GetMethod As PropertyGetDeclaration = Nothing, Optional ByVal SetMethod As PropertySetDeclaration = Nothing, Optional ByVal MemberImplementsClause As MemberImplementsClause = Nothing)
-        MyBase.Init(Attributes, Modifiers, Signature.Name)
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, Optional ByVal GetMethod As PropertyGetDeclaration = Nothing, Optional ByVal SetMethod As PropertySetDeclaration = Nothing, Optional ByVal MemberImplementsClause As MemberImplementsClause = Nothing)
+        MyBase.Init(Modifiers, Signature.Name)
 
         m_Signature = Signature
 
         If Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso SetMethod Is Nothing Then
             SetMethod = New PropertySetDeclaration(Me)
-            SetMethod.Init(Attributes, Modifiers, Nothing, Nothing, Nothing)
+            SetMethod.Init(Modifiers, Nothing, Nothing, Nothing)
         End If
         If Modifiers.Is(ModifierMasks.WriteOnly) = False AndAlso GetMethod Is Nothing Then
             GetMethod = New PropertyGetDeclaration(Me)
-            GetMethod.Init(Attributes, Modifiers, Nothing, Nothing)
+            GetMethod.Init(Modifiers, Nothing, Nothing)
         End If
 
         m_Get = GetMethod

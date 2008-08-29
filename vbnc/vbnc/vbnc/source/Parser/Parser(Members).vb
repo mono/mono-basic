@@ -75,7 +75,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Sub) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Block)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_Signature, m_Block)
 
         Return result
     End Function
@@ -159,7 +160,8 @@ Partial Class Parser
         End If
 
 
-        result.Init(Info.Attributes, m_Modifiers, m_Signature, m_Get, m_Set, m_ImplementsClause)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_Signature, m_Get, m_Set, m_ImplementsClause)
 
         Return result
     End Function
@@ -202,7 +204,8 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
 
-        result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block, m_ParameterList)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, ParentImplements, m_Block, m_ParameterList)
 
         Return result
     End Function
@@ -236,7 +239,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Get) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Info.Attributes, m_Modifiers, ParentImplements, m_Block)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, ParentImplements, m_Block)
 
         Return result
     End Function

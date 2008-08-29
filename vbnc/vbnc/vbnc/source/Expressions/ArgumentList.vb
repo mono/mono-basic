@@ -115,7 +115,7 @@ Public Class ArgumentList
                 Dim thisStatement As Statement = Me.FindFirstParent(Of Statement)()
 
                 varTmp = New LocalVariableDeclaration(Me.Parent)
-                varTmp.Init(Nothing, Nothing, "VB$tmp", CecilHelper.GetElementType(par.ParameterType))
+                varTmp.Init(Nothing, "VB$tmp", CecilHelper.GetElementType(par.ParameterType))
                 'result = varTmp.ResolveMember(ResolveInfo.Default(Compiler)) AndAlso result
 
                 assignA = New AssignmentStatement(Me.Parent)

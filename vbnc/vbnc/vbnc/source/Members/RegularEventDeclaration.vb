@@ -38,8 +38,8 @@ Public Class RegularEventDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ParametersOrType As ParametersOrType, ByVal ImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Identifier, ImplementsClause)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ParametersOrType As ParametersOrType, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Modifiers, Identifier, ImplementsClause)
         m_ParametersOrType = ParametersOrType
     End Sub
 
@@ -142,7 +142,7 @@ Public Class RegularEventDeclaration
             m_Type = New TypeName(Me, EventType)
         ElseIf m_Parameters IsNot Nothing Then
             m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
-            m_ImplicitEventDelegate.Init(Nothing, New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            m_ImplicitEventDelegate.Init(New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
             If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
 
             EventType = m_ImplicitEventDelegate.CecilType
@@ -161,10 +161,10 @@ Public Class RegularEventDeclaration
             eventVariableModifiers = New Modifiers(ModifierMasks.Private)
             If Me.IsShared Then eventVariableModifiers.AddModifiers(ModifierMasks.Shared)
             If m_ImplicitEventDelegate IsNot Nothing Then
-                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.CecilType)
+                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.CecilType)
             Else
                 Helper.Assert(m_Type IsNot Nothing)
-                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_Type)
+                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_Type)
             End If
         Else
             m_Variable = Nothing
@@ -207,7 +207,7 @@ Public Class RegularEventDeclaration
         End If
 
         If m_ImplicitEventDelegate IsNot Nothing Then
-            result = m_ImplicitEventDelegate.ResolveType AndAlso result
+            result = m_ImplicitEventDelegate.ResolveTypeReferences AndAlso result
         End If
 
         result = MyBase.ResolveTypeReferences AndAlso result

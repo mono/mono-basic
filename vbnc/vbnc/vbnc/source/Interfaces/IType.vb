@@ -28,13 +28,9 @@ Public Interface IType
     Inherits INameable, IModifiable, IDefinableType, IMember ', ICreatableType
 
     Property TypeAttributes() As Mono.Cecil.TypeAttributes
-    'ReadOnly Property TypeBuilder() As Mono.Cecil.TypeDefinition
     ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition
     ReadOnly Property Members() As MemberDeclarations
     Property BaseType() As Mono.Cecil.TypeReference
-    'ReadOnly Property CecilBaseType() As Mono.Cecil.TypeReference
-    'ReadOnly Property TypeDescriptor() As Mono.Cecil.TypeDefinition
     ReadOnly Property IsNestedType() As Boolean
     ReadOnly Property [Namespace]() As String
-    Function ResolveType() As Boolean 'No info is needed to resolve a type.
 End Interface

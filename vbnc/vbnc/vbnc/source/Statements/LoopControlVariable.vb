@@ -169,7 +169,7 @@ Public Class LoopControlVariable
             'result = m_Identifier.Resolve AndAlso result
             'result = m_ArrayNameModifier.Resolve AndAlso result
             result = m_TypeName.ResolveTypeReferences AndAlso result
-            m_Declaration = New LocalVariableDeclaration(Me, Nothing, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
+            m_Declaration = New LocalVariableDeclaration(Me, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
             result = m_Declaration.ResolveTypeReferences() AndAlso result
             'result = m_Declaration.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
             result = m_Declaration.ResolveCode(info) AndAlso result

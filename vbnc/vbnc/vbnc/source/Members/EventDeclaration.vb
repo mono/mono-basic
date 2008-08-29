@@ -47,8 +47,8 @@ Public Class EventDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Identifier.Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Modifiers, Identifier.Name)
 
         m_Identifier = Identifier
         m_ImplementsClause = ImplementsClause

@@ -35,18 +35,18 @@ Public Class ExternalSubDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Identifier, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
-        MyBase.Init(Attributes, Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
-        MyBase.AddModifier(KS.Shared)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Identifier, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
+        MyBase.Init(Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
+        Modifiers = Modifiers.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause
         m_AliasClause = AliasClause
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal Signature As SubSignature)
-        MyBase.Init(Attributes, Modifiers, Signature, Nothing)
-        MyBase.AddModifier(KS.Shared)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature, Nothing)
+        Modifiers = Modifiers.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause

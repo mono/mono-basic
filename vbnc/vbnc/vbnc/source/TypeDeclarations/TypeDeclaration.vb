@@ -101,8 +101,8 @@ Public MustInherit Class TypeDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
-        MyBase.Init(CustomAttributes, Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
+        MyBase.Init(Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
 
         m_Name = Name
 
@@ -278,14 +278,6 @@ Public MustInherit Class TypeDeclaration
             Return result
         End Get
     End Property
-
-    Public Overridable Function ResolveType() As Boolean Implements IType.ResolveType
-        Dim result As Boolean = True
-
-        Helper.Assert(BaseType IsNot Nothing OrElse Me.IsInterface)
-
-        Return result
-    End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True

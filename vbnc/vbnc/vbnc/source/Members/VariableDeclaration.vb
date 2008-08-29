@@ -44,10 +44,10 @@ Public MustInherit Class VariableDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As VariableIdentifier, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As VariableIdentifier, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
-        MyBase.Init(Attributes, Modifiers, VariableIdentifier.Name)
+        MyBase.Init(Modifiers, VariableIdentifier.Name)
         m_VariableIdentifier = VariableIdentifier
         m_IsNew = IsNew
         m_TypeName = TypeName
@@ -55,10 +55,10 @@ Public MustInherit Class VariableDeclaration
         m_ArgumentList = ArgumentList
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Identifier, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
-        MyBase.Init(Attributes, Modifiers, VariableIdentifier.Name)
+        MyBase.Init(Modifiers, VariableIdentifier.Name)
         m_VariableIdentifier = New VariableIdentifier(Me, VariableIdentifier)
         m_IsNew = IsNew
         m_TypeName = TypeName
@@ -66,10 +66,10 @@ Public MustInherit Class VariableDeclaration
         m_ArgumentList = ArgumentList
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal Identifier As Identifier, _
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent)
-        MyBase.Init(Attributes, New Modifiers(), Identifier.Name)
+        MyBase.Init(New Modifiers(), Identifier.Name)
 
         m_VariableIdentifier = New VariableIdentifier(Me, Identifier)
         m_IsNew = IsNew
@@ -78,14 +78,14 @@ Public MustInherit Class VariableDeclaration
         m_ArgumentList = ArgumentList
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As Mono.Cecil.TypeReference)
-        MyBase.Init(Attributes, Modifiers, Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As Mono.Cecil.TypeReference)
+        MyBase.Init(Modifiers, Name)
         m_VariableType = VariableType
 
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As TypeName)
-        MyBase.Init(Attributes, Modifiers, Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As TypeName)
+        MyBase.Init(Modifiers, Name)
         m_TypeName = VariableType
 
         Helper.Assert(m_TypeName IsNot Nothing)

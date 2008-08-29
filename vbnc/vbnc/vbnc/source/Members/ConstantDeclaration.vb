@@ -48,8 +48,8 @@ Public Class ConstantDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
-        MyBase.Init(Attributes, Modifiers, Identifier.Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
+        MyBase.Init(Modifiers, Identifier.Name)
         m_Identifier = Identifier
         m_TypeName = TypeName
         m_ConstantExpression = ConstantExpression

@@ -116,7 +116,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Event) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Info.Attributes, m_Modifiers, m_Identifier, m_TypeName, m_ImplementsClause)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_Identifier, m_TypeName, m_ImplementsClause)
 
         result.AddMethod = m_EventAccessorDeclarations.AddHandler
         result.RemoveMethod = m_EventAccessorDeclarations.RemoveHandler
@@ -149,7 +150,8 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Info.Attributes, m_Modifiers, m_Identifier, m_ParametersOrType, Nothing)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_Identifier, m_ParametersOrType, Nothing)
 
         Return result
     End Function
@@ -218,7 +220,8 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Info.Attributes, m_Modifiers, m_Identifier, m_ParametersOrType, m_ImplementsClause)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_Identifier, m_ParametersOrType, m_ImplementsClause)
 
         Return result
     End Function
@@ -286,7 +289,8 @@ Partial Class Parser
         End If
 
 
-        result.Init(Info.Attributes, m_Modifiers, m_ParameterList, m_Block, m_HandlerType, EventName)
+        result.CustomAttributes = Info.Attributes
+        result.Init(m_Modifiers, m_ParameterList, m_Block, m_HandlerType, EventName)
 
         Return result
     End Function

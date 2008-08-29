@@ -33,8 +33,6 @@ Public Class Parameter
     Private m_TypeName As TypeName
     Private m_ConstantExpression As Expression
 
-    'Private m_ConstantValue As Object
-    'Private m_ParameterType As Mono.Cecil.TypeReference
     Private m_ParameterAttributes As Mono.Cecil.ParameterAttributes = Mono.Cecil.ParameterAttributes.None
     
     Private m_ParameterBuilderCecil As Mono.Cecil.ParameterDefinition
@@ -122,10 +120,13 @@ Public Class Parameter
         End Set
     End Property
 
-    ReadOnly Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
+    Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
         Get
             Return m_CustomAttributes
         End Get
+        Set(ByVal value As Attributes)
+            m_CustomAttributes = value
+        End Set
     End Property
 
     Property ParameterAttributes() As Mono.Cecil.ParameterAttributes
@@ -167,10 +168,13 @@ Public Class Parameter
         End Set
     End Property
 
-    Public ReadOnly Property Modifiers() As Modifiers Implements IModifiable.Modifiers
+    Public Property Modifiers() As Modifiers Implements IModifiable.Modifiers
         Get
             Return m_Modifiers
         End Get
+        Set(ByVal value As Modifiers)
+            m_Modifiers = value
+        End Set
     End Property
 
     Private ReadOnly Property ImplName() As String Implements INameable.Name

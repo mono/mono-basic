@@ -56,7 +56,7 @@ Public Class OperatorDeclaration
     ''' <param name="TypeName"></param>
     ''' <param name="Block"></param>
     ''' <remarks></remarks>
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As String, ByVal Symbol As KS, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As String, ByVal Symbol As KS, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
 
         Helper.Assert(Identifier Is Nothing Xor Symbol = KS.None)
 
@@ -143,7 +143,7 @@ Public Class OperatorDeclaration
         m_Operand1 = Operand1
         m_Operand2 = Operand2
 
-        MyBase.Init(Attributes, Modifiers, mySignature, Block)
+        MyBase.Init(Modifiers, mySignature, Block)
     End Sub
 
 

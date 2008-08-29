@@ -185,33 +185,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Function ResolveTypes() As Boolean
-        Dim result As Boolean = True
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-#End If
-            result = ResolveType(type) AndAlso result
-        Next
-
-        Return result
-    End Function
-
-    Private Shared Function ResolveType(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        result = Type.ResolveType AndAlso result
-
-        For Each n As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = ResolveType(n) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     Function CreateImplicitTypes() As Boolean
         Dim result As Boolean = True
 

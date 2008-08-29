@@ -57,7 +57,7 @@ Public Class DelegateDeclaration
         Else
             m_Signature = New FunctionSignature(Me, Name, Parameters, ReturnType, Parent.Location)
         End If
-        Me.Init(New Attributes(Me), Modifiers, m_Signature)
+        Me.Init(Modifiers, m_Signature)
     End Sub
 
     Public Overrides Sub Initialize(ByVal Parent As BaseObject)
@@ -66,8 +66,8 @@ Public Class DelegateDeclaration
         If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(CustomAttributes, Modifiers, Signature.Identifier, Signature.TypeParameters)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature.Identifier, Signature.TypeParameters)
         m_Signature = Signature
     End Sub
 
@@ -148,9 +148,9 @@ Public Class DelegateDeclaration
         End If
         beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.System_IAsyncResult, Me.Location)
 
-        m_Invoke.Init(Nothing, New Modifiers(), invokeSignature, Nothing, Nothing)
-        m_BeginInvoke.Init(Nothing, New Modifiers(), beginInvokeSignature, Nothing, Nothing)
-        m_EndInvoke.Init(Nothing, New Modifiers(), endInvokeSignature, Nothing, Nothing)
+        m_Invoke.Init(New Modifiers(), invokeSignature, Nothing, Nothing)
+        m_BeginInvoke.Init(New Modifiers(), beginInvokeSignature, Nothing, Nothing)
+        m_EndInvoke.Init(New Modifiers(), endInvokeSignature, Nothing, Nothing)
 
         Dim attr As Mono.Cecil.MethodAttributes
         Dim implattr As Mono.Cecil.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
@@ -179,12 +179,12 @@ Public Class DelegateDeclaration
         Return result
     End Function
 
-    Overrides Function ResolveType() As Boolean
+    Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         BaseType = Compiler.TypeCache.System_MulticastDelegate
 
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         result = m_Signature.ResolveTypeReferences(False) AndAlso result
 

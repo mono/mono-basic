@@ -55,18 +55,20 @@ Public Structure Modifiers
     ''' </summary>
     ''' <param name="Modifier"></param>
     ''' <remarks></remarks>
-    Public Sub AddModifier(ByVal Modifier As KS)
+    Public Function AddModifier(ByVal Modifier As KS) As Modifiers
         m_ModifierMask = m_ModifierMask Or KSToMask(Modifier)
-    End Sub
+        Return Me
+    End Function
 
     ''' <summary>
     ''' Adds a modifier to the list if the modifier isn't there already.
     ''' </summary>
     ''' <param name="Modifier"></param>
     ''' <remarks></remarks>
-    Public Sub AddModifiers(ByVal Modifier As ModifierMasks)
+    Public Function AddModifiers(ByVal Modifier As ModifierMasks) As Modifiers
         m_ModifierMask = m_ModifierMask Or Modifier
-    End Sub
+        Return Me
+    End Function
 
     ''' <summary>
     ''' Returns true if the modifier Publis is set, or any other modifiers (Private, Friend, Protected) 

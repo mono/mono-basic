@@ -24,5 +24,5 @@
 Public Interface IAttributableDeclaration
     Inherits IBaseObject
 
-    ReadOnly Property CustomAttributes() As Attributes
+    Property CustomAttributes() As Attributes
 End Interface

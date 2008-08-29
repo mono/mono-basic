@@ -51,14 +51,14 @@ Public MustInherit Class MethodBaseDeclaration
         If m_Code IsNot Nothing Then m_Code.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(Attributes, Modifiers, Signature.Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature.Name)
         m_Signature = Signature
         Helper.Assert(m_Signature IsNot Nothing)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
-        Me.Init(Attributes, Modifiers, Signature)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
+        Me.Init(Modifiers, Signature)
         m_Code = Code
         Helper.Assert(m_Signature IsNot Nothing)
     End Sub

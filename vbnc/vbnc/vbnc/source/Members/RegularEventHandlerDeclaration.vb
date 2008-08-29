@@ -42,7 +42,7 @@ Public Class RegularEventHandlerDeclaration
             End Select
         End If
 
-        MyBase.Init(Nothing, Modifiers, HandlerType, EventName, New ParameterList(Me), Code)
+        MyBase.Init(Modifiers, HandlerType, EventName, New ParameterList(Me), Code)
 
         If DeclaringType.IsValueType Then
             Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed

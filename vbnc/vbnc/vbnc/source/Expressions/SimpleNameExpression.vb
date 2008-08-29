@@ -523,8 +523,8 @@ Public Class SimpleNameExpression
                 Else
                     varType = Compiler.TypeCache.System_Object
                 End If
-                varD = New LocalVariableDeclaration(parent_method.Code, Nothing, Nothing, m_Identifier, False, Nothing, Nothing, Nothing)
-                varD.Init(Nothing, Nothing, m_Identifier.Identifier, varType)
+                varD = New LocalVariableDeclaration(parent_method.Code, Nothing, m_Identifier, False, Nothing, Nothing, Nothing)
+                varD.Init(Nothing, m_Identifier.Identifier, varType)
                 parent_method.Code.AddVariable(varD)
                 Me.Classification = New VariableClassification(Me, varD)
                 Return True

@@ -401,10 +401,6 @@ Public Class Compiler
         VerifyConsistency(result, "CreateImplicitTypes")
         If result = False Then Return result
 
-        result = theAss.ResolveTypes AndAlso result
-        VerifyConsistency(result, "ResolveTypes")
-        If result = False Then Return result
-
         result = theAss.ResolveTypeReferences AndAlso result
         VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result

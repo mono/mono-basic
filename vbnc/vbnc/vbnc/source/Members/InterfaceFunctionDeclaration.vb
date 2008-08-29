@@ -30,8 +30,8 @@ Public Class InterfaceFunctionDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature)
-        MyBase.Init(Attributes, Modifiers, Signature, Nothing)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature)
+        MyBase.Init(Modifiers, Signature, Nothing)
     End Sub
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean

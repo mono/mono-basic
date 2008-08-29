@@ -41,8 +41,8 @@ Public Class EnumDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal EnumType As KS)
-        MyBase.Init(CustomAttributes, Modifiers, Name, 0)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal EnumType As KS)
+        MyBase.Init(Modifiers, Name, 0)
         m_QualifiedName = EnumType
     End Sub
 
@@ -56,11 +56,10 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        result = MyBase.ResolveType AndAlso result
-
+        result = MyBase.ResolveTypeReferences() AndAlso result
         UpdateDefinition()
 
         Return result

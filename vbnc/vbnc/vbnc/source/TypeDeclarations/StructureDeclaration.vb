@@ -33,11 +33,11 @@ Public Class StructureDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         MyBase.BaseType = Compiler.TypeCache.System_ValueType
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function

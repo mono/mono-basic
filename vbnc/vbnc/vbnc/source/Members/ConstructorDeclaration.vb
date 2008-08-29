@@ -59,10 +59,10 @@ Public Class ConstructorDeclaration
     End Sub
 
     Shadows Sub Init(ByVal Code As CodeBlock)
-        MyBase.Init(New Attributes(Me), New Modifiers(), New SubSignature(Me, ConstructorName, New ParameterList(Me)), Code)
+        MyBase.Init(New Modifiers(), New SubSignature(Me, ConstructorName, New ParameterList(Me)), Code)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
 
         'If vbnc.Modifiers.IsNothing(Modifiers) = False AndAlso Modifiers.Is(ModifierMasks.Shared) Then
         If Modifiers.Is(ModifierMasks.Shared) OrElse FindTypeParent.IsModule Then
@@ -71,13 +71,13 @@ Public Class ConstructorDeclaration
             Signature.Init(New Identifier(Signature, ConstructorName, Signature.Location, TypeCharacters.Characters.None), Signature.TypeParameters, Signature.Parameters)
         End If
 
-        MyBase.Init(Attributes, Modifiers, Signature, Block)
+        MyBase.Init(Modifiers, Signature, Block)
     End Sub
 
     Shared Function CreateTypeConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
         Dim result As New ConstructorDeclaration(Parent)
 
-        result.Init(New Attributes(result), New Modifiers(ModifierMasks.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
+        result.Init(New Modifiers(ModifierMasks.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         result.UpdateDefinition()
         If result.ResolveTypeReferences() = False Then
@@ -90,7 +90,7 @@ Public Class ConstructorDeclaration
     Shared Function CreateDefaultConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
         Dim result As New ConstructorDeclaration(Parent)
 
-        result.Init(New Attributes(result), New Modifiers(), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
+        result.Init(New Modifiers(), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         If result.ResolveTypeReferences() = False Then
             Helper.ErrorRecoveryNotImplemented(Parent.Location)

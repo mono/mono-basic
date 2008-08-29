@@ -54,15 +54,11 @@ Public Class ModuleDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        '#If ENABLECECIL Then
         MyBase.BaseType = Compiler.TypeCache.System_Object
-        '#End If
-
-        '        MyBase.BaseType = Compiler.TypeCache.System_Object
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Me.FindDefaultConstructors()
 
@@ -95,7 +91,7 @@ Public Class ModuleDeclaration
 
         If DefaultSharedConstructor Is Nothing AndAlso (Me.HasSharedConstantFields OrElse Me.HasSharedFieldsWithInitializers) Then
             DefaultSharedConstructor = New ConstructorDeclaration(Me)
-            DefaultSharedConstructor.Init(Nothing, New Modifiers(ModifierMasks.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
+            DefaultSharedConstructor.Init(New Modifiers(ModifierMasks.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
             result = DefaultSharedConstructor.ResolveTypeReferences AndAlso result
             Members.Add(DefaultSharedConstructor)
             BeforeFieldInit = True

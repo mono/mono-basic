@@ -44,8 +44,8 @@ Public Class EnumMemberDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Attributes As Attributes, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
-        MyBase.Init(Attributes, Nothing, Identifier.Identifier)
+    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
+        MyBase.Init(Nothing, Identifier.Identifier)
         m_EnumIndex = EnumIndex
         m_Identifier = Identifier
         m_ConstantExpression = ConstantExpression

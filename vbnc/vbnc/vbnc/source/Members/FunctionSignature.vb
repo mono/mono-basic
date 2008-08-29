@@ -98,13 +98,6 @@ Public Class FunctionSignature
         End Get
     End Property
 
-    'Overrides ReadOnly Property ReturnParameter() As ParameterInfo
-    '    Get
-    '        If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(ReturnType, 1, Me)
-    '        Return m_ReturnParameter
-    '    End Get
-    'End Property
-
     Public Overrides ReadOnly Property ReturnType() As Mono.Cecil.TypeReference
         Get
             'Helper.Assert(m_ReturnType IsNot Nothing)

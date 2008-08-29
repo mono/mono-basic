@@ -34,8 +34,8 @@ Public Class InterfaceDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
-        MyBase.Init(CustomAttributes, Modifiers, Name, TypeParameters)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
+        MyBase.Init(Modifiers, Name, TypeParameters)
         m_InterfaceBases = InterfaceBases
     End Sub
 
@@ -57,7 +57,7 @@ Public Class InterfaceDeclaration
         End Get
     End Property
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         If m_InterfaceBases IsNot Nothing Then
@@ -67,7 +67,7 @@ Public Class InterfaceDeclaration
             Next
         End If
 
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function

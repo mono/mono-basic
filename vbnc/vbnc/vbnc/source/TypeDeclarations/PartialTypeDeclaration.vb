@@ -28,8 +28,8 @@ Public MustInherit Class PartialTypeDeclaration
         MyBase.new(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
-        MyBase.Init(CustomAttributes, Modifiers, Name, TypeParameters)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
+        MyBase.Init(Modifiers, Name, TypeParameters)
         m_TypeImplementsClauses = [Implements]
         If m_TypeImplementsClauses Is Nothing Then m_TypeImplementsClauses = New TypeImplementsClauses(Me)
     End Sub
@@ -54,7 +54,7 @@ Public MustInherit Class PartialTypeDeclaration
         TypeAttributes = GetTypeAttributes()
     End Sub
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         If m_TypeImplementsClauses IsNot Nothing Then
@@ -64,7 +64,7 @@ Public MustInherit Class PartialTypeDeclaration
             Next
         End If
 
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         If Me.IsPartial Then
             If PartialModifierFound = False Then
@@ -89,14 +89,6 @@ Public MustInherit Class PartialTypeDeclaration
             '    End If
             'End If
         End If
-
-        Return result
-    End Function
-
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
@@ -150,12 +142,4 @@ Public MustInherit Class PartialTypeDeclaration
     '    Next
     '    Return result.ToArray
     'End Function
-
-    Public Overrides Function DefineTypeHierarchy() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.DefineTypeHierarchy() AndAlso result
-
-        Return result
-    End Function
 End Class

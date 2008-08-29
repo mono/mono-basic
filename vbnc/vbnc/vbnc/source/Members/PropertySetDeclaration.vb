@@ -34,7 +34,7 @@ Public Class PropertySetDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Public Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock, ByVal SetParameters As ParameterList)
+    Public Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock, ByVal SetParameters As ParameterList)
         Dim mySignature As SubSignature
         Dim name As String
         Dim typeParams As TypeParameters
@@ -105,7 +105,7 @@ Public Class PropertySetDeclaration
 
         mySignature.Init(New Identifier(mySignature, name, PropertySignature.Location, PropertySignature.Identifier.TypeCharacter), typeParams, params)
 
-        MyBase.Init(Attributes, Modifiers, mySignature, ImplementsClause, Block)
+        MyBase.Init(Modifiers, mySignature, ImplementsClause, Block)
     End Sub
 
     Shared Shadows Function IsMe(ByVal tm As tm) As Boolean

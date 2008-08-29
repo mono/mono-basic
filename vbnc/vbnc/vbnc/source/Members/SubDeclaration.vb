@@ -45,7 +45,7 @@ Public Class SubDeclaration
 
     Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal MethodAttributes As Mono.Cecil.MethodAttributes, ByVal ParameterTypes As Mono.Cecil.TypeReference())
         MyBase.New(Parent)
-        MyBase.Init(Nothing, New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
+        MyBase.Init(New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
         MyBase.MethodAttributes = MethodAttributes
         UpdateDefinition()
     End Sub
@@ -56,19 +56,19 @@ Public Class SubDeclaration
         If m_HandlesOrImplements IsNot Nothing Then m_HandlesOrImplements.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
-        MyBase.Init(Attributes, Modifiers, Signature, Block)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
+        MyBase.Init(Modifiers, Signature, Block)
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal HandlesOrImplements As HandlesOrImplements, ByVal Block As CodeBlock)
-        MyBase.Init(Attributes, Modifiers, Signature, Block)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal HandlesOrImplements As HandlesOrImplements, ByVal Block As CodeBlock)
+        MyBase.Init(Modifiers, Signature, Block)
         m_HandlesOrImplements = HandlesOrImplements
         UpdateDefinition()
     End Sub
 
-    Protected Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
-        MyBase.Init(Attributes, Modifiers, Signature, Block)
+    Protected Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
+        MyBase.Init(Modifiers, Signature, Block)
         If ImplementsClause IsNot Nothing Then m_HandlesOrImplements = New HandlesOrImplements(Me, ImplementsClause)
         UpdateDefinition()
     End Sub

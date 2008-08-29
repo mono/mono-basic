@@ -1,5 +1,45 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/ArgumentList.vb, Expressions/SimpleNameExpression.vb,
+	  Interfaces/IType.vb, Interfaces/IAttributableDeclaration.vb,
+	  Statements/LoopControlVariable.vb, Statements/CatchStatement.vb,
+	  Statements/AssignStatements/CompoundAssignmentStatement.vb,
+	  Members/PropertyDeclaration.vb,
+	  Members/ExternalFunctionDeclaration.vb,
+	  Members/ConstantDeclaration.vb, Members/ExternalSubDeclaration.vb,
+	  Members/LocalVariableDeclaration.vb,
+	  Members/ConversionOperatorDeclaration.vb,
+	  Members/RegularEventHandlerDeclaration.vb,
+	  Members/RegularEventDeclaration.vb, Members/MemberDeclaration.vb,
+	  Members/EventHandlerDeclaration.vb, Members/SubDeclaration.vb,
+	  Members/EnumMemberDeclaration.vb, Members/FunctionSignature.vb,
+	  Members/Parameter.vb, Members/CustomEventHandlerDeclaration.vb,
+	  Members/Modifiers.vb, Members/MethodDeclaration.vb,
+	  Members/FunctionDeclaration.vb, Members/ConstructorDeclaration.vb,
+	  Members/TypeVariableDeclaration.vb,
+	  Members/InterfaceFunctionDeclaration.vb,
+	  Members/CustomEventDeclaration.vb, Members/EventDeclaration.vb,
+	  Members/PropertyGetDeclaration.vb, Members/VariableDeclaration.vb,
+	  Members/OperatorDeclaration.vb, Members/PropertySetDeclaration.vb,
+	  Parser/Parser(Members2).vb, Parser/Parser(Events).vb,
+	  Parser/Parser(Types).vb, Parser/Parser(Statements).vb,
+	  Parser/Parser(Members).vb, Types/IModifiable.vb,
+	  TypeDeclarations/EnumDeclaration.vb,
+	  TypeDeclarations/ClassDeclaration.vb,
+	  TypeDeclarations/ModuleDeclaration.vb,
+	  TypeDeclarations/DelegateDeclaration.vb,
+	  TypeDeclarations/GenericTypeDeclaration.vb,
+	  TypeDeclarations/PartialTypeDeclaration.vb,
+	  TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/InterfaceDeclaration.vb,
+	  TypeDeclarations/StructureDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb, General/AssemblyInfo.vb,
+	  General/Compiler.vb, General/MethodBaseDeclaration.vb: Minor
+	  refactoring: don't pass Attributes to the Init method, make the
+	  parser call the property setter.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* ConditionalCompilation/ConditionalExpression.vb, Emit/EmitInfo.vb,
 	  Emit/EmitLog.vb, Expressions/ArgumentList.vb,
 	  Expressions/ConstantExpression.vb, Expressions/DeRefExpression.vb,

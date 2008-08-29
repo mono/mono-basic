@@ -35,7 +35,7 @@ Public Class ConversionOperatorDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal [Operator] As Token, ByVal Operand As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal [Operator] As Token, ByVal Operand As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
         Dim mySignature As New FunctionSignature(Me)
         Dim parameters As New ParameterList(Me)
 
@@ -52,7 +52,7 @@ Public Class ConversionOperatorDeclaration
         m_Operator = [Operator]
         m_Operand = Operand
 
-        MyBase.Init(Attributes, Modifiers, mySignature, Block)
+        MyBase.Init(Modifiers, mySignature, Block)
     End Sub
 
     Public Overrides Function ResolveTypeReferences() As Boolean

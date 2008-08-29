@@ -52,7 +52,7 @@ Public MustInherit Class CompoundAssignmentStatement
             Dim stmt As AssignmentStatement
 
             varDecl = New LocalVariableDeclaration(arg)
-            varDecl.Init(Nothing, Nothing, "VB$tmp", exp.ExpressionType)
+            varDecl.Init(Nothing, "VB$tmp", exp.ExpressionType)
             block.AddVariable(varDecl)
 
             newExp = New VariableExpression(arg, varDecl)

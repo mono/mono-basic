@@ -124,7 +124,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Class) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, m_Modifiers, m_DeclaringType, m_Identifier, m_TypeParameters, m_TypeImplementsClauses)
+        result.CustomAttributes = Attributes
+        result.Init(m_Modifiers, m_DeclaringType, m_Identifier, m_TypeParameters, m_TypeImplementsClauses)
 
         Return result
     End Function
@@ -184,7 +185,8 @@ Partial Class Parser
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, Modifiers, m_Signature)
+        result.CustomAttributes = Attributes
+        result.Init(Modifiers, m_Signature)
 
         Return result
     End Function
@@ -254,7 +256,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Enum) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, m_Modifiers, m_Identifier, m_QualifiedName)
+        result.CustomAttributes = Attributes
+        result.Init(m_Modifiers, m_Identifier, m_QualifiedName)
 
         Return result
     End Function
@@ -302,7 +305,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Interface) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, m_Modifiers, m_Identifier, m_TypeParameters, m_InterfaceBases)
+        result.CustomAttributes = Attributes
+        result.Init(m_Modifiers, m_Identifier, m_TypeParameters, m_InterfaceBases)
 
         Return result
     End Function
@@ -334,7 +338,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Module) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, m_Modifiers, m_Name, 0)
+        result.CustomAttributes = Attributes
+        result.Init(m_Modifiers, m_Name, 0)
 
         Return result
     End Function
@@ -378,7 +383,8 @@ Partial Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Structure) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        result.Init(Attributes, m_Modifiers, m_Name, m_TypeParameters, m_Implements)
+        result.CustomAttributes = Attributes
+        result.Init(m_Modifiers, m_Name, m_TypeParameters, m_Implements)
 
         Return result
     End Function

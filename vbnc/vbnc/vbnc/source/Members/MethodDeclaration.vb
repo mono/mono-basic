@@ -53,13 +53,13 @@ Public MustInherit Class MethodDeclaration
         Return result
     End Function
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(Attributes, Modifiers, Signature)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature)
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
-        MyBase.Init(Attributes, Modifiers, Signature, Code)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
+        MyBase.Init(Modifiers, Signature, Code)
         UpdateDefinition()
     End Sub
 

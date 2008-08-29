@@ -44,8 +44,8 @@ Public Class ClassDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
-        MyBase.Init(CustomAttributes, Modifiers, Name, TypeParameters, TypeImplementsClauses)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
+        MyBase.Init(Modifiers, Name, TypeParameters, TypeImplementsClauses)
     End Sub
 
     Sub AddInheritsClause(ByVal Clause As NonArrayTypeName)
@@ -112,15 +112,7 @@ Public Class ClassDeclaration
         TypeAttributes = GetTypeAttributes()
     End Sub
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveTypeReferences() AndAlso result
-
-        Return result
-    End Function
-
-    Overrides Function ResolveType() As Boolean
+    Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(m_InheritsClauses Is Nothing OrElse m_InheritsClauses.Count > 0) 'Perf check
@@ -143,7 +135,7 @@ Public Class ClassDeclaration
             BaseType = Compiler.TypeCache.System_Object
         End If
 
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         'Find the default constructors for this class
         Me.FindDefaultConstructors()
@@ -424,8 +416,8 @@ Public Class ClassDeclaration
             Dim prop As New PropertyDeclaration(Me)
             Dim modifiers As New Modifiers(ModifierMasks.Public)
 
-            field.Init(Nothing, modifiers, fieldName, type.CecilType)
-            prop.Init(Nothing, modifiers, propertyName, type.CecilType)
+            field.Init(modifiers, fieldName, type.CecilType)
+            prop.Init(modifiers, propertyName, type.CecilType)
 
             Dim setter As MethodDeclaration
             Dim getter As MethodDeclaration

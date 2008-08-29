@@ -33,12 +33,12 @@ Public MustInherit Class GenericTypeDeclaration
         If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
         Dim TypeArgumentCount As Integer
         If TypeParameters IsNot Nothing Then
             TypeArgumentCount = TypeParameters.Parameters.Count
         End If
-        MyBase.Init(CustomAttributes, Modifiers, Name, TypeArgumentCount)
+        MyBase.Init(Modifiers, Name, TypeArgumentCount)
         m_TypeParameters = TypeParameters
     End Sub
 
@@ -47,18 +47,6 @@ Public MustInherit Class GenericTypeDeclaration
             Return m_TypeParameters
         End Get
     End Property
-
-    Public Overrides Function ResolveType() As Boolean
-        Dim result As Boolean = True
-
-        If m_TypeParameters IsNot Nothing Then
-            result = m_TypeParameters.ResolveTypeReferences AndAlso result
-        End If
-
-        result = MyBase.ResolveType AndAlso result
-
-        Return result
-    End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True

@@ -47,8 +47,8 @@ Public Class CustomEventHandlerDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal ParameterList As ParameterList, ByVal Block As CodeBlock, ByVal HandlerType As KS, ByVal EventName As Identifier)
-        MyBase.Init(Attributes, Modifiers, HandlerType, EventName, ParameterList, Block)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal ParameterList As ParameterList, ByVal Block As CodeBlock, ByVal HandlerType As KS, ByVal EventName As Identifier)
+        MyBase.Init(Modifiers, HandlerType, EventName, ParameterList, Block)
         MyBase.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
     End Sub
 

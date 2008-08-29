@@ -34,8 +34,8 @@ Public Class CustomEventDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As NonArrayTypeName, ByVal ImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Identifier, ImplementsClause)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As NonArrayTypeName, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Modifiers, Identifier, ImplementsClause)
         m_Type = TypeName
     End Sub
 
