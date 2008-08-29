@@ -1,4 +1,4 @@
-﻿' 
+' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -40,7 +40,6 @@ Public Class CecilHelper
 
 #If ENABLECECIL And Debug Then
     Public Shared Sub Test()
-        Dim a As Mono.Cecil.AssemblyDefinition = AssemblyFactory.GetAssembly("Z:\main\git\mono-basic\vbnc\vbnc\tests\CompileTime2\testoutput\Generic2_vbc.exe")
         For Each Type As TypeDefinition In a.MainModule.Types
             System.Diagnostics.Debug.WriteLine(Type.FullName)
             For Each field As FieldDefinition In Type.Fields
@@ -772,6 +771,13 @@ Public Class CecilHelper
             End If
         Next
 
+        Return result
+    End Function
+
+    Public Shared Function GetAttributeCtorString(ByVal Attrib As CustomAttribute, ByVal index As Integer) As String
+        Dim result As String
+        If Attrib.ConstructorParameters.Count - 1 < index Then Return Nothing
+        result = TryCast(Attrib.ConstructorParameters(index), String)
         Return result
     End Function
 

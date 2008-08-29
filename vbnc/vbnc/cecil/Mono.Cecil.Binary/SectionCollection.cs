@@ -58,7 +58,7 @@ namespace Mono.Cecil.Binary {
 			m_items = new ArrayList (4);
 		}
 
-		internal void Add (Section value)
+		public void Add (Section value)
 		{
 			m_items.Add (value);
 		}

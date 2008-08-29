@@ -112,7 +112,7 @@ namespace Mono.Cecil.Binary {
 			set { m_exportTable = value; }
 		}
 
-		internal ResourceDirectoryTable ResourceDirectoryRoot {
+		public ResourceDirectoryTable ResourceDirectoryRoot {
 			get { return m_rsrcRoot; }
 			set { m_rsrcRoot = value; }
 		}

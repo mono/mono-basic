@@ -1,3 +1,8 @@
+2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb: Save pending work (to set pe file properties/version
+	  info):
+
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* frmMain.vb: Use the specified path to the vbnc compiler to figure out

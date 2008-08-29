@@ -463,33 +463,207 @@ Public Class AssemblyDeclaration
     End Sub
 
     Sub SetFileVersion()
-        'Dim product, productversion, company, copyright, trademark As String
-        'Dim att() As Object
-        'Dim product_att As Reflection.AssemblyProductAttribute = Nothing
-        'Dim productversion_att As Reflection.AssemblyVersionAttribute = Nothing
-        'Dim company_att As Reflection.AssemblyCompanyAttribute = Nothing
-        'Dim copyright_att As Reflection.AssemblyCopyrightAttribute = Nothing
-        'Dim trademark_att As Reflection.AssemblyTrademarkAttribute = Nothing
+    	'TOOD: This is not ready yet, it creates invalid binaries somehow.
+    	Return
+        Dim product As String = String.Empty
+        Dim productversion As String = String.Empty
+        Dim company As String = String.Empty
+        Dim copyright As String = String.Empty
+        Dim trademark As String = String.Empty
 
-        Report.WriteLine("Throw New NotImplementedException (): SetFileVersion")
-        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyProductAttribute, True)
-        'If att.Length > 0 Then product_att = DirectCast(att(0), AssemblyProductAttribute)
-        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute, True)
-        'If att.Length > 0 Then productversion_att = DirectCast(att(0), AssemblyVersionAttribute)
-        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute, True)
-        'If att.Length > 0 Then company_att = DirectCast(att(0), AssemblyCompanyAttribute)
-        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute, True)
-        'If att.Length > 0 Then copyright_att = DirectCast(att(0), AssemblyCopyrightAttribute)
-        'att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute, True)
-        'If att.Length > 0 Then trademark_att = DirectCast(att(0), AssemblyTrademarkAttribute)
+        Dim att As Mono.Cecil.CustomAttributeCollection
+        Dim custom_attributes As Mono.Cecil.CustomAttributeCollection = Me.Compiler.AssemblyBuilderCecil.CustomAttributes
 
-        'If product_att IsNot Nothing Then product = product_att.Product Else product = ""
-        'If productversion_att IsNot Nothing Then productversion = productversion_att.Version Else productversion = ""
-        'If company_att IsNot Nothing Then company = company_att.Company Else company = ""
-        'If copyright_att IsNot Nothing Then copyright = copyright_att.Copyright Else copyright = ""
-        'If trademark_att IsNot Nothing Then trademark = trademark_att.Trademark Else trademark = ""
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyProductAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then product = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then productversion = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then company = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then copyright = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then trademark = CecilHelper.GetAttributeCtorString(att(0), 0)
 
-        'Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
+        Dim rdt As New Mono.Cecil.Binary.ResourceDirectoryTable()
+        Dim r1 As New Mono.Cecil.Binary.ResourceDirectoryEntry(16)
+        Dim r2 As New Mono.Cecil.Binary.ResourceDirectoryEntry(1)
+        Dim r3 As New Mono.Cecil.Binary.ResourceDirectoryEntry(0)
+        Dim data As New Mono.Cecil.Binary.ResourceDataEntry()
+
+        Dim has_rsrc As Boolean
+        For i As Integer = 0 To Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Count - 1
+            If Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections(i).Name = Mono.Cecil.Binary.Section.Resources Then
+                has_rsrc = True
+                Exit For
+            End If
+        Next
+        If Not has_rsrc Then
+            Dim s As New Mono.Cecil.Binary.Section()
+            s.Name = Mono.Cecil.Binary.Section.Resources
+            Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.add(s)
+        End If
+        Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot.Entries.Add(r1)
+        rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        rdt.Entries.Add(r2)
+        r1.Child = rdt
+
+        rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        rdt.Entries.Add(r3)
+        r2.Child = rdt
+
+        r3.Child = data
+
+        Using ms As New IO.MemoryStream()
+            Using w As New IO.BinaryWriter(ms, System.Text.Encoding.Unicode)
+                Dim file_flags_mask As Integer = 63
+                Dim file_flags As Integer = 0
+                Dim file_os As Integer = 4 '/* VOS_WIN32 */
+                Dim file_type As Integer = 2
+                Dim file_subtype As Integer = 0
+                Dim file_date As Long = 0
+                Dim file_lang As Integer = 0
+                Dim file_codepage As Integer = 1200
+                Dim properties As New Generic.Dictionary(Of String, String)
+
+                Dim file_version As Long
+                Dim product_version As Long
+
+                Dim WellKnownProperties As String() = New String() {"Assembly Version", "FileDescription", "FileVersion", "InternalName", "OriginalFilename", "ProductVersion"}
+
+                For i As Integer = 0 To WellKnownProperties.Length - 1
+                    properties.Add(WellKnownProperties(i), WellKnownProperties(i) & " ")
+                Next
+
+                If product <> String.Empty Then properties("ProductName") = product
+                If productversion <> String.Empty Then properties("ProductVersion") = productversion
+                If company <> String.Empty Then properties("Company") = company
+                If copyright <> String.Empty Then properties("LegalCopyright") = copyright
+                If trademark <> String.Empty Then properties("LegalTrademark") = trademark
+
+                'VS_VERSIONINFO
+                w.Write(CShort(0))
+                w.Write(CShort(&H34))
+                w.Write(CShort(0))
+                w.Write("VS_VERSION_INFO".ToCharArray())
+                w.Write(CShort(0))
+                emit_padding(w)
+
+                '// VS_FIXEDFILEINFO
+                w.Write(&HFEEF04BDUI)
+                w.Write(CInt(1 << 16))
+                w.Write(CInt(file_version >> 32)) 'TODO: FileVersion?
+                w.Write(CInt(((file_version And &HFFFFFFFF)))) 'TODO: ?
+
+                w.Write(CInt(product_version >> 32))
+                w.Write(CInt(product_version And &HFFFFFFFF))
+                w.Write(CInt(file_flags_mask))
+                w.Write(CInt(file_flags))
+                w.Write(CInt(file_os))
+                w.Write(CInt(file_type))
+                w.Write(CInt(file_subtype))
+                w.Write(CInt((file_date >> 32)))
+                w.Write(CInt((file_date And &HFFFFFFFF)))
+
+                emit_padding(w)
+
+                '// VarFileInfo
+                Dim var_file_info_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write("VarFileInfo".ToCharArray())
+                w.Write(CShort(0))
+
+                If ((ms.Position Mod 4) <> 0) Then
+                    w.Write(CShort(0))
+                End If
+
+                '// Var
+                Dim var_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(4))
+                w.Write(CShort(0))
+                w.Write("Translation".ToCharArray())
+                w.Write(CShort(0))
+
+                If ((ms.Position Mod 4) <> 0) Then
+                    w.Write(CShort(0))
+                End If
+
+                w.Write(CShort(file_lang))
+                w.Write(CShort(file_codepage))
+
+                patch_length(w, var_pos)
+
+                patch_length(w, var_file_info_pos)
+
+                '// StringFileInfo
+                Dim string_file_info_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write("StringFileInfo".ToCharArray())
+
+                emit_padding(w)
+
+                '// StringTable
+                Dim string_table_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write(String.Format("{0:x4}{1:x4}", file_lang, file_codepage).ToCharArray())
+
+                emit_padding(w)
+
+                '// Strings
+                For Each key As String In properties.Keys
+                    Dim value As String = properties(key)
+
+                    Dim string_pos As Long = ms.Position
+                    w.Write(CShort(0))
+                    w.Write(CShort((value.ToCharArray().Length + 1)))
+                    w.Write(CShort(1))
+                    w.Write(key.ToCharArray())
+                    w.Write(CShort(0))
+
+                    emit_padding(w)
+
+                    w.Write(value.ToCharArray())
+                    w.Write(CShort(0))
+
+                    emit_padding(w)
+
+                    patch_length(w, string_pos)
+                Next
+
+                patch_length(w, string_table_pos)
+
+                patch_length(w, string_file_info_pos)
+
+                patch_length(w, 0)
+                data.Size = CUInt(ms.Length)
+                data.ResourceData = ms.ToArray()
+            End Using
+        End Using
+    End Sub
+
+    Private Sub patch_length(ByVal w As IO.BinaryWriter, ByVal len_pos As Long)
+        Dim ms As IO.Stream = w.BaseStream
+
+        Dim pos As Long = ms.Position
+        ms.Position = len_pos
+        w.Write(CShort(pos - len_pos))
+        ms.Position = pos
+    End Sub
+
+    Private Sub emit_padding(ByVal w As IO.BinaryWriter)
+        Dim ms As IO.Stream = w.BaseStream
+
+        If ((ms.Position Mod 4) <> 0) Then
+            w.Write(CShort(0))
+        End If
     End Sub
 
     Public Function SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition) As Boolean
@@ -604,7 +778,7 @@ Public Class AssemblyDeclaration
 
         Return True
     End Function
-    
+
     '    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
     '        Dim filename As String
 
@@ -692,7 +866,7 @@ Public Class AssemblyDeclaration
         End Try
 
     End Function
-    
+
     '    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
     '        Dim CryptoConvert As Type
     '        Dim FromCapiKeyBlob As MethodInfo
@@ -906,7 +1080,7 @@ Public Class AssemblyDeclaration
     Function FindTypeWithName(ByVal Name As String) As TypeDeclaration
         For i As Integer = 0 To m_Members.Count - 1
             Dim tD As TypeDeclaration = TryCast(m_Members(i), TypeDeclaration)
-            If td Is Nothing Then Continue For
+            If tD Is Nothing Then Continue For
             If Helper.CompareName(tD.Name, Name) Then Return tD
         Next
         Return Nothing

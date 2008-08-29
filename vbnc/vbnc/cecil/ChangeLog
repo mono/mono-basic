@@ -1,3 +1,9 @@
+2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Mono.Cecil.Binary/Image.cs, Mono.Cecil.Binary/Section.cs,
+	  Mono.Cecil.Binary/SectionCollection.cs: Save pending work (to set
+	  pe file properties/version info):
+
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Mono.Cecil/MemberReference.cs, Mono.Cecil/FieldReference.cs,
