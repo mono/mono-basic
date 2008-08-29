@@ -297,7 +297,7 @@ Public Class VariableClassification
                 If isByRefStructure Then
                     Emitter.EmitLoadVariable(Info.Clone(Parent, paramType), ParameterInfo)
                     If TypeOf rhs Is GetRefExpression Then rhs = DirectCast(rhs, GetRefExpression).Expression
-                    paramConsumed = TypeOf rhs Is NewExpression
+                    'paramConsumed = TypeOf rhs Is NewExpression
                     If paramConsumed Then
                         rInfo = Info.Clone(Parent, True, False, paramType)
                     Else

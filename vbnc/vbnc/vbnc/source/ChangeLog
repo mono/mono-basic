@@ -1,5 +1,11 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/Classifications/VariableClassification.vb: Minor fix to
+	  let decimal ctors work.
+	* Members/ConstantDeclaration.vb: Implement constant decimals again.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/VariableExpression.vb, General/AssemblyInfo.vb,
 	  General/Helper.vb, General/TypeManager.vb,
 	  Members/ArrayTypeModifiers.vb: Remove dead code.

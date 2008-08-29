@@ -105,9 +105,49 @@ Public Class ConstantDeclaration
         Dim decAttrs As Mono.Cecil.CustomAttributeCollection
         decAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute)
         If decAttrs IsNot Nothing AndAlso decAttrs.Count = 1 Then
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Always, "Not implemented getting decimal values from attribute")
-            'value = DirectCast(decAttrs(0).Properties("Value"), Decimal)
-            value = 0
+            Dim attr As Mono.Cecil.CustomAttribute = decAttrs(0)
+            Dim scale As Byte, sign As Byte
+            Dim hi1 As Integer, mid1 As Integer, low1 As Integer
+            Dim isUnsigned As Boolean
+
+            If attr.ConstructorParameters.Count <> 5 Then Return False
+            If TypeOf attr.ConstructorParameters(0) Is Byte = False Then Return False
+            If TypeOf attr.ConstructorParameters(1) Is Byte = False Then Return False
+
+            scale = DirectCast(attr.ConstructorParameters(0), Byte)
+            sign = DirectCast(attr.ConstructorParameters(1), Byte)
+
+            If TypeOf attr.ConstructorParameters(2) Is Integer Then
+                hi1 = DirectCast(attr.ConstructorParameters(2), Integer)
+                isUnsigned = False
+            ElseIf TypeOf attr.ConstructorParameters(2) Is UInteger Then
+                hi1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(2), UInteger)), 0)
+                isUnsigned = True
+            Else
+                Return False
+            End If
+
+            If TypeOf attr.ConstructorParameters(3) Is Integer Then
+                If isUnsigned Then Return False
+                mid1 = DirectCast(attr.ConstructorParameters(3), Integer)
+            ElseIf TypeOf attr.ConstructorParameters(3) Is UInteger Then
+                If isUnsigned = False Then Return False
+                mid1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(3), UInteger)), 0)
+            Else
+                Return False
+            End If
+
+            If TypeOf attr.ConstructorParameters(4) Is Integer Then
+                If isUnsigned Then Return False
+                low1 = DirectCast(attr.ConstructorParameters(4), Integer)
+            ElseIf TypeOf attr.ConstructorParameters(4) Is UInteger Then
+                If isUnsigned = False Then Return False
+                low1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(4), UInteger)), 0)
+            Else
+                Return False
+            End If
+
+            value = New Decimal(low1, mid1, hi1, sign <> 0, scale)
             Return True
         End If
         Return False
