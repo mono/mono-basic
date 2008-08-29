@@ -1,5 +1,11 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/VariableExpression.vb, General/AssemblyInfo.vb,
+	  General/Helper.vb, General/TypeManager.vb,
+	  Members/ArrayTypeModifiers.vb: Remove dead code.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/CecilHelper.vb: When finding definitions don't load again
 	  assemblies we've already loaded. Also add a workaround for a lazy
 	  initialization bug.

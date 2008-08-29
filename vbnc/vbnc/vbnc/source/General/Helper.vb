@@ -1943,30 +1943,6 @@ Public Class Helper
 #If ENABLECECIL Then
     Shared Function GetTypeDefinition(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Return CecilHelper.FindDefinition(Type)
-        'If Type Is Nothing Then Return Nothing
-        'Dim tD As TypeDescriptor = TryCast(Type, TypeDescriptor)
-        'If tD IsNot Nothing Then
-        '    Dim tP As TypeParameterDescriptor
-        '    Dim tG As GenericTypeDescriptor
-
-        '    tP = TryCast(tD, TypeParameterDescriptor)
-        '    tG = TryCast(tD, GenericTypeDescriptor)
-        '    If tP IsNot Nothing Then
-        '        Return tD.Declaration.CecilType
-        '    ElseIf tG IsNot Nothing Then
-        '        Dim result As New Mono.Cecil.GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, tG.GetGenericTypeDefinition))
-        '        For Each arg As Type In tG.GetGenericArguments
-        '            result.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, arg))
-        '        Next
-        '        Return result
-        '    Else
-        '        Return tD.Declaration.CecilType
-        '    End If
-        'Else
-        '    Dim ass As Mono.Cecil.AssemblyDefinition
-        '    ass = Compiler.TypeManager.FindAssemblyDefinition(Type.Assembly.FullName)
-        '    Return ass.MainModule.Types.Item(Type.FullName)
-        'End If
     End Function
 
     Shared Function GetTypeOrTypeReference(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
@@ -1976,85 +1952,12 @@ Public Class Helper
         If Compiler.Assembly.IsDefinedHere(Type) Then
             Return Type
         Else
-            'System.Diagnostics.Debug.WriteLine("Importing: " & Type.FullName)
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
         End If
     End Function
 
-    'Private Shared m_TypeReferenceCache As New Generic.Dictionary(Of Mono.Cecil.TypeReference, Mono.Cecil.TypeReference)
-
-    'Public Shared Function GetTypeOrTypeReference(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
-    '    Dim tD As TypeDescriptor
-
-    '    If Type Is Nothing Then Return Nothing
-
-    '    Helper.Assert(Type IsNot Nothing)
-
-    '    tD = TryCast(Type, TypeDescriptor)
-
-    '    If tD Is Nothing Then
-    '        tD = TryCast(Compiler.TypeManager.GetRegisteredType(Type), TypeDescriptor)
-    '    End If
-
-    '    If tD IsNot Nothing Then Return tD.TypeInCecil
-
-    '    Return GetTypeReference(Compiler, Type)
-    'End Function
-
     Private Shared Function GetTypeReference(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Return GetTypeOrTypeReference(Compiler, Type)
-        'Dim tpRef As Mono.Cecil.TypeReference = Nothing
-
-        'If m_TypeReferenceCache.TryGetValue(Type, tpRef) = False Then
-        '    If Compiler.Assembly.IsDefinedHere(Type) Then
-        '        If TypeOf Type Is GenericTypeParameterBuilder Then
-        '            If Type.DeclaringMethod IsNot Nothing Then
-        '                Dim meth As MethodBase = Type.DeclaringMethod
-        '                Dim mD As MethodDescriptor = TryCast(Compiler.TypeManager.GetRegisteredMember(Compiler, meth), MethodDescriptor)
-        '                For Each obj As TypeParameter In mD.Declaration.Signature.TypeParameters.Parameters
-        '                    If obj.TypeParameterBuilder Is Type Then
-        '                        Return obj.CecilBuilder
-        '                    End If
-        '                Next
-        '            End If
-
-        '            Dim tp As Type = Type.DeclaringType
-        '            Dim tpD As TypeDescriptor = TryCast(Compiler.TypeManager.GetRegisteredType(tp), TypeDescriptor)
-        '            Dim tpG As GenericTypeDeclaration = TryCast(tpD.Declaration, GenericTypeDeclaration)
-        '            For Each obj As TypeParameter In tpG.TypeParameters.Parameters
-        '                If obj.TypeParameterBuilder Is Type Then
-        '                    Return obj.CecilBuilder
-        '                End If
-        '            Next
-        '            Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
-        '        End If
-        '        Return GetTypeOrTypeReference(Compiler, Compiler.TypeManager.GetRegisteredType(Type))
-        '    End If
-
-        '    Dim elementType As Type = Nothing
-        '    If Type.IsGenericType = False Then
-        '        elementType = Type.GetElementType()
-        '    End If
-        '    While elementType IsNot Nothing
-        '        If Type.IsArray Then
-        '            Return New Mono.Cecil.ArrayType(GetTypeOrTypeReference(Compiler, elementType), Type.GetArrayRank())
-        '        ElseIf Type.IsByRef Then
-        '            Return New Mono.Cecil.ReferenceType(GetTypeOrTypeReference(Compiler, elementType))
-        '        ElseIf Type.IsPointer Then
-        '            Throw New InternalException()
-        '        Else
-        '            Throw New InternalException()
-        '        End If
-
-        '        Type = elementType
-        '        elementType = Type.GetElementType()
-        '    End While
-
-        '    tpRef = Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
-        '    m_TypeReferenceCache.Add(Type, tpRef)
-        'End If
-
-        'Return tpRef
     End Function
 #End If
     Shared Sub ApplyTypeArguments(ByVal Context As BaseObject, ByVal Members As Generic.List(Of Mono.Cecil.MemberReference), ByVal TypeArguments As TypeArgumentList)
@@ -2541,42 +2444,6 @@ Public Class Helper
         Next
 
         Return Nothing
-    End Function
-
-    '''' <summary>
-    '''' Finds the member with the exact same signature.
-    '''' </summary>
-    '''' <param name="grp"></param>
-    '''' <param name="params"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Shared Function ResolveGroupExact(ByVal grp As Generic.List(Of Mono.Cecil.MemberReference), ByVal params() As Mono.Cecil.TypeReference) As MethodBase
-    '    Dim result As MethodBase = Nothing
-
-    '    For i As Integer = 0 To grp.Count - 1
-    '        Dim member As MethodBase = grp(i)
-    '        Dim paramtypes As Type() = Helper.GetParameterTypes(member.GetParameters)
-    '        If Helper.CompareTypes(paramtypes, params) Then
-    '            Helper.Assert(result Is Nothing)
-    '            result = member
-    '            Exit For
-    '        End If
-    '    Next
-
-    '    Return result
-    'End Function
-
-    Shared Function MakeArrayType(ByVal OriginalType As Mono.Cecil.TypeReference, ByVal Ranks As Integer) As Mono.Cecil.TypeReference
-        Return CecilHelper.MakeArrayType(OriginalType, Ranks)
-        'Dim result As Type = OriginalType
-        'If Ranks = 1 Then
-        '    result = result.MakeArrayType()
-        'ElseIf Ranks > 1 Then
-        '    result = result.MakeArrayType(Ranks)
-        'Else
-        '    Throw New InternalException("")
-        'End If
-        'Return result
     End Function
 
     Shared Function IsTypeConvertibleToAny(ByVal TypesToSearch As Mono.Cecil.TypeReference(), ByVal TypeToFind As Mono.Cecil.TypeReference) As Boolean
@@ -3463,6 +3330,7 @@ Public Class Helper
         ElseIf CecilHelper.IsGenericType(fromExpr.ExpressionType) Then
             'fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
             fromExpr = New CTypeExpression(Parent, fromExpr, DestinationType)
+            result = fromExpr.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
         End If
 
 #If EXTENDEDDEBUG Then

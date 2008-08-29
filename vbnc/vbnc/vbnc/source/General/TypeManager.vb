@@ -449,88 +449,10 @@ Public Class TypeManager
         End If
     End Function
 
-    'Sub RegisterReflectionType(ByVal ReflectionType As Type, ByVal Descriptor As TypeDescriptor)
-    '    m_TypeDescriptorsOfTypesBuilders.Add(ReflectionType)
-    '    m_TypeDescriptorsOfTypesDescriptors.Add(Descriptor)
-    '    'If m_TypeDescriptorsOfTypes.ContainsKey(ReflectionType) = False Then
-    '    '    m_TypeDescriptorsOfTypes.Add(ReflectionType, Descriptor)
-    '    '    m_TypeDescriptorsOfTypes2.Add(ReflectionType.GetHashCode, Descriptor)
-    '    'End If
-    'End Sub
-
-    'Function GetRegisteredType(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
-    '    If Type Is Nothing Then Return Nothing
-    '    If TypeOf Type Is TypeDescriptor Then Return Type
-
-    '    For i As Integer = 0 To m_TypeDescriptorsOfTypesBuilders.Count - 1
-    '        If m_TypeDescriptorsOfTypesBuilders(i) Is Type Then
-    '            Return m_TypeDescriptorsOfTypesDescriptors(i)
-    '        End If
-    '    Next
-
-    '    'If m_TypeDescriptorsOfTypes2.ContainsKey(Type.GetHashCode) Then Return m_TypeDescriptorsOfTypes2(Type.GetHashCode)
-    '    'If m_TypeDescriptorsOfTypes.ContainsKey(Type) Then Return m_TypeDescriptorsOfTypes(Type)
-    '    'For Each key As Type In m_TypeDescriptorsOfTypes.Keys
-    '    '    If key Is Type Then
-    '    '        For Each item As Generic.KeyValuePair(Of Type, TypeDescriptor) In m_TypeDescriptorsOfTypes
-    '    '            If item.Key Is Type Then
-    '    '                Return item.Value
-    '    '            End If
-    '    '        Next
-    '    '        Helper.Assert(False)
-    '    '    End If
-    '    'Next
-    '    Helper.Assert(Helper.IsReflectionType(Type) = False)
-    '    Return Type
-    'End Function
-
-    'Sub RegisterReflectionMember(ByVal ReflectionMember As MemberInfo, ByVal Descriptor As Mono.Cecil.MemberReference)
-    '    'Console.WriteLine("RegisterReflectionMember (MemberInfo, MemberInfo)")
-    '    'If ReflectionMember Is Nothing Then
-    '    'Console.WriteLine(">ReflectionMember = Nothing")
-    '    'Else
-    '    'Console.WriteLine(">ReflectionMember = " & ReflectionMember.Name)
-    '    'End If
-    '    'If Descriptor Is Nothing Then
-    '    'Console.WriteLine(">Descriptor = Nothing")
-    '    'Else
-    '    'Console.WriteLine(">Descriptor = " & Descriptor.Name)
-    '    'End If
-    '    ' If m_MemberDescriptorsOfMembers.ContainsKey(ReflectionMember.GetHashCode) = False Then
-    '    'm_MemberDescriptorsOfMembers.Add(ReflectionMember.GetHashCode, Descriptor)
-    '    ' End If
-    '    m_MemberDescriptorsOfMembersBuilders.Add(ReflectionMember)
-    '    m_MemberDescriptorsOfMembersDescriptors.Add(Descriptor)
-    '    'If m_MemberDescriptorsOfMembers2.ContainsKey(ReflectionMember) = False Then
-    '    '    m_MemberDescriptorsOfMembers2.Add(ReflectionMember, Descriptor)
-    '    'End If
-    'End Sub
-
-    'Function GetRegisteredMember(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As Mono.Cecil.MemberReference
-    '    If Member Is Nothing Then Return Nothing
-
-    '    If TypeOf Member Is ConstructorDescriptor Then Return Member
-    '    If TypeOf Member Is PropertyDescriptor Then Return Member
-    '    If TypeOf Member Is FieldDescriptor Then Return Member
-    '    If TypeOf Member Is MethodDescriptor Then Return Member
-    '    If TypeOf Member Is TypeDescriptor Then Return Member
-    '    If TypeOf Member Is EventDescriptor Then Return Member
-
-    '    'If m_MemberDescriptorsOfMembers.ContainsKey(Member.GetHashCode) Then Return m_MemberDescriptorsOfMembers(Member.GetHashCode)
-    '    For i As Integer = 0 To m_MemberDescriptorsOfMembersBuilders.Count - 1
-    '        If m_MemberDescriptorsOfMembersBuilders(i) Is Member Then
-    '            Return m_MemberDescriptorsOfMembersDescriptors(i)
-    '        End If
-    '    Next
-    '    'Helper.Assert(Helper.IsReflectionMember(Context, Member) = False)
-    '    Return Member
-    'End Function
-
     Function MakeGenericField(ByVal Parent As ParsedObject, ByVal OpenField As Mono.Cecil.FieldReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments() As Mono.Cecil.TypeReference, ByVal ClosedType As Mono.Cecil.TypeReference) As Mono.Cecil.FieldReference
         Dim result As Mono.Cecil.FieldReference
 
         result = New Mono.Cecil.FieldReference(OpenField.Name, ClosedType, OpenField.FieldType)
-        '        result = New GenericFieldDescriptor(Parent, OpenField, TypeParameters, TypeArguments, ClosedType)
 
         Return result
     End Function
@@ -608,7 +530,6 @@ Public Class TypeManager
         Dim result As Mono.Cecil.GenericInstanceType
 
         result = New Mono.Cecil.GenericInstanceType(Helper.GetTypeOrTypeReference(Parent.Compiler, OpenType))
-        'result = New GenericTypeDescriptor(Parent, OpenType, genericParameters, GenericArguments)
 
         For i As Integer = 0 To GenericArguments.Count - 1
             result.GenericArguments.Add(Helper.GetTypeOrTypeReference(Parent.Compiler, GenericArguments(i)))
@@ -665,22 +586,4 @@ Public Class TypeManager
             Return obj.GetHashCode
         End Function
     End Class
-
-    'Class MemberComparer
-    '    Implements Collections.Generic.IEqualityComparer(Of MemberInfo)
-
-    '    Public Function Equals1(ByVal x As System.Reflection.MemberInfo, ByVal y As System.Reflection.MemberInfo) As Boolean Implements System.Collections.Generic.IEqualityComparer(Of System.Reflection.MemberInfo).Equals
-    '        If x Is Nothing Xor y Is Nothing Then
-    '            Return False
-    '        ElseIf x Is Nothing AndAlso y Is Nothing Then
-    '            Return True
-    '        Else
-    '            Return x.Equals(y)
-    '        End If
-    '    End Function
-
-    '    Public Function GetHashCode1(ByVal obj As System.Reflection.MemberInfo) As Integer Implements System.Collections.Generic.IEqualityComparer(Of System.Reflection.MemberInfo).GetHashCode
-    '        Return obj.GetHashCode()
-    '    End Function
-    'End Class
 End Class

@@ -33,22 +33,8 @@ Public Class VariableExpression
         Return Emit(Info, m_Variable.LocalBuilder)
     End Function
 
-    'Shared Function Emit(ByVal Info As EmitInfo, ByVal Variable As LocalVariableDeclaration) As Boolean
-    '    Dim result As Boolean = True
-    '    Dim Compiler As Compiler = Info.Compiler
-
-    '    If Variable.LocalBuilder IsNot Nothing Then
-    '        result = Emit(Info, Variable.LocalBuilder) AndAlso result
-    '    Else
-    '        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Variable.Location)
-    '    End If
-
-    '    Return True
-    'End Function
-
     Shared Function Emit(ByVal Info As EmitInfo, ByVal LocalBuilder As Mono.Cecil.Cil.VariableDefinition) As Boolean
         Dim result As Boolean = True
-        'Dim tc As TypeCache = Info.Compiler.TypeCache '
 
         If Info.IsRHS Then
             Emitter.EmitLoadVariable(Info, LocalBuilder)

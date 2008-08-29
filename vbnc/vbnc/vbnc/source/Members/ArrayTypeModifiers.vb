@@ -53,7 +53,7 @@ Public Class ArrayTypeModifiers
         Dim result As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeReference(Compiler, OriginalType)
         Dim mods() As ArrayTypeModifier = m_ArrayTypeModifiers
         For i As Integer = mods.GetUpperBound(0) To 0 Step -1
-            result = Helper.MakeArrayType(result, mods(i).Ranks)
+            result = CecilHelper.MakeArrayType(result, mods(i).Ranks)
         Next
         Return result
     End Function
