@@ -1,3 +1,8 @@
+2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* SelfTest/boot.sh, SelfTest/rerun.sh: Get most recent version of cecil
+	  before trying to compile.
+
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	
