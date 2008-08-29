@@ -600,6 +600,15 @@ Public Class CecilHelper
         reflectableMember.OriginalMethod = Member
         result.OriginalMethod = Member
 
+        'This is weird, but there is a bug in the lazy reflection reader which 
+        'causes parameter types to not be read. Reading the method body
+        'will cause the parameter types to be read.
+        'TODO: Fix the lazy reflection reader bug.
+        'This shows up when getting System.Collection.Generic.Queue(of String)'s constructors, the third ctor
+        '(taking a IEnumerable(of string)) shows up as IEnumerable() (no GenericParameters in the inflated type)
+        'Test case: Cecil/LazyBug1.vb
+        Dim cilbody As Mono.Cecil.Cil.MethodBody = Member.Body
+
         For i As Integer = 0 To Member.Parameters.Count - 1
             Dim pD As Mono.Cecil.ParameterDefinition = Member.Parameters(i)
             Dim pDType As Mono.Cecil.TypeReference
@@ -1007,6 +1016,13 @@ Public Class CecilHelper
     Public Shared Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
         Dim asm As AssemblyDefinition = TryCast(_assemblies(name.Name), AssemblyDefinition)
         If asm Is Nothing Then
+            For i As Integer = 0 To BaseObject.m_Compiler.TypeManager.CecilAssemblies.Count - 1
+                asm = BaseObject.m_Compiler.TypeManager.CecilAssemblies(i)
+                If Helper.CompareNameOrdinal(asm.Name.FullName, name.FullName) Then
+                    _assemblies(name.Name) = asm
+                    Return asm
+                End If
+            Next
             Dim base As New resolver
 
             asm = base.Resolve(name)

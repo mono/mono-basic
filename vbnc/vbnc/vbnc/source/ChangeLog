@@ -1,5 +1,11 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/CecilHelper.vb: When finding definitions don't load again
+	  assemblies we've already loaded. Also add a workaround for a lazy
+	  initialization bug.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/Namespace.vb, Interfaces/INameable.vb,
 	  Members/MemberDeclaration.vb, Members/Operand.vb,
 	  Members/Parameter.vb, Members/ParemeterIdentifier.vb,
