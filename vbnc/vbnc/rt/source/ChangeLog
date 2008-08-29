@@ -1,5 +1,10 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* frmMain.vb: Use the specified path to the vbnc compiler to figure out
+	  which directory to write debug.rsp.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* AssemblyInfo.vb, HostedCompiler.vb, Test.vb: Completely remove AC.
 	  Tried to host vbnc inside the rt process, but we're still leaking
 	  something somewhere, memory just goes up.

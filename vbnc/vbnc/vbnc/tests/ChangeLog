@@ -1,5 +1,9 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Cecil, Cecil/all.rsp, Cecil/LazyBug1.vb, Cecil/testoutput: Added test
 	  for lazy initialization bug found in cecil.
 
