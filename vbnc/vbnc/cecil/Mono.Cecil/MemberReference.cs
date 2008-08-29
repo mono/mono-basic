@@ -39,6 +39,7 @@ namespace Mono.Cecil {
 		MetadataToken m_token;
 		IDictionary m_annotations;
 		private MetadataResolver m_metaResolver;
+		string cached_tostring;
 
 		internal MetadataResolver MetaResolver {
 			get {
@@ -85,10 +86,14 @@ namespace Mono.Cecil {
 
 		public override string ToString ()
 		{
-			if (m_decType == null)
-				return m_name;
+			if (cached_tostring != null)
+				return cached_tostring;
 
-			return string.Concat (m_decType.FullName, "::", m_name);
+			if (m_decType == null)
+				cached_tostring = m_name;
+			else 
+				cached_tostring = string.Concat (m_decType.FullName, "::", m_name);
+			return cached_tostring;
 		}
 
 		public virtual void Accept (IReflectionVisitor visitor)

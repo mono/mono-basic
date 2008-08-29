@@ -1,5 +1,11 @@
 2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Mono.Cecil/MemberReference.cs, Mono.Cecil/FieldReference.cs,
+	  Mono.Cecil/TypeReference.cs: Cache a bit more. Saves another 150 MB
+	  of strings for a bootstrap.
+
+2008-08-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Mono.Cecil/GenericInstanceType.cs, Mono.Cecil/MethodReference.cs:
 	  Cache a few strings, cuts bootstrap compilation time with 25%.
 

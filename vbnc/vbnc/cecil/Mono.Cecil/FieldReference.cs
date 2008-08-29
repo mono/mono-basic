@@ -33,6 +33,7 @@ namespace Mono.Cecil {
 	public class FieldReference : MemberReference {
 
 		TypeReference m_fieldType;
+		string cached_tostring;
 
 		public TypeReference FieldType {
 			get { return m_fieldType; }
@@ -52,7 +53,11 @@ namespace Mono.Cecil {
 
 		public override string ToString ()
 		{
-			return string.Concat (m_fieldType.FullName, " ", base.ToString ());
+			if (cached_tostring != null)
+				return cached_tostring;
+
+			cached_tostring = string.Concat (m_fieldType.FullName, " ", base.ToString ());
+			return cached_tostring;
 		}
 	}
 }

@@ -102,8 +102,11 @@ namespace Mono.Cecil {
 				if (m_fullName != null && !m_fullNameDiscarded)
 					return m_fullName;
 
-				if (this.IsNested)
-					return string.Concat (this.DeclaringType.FullName, "/", this.Name);
+				if (this.IsNested) {
+					m_fullName = string.Concat (this.DeclaringType.FullName, "/", this.Name);
+					m_fullNameDiscarded = false;
+					return m_fullName;
+				}
 
 				if (m_namespace == null || m_namespace.Length == 0)
 					return this.Name;
