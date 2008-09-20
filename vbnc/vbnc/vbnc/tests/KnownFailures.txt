@@ -69,13 +69,6 @@ Mono\VariablesC
 VBRunTime\Microsoft.VisualBasic.linux
 
 'The following fail since cecil was introduced. Should be fixed asap.
-1Declarations\EventDelegate1 'Type Safety and Security Verification failed, process exited with exit code 1
-1Declarations\Events2 'Type Safety and Security Verification failed, process exited with exit code 1
-1Declarations\GenericMember2 'Type Safety and Security Verification failed, process exited with exit code 1
-1Declarations\GenericMember4 'Type Safety and Security Verification failed, process exited with exit code 1
-1Declarations\GenericType3 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
-1Declarations\MultiInterface1 'Type Safety and Security Verification failed, process exited with exit code 1
-1Declarations\Partial5 'Type Safety and Security Verification failed, process exited with exit code 1
 Bugs\30420-bug-74955 'VBNC Compile failed spectacularly. 
 Bugs\30420-bug-74955-2 'VBNC Compile failed spectacularly. 
 Bugs\aspnet1 'VBNC Compile failed, process exited with exit code -1

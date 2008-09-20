@@ -40,6 +40,7 @@ Public Class CecilHelper
 
 #If ENABLECECIL And Debug Then
     Public Shared Sub Test()
+        Dim a As AssemblyDefinition
         For Each Type As TypeDefinition In a.MainModule.Types
             System.Diagnostics.Debug.WriteLine(Type.FullName)
             For Each field As FieldDefinition In Type.Fields
@@ -497,15 +498,15 @@ Public Class CecilHelper
 
         fieldType = CecilHelper.ResolveType(Member.FieldType, genericType.ElementType.GenericParameters, genericType.GenericArguments)
 
-        If fieldType IsNot Member.FieldType Then
-            fieldType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, fieldType)
+        'If fieldType IsNot Member.FieldType Then
+        fieldType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, fieldType)
 
-            result = New FieldReference(Member.Name, Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, Member.DeclaringType), fieldType)
-            result.Annotations.Add("MemberInReflection", New FieldReference(Member.Name, genericType, Member.FieldType))
-            Return result
-        Else
-            Return Member
-        End If
+        result = New FieldReference(Member.Name, Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, Member.DeclaringType), fieldType)
+        result.Annotations.Add("MemberInReflection", New FieldReference(Member.Name, genericType, Member.FieldType))
+        Return result
+        'Else
+        '    Return Member
+        'End If
 
     End Function
 

@@ -1,3 +1,7 @@
+2008-09-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* AssemblyInfo.vb, CecilComparer.vb: Lookup type definitions properly.
+
 2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* AssemblyInfo.vb: Save pending work (to set pe file properties/version

@@ -20,6 +20,42 @@
 
 Partial Class Parser
 
+    Private Function GetPartialType(ByVal Parent As ParsedObject, ByVal m_Identifier As Identifier, ByVal m_TypeParameters As TypeParameters, ByVal m_Modifiers As Modifiers, ByVal IsClass As Boolean, ByVal [Namespace] As String) As PartialTypeDeclaration
+        Dim result As PartialTypeDeclaration
+
+        'Get the actual name of the type including generic number
+        Dim CompleteName As String
+        If m_TypeParameters Is Nothing Then
+            CompleteName = m_Identifier.Name
+        Else
+            CompleteName = Helper.CreateGenericTypename(m_Identifier.Name, m_TypeParameters.Parameters.Count)
+        End If
+
+        'Try to find the type in the parent
+        Dim partialType As TypeDeclaration = FindTypeInParent(Parent, CompleteName)
+        Dim partialClassOrStruct As PartialTypeDeclaration = TryCast(partialType, PartialTypeDeclaration)
+
+        If partialType IsNot Nothing Then
+            'There is already a type with the same name
+            result = partialClassOrStruct
+            result.IsPartial = True
+            result.Modifiers.AddModifiers(m_Modifiers.Mask)
+            result.PartialModifierFound = result.Modifiers.Is(ModifierMasks.Partial) OrElse m_Modifiers.Is(ModifierMasks.Partial)
+        ElseIf partialType IsNot Nothing Then
+            'There is another type with the same name
+            Helper.AddError(tm.Compiler, tm.CurrentLocation, "Two types with the same name: " & m_Identifier.Name)
+            Return Nothing
+        Else
+            'No type with the same name.
+            If IsClass Then
+                result = New ClassDeclaration(Parent, [Namespace])
+            Else
+                result = New StructureDeclaration(Parent, [Namespace])
+            End If
+        End If
+
+        Return result
+    End Function
     ''' <summary>
     ''' ClassDeclaration  ::=
     '''	[  Attributes  ]  [  ClassModifier+  ]  "Class"  Identifier  [  TypeParameters  ]  StatementTerminator
@@ -37,6 +73,7 @@ Partial Class Parser
     ''' <remarks></remarks>
     Private Function ParseClassDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As ClassDeclaration
         Dim result As ClassDeclaration
+        Dim partialType As PartialTypeDeclaration
 
         Dim m_Attributes As Attributes
         Dim m_Modifiers As Modifiers
@@ -66,33 +103,16 @@ Partial Class Parser
         End If
 
         'Here we have enough information to know if it's a partial type or not
+        partialType = GetPartialType(Parent, m_Identifier, m_TypeParameters, m_Modifiers, True, [Namespace])
 
-        'Get the actual name of the type including generic number
-        Dim CompleteName As String
-        If m_TypeParameters Is Nothing Then
-            CompleteName = m_Identifier.Name
-        Else
-            CompleteName = Helper.CreateGenericTypename(m_Identifier.Name, m_TypeParameters.Parameters.Count)
-        End If
-
-        'Try to find the type in the parent
-        Dim partialType As TypeDeclaration = FindTypeInParent(Parent, CompleteName)
-        Dim partialClass As ClassDeclaration = TryCast(partialType, ClassDeclaration)
-
-        If partialType IsNot Nothing Then
-            If partialClass IsNot Nothing Then
-                'There is already a type with the same name
-                result = partialClass
-                result.IsPartial = True
-                result.Modifiers.AddModifiers(m_Modifiers.Mask)
-                result.PartialModifierFound = result.Modifiers.Is(ModifierMasks.Partial) OrElse m_Modifiers.Is(ModifierMasks.Partial)
+        result = TryCast(partialType, ClassDeclaration)
+        If result Is Nothing Then
+            If partialType IsNot Nothing Then
+                Helper.AddError(tm.Compiler, tm.CurrentLocation, "Partial types must be either all classes or all structures.")
             Else
-                Helper.AddError(Compiler, tm.CurrentLocation, "Partial classes must be either class or structure, not a mix")
-                Return Nothing
+                'Error message has already been shown
             End If
-        Else
-            'No type with the same name.
-            result = New ClassDeclaration(Parent, [Namespace])
+            Return Nothing
         End If
 
         m_Identifier.Parent = result
@@ -353,19 +373,26 @@ Partial Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseStructureDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As StructureDeclaration
-        Dim result As New StructureDeclaration(Parent, [Namespace])
+        Dim result As StructureDeclaration = Nothing
+        Dim partialType As PartialTypeDeclaration
 
         Dim m_Modifiers As Modifiers
-        Dim m_Name As Identifier
+        Dim m_Identifier As Identifier
         Dim m_TypeParameters As TypeParameters
         Dim m_Implements As TypeImplementsClauses
+        Dim m_DeclaringType As TypeDeclaration
+        Dim m_Attributes As Attributes
 
+        m_DeclaringType = TryCast(Parent, TypeDeclaration)
+        Helper.Assert(m_DeclaringType IsNot Nothing OrElse TypeOf Parent Is AssemblyDeclaration)
+
+        m_Attributes = Attributes
         m_Modifiers = ParseModifiers(ModifierMasks.StructureModifiers)
 
         tm.AcceptIfNotInternalError(KS.Structure)
 
-        m_Name = ParseIdentifier(result)
-        If m_Name Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        m_Identifier = ParseIdentifier(result)
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.AcceptEndOfStatement = False Then
             m_TypeParameters = ParseTypeParameters(result)
@@ -373,6 +400,27 @@ Partial Class Parser
             If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_TypeParameters = Nothing
+        End If
+
+        'Here we have enough information to know if it's a partial type or not
+        partialType = GetPartialType(Parent, m_Identifier, m_TypeParameters, m_Modifiers, False, [Namespace])
+
+        result = TryCast(partialType, StructureDeclaration)
+        If result Is Nothing Then
+            If partialType IsNot Nothing Then
+                Helper.AddError(tm.Compiler, tm.CurrentLocation, "Partial types must be either all classes or all structures.")
+            Else
+                'Error message has already been shown
+            End If
+            Return Nothing
+        End If
+
+        m_Identifier.Parent = result
+        If m_TypeParameters IsNot Nothing Then
+            m_TypeParameters.Parent = result
+            result.SetName(m_Identifier, m_TypeParameters.Parameters.Count)
+        Else
+            result.SetName(m_Identifier, 0)
         End If
 
         m_Implements = ParseTypeImplementsClauses(result)
@@ -384,7 +432,7 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_Name, m_TypeParameters, m_Implements)
+        result.Init(m_Modifiers, m_Identifier, m_TypeParameters, m_Implements)
 
         Return result
     End Function

@@ -541,9 +541,47 @@ Public Class CecilComparer
         CompareList(CloneCollection(Of MethodDefinition)(Ctors1), CloneCollection(Of MethodDefinition)(Ctors2), AddressOf CompareMethod, AddressOf AreSameCtor, "Constructor", AddressOf CtorAsString)
     End Sub
 
+    Private Shared _assemblies As New Hashtable
+
+    Private Class resolver
+        Inherits BaseAssemblyResolver
+
+    End Class
+
+    Public Shared Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
+        Dim asm As AssemblyDefinition = TryCast(_assemblies(name.Name), AssemblyDefinition)
+        If asm Is Nothing Then
+            Dim base As New resolver
+            asm = base.Resolve(name)
+            asm.Resolver = base
+            _assemblies(name.Name) = asm
+        End If
+
+        Return asm
+    End Function
+    Public Shared Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
+        If type Is Nothing Then Return Nothing
+        Dim tD As TypeDefinition = TryCast(type, TypeDefinition)
+        If tD IsNot Nothing Then Return tD
+        type = type.GetOriginalType
+        If TypeOf type Is TypeDefinition Then
+            Return DirectCast(type, TypeDefinition)
+        End If
+        Dim reference As AssemblyNameReference = TryCast(type.Scope, AssemblyNameReference)
+        If reference IsNot Nothing Then
+            Dim assembly As AssemblyDefinition = FindDefinition(reference)
+            Return assembly.MainModule.Types(type.FullName)
+        End If
+        Dim moduledef As ModuleDefinition = TryCast(type.Scope, ModuleDefinition)
+        If moduledef IsNot Nothing Then
+            Return moduledef.Types(type.FullName)
+        End If
+        Throw New NotImplementedException
+    End Function
+
     Private Function EventAsString(ByVal Info As EventDefinition) As String
         Dim tD As TypeDefinition
-        tD = Info.EventType.Module.Types(Info.EventType.FullName)
+        tD = FindDefinition(Info.EventType).Module.Types(Info.EventType.FullName)
         Return Info.Name & ParametersToString(tD.Methods.GetMethod("Invoke")(0).Parameters)
     End Function
 

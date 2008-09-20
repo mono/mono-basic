@@ -4,7 +4,7 @@ Namespace GenericType3
     Class A(Of X, Y)
         Public C As List(Of Y)
 
-        Shared Sub M()
+        Sub M()
             c.add(Nothing)
         End Sub
     End Class

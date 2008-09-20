@@ -202,7 +202,7 @@ Public MustInherit Class TypeDeclaration
     End Property
 
     Sub AddInterface(ByVal Type As Mono.Cecil.TypeReference)
-        m_CecilType.Interfaces.Add(Type)
+        m_CecilType.Interfaces.Add(Helper.GetTypeOrTypeReference(Compiler, Type))
     End Sub
 
     ReadOnly Property Identifier() As Identifier

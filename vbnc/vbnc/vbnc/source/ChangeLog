@@ -1,3 +1,15 @@
+2008-09-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/EventDeclaration.vb: Lookup type reference for the event
+	  type.
+	* Parser/Parser(Types).vb: Lookup partial structures same way as we're
+	  looking up partial classes.
+	* TypeDeclarations/TypeDeclaration.vb: Lookup type reference for the
+	  implemented interface type.
+	* General/CecilHelper.vb: For fields on generic types we always need to
+	  create a field reference, even if the field type isn't generic.
+	* General/AssemblyInfo.vb: Updated.
+
 2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/AssemblyInfo.vb, General/CecilHelper.vb,

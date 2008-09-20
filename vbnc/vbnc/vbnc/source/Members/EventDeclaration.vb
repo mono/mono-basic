@@ -68,7 +68,7 @@ Public Class EventDeclaration
             Return m_CecilBuilder.EventType
         End Get
         Set(ByVal value As Mono.Cecil.TypeReference)
-            m_CecilBuilder.EventType = value
+            m_CecilBuilder.EventType = Helper.GetTypeOrTypeReference(Compiler, value)
         End Set
     End Property
 

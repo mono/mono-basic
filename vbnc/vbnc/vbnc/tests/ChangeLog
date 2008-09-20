@@ -1,3 +1,10 @@
+2008-09-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* 1Declarations/Events8.vb, 1Declarations/GenericMember10.vb,
+	  CompileTime2/ByRefAssignment2.vb: Added.
+	* 1Declarations/GenericType3.vb: Fix test.
+	* KnownFailures.txt: Remove some tests which are passing now.
+
 2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* SelfTest/boot.sh, SelfTest/rerun.sh: Get most recent version of cecil
