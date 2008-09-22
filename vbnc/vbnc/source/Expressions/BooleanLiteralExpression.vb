@@ -30,6 +30,13 @@ Public Class BooleanLiteralExpression
         m_Value = Value
     End Sub
 
+    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
+        If NewParent IsNot Nothing Then NewParent = Me.Parent
+        Dim result As New BooleanLiteralExpression(NewParent)
+        result.Init(m_Value)
+        Return result
+    End Function
+
     Overrides ReadOnly Property ExpressionType() As Type
         Get
 

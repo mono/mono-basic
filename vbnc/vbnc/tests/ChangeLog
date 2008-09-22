@@ -1,3 +1,7 @@
+2008-09-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-428340.vb: Added test case for #428340.
+
 2008-03-15  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-359234-ProtectedDefaultBaseCtor.response,
