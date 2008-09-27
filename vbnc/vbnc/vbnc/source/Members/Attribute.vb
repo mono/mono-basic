@@ -223,15 +223,15 @@ Public Class Attribute
                         Helper.AddError(Me, "Invalid member type for attribute value.")
                     End If
                 Next
-        End If
+            End If
 
         ElseIf m_Arguments IsNot Nothing Then
-        argList = New ArgumentList(Me)
-        For i As Integer = 0 To m_Arguments.Length - 1
+            argList = New ArgumentList(Me)
+            For i As Integer = 0 To m_Arguments.Length - 1
                 argList.Arguments.Add(New PositionalArgument(argList, argList.Count, New ConstantExpression(argList, m_Arguments(i), CecilHelper.GetType(Compiler, m_Arguments(i)))))
-        Next
+            Next
         Else
-        argList = New ArgumentList(Me)
+            argList = New ArgumentList(Me)
         End If
 
         If m_Arguments Is Nothing Then m_Arguments = New Object() {}
@@ -259,31 +259,13 @@ Public Class Attribute
 
         m_IsResolved = result
 
-        Return result
-    End Function
-
-    Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
-        Dim result As Boolean = True
-
-#If ENABLECECIL Then
         Dim cecilBuilder As Mono.Cecil.CustomAttribute
         cecilBuilder = GetAttributeBuilderCecil()
-#End If
 
         If m_IsAssembly Then
-            '           Dim builder As CustomAttributeBuilder
-            '            builder = GetAttributeBuilder()
-            '            Me.Compiler.AssemblyBuilder.SetCustomAttribute(builder)
-#If ENABLECECIL Then
             Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cecilBuilder)
-#End If
         ElseIf m_IsModule Then
-            'Dim builder As CustomAttributeBuilder
-            'builder = GetAttributeBuilder()
-            'Me.Compiler.ModuleBuilder.SetCustomAttribute(builder)
-#If ENABLECECIL Then
             Me.Compiler.ModuleBuilderCecil.CustomAttributes.Add(cecilBuilder)
-#End If
         Else
             Dim memberparent As IAttributableDeclaration = Me.FindFirstParent(Of IAttributableDeclaration)()
             If memberparent IsNot Nothing Then
@@ -298,17 +280,8 @@ Public Class Attribute
                 Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
 
                 If tp IsNot Nothing Then
-                    'If tp.TypeBuilder Is Nothing Then
-                    '    tp.EnumBuilder.SetCustomAttribute(GetAttributeBuilder)
-                    'Else
-                    '    tp.TypeBuilder.SetCustomAttribute(GetAttributeBuilder)
-                    'End If
-#If ENABLECECIL Then
                     tp.CecilType.CustomAttributes.Add(cecilBuilder)
-#End If
                 ElseIf mthd IsNot Nothing Then
-                    'mthd.MethodBuilder.SetCustomAttribute(GetAttributeBuilder)
-#If ENABLECECIL Then
                     If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
                         Dim values As IDictionary = cecilBuilder.Fields
                         Dim entry As String = DirectCast(values("EntryPoint"), String)
@@ -369,27 +342,14 @@ Public Class Attribute
                     Else
                         mthd.CecilBuilder.CustomAttributes.Add(cecilBuilder)
                     End If
-#End If
                 ElseIf ctro IsNot Nothing Then
-                    '                   ctro.ConstructorBuilder.SetCustomAttribute(GetAttributeBuilder)
-#If ENABLECECIL Then
                     ctro.CecilBuilder.CustomAttributes.Add(cecilBuilder)
-#End If
                 ElseIf fld IsNot Nothing Then
-                    '                    fld.FieldBuilder.SetCustomAttribute(GetAttributeBuilder)
-#If ENABLECECIL Then
                     fld.FieldBuilder.CustomAttributes.Add(cecilBuilder)
-#End If
                 ElseIf prop IsNot Nothing Then
-                    '              prop.PropertyBuilder.SetCustomAttribute(GetAttributeBuilder)
-#If ENABLECECIL Then
                     prop.CecilBuilder.CustomAttributes.Add(cecilBuilder)
-#End If
                 ElseIf param IsNot Nothing Then
-                    '            param.ParameterBuilder.SetCustomAttribute(GetAttributeBuilder)
-#If ENABLECECIL Then
                     param.CecilBuilder.CustomAttributes.Add(cecilBuilder)
-#End If
                 Else
                     Throw New InternalException(Me)
                 End If
@@ -399,6 +359,10 @@ Public Class Attribute
         End If
 
         Return result
+    End Function
+
+    Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
+        Return True
     End Function
 
 #If ENABLECECIL Then

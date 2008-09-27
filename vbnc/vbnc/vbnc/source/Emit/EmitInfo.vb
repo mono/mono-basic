@@ -176,12 +176,6 @@ Public Class EmitInfo
         End Get
     End Property
 
-    ReadOnly Property Stack() As EmitStack
-        Get
-            Return m_Stack
-        End Get
-    End Property
-
     ''' <summary>
     ''' The method where the code is located.
     ''' </summary>

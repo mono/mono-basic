@@ -84,14 +84,12 @@ Public Class CatchStatement
             Emitter.EmitBranch(Info, EndWhen)
 
             'Do the when clause.
-            Info.Stack.Push(Compiler.TypeCache.System_Exception)
             Emitter.MarkLabel(Info, DoWhenComparison)
             Emitter.EmitPop(Info, Compiler.TypeCache.System_Exception)
             'result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
             result = CBoolExpression.GenerateCode(m_When, Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
             Emitter.MarkLabel(Info, EndWhen)
-            Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
             Emitter.EmitBeginCatch(Info, Nothing)
         Else
             Helper.Assert(m_ExceptionType IsNot Nothing)

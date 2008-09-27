@@ -67,21 +67,12 @@ Partial Public Class Emitter
     Shared Sub EmitBeginExceptionFilter(ByVal Info As EmitInfo)
         Helper.Assert(Info.InExceptionFilter = False)
         Info.ILGen.BeginExceptFilterBlock()
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Object)
         Info.InExceptionFilter = True
     End Sub
 
     Shared Sub EmitBeginCatch(ByVal Info As EmitInfo, ByVal ExceptionType As Mono.Cecil.TypeReference)
         If ExceptionType IsNot Nothing Then ExceptionType = Helper.GetTypeOrTypeReference(Info.Compiler, ExceptionType)
-        If Info.InExceptionFilter Then
-            Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
-        End If
         Info.ILGen.BeginCatchBlock(ExceptionType)
-        If ExceptionType IsNot Nothing Then
-            Info.Stack.Push(ExceptionType)
-        Else
-            Info.Stack.Push(Info.Compiler.TypeCache.System_Object)
-        End If
         Info.InExceptionFilter = False
     End Sub
 
@@ -110,30 +101,19 @@ Partial Public Class Emitter
     Shared Sub EmitPop(ByVal Info As EmitInfo, ByVal Type As Mono.Cecil.TypeReference)
         Type = Helper.GetTypeOrTypeReference(Info.Compiler, Type)
         Info.ILGen.Emit(OpCodes.Pop)
-        Info.Stack.Pop(Type)
     End Sub
 
     Shared Sub EmitBranchIfFalse(ByVal Info As EmitInfo, ByVal Label As Label)
-#If DEBUG Then
-        If CecilHelper.IsClass(Info.Stack.Peek) OrElse CecilHelper.IsInterface(Info.Stack.Peek) Then
-            'comparison with Nothing, operand can be a class or interface.
-            Info.Stack.Pop(Info.Stack.Peek)
-        Else
-            Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
-        End If
-#End If
         Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brfalse, Label)
     End Sub
 
     Shared Sub EmitBranchIfTrue(ByVal Info As EmitInfo, ByVal Label As Label)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Boolean)
         Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brtrue, Label)
     End Sub
 
     Shared Sub EmitBranchIfTrue(ByVal Info As EmitInfo, ByVal Label As Label, ByVal Type As Mono.Cecil.TypeReference)
         Type = Helper.GetTypeOrTypeReference(Info.Compiler, Type)
         Helper.Assert(Helper.CompareType(Type, Info.Compiler.TypeCache.System_Boolean) OrElse CecilHelper.IsClass(Type) OrElse CecilHelper.IsInterface(Type))
-        Info.Stack.Pop(Type)
         Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brtrue, Label)
     End Sub
 
@@ -151,31 +131,21 @@ Partial Public Class Emitter
 
     Shared Sub EmitLeave(ByVal Info As EmitInfo, ByVal Label As Label)
         Info.ILGen.Emit(OpCodes.Leave, Label)
-        Info.Stack.Clear()
     End Sub
 
     Shared Sub EmitSub(ByVal Info As EmitInfo, ByVal SubType As Mono.Cecil.TypeReference)
         SubType = Helper.GetTypeOrTypeReference(Info.Compiler, SubType)
-        Info.Stack.Pop(SubType)
-        Info.Stack.Pop(SubType)
         Info.ILGen.Emit(OpCodes.Sub)
-        Info.Stack.Push(SubType)
     End Sub
 
     Shared Sub EmitSubOvf(ByVal Info As EmitInfo, ByVal SubType As Mono.Cecil.TypeReference)
         SubType = Helper.GetTypeOrTypeReference(Info.Compiler, SubType)
-        Info.Stack.Pop(SubType)
-        Info.Stack.Pop(SubType)
         Info.ILGen.Emit(OpCodes.Sub_Ovf)
-        Info.Stack.Push(SubType)
     End Sub
 
     Shared Sub EmitSubOvfUn(ByVal Info As EmitInfo, ByVal SubType As Mono.Cecil.TypeReference)
         SubType = Helper.GetTypeOrTypeReference(Info.Compiler, SubType)
-        Info.Stack.Pop(SubType)
-        Info.Stack.Pop(SubType)
         Info.ILGen.Emit(OpCodes.Sub_Ovf_Un)
-        Info.Stack.Push(SubType)
     End Sub
 
     Shared Sub EmitSubOrSubOvfOrSubOvfUn(ByVal Info As EmitInfo, ByVal SubType As Mono.Cecil.TypeReference)
@@ -188,111 +158,73 @@ Partial Public Class Emitter
 
     Shared Sub EmitOr(ByVal Info As EmitInfo, ByVal OrType As Mono.Cecil.TypeReference)
         OrType = Helper.GetTypeOrTypeReference(Info.Compiler, OrType)
-        Info.Stack.Pop(OrType)
-        Info.Stack.Pop(OrType)
         Info.ILGen.Emit(OpCodes.Or)
-        Info.Stack.Push(OrType)
     End Sub
 
     Shared Sub EmitAnd(ByVal Info As EmitInfo, ByVal AndType As Mono.Cecil.TypeReference)
         AndType = Helper.GetTypeOrTypeReference(Info.Compiler, AndType)
-        Info.Stack.Pop(AndType)
-        Info.Stack.Pop(AndType)
         Info.ILGen.Emit(OpCodes.And)
-        Info.Stack.Push(AndType)
     End Sub
 
     Shared Sub EmitXOr(ByVal Info As EmitInfo, ByVal XorType As Mono.Cecil.TypeReference)
         XorType = Helper.GetTypeOrTypeReference(Info.Compiler, XorType)
-        Info.Stack.Pop(XorType)
-        Info.Stack.Pop(XorType)
         Info.ILGen.Emit(OpCodes.Xor)
-        Info.Stack.Push(XorType)
     End Sub
 
     Shared Sub EmitNot(ByVal Info As EmitInfo, ByVal NotType As Mono.Cecil.TypeReference)
         NotType = Helper.GetTypeOrTypeReference(Info.Compiler, NotType)
-        Info.Stack.Pop(NotType)
         Info.ILGen.Emit(OpCodes.Not)
-        Info.Stack.Push(NotType)
     End Sub
 
     Shared Sub EmitMod(ByVal Info As EmitInfo, ByVal ModType As Mono.Cecil.TypeReference)
         ModType = Helper.GetTypeOrTypeReference(Info.Compiler, ModType)
-        Info.Stack.Pop(ModType)
-        Info.Stack.Pop(ModType)
         Info.ILGen.Emit(OpCodes.[Rem])
-        Info.Stack.Push(ModType)
     End Sub
 
     Shared Sub EmitEquals(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitNotEquals(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Ceq)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGE(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Clt)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGT(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Cgt)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitGT_Un(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Cgt_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitLE(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Cgt)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitLT(ByVal Info As EmitInfo, ByVal CompareType As Mono.Cecil.TypeReference)
         CompareType = Helper.GetTypeOrTypeBuilder(Info.Compiler, CompareType)
-        Info.Stack.Pop(CompareType)
-        Info.Stack.Pop(CompareType)
         Info.ILGen.Emit(OpCodes.Clt)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitAdd(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
         OperandType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OperandType)
-        Info.Stack.Pop(OperandType)
-        Info.Stack.Pop(OperandType)
         Info.ILGen.Emit(OpCodes.Add)
-        Info.Stack.Push(OperandType)
     End Sub
 
     Shared Sub EmitAddOrAddOvf(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
@@ -305,26 +237,17 @@ Partial Public Class Emitter
 
     Shared Sub EmitAddOvf(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
         OperandType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OperandType)
-        Info.Stack.Pop(OperandType)
-        Info.Stack.Pop(OperandType)
         Info.ILGen.Emit(OpCodes.Add_Ovf)
-        Info.Stack.Push(OperandType)
     End Sub
 
     Shared Sub EmitMult(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
         OperandType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OperandType)
-        Info.Stack.Pop(OperandType)
-        Info.Stack.Pop(OperandType)
         Info.ILGen.Emit(OpCodes.Mul)
-        Info.Stack.Push(OperandType)
     End Sub
 
     Shared Sub EmitMultOvf(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
         OperandType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OperandType)
-        Info.Stack.Pop(OperandType)
-        Info.Stack.Pop(OperandType)
         Info.ILGen.Emit(OpCodes.Mul_Ovf)
-        Info.Stack.Push(OperandType)
     End Sub
 
     Shared Sub EmitMultOrMultOvf(ByVal Info As EmitInfo, ByVal OperandType As Mono.Cecil.TypeReference)
@@ -336,77 +259,37 @@ Partial Public Class Emitter
     End Sub
 
     Shared Sub EmitIs(ByVal Info As EmitInfo)
-        Info.Stack.Pop(Info.Stack.Peek)
-        Info.Stack.Pop(Info.Stack.Peek)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
     Shared Sub EmitRShift(ByVal Info As EmitInfo, ByVal OpType As Mono.Cecil.TypeReference)
         OpType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OpType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Shr)
-        Info.Stack.Push(OpType)
     End Sub
 
     Shared Sub EmitLShift(ByVal Info As EmitInfo, ByVal OpType As Mono.Cecil.TypeReference)
         OpType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OpType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Shl)
-        Info.Stack.Push(OpType)
     End Sub
 
     Shared Sub EmitIntDiv(ByVal Info As EmitInfo, ByVal OpType As Mono.Cecil.TypeReference)
         OpType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OpType)
-        Info.Stack.Pop(OpType)
-        Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Div)
-        Info.Stack.Push(OpType)
     End Sub
 
     Shared Sub EmitRealDiv(ByVal Info As EmitInfo, ByVal OpType As Mono.Cecil.TypeReference)
         OpType = Helper.GetTypeOrTypeBuilder(Info.Compiler, OpType)
-        Info.Stack.Pop(OpType)
-        Info.Stack.Pop(OpType)
         Info.ILGen.Emit(OpCodes.Div)
-        Info.Stack.Push(OpType)
     End Sub
 
     Shared Sub EmitIsNot(ByVal Info As EmitInfo)
-        Info.Stack.Pop(Info.Stack.Peek)
-        Info.Stack.Pop(Info.Stack.Peek)
         Info.ILGen.Emit(OpCodes.Ceq)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
-    End Sub
-
-    '<Diagnostics.Conditional("DEBUG")> _
-    'Private Shared Sub PopParameters(ByVal Info As EmitInfo, ByVal Params As ParameterInfo())
-    '    For i As Integer = Params.Length - 1 To 0 Step -1
-    '        Info.Stack.Pop(Params(i).ParameterType)
-    '    Next
-    'End Sub
-
-    <Diagnostics.Conditional("DEBUG")> _
-    Private Shared Sub PopParameters(ByVal Info As EmitInfo, ByVal Params As Mono.Cecil.ParameterDefinitionCollection)
-        For i As Integer = Params.Count - 1 To 0 Step -1
-            Info.Stack.Pop(Params(i).ParameterType)
-        Next
-    End Sub
-
-    <Diagnostics.Conditional("DEBUG")> _
-    Private Shared Sub PopParameters(ByVal Info As EmitInfo, ByVal Params As Mono.Cecil.TypeReference())
-        For i As Integer = Params.GetUpperBound(0) To 0 Step -1
-            Info.Stack.Pop(Params(i))
-        Next
     End Sub
 
     Shared Sub EmitDup(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Dup)
-        Info.Stack.Push(Info.Stack.Peek)
     End Sub
 
     ''' <summary>
@@ -424,19 +307,16 @@ Partial Public Class Emitter
             If CecilHelper.FindDefinition(methodinf).IsStatic Then
                 Info.ILGen.Emit(OpCodes.Ldftn, methodinf)
             Else
-                Info.Stack.Pop(methodinf.DeclaringType)
                 Info.ILGen.Emit(OpCodes.Ldvirtftn, methodinf)
             End If
         Else
             Helper.Stop()
         End If
-        Info.Stack.Push(Info.Compiler.TypeCache.System_IntPtr)
     End Sub
 
     Shared Sub EmitInitObj(ByVal Info As EmitInfo, ByVal Type As Mono.Cecil.TypeReference)
         Type = Helper.GetTypeOrTypeBuilder(Info.Compiler, Type)
         Info.ILGen.Emit(OpCodes.Initobj, Type)
-        Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Type))
     End Sub
 
     Shared Sub EmitNeg(ByVal Info As EmitInfo)
@@ -452,19 +332,16 @@ Partial Public Class Emitter
     Shared Sub EmitNew(ByVal Info As EmitInfo, ByVal Constructor As Mono.Cecil.MethodReference)
         Dim vOriginalConstructor As Mono.Cecil.MethodReference = Constructor
         Helper.Assert(Constructor IsNot Nothing)
-        PopParameters(Info, Helper.GetParameters(Info.Compiler, Constructor))
+        'PopParameters(Info, Helper.GetParameters(Info.Compiler, Constructor))
         Constructor = Helper.GetCtorOrCtorBuilder(Info.Compiler, Constructor)
         Info.ILGen.Emit(OpCodes.Newobj, Constructor)
-        Info.Stack.Push(Constructor.DeclaringType)
     End Sub
 
     Shared Sub EmitCastClass(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
         Helper.Assert(CecilHelper.IsByRef(ToType) = False)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Castclass, ToType)
-        Info.Stack.Push(ToType)
     End Sub
 
     Shared Sub EmitIsInst(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference)
@@ -472,9 +349,7 @@ Partial Public Class Emitter
 
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Isinst, ToType)
-        Info.Stack.Push(ToType)
     End Sub
 
     Shared Sub EmitValueTypeToObjectConversion(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference)
@@ -500,184 +375,132 @@ Partial Public Class Emitter
 
     Shared Sub EmitConv_U1(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U1)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_U1_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U1)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_U1_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U1_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Byte)
     End Sub
 
     Shared Sub EmitConv_I1(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I1)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_I1_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I1)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_I1_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I1_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_SByte)
     End Sub
 
     Shared Sub EmitConv_U2(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U2)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_U2_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U2)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_U2_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U2_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt16)
     End Sub
 
     Shared Sub EmitConv_I2(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I2)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_I2_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I2)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_I2_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I2_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int16)
     End Sub
 
     Shared Sub EmitConv_U4(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U4)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_U4_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U4)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_U4_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U4_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt32)
     End Sub
 
     Shared Sub EmitConv_I4(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I4)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_I4_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I4)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_I4_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I4_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitConv_U8(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_U8)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_U8_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U8)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_U8_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_U8_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_UInt64)
     End Sub
 
     Shared Sub EmitConv_I8(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_I8)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_I8_Overflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I8)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_I8_Overflow_Underflow(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_Ovf_I8_Un)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitConv_R8(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_R8)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
     End Sub
 
     Shared Sub EmitConv_R4(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference)
         FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
-        Info.Stack.Pop(FromType)
         Info.ILGen.Emit(OpCodes.Conv_R4)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Single)
     End Sub
 
     ''' <summary>
@@ -975,9 +798,6 @@ Partial Public Class Emitter
         If Not converted Then
             Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Skipped option: " & Switch.ToString)
             Helper.Stop()
-        Else
-            Info.Stack.Pop(FromType)
-            Info.Stack.Push(ToType)
         End If
     End Sub
 
@@ -989,11 +809,6 @@ Partial Public Class Emitter
     Shared Sub EmitLoadMe(ByVal Info As EmitInfo, ByVal TypeOfMe As Mono.Cecil.TypeReference)
         TypeOfMe = Helper.GetTypeOrTypeBuilder(Info.Compiler, TypeOfMe)
         Info.ILGen.Emit(OpCodes.Ldarg_0)
-        If CecilHelper.IsValueType(TypeOfMe) Then
-            Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), TypeOfMe))
-        Else
-            Info.Stack.Push(TypeOfMe)
-        End If
     End Sub
 
     Shared Sub EmitCall(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
@@ -1011,21 +826,14 @@ Partial Public Class Emitter
 
         minfo = CecilHelper.MakeEmittable(minfo)
 
-        PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
         If mD Is Nothing Then
             Info.ILGen.Emit(OpCodes.Callvirt, minfo)
         ElseIf mD.IsStatic Then
             Info.ILGen.Emit(OpCodes.Call, minfo)
         ElseIf CecilHelper.IsValueType(Method.DeclaringType) Then
-            Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Method.DeclaringType))
             Info.ILGen.Emit(OpCodes.Call, minfo)
         Else
-            Info.Stack.Pop(Method.DeclaringType)
             Info.ILGen.Emit(OpCodes.Call, minfo)
-        End If
-
-        If minfo.ReturnType IsNot Nothing AndAlso mD IsNot Nothing AndAlso Helper.CompareType(mD.ReturnType.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
-            Info.Stack.Push(mD.ReturnType.ReturnType)
         End If
 
     End Sub
@@ -1046,7 +854,6 @@ Partial Public Class Emitter
         Type = Helper.GetTypeOrTypeBuilder(Info.Compiler, Type)
         Helper.Assert(Type IsNot Nothing)
         Info.ILGen.Emit(OpCodes.Ldtoken, Type)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_RuntimeTypeHandle)
     End Sub
 
 
@@ -1092,36 +899,22 @@ Partial Public Class Emitter
             Method = CecilHelper.MakeEmittable(Method)
         End If
 
-        PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
-
-        Info.Stack.Pop(Method.DeclaringType)
         Info.ILGen.EmitCall(OpCodes.Callvirt, Method, Nothing)
-
-        If OriginalMethod.ReturnType IsNot Nothing AndAlso Helper.CompareType(OriginalMethod.ReturnType.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
-            Info.Stack.Push(OriginalMethod.ReturnType.ReturnType)
-        End If
     End Sub
 
     Shared Sub EmitNewArr(ByVal Info As EmitInfo, ByVal Type As Mono.Cecil.TypeReference)
         Type = Helper.GetTypeOrTypeBuilder(Info.Compiler, Type)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
         Info.ILGen.Emit(OpCodes.Newarr, Type)
-        Info.Stack.Push(CecilHelper.MakeArrayType(Type))
     End Sub
 
     Shared Sub EmitLoadElementAddress(ByVal Info As EmitInfo, ByVal ElementType As Mono.Cecil.TypeReference, ByVal ArrayType As Mono.Cecil.TypeReference)
         ArrayType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ArrayType)
         ElementType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ElementType)
         Info.ILGen.Emit(OpCodes.Ldelema, ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(ArrayType)
-        Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ElementType))
     End Sub
 
     Shared Sub EmitLoadElement(ByVal Info As EmitInfo, ByVal ArrayType As Mono.Cecil.TypeReference)
         ArrayType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ArrayType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(ArrayType)
         Dim ElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
         Select Case Helper.GetTypeCode(Info.Compiler, ElementType)
             Case TypeCode.Byte
@@ -1151,7 +944,6 @@ Partial Public Class Emitter
             Case Else
                 Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
-        Info.Stack.Push(ElementType)
     End Sub
 
     Shared Sub LoadElement(ByVal Info As EmitInfo, ByVal ElementType As Mono.Cecil.TypeReference)
@@ -1185,9 +977,6 @@ Partial Public Class Emitter
             Case Else
                 Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End Select
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(CecilHelper.MakeArrayType(ElementType))
-        Info.Stack.Push(ElementType)
     End Sub
 
 
@@ -1229,9 +1018,6 @@ Partial Public Class Emitter
             Case Else
                 Helper.Stop()
         End Select
-        Info.Stack.Pop(ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
-        Info.Stack.Pop(ArrayType)
     End Sub
 
     ''' <summary>
@@ -1243,8 +1029,6 @@ Partial Public Class Emitter
     Shared Sub EmitStoreObject(ByVal Info As EmitInfo, ByVal ElementType As Mono.Cecil.TypeReference)
         ElementType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ElementType)
         Info.ILGen.Emit(OpCodes.Stobj, ElementType)
-        Info.Stack.Pop(ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ElementType))
     End Sub
 
     ''' <summary>
@@ -1256,8 +1040,6 @@ Partial Public Class Emitter
     Shared Sub EmitLoadObject(ByVal Info As EmitInfo, ByVal ElementType As Mono.Cecil.TypeReference)
         ElementType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ElementType)
         Info.ILGen.Emit(OpCodes.Ldobj, ElementType)
-        Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ElementType))
-        Info.Stack.Push(ElementType)
     End Sub
     ''' <summary>
     ''' Creates a new array and the new array reference is loaded at the top of the stack.
@@ -1284,29 +1066,24 @@ Partial Public Class Emitter
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As Long)
         Info.ILGen.Emit(OpCodes.Ldc_I8, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Int64)
     End Sub
 
     Shared Sub EmitLoadI8Value(ByVal Info As EmitInfo, ByVal I As Long, ByVal TypeToPushOnStack As Mono.Cecil.TypeReference)
         TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(Info.Compiler, TypeToPushOnStack)
         Info.ILGen.Emit(OpCodes.Ldc_I8, I)
-        Info.Stack.Push(TypeToPushOnStack)
     End Sub
 
     Shared Sub EmitLoadR8Value(ByVal Info As EmitInfo, ByVal I As Double)
         Info.ILGen.Emit(OpCodes.Ldc_R8, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
     End Sub
 
     Shared Sub EmitLoadR8Value(ByVal Info As EmitInfo, ByVal I As Double, ByVal TypeToPushOnStack As Mono.Cecil.TypeReference)
         TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(Info.Compiler, TypeToPushOnStack)
         Info.ILGen.Emit(OpCodes.Ldc_R8, I)
-        Info.Stack.Push(TypeToPushOnStack)
     End Sub
 
     Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single)
         Info.ILGen.Emit(OpCodes.Ldc_R4, I)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_Single)
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Integer, ByVal TypeToPushOnStack As Mono.Cecil.TypeReference)
@@ -1338,12 +1115,10 @@ Partial Public Class Emitter
             Case Else
                 Info.ILGen.Emit(OpCodes.Ldc_I4, I)
         End Select
-        Info.Stack.Push(TypeToPushOnStack)
     End Sub
     Shared Sub EmitLoadR4Value(ByVal Info As EmitInfo, ByVal I As Single, ByVal TypeToPushOnStack As Mono.Cecil.TypeReference)
         TypeToPushOnStack = Helper.GetTypeOrTypeBuilder(Info.Compiler, TypeToPushOnStack)
         Info.ILGen.Emit(OpCodes.Ldc_R4, I)
-        Info.Stack.Push(TypeToPushOnStack)
     End Sub
 
     Shared Sub EmitLoadI4Value(ByVal Info As EmitInfo, ByVal I As Boolean)
@@ -1519,7 +1294,6 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Overloads Shared Sub EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As String)
         Info.ILGen.Emit(OpCodes.Ldstr, Value)
-        Info.Stack.Push(Info.Compiler.TypeCache.System_String)
     End Sub
 
     ''' <summary>
@@ -1598,12 +1372,10 @@ Partial Public Class Emitter
             Case TypeCode.Double
                 Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Double, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldc_R8, CDbl(Value))
-                Info.Stack.Push(Info.Compiler.TypeCache.System_Double)
                 Return
             Case TypeCode.String
                 Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.System_Object, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldstr, CStr(Value))
-                Info.Stack.Push(Info.Compiler.TypeCache.System_String)
                 Return
             Case TypeCode.Byte
                 'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
@@ -1669,11 +1441,9 @@ Partial Public Class Emitter
             Info.ILGen.Emit(OpCodes.Ldnull)
             EmitStoreVariable(Info, local)
             EmitLoadVariableLocation(Info, local)
-            Info.Stack.Push(Info.DesiredType)
             FreeLocal(local)
         ElseIf CecilHelper.IsClass(Info.DesiredType) OrElse CecilHelper.IsInterface(Info.DesiredType) Then
             Info.ILGen.Emit(OpCodes.Ldnull)
-            Info.Stack.Push(Info.DesiredType)
         ElseIf CecilHelper.IsValueType(Info.DesiredType) Then
             Dim DesiredTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, Info.DesiredType)
             Select Case DesiredTypeCode
@@ -1696,13 +1466,11 @@ Partial Public Class Emitter
                     FreeLocal(local)
                 Case TypeCode.String
                     Info.ILGen.Emit(OpCodes.Ldnull)
-                    Info.Stack.Push(Info.DesiredType)
                 Case Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
             End Select
         ElseIf Helper.CompareType(Info.DesiredType, Info.Compiler.TypeCache.System_Enum) Then
             Info.ILGen.Emit(OpCodes.Ldnull)
-            Info.Stack.Push(Info.DesiredType)
         Else
             Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If
@@ -1716,9 +1484,7 @@ Partial Public Class Emitter
     Shared Sub EmitLoadDateValue(ByVal Info As EmitInfo, ByVal DateValue As Date)
         Dim emitLong As EmitInfo = Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Int64)
         EmitLoadI8Value(emitLong, DateValue.Ticks)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int64)
         Info.ILGen.Emit(OpCodes.Newobj, Helper.GetMethodOrMethodReference(Info.Compiler, Info.Compiler.TypeCache.System_DateTime__ctor_Int64))
-        Info.Stack.Push(Info.Compiler.TypeCache.System_DateTime)
     End Sub
 
     ''' <summary>
@@ -1739,14 +1505,11 @@ Partial Public Class Emitter
     Shared Sub EmitLoadDecimalValue(ByVal Info As EmitInfo, ByVal decimalValue As DecimalFields)
         If decimalValue.Value = -1 Then
             Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__MinusOne))
-            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 0 Then
             Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__Zero))
-            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
         ElseIf decimalValue.Value = 1 Then
             Info.ILGen.Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal__One))
-            Info.Stack.Push(Info.Compiler.TypeCache.System_Decimal)
-        Else
+         Else
             EmitLoadI4Value(Info, decimalValue.Lo)
             EmitLoadI4Value(Info, decimalValue.Mid)
             EmitLoadI4Value(Info, decimalValue.Hi)
@@ -1759,7 +1522,6 @@ Partial Public Class Emitter
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Variable As VariableClassification)
         If Variable.LocalBuilder IsNot Nothing Then
             Info.ILGen.Emit(OpCodes.Ldloca, Variable.LocalBuilder)
-            Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Variable.LocalBuilder.VariableType))
         ElseIf Variable.FieldInfo IsNot Nothing Then
             Dim emittableField As Mono.Cecil.FieldReference = Helper.GetFieldOrFieldReference(Info.Compiler, Variable.FieldInfo)
             If Variable.InstanceExpression IsNot Nothing Then
@@ -1767,14 +1529,12 @@ Partial Public Class Emitter
                 result = Variable.InstanceExpression.GenerateCode(Info)
                 Helper.Assert(result)
                 'Helper.Assert(Variable.FieldInfo.IsStatic = False)
-                Info.Stack.Pop(Variable.FieldInfo.DeclaringType)
                 Info.ILGen.Emit(OpCodes.Ldflda, emittableField)
             Else
                 Helper.Assert(CecilHelper.IsStatic(Variable.FieldInfo))
                 Info.ILGen.Emit(OpCodes.Ldsflda, emittableField)
             End If
-            Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Variable.FieldInfo.FieldType))
-        ElseIf Variable.ParameterInfo IsNot Nothing Then
+         ElseIf Variable.ParameterInfo IsNot Nothing Then
             Helper.Assert(Variable.InstanceExpression Is Nothing)
             EmitLoadParameterAddress(Info, Variable.ParameterInfo)
         Else
@@ -1801,7 +1561,6 @@ Partial Public Class Emitter
 
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Ldloca, Variable)
-        Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Variable.VariableType))
     End Sub
 
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Field As Mono.Cecil.FieldReference)
@@ -1818,9 +1577,7 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Ldsflda, emittableField)
             Else
                 Info.ILGen.Emit(OpCodes.Ldflda, emittableField)
-                Info.Stack.Pop(Field.DeclaringType)
             End If
-            Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Field.FieldType))
         End If
     End Sub
 
@@ -1892,8 +1649,7 @@ Partial Public Class Emitter
             Case Else
                 Info.ILGen.Emit(OpCodes.Ldarg, position)
         End Select
-        Info.Stack.Push(Parameter.ParameterType)
-    End Sub
+   End Sub
 
     ''' <summary>
     ''' Loads the value of the specified parameter.
@@ -1909,7 +1665,6 @@ Partial Public Class Emitter
         Else
             Info.ILGen.Emit(OpCodes.Ldarga, position)
         End If
-        Info.Stack.Push(Parameter.ParameterType)
     End Sub
 
     ''' <summary>
@@ -1934,7 +1689,6 @@ Partial Public Class Emitter
     ''' <remarks></remarks>
     Shared Sub EmitLoadIndirect(ByVal Info As EmitInfo, ByVal ByRefType As Mono.Cecil.TypeReference)
         ByRefType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ByRefType)
-        Info.Stack.Pop(ByRefType)
         Dim elementtype As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ByRefType)
         Select Case Helper.GetTypeCode(Info.Compiler, elementtype)
             Case TypeCode.Byte
@@ -1968,7 +1722,6 @@ Partial Public Class Emitter
                 Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
                 'Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
         End Select
-        Info.Stack.Push(elementtype)
     End Sub
 
     ''' <summary>
@@ -2020,9 +1773,6 @@ Partial Public Class Emitter
 
     Shared Sub EmitRet(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Ret)
-        If Info.Method.DefaultReturnVariable IsNot Nothing Then
-            Info.Stack.Pop(Info.Method.DefaultReturnVariable.VariableType)
-        End If
     End Sub
 
     'Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As LocalBuilder)
@@ -2032,7 +1782,6 @@ Partial Public Class Emitter
 
     Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Ldloc, Variable)
-        Info.Stack.Push(Variable.VariableType)
     End Sub
 
     Shared Sub EmitNop(ByVal Info As EmitInfo)
@@ -2063,18 +1812,14 @@ Partial Public Class Emitter
                 Emitter.EmitLoadValue(Info.Clone(Info.Context, True, False, Variable.FieldType), fD.Constant)
             Else
                 Info.ILGen.Emit(OpCodes.Ldsfld, Variable)
-                Info.Stack.Push(Variable.FieldType)
             End If
         Else
             Info.ILGen.Emit(OpCodes.Ldfld, Variable)
-            Info.Stack.Pop(Variable.DeclaringType)
-            Info.Stack.Push(Variable.FieldType)
         End If
     End Sub
 
     Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Stloc, Variable)
-        Info.Stack.Pop(Variable.VariableType)
     End Sub
 
     Shared Sub EmitStoreVariable(ByVal Info As EmitInfo, ByVal Variable As VariableClassification)
@@ -2092,8 +1837,6 @@ Partial Public Class Emitter
     Shared Sub EmitStoreIndirect(ByVal Info As EmitInfo, ByVal ByRefType As Mono.Cecil.TypeReference)
         ByRefType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ByRefType)
         Dim elementtype As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ByRefType)
-        Info.Stack.Pop(elementtype)
-        Info.Stack.Pop(ByRefType)
         Select Case Helper.GetTypeCode(Info.Compiler, elementtype)
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Boolean
                 Info.ILGen.Emit(OpCodes.Stind_I1)
@@ -2132,18 +1875,15 @@ Partial Public Class Emitter
             End If
         Else
             Info.ILGen.Emit(OpCodes.Starg, position)
-            Info.Stack.Pop(Variable.ParameterType)
         End If
     End Sub
 
     Shared Sub EmitSwitch(ByVal Info As EmitInfo, ByVal Labels() As Label)
         Info.ILGen.Emit(OpCodes.Switch, Labels)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitSwitch(ByVal Info As EmitInfo, ByVal Labels() As Mono.Cecil.Cil.Instruction)
         Info.ILGen.Emit(OpCodes.Switch, Labels)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Int32)
     End Sub
 
     Shared Sub EmitStoreField(ByVal Info As EmitInfo, ByVal Field As Mono.Cecil.FieldReference)
@@ -2151,11 +1891,8 @@ Partial Public Class Emitter
         Field2 = Emitter.GetFieldRef(Field2)
         Field2 = Helper.GetFieldOrFieldBuilder(Info.Compiler, Field2)
         If CecilHelper.IsStatic(Field) Then
-            Info.Stack.Pop(Field.FieldType)
             Info.ILGen.Emit(OpCodes.Stsfld, Field2)
         Else
-            Info.Stack.Pop(Field.FieldType)
-            Info.Stack.Pop(Field.DeclaringType)
             Info.ILGen.Emit(OpCodes.Stfld, Field2)
         End If
     End Sub
@@ -2169,33 +1906,25 @@ Partial Public Class Emitter
         Dim OriginalDestinationType As Mono.Cecil.TypeReference = SourceType
         SourceType = Helper.GetTypeOrTypeBuilder(Info.Compiler, SourceType)
         Info.ILGen.Emit(OpCodes.Box, SourceType)
-        Info.Stack.SwitchHead(Info.Stack.Peek, Info.Compiler.TypeCache.System_Object) 'Push a object reference on the stack.
     End Sub
 
     Shared Sub EmitUnbox(ByVal Info As EmitInfo, ByVal ToType As Mono.Cecil.TypeReference)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
-        Info.Stack.Pop(Info.Stack.Peek)
         Info.ILGen.Emit(OpCodes.Unbox, ToType)
-        Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), ToType))
     End Sub
 
     Shared Sub EmitUnbox_Any(ByVal Info As EmitInfo, ByVal ToType As Mono.Cecil.TypeReference)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
-        Info.Stack.Pop(Info.Stack.Peek)
         Info.ILGen.Emit(OpCodes.Unbox_Any, ToType)
-        Info.Stack.Push(ToType)
     End Sub
 
     Shared Sub EmitLdobj(ByVal Info As EmitInfo, ByVal SourceType As Mono.Cecil.TypeReference)
         SourceType = Helper.GetTypeOrTypeBuilder(Info.Compiler, SourceType)
-        Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), SourceType))
         Info.ILGen.Emit(OpCodes.Ldobj, SourceType)
-        Info.Stack.Push(SourceType)
     End Sub
 
     Shared Sub EmitThrow(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Throw)
-        Info.Stack.Pop(Info.Compiler.TypeCache.System_Exception)
     End Sub
 
     Shared Function SwitchVersionedMethods(ByVal Info As EmitInfo, ByVal UnversionedMethod As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference

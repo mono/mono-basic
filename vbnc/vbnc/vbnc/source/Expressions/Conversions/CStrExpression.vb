@@ -69,7 +69,6 @@ Public Class CStrExpression
             Case TypeCode.DateTime
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_DateTime)
             Case TypeCode.SByte, TypeCode.Int16
-                Info.Stack.SwitchHead(expType, Info.Compiler.TypeCache.System_Int32)
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
             Case TypeCode.Int32
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
@@ -92,7 +91,6 @@ Public Class CStrExpression
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'No conversion necessary
-                    Info.Stack.SwitchHead(Info.Compiler.TypeCache.Nothing, Info.Compiler.TypeCache.System_String)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
                     Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_String__ctor_Array)
                 Else

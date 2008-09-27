@@ -68,7 +68,7 @@ Public Class EventDeclaration
             Return m_CecilBuilder.EventType
         End Get
         Set(ByVal value As Mono.Cecil.TypeReference)
-            m_CecilBuilder.EventType = Helper.GetTypeOrTypeReference(Compiler, value)
+            CecilBuilder.EventType = Helper.GetTypeOrTypeReference(Compiler, value)
         End Set
     End Property
 
@@ -238,6 +238,7 @@ Public Class EventDeclaration
 
         If m_CecilBuilder Is Nothing Then
             m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, Nothing, Mono.Cecil.EventAttributes.SpecialName)
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
             FindFirstParent(Of TypeDeclaration).CecilType.Events.Add(m_CecilBuilder)
         End If
         m_CecilBuilder.Name = Name

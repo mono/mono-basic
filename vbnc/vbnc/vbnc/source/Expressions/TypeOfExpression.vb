@@ -62,7 +62,6 @@ Public Class TypeOfExpression
         Emitter.EmitIsInst(Info, m_Expression.ExpressionType, m_Type.ResolvedType)
 
         Emitter.EmitLoadNull(Info.Clone(Me, True, False, Compiler.TypeCache.System_Object))
-        Info.Stack.SwitchHead(Compiler.TypeCache.System_Object, Helper.GetTypeOrTypeBuilder(Compiler, m_Type.ResolvedType))
         If m_Is Then
             Emitter.EmitNotEquals(Info, m_Type.ResolvedType)
         Else

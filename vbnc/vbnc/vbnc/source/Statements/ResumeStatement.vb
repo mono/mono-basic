@@ -47,7 +47,6 @@ Public Class ResumeStatement
 
         'Test if the code is in an exception handler
         Emitter.EmitLoadVariable(Info, block.VB_ResumeTarget)
-        Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfTrue(Info, ResumeOK)
 
         'If code is not in an exception handler raise an error

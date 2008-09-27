@@ -117,7 +117,7 @@ Public Class DictionaryAccessExpression
         Dim attr As Mono.Cecil.CustomAttribute = Helper.GetDefaultMemberAttribute(Compiler, firsttp)
         'Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, True)
         If attr IsNot Nothing Then '.Length = 1 Then
-            Dim name As String = DirectCast(attr.Properties("MemberName"), String)
+            Dim name As String = DirectCast(attr.ConstructorParameters(0), String)
             Dim props As Mono.Cecil.PropertyDefinition() = CecilHelper.FindDefinition(firsttp).Properties.GetProperties(name)
             If props IsNot Nothing AndAlso props.Length = 1 Then
                 m_DefaultProperty = props(0)

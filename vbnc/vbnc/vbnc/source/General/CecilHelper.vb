@@ -167,10 +167,7 @@ Public Class CecilHelper
         For i As Integer = 0 To Type.Constraints.Count - 1
             AddRange(result, GetMembers(Type.Constraints(i)))
         Next
-        If Type.HasReferenceTypeConstraint Then
-            AddRange(result, GetMembers(BaseObject.m_Compiler.TypeCache.System_Object))
-        End If
-
+        AddRange(result, GetMembers(BaseObject.m_Compiler.TypeCache.System_Object))
         Return result
     End Function
 
@@ -675,6 +672,11 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function MakeGenericMethod(ByVal Method As MethodReference, ByVal Types() As Mono.Cecil.TypeReference) As Mono.Cecil.GenericInstanceMethod
+        Dim result As New Mono.Cecil.GenericInstanceMethod(Method)
+        For i As Integer = 0 To Types.Length - 1
+            result.GenericArguments.Add(Types(i))
+        Next
+        Return result
         Throw New NotImplementedException
     End Function
 
@@ -1007,7 +1009,11 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function GetGenericParameterAttributes(ByVal Type As TypeReference) As GenericParameterAttributes
-        Throw New NotImplementedException
+        Dim gt As Mono.Cecil.GenericParameter
+
+        gt = DirectCast(Type, Mono.Cecil.GenericParameter)
+
+        Return gt.Attributes
     End Function
 
     Public Shared Function IsInterface(ByVal Type As TypeReference) As Boolean

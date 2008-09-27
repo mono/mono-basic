@@ -197,7 +197,6 @@ Public Class PropertyDeclaration
         End If
     End Sub
 
-
     Public Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
 

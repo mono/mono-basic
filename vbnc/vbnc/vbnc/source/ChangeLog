@@ -1,5 +1,21 @@
 2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/TypeOfExpression.vb,
+	  Expressions/Conversions/CStrExpression.vb,
+	  Expressions/BinaryExpressions/OrElseExpression.vb,
+	  Expressions/BinaryExpressions/AndAlsoExpression.vb,
+	  Expressions/InvocationOrIndexExpression.vb,
+	  Expressions/DictionaryAccessExpression.vb,
+	  Expressions/DelegateOrObjectCreationExpression.vb,
+	  Statements/ForStatement.vb, Statements/CatchStatement.vb,
+	  Statements/ResumeStatement.vb, Members/PropertyDeclaration.vb,
+	  Members/Attribute.vb, Members/EventDeclaration.vb, Emit/Emitter.vb,
+	  Emit/EmitInfo.vb, TypeDeclarations/ModuleDeclaration.vb,
+	  Code/CodeBlock.vb, General/Helper.vb, General/AssemblyInfo.vb,
+	  General/CecilHelper.vb: Remove the emit stack.
+
+2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/BooleanLiteralExpression.vb: Backported fix.
 	* Expressions/ArrayCreationExpression.vb, Emit/Emitter.vb: Properly
 	  create and handle Set method on arrays.

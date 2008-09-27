@@ -57,8 +57,7 @@ Public Class AndAlsoExpression
                 Emitter.EmitLoadValue(Info, True) 'Load true value
 
                 Emitter.MarkLabel(Info, endexp) 'The end of the expression
-                Info.Stack.Pop(Compiler.TypeCache.System_Boolean) 'Both a true and a false value was added to the stack, remove one.
-
+               
                 If opType = TypeCode.Object Then
                     Emitter.EmitBox(Info, Compiler.TypeCache.System_Boolean)
                     Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)

@@ -29,14 +29,20 @@ Public Class ModuleDeclaration
     Inherits TypeDeclaration
     Implements IHasImplicitMembers
 
+    Private m_DefinedStandardModuleAttribute As Boolean
+
     Private Function AddAttribute() As Boolean
         Dim result As Boolean = True
         Dim newAttrib As Attribute
 
+        If m_DefinedStandardModuleAttribute Then Return True
+
         newAttrib = New Attribute(Me, Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
         result = newAttrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
 
+        If MyBase.CustomAttributes Is Nothing Then MyBase.CustomAttributes = New Attributes(Me)
         MyBase.CustomAttributes.Add(newAttrib)
+        m_DefinedStandardModuleAttribute = True
 
         Return result
     End Function
@@ -77,6 +83,7 @@ Public Class ModuleDeclaration
         MyBase.UpdateDefinition()
 
         TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+        AddAttribute()
     End Sub
 
     Public Overrides ReadOnly Property IsShared() As Boolean
@@ -84,7 +91,6 @@ Public Class ModuleDeclaration
             Return True
         End Get
     End Property
-
 
     Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
         Dim result As Boolean = True

@@ -391,7 +391,6 @@ Public Class ForStatement
                 Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), TypeConverter.ConvertTo(Compiler, 0, m_LoopType))
                 Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
                 Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brfalse_S, negativeLabel)
-                Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
                 Emitter.EmitLE(Info, m_LoopType) 'Positive check
                 Emitter.EmitBranch(Info, endCheck)
                 Emitter.MarkLabel(Info, negativeLabel)

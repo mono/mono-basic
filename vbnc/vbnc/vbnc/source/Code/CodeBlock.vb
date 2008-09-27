@@ -358,7 +358,6 @@ Public Class CodeBlock
         'if it was not raised when in the unstructured handler and if there actually
         'is a registered exception handler.
         Info.ILGen.BeginExceptFilterBlock()
-        Info.Stack.Push(Compiler.TypeCache.System_Object)
         Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
         Emitter.EmitLoadNull(Info.Clone(Me, True, False, Compiler.TypeCache.System_Exception))
         Emitter.EmitGT_Un(Info, Compiler.TypeCache.System_Exception) 'TypeOf ... Is System.Exception
@@ -373,11 +372,8 @@ Public Class CodeBlock
         Emitter.EmitEquals(Info, Compiler.TypeCache.System_Int32) 'if code is in a unstructured handler or not
         Emitter.EmitAnd(Info, Compiler.TypeCache.System_Boolean)
 
-        Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
-
         'create the catch block
         Info.ILGen.BeginCatchBlock(CType(Nothing, Mono.Cecil.TypeReference))
-        Info.Stack.Push(Compiler.TypeCache.System_Object)
         Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__SetProjectError_Exception)
         Emitter.EmitLeave(Info, VB_ActiveHandlerLabel)
@@ -394,7 +390,6 @@ Public Class CodeBlock
 
         Dim veryMethodEnd As Label = Emitter.DefineLabel(Info)
         Emitter.EmitLoadVariable(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean), VB_ResumeTarget)
-        Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfFalse(Info, veryMethodEnd)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
         Emitter.MarkLabel(Info, veryMethodEnd)
@@ -509,10 +504,6 @@ Public Class CodeBlock
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-#If DEBUG Then
-        Info.Stack.CheckStackEmpty("Start of block " & Me.GetType.Name & " - " & Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
-
         For i As Integer = 0 To m_Variables.Count - 1
             Dim var As LocalVariableDeclaration = m_Variables(i)
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
@@ -522,17 +513,10 @@ Public Class CodeBlock
         For i As Integer = 0 To m_Sequence.Count - 1
             Dim stmt As BaseObject = m_Sequence.Item(i)
 
-#If DEBUG Then
-            Info.Stack.CheckStackEmpty("Start of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
-
             Emitter.MarkSequencePoint(Info, stmt.Location)
 
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
             result = stmt.GenerateCode(Info) AndAlso result
-#If DEBUG Then
-            Info.Stack.CheckStackEmpty("End of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
         Next
 
         Return result

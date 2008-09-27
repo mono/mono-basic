@@ -1630,8 +1630,12 @@ Public Class Helper
             Dim elementInfo As EmitInfo = Info.Clone(Info.Context, True, False, Info.Compiler.TypeCache.System_Int32)
             Dim methodtypes(Arguments.Count - 1) As Mono.Cecil.TypeReference
             For i As Integer = 0 To Arguments.Count - 1
-                result = Arguments(i).GenerateCode(elementInfo) AndAlso result
-                Emitter.EmitConversion(Info.Stack.Peek, Info.Compiler.TypeCache.System_Int32, Info)
+                Dim exp As Expression = Arguments(i).Expression
+                If Info.Compiler.TypeResolution.IsImplicitlyConvertible(Compiler.m_Compiler, exp.ExpressionType, Info.Compiler.TypeCache.System_Int32) = False Then
+                    'TODO: This should be done during resultion, not emission
+                    exp = New CIntExpression(exp, exp)
+                End If
+                result = exp.GenerateCode(elementInfo) AndAlso result
                 methodtypes(i) = Info.Compiler.TypeCache.System_Int32
             Next
 
@@ -2361,7 +2365,7 @@ Public Class Helper
         If isFriend AndAlso isProtected Then
             'Friend and Protected
             'Both types must be in the same assembly or CallerType must inherit from CalledType.
-            Return Context.Compiler.Assembly.IsDefinedHere(CalledType) OrElse (Helper.IsSubclassOf(CallerType, CalledType))
+            Return Context.Compiler.Assembly.IsDefinedHere(CalledType) OrElse (Helper.IsSubclassOf(CalledType, CallerType))
         ElseIf isFriend Then
             'Friend, but not Protected
             'Both types must be in the same assembly
@@ -3877,7 +3881,7 @@ Public Class Helper
 
     Shared Function GetMethodAttributes(ByVal Member As Mono.Cecil.MemberReference) As Mono.Cecil.MethodAttributes
         Select Case CecilHelper.GetMemberType(Member)
-            Case MemberTypes.Method
+            Case MemberTypes.Method, MemberTypes.Constructor
                 Return CecilHelper.FindDefinition(DirectCast(Member, Mono.Cecil.MethodReference)).Attributes
             Case MemberTypes.Property
                 Return GetPropertyAttributes(DirectCast(Member, Mono.Cecil.PropertyReference))

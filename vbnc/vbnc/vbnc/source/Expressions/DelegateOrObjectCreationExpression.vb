@@ -111,7 +111,7 @@ Public Class DelegateOrObjectCreationExpression
         ElseIf m_IsGenericConstructor Then
             Dim method As Mono.Cecil.MethodReference
             Dim args As Mono.Cecil.TypeReference() = New Mono.Cecil.TypeReference() {Helper.GetTypeOrTypeBuilder(Compiler, ExpressionType)}
-            method = CecilHelper.makegenericmethod(Compiler.TypeCache.System_Activator__CreateInstance, args)
+            method = CecilHelper.MakeGenericMethod(Compiler.TypeCache.System_Activator__CreateInstance, args)
             Emitter.EmitCall(Info, method)
         Else
             Dim ctor As Mono.Cecil.MethodReference
@@ -136,7 +136,9 @@ Public Class DelegateOrObjectCreationExpression
 
         Helper.Assert(m_ResolvedType IsNot Nothing)
         If m_IsDelegateCreationExpression = False Then
-            m_IsDelegateCreationExpression = Helper.CompareType(CecilHelper.FindDefinition(m_ResolvedType).BaseType, Compiler.TypeCache.System_MulticastDelegate)
+            If TypeOf m_ResolvedType Is Mono.Cecil.GenericParameter = False Then
+                m_IsDelegateCreationExpression = Helper.CompareType(CecilHelper.FindDefinition(m_ResolvedType).BaseType, Compiler.TypeCache.System_MulticastDelegate)
+            End If
         End If
 
         If m_ArgumentList IsNot Nothing Then

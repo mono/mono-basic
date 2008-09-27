@@ -145,8 +145,7 @@ Public Class InvocationOrIndexExpression
 
         If m_AscWExpression IsNot Nothing Then
             result = m_AscWExpression.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Char)) AndAlso result
-            Info.Stack.SwitchHead(Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32)
-
+         
             Return result
         End If
 
