@@ -1,3 +1,8 @@
+2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CompileTime2/GenericType3.vb, NonCecilRelated,
+	  NonCecilRelated/GenericType3.vb: Move test to not confuse.
+
 2008-09-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* 1Declarations/Events8.vb, 1Declarations/GenericMember10.vb,
