@@ -1,2 +1,3 @@
 -imports:System.Data
 -target:library
+-reference:System.Data.dll

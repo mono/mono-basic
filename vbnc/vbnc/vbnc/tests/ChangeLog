@@ -1,5 +1,10 @@
 2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* CompileTime/PropertyAccess5.response: Fixed.
+	* KnownFailures.txt: A lot more passing tests now.
+
+2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* CompileTime2/GenericType3.vb, NonCecilRelated,
 	  NonCecilRelated/GenericType3.vb: Move test to not confuse.
 
