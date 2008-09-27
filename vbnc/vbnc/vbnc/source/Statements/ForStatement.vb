@@ -442,6 +442,7 @@ Public Class ForStatement
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         Else
             m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
+            result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         End If
 
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result

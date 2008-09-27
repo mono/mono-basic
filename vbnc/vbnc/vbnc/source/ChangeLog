@@ -1,3 +1,12 @@
+2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/BooleanLiteralExpression.vb: Backported fix.
+	* Expressions/ArrayCreationExpression.vb, Emit/Emitter.vb: Properly
+	  create and handle Set method on arrays.
+	* Statements/ForStatement.vb: Resolve an expression.
+	* General/Helper.vb: Properties don't need to get imported, only the
+	  contained methods.
+
 2008-09-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Members/EventDeclaration.vb: Lookup type reference for the event

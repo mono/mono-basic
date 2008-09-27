@@ -1087,7 +1087,9 @@ Public Class CecilHelper
 
     Public Shared Function FindDefinition(ByVal method As MethodReference) As MethodDefinition
         If method Is Nothing Then Return Nothing
-        Dim type As TypeDefinition = FindDefinition(method.DeclaringType)
+        Dim type As TypeDefinition
+
+        type = FindDefinition(method.DeclaringType)
         method = method.GetOriginalMethod
         If Helper.CompareNameOrdinal(method.Name, MethodDefinition.Cctor) OrElse Helper.CompareNameOrdinal(method.Name, MethodDefinition.Ctor) Then
             Return GetMethod(type.Constructors, method)

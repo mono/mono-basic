@@ -3030,6 +3030,7 @@ Public Class Helper
         If Compiler.Assembly.IsDefinedHere([Property]) Then
             Return [Property]
         Else
+            Return [Property]
             Throw New NotImplementedException
             'Return Compiler.AssemblyBuilderCecil.MainModule.Import([Property])
         End If

@@ -1012,7 +1012,9 @@ Partial Public Class Emitter
         minfo = CecilHelper.MakeEmittable(minfo)
 
         PopParameters(Info, Helper.GetParameters(Info.Compiler, Method))
-        If mD.IsStatic Then
+        If mD Is Nothing Then
+            Info.ILGen.Emit(OpCodes.Callvirt, minfo)
+        ElseIf mD.IsStatic Then
             Info.ILGen.Emit(OpCodes.Call, minfo)
         ElseIf CecilHelper.IsValueType(Method.DeclaringType) Then
             Info.Stack.Pop(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Method.DeclaringType))
@@ -1022,7 +1024,7 @@ Partial Public Class Emitter
             Info.ILGen.Emit(OpCodes.Call, minfo)
         End If
 
-        If minfo.ReturnType IsNot Nothing AndAlso Helper.CompareType(mD.ReturnType.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
+        If minfo.ReturnType IsNot Nothing AndAlso mD IsNot Nothing AndAlso Helper.CompareType(mD.ReturnType.ReturnType, Info.Compiler.TypeCache.System_Void) = False Then
             Info.Stack.Push(mD.ReturnType.ReturnType)
         End If
 
@@ -1031,7 +1033,9 @@ Partial Public Class Emitter
     Shared Sub EmitCallOrCallVirt(ByVal Info As EmitInfo, ByVal Method As Mono.Cecil.MethodReference)
         Helper.Assert(Method IsNot Nothing)
         Dim mD As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(Method)
-        If mD.IsStatic OrElse CecilHelper.IsValueType(Method.DeclaringType) Then
+        If mD Is Nothing AndAlso TypeOf Method.DeclaringType Is Mono.Cecil.ArrayType AndAlso (Method.Name = "Get" OrElse Method.Name = "Set") Then
+            EmitCall(Info, Method)
+        ElseIf mD.IsStatic OrElse CecilHelper.IsValueType(Method.DeclaringType) Then
             EmitCall(Info, Method)
         Else
             EmitCallVirt(Info, Method)

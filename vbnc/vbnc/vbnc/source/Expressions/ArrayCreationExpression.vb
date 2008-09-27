@@ -203,12 +203,12 @@ Public Class ArrayCreationExpression
                 Emitter.EmitStoreElement(Info, elementType, ArrayType)
             Else
                 Dim setmethod As Mono.Cecil.MethodReference
-                Dim settypes(CurrentDepth) As Mono.Cecil.TypeReference
+                setmethod = New Mono.Cecil.MethodReference("Set", ArrayType, Compiler.TypeCache.System_Void, True, False, Mono.Cecil.MethodCallingConvention.Default)
                 For i As Integer = 0 To CurrentDepth - 1
-                    settypes(i) = Compiler.TypeCache.System_Int32
+                    setmethod.Parameters.Add(New Mono.Cecil.ParameterDefinition(Compiler.TypeCache.System_Int32))
                 Next
-                settypes(CurrentDepth) = CecilHelper.GetElementType(ArrayType)
-                setmethod = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Set", settypes)
+                setmethod.Parameters.Add(New Mono.Cecil.ParameterDefinition(CecilHelper.GetElementType(ArrayType)))
+                'setmethod = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Set", settypes)
                 Emitter.EmitCallOrCallVirt(Info, setmethod)
             End If
         ElseIf vi.IsArrayElementInitializer Then
