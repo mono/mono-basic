@@ -19,19 +19,13 @@ DISTFILES = \
 	source/vbnc.vbproj	\
 	bin/vbnc.rsp            \
 	source/Resources/Errors.resx \
-	source/vbnc.rsp
+	source/vbnc.rsp		\
+	setversion.sh
 
-VERSION_VB=source/General/Version.vb
+version.tmp: $(topdir)/configure setversion.sh
+	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
 
-version: $(VERSION_VB) ../../configure
-	-cat ../License\ FileHeader.txt > $(VERSION_VB)
-	-echo -n "<Assembly: AssemblyInformationalVersion (\"" >> $(VERSION_VB)
-	-echo -n `more ../../configure | grep VERSION | grep -v echo | sed 's/VERSION=//'` >> $(VERSION_VB)
-	-echo -n " - r" >> $(VERSION_VB)
-	-echo -n `svn info . | grep Revision | sed 's/Revision: //'` >> $(VERSION_VB)
-	-echo -n "\")>" >> $(VERSION_VB)
-
-all-local: vbnc.Errors.resources vbnc.exe.sources version
+all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp
 
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
@@ -42,7 +36,7 @@ vbnc.vbnc.rsp: source/vbnc.rsp
 vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
 	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r
 
-install-local: install-extras
+install-local: install-extras version.tmp
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_DATA) bin/vbnc.rsp $(DESTDIR)$(PROGRAM_INSTALL_DIR)

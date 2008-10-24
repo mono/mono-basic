@@ -1,3 +1,7 @@
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* setversion.sh, Makefile: Make the version hack actually work.
+
 2008-03-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.Errors.resources: Added more messages.
