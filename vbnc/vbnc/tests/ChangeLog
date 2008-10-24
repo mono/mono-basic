@@ -1,5 +1,10 @@
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Bugs/bug-438683.vb: Parser: fix parsing of Not expressions followed
+	  by AndAlso/OrElse expressions.
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Resources/Resources5.resources, Resources/Resources5.response,
 	  Resources/Resources5.vb: Added Resources5 test case.
 
