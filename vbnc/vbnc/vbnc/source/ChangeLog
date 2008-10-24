@@ -1,5 +1,11 @@
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
+	* Statements/ForEachStatement.vb, Resources/Source.xml,
+	  Resources/Errors.resx, General/Messages.vb: Don't verify the
+	  expression after 'Next' to much. Fixes #392456.
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Parser/Parser(Expressions).vb: Parser: fix parsing of Not expressions
 	  followed by AndAlso/OrElse expressions [Merged from HEAD/116956]
 

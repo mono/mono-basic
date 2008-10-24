@@ -1,4 +1,8 @@
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	* vbnc.Errors.resources: Don't verify the expression after 'Next' to
+	  much. Fixes #392456. [Merged from HEAD/r116958]
+
+2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* setversion.sh, Makefile: Make the version hack actually work [Merged from HEAD/r116952]
 

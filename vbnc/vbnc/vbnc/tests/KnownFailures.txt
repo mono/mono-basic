@@ -1,11 +1,13 @@
 Errors\30064 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30068 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30070-1 'VBNC Compile succeeded unexpectedly.
 Errors\30074 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30074-1 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30108 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30311 'VBNC Compile failed spectacularly. 
 Errors\30337 'VBNC Compile failed spectacularly. 
 Errors\30337-2 'VBNC Compile failed correctly, but didn't give the expected error code.
+Errors\30451-1 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30506-2 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30506-3 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30506-4 'VBNC Compile failed correctly, but didn't give the expected error code.

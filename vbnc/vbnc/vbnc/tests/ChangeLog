@@ -1,4 +1,10 @@
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
+	* Bugs/bug-392456.vb, CompileTime/ForEach2.vb, Errors/30070.vb,
+	  Errors/30070-1.vb, Errors/30451-1.vb, KnownFailures.txt: Don't
+	  verify the expression after 'Next' to much. Fixes #392456.
+	  [Merged from HEAD/116958]
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Parser/Parser(Expressions).vb: Parser: fix parsing of Not expressions
 	  followed by AndAlso/OrElse expressions [Merged from HEAD/116956]

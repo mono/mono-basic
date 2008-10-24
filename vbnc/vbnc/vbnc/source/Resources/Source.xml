@@ -359,7 +359,7 @@
 	</Message>
 	<Message id="30070" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>The variable specified after Next doesn't match the variable specified in the for loop ({0}).</VBNCValue>
 		<VBValue>Next control variable does not match For loop control variable '|1'.</VBValue>
 	</Message>
 	<Message id="30071" level="Error">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -102,7 +102,7 @@
   <data name="30067"><value>It is not valid to use 'Exit Function' in a Sub or Property.</value></data>
   <data name="30068"><value>CHANGEME</value></data>
   <data name="30069"><value>CHANGEME</value></data>
-  <data name="30070"><value>CHANGEME</value></data>
+  <data name="30070"><value>The variable specified after Next doesn't match the variable specified in the for loop ({0}).</value></data>
   <data name="30071"><value>CHANGEME</value></data>
   <data name="30072"><value>CHANGEME</value></data>
   <data name="30074"><value>CHANGEME</value></data>
