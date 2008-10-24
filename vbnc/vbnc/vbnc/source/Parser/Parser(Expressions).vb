@@ -532,12 +532,13 @@ Partial Class Parser
         Return result
     End Function
 
-    Private Function ParseUnaryNotExpression(ByVal Parent As ParsedObject) As UnaryNotExpression
-        Dim result As New UnaryNotExpression(Parent)
+    Private Function ParseUnaryNotExpression(ByVal Info As ExpressionParseInfo) As UnaryNotExpression
+        Dim result As New UnaryNotExpression(Info.Parent)
 
         Dim m_Expression As Expression
         tm.AcceptIfNotInternalError(KS.Not)
-        m_Expression = ParseExpression(result)
+
+        m_Expression = ParseComparison(Info)
 
         result.Init(m_Expression)
 
@@ -546,7 +547,6 @@ Partial Class Parser
 
     Private Function ParseUnaryPlusExpression(ByVal Info As ExpressionParseInfo) As UnaryPlusExpression
         Dim result As New UnaryPlusExpression(Info.Parent)
-
         Dim m_Expression As Expression
 
         tm.AcceptIfNotInternalError(KS.Add)
@@ -1462,7 +1462,7 @@ Partial Class Parser
         Dim result As UnaryNotExpression
 
         If tm.CurrentToken = KS.Not Then
-            result = ParseUnaryNotExpression(Info.Parent)
+            result = ParseUnaryNotExpression(Info)
         Else
             Return ParseComparison(Info)
         End If

@@ -1,3 +1,13 @@
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Parser/Parser(Expressions).vb: Parser: fix parsing of Not expressions
+	  followed by AndAlso/OrElse expressions [Merged from HEAD/116956]
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/Compiler.vb: AddResources: Fix comparison to not include
+	  empty string either [Merged from HEAD/r116919 and r116925] 
+
 2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/TypeOfExpression.vb,

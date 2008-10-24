@@ -1,3 +1,14 @@
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Parser/Parser(Expressions).vb: Parser: fix parsing of Not expressions
+	  followed by AndAlso/OrElse expressions [Merged from HEAD/116956]
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Resources/Resources5.resources, Resources/Resources5.response,
+	  Resources/Resources5.vb: Added Resources5 test case.
+	  [Merged from HEAD/r116919 and r116925] 
+
 2008-09-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CompileTime/PropertyAccess5.response: Fixed.
