@@ -777,6 +777,13 @@ EndOfCompilation:
             Dim resourceFile As String = IO.Path.GetFileName(r.Filename)
             Dim resourceName As String = IO.Path.GetFileName(r.Filename)
             Dim attrib As System.Reflection.ResourceAttributes
+
+            If r.Identifier <> String.Empty Then
+                resourceName = r.Identifier
+            Else
+                resourceName = IO.Path.GetFileName(r.Filename)
+            End If
+
             If r.Public Then
                 attrib = System.Reflection.ResourceAttributes.Public
             Else
