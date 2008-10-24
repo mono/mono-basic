@@ -1,3 +1,7 @@
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* setversion.sh, Makefile: Make the version hack actually work [Merged from HEAD/r116952]
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* bin/vbnc.vbnc.rsp, bin/vbnc.rsp, bin/vbnc.Errors.resources: Remove
