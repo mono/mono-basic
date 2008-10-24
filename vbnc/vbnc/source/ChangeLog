@@ -1,3 +1,8 @@
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/AssemblyInfo.vb, General/Compiler.vb: AddResources: Properly
+	  handle resources where name is specified on the command line.
+
 2008-09-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Expressions/BooleanLiteralExpression.vb: Override Clone. Fixes
