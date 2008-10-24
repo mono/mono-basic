@@ -879,7 +879,7 @@ EndOfCompilation:
             Dim resourceName As String = IO.Path.GetFileName(r.Filename)
             Dim attrib As System.Reflection.ResourceAttributes
 
-            If r.Identifier IsNot Nothing Then
+            If r.Identifier <> String.Empty Then
                 resourceName = r.Identifier
             Else
                 resourceName = IO.Path.GetFileName(r.Filename)
