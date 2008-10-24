@@ -1,5 +1,10 @@
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* LateBinding.vb: LateIndexGet: Use our own late binder instead of the
+	  default one. Fixes #417557.
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* LateBinder.vb: BindToMethod: If no methods passed in, return Nothing.
 	  Fixes #417750.
 
