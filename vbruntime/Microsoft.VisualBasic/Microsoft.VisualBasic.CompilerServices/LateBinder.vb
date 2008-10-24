@@ -100,6 +100,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
                                                 ByVal names() As String, _
                                                 ByRef state As Object) As System.Reflection.MethodBase
 
+			If match Is Nothing OrElse match.Length = 0 Then
+				return Nothing
+			End If
 
             state = GetStateInstance()
             CType(state, BState).oargs = CType(args.Clone(), Object())
