@@ -210,8 +210,13 @@ Public Class ForEachStatement
         result = CodeBlock.ResolveCode(Info) AndAlso result
 
         If m_NextExpression IsNot Nothing Then
-            result = m_NextExpression.ResolveExpression(Info) AndAlso result
-            result = Helper.VerifyValueClassification(m_NextExpression, Info) AndAlso result
+            'TODO: Add check here. Seems like this expression can be arbitrarily complex
+            Dim sneNext As SimpleNameExpression = TryCast(m_NextExpression, SimpleNameExpression)
+            If sneNext IsNot Nothing Then
+                If Helper.CompareName(sneNext.Identifier.Identifier, m_LoopControlVariable.Identifier.Identifier) = False Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30070, sneNext.Location, m_LoopControlVariable.Identifier.Identifier) AndAlso result
+                End If
+            End If
         End If
 
         Compiler.Helper.AddCheck("It is not valid to branch into a For Each statement block from outside the block.")
@@ -219,6 +224,7 @@ Public Class ForEachStatement
         Compiler.Helper.AddCheck("The enumerator expression must be classified as a value and its type must be a collection type or Object. ")
         Compiler.Helper.AddCheck("If the type of the enumerator expression is Object, then all processing is deferred until run-time. Otherwise, a conversion must exist from the element type of the collection to the type of the loop control variable")
         Compiler.Helper.AddCheck("The loop control variable cannot be used by another enclosing For Each statement. ")
+
         Return result
     End Function
 End Class

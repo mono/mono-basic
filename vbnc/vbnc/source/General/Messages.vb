@@ -513,7 +513,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30069 = 30069
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "The variable specified after Next doesn't match the variable specified in the for loop ({0})."
     ''' VB   = "Next control variable does not match For loop control variable '|1'."
     ''' </summary>
     ''' <remarks></remarks>
