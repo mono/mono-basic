@@ -47,10 +47,15 @@ namespace Mono.Cecil {
 		public override ParameterDefinitionCollection ResolvedParameters {
 			get {
 				if (m_resolvedParameters == null) {
-					if (GenericArguments.Count > 0 && GenericParameters.Count == 0)
-						m_resolvedParameters = Parameters.ResolveGenericTypes (OriginalMethod.GenericParameters, GenericArguments);
-					else
+					if (GenericArguments.Count > 0 && GenericParameters.Count == 0) {
+						if (OriginalMethod == null) {
+							m_resolvedParameters = Parameters.ResolveGenericTypes (ElementMethod.GenericParameters, GenericArguments);
+						} else {
+							m_resolvedParameters = Parameters.ResolveGenericTypes (OriginalMethod.GenericParameters, GenericArguments);
+						}
+					} else {
 						m_resolvedParameters = Parameters.ResolveGenericTypes (GenericParameters, GenericArguments);
+					}
 				}
 				return m_resolvedParameters;
 			}

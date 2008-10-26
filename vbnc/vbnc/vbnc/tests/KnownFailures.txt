@@ -16,6 +16,7 @@ Errors\32046 'VBNC Compile failed correctly, but didn't give the expected error 
 Errors\32105 'VBNC Compile succeeded unexpectedly.
 Errors\32106 'VBNC Compile succeeded unexpectedly.
 Mono\PropertyL 'VBNC Compile failed, process exited with exit code -1
+NonCecilRelated\GenericType3 'VBNC Compile failed, process exited with exit code 1
 NotImplementedYet\CDateConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\CDecConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\DecimalConstant1 'VBNC Compile failed, process exited with exit code -1
@@ -71,41 +72,12 @@ Mono\VariablesC
 VBRunTime\Microsoft.VisualBasic.linux
 
 'The following fail since cecil was introduced. Should be fixed asap.
-Bugs\30420-bug-74955 'VBNC Compile failed spectacularly. 
-Bugs\30420-bug-74955-2 'VBNC Compile failed spectacularly. 
-Bugs\aspnet1 'VBNC Compile failed, process exited with exit code -1
-Bugs\aspnet2 'VBNC Compile failed, process exited with exit code -1
-Bugs\aspnet3 'VBNC Compile failed, process exited with exit code 1
-Bugs\bug-320964 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-325331 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-325332 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-325339 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-325346 'VBNC Compile failed, process exited with exit code 1
-Bugs\bug-325976 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-325976-2 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-327596 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-332868 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-333403 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-333962 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-359234-ProtectedDefaultBaseCtor 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-74955 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80750 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-80752 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80833 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80967 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80968 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80989 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80990 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-80995 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81009 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-81016 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81055 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81059 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81119 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81162 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-81243 'VBNC Compile failed, process exited with exit code -1
-Bugs\bug-82382 'VBNC Compile failed, process exited with exit code -1
-Bugs\ia64-1 'VBNC Compile failed, process exited with exit code -1
 CompileTime2\Attribute2 'Only 'Attribute2' has the attribute 'System.SerializableAttribute()' on the member 'Attribute2.Test'.
 CompileTime2\GenericMethod8 'VBNC Compile failed, process exited with exit code -1
 CompileTime2\GetEnumerator1 'Type Safety and Security Verification failed, process exited with exit code 1
@@ -125,12 +97,9 @@ Errors\30506-2 'VBNC Compile failed correctly, but didn't give the expected erro
 Errors\30506-3 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30506-4 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30590 'VBNC Compile failed correctly, but didn't give the expected error code.
-Errors\31509 'VBC Compile (verifies that the test itself is correct) succeeded unexpectedly.
 Errors\32046 'VBNC Compile failed spectacularly. 
-Errors\32085 'VBNC Compile failed spectacularly. 
 Errors\32105 'VBNC Compile failed spectacularly. 
 Errors\32106 'VBNC Compile failed spectacularly. 
-Errors\42024 'VBC Compile (verifies that the test itself is correct) succeeded correctly, but didn't give the expected error code.
 External\PrivateScope1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
 Generated\Constants 'VBNC Compile failed, process exited with exit code -1
 Generated\ZCompilerCodeGenerator 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
@@ -145,19 +114,6 @@ Mono\Delegate_exe 'VBNC Compile failed, process exited with exit code -1
 Mono\EnumB 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\EnumConversionA 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\EnumConversionB 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\Event_dll 'VBNC Compile failed, process exited with exit code -1
-Mono\Event_exe 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
-Mono\EventA 'VBNC Compile failed, process exited with exit code -1
-Mono\EventB 'VBNC Compile failed, process exited with exit code -1
-Mono\EventC 'VBNC Compile failed, process exited with exit code -1
-Mono\EventD 'VBNC Compile failed, process exited with exit code -1
-Mono\EventE 'VBNC Compile failed, process exited with exit code -1
-Mono\EventF 'VBNC Compile failed, process exited with exit code -1
-Mono\EventG 'VBNC Compile failed, process exited with exit code -1
-Mono\EventJ 'VBNC Compile failed, process exited with exit code -1
-Mono\EventK 'VBNC Compile failed, process exited with exit code -1
-Mono\EventM 'VBNC Compile failed, process exited with exit code -1
-Mono\EventN 'VBNC Compile failed, process exited with exit code -1
 Mono\ExplicitConversionEnumToIntA 'VBNC Compile failed, process exited with exit code -1
 Mono\ExplicitConversionEnumToIntB 'VBNC Compile failed, process exited with exit code -1
 Mono\ExpressionInstanceMyBaseA 'VBNC Compile failed, process exited with exit code -1
@@ -169,25 +125,13 @@ Mono\InterfaceH 'VBNC Compile failed, process exited with exit code -1
 Mono\LocalDeclarationA 'VBNC Compile failed, process exited with exit code -1
 Mono\MethodDeclarationA 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\NameSpaceE 'Only 'NameSpaceE_vbc' has the type 'A.Default.If.C'.
-Mono\NameSpaceG 'VBNC Compile failed, process exited with exit code 1
-Mono\Override_exe 'VBNC Compile failed, process exited with exit code -1
 Mono\PropertyI 'VBNC Compile failed, process exited with exit code -1
 Mono\PropertyL 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\ScopeA 'VBNC Compile failed, process exited with exit code 1
 Mono\TypeMembersF 'VBNC Compile failed, process exited with exit code -1
-Mono\VariablesI 'VBNC Compile failed, process exited with exit code -1
 My\bug-333403 'VBNC Compile failed, process exited with exit code 1
-My\Console 'VBNC Compile failed, process exited with exit code -1
 My\Custom 'Only 'Custom_vbc' has the type 'My.MyProject/ThreadSafeObjectProvider`1+ThreadSafeObjectProvider`1(Of T)'.
 My\DefaultInstances1 'VBNC Compile failed, process exited with exit code 1
-My\DefinedSymbols 'VBNC Compile failed, process exited with exit code -1
-My\EmptyString 'VBNC Compile failed, process exited with exit code -1
-My\My.Application1 'VBNC Compile failed, process exited with exit code 1
 My\My.Forms1 'VBNC Compile failed, process exited with exit code 1
-My\None 'VBNC Compile failed, process exited with exit code -1
-My\Web 'VBNC Compile failed, process exited with exit code -1
-My\WebControl 'VBNC Compile failed, process exited with exit code -1
-My\Windows 'VBNC Compile failed, process exited with exit code -1
 My\WindowsForms 'VBNC Compile failed, process exited with exit code 1
 My\WindowsForms_exe 'VBNC Compile failed, process exited with exit code 1
 My\WindowsForms_library 'VBNC Compile failed, process exited with exit code 1
@@ -198,22 +142,7 @@ NotImplementedYet\CDecConstantExpression1 'VBNC Compile failed, process exited w
 NotImplementedYet\DecimalConstant1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\DelegateAsMethodParameter1 'Type Safety and Security Verification failed, process exited with exit code 1
 NotImplementedYet\MethodOverload1 'Only 'MethodOverload1_vbc' has the Method 'MethodOverload1.Test.F(Of )(System.Int32)'.
-NUnitTests\ArrayCreation1 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\ArrayIndexExpressions 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\ArrayStore 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\Assignment 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\BinaryAdd.Generated 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\BinaryAdd1 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\BinaryAdd2 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\ExplicitConversions 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\FunctionCall 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\ImplicitConversions 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\MethodCall1 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\MethodCall2 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\MethodCall3 'VBNC Compile failed, process exited with exit code -1
 NUnitTests\MethodCall4 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\MethodOverload1 'VBNC Compile failed, process exited with exit code -1
-NUnitTests\NUnit1 'VBNC Compile failed, process exited with exit code -1
 RunTime\ArrayElements4 'VBNC Compile failed, process exited with exit code -1
 RunTime\CType_TypeParameter1 'VBNC Compile failed, process exited with exit code -1
 RunTime\CType_TypeParameter2 'VBNC Compile failed, process exited with exit code 1

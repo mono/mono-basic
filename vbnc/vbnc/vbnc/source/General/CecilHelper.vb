@@ -643,6 +643,7 @@ Public Class CecilHelper
         If genM IsNot Nothing Then
             Dim result As New GenericInstanceMethod(Helper.GetMethodOrMethodReference(BaseObject.m_Compiler, mD))
             result.OriginalMethod = mD
+            result.ReturnType.ReturnType = mD.ReturnType.ReturnType
             For i As Integer = 0 To genM.GenericArguments.Count - 1
                 result.GenericArguments.Add(Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, genM.GenericArguments(i)))
             Next

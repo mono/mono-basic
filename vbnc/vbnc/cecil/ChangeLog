@@ -1,3 +1,8 @@
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Mono.Cecil/GenericInstanceMethod.cs: ResolvedParameters: Use
+	  ElementMethod if OriginalMethod isn't available.
+
 2008-08-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Mono.Cecil.Binary/Image.cs, Mono.Cecil.Binary/Section.cs,

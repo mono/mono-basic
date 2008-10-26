@@ -1,3 +1,7 @@
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* KnownFailures.txt: Lots of test cases are passing now.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
 	* Bugs/bug-392456.vb, CompileTime/ForEach2.vb, Errors/30070.vb,
 	  Errors/30070-1.vb, Errors/30451-1.vb, KnownFailures.txt: Don't

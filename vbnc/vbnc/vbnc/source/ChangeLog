@@ -1,3 +1,7 @@
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/CecilHelper.vb: MakeEmittable: use original return type.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* Statements/ForEachStatement.vb, Resources/Source.xml,
