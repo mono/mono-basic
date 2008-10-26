@@ -28,8 +28,8 @@ Public MustInherit Class PartialTypeDeclaration
         MyBase.new(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
-        MyBase.Init(Modifiers, Name, TypeParameters)
+    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
+        MyBase.Init(Name, TypeParameters)
         m_TypeImplementsClauses = [Implements]
         If m_TypeImplementsClauses Is Nothing Then m_TypeImplementsClauses = New TypeImplementsClauses(Me)
     End Sub

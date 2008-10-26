@@ -52,6 +52,7 @@ Partial Class Parser
             Else
                 result = New StructureDeclaration(Parent, [Namespace])
             End If
+            result.Modifiers = m_Modifiers
         End If
 
         Return result
@@ -145,7 +146,7 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_DeclaringType, m_Identifier, m_TypeParameters, m_TypeImplementsClauses)
+        result.Init(m_DeclaringType, m_Identifier, m_TypeParameters, m_TypeImplementsClauses)
 
         Return result
     End Function
@@ -206,7 +207,8 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(Modifiers, m_Signature)
+        result.Modifiers = Modifiers
+        result.Init(m_Signature)
 
         Return result
     End Function
@@ -277,7 +279,8 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_Identifier, m_QualifiedName)
+        result.Modifiers = m_Modifiers
+        result.Init(m_Identifier, m_QualifiedName)
 
         Return result
     End Function
@@ -326,7 +329,8 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_Identifier, m_TypeParameters, m_InterfaceBases)
+        result.Modifiers = m_Modifiers
+        result.Init(m_Identifier, m_TypeParameters, m_InterfaceBases)
 
         Return result
     End Function
@@ -359,7 +363,8 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_Name, 0)
+        result.Modifiers = m_Modifiers
+        result.Init(m_Name, 0)
 
         Return result
     End Function
@@ -432,7 +437,7 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Modifiers, m_Identifier, m_TypeParameters, m_Implements)
+        result.Init(m_Identifier, m_TypeParameters, m_Implements)
 
         Return result
     End Function

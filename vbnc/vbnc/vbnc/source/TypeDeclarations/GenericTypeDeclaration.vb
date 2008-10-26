@@ -33,12 +33,12 @@ Public MustInherit Class GenericTypeDeclaration
         If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
         Dim TypeArgumentCount As Integer
         If TypeParameters IsNot Nothing Then
             TypeArgumentCount = TypeParameters.Parameters.Count
         End If
-        MyBase.Init(Modifiers, Name, TypeArgumentCount)
+        MyBase.Init(Name, TypeArgumentCount)
         m_TypeParameters = TypeParameters
     End Sub
 

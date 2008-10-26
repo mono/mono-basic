@@ -112,8 +112,8 @@ Public MustInherit Class TypeDeclaration
         UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
-        MyBase.Init(Modifiers, Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
+    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
+        MyBase.Init(Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
 
         m_Name = Name
 

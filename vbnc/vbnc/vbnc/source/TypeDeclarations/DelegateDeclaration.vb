@@ -57,7 +57,8 @@ Public Class DelegateDeclaration
         Else
             m_Signature = New FunctionSignature(Me, Name, Parameters, ReturnType, Parent.Location)
         End If
-        Me.Init(Modifiers, m_Signature)
+        Me.Modifiers = Modifiers
+        Me.Init(m_Signature)
     End Sub
 
     Public Overrides Sub Initialize(ByVal Parent As BaseObject)
@@ -66,8 +67,8 @@ Public Class DelegateDeclaration
         If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(Modifiers, Signature.Identifier, Signature.TypeParameters)
+    Shadows Sub Init(ByVal Signature As SubSignature)
+        MyBase.Init(Signature.Identifier, Signature.TypeParameters)
         m_Signature = Signature
     End Sub
 

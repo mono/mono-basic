@@ -1,5 +1,17 @@
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Members/MemberDeclaration.vb, Members/RegularEventDeclaration.vb,
+	  Parser/Parser(Types).vb, TypeDeclarations/ClassDeclaration.vb,
+	  TypeDeclarations/DelegateDeclaration.vb,
+	  TypeDeclarations/EnumDeclaration.vb,
+	  TypeDeclarations/GenericTypeDeclaration.vb,
+	  TypeDeclarations/InterfaceDeclaration.vb,
+	  TypeDeclarations/PartialTypeDeclaration.vb,
+	  TypeDeclarations/TypeDeclaration.vb: Properly propagate Modifiers
+	  for partial types.
+
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/TypeCache.vb: Removed non-Cecil parts, regenerated.
 	* General/TypeCache.in: Added System.SerializableAttribute.
 	* Members/Attribute.vb, TypeDeclarations/TypeDeclaration.vb: Handle

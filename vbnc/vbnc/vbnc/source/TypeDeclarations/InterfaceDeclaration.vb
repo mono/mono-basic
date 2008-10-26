@@ -34,8 +34,8 @@ Public Class InterfaceDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
-        MyBase.Init(Modifiers, Name, TypeParameters)
+    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
+        MyBase.Init(Name, TypeParameters)
         m_InterfaceBases = InterfaceBases
     End Sub
 

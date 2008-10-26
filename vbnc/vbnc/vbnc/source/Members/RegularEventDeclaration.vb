@@ -142,7 +142,8 @@ Public Class RegularEventDeclaration
             m_Type = New TypeName(Me, EventType)
         ElseIf m_Parameters IsNot Nothing Then
             m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
-            m_ImplicitEventDelegate.Init(New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            m_ImplicitEventDelegate.Modifiers = Me.Modifiers
+            m_ImplicitEventDelegate.Init(New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
             If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
 
             EventType = m_ImplicitEventDelegate.CecilType

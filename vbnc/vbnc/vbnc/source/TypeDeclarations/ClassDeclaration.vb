@@ -44,8 +44,8 @@ Public Class ClassDeclaration
         MyBase.New(Parent, [Namespace])
     End Sub
 
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
-        MyBase.Init(Modifiers, Name, TypeParameters, TypeImplementsClauses)
+    Shadows Sub Init(ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
+        MyBase.Init(Name, TypeParameters, TypeImplementsClauses)
     End Sub
 
     Sub AddInheritsClause(ByVal Clause As NonArrayTypeName)

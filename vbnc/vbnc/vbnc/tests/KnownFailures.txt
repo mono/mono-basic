@@ -79,8 +79,6 @@ Bugs\bug-74955 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-80752 'VBNC Compile failed, process exited with exit code -1
 Bugs\bug-81016 'VBNC Compile failed, process exited with exit code -1
 CompileTime2\GenericMethod8 'VBNC Compile failed, process exited with exit code -1
-CompileTime2\GetEnumerator1 'Type Safety and Security Verification failed, process exited with exit code 1
-CompileTime2\MethodInvocation19 ''MethodInvocation19.Tester' has the attributes 'AutoLayout, AnsiClass, Class, Public', while 'MethodInvocation19.Tester' has the attributes 'NotPublic'
 CompileTime2\NullChar 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
 Errors\30064 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\30068 'VBNC Compile failed correctly, but didn't give the expected error code.
