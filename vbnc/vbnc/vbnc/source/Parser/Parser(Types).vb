@@ -39,7 +39,7 @@ Partial Class Parser
             'There is already a type with the same name
             result = partialClassOrStruct
             result.IsPartial = True
-            result.Modifiers.AddModifiers(m_Modifiers.Mask)
+            result.Modifiers = result.Modifiers.AddModifiers(m_Modifiers.Mask)
             result.PartialModifierFound = result.Modifiers.Is(ModifierMasks.Partial) OrElse m_Modifiers.Is(ModifierMasks.Partial)
         ElseIf partialType IsNot Nothing Then
             'There is another type with the same name
