@@ -1,0 +1,3 @@
+/target:library
+/imports:System.Collections.Generic,System.Collections,VB=Microsoft.VisualBasic
+ZCompilerCodeGenerator.vb

@@ -96,8 +96,6 @@ Errors\32046 'VBNC Compile failed spectacularly.
 Errors\32105 'VBNC Compile failed spectacularly. 
 Errors\32106 'VBNC Compile failed spectacularly. 
 External\PrivateScope1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
-Generated\Constants 'VBNC Compile failed, process exited with exit code -1
-Generated\ZCompilerCodeGenerator 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
 Mono\ArrayA 'VBNC Compile failed, process exited with exit code -1
 Mono\ArrayB 'VBNC Compile failed, process exited with exit code -1
 Mono\ArrayF 'VBNC Compile failed, process exited with exit code -1

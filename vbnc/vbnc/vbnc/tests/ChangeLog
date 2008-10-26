@@ -1,5 +1,10 @@
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Generated/ZCompilerCodeGenerator.rsp, KnownFailures.txt: Fix
+	  Generated\ZCompilerCodeGenerator.
+
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KnownFailures.txt: Minor fix to be able to find the method definition
 	  for a generic method. Fixes CompileTime2\GenericMethod8
 
