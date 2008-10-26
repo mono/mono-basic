@@ -128,15 +128,6 @@ Public Class Attribute
         Return result
     End Function
 
-    'ReadOnly Property AttributeInstance() As System.Attribute
-    '    Get
-    '        If m_Instance Is Nothing Then
-    '            m_Instance = CType(Activator.CreateInstance(m_ResolvedType, BindingFlags.CreateInstance, Nothing, m_Arguments, Nothing), System.Attribute)
-    '        End If
-    '        Return m_Instance
-    '    End Get
-    'End Property
-
     ReadOnly Property AttributeType() As Mono.Cecil.TypeReference
         Get
             ' If m_ResolvedType Is Nothing Then Throw New InternalException(Me)
@@ -280,7 +271,11 @@ Public Class Attribute
                 Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
 
                 If tp IsNot Nothing Then
-                    tp.CecilType.CustomAttributes.Add(cecilBuilder)
+                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_SerializableAttribute) Then
+                        tp.Serializable = True
+                    Else
+                        tp.CecilType.CustomAttributes.Add(cecilBuilder)
+                    End If
                 ElseIf mthd IsNot Nothing Then
                     If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
                         Dim values As IDictionary = cecilBuilder.Fields
@@ -365,7 +360,6 @@ Public Class Attribute
         Return True
     End Function
 
-#If ENABLECECIL Then
     Private Function GetAttributeBuilderCecil() As Mono.Cecil.CustomAttribute
         Dim result As Mono.Cecil.CustomAttribute
 
@@ -407,37 +401,4 @@ Public Class Attribute
 
         Return result
     End Function
-
-#End If
-
-    'Private Function GetAttributeBuilder() As CustomAttributeBuilder
-    '    Dim result As CustomAttributeBuilder
-
-    '    Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
-    '    Helper.Assert(m_Arguments IsNot Nothing)
-    '    Helper.Assert(Helper.GetParameters(Me, m_ResolvedTypeConstructor).Length = m_Arguments.Length)
-    '    Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
-    '    Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
-
-    '    m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(m_ResolvedTypeConstructor)
-    '    Helper.GetFieldOrFieldBuilder(m_Fields)
-    '    Helper.GetPropertyOrPropertyBuilder(m_Properties)
-
-    '    For i As Integer = 0 To m_Arguments.Length - 1
-    '        Dim type As Type
-    '        type = TryCast(m_Arguments(i), Type)
-    '        If type IsNot Nothing Then
-    '            m_Arguments(i) = Helper.GetTypeOrTypeBuilder(type)
-    '        End If
-    '    Next
-
-    '    Try
-    '        result = New CustomAttributeBuilder(m_ResolvedTypeConstructor, m_Arguments, m_Properties.ToArray, m_PropertyValues.ToArray, m_Fields.ToArray, m_FieldValues.ToArray)
-    '    Catch ex As Exception
-    '        Throw
-    '    End Try
-
-    '    Return result
-    'End Function
-
 End Class

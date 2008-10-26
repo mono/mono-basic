@@ -40,23 +40,13 @@ Public MustInherit Class TypeCacheBase
         Dim lines As String() = content.Split(New String() {VB.vbCr, VB.vbLf, VB.vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
 
         Dim cecil As New System.Text.StringBuilder
-        Dim sre As New System.Text.StringBuilder
         Dim all As New System.Text.StringBuilder
-
 
         all.AppendLine(VB.Join(content.Substring(0, content.IndexOf("''") - 1).Split(New String() {VB.vbCr, VB.vbLf, VB.vbCrLf}, StringSplitOptions.RemoveEmptyEntries), Environment.NewLine))
 
-        sre.AppendLine("Public Partial Class TypeCache")
-        sre.AppendLine(Generate(lines, False))
-        sre.AppendLine("End Class")
-
-        all.AppendLine(sre.ToString)
-
-        cecil.AppendLine("#If ENABLECECIL Then")
         cecil.AppendLine("Public Partial Class CecilTypeCache")
-        cecil.AppendLine(Generate(lines, True))
+        cecil.AppendLine(Generate(lines))
         cecil.AppendLine("End Class")
-        cecil.AppendLine("#End If")
 
         all.AppendLine(cecil.ToString)
         
@@ -73,7 +63,7 @@ Public MustInherit Class TypeCacheBase
         System.Diagnostics.Debug.WriteLine("Written TypeCache.vb, saved to TypeCache.vb.old")
     End Sub
 
-    Shared Function Generate(ByVal Lines As String(), ByVal Cecil As Boolean) As String
+    Shared Function Generate(ByVal Lines As String()) As String
         Dim variables As New System.Text.StringBuilder
         Dim getters As New System.Text.StringBuilder
         Dim vbtypes As New System.Text.StringBuilder
@@ -109,35 +99,35 @@ Public MustInherit Class TypeCacheBase
                     name = name.Replace("Microsoft.VisualBasic.CompilerServices.", "MS_VB_CS_")
                     name = name.Replace("Microsoft.VisualBasic.", "MS_VB_")
                     name = name.Replace("""", "").Replace(".", "_").Replace("`", "").Replace("+", "_")
-                    If Cecil Then type = "Mono.Cecil.TypeDefinition" Else type = "System.Type"
+                    type = "Mono.Cecil.TypeDefinition"
                     find = "GetVBType"
                     parameters = splitted(1)
                     isVB = True
                 Case "type"
                     name = splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "").Replace("+", "_")
-                    If Cecil Then type = "Mono.Cecil.TypeDefinition" Else type = "System.Type"
+                    type = "Mono.Cecil.TypeDefinition"
                     find = "[GetType]"
                     parameters = splitted(1) & ", " & splitted(2)
 
-                    If Cecil AndAlso splitted(2).IndexOf("+"c) > 0 Then
+                    If splitted(2).IndexOf("+"c) > 0 Then
                         Dim declaringtype As String = splitted(2).Substring(0, splitted(2).LastIndexOf("+"c)).Replace(".", "_").Replace("""", "")
                         Dim nestedtype As String = """" & splitted(2).Substring(splitted(2).LastIndexOf("+"c) + 1)
                         parameters = declaringtype & ", " & nestedtype
                     End If
-                    
+
                 Case "array"
                     name = splitted(1).Replace("""", "").Replace(".", "_").Replace("`", "") & "_Array"
-                    If Cecil Then type = "Mono.Cecil.TypeReference" Else type = "System.Type"
+                    type = "Mono.Cecil.TypeReference"
                     find = "GetArrayType"
                     parameters = splitted(1)
                 Case "byref"
                     name = splitted(1).Replace("""", "").Replace(".", "_").Replace("`", "") & "_ByRef"
-                    If Cecil Then type = "Mono.Cecil.TypeReference" Else type = "System.Type"
+                    type = "Mono.Cecil.TypeReference"
                     find = "GetByRefType"
                     parameters = splitted(1)
                 Case "method", "method2"
                     name = splitted(1) & "__" & splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "")
-                    If Cecil Then type = "Mono.Cecil.MethodDefinition" Else type = "System.Reflection.MethodInfo"
+                    type = "Mono.Cecil.MethodDefinition"
                     If splitted(0) <> "method" Then noparaminname = True
                     param = 3
                     find = "GetMethod"
@@ -145,20 +135,20 @@ Public MustInherit Class TypeCacheBase
                     isVBMember = splitted(1).StartsWith("MS_")
                 Case "property"
                     name = splitted(1) & "__" & splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "")
-                    If Cecil Then type = "Mono.Cecil.PropertyDefinition" Else type = "System.Reflection.PropertyInfo"
+                    type = "Mono.Cecil.PropertyDefinition"
                     param = 3
                     find = "GetProperty"
                     parameters = splitted(1) & ", " & splitted(2)
                     isVBMember = splitted(1).StartsWith("MS_")
                 Case "field"
                     name = splitted(1) & "__" & splitted(2).Replace("""", "").Replace(".", "_").Replace("`", "")
-                    If Cecil Then type = "Mono.Cecil.FieldDefinition" Else type = "System.Reflection.FieldInfo"
+                    type = "Mono.Cecil.FieldDefinition"
                     find = "GetField"
                     parameters = splitted(1) & ", " & splitted(2)
                     isVBMember = splitted(1).StartsWith("MS_")
                 Case "ctor"
                     name = splitted(1) & "__ctor"
-                    If Cecil Then type = "Mono.Cecil.MethodDefinition" Else type = "System.Reflection.ConstructorInfo"
+                    type = "Mono.Cecil.MethodDefinition"
                     param = 2
                     find = "GetConstructor"
                     parameters = splitted(1)
@@ -414,6 +404,25 @@ Public Class CecilTypeCache
 
 End Class
 
+'START SRE
+' 
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' 
+' This library is free software; you can redistribute it and/or
+' modify it under the terms of the GNU Lesser General Public
+' License as published by the Free Software Foundation; either
+' version 2.1 of the License, or (at your option) any later version.
+' 
+' This library is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+' Lesser General Public License for more details.
+' 
+' You should have received a copy of the GNU Lesser General Public
+' License along with this library; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+' 
 Public Partial Class CecilTypeCache
     Public System_Boolean As Mono.Cecil.TypeDefinition
     Public System_Boolean_Array As Mono.Cecil.TypeReference
@@ -461,6 +470,7 @@ Public Partial Class CecilTypeCache
     Public System_Exception As Mono.Cecil.TypeDefinition
     Public System_Array As Mono.Cecil.TypeDefinition
     Public System_DBNull As Mono.Cecil.TypeDefinition
+    Public System_SerializableAttribute As Mono.Cecil.TypeDefinition
     Public System_Array__SetValue As Mono.Cecil.MethodDefinition
     Public System_Array__GetValue As Mono.Cecil.MethodDefinition
     Public System_Array__CreateInstance As Mono.Cecil.MethodDefinition
@@ -722,6 +732,7 @@ Public Partial Class CecilTypeCache
         System_Exception = [GetType](mscorlib, "System.Exception")
         System_Array = [GetType](mscorlib, "System.Array")
         System_DBNull = [GetType](mscorlib, "System.DBNull")
+        System_SerializableAttribute = [GetType](mscorlib, "System.SerializableAttribute")
         System_Array__SetValue = GetMethod(System_Array, "SetValue", System_Object, System_Int32_Array)
         System_Array__GetValue = GetMethod(System_Array, "GetValue", System_Int32_Array)
         System_Array__CreateInstance = GetMethod(System_Array, "CreateInstance", System_Type, System_Int32_Array)
@@ -944,3 +955,6 @@ Public Partial Class CecilTypeCache
     End Sub
 
 End Class
+
+
+'END SRE

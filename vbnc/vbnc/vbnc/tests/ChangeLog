@@ -1,5 +1,9 @@
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* KnownFailures.txt: Attribute2 isn't failing anymore.
+
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KnownFailures.txt: Lots of test cases are passing now.
 
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com>

@@ -49,6 +49,7 @@ Public MustInherit Class TypeDeclaration
     Private m_DefaultSharedConstructor As ConstructorDeclaration
     Private m_StaticVariables As Generic.List(Of LocalVariableDeclaration)
     Private m_BeforeFieldInit As Boolean
+    Private m_Serializable As Boolean
 
     'Information collected during define phase.
     Private m_CecilType As Mono.Cecil.TypeDefinition
@@ -56,6 +57,16 @@ Public MustInherit Class TypeDeclaration
     Private m_FullName As String
 
     Private m_AddHandlers As New Generic.List(Of AddOrRemoveHandlerStatement)
+
+    Property Serializable() As Boolean
+        Get
+            Return m_Serializable
+        End Get
+        Set(ByVal value As Boolean)
+            If m_CecilType IsNot Nothing Then m_CecilType.IsSerializable = value
+            m_Serializable = value
+        End Set
+    End Property
 
     Public Overrides Sub Initialize(ByVal Parent As BaseObject)
         MyBase.Initialize(Parent)
@@ -380,7 +391,8 @@ Public MustInherit Class TypeDeclaration
         End Get
         Set(ByVal value As Mono.Cecil.TypeAttributes)
             m_CecilType.Attributes = value
-            If m_BeforeFieldInit Then m_CecilType.IsBeforeFieldInit = True
+            m_CecilType.IsBeforeFieldInit = m_BeforeFieldInit
+            m_CecilType.IsSerializable = m_Serializable
         End Set
     End Property
 
