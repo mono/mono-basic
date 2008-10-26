@@ -1,5 +1,11 @@
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/Emitter.vb, General/AssemblyInfo.vb, General/CecilHelper.vb:
+	  Minor fix to be able to find the method definition for a generic
+	  method. Fixes CompileTime2\GenericMethod8
+
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/MemberDeclaration.vb, Members/RegularEventDeclaration.vb,
 	  Parser/Parser(Types).vb, TypeDeclarations/ClassDeclaration.vb,
 	  TypeDeclarations/DelegateDeclaration.vb,

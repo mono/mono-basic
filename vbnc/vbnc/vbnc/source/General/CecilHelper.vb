@@ -1097,7 +1097,11 @@ Public Class CecilHelper
         Dim type As TypeDefinition
 
         type = FindDefinition(method.DeclaringType)
-        method = method.GetOriginalMethod
+        If method.OriginalMethod IsNot Nothing Then
+            method = method.OriginalMethod
+        Else
+            method = method.GetOriginalMethod
+        End If
         If Helper.CompareNameOrdinal(method.Name, MethodDefinition.Cctor) OrElse Helper.CompareNameOrdinal(method.Name, MethodDefinition.Ctor) Then
             Return GetMethod(type.Constructors, method)
         Else

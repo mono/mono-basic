@@ -822,6 +822,10 @@ Partial Public Class Emitter
         minfo = SwitchVersionedMethods(Info, Method)
         minfo = Helper.GetMethodOrMethodBuilder(Info.Compiler, minfo)
 
+        If minfo.OriginalMethod Is Nothing Then
+            minfo.OriginalMethod = Method.OriginalMethod
+        End If
+
         mD = CecilHelper.FindDefinition(minfo)
 
         minfo = CecilHelper.MakeEmittable(minfo)

@@ -1,5 +1,10 @@
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* KnownFailures.txt: Minor fix to be able to find the method definition
+	  for a generic method. Fixes CompileTime2\GenericMethod8
+
+2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KnownFailures.txt: MethodInvocation19 isn't failing anymore.
 
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
