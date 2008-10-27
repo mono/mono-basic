@@ -202,14 +202,14 @@ Public Class ArrayElementInitializer
 
         methodtypes(ranks) = elementType
 
-        If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
-            Throw New NotImplementedException
-            'ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
-            'elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
-            'result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Set", CallingConventions.HasThis Or CallingConventions.Standard, Nothing, methodtypes)
-        Else
-            result = CecilHelper.FindDefinition(ArrayType).Methods.GetMethod("Set", methodtypes)
-        End If
+        ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
+        elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
+        result = New Mono.Cecil.MethodReference("Set", ArrayType, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, Mono.Cecil.MethodCallingConvention.Default)
+
+        For i As Integer = 1 To ranks
+            result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int32)))
+        Next
+        result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Helper.GetTypeOrTypeReference(Compiler, elementType)))
 
         Return result
     End Function

@@ -416,6 +416,7 @@ Public Class VariableClassification
         m_InstanceExpression = InstanceExpression
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
         Helper.Assert((Helper.IsShared(variable) AndAlso m_InstanceExpression Is Nothing) OrElse (Helper.IsShared(variable) = False AndAlso m_InstanceExpression IsNot Nothing))
+        Helper.Assert(variable IsNot Nothing AndAlso variable.FieldType IsNot Nothing)
     End Sub
 
     ''' <summary>

@@ -1801,7 +1801,7 @@ Public Class Helper
         Dim defaultName As String = Nothing
 
         properties = New Generic.List(Of Mono.Cecil.PropertyReference)
-        members = Compiler.TypeManager.GetCache(tp).FlattenedCache.GetAllMembers()
+        members = Compiler.TypeManager.GetCache(tp).Cache.GetAllMembers()
 
         For i As Integer = 0 To members.Count - 1
             Dim p As Mono.Cecil.PropertyReference = TryCast(members(i), Mono.Cecil.PropertyReference)
@@ -1835,6 +1835,10 @@ Public Class Helper
 
             If Helper.CompareNameOrdinal(p.Name, defaultName) Then properties.Add(p)
         Next
+
+        If properties.Count = 0 Then
+            Return HasDefaultProperty(Context, CecilHelper.GetBaseType(tp), properties)
+        End If
 
         Return properties.Count > 0
     End Function

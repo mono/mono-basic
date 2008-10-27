@@ -178,6 +178,7 @@ Public Class ConstantDeclaration
                 Else
                     m_ConstantValue = TypeConverter.ConvertTo(Compiler, m_ConstantValue, m_TypeName.ResolvedType)
                 End If
+                UpdateDefinition()
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
                 Helper.AddError(Me, "Constant value is not constant!")
@@ -193,6 +194,10 @@ Public Class ConstantDeclaration
 
     Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
+
+        If m_TypeName Is Nothing AndAlso Location.File(Compiler).IsOptionStrictOn Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
+        End If
 
         If m_ConstantExpression Is Nothing Then
             Helper.AddError(Me, "No constant expression.")
@@ -247,7 +252,11 @@ Public Class ConstantDeclaration
         m_FieldBuilderCecil.Constant = m_ConstantValue
         m_FieldBuilderCecil.HasDefault = True
         m_FieldBuilderCecil.Name = Name
-        If m_TypeName IsNot Nothing Then m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)
+        If m_TypeName IsNot Nothing Then
+            m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)
+        Else
+            'Helper.StopIfDebugging()
+        End If
         m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
 
     End Sub

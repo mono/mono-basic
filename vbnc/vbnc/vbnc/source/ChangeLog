@@ -1,3 +1,9 @@
+2008-10-27  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Members/ArrayElementInitializer.vb, Members/ConstantDeclaration.vb,
+	  General/Helper.vb, General/CecilHelper.vb, General/AssemblyInfo.vb,
+	  Expressions/Classifications/VariableClassification.vb: Minor fixes.
+
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Parser/Parser(Types).vb: Really fix partial modifiers.

@@ -1047,6 +1047,23 @@ Public Class CecilHelper
         Return asm
     End Function
 
+    Public Shared Function GetBaseType(ByVal Type As TypeReference) As TypeReference
+        Dim result As Mono.Cecil.TypeReference
+        Dim tD As Mono.Cecil.TypeDefinition
+
+        tD = CecilHelper.FindDefinition(Type)
+
+        If tD Is Nothing Then Return Nothing
+
+        result = tD.BaseType
+
+        If result Is Nothing Then Return Nothing
+
+        result = CecilHelper.InflateType(result, Type)
+
+        Return result
+    End Function
+
     Public Shared Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
         If type Is Nothing Then Return Nothing
         Dim tD As TypeDefinition = TryCast(type, TypeDefinition)
