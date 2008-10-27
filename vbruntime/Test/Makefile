@@ -16,7 +16,7 @@ DISTFILES = \
 	Make.cmd
 
 DISTFILES += $(wildcard *.vb) $(wildcard *.cs) $(wildcard */*.vb) $(wildcard */*.cs)
-DISTFILES += $(wildcard bin/*)
+DISTFILES += $(wildcard bin/*config)
 
 MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
@@ -40,7 +40,16 @@ else
 WINTEST=-echo Linux environment.
 endif
 
-init:
+bin/nunit-console.exe:
+	wget -O bin/nunit-console.exe http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit-console.exe?revision=76123
+bin/nunit.framework.dll:
+	wget -O bin/nunit.framework.dll http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.framework.dll?revision=76123
+bin/nunit.core.dll:
+	wget -O bin/nunit.core.dll http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.core.dll?revision=76123
+bin/nunit.util.dll:
+	wget -O bin/nunit.util.dll http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.util.dll?revision=76123
+
+init: bin/nunit-console.exe bin/nunit.framework.dll bin/nunit.core.dll bin/nunit.util.dll
 	cp bin/nunit-console$(NUNIT_VERSION).exe.config bin/nunit-console.exe.config
 	$(WINTEST)
 

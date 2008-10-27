@@ -1,3 +1,8 @@
+2008-10-27  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Makefile: Don't include binary files in source tarball, 
+	  wget them from svn whenever needed.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Make.cmd: Minor fixes and more output.
