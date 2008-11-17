@@ -1,5 +1,11 @@
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Members/ExternalSubDeclaration.vb: Properly handle external method
+	  declarations which doesn't specify neither Ansi, Unicode nor Auto.
+	  Fixes #444811.
+
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Parser/Parser(Members2).vb: Parse Alias clauses properly. Fixes
 	  #444120.
 
