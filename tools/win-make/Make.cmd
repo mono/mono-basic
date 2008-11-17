@@ -18,7 +18,7 @@ rem
 
 :COMPILERFOUND
 
-	%COMPILERPATH% %BASEDIR%tools\win-make\win-make.vb -out:%BASEDIR%tools\win-make\win-make.exe -r:System.dll %DEFINE%
+	"%COMPILERPATH%" "%BASEDIR%tools\win-make\win-make.vb" "-out:%BASEDIR%tools\win-make\win-make.exe" -r:System.dll %DEFINE%
 
 	goto ENDFILE
 
