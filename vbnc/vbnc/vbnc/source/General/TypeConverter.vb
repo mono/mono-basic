@@ -623,7 +623,6 @@ Public Class TypeConverter
         End Select
     End Function
 
-#If GENERATOR = False OrElse DEVGENERATOR Then
     Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Mono.Cecil.TypeReference, ByVal op2 As Mono.Cecil.TypeReference) As TypeCode
         Dim result As TypeCode
 
@@ -671,7 +670,6 @@ Public Class TypeConverter
 
         Return result
     End Function
-#End If
 
     Shared Function GetBinaryOperandDefinedTypes(ByVal op As KS) As String
         Select Case op
@@ -807,7 +805,6 @@ Public Class TypeConverter
         End If
     End Function
 
-#If DEVGENERATOR OrElse GENERATOR = False Then
     ''' <summary>
     ''' Converts the source to the destination type. Compiletime conversions are the only ones that succeeds.
     ''' Returns nothing if no conversion possible.
@@ -816,9 +813,7 @@ Public Class TypeConverter
     ''' <param name="Destination"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function ConvertTo(ByVal Compiler As Compiler, ByVal Source As Object, ByVal Destination As Mono.Cecil.TypeReference) As Object
-        Dim result As Object
-
+    Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Type, ByRef result As Object) As Boolean
         If Destination Is Nothing Then Return Source
 
         Helper.Assert(Source IsNot Nothing)
@@ -829,820 +824,770 @@ Public Class TypeConverter
 
         'Console.WriteLine("ConvertTo: from " & stc.ToString() & " to " & dtc.ToString)
 
-        If dtc = stc Then Return Source
+        If dtc = stc Then
+            result = Source
+            Return True
+        End If
 
         Select Case dtc
             Case TypeCode.Boolean
-                result = ConvertToBoolean(Source, stc)
+                Return ConvertToBoolean(Context, Source, stc, result)
             Case TypeCode.Byte
-                result = ConvertToByte(Source, stc)
+                Return ConvertToByte(Context, Source, stc, result)
             Case TypeCode.Char
-                result = ConvertToChar(Source, stc)
+                Return ConvertToChar(Context, Source, stc, result)
             Case TypeCode.DateTime
-                result = ConvertToDateTime(Source, stc)
-            Case TypeCode.DBNull
-                result = ConvertToDBNull(Source, stc)
+                Return ConvertToDateTime(Context, Source, stc, result)
             Case TypeCode.Decimal
-                result = ConvertToDecimal(Source, stc)
+                Return ConvertToDecimal(Context, Source, stc, result)
             Case TypeCode.Double
-                result = ConvertToDouble(Source, stc)
-            Case TypeCode.Empty
-                result = ConvertToEmpty(Source, stc)
+                Return ConvertToDouble(Context, Source, stc, result)
             Case TypeCode.Int16
-                result = ConvertToInt16(Source, stc)
+                Return ConvertToInt16(Context, Source, stc, result)
             Case TypeCode.Int32
-                result = ConvertToInt32(Source, stc)
+                Return ConvertToInt32(Context, Source, stc, result)
             Case TypeCode.Int64
-                result = ConvertToInt64(Source, stc)
-            Case TypeCode.Object
-                result = ConvertToObject(Source, stc)
+                Return ConvertToInt64(Context, Source, stc, result)
             Case TypeCode.SByte
-                result = ConvertToSByte(Source, stc)
+                Return ConvertToSByte(Context, Source, stc, result)
             Case TypeCode.Single
-                result = ConvertToSingle(Source, stc)
+                Return ConvertToSingle(Context, Source, stc, result)
             Case TypeCode.String
-                result = ConvertToString(Source, stc)
+                Return ConvertToString(Context, Source, stc, result)
             Case TypeCode.UInt16
-                result = ConvertToUInt16(Source, stc)
+                Return ConvertToUInt16(Context, Source, stc, result)
             Case TypeCode.UInt32
-                result = ConvertToUInt32(Source, stc)
+                Return ConvertToUInt32(Context, Source, stc, result)
             Case TypeCode.UInt64
-                result = ConvertToUInt64(Source, stc)
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-
-        Return result
-    End Function
-#End If
-
-    Public Shared Function ConvertToBoolean(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Boolean
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
+                Return ConvertToUInt64(Context, Source, stc, result)
             Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
+                result = Source
+                Return True
             Case Else
-                Throw New NotImplementedException()
+                'This should never happen 
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, CObj(dtc).ToString())
         End Select
     End Function
 
-    Public Shared Function ConvertToByte(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Byte
+    Public Shared Function ConvertToBoolean(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
         Select Case SourceTypeCode
             Case TypeCode.Boolean
-                Throw New NotImplementedException
+                result = Source
+                Return True
             Case TypeCode.Byte
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Byte))
+                Return True
             Case TypeCode.Char
-                Throw New NotImplementedException
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Char", "Boolean")
             Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", "Boolean")
             Case TypeCode.Decimal
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Decimal))
+                Return True
             Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Double))
+                Return True
             Case TypeCode.Int16
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Short))
+                Return True
             Case TypeCode.Int32
-                Return CByte(DirectCast(Source, Integer))
+                result = CBool(DirectCast(Source, Integer))
+                Return True
             Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Long))
+                Return True
             Case TypeCode.SByte
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, SByte))
+                Return True
             Case TypeCode.Single
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, Single))
+                Return True
             Case TypeCode.String
-                Throw New NotImplementedException
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Byte", "String")
             Case TypeCode.UInt16
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, UShort))
+                Return True
             Case TypeCode.UInt32
-                Throw New NotImplementedException
+                result = CBool(DirectCast(Source, UInteger))
+                Return True
             Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
+                result = CBool(DirectCast(Source, ULong))
+                Return True
+            Case TypeCode.DBNull
+                result = CBool(Nothing)
+                Return True
         End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Boolean")
     End Function
 
-    Public Shared Function ConvertToChar(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Char
+    Public Shared Function ConvertToByte(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
         Select Case SourceTypeCode
             Case TypeCode.Boolean
-                Throw New NotImplementedException
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CByte(i)
+                Return True
             Case TypeCode.Byte
-                Throw New NotImplementedException
+                result = Source
+                Return True
             Case TypeCode.Char
-                Throw New NotImplementedException
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, "Byte")
             Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", "Byte")
             Case TypeCode.Decimal
-                Throw New NotImplementedException
+                Dim i As Decimal = DirectCast(Source, Decimal)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
+                Dim i As Double = DirectCast(Source, Double)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.Int16
-                Throw New NotImplementedException
+                Dim i As Short = DirectCast(Source, Short)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.Int32
-                Throw New NotImplementedException
+                Dim i As Integer = DirectCast(Source, Integer)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
+                Dim i As Long = DirectCast(Source, Long)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.SByte
-                Throw New NotImplementedException
+                Dim i As SByte = DirectCast(Source, SByte)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
             Case TypeCode.Single
-                Throw New NotImplementedException
+                Dim i As Single = DirectCast(Source, Single)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Byte", "String")
+            Case TypeCode.UInt16
+                Dim i As UShort = DirectCast(Source, UShort)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
+            Case TypeCode.UInt32
+                Dim i As UInteger = DirectCast(Source, UInteger)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
+            Case TypeCode.UInt64
+                Dim i As ULong = DirectCast(Source, ULong)
+                If i >= Byte.MinValue AndAlso i <= Byte.MaxValue Then
+                    result = CByte(i)
+                    Return True
+                End If
+            Case TypeCode.DBNull
+                result = CByte(0)
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Byte")
+    End Function
+
+    Public Shared Function ConvertToChar(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Boolean", "Char")
+            Case TypeCode.Byte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "Byte")
+            Case TypeCode.Char
+                result = Source
+                Return True
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "DateTime", "Char")
+            Case TypeCode.Decimal
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Decimal", "Char")
+            Case TypeCode.Double
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Double", "Char")
+            Case TypeCode.Int16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "Short")
+            Case TypeCode.Int32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "Integer")
+            Case TypeCode.Int64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "Long")
+            Case TypeCode.SByte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "SByte")
+            Case TypeCode.Single
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Single", "Char")
             Case TypeCode.String
                 Dim str As String = DirectCast(Source, String)
-                If str.Length = 1 Then Return str(0)
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToDateTime(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As DateTime
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToDBNull(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As DBNull
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToDecimal(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Object
-        Dim result As Decimal
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
-                result = CLng(Source)
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
-                result = CULng(Source)
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-        Return result
-    End Function
-
-    Public Shared Function ConvertToDouble(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Double
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Return CDbl(Source)
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToEmpty(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Object
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToInt16(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Int16
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Return CShort(DirectCast(Source, Integer))
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToInt32(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Int32
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Return 0
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToInt64(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Int64
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Return CLng(Source)
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Return CLng(Source)
-            Case TypeCode.Int32
-                Return CLng(Source)
-            Case TypeCode.Int64
-                Return CLng(Source)
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Return CLng(Source)
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Return CLng(Source)
-            Case TypeCode.UInt32
-                Return CLng(Source)
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToObject(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Object
-        Return Source
-    End Function
-
-    Public Shared Function ConvertToSByte(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As SByte
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToSingle(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Single
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Return DirectCast(Source, Byte)
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Return DirectCast(Source, Short)
-            Case TypeCode.Int32
-                Return DirectCast(Source, Integer)
-            Case TypeCode.Int64
-                Return DirectCast(Source, Long)
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Return DirectCast(Source, SByte)
-            Case TypeCode.Single
-                Return DirectCast(Source, Single)
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Return DirectCast(Source, UShort)
-            Case TypeCode.UInt32
-                Return DirectCast(Source, UInteger)
-            Case TypeCode.UInt64
-                Return DirectCast(Source, ULong)
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToString(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As String
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Return CStr(Source)
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Return Nothing 'Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToUInt16(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As UInt16
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToUInt32(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As UInt32
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                Throw New NotImplementedException
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Throw New NotImplementedException()
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.Int16
-                Throw New NotImplementedException
-            Case TypeCode.Int32
-                Throw New NotImplementedException
-            Case TypeCode.Int64
-                Throw New NotImplementedException
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.SByte
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Throw New NotImplementedException
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16
-                Throw New NotImplementedException
-            Case TypeCode.UInt32
-                Throw New NotImplementedException
-            Case TypeCode.UInt64
-                Throw New NotImplementedException
-            Case Else
-                Throw New NotImplementedException()
-        End Select
-    End Function
-
-    Public Shared Function ConvertToUInt64(ByVal Source As Object, ByVal SourceTypeCode As TypeCode) As Object
-        Dim result As ULong
-        Select Case SourceTypeCode
-            Case TypeCode.Boolean
-                Throw New NotImplementedException
-            Case TypeCode.Byte
-                result = CByte(Source)
-            Case TypeCode.Char
-                Throw New NotImplementedException
-            Case TypeCode.DateTime
-                Throw New NotImplementedException
-            Case TypeCode.DBNull
-                Throw New NotImplementedException
-            Case TypeCode.Decimal
-                Throw New NotImplementedException
-            Case TypeCode.Double
-                Return Nothing
-            Case TypeCode.Empty
-                Throw New NotImplementedException
-            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
-                Dim tmp As Long = CLng(Source)
-                If tmp >= 0 Then
-                    result = CULng(tmp)
+                If str.Length >= 1 Then
+                    result = str(0)
                 Else
-                    Return Nothing
+                    result = CChar(Nothing)
                 End If
-            Case TypeCode.Object
-                Throw New NotImplementedException
-            Case TypeCode.Single
-                Return Nothing
-            Case TypeCode.String
-                Throw New NotImplementedException
-            Case TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
-                Return CULng(Source)
-            Case Else
-                Throw New NotImplementedException()
+                Return True
+            Case TypeCode.UInt16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "UShort")
+            Case TypeCode.UInt32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "UInteger")
+            Case TypeCode.UInt64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32007, Context.Location, "ULong")
+            Case TypeCode.DBNull
+                result = VB.Chr(0)
+                Return True
         End Select
-        Return result
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Char")
+    End Function
+
+    Public Shared Function ConvertToDateTime(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Boolean", "Date")
+            Case TypeCode.Byte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Byte", "Date")
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Char", "Date")
+            Case TypeCode.DateTime
+                result = Source
+                Return True
+            Case TypeCode.Decimal
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Decimal", "Date")
+            Case TypeCode.Double
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30533, Context.Location)
+            Case TypeCode.Int16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Short", "Date")
+            Case TypeCode.Int32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Integer", "Date")
+            Case TypeCode.Int64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Long", "Date")
+            Case TypeCode.SByte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "SByte", "Date")
+            Case TypeCode.Single
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Single", "Date")
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "String", "Date")
+            Case TypeCode.UInt16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "UShort", "Date")
+            Case TypeCode.UInt32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "UInteger", "Date")
+            Case TypeCode.UInt64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "ULong", "Date")
+            Case TypeCode.DBNull
+                result = New Date()
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Date")
+    End Function
+
+    Public Shared Function ConvertToDecimal(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CDec(i)
+                Return True
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Char", "Decimal")
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", "Decimal")
+            Case TypeCode.Decimal
+                result = Source
+                Return True
+            Case TypeCode.Double
+                Dim i As Double = DirectCast(Source, Double)
+                If i >= Decimal.MinValue AndAlso i <= Decimal.MaxValue Then
+                    result = CDec(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                result = CDec(CLng(Source))
+                Return True
+            Case TypeCode.Single
+                Dim i As Single = DirectCast(Source, Single)
+                If i >= Decimal.MinValue AndAlso i <= Decimal.MaxValue Then
+                    result = CDec(i)
+                    Return True
+                End If
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "String", "Decimal")
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                result = CDec(CULng(Source))
+                Return True
+            Case TypeCode.DBNull
+                result = 0D
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Decimal")
+    End Function
+
+    Public Shared Function ConvertToDouble(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                result = CDbl(DirectCast(Source, Boolean))
+                Return True
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Char", "Double")
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30532, Context.Location)
+            Case TypeCode.Decimal
+                result = CDbl(DirectCast(Source, Decimal))
+                Return True
+            Case TypeCode.Double
+                result = Source
+                Return True
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                result = CDbl(CLng(Source))
+                Return True
+            Case TypeCode.Single
+                result = CDbl(DirectCast(Source, Single))
+                Return True
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "String", "Double")
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                result = CDbl(CULng(Source))
+                Return True
+            Case TypeCode.DBNull
+                result = 0.0R
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Double")
+    End Function
+
+    Public Shared Function ConvertToInt16(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "Short"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CShort(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= Short.MinValue AndAlso i <= Short.MaxValue Then
+                    result = CShort(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= Short.MinValue AndAlso i <= Short.MaxValue Then
+                    result = CShort(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= Short.MinValue AndAlso i <= Short.MaxValue Then
+                    result = CShort(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= Short.MinValue AndAlso i <= Short.MaxValue Then
+                    result = CShort(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0S
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
+    End Function
+
+    Public Shared Function ConvertToInt32(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "Integer"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CInt(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= Integer.MinValue AndAlso i <= Integer.MaxValue Then
+                    result = CInt(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= Integer.MinValue AndAlso i <= Integer.MaxValue Then
+                    result = CInt(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= Integer.MinValue AndAlso i <= Integer.MaxValue Then
+                    result = CInt(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= Integer.MinValue AndAlso i <= Integer.MaxValue Then
+                    result = CInt(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0I
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
+    End Function
+
+    Public Shared Function ConvertToInt64(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "Long"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CLng(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= Long.MinValue AndAlso i <= Long.MaxValue Then
+                    result = CLng(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= Long.MinValue AndAlso i <= Long.MaxValue Then
+                    result = CLng(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= Long.MinValue AndAlso i <= Long.MaxValue Then
+                    result = CLng(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= Long.MinValue AndAlso i <= Long.MaxValue Then
+                    result = CLng(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0L
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
+    End Function
+
+    Public Shared Function ConvertToSByte(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CSByte(i)
+                Return True
+            Case TypeCode.Byte
+                Dim i As Byte = DirectCast(Source, Byte)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, "SByte")
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", "SByte")
+            Case TypeCode.Decimal
+                Dim i As Decimal = DirectCast(Source, Decimal)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.Double
+                Dim i As Double = DirectCast(Source, Double)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.Int16
+                Dim i As Short = DirectCast(Source, Short)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.Int32
+                Dim i As Integer = DirectCast(Source, Integer)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.Int64
+                Dim i As Long = DirectCast(Source, Long)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.SByte
+                result = Source
+                Return True
+            Case TypeCode.Single
+                Dim i As Single = DirectCast(Source, Single)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "SByte", "String")
+            Case TypeCode.UInt16
+                Dim i As UShort = DirectCast(Source, UShort)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.UInt32
+                Dim i As UInteger = DirectCast(Source, UInteger)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.UInt64
+                Dim i As ULong = DirectCast(Source, ULong)
+                If i >= SByte.MinValue AndAlso i <= SByte.MaxValue Then
+                    result = CSByte(i)
+                    Return True
+                End If
+            Case TypeCode.DBNull
+                result = CSByte(0)
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "SByte")
+    End Function
+
+    Public Shared Function ConvertToSingle(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                result = CSng(DirectCast(Source, Boolean))
+                Return True
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Char", "Single")
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", "Single")
+            Case TypeCode.Decimal
+                result = CSng(DirectCast(Source, Decimal))
+                Return True
+            Case TypeCode.Double
+                Dim i As Double = DirectCast(Source, Double)
+                If i >= Single.MinValue AndAlso i <= Single.MaxValue Then
+                    result = CSng(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                result = CSng(CLng(Source))
+                Return True
+            Case TypeCode.Single
+                result = Source
+                Return True
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "String", "Single")
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                result = CSng(CULng(Source))
+                Return True
+            Case TypeCode.DBNull
+                result = 0.0!
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "Single")
+    End Function
+
+    Public Shared Function ConvertToString(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Boolean", "String")
+            Case TypeCode.Byte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Byte", "String")
+            Case TypeCode.Char
+                result = CStr(DirectCast(Source, Char))
+                Return True
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Date", "String")
+            Case TypeCode.Decimal
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Decimal", "String")
+            Case TypeCode.Double
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Double", "String")
+            Case TypeCode.Int16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Short", "String")
+            Case TypeCode.Int32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Integer", "String")
+            Case TypeCode.Int64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Long", "String")
+            Case TypeCode.SByte
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "SByte", "String")
+            Case TypeCode.Single
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "Single", "String")
+            Case TypeCode.String
+                result = Source
+                Return True
+            Case TypeCode.UInt16
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "UShort", "String")
+            Case TypeCode.UInt32
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "UInteger", "String")
+            Case TypeCode.UInt64
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, "ULong", "String")
+            Case TypeCode.DBNull
+                result = Nothing
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, "String")
+    End Function
+
+    Public Shared Function ConvertToUInt16(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "UShort"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CUShort(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= UShort.MinValue AndAlso i <= UShort.MaxValue Then
+                    result = CUShort(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= UShort.MinValue AndAlso i <= UShort.MaxValue Then
+                    result = CUShort(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= UShort.MinValue AndAlso i <= UShort.MaxValue Then
+                    result = CUShort(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= UShort.MinValue AndAlso i <= UShort.MaxValue Then
+                    result = CUShort(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0US
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
+    End Function
+
+    Public Shared Function ConvertToUInt32(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "UInteger"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CUInt(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= UInteger.MinValue AndAlso i <= UInteger.MaxValue Then
+                    result = CUInt(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= UInteger.MinValue AndAlso i <= UInteger.MaxValue Then
+                    result = CUInt(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= UInteger.MinValue AndAlso i <= UInteger.MaxValue Then
+                    result = CUInt(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= UInteger.MinValue AndAlso i <= UInteger.MaxValue Then
+                    result = CUInt(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0UI
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
+    End Function
+
+    Public Shared Function ConvertToUInt64(ByVal Context As ParsedObject, ByVal Source As Object, ByVal SourceTypeCode As TypeCode, ByRef result As Object) As Boolean
+        Const DEST As String = "ULong"
+
+        Select Case SourceTypeCode
+            Case TypeCode.Boolean
+                Dim i As Boolean = DirectCast(Source, Boolean)
+                result = CULng(i)
+                Return True
+            Case TypeCode.Decimal
+                Dim i As Decimal = CDec(Source)
+                If i >= ULong.MinValue AndAlso i <= ULong.MaxValue Then
+                    result = CULng(i)
+                    Return True
+                End If
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
+                Dim i As Long = CLng(Source)
+                If i >= ULong.MinValue AndAlso i <= ULong.MaxValue Then
+                    result = CULng(i)
+                    Return True
+                End If
+            Case TypeCode.Double, TypeCode.Single
+                Dim i As Double = CDbl(Source)
+                If i >= ULong.MinValue AndAlso i <= ULong.MaxValue Then
+                    result = CULng(i)
+                    Return True
+                End If
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Dim i As ULong = CULng(Source)
+                If i >= ULong.MinValue AndAlso i <= ULong.MaxValue Then
+                    result = CULng(i)
+                    Return True
+                End If
+            Case TypeCode.Char
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC32006, Context.Location, DEST)
+            Case TypeCode.DateTime
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30311, Context.Location, "Date", DEST)
+            Case TypeCode.String
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC30060, Context.Location, DEST, "String")
+            Case TypeCode.DBNull
+                result = 0UL
+                Return True
+        End Select
+        Return Context.Compiler.Report.ShowMessage(Messages.VBNC30439, Context.Location, DEST)
     End Function
 
 End Class
-
-
-
-#If GENERATOR And DEVGENERATOR = False Then
-''' <summary>
-''' All the keywords.
-''' </summary>
-''' <remarks></remarks>
-Public Enum KS
-    [AndAlso]
-    [And]
-    [Is]
-    [IsNot]
-    [Like]
-    [Mod]
-    [Not]
-    [Or]
-    [OrElse]
-    [Xor]
-    LT
-    GT
-    Equals
-    NotEqual
-    LE
-    GE
-    Concat
-    Mult
-    Add
-    Minus
-    Power
-    RealDivision
-    IntDivision
-    ShiftRight
-    ShiftLeft
-    ConcatAssign '		L"&="
-    AddAssign 'L"+="
-    MinusAssign 'L"-="
-    RealDivAssign 'L"/="
-    IntDivAssign 'L"\="
-    PowerAssign 'L"^="
-    MultAssign 'L"*="
-    ShiftLeftAssign '<<=
-    ShiftRightAssign '>>=
-End Enum
-#End If

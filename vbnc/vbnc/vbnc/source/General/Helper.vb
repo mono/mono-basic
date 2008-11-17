@@ -1836,7 +1836,7 @@ Public Class Helper
             If Helper.CompareNameOrdinal(p.Name, defaultName) Then properties.Add(p)
         Next
 
-        If properties.Count = 0 Then
+        If properties.Count = 0 AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, tp) = False Then
             Return HasDefaultProperty(Context, CecilHelper.GetBaseType(tp), properties)
         End If
 
@@ -3340,6 +3340,12 @@ Public Class Helper
             'fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
             fromExpr = New CTypeExpression(Parent, fromExpr, DestinationType)
             result = fromExpr.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
+        ElseIf fromExpr.Compiler.TypeResolution.IsImplicitlyConvertible(fromExpr, fromExpr.ExpressionType, DestinationType) AndAlso DestinationType.IsValueType AndAlso fromExpr.ExpressionType.IsValueType Then
+            Dim CTypeExp As Expression
+
+            CTypeExp = ConversionExpression.GetTypeConversion(Parent, fromExpr, DestinationType)
+            result = CTypeExp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
+            fromExpr = CTypeExp
         End If
 
 #If EXTENDEDDEBUG Then

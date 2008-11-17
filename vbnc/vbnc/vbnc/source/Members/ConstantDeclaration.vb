@@ -36,6 +36,13 @@ Public Class ConstantDeclaration
 
     Private m_Resolved As Boolean
     Private m_ConstantValue As Object
+    Private m_RequiresSharedInitialization As Boolean
+
+    ReadOnly Property RequiresSharedInitialization() As Boolean
+        Get
+            Return m_RequiresSharedInitialization
+        End Get
+    End Property
 
     ReadOnly Property Resolved() As Boolean
         Get
@@ -97,6 +104,15 @@ Public Class ConstantDeclaration
         If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
 
         UpdateDefinition()
+
+        If result AndAlso m_TypeName IsNot Nothing Then
+            Helper.Assert(m_TypeName IsNot Nothing)
+            If Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_Decimal) Then
+                m_RequiresSharedInitialization = True
+            ElseIf Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_DateTime) Then
+                m_RequiresSharedInitialization = True
+            End If
+        End If
 
         Return result
     End Function
@@ -176,13 +192,12 @@ Public Class ConstantDeclaration
                 If m_TypeName Is Nothing Then
                     m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
                 Else
-                    m_ConstantValue = TypeConverter.ConvertTo(Compiler, m_ConstantValue, m_TypeName.ResolvedType)
+                    result = TypeConverter.ConvertTo(m_ConstantExpression, m_ConstantValue, m_TypeName.ResolvedType, m_ConstantValue) AndAlso result
                 End If
                 UpdateDefinition()
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
-                Helper.AddError(Me, "Constant value is not constant!")
-                result = False
+                result = Compiler.Report.ShowMessage(Messages.VBNC30059, m_ConstantExpression.Location)
             End If
             m_Resolved = True
         End If
@@ -219,11 +234,16 @@ Public Class ConstantDeclaration
         If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
             'm_FieldBuilder.SetConstant(Nothing)
         ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
-            result = Compiler.Report.ShowMessage(Messages.VBNC99997) AndAlso result
+            'result = Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location) AndAlso result
             'Helper.NotImplementedYet("Emit value of a decimal constant")
+<<<<<<< .working
         ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
-            'Helper.NotImplementedYet("Emit value of a date constant")
-            result = Compiler.Report.ShowMessage(Messages.VBNC99997) AndAlso result
+=======
+            Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
+            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32, New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()))
+        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_DateTime) Then
+>>>>>>> .merge-right.r119055
+            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64, New Object() {DirectCast(m_ConstantValue, Date).Ticks}))
         Else
             'If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
             '    m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)

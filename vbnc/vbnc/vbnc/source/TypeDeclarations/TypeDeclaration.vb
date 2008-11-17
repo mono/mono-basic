@@ -461,6 +461,9 @@ Public MustInherit Class TypeDeclaration
             For Each item As VariableDeclaration In m_StaticVariables
                 If item.DeclaringMethod.IsShared AndAlso item.HasInitializer Then Return True
             Next
+            For Each item As ConstantDeclaration In Members.GetSpecificMembers(Of ConstantDeclaration)()
+                If item.RequiresSharedInitialization Then Return True
+            Next
             Return False
         End Get
     End Property

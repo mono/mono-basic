@@ -244,7 +244,15 @@ Public Class Parameter
                 Helper.AddError(Me, "Optional expressions must be constant.")
                 result = False
             Else
+	'' <<<<<<< .working
                 ConstantValue = m_ConstantExpression.ConstantValue
+	'' =======
+                m_ConstantValue = m_ConstantExpression.ConstantValue
+                result = TypeConverter.ConvertTo(Me, m_ConstantValue, m_ParameterType, m_ConstantValue) AndAlso result
+                If m_ConstantValue Is DBNull.Value Then
+                    m_ConstantValue = Nothing
+                End If
+ 	'' >>>>>>>
             End If
         Else
             If m_ConstantExpression IsNot Nothing Then

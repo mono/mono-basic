@@ -107,6 +107,7 @@ type mscorlib "System.STAThreadAttribute"
 ctor System_STAThreadAttribute
 type mscorlib "System.IntPtr"
 type mscorlib "System.Runtime.CompilerServices.DateTimeConstantAttribute"
+ctor System_Runtime_CompilerServices_DateTimeConstantAttribute System_Int64
 ctor System_DateTime System_Int64 
 ctor System_Decimal System_Int32 
 ctor System_Decimal System_Int64 
