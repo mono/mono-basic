@@ -35,3 +35,4 @@ Microsoft.VisualBasic\GlobalsTests.vb
 Microsoft.VisualBasic\Helper.vb
 Microsoft.VisualBasic\InformationTests.vb
 Microsoft.VisualBasic\InteractionTests.vb
+Microsoft.VisualBasic\StringsTest.vb

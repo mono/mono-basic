@@ -1,3 +1,12 @@
+2008-11-15  Kornél Pál  <kornelpal@gmail.com>
+
+	* Strings.vb: Asc, AscW: Changed argument name to String.
+	  Asc(String), AscW(String): Implemented more efficient argument check.
+	  Asc: Added ASCII fast path, support for double byte character sets and
+	  now uses Encoding.Default.
+	  Chr: Added ASCII fast path and support for double byte character sets.
+	  ChrW: Implemented more efficient conversion.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileData.vb: Lots of fixes.

@@ -32,6 +32,7 @@
 Imports System
 Imports System.Collections
 Imports System.Text
+Imports System.Threading
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CompilerServices
@@ -76,75 +77,113 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Function Asc(ByVal c As Char) As Integer
-            Dim enc As System.Text.Encoding
-            enc = System.Text.Encoding.GetEncoding(Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage)
-
-            Dim bytes() As Byte
-            bytes = enc.GetBytes(New Char() {c})
-            Return bytes(0)
-        End Function
-
-        Public Function AscW(ByVal c As Char) As Integer
-            ' Compiled as if it were "Return CInt(c)" when /novbruntimeref is used;
-            ' No AscW or other method is called.
-            Return AscW(c)
-        End Function
-
-        Public Function Asc(ByVal s As String) As Integer
-            If (s Is Nothing) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            If (s.Length.Equals(0)) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            Return Asc(s.Chars(0))
-        End Function
-
-        Public Function AscW(ByVal s As String) As Integer
-            If (s Is Nothing) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            If (s.Length.Equals(0)) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            Return AscW(s.Chars(0))
-        End Function
-
-        'MONOTODO: Chr should use the Encoding class in the System.Text. see the Chr documentation.
-        Public Function Chr(ByVal CharCode As Integer) As Char
-
-            'FIXME: The docs state that CharCode can be: (CharCode >= -32768) OR (CharCode <= 65535)
-            ' but .NET throws ArgumentException for: (CharCode < 0) AND (CharCode > 255)
-            If ((CharCode < 0) Or (CharCode > 255)) Then
-                Throw New System.ArgumentException("Procedure call or argument is not valid.")
-            End If
-
-            If ((CharCode < -32768) Or (CharCode > 65535)) Then
-                Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
-            End If
-
-            Return System.Convert.ToChar(CharCode)
-
-        End Function
-        Public Function ChrW(ByVal CharCode As Integer) As Char
-#If TRACE Then
-            Console.WriteLine("ChrW (Integer): " & CharCode.ToString)
+        Public Function Asc(ByVal [String] As Char) As Integer
+#If NET_VER >= 2.0 Then
+            ' Convert.ToUInt16 with ldarg.0 and ret is a good candidate for
+            ' inlining and unsigned comparison will be performed later.
+            Dim charCode As UShort = Convert.ToUInt16([String])
+#Else
+            Dim charCode As Integer = AscW([String])
 #End If
-            If ((CharCode < -32768) Or (CharCode > 65535)) Then
-                Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
+
+            ' Fast path for ASCII that also makes Asc incompatible with
+            ' non-ASCII-compatible encodings.
+            If charCode <= CByte(127) Then
+                Return charCode
             End If
 
-            ' -32768 through -1 is the same as +32768 through +65535
-            If (CharCode >= -32768) And (CharCode <= -1) Then
-                CharCode = CharCode + 65536
+            Dim enc As Encoding = Encoding.Default
+            Dim chars As Char() = New Char() {[String]}
+            Dim bytes As Byte() = New Byte(1) {}
+
+            ' ArgumentException is thrown when more than two bytes are required.
+            If enc.GetBytes(chars, 0, 1, bytes, 0) = 1 Then
+                Return bytes(0)
             End If
 
-            Return System.Convert.ToChar(CharCode)
+            ' Zero is returned when no characters were encoded.
+            Return (CInt(bytes(0)) << 8) Or bytes(1)
+        End Function
+
+        Public Function AscW(ByVal [String] As Char) As Integer
+            ' Compiled as if it were "Return CInt([String])" when /novbruntimeref is used;
+            ' No AscW or other method is called.
+            Return AscW([String])
+        End Function
+
+        Public Function Asc(ByVal [String] As String) As Integer
+            If [String] Is Nothing OrElse [String].Length = 0 Then
+                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
+            End If
+
+            Return Asc([String].Chars(0))
+        End Function
+
+        Public Function AscW(ByVal [String] As String) As Integer
+            If [String] Is Nothing OrElse [String].Length = 0 Then
+                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
+            End If
+
+            Return AscW([String].Chars(0))
+        End Function
+
+        Public Function Chr(ByVal CharCode As Integer) As Char
+            ' Fast path for ASCII that also makes Chr incompatible with
+            ' non-ASCII-compatible encodings.
+            If CharCode >= 0 AndAlso CharCode <= 127 Then
+                ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
+#If NET_VER >= 2.0 Then
+                Return Convert.ToChar(CUShort(CharCode))
+#Else
+                Return Convert.ToChar(CByte(CharCode))
+#End If
+            End If
+
+            If CharCode < -32768 OrElse CharCode > 65535 Then
+                Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
+            End If
+
+            ' Unlike Asc, Chr is using ANSICodePage that makes them incompatible.
+            Dim enc As Encoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage)
+            Dim bytes As Byte()
+            Dim byteCount As Integer
+
+            If CharCode >= 0 AndAlso CharCode <= 255 Then
+                bytes = New Byte() {CByte(CharCode)}
+                byteCount = 1
+            Else
+                If enc.IsSingleByte Then
+                    Throw New ArgumentException("Procedure call or argument is not valid.")
+                End If
+
+                ' Two bytes are allowed for multi-byte encodings even when
+                ' the first byte represents a character by itself.
+                bytes = New Byte() {CByte((CharCode And &HFF00) >> 8), CByte(CharCode And &HFF)}
+                byteCount = 2
+            End If
+
+            Dim chars As Char() = New Char(1) {}
+
+            ' No execption is thrown by Decoders on left over bytes.
+            ' ArgumentException is thrown when more than two characters are required.
+            enc.GetDecoder().GetChars(bytes, 0, byteCount, chars, 0)
+
+            ' The second character (if present) is ignored.
+            ' Zero is returned when no characters were decoded.
+            Return chars(0)
+        End Function
+
+        Public Function ChrW(ByVal CharCode As Integer) As Char
+            If ((CharCode < -32768) OrElse (CharCode > 65535)) Then
+                Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
+            End If
+
+#If NET_VER >= 2.0 Then
+            ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
+            Return Convert.ToChar(CUShort(CharCode And &HFFFF))
+#Else
+            Return Convert.ToChar(CharCode And &HFFFF)
+#End If
         End Function
 
         Public Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
