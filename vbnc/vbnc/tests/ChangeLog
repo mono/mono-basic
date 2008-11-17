@@ -1,5 +1,36 @@
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Errors/30059.vb, Errors/30060.vb, Errors/30060-1.vb,
+	  Errors/30060-10.vb, Errors/30060-12.vb, Errors/30060-11.vb,
+	  Errors/30060-13.vb, Errors/30060-14.vb, Errors/30060-16.vb,
+	  Errors/30060-15.vb, Errors/30060-17.vb, Errors/30060-18.vb,
+	  Errors/30060-2.vb, Errors/30060-19.vb, Errors/30060-20.vb,
+	  Errors/30060-21.vb, Errors/30060-22.vb, Errors/30060-23.vb,
+	  Errors/30060-24.vb, Errors/30060-25.vb, Errors/30060-3.vb,
+	  Errors/30060-4.vb, Errors/30060-5.vb, Errors/30060-6.vb,
+	  Errors/30060-7.vb, Errors/30060-8.vb, Errors/30311-1.vb,
+	  Errors/30060-9.vb, Errors/30311-10.vb, Errors/30311-11.vb,
+	  Errors/30311-12.vb, Errors/30311-13.vb, Errors/30311-14.vb,
+	  Errors/30311-15.vb, Errors/30311-16.vb, Errors/30311-17.vb,
+	  Errors/30311-18.vb, Errors/30311-19.vb, Errors/30311-2.vb,
+	  Errors/30311-20.vb, Errors/30311-22.vb, Errors/30311-21.vb,
+	  Errors/30311-23.vb, Errors/30311-24.vb, Errors/30311-25.vb,
+	  Errors/30311-26.vb, Errors/30311-27.vb, Errors/30311-28.vb,
+	  Errors/30311-29.vb, Errors/30311-3.vb, Errors/30311-30.vb,
+	  Errors/30311-31.vb, Errors/30311-33.vb, Errors/30311-34.vb,
+	  Errors/30311-32.vb, Errors/30311-35.vb, Errors/30311-4.vb,
+	  Errors/30311-5.vb, Errors/30311-6.vb, Errors/30311-7.vb,
+	  Errors/30311-8.vb, Errors/30311-9.vb, Errors/30439.response,
+	  Errors/30439.vb, Errors/30439-1.vb, Errors/30532.vb,
+	  Errors/30533.vb, Errors/32006.vb, Errors/32006-1.vb,
+	  Errors/32006-2.vb, Errors/32006-3.vb, Errors/32006-4.vb,
+	  Errors/32006-5.vb, Errors/32006-6.vb, Errors/32006-7.vb,
+	  Errors/32007.vb, Errors/32007-1.vb, Errors/32007-2.vb,
+	  Errors/32007-3.vb, Errors/32007-4.vb, Errors/32007-5.vb,
+	  Errors/32007-6.vb: Implement constant conversion. Fixes #444828.
+
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Bugs/bug-444811.vb: Properly handle external method declarations
 	  which doesn't specify neither Ansi, Unicode nor Auto. Fixes
 	  #444811.

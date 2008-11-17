@@ -653,6 +653,7 @@ Public Partial Class TypeCache
     Public System_STAThreadAttribute__ctor As System.Reflection.ConstructorInfo
     Public System_IntPtr As System.Type
     Public System_Runtime_CompilerServices_DateTimeConstantAttribute As System.Type
+    Public System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64 As System.Reflection.ConstructorInfo
     Public System_DateTime__ctor_Int64 As System.Reflection.ConstructorInfo
     Public System_Decimal__ctor_Int32 As System.Reflection.ConstructorInfo
     Public System_Decimal__ctor_Int64 As System.Reflection.ConstructorInfo
@@ -914,6 +915,7 @@ Public Partial Class TypeCache
         System_STAThreadAttribute__ctor = GetConstructor(System_STAThreadAttribute)
         System_IntPtr = [GetType](mscorlib, "System.IntPtr")
         System_Runtime_CompilerServices_DateTimeConstantAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.DateTimeConstantAttribute")
+        System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64 = GetConstructor(System_Runtime_CompilerServices_DateTimeConstantAttribute, System_Int64)
         System_DateTime__ctor_Int64 = GetConstructor(System_DateTime, System_Int64)
         System_Decimal__ctor_Int32 = GetConstructor(System_Decimal, System_Int32)
         System_Decimal__ctor_Int64 = GetConstructor(System_Decimal, System_Int64)

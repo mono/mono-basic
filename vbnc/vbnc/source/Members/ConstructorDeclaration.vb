@@ -289,6 +289,10 @@ Public Class ConstructorDeclaration
             Next
         End If
 
+        If Me.IsShared Then
+            result = EmitConstantInitialization(Info) AndAlso result
+        End If
+
 #If DEBUG Then
         Info.ILGen.Emit(OpCodes.Nop)
 #End If
@@ -319,6 +323,26 @@ Public Class ConstructorDeclaration
                 Emitter.EmitStoreField(Info, variable.StaticInitBuilder)
             End If
         Next
+
+        Return result
+    End Function
+
+    Private Function EmitConstantInitialization(ByVal Info As EmitInfo) As Boolean
+        Dim result As Boolean = True
+        Dim parent As TypeDeclaration
+
+        Parent = Me.DeclaringType
+
+        For Each variable As ConstantDeclaration In Parent.Members.GetSpecificMembers(Of ConstantDeclaration)()
+            If Helper.CompareType(variable.FieldType, Compiler.TypeCache.System_DateTime) Then
+                Emitter.EmitLoadDateValue(Info, DirectCast(variable.ConstantValue, Date))
+                Emitter.EmitStoreField(Info, variable.FieldBuilder)
+            ElseIf Helper.CompareType(variable.FieldType, Compiler.TypeCache.System_Decimal) Then
+                Emitter.EmitLoadDecimalValue(Info, DirectCast(variable.ConstantValue, Decimal))
+                Emitter.EmitStoreField(Info, variable.FieldBuilder)
+            End If
+        Next
+
         Return result
     End Function
 

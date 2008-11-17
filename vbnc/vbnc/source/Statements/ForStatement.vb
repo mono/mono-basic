@@ -388,7 +388,12 @@ Public Class ForStatement
                 endCheck = Emitter.DefineLabel(Info)
 
                 Emitter.EmitLoadVariable(Info, loopStep)
-                Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), TypeConverter.ConvertTo(0, m_LoopType))
+                Dim tmp As Object = Nothing
+                If TypeConverter.ConvertTo(Me, 0, m_LoopType, tmp) Then
+                    Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), tmp)
+                Else
+                    Throw New InternalException
+                End If
                 Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
                 Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
                 Info.Stack.Pop(Compiler.TypeCache.System_Boolean)

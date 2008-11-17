@@ -237,7 +237,7 @@ Public Class Parameter
                 result = False
             Else
                 m_ConstantValue = m_ConstantExpression.ConstantValue
-                m_ConstantValue = TypeConverter.ConvertTo(m_ConstantValue, m_ParameterType)
+                result = TypeConverter.ConvertTo(Me, m_ConstantValue, m_ParameterType, m_ConstantValue) AndAlso result
                 If m_ConstantValue Is DBNull.Value Then
                     m_ConstantValue = Nothing
                 End If
