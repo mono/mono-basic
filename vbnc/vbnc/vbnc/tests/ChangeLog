@@ -1,5 +1,10 @@
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Bugs/bug-444993.vb: Don't show an error for 'Exit Sub' in a
+	  constructor. Fixes #444993. (Backport of r118993).
+
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Bugs/bug-445479.vb: Emit unsigned comparison when comparing unsigned
 	  int values. Fixes #445479. (Backport of r118990).
 

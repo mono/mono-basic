@@ -1,5 +1,10 @@
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Statements/ExitStatement.vb: Don't show an error for 'Exit Sub' in a
+	  constructor. Fixes #444993. (Backport of r118993).
+
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/BinaryExpressions/LTExpression.vb,
 	  Expressions/BinaryExpressions/LEExpression.vb,
 	  Expressions/BinaryExpressions/GTExpression.vb,
