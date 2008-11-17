@@ -1,5 +1,10 @@
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Parser/Parser(Members2).vb: Parse Alias clauses properly. Fixes
+	  #444120.
+
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Statements/ExitStatement.vb: Don't show an error for 'Exit Sub' in a
 	  constructor. Fixes #444993.
 

@@ -577,7 +577,7 @@ Partial Class Parser
         Dim result As New ExternalFunctionDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers = Nothing
-        Dim m_CharsetModifier As KS
+        Dim m_CharsetModifier As KS = KS.None
         Dim m_Identifier As Identifier
         Dim m_LibraryClause As LibraryClause = Nothing
         Dim m_AliasClause As AliasClause = Nothing
@@ -644,6 +644,7 @@ Partial Class Parser
 
         If tm.CurrentToken.IsStringLiteral Then
             m_StringLiteral = tm.CurrentToken
+            tm.NextToken()
         Else
             Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
         End If
