@@ -247,6 +247,16 @@ Partial Public Class Emitter
         Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 
+    Shared Sub EmitGE_Un(ByVal Info As EmitInfo, ByVal CompareType As Type)
+        CompareType = Helper.GetTypeOrTypeBuilder(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.ILGen.Emit(OpCodes.Clt_Un)
+        Info.ILGen.Emit(OpCodes.Ldc_I4_0)
+        Info.ILGen.Emit(OpCodes.Ceq)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
+    End Sub
+
     Shared Sub EmitGT(ByVal Info As EmitInfo, ByVal CompareType As Type)
         CompareType = Helper.GetTypeOrTypeBuilder(CompareType)
         Info.Stack.Pop(CompareType)
@@ -270,6 +280,24 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Cgt)
         Info.ILGen.Emit(OpCodes.Ldc_I4_0)
         Info.ILGen.Emit(OpCodes.Ceq)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
+    End Sub
+
+    Shared Sub EmitLE_Un(ByVal Info As EmitInfo, ByVal CompareType As Type)
+        CompareType = Helper.GetTypeOrTypeBuilder(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.ILGen.Emit(OpCodes.Cgt_Un)
+        Info.ILGen.Emit(OpCodes.Ldc_I4_0)
+        Info.ILGen.Emit(OpCodes.Ceq)
+        Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
+    End Sub
+
+    Shared Sub EmitLT_Un(ByVal Info As EmitInfo, ByVal CompareType As Type)
+        CompareType = Helper.GetTypeOrTypeBuilder(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.Stack.Pop(CompareType)
+        Info.ILGen.Emit(OpCodes.Clt_Un)
         Info.Stack.Push(Info.Compiler.TypeCache.System_Boolean)
     End Sub
 

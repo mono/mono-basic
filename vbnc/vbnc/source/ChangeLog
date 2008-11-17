@@ -1,3 +1,12 @@
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Expressions/BinaryExpressions/LTExpression.vb,
+	  Expressions/BinaryExpressions/LEExpression.vb,
+	  Expressions/BinaryExpressions/GTExpression.vb,
+	  Expressions/BinaryExpressions/GEExpression.vb, Emit/Emitter.vb:
+	  Emit unsigned comparison when comparing unsigned int values. Fixes
+	  #445479.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Statements/ForEachStatement.vb, Resources/Source.xml,

@@ -1,3 +1,8 @@
+2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Bugs/bug-445479.vb: Emit unsigned comparison when comparing unsigned
+	  int values. Fixes #445479.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Bugs/bug-392456.vb, CompileTime/ForEach2.vb, Errors/30070.vb,

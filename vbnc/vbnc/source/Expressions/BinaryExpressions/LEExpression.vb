@@ -33,8 +33,10 @@ Public Class LEExpression
         Select Case OperandTypeCode
             Case TypeCode.Boolean
                 Emitter.EmitGE(Info, OperandType) 'LAMESPEC
-            Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.Int64, TypeCode.UInt64, TypeCode.Single, TypeCode.Double, TypeCode.Char
+            Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Char
                 Emitter.EmitLE(Info, OperandType)
+            Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Emitter.EmitLE_Un(Info, OperandType)
             Case TypeCode.DateTime
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_DateTime__Compare_DateTime_DateTime)
                 Emitter.EmitLoadI4Value(Info, 0)
