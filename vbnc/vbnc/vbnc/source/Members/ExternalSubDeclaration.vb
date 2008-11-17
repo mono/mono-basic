@@ -108,7 +108,7 @@ Public Class ExternalSubDeclaration
                 attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Auto)
             Case KS.Unicode
                 attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Unicode)
-            Case KS.Ansi
+            Case KS.Ansi, KS.None
                 attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Ansi)
             Case Else
                 Throw New InternalException
