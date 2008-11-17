@@ -92,7 +92,7 @@ Public Class ExitStatement
                 m_Container = Me.FindFirstParent(Of IMethod)()
                 If m_Container Is Nothing Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30065, Location) AndAlso result
-                ElseIf TypeOf m_Container Is SubDeclaration = False OrElse TypeOf m_Container Is FunctionDeclaration = True Then
+                ElseIf (TypeOf m_Container Is SubDeclaration = False AndAlso TypeOf m_Container Is ConstructorDeclaration = False) OrElse TypeOf m_Container Is FunctionDeclaration = True Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30065, Location) AndAlso result
                 End If
             Case KS.Property
