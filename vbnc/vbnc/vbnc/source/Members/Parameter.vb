@@ -251,6 +251,7 @@ Public Class Parameter
                 If cv Is DBNull.Value Then
                     cv = Nothing
                 End If
+                ConstantValue = cv
             End If
         Else
             If m_ConstantExpression IsNot Nothing Then
