@@ -117,6 +117,9 @@ namespace Mono.Cecil {
 					InitConstant ();				
 				return m_hasConstant; 
 			}
+			set {
+				m_hasConstant = value;
+			}
 		}
 
 		public object Constant {

@@ -1,3 +1,7 @@
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Mono.Cecil/FieldDefinition.cs: Add a HasConstant setter.
+
 2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Mono.Cecil/PInvokeInfo.cs: Local fix for #450269.

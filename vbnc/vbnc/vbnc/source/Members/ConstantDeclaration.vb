@@ -235,14 +235,14 @@ Public Class ConstantDeclaration
             'm_FieldBuilder.SetConstant(Nothing)
         ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
             Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
-            Dim attrib As New Mono.Cecil.CustomAttribute(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32)
+            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32))
             Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
             For i As Integer = 0 To params.Length - 1
                 attrib.ConstructorParameters.Add(params(i))
             Next
             m_FieldBuilderCecil.CustomAttributes.Add(attrib) 
         ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
-            Dim attrib As New Mono.Cecil.CustomAttribute(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64)
+            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
             attrib.ConstructorParameters.Add(DirectCast(m_ConstantValue, Date).Ticks)
             m_FieldBuilderCecil.CustomAttributes.Add(attrib)
         Else
@@ -270,8 +270,13 @@ Public Class ConstantDeclaration
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If
 
-        m_FieldBuilderCecil.Constant = m_ConstantValue
+        If m_RequiresSharedInitialization Then
+            m_FieldBuilderCecil.Constant = Nothing
+        Else
+            m_FieldBuilderCecil.Constant = m_ConstantValue
+        End If
         m_FieldBuilderCecil.HasDefault = True
+        m_FieldBuilderCecil.HasConstant = Not m_RequiresSharedInitialization
         m_FieldBuilderCecil.Name = Name
         If m_TypeName IsNot Nothing Then
             m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)

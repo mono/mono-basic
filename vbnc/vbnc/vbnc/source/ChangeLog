@@ -1,5 +1,10 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/AssemblyInfo.vb, Members/ConstantDeclaration.vb: Fix date and
+	  decimal constants.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/AssemblyInfo.vb, General/Compiler.vb, General/Helper.vb,
 	  General/MemberCache.vb, General/MyGenerator.vb,
 	  General/TypeConverter.vb, Parser/Parser(Types).vb,
