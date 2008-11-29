@@ -101,8 +101,13 @@ Public Class ExternalSubDeclaration
         Dim attrib As New Attribute(Me)
         attrib.ResolvedType = Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute
         attrib.AttributeArguments.PositionalArgumentList.Add(m_LibraryClause.StringLiteral.StringLiteral)
-        attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", Name)
+        If m_AliasClause IsNot Nothing Then
+            attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", m_AliasClause.StringLiteral.LiteralValue)
+        Else
+            attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", Name)
+        End If
         attrib.AttributeArguments.VariablePropertyInitializerList.Add("SetLastError", True)
+        attrib.AttributeArguments.VariablePropertyInitializerList.Add("PreserveSig", True)
         Select Case m_CharsetModifier
             Case KS.Auto
                 attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Auto)
@@ -115,8 +120,14 @@ Public Class ExternalSubDeclaration
         End Select
         Me.CustomAttributes.Add(attrib)
 
+        For i As Integer = 0 To Signature.Parameters.Count - 1
+            If Helper.CompareType(Signature.Parameters(i).ParameterType, Compiler.TypeCache.System_String) AndAlso Signature.Parameters(i).CustomAttributes.Count = 0 Then
+                Signature.Parameters(i).ParameterType = New Mono.Cecil.ReferenceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_String))
+                Signature.Parameters(i).CecilBuilder.MarshalSpec = New Mono.Cecil.MarshalSpec(Mono.Cecil.NativeType.BYVALSTR, Signature.Parameters(i).CecilBuilder)
+            End If
+        Next
+
+
         Return result
     End Function
-
-
 End Class

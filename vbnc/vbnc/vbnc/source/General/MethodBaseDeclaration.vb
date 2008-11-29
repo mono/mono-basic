@@ -83,7 +83,11 @@ Public MustInherit Class MethodBaseDeclaration
         End If
 
         MethodAttributes = Helper.GetAttributes(Me)
-        MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
+        If TypeOf Me Is ExternalSubDeclaration Then
+            MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.PreserveSig
+        Else
+            MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
+        End If
     End Sub
 
     Property ReturnType() As Mono.Cecil.TypeReference

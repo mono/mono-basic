@@ -212,6 +212,10 @@ Public Class Helper
             result = result Or Mono.Cecil.MethodAttributes.PInvokeImpl
         End If
 
+        If TypeOf m_Declaration Is ExternalSubDeclaration Then
+            result = result Or Mono.Cecil.MethodAttributes.PInvokeImpl
+        End If
+
         Return result
     End Function
 

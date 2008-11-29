@@ -311,7 +311,7 @@ Public Class Attribute
                         If values.Contains("CallingConvention") Then
                             callingconv = DirectCast(values("CallingConvention"), System.Runtime.InteropServices.CallingConvention)
                         Else
-                            callingconv = Runtime.InteropServices.CallingConvention.StdCall
+                            callingconv = Runtime.InteropServices.CallingConvention.Winapi
                         End If
                         Select Case callingconv
                             Case Runtime.InteropServices.CallingConvention.Cdecl

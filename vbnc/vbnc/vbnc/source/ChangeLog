@@ -1,5 +1,11 @@
 2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/AssemblyInfo.vb, General/Helper.vb,
+	  General/MethodBaseDeclaration.vb, Members/Attribute.vb,
+	  Members/ExternalSubDeclaration.vb: Fix some pinvoke issues.
+
+2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Members/Parameter.vb: Fix latest fix for latest backports.
 
 2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
