@@ -814,7 +814,7 @@ Public Class TypeConverter
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Mono.Cecil.TypeReference, ByRef result As Object) As Boolean
-        If Destination Is Nothing Then
+        If Destination Is Nothing OrElse Source Is Nothing Then
             result = Source
             Return True
         End If

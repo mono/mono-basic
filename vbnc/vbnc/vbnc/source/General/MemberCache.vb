@@ -65,7 +65,8 @@ Public Class MemberCache
     Private m_ShadowedInterfaceMembers As Generic.List(Of Mono.Cecil.MemberReference)
 
     Private m_Type As Mono.Cecil.TypeReference
-    Private m_Base As MemberCache
+    Private m_Types As List(Of Mono.Cecil.TypeReference)
+    Private m_Bases As List(Of MemberCache)
 
     Sub New(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference)
         m_Compiler = Compiler
@@ -128,10 +129,34 @@ Public Class MemberCache
     End Property
 
     Sub Load()
+        Dim tG As Mono.Cecil.GenericParameter
+
+        m_Types = New List(Of Mono.Cecil.TypeReference)
+
+        tG = TryCast(m_Type, Mono.Cecil.GenericParameter)
+        If tG IsNot Nothing Then
+            If tG.Constraints.Count = 0 Then
+                m_Types.Add(Compiler.TypeCache.System_Object)
+            Else
+                For i As Integer = 0 To tG.Constraints.Count - 1
+                    m_Types.Add(tG.Constraints(i))
+                Next
+            End If
+        Else
+            m_Types.Add(m_Type)
+        End If
+
+        For i As Integer = 0 To m_Types.Count - 1
+            Load(m_Types(i))
+        Next
+    End Sub
+
+    Sub Load(ByVal Type As Mono.Cecil.TypeReference)
         Dim members As Mono.Cecil.MemberReferenceCollection
 
-        Log("Caching type: " & m_Type.Name)
-        members = CecilHelper.GetMembers(m_Type)
+        Log("Caching type: " & m_Type.Name & " (current type: " & Type.Name & ")")
+
+        members = CecilHelper.GetMembers(Type)
 
         m_Cache = New MemberCacheEntries()
         m_Cache2 = New MemberVisibilityEntries()
@@ -149,7 +174,7 @@ Public Class MemberCache
         Dim publicProtectedEntries As New MemberCacheEntries
         Dim publicProtectedFriendEntries As New MemberCacheEntries
 
-        Dim isDefinedHere As Boolean = Compiler.Assembly.IsDefinedHere(m_Type)
+        Dim isDefinedHere As Boolean = Compiler.Assembly.IsDefinedHere(Type)
 
         Dim addTo(MemberVisibility.All) As Boolean
         Dim caches(addTo.Length - 1) As MemberCacheEntries
@@ -205,9 +230,18 @@ Public Class MemberCache
     End Sub
 
     Sub Flatten()
-        Dim base As MemberCache
-        base = GetBaseCache()
+        Dim bases As List(Of MemberCache) = GetBaseCache()
 
+        If bases.Count = 0 Then
+            Flatten(Nothing)
+        Else
+            For i As Integer = 0 To bases.Count - 1
+                Flatten(bases(i))
+            Next
+        End If
+    End Sub
+
+    Sub Flatten(ByVal base As MemberCache)
         If base Is Nothing Then
             If Helper.IsInterface(Compiler, m_Type) AndAlso CecilHelper.IsGenericParameter(m_Type) = False Then
                 Dim ifaces As Mono.Cecil.InterfaceCollection
@@ -394,23 +428,30 @@ Public Class MemberCache
         Return False
     End Function
 
-    Function GetBaseCache() As MemberCache
-        If m_Base IsNot Nothing Then Return m_Base
-
-        If TypeOf m_Type Is Mono.Cecil.GenericParameter Then Return Nothing
-
+    Function GetBaseCache() As List(Of MemberCache)
         Dim base As Mono.Cecil.TypeReference
-        base = CecilHelper.FindDefinition(m_Type).BaseType
-        If base Is Nothing Then Return Nothing
+        Dim cache As MemberCache
 
-        base = CecilHelper.InflateType(base, m_Type)
+        If m_Bases IsNot Nothing Then Return m_Bases
 
-        If m_Compiler.TypeManager.MemberCache.ContainsKey(base) = False Then
-            m_Base = New MemberCache(m_Compiler, base)
-        Else
-            m_Base = m_Compiler.TypeManager.MemberCache(base)
-        End If
-        Return m_Base
+        m_Bases = New List(Of MemberCache)
+
+        For i As Integer = 0 To m_Types.Count - 1
+            base = CecilHelper.FindDefinition(m_Types(i)).BaseType
+
+            If base Is Nothing Then Continue For
+
+            base = CecilHelper.InflateType(base, m_Type)
+
+            If m_Compiler.TypeManager.MemberCache.ContainsKey(base) = False Then
+                cache = New MemberCache(m_Compiler, base)
+            Else
+                cache = m_Compiler.TypeManager.MemberCache(base)
+            End If
+            m_Bases.Add(cache)
+        Next
+
+        Return m_Bases
     End Function
 
     ''' <summary>

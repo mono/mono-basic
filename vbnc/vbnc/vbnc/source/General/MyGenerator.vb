@@ -91,7 +91,7 @@ Public Class MyGenerator
         result = GenerateMyUser() AndAlso result
         result = GenerateMyWebServices() AndAlso result
 
-        If Code.Length > 0 Then
+        If Code.Length > 0 OrElse m_MyType = MyTypes.Custom Then
             Dim projectPrepend As New System.Text.StringBuilder()
             projectPrepend.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""8.0.0.0"")> _")
             projectPrepend.AppendLine("    <Global.Microsoft.VisualBasic.HideModuleName> _")

@@ -343,7 +343,7 @@ Public Class ClassDeclaration
             ElseIf mi.IsShared = False AndAlso Helper.CompareName(disposeInstanceMethodName, mi.Name) Then
                 If mi.Signature.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
-                If mi.Signature.ReturnType IsNot Nothing Then Continue For
+                If mi.Signature.ReturnType IsNot Nothing AndAlso Helper.CompareType(mi.Signature.ReturnType, Compiler.TypeCache.System_Void) = False Then Continue For
 
                 Dim T As TypeParameter = mi.Signature.TypeParameters.Parameters(0)
                 If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
@@ -509,6 +509,9 @@ Public Class ClassDeclaration
 
             Members.Add(field)
             Members.Add(prop)
+
+            field.UpdateDefinition()
+            prop.UpdateDefinition()
 
             'Me.TypeDescriptor.ClearCache()
 

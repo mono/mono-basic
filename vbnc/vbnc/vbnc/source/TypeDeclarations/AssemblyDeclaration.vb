@@ -1086,6 +1086,15 @@ Public Class AssemblyDeclaration
         Return Nothing
     End Function
 
+    Function FindTypeWithFullname(ByVal Fullname As String) As TypeDeclaration
+        For i As Integer = 0 To m_Members.Count - 1
+            Dim tD As TypeDeclaration = TryCast(m_Members(i), TypeDeclaration)
+            If tD Is Nothing Then Continue For
+            If Helper.CompareName(tD.FullName, Fullname) Then Return tD
+        Next
+        Return Nothing
+    End Function
+
     Property Name() As String
         Get
             Return m_Name

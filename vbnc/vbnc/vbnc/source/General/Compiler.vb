@@ -846,11 +846,6 @@ EndOfCompilation:
     Private Function SetMain() As Boolean
         Dim result As Boolean = True
 
-        If False AndAlso vbnc.Helper.IsOnMono AndAlso CommandLine.Files.Count > 100 Then
-            Report.WriteLine("Skipped setting Main method")
-            Return True
-        End If
-
         Try
             If CommandLine.Target = vbnc.CommandLine.Targets.Library Then Return True
             If CommandLine.Target = vbnc.CommandLine.Targets.Module Then Return True
@@ -858,9 +853,7 @@ EndOfCompilation:
             'Find the main function
             Dim lstMethods As New Generic.List(Of Mono.Cecil.MethodDefinition)
             Dim mainClass As TypeDeclaration = Nothing
-#If ENABLECECIL Then
             Dim mainCecil As Mono.Cecil.MethodDefinition = Nothing
-#End If
             result = FindMainClass(mainClass) AndAlso result
             result = FindMainMethod(mainClass, lstMethods) AndAlso result
 
@@ -880,6 +873,7 @@ EndOfCompilation:
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
                     mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Ret)
                     mainClass.CecilType.Methods.Add(mainCecil)
+                    lstMethods.Add(mainCecil)
                 End If
             End If
 
@@ -896,23 +890,11 @@ EndOfCompilation:
                 Return False
             Else
                 Dim entryMethod As Mono.Cecil.MethodDefinition = lstMethods(0)
-                'Dim entryMethodDescriptor As MethodDescriptor
-
-                'entryMethodDescriptor = TryCast(lstMethods(0), MethodDescriptor)
-                'If entryMethodDescriptor IsNot Nothing Then
-                '    entryMethod = entryMethodDescriptor.Declaration.MethodBuilder
-                'Else
-                '    entryMethod = DirectCast(lstMethods(0), MethodBuilder)
-                'End If
-                'entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
-                'AssemblyBuilder.SetEntryPoint(entryMethod)
-#If ENABLECECIL Then
                 If mainCecil Is Nothing Then
                     mainCecil = entryMethod
                 End If
                 mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, TypeCache.System_STAThreadAttribute__ctor)))
                 AssemblyBuilderCecil.EntryPoint = entryMethod
-#End If
             End If
 
         Catch ex As Exception

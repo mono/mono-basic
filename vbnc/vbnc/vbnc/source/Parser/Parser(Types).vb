@@ -31,6 +31,10 @@ Partial Class Parser
             CompleteName = Helper.CreateGenericTypename(m_Identifier.Name, m_TypeParameters.Parameters.Count)
         End If
 
+        If TypeOf Parent Is AssemblyDeclaration AndAlso [Namespace] <> String.Empty Then
+            CompleteName = [Namespace] & "." & CompleteName
+        End If
+
         'Try to find the type in the parent
         Dim partialType As TypeDeclaration = FindTypeInParent(Parent, CompleteName)
         Dim partialClassOrStruct As PartialTypeDeclaration = TryCast(partialType, PartialTypeDeclaration)
@@ -158,7 +162,7 @@ Partial Class Parser
         Dim partialTypes As Generic.List(Of INameable)
 
         If assemblyParent IsNot Nothing Then
-            partialType = assemblyParent.FindTypeWithName(CompleteName)
+            partialType = assemblyParent.FindTypeWithFullname(CompleteName)
         ElseIf typeParent IsNot Nothing Then
             partialTypes = typeParent.Members.Index.Item(CompleteName)
             If partialTypes IsNot Nothing Then

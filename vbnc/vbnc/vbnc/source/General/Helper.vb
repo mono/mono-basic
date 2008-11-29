@@ -3425,6 +3425,14 @@ Public Class Helper
             Return False
         End If
 
+        Dim r1 As Mono.Cecil.ReferenceType = TryCast(t1, Mono.Cecil.ReferenceType)
+        Dim r2 As Mono.Cecil.ReferenceType = TryCast(t2, Mono.Cecil.ReferenceType)
+        If r1 IsNot Nothing AndAlso r2 IsNot Nothing Then
+            Return Helper.CompareType(r1.ElementType, r2.ElementType)
+        ElseIf r1 IsNot Nothing Xor r2 IsNot Nothing Then
+            Return False
+        End If
+
         If CecilHelper.FindDefinition(t1) Is CecilHelper.FindDefinition(t2) Then Return True
         If t1.FullName IsNot Nothing AndAlso t2.FullName IsNot Nothing AndAlso Helper.CompareNameOrdinal(t1.FullName, t2.FullName) Then Return True
         Helper.Assert(t1.FullName.Equals(t2.FullName) = False)

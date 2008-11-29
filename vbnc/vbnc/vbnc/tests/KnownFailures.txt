@@ -121,15 +121,7 @@ Mono\NameSpaceE 'Only 'NameSpaceE_vbc' has the type 'A.Default.If.C'.
 Mono\PropertyI 'VBNC Compile failed, process exited with exit code -1
 Mono\PropertyL 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\TypeMembersF 'VBNC Compile failed, process exited with exit code -1
-My\bug-333403 'VBNC Compile failed, process exited with exit code 1
-My\Custom 'Only 'Custom_vbc' has the type 'My.MyProject/ThreadSafeObjectProvider`1+ThreadSafeObjectProvider`1(Of T)'.
-My\DefaultInstances1 'VBNC Compile failed, process exited with exit code 1
-My\My.Forms1 'VBNC Compile failed, process exited with exit code 1
-My\WindowsForms 'VBNC Compile failed, process exited with exit code 1
-My\WindowsForms_exe 'VBNC Compile failed, process exited with exit code 1
-My\WindowsForms_library 'VBNC Compile failed, process exited with exit code 1
 My\WindowsForms_module 'VBNC Compile failed, process exited with exit code 1
-My\WindowsForms_winexe 'VBNC Compile failed, process exited with exit code 1
 NotImplementedYet\CDateConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\CDecConstantExpression1 'VBNC Compile failed, process exited with exit code -1
 NotImplementedYet\DecimalConstant1 'VBNC Compile failed, process exited with exit code -1

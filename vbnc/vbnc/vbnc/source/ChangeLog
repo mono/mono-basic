@@ -1,3 +1,12 @@
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* General/AssemblyInfo.vb, General/Compiler.vb, General/Helper.vb,
+	  General/MemberCache.vb, General/MyGenerator.vb,
+	  General/TypeConverter.vb, Parser/Parser(Types).vb,
+	  TypeDeclarations/AssemblyDeclaration.vb,
+	  TypeDeclarations/ClassDeclaration.vb: More fixes and more passing
+	  tests.
+
 2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/AssemblyInfo.vb, General/Helper.vb,

@@ -1,3 +1,7 @@
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* KnownFailures.txt: More fixes and more passing tests.
+
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Errors/30059.vb, Errors/30060.vb, Errors/30060-1.vb,
