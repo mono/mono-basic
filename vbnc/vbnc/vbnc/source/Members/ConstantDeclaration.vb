@@ -234,16 +234,17 @@ Public Class ConstantDeclaration
         If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
             'm_FieldBuilder.SetConstant(Nothing)
         ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
-            'result = Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location) AndAlso result
-            'Helper.NotImplementedYet("Emit value of a decimal constant")
-<<<<<<< .working
-        ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
-=======
             Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
-            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32, New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()))
-        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_DateTime) Then
->>>>>>> .merge-right.r119055
-            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64, New Object() {DirectCast(m_ConstantValue, Date).Ticks}))
+            Dim attrib As New Mono.Cecil.CustomAttribute(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32)
+            Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
+            For i As Integer = 0 To params.Length - 1
+                attrib.ConstructorParameters.Add(params(i))
+            Next
+            m_FieldBuilderCecil.CustomAttributes.Add(attrib) 
+        ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
+            Dim attrib As New Mono.Cecil.CustomAttribute(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64)
+            attrib.ConstructorParameters.Add(DirectCast(m_ConstantValue, Date).Ticks)
+            m_FieldBuilderCecil.CustomAttributes.Add(attrib)
         Else
             'If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
             '    m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)

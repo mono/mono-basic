@@ -405,7 +405,7 @@ Public Class CecilTypeCache
 End Class
 
 'START SRE
-' 
+'' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -500,6 +500,7 @@ Public Partial Class CecilTypeCache
     Public System_STAThreadAttribute__ctor As Mono.Cecil.MethodDefinition
     Public System_IntPtr As Mono.Cecil.TypeDefinition
     Public System_Runtime_CompilerServices_DateTimeConstantAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64 As Mono.Cecil.MethodDefinition
     Public System_DateTime__ctor_Int64 As Mono.Cecil.MethodDefinition
     Public System_Decimal__ctor_Int32 As Mono.Cecil.MethodDefinition
     Public System_Decimal__ctor_Int64 As Mono.Cecil.MethodDefinition
@@ -762,6 +763,7 @@ Public Partial Class CecilTypeCache
         System_STAThreadAttribute__ctor = GetConstructor(System_STAThreadAttribute)
         System_IntPtr = [GetType](mscorlib, "System.IntPtr")
         System_Runtime_CompilerServices_DateTimeConstantAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.DateTimeConstantAttribute")
+        System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64 = GetConstructor(System_Runtime_CompilerServices_DateTimeConstantAttribute, System_Int64)
         System_DateTime__ctor_Int64 = GetConstructor(System_DateTime, System_Int64)
         System_Decimal__ctor_Int32 = GetConstructor(System_Decimal, System_Int32)
         System_Decimal__ctor_Int64 = GetConstructor(System_Decimal, System_Int64)
@@ -955,6 +957,7 @@ Public Partial Class CecilTypeCache
     End Sub
 
 End Class
+
 
 
 'END SRE

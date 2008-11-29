@@ -813,14 +813,17 @@ Public Class TypeConverter
     ''' <param name="Destination"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Type, ByRef result As Object) As Boolean
-        If Destination Is Nothing Then Return Source
+    Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Mono.Cecil.TypeReference, ByRef result As Object) As Boolean
+        If Destination Is Nothing Then
+            result = Source
+            Return True
+        End If
 
         Helper.Assert(Source IsNot Nothing)
         Helper.Assert(Destination IsNot Nothing)
 
-        Dim dtc As TypeCode = Helper.GetTypeCode(Compiler, Destination)
-        Dim stc As TypeCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, Source))
+        Dim dtc As TypeCode = Helper.GetTypeCode(Context.Compiler, Destination)
+        Dim stc As TypeCode = Helper.GetTypeCode(Context.Compiler, CecilHelper.GetType(Context.Compiler, Source))
 
         'Console.WriteLine("ConvertTo: from " & stc.ToString() & " to " & dtc.ToString)
 
