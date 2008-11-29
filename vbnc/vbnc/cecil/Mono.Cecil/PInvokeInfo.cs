@@ -115,10 +115,9 @@ namespace Mono.Cecil {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.SupportsLastError; }
 			set {
 				if (value) {
-					m_attributes &= ~PInvokeAttributes.CharSetMask;
 					m_attributes |= PInvokeAttributes.SupportsLastError;
 				} else
-					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError);
+					m_attributes &= ~(PInvokeAttributes.SupportsLastError);
 			}
 		}
 

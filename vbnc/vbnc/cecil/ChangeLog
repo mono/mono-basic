@@ -1,3 +1,7 @@
+2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* Mono.Cecil/PInvokeInfo.cs: Local fix for #450269.
+
 2008-10-26  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Mono.Cecil/GenericInstanceMethod.cs: ResolvedParameters: Use
