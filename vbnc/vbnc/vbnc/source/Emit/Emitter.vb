@@ -1382,7 +1382,7 @@ Partial Public Class Emitter
                 EmitLoadValue(Info, CInt(Value))
                 Return
             Case TypeCode.Int64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Int64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
+                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Int64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CLng(Value))
                 Return
             Case TypeCode.Single

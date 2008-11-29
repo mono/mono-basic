@@ -285,7 +285,7 @@ Public Class Parameter
             End If
         ElseIf m_ParameterIdentifier.Identifier.HasTypeCharacter Then
             ParameterType = TypeCharacters.TypeCharacterToType(Compiler, m_ParameterIdentifier.Identifier.TypeCharacter)
-        ElseIf ParameterType Is Nothing Then
+        ElseIf ParameterType Is Nothing OrElse Helper.CompareType(ParameterType, Compiler.TypeCache.System_Void) Then
             If Me.Location.File(Compiler).IsOptionStrictOn Then
                 Helper.AddError(Me, "Parameter type must be specified.")
             Else

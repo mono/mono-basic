@@ -103,18 +103,10 @@ Mono\Delegate_exe 'VBNC Compile failed, process exited with exit code -1
 Mono\EnumB 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\EnumConversionA 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\EnumConversionB 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\ExplicitConversionEnumToIntA 'VBNC Compile failed, process exited with exit code -1
-Mono\ExplicitConversionEnumToIntB 'VBNC Compile failed, process exited with exit code -1
-Mono\ExpressionInstanceMyBaseA 'VBNC Compile failed, process exited with exit code -1
-Mono\ExpressionInstanceMyClassA 'VBNC Compile failed, process exited with exit code 1
-Mono\ExpressionSimpleNameAddressOfA 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\ExpressionSimpleNameTypeOfA 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\InterfaceA 'VBNC Compile failed, process exited with exit code -1
 Mono\InterfaceH 'VBNC Compile failed, process exited with exit code -1
 Mono\LocalDeclarationA 'VBNC Compile failed, process exited with exit code -1
-Mono\MethodDeclarationA 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\NameSpaceE 'Only 'NameSpaceE_vbc' has the type 'A.Default.If.C'.
-Mono\PropertyI 'VBNC Compile failed, process exited with exit code -1
 Mono\PropertyL 'Type Safety and Security Verification failed, process exited with exit code 1
 Mono\TypeMembersF 'VBNC Compile failed, process exited with exit code -1
 My\WindowsForms_module 'VBNC Compile failed, process exited with exit code 1

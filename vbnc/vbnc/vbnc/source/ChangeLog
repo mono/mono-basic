@@ -1,5 +1,10 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/Emitter.vb, General/AssemblyInfo.vb, General/BaseObject.vb,
+	  Members/Parameter.vb: More fixes.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* General/AssemblyInfo.vb, Members/ConstantDeclaration.vb: Fix date and
 	  decimal constants.
 

@@ -264,21 +264,21 @@ Public MustInherit Class BaseObject
             Return result.ToArray
         End Get
     End Property
-    ReadOnly Property ParentLocationTree() As String
+    ReadOnly Property ParentLocationTree() As String()
         Get
-            Dim result As String = ""
+            Dim result As New Generic.List(Of String)
 
             Dim tmp As BaseObject = Me
             Do Until tmp Is Nothing
                 'If tmp.HasLocation = False Then
                 '    result &= "(" & tmp.GetType.Name & "): (no location)" & VB.vbNewLine
                 'Else
-                result &= "(" & tmp.GetType.Name & "): " & tmp.Location.ToString(Compiler) & VB.vbNewLine
+                result.Add("(" & tmp.GetType.Name & "): " & tmp.Location.ToString(Compiler))
                 'End If
                 tmp = tmp.Parent
             Loop
 
-            Return result
+            Return result.toarray
         End Get
     End Property
 #End If

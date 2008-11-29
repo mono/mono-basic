@@ -1,5 +1,9 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* KnownFailures.txt: More fixes.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KnownFailures.txt: Fix date and decimal constants.
 
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
