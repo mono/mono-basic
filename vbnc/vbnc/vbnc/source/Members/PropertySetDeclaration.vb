@@ -97,6 +97,7 @@ Public Class PropertySetDeclaration
                 param = New Parameter(params, valueName, PropertySignature.ReturnType)
             Else
                 param = New Parameter(params, valueName, PropertySignature.TypeName)
+                param.ParameterIdentifier.Identifier.TypeCharacter = PropertySignature.Identifier.TypeCharacter
             End If
             params.Add(param)
         End If

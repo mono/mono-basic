@@ -15,7 +15,6 @@ Errors\30590 'VBNC Compile failed correctly, but didn't give the expected error 
 Errors\32046 'VBNC Compile failed correctly, but didn't give the expected error code.
 Errors\32105 'VBNC Compile succeeded unexpectedly.
 Errors\32106 'VBNC Compile succeeded unexpectedly.
-Mono\PropertyL 'VBNC Compile failed, process exited with exit code -1
 NonCecilRelated\GenericType3 'VBNC Compile failed, process exited with exit code 1
 Unfixable\GenericNestedType1 'VBNC Compile failed, process exited with exit code -1
 Unfixable\NoVBRuntimeRef1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
@@ -92,23 +91,6 @@ Errors\32046 'VBNC Compile failed spectacularly.
 Errors\32105 'VBNC Compile failed spectacularly. 
 Errors\32106 'VBNC Compile failed spectacularly. 
 External\PrivateScope1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
-Mono\ArrayA 'VBNC Compile failed, process exited with exit code -1
-Mono\ArrayB 'VBNC Compile failed, process exited with exit code -1
-Mono\ArrayF 'VBNC Compile failed, process exited with exit code -1
-Mono\ArrayG 'VBNC Compile failed, process exited with exit code -1
-Mono\ConstantA 'VBNC Compile failed, process exited with exit code -1
-Mono\DefaultPropC 'VBNC Compile failed, process exited with exit code 1
-Mono\DefaultPropE 'VBNC Compile failed, process exited with exit code -1
-Mono\Delegate_exe 'VBNC Compile failed, process exited with exit code -1
-Mono\EnumB 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\EnumConversionA 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\EnumConversionB 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\InterfaceA 'VBNC Compile failed, process exited with exit code -1
-Mono\InterfaceH 'VBNC Compile failed, process exited with exit code -1
-Mono\LocalDeclarationA 'VBNC Compile failed, process exited with exit code -1
-Mono\NameSpaceE 'Only 'NameSpaceE_vbc' has the type 'A.Default.If.C'.
-Mono\PropertyL 'Type Safety and Security Verification failed, process exited with exit code 1
-Mono\TypeMembersF 'VBNC Compile failed, process exited with exit code -1
 My\WindowsForms_module 'VBNC Compile failed, process exited with exit code 1
 NotImplementedYet\DelegateAsMethodParameter1 'Type Safety and Security Verification failed, process exited with exit code 1
 NotImplementedYet\MethodOverload1 'Only 'MethodOverload1_vbc' has the Method 'MethodOverload1.Test.F(Of )(System.Int32)'.

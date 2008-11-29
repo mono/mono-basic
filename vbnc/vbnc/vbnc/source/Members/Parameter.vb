@@ -71,6 +71,12 @@ Public Class Parameter
         Helper.Assert(m_ParameterIdentifier IsNot Nothing)
     End Sub
 
+    ReadOnly Property ParameterIdentifier() As ParameterIdentifier
+        Get
+            Return m_ParameterIdentifier
+        End Get
+    End Property
+
     Shadows ReadOnly Property Parent() As ParameterList
         Get
             Return DirectCast(MyBase.Parent, ParameterList)

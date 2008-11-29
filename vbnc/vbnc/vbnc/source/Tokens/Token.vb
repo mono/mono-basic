@@ -33,6 +33,8 @@ Public Class Token
     Public Overrides Function ToString() As String
         If Me.IsIdentifier Then
             Return Me.Identifier
+        ElseIf Me.IsKeyword Then
+            Return Me.Identifier
         Else
             Return "<Token>"
         End If

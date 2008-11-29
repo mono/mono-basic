@@ -55,16 +55,22 @@ Public Class MemberImplementsClause
 
             Helper.Assert(eventI IsNot Nothing)
 
-            Dim addMethodI, removeMethodI, raiseMethodI As Mono.Cecil.MethodReference
-            Dim addMethod, removeMethod, raiseMethod As Mono.Cecil.MethodReference
+            Dim addMethodI, removeMethodI As Mono.Cecil.MethodReference
+            Dim addMethod, removeMethod As Mono.Cecil.MethodReference
+            Dim raiseMethod As Mono.Cecil.MethodReference = Nothing
+            Dim raiseMethodI As Mono.Cecil.MethodReference = Nothing
 
             addMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.AddMethod)
             removeMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.RemoveMethod)
-            raiseMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.InvokeMethod)
+            If eventI.InvokeMethod IsNot Nothing Then
+                raiseMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.InvokeMethod)
+            End If
 
             addMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.AddDefinition)
             removeMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.RemoveDefinition)
-            raiseMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.RaiseDefinition)
+            If Declaration.RaiseDefinition IsNot Nothing Then
+                raiseMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.RaiseDefinition)
+            End If
 
             Helper.Assert((addMethodI Is Nothing Xor addMethod Is Nothing) = False)
             Helper.Assert((removeMethodI Is Nothing Xor removeMethod Is Nothing) = False)

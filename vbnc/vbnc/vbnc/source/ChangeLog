@@ -1,5 +1,12 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Emit/Emitter.vb, General/AssemblyInfo.vb,
+	  Members/MemberImplementsClause.vb, Members/Parameter.vb,
+	  Members/PropertySetDeclaration.vb, Tokens/Token.vb: All tests in
+	  tests/Mono now pass.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Emit/Emitter.vb, General/AssemblyInfo.vb, General/BaseObject.vb,
 	  Members/Parameter.vb: More fixes.
 

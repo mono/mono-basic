@@ -1737,7 +1737,7 @@ Partial Public Class Emitter
             Case TypeCode.Boolean
                 Info.ILGen.Emit(OpCodes.Ldind_I1)
             Case TypeCode.Decimal
-                Info.ILGen.Emit(OpCodes.Ldobj, Info.Compiler.TypeCache.System_Decimal)
+                Info.ILGen.Emit(OpCodes.Ldobj, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal))
             Case Else
                 Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
                 'Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
