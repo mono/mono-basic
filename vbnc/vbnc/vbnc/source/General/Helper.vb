@@ -2466,10 +2466,18 @@ Public Class Helper
         Return False
     End Function
 
+    Shared Function IsTypeConvertibleToAny(ByVal TypeToSearch As Mono.Cecil.TypeReference, ByVal TypesToFind As Mono.Cecil.ConstraintCollection) As Boolean
+        For i As Integer = 0 To TypesToFind.Count - 1
+            Dim t As Mono.Cecil.TypeReference = TypesToFind(i)
+            If Helper.CompareType(t, TypeToSearch) OrElse Helper.IsSubclassOf(TypeToSearch, t) Then Return True
+        Next
+        Return False
+    End Function
+
     Shared Function IsTypeConvertibleToAny(ByVal TypesToSearch As Mono.Cecil.ConstraintCollection, ByVal TypeToFind As Mono.Cecil.TypeReference) As Boolean
         For i As Integer = 0 To TypesToSearch.Count - 1
             Dim t As Mono.Cecil.TypeReference = TypesToSearch(i)
-            If Helper.CompareType(t, TypeToFind) OrElse Helper.IsSubclassOf(t, TypeToFind) Then Return True
+            If Helper.CompareType(t, TypeToFind) OrElse Helper.IsSubclassOf(TypeToFind, t) Then Return True
         Next
         Return False
     End Function

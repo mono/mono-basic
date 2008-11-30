@@ -1,5 +1,12 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* Expressions/Conversions/CTypeExpression.vb,
+	  Expressions/MethodGroupToValueExpression.vb,
+	  General/AssemblyInfo.vb, General/CecilHelper.vb, General/Helper.vb:
+	  Fixes.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Emit/Emitter.vb, General/AssemblyInfo.vb,
 	  Members/MemberImplementsClause.vb, Members/Parameter.vb,
 	  Members/PropertySetDeclaration.vb, Tokens/Token.vb: All tests in

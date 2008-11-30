@@ -1,3 +1,3 @@
-ilasm PrivateScope1.il /dll /out:PrivateScope1.dll
+ilasm PrivateScope1.il /dll /out:PrivateScope1_Ext.dll
 mkdir testoutput
-copy PrivateScope1.dll testoutput
+copy PrivateScope1_Ext.dll testoutput

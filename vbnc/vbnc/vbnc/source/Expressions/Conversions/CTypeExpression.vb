@@ -215,8 +215,10 @@ Public Class CTypeExpression
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf CecilHelper.IsGenericParameter(SourceElementType) AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                ElseIf CecilHelper.IsGenericParameter(DestinationElementType) AndAlso Helper.IsTypeConvertibleToAny(SourceElementType, Helper.GetGenericParameterConstraints(Me, DestinationElementType)) Then
+                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
-                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
+                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, SourceType.Name, DestinationType.Name)
                     result = False
                 End If
 
@@ -257,12 +259,7 @@ Public Class CTypeExpression
             End If
         ElseIf Helper.IsInterface(Compiler, SourceType) Then
             If CecilHelper.IsGenericParameter(DestinationType) Then
-                'Dim method As MethodInfo
-                Throw New NotImplementedException
-                'Dim methodD As New GenericMethodDescriptor(Me, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.GetGenericArguments(), New Type() {DestinationType.UnderlyingSystemType})
-
-                'Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                'Emitter.EmitCall(Info, methodD)
+                Emitter.EmitUnbox_Any(Info, DestinationType)
             ElseIf Helper.DoesTypeImplementInterface(Me, DestinationType, SourceType) Then
                 If CecilHelper.IsValueType(DestinationType) Then
                     Emitter.EmitUnbox(Info, DestinationType)

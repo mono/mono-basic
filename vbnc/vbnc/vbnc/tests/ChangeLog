@@ -1,5 +1,10 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* External/PrivateScope1.bat, External/PrivateScope1.response,
+	  KnownFailures.txt: Fixes.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* KnownFailures.txt: All tests in tests/Mono now pass.
 
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 

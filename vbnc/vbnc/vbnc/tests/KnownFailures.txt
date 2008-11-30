@@ -16,6 +16,8 @@ Errors\32046 'VBNC Compile failed correctly, but didn't give the expected error 
 Errors\32105 'VBNC Compile succeeded unexpectedly.
 Errors\32106 'VBNC Compile succeeded unexpectedly.
 NonCecilRelated\GenericType3 'VBNC Compile failed, process exited with exit code 1
+NotImplementedYet\DelegateAsMethodParameter1 'Type Safety and Security Verification failed, process exited with exit code 1
+NotImplementedYet\MethodOverload1 'Only 'MethodOverload1_vbc' has the Method 'MethodOverload1.Test.F(Of )(System.Int32)'.
 Unfixable\GenericNestedType1 'VBNC Compile failed, process exited with exit code -1
 Unfixable\NoVBRuntimeRef1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
 
@@ -92,15 +94,11 @@ Errors\32105 'VBNC Compile failed spectacularly.
 Errors\32106 'VBNC Compile failed spectacularly. 
 External\PrivateScope1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 2000
 My\WindowsForms_module 'VBNC Compile failed, process exited with exit code 1
-NotImplementedYet\DelegateAsMethodParameter1 'Type Safety and Security Verification failed, process exited with exit code 1
-NotImplementedYet\MethodOverload1 'Only 'MethodOverload1_vbc' has the Method 'MethodOverload1.Test.F(Of )(System.Int32)'.
 NUnitTests\MethodCall4 'VBNC Compile failed, process exited with exit code -1
 RunTime\ArrayElements4 'VBNC Compile failed, process exited with exit code -1
 RunTime\CType_TypeParameter1 'VBNC Compile failed, process exited with exit code -1
 RunTime\CType_TypeParameter2 'VBNC Compile failed, process exited with exit code 1
 RunTime\CType_TypeParameter4 'VBNC Compile failed, process exited with exit code -1
 SelfTest\rt.windows 'VBNC Compile failed, process exited with exit code 1
-Unfixable\GenericNestedType1 'VBNC Compile failed, process exited with exit code -1
-Unfixable\NoVBRuntimeRef1 'VBC Compile (verifies that the test itself is correct) failed, process exited with exit code 1
 VBRunTime\Microsoft.VisualBasic.linux
 VBRunTime\Microsoft.VisualBasic.windows 'VBNC Compile failed, process exited with exit code -1

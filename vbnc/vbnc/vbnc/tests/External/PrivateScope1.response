@@ -1,1 +1,1 @@
-/r:PrivateScope1.dll /define:_MYTYPE=\"Empty\"
+/r:PrivateScope1_Ext.dll /define:_MYTYPE=\"Empty\"

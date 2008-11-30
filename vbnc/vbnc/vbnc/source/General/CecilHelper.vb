@@ -1018,6 +1018,7 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function IsInterface(ByVal Type As TypeReference) As Boolean
+        If TypeOf Type Is ArrayType Then Return False
         Return FindDefinition(Type).IsInterface
     End Function
 
