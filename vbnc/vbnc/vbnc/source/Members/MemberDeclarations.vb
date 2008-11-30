@@ -60,16 +60,6 @@
 Public Class MemberDeclarations
     Inherits Nameables(Of IMember)
 
-    Shadows Sub Add(ByVal Value As IMember)
-        Dim pD As PartialTypeDeclaration = TryCast(Value, PartialTypeDeclaration)
-
-        If pD IsNot Nothing AndAlso pD.IsPartial Then
-            Helper.Assert(MyBase.Index.Item(pD.Name) IsNot Nothing)
-        Else
-            MyBase.Add(Value)
-        End If
-    End Sub
-
     ReadOnly Property Declarations() As Nameables(Of IMember)
         Get
             Return Me
@@ -100,6 +90,6 @@ Public Class MemberDeclarations
     End Function
 
     Sub New(ByVal Parent As ParsedObject)
-        MyBase.new(Parent, New Index(Parent))
+        MyBase.new(Parent)
     End Sub
 End Class

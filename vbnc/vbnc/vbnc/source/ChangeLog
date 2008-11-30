@@ -1,5 +1,12 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* General/AssemblyInfo.vb, General/Helper.vb, General/MemberCache.vb,
+	  Members/MemberDeclarations.vb, Parser/Parser(Types).vb,
+	  TypeDeclarations/ClassDeclaration.vb, Types/Nameables.vb: More
+	  fixes. Only test cases left to fix now are a few error conditions.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* Expressions/Conversions/CTypeExpression.vb,
 	  Expressions/MethodGroupToValueExpression.vb,
 	  General/AssemblyInfo.vb, General/CecilHelper.vb, General/Helper.vb:

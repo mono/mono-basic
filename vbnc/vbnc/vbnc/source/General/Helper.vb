@@ -3388,6 +3388,38 @@ Public Class Helper
         End If
     End Function
 
+    Shared Function CompareMethod(ByVal m1 As Mono.Cecil.MethodReference, ByVal m2 As Mono.Cecil.MethodReference) As Boolean
+        Dim g1 As Mono.Cecil.GenericInstanceMethod
+        Dim g2 As Mono.Cecil.GenericInstanceMethod
+
+        If m1 Is Nothing AndAlso m2 Is Nothing Then Return True
+        If m1 Is Nothing Xor m2 Is Nothing Then Return False
+
+        If m1 Is m2 Then Return True
+        If Helper.CompareNameOrdinal(m1.Name, m2.Name) = False Then Return False
+        If m1.Parameters.Count <> m2.Parameters.Count Then Return False
+        If m1.GenericParameters.Count <> m2.GenericParameters.Count Then Return False
+        If Helper.Compare(m1.DeclaringType, m2.DeclaringType) = False Then Return False
+
+        For i As Integer = 0 To m1.Parameters.Count - 1
+            If Helper.CompareType(m1.Parameters(i).ParameterType, m2.Parameters(i).ParameterType) = False Then Return False
+        Next
+
+        g1 = TryCast(m1, Mono.Cecil.GenericInstanceMethod)
+        g2 = TryCast(m2, Mono.Cecil.GenericInstanceMethod)
+
+        If g1 IsNot Nothing AndAlso g2 IsNot Nothing Then
+            If g1.GenericArguments.Count <> g2.GenericArguments.Count Then Return False
+            For i As Integer = 0 To g1.GenericArguments.Count - 1
+                If Helper.CompareType(g1.GenericArguments(i), g2.GenericArguments(i)) = False Then Return False
+            Next
+        ElseIf g1 IsNot Nothing Xor g2 IsNot Nothing Then
+            Return False
+        End If
+
+        Return True
+    End Function
+
     Shared Function CompareType(ByVal t1 As Mono.Cecil.TypeReference, ByVal t2 As Mono.Cecil.TypeReference) As Boolean
         If t1 Is t2 Then Return True
         If t1 Is Nothing OrElse t2 Is Nothing Then Return False

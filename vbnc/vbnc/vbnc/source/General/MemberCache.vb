@@ -347,10 +347,32 @@ Public Class MemberCache
                         For j As Integer = 0 To addTo.Length - 1
                             If addTo(j) = False Then Continue For
                             Dim entries As MemberCacheEntries = caches(j)
-                            If entries.ContainsKey(cache.Name) = False Then
+                            Dim cacheentry As MemberCacheEntry = Nothing
+                            Dim method As Mono.Cecil.MethodReference
+
+                            If entries.TryGetValue(cache.Name, cacheentry) = False Then
                                 entries.Add(New MemberCacheEntry(member))
-                            ElseIf entries(cache.Name).Members.Contains(member) = False Then
-                                entries(cache.Name).Members.Add(member)
+                            ElseIf cacheentry.Members.Contains(member) = False Then
+                                Dim found As Boolean = False
+                                For k As Integer = 0 To cacheentry.Members.Count - 1
+                                    If cacheentry.Members(k) Is member Then
+                                        found = True
+                                        Exit For
+                                    End If
+                                Next
+
+                                method = TryCast(member, Mono.Cecil.MethodReference)
+                                If Not found AndAlso method IsNot Nothing Then
+                                    For k As Integer = 0 To cacheentry.Members.Count - 1
+                                        If Helper.CompareMethod(TryCast(cacheentry.Members(k), Mono.Cecil.MethodReference), method) Then
+                                            found = True
+                                            Exit For
+                                        End If
+                                    Next
+                                End If
+                                If Not found Then
+                                    entries(cache.Name).Members.Add(member)
+                                End If
                             End If
                         Next
                     End If

@@ -26,31 +26,11 @@ Public Class Nameables(Of T As INameable)
     ''' <remarks></remarks>
     Private m_Index As Index
 
-
-    ''' <summary>
-    ''' Create a new collection with the specified index.
-    ''' </summary>
-    ''' <param name="Index"></param>
-    ''' <remarks></remarks>
-    Sub New(ByVal Parent As ParsedObject, Optional ByVal Index As Index = Nothing)
+    Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        If Index Is Nothing Then
-            m_Index = New Index(Parent)
-        Else
-            m_Index = Index
-        End If
+        m_Index = New Index(Parent)
     End Sub
 
-    ''' <summary>
-    ''' Returns the index for this collection.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    ReadOnly Property Index() As Index
-        Get
-            Return m_Index
-        End Get
-    End Property
 
     ''' <summary>
     ''' Looks up the type of the specified index. 
@@ -71,6 +51,7 @@ Public Class Nameables(Of T As INameable)
     ''' <param name="Name"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    <Obsolete()> _
     Shadows Function ContainsName(ByVal Name As String) As Boolean
         Return m_Index.ContainsName(Name)
     End Function
@@ -87,4 +68,16 @@ Public Class Nameables(Of T As INameable)
         MyBase.Add(Base)
         m_Index.Add(Base)
     End Sub
+
+    Shadows Sub AddRange(ByVal Base As Generic.IEnumerable(Of T))
+        For Each obj As T In Base
+            Add(obj)
+        Next
+    End Sub
+
+    ReadOnly Property Index() As Index
+        Get
+            Return m_Index
+        End Get
+    End Property
 End Class

@@ -1,5 +1,10 @@
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
+	* KnownFailures.txt: More fixes. Only test cases left to fix now are a
+	  few error conditions.
+
+2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
 	* External/PrivateScope1.bat, External/PrivateScope1.response,
 	  KnownFailures.txt: Fixes.
 

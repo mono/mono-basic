@@ -168,6 +168,8 @@ Public Class ClassDeclaration
 
         If methods Is Nothing OrElse methods.Count = 0 Then Return result
 
+        methods = New Generic.List(Of INameable)(methods)
+
         For i As Integer = methods.Count - 1 To 0 Step -1
             Dim subD As SubDeclaration
             subD = TryCast(methods(i), SubDeclaration)
@@ -176,7 +178,7 @@ Public Class ClassDeclaration
                 Continue For
             End If
 
-            If subD.Signature.ReturnType IsNot Nothing Then
+            If subD.Signature.ReturnType IsNot Nothing AndAlso Helper.CompareType(subD.Signature.ReturnType, Compiler.TypeCache.System_Void) = False Then
                 methods.RemoveAt(i)
                 Continue For
             End If
