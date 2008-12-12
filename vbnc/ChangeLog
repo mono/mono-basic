@@ -1,3 +1,9 @@
+2008-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* man: Added.
+	* configure, Makefile: version bump -> 2.3, 
+	  added support for man pages.
+
 2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* configure, class/mono.snk, class/Makefile, ChangeLog: Merge with
