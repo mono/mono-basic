@@ -152,7 +152,12 @@ Namespace Microsoft.VisualBasic
                 bytes = New Byte() {CByte(CharCode)}
                 byteCount = 1
             Else
+#If NET_VER >= 2.0 Then
+                ' GetMaxByteCount includes possible fallback characters from EncoderFallback
                 If enc.IsSingleByte Then
+#Else
+                If enc.GetMaxByteCount(1) = 1 Then
+#End If
                     Throw New ArgumentException("Procedure call or argument is not valid.")
                 End If
 
@@ -174,7 +179,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Function ChrW(ByVal CharCode As Integer) As Char
-            If ((CharCode < -32768) OrElse (CharCode > 65535)) Then
+            If CharCode < -32768 OrElse CharCode > 65535 Then
                 Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
             End If
 
