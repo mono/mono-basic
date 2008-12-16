@@ -1,3 +1,7 @@
+2008-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Honor DESTDIR.
+
 2008-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Fix duplication of install-local.
