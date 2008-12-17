@@ -1,3 +1,11 @@
+2008-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* man: Added.
+	* configure, Makefile: version bump -> 2.3, 
+	  added support for man pages.
+
+	  [Backport of r121405].
+
 2008-03-24  Wade Berrier  <wberrier@novell.com>
 
 	* class/Makefile: add mono.snk to DIST to fix build
