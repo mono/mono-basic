@@ -1,3 +1,8 @@
+2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Errors/30456.vb:
+	* Bugs/30456-bug-456326.vb: Added test cases for r122291.
+
 2008-11-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Errors/30059.vb, Errors/30060.vb, Errors/30060-1.vb,
