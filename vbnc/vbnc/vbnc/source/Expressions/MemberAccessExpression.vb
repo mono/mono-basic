@@ -342,6 +342,12 @@ Public Class MemberAccessExpression
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
             entry = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name)
+
+            If entry Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, m_First.Classification.AsTypeClassification.Type.FullName)
+                Return False
+            End If			
+
             If entry IsNot Nothing Then
                 members = entry.Members
                 Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments

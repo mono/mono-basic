@@ -1,3 +1,10 @@
+2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* General/AssemblyInfo.vb:
+	* Expressions/MemberAccessExpression.vb: Avoid a NRE and report 30456.
+
+	[Backport of r122291]
+
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* General/AssemblyInfo.vb, General/Helper.vb, General/MemberCache.vb,
