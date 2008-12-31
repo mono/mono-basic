@@ -1,3 +1,10 @@
+2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Errors/30456.vb:
+	* Bugs/30456-bug-456326.vb: Added test cases for r122291.
+
+	[Backport of r122295]
+
 2008-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* KnownFailures.txt: More fixes. Only test cases left to fix now are a
