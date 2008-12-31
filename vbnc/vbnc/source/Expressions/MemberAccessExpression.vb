@@ -338,9 +338,17 @@ Public Class MemberAccessExpression
                 Helper.AddError(Me)
             End If
             Dim members As Generic.List(Of MemberInfo)
+            Dim cache As MemberCacheEntry
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
-            members = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name).Members
+            cache = Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).LookupFlattened(Name)
+
+            If cache Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, m_First.Classification.AsTypeClassification.Type.FullName)
+                Return False
+            End If
+
+            members = cache.Members
 
             Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
             withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
