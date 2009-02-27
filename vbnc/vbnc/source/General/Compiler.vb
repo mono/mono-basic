@@ -982,6 +982,7 @@ EndOfCompilation:
             Else
                 Dim entryMethod As MethodBuilder
                 Dim entryMethodDescriptor As MethodDescriptor
+                Dim peFileKind As PEFileKinds
 
                 entryMethodDescriptor = TryCast(lstMethods(0), MethodDescriptor)
                 If entryMethodDescriptor IsNot Nothing Then
@@ -990,7 +991,15 @@ EndOfCompilation:
                     entryMethod = DirectCast(lstMethods(0), MethodBuilder)
                 End If
                 entryMethod.SetCustomAttribute(TypeCache.System_STAThreadAttribute__ctor, New Byte() {})
-                AssemblyBuilder.SetEntryPoint(entryMethod)
+
+                If CommandLine.Target = vbnc.CommandLine.Targets.Winexe Then
+                    peFileKind = PEFileKinds.WindowApplication
+                Else
+                    'At the top of the method we return unless target = winexe or console
+                    Helper.Assert(CommandLine.Target = vbnc.CommandLine.Targets.Console)
+                    peFileKind = PEFileKinds.ConsoleApplication
+                End If
+                AssemblyBuilder.SetEntryPoint(entryMethod, peFileKind)
             End If
 
         Catch ex As Exception
