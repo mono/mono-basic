@@ -893,6 +893,7 @@ EndOfCompilation:
                 If mainCecil Is Nothing Then
                     mainCecil = entryMethod
                 End If
+				Console.WriteLine ("TODO: Need to figure out how to set pefilekind")
                 mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, TypeCache.System_STAThreadAttribute__ctor)))
                 AssemblyBuilderCecil.EntryPoint = entryMethod
             End If
