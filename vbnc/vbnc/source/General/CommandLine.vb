@@ -253,6 +253,12 @@ Public Class CommandLine
     Private m_eOptionStrict As OptionStrictTypes = OptionStrictTypes.Off
 
     ''' <summary>
+    ''' /optioninfer[+|-]       Allow type inference of variables.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_eOptionInfer As OptionInferTypes = OptionInferTypes.Off
+
+    ''' <summary>
     ''' /rootnamespace:&lt;string&gt; Specifies the root Namespace for all type declarations.
     ''' </summary>
     Private m_strRootNamespace As String
@@ -997,6 +1003,11 @@ Public Class CommandLine
             Case "optionstrict-"
                 Console.WriteLine("Warning: Option Strict Off will probably fail.")
                 m_eOptionStrict = OptionStrictTypes.Off
+            Case "optioninfer+", "optioninfer"
+                Console.WriteLine("Warning: Option Infer On does not work yet.")
+                m_eOptionInfer = OptionInferTypes.On
+            Case "optioninfer-"
+                m_eOptionInfer = OptionInferTypes.Off
             Case "rootnamespace"
                 m_strRootNamespace = strValue
             Case "optioncompare"

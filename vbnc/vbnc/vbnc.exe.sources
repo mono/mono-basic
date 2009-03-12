@@ -383,6 +383,7 @@ source/Members/PropertySetDeclaration.vb
 source/General/Report.vb
 source/General/Scanner.vb
 source/Testing/Testing.vb
+source/General/CommandLine.OptionInferTypes.vb
 source/Tokens/Span.vb
 source/Tokens/Token.vb
 source/TypeDeclarations/AssemblyDeclaration.vb

@@ -1,3 +1,9 @@
+2009-03-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Update to generate sources from vbnc9.vbproj.
+
+	* vbnc.exe.sources: Updated.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* vbnc.Errors.resources: Don't verify the expression after 'Next' to

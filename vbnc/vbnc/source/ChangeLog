@@ -1,3 +1,13 @@
+2009-03-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* vbnc9.vbproj:
+	* General/AssemblyInfo.vb: Updated.
+
+	* General/CommandLine.OptionInferTypes.vb: Added.
+
+	* General/CommandLine.vb: Added support for accepting
+	  /optioninfer on the commandline.
+
 2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* General/AssemblyInfo.vb:
