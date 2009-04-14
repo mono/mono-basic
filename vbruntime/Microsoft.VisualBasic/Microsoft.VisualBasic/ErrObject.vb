@@ -103,11 +103,12 @@ Namespace Microsoft.VisualBasic
             End If
             SetExceptionFromNumber(Number, m_Description)
 
+#If Moonlight = False Then
             If Not (Source Is Nothing) Then
                 m_Source = Convert.ToString(Source)
                 m_Exception.Source = m_Source
             End If
-
+#End If
 
             If Not (HelpFile Is Nothing) Then
                 m_HelpFile = Convert.ToString(HelpFile)

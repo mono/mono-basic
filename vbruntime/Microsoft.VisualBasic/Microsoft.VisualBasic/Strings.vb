@@ -77,6 +77,7 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
+#If Moonlight = False Then
         Public Function Asc(ByVal [String] As Char) As Integer
 #If NET_VER >= 2.0 Then
             ' Convert.ToUInt16 with ldarg.0 and ret is a good candidate for
@@ -104,6 +105,7 @@ Namespace Microsoft.VisualBasic
             ' Zero is returned when no characters were encoded.
             Return (CInt(bytes(0)) << 8) Or bytes(1)
         End Function
+#End If
 
         Public Function AscW(ByVal [String] As Char) As Integer
             ' Compiled as if it were "Return CInt([String])" when /novbruntimeref is used;
@@ -111,6 +113,7 @@ Namespace Microsoft.VisualBasic
             Return AscW([String])
         End Function
 
+        '#If Moonlight = False Then
         Public Function Asc(ByVal [String] As String) As Integer
             If [String] Is Nothing OrElse [String].Length = 0 Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
@@ -118,6 +121,7 @@ Namespace Microsoft.VisualBasic
 
             Return Asc([String].Chars(0))
         End Function
+        '#End If
 
         Public Function AscW(ByVal [String] As String) As Integer
             If [String] Is Nothing OrElse [String].Length = 0 Then
@@ -127,6 +131,7 @@ Namespace Microsoft.VisualBasic
             Return AscW([String].Chars(0))
         End Function
 
+#If Moonlight = False Then
         Public Function Chr(ByVal CharCode As Integer) As Char
             ' Fast path for ASCII that also makes Chr incompatible with
             ' non-ASCII-compatible encodings.
@@ -177,6 +182,13 @@ Namespace Microsoft.VisualBasic
             ' Zero is returned when no characters were decoded.
             Return chars(0)
         End Function
+#Else
+        Public Function Chr(CharCode As Integer) As Char
+            'Silverlight doesn't include Chr, but vbnc crashes without it
+            'This is a dummy implementation until vbnc is fixed
+            Return ChrW (CharCode) 
+        End Function
+#End If
 
         Public Function ChrW(ByVal CharCode As Integer) As Char
             If CharCode < -32768 OrElse CharCode > 65535 Then
@@ -277,7 +289,7 @@ Namespace Microsoft.VisualBasic
                 Return String.Format(PredefinedStyle.ToString(), Expression)
             End If
 
-            If String.Compare(Style, "Yes/No", True) = 0 Then
+            If String_Compare(Style, "Yes/No", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "No"
                 Else
@@ -285,7 +297,7 @@ Namespace Microsoft.VisualBasic
                 End If
             End If
 
-            If String.Compare(Style, "True/False", True) = 0 Then
+            If String_Compare(Style, "True/False", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "False"
                 Else
@@ -293,7 +305,7 @@ Namespace Microsoft.VisualBasic
                 End If
             End If
 
-            If String.Compare(Style, "On/Off", True) = 0 Then
+            If String_Compare(Style, "On/Off", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "Off"
                 Else
@@ -931,7 +943,7 @@ Namespace Microsoft.VisualBasic
             Dim sb As StringBuilder = New StringBuilder(Expression.Length)
 
             While (replaced < Count Or Count = -1) And current < Expression.Length
-                Dim res As Integer = String.Compare(Expression, current, Find, 0, Find.Length, IgnoreCase)
+                Dim res As Integer = String_Compare(Expression, current, Find, 0, Find.Length, IgnoreCase)
                 If res = 0 Then
                     sb.Append(Replacement)
                     current = current + Find.Length
@@ -1050,7 +1062,7 @@ Namespace Microsoft.VisualBasic
             If Limit = -1 Then
                 Limit = 0
                 While current < Expression.Length
-                    Dim res As Integer = String.Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
+                    Dim res As Integer = String_Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
                     If res = 0 Then
                         current = current + Delimiter.Length
                         Limit = Limit + 1
@@ -1066,7 +1078,7 @@ Namespace Microsoft.VisualBasic
             Dim previous As Integer = 0
             current = 0
             While current < Expression.Length And count < Limit - 1
-                Dim res As Integer = String.Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
+                Dim res As Integer = String_Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
                 If res = 0 Then
                     sarr(count) = Expression.Substring(previous, current - previous)
                     current = current + Delimiter.Length
@@ -1084,6 +1096,22 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
+        Friend Function String_Compare(ByVal strA As String, ByVal strB As String, ByVal ignoreCase As Boolean) As Integer
+#If NET_VER < 2.0 Then
+            Return String.Compare(strA, strB, ignoreCase)
+#Else
+            Return String.Compare(strA, strB, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
+#End If
+        End Function
+
+        Friend Function String_Compare(ByVal strA As String, ByVal indexA As Integer, ByVal strB As String, ByVal indexB As Integer, ByVal length As Integer, ByVal ignoreCase As Boolean) As Integer
+#If NET_VER < 2.0 Then
+            Return String.Compare(strA, indexA, strB, indexB, length, True)
+#Else
+            Return String.Compare(strA, indexA, strB, indexB, length, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
+#End If
+        End Function
+
         Public Function StrComp(ByVal String1 As String, ByVal String2 As String, _
                         <OptionCompare()> Optional ByVal Compare As CompareMethod = 0) As Integer
 
@@ -1099,7 +1127,7 @@ Namespace Microsoft.VisualBasic
             If Compare = CompareMethod.Binary Then
                 res = String.CompareOrdinal(String1, String2)
             Else
-                res = String.Compare(String1, String2, True)
+                res = String_Compare(String1, String2, True)
             End If
 
             If res > 0 Then

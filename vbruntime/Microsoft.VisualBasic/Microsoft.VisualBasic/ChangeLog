@@ -1,3 +1,15 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Hashtable.vb:
+	* ArrayList.vb: Add two wrapper classes since these do not
+	exist in Silverlight.
+
+	* Strings.vb:
+	* ErrObject.vb:
+	* DateAndTime.vb: Try to only use methods in corlib which are
+	present in all profiles, or add moonlight-specific code
+	conditionally otherwse.
+
 2008-12-12  Kornél Pál  <kornelpal@gmail.com>
 
 	* Strings.vb: Chr: Use GetMaxByteCount on profile 1.x that fixes the build.

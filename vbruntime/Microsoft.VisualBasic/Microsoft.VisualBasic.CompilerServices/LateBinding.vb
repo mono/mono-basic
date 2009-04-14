@@ -73,12 +73,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 realType.InvokeMember("SetValue", flags, LBinder, o, newArgs)
 #Else
-                realType.InvokeMember("Set", flags, Nothing, o, args, Nothing)
+                realType.InvokeMember("Set", flags, Nothing, o, args, Nothing, Nothing, Nothing)
 #End If
             Else
                 Dim defaultMembers() As MemberInfo = realType.GetDefaultMembers()
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.SetProperty
-                realType.InvokeMember(defaultMembers(0).Name, flags, Nothing, o, args, Nothing)
+                realType.InvokeMember(defaultMembers(0).Name, flags, Nothing, o, args, Nothing, Nothing, Nothing)
             End If
         End Sub
 
@@ -190,12 +190,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Return realType.InvokeMember("GetValue", flags, LBinder, o, newArgs)
 #Else
-                Return realType.InvokeMember("Get", flags, New LateBinder, o, args, Nothing)
+                Return realType.InvokeMember("Get", flags, New LateBinder, o, args, Nothing, Nothing, Nothing)
 #End If
             Else
                 Dim defaultMembers() As MemberInfo = realType.GetDefaultMembers()
                 flags = BindingFlags.IgnoreCase Or BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Instance Or BindingFlags.InvokeMethod Or BindingFlags.GetProperty
-                Return realType.InvokeMember(defaultMembers(0).Name, flags, New LateBinder, o, args, Nothing)
+                Return realType.InvokeMember(defaultMembers(0).Name, flags, New LateBinder, o, args, Nothing, Nothing, Nothing)
             End If
         End Function
 

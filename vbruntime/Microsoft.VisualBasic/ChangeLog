@@ -1,3 +1,8 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Microsoft.VisualBasic.dll.moonlight.sources: Remove more
+	files from moonlight build.
+
 2008-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Makefile: Do sign Microsoft.VisualBasic.dll

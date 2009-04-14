@@ -1,3 +1,13 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Utils.vb:
+	* LateBinder.vb:
+	* ProjectData.vb:
+	* Conversions.vb:
+	* LateBinding.vb: Try to only use methods in corlib which are
+	present in all profiles, or add moonlight-specific code
+	conditionally otherwse.
+
 2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* LateBinding.vb: LateIndexGet: Use our own late binder instead of the

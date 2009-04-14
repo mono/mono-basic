@@ -134,8 +134,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'FIXME: projectError.Erl  is readonly. suggested solution, add an overload of SetException(Exception,Integer)
         End Sub
 
+#If Moonlight = False Then
         Public Shared Sub EndApp()
             Environment.Exit(Environment.ExitCode)
         End Sub
+#End If
     End Class
 End Namespace

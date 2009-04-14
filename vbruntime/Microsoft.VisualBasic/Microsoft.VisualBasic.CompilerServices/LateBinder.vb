@@ -92,6 +92,23 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New NotImplementedException
         End Function
 
+#If Moonlight = False Then
+        Friend Function Array_IndexOf(ByVal Array As Integer(), ByVal item As Integer) As Integer
+            Return System.Array.IndexOf(Array, item)
+        End Function
+
+        Friend Function Array_IndexOf(ByVal Array As String(), ByVal item As String) As Integer
+            Return System.Array.IndexOf(Array, item)
+        End Function
+#Else
+        Friend Function Array_IndexOf(ByVal Array As Integer(), ByVal item As Integer) As Integer
+            Return System.Array.IndexOf(Of Integer)(Array, item)
+        End Function
+
+        Friend Function Array_IndexOf(ByVal Array As String(), ByVal item As String) As Integer
+            Return System.Array.IndexOf(Of String)(Array, item)
+        End Function
+#End If
         Public Overrides Function BindToMethod(ByVal bindingAttr As System.Reflection.BindingFlags, _
                                                 ByVal match() As System.Reflection.MethodBase, _
                                                 ByRef args() As Object, _
@@ -124,7 +141,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     If Not names Is Nothing Then
                         Dim parameters As ParameterInfo() = match(0).GetParameters()
                         If IsParamArray(parameters, parameters.Length - 1) Then
-                            If Array.IndexOf(names, parameters(parameters.Length - 1).Name) <> -1 Then
+                            If Array_IndexOf(names, parameters(parameters.Length - 1).Name) <> -1 Then
                                 Throw New ArgumentException("Named arguments cannot match ParamArray parameters.")
                             End If
                         End If
@@ -218,7 +235,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     If mapping Is Nothing Then
                         args(i) = clone(cpos) 'FIXME: is it possible that method was invoked after the mapping failed? 
                     Else
-                        Dim reverseMapping As Integer = Array.IndexOf(mapping, i)
+                        Dim reverseMapping As Integer = Array_IndexOf(mapping, i)
                         If reverseMapping > -1 Then
                             If parameters(i).ParameterType.IsByRef Then
                                 'ByRef parameters
@@ -288,7 +305,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 ReDim preparedArguments(parameters.Length - 1)
                 For i As Integer = 0 To parameters.Length - 1
-                    Dim mappedArgument As Integer = Array.IndexOf(mapping, i)
+                    Dim mappedArgument As Integer = Array_IndexOf(mapping, i)
                     If mappedArgument = -1 Or mappedArgument > args.Length - 1 Then
                         If parameters(i).IsOptional Then
                             preparedArguments(i) = parameters(i).DefaultValue 'initialize optional parameter
@@ -309,7 +326,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 If args.Length > 0 Then
                     If Not names Is Nothing Then ' for simplicity, care about named prameters case separately
                         For i As Integer = 0 To args.Length - 1
-                            Dim mappedArgument As Integer = Array.IndexOf(mapping, i)
+                            Dim mappedArgument As Integer = Array_IndexOf(mapping, i)
                             If mappedArgument = -1 Then
                                 If i = args.Length - 1 Then ' i.e. there is no mapping for param array
                                     Exit For ' its ok, just finish preparing arguments
@@ -341,7 +358,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
 
             For i As Integer = 0 To args.Length - 1
-                Dim mappedArgument As Integer = Array.IndexOf(mapping, i)
+                Dim mappedArgument As Integer = Array_IndexOf(mapping, i)
                 If mappedArgument = -1 Or mappedArgument > args.Length - 1 Then
                     Return Nothing 'not-optional parameter missing
                 Else
@@ -371,7 +388,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             For i As Integer = 0 To mapping.Length - 1
                 If i < names.Length Then
-                    Dim m As Integer = Array.IndexOf(parameterNames, names(i))
+                    Dim m As Integer = Array_IndexOf(parameterNames, names(i))
                     If m = -1 Then
                         Return Nothing ' mapping failed
                     End If
@@ -484,7 +501,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     Case TypeCode.Single
                         Return CSng(value)
                 End Select
-                Return Convert.ChangeType(value, type2)
+                Return Convert.ChangeType(value, type2, CultureInfo.CurrentCulture)
             Else
                 If type2 Is GetType(String) Then
                     Return CStr(value)
@@ -810,7 +827,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
                 Dim nameMatch As Boolean = True
                 For j As Integer = 0 To names.Length - 1
-                    If Array.IndexOf(paramNames, names(j)) = -1 Then
+                    If Array_IndexOf(paramNames, names(j)) = -1 Then
                         nameMatch = False
                         Exit For
                     End If

@@ -39,11 +39,16 @@ Imports Microsoft.VisualBasic.CompilerServices
 
 Namespace Microsoft.VisualBasic
     Public Module DateAndTime
+#If Moonlight = False Then
         Public Property DateString() As String
+#Else
+        Public ReadOnly Property DateString() As String
+#End If
             Get
                 Return DateTime.Today.ToString("MM-dd-yyyy")
             End Get
 
+#If Moonlight = False Then
             Set(ByVal Value As String)
                 Dim formats() As String = {"M-d-yyyy", "M-d-y", "M/d/yyyy", "M/d/y"}
 
@@ -57,15 +62,22 @@ Namespace Microsoft.VisualBasic
                     Throw New InvalidCastException(String.Format("Cast from string {0} to type 'Date' is not valid.", Value))
                 End Try
             End Set
+#End If
         End Property
 
+#If Moonlight = False Then
         Public Property Today() As System.DateTime
+#Else
+        Public readonly Property Today() As System.DateTime
+#End If
             Get
                 Return DateTime.Today
             End Get
+#If Moonlight = False Then
             Set(ByVal Value As System.DateTime)
                 OSSpecific.OSDriver.Driver.SetDate(Value)
             End Set
+#End If
         End Property
 
         Public ReadOnly Property Timer() As Double
@@ -83,7 +95,11 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
+#If Moonlight = False Then
         Public Property TimeOfDay() As System.DateTime
+#Else
+        Public ReadOnly Property TimeOfDay() As System.DateTime
+#End If
             Get
                 Dim TSpan As TimeSpan = DateTime.Now.TimeOfDay
 
@@ -91,15 +107,22 @@ Namespace Microsoft.VisualBasic
                  TSpan.Minutes, TSpan.Seconds, _
                  TSpan.Milliseconds)
             End Get
+#If Moonlight = False Then
             Set(ByVal Value As System.DateTime)
                 OSSpecific.OSDriver.Driver.SetTime(Value)
             End Set
+#End If
         End Property
 
+#If Moonlight = False Then
         Public Property TimeString() As String
+#Else
+        Public ReadOnly Property TimeString() As String
+#End If
             Get
                 Return DateTime.Now.ToString("HH:mm:ss")
             End Get
+#If Moonlight = False Then
             Set(ByVal Value As String)
                 Dim formats() As String = {"hh:mm:ss tt", "H:mm:ss tt", "HH:mm:ss", "H:mm:ss", "h:mm:ss", "hh:mm:ss", "hh:mm", "hh:mm tt", "h:mm", "h:mm tt", "h:m", "h:m tt"}
 
@@ -113,6 +136,7 @@ Namespace Microsoft.VisualBasic
                     Throw New InvalidCastException(String.Format("Cast from string {0} to type '{1}' is not valid.", Value, "Date"))
                 End Try
             End Set
+#End If
         End Property
 
         ' Methods
@@ -192,7 +216,7 @@ Namespace Microsoft.VisualBasic
             Dim YearQuarters As Integer
             Dim WeekRule As CalendarWeekRule = CalendarWeekRule.FirstDay
             Dim DayRule As DayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek
-			Dim WeekDiff as Long
+            Dim WeekDiff As Long
 
             Select Case Interval
                 Case DateInterval.Year
@@ -206,16 +230,16 @@ Namespace Microsoft.VisualBasic
                 Case DateInterval.WeekOfYear
                     WeekDiff = Convert.ToInt64(Date2.Subtract(Date1).Days \ 7)
                     DayRule = GetDayRule(StartOfWeek, DayRule)
-                    if (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek < DayRule)
-                        return WeekDiff + 1
-                    Else if (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek > Date2.DayOfWeek)
-                        return WeekDiff + 1
-                    Else if (Date1.DayOfWeek >= DayRule And Date2.DayOfWeek < DayRule)
-                        return WeekDiff
-                    Else if (Date2.DayOfWeek < Date1.DayOfWeek)
-                        return WeekDiff + 1
+                    If (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek < DayRule) Then
+                        Return WeekDiff + 1
+                    ElseIf (Date2.DayOfWeek >= DayRule And Date1.DayOfWeek > Date2.DayOfWeek) Then
+                        Return WeekDiff + 1
+                    ElseIf (Date1.DayOfWeek >= DayRule And Date2.DayOfWeek < DayRule) Then
+                        Return WeekDiff
+                    ElseIf (Date2.DayOfWeek < Date1.DayOfWeek) Then
+                        Return WeekDiff + 1
                     Else
-                        return WeekDiff
+                        Return WeekDiff
                     End If
                 Case DateInterval.Weekday
                     Return Convert.ToInt64(((Date2.Subtract(Date1)).Days \ 7))
