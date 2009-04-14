@@ -1,3 +1,7 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Dist vbnc9.vbproj.
+
 2009-03-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Update to generate sources from vbnc9.vbproj.
