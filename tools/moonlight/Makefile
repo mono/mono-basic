@@ -16,7 +16,8 @@ dist-local: dist-default
 tuner.exe: tuner.vb
 	mono --debug $(topdir)/class/lib/bootstrap/vbnc.exe tuner.vb -out:tuner.exe -r:`pkg-config --variable=Libraries cecil` -debug+
 
-moonlight: 
+moonlight:
+	mkdir -p $(topdir)/class/lib/moonlight
 	$(MAKE) -C ../../vbruntime/Microsoft.VisualBasic PROFILE=moonlight
 	
 tune: moonlight tuner.exe
