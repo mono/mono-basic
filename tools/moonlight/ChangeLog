@@ -1,0 +1,4 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tuner.vb, Makefile: Added simple program to convert
+	  MS.VB.dll's 2.0.0.0 references into 2.0.5.0 references.

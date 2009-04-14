@@ -1,6 +1,6 @@
 thisdir = tools
 
-SUBDIRS = extract-source
+SUBDIRS = extract-source moonlight
 
 include ../build/rules.make
 
@@ -10,3 +10,6 @@ clean-local test-local run-test-local run-test-ondotnet-local all-local install-
 	@:
 
 dist-local: dist-default
+
+tune:
+	$(MAKE) -C moonlight tune
