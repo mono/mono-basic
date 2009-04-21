@@ -19,6 +19,7 @@
 Imports Mono.Cecil
 Imports System
 Imports System.IO
+Imports System.Reflection
 
 Class Tuner
 	Shared Function Main (args () As String) As Integer
@@ -30,6 +31,7 @@ Class Tuner
 		destination = Path.GetFullPath (destination)
 
 		a = AssemblyFactory.GetAssembly (source)
+		a.MainModule.LoadSymbols ()
 
 		Console.WriteLine ("Assembly successfully loaded from {0}", source)
 
@@ -42,6 +44,7 @@ Class Tuner
 			Console.WriteLine (" => {0}", ref.FullName)
 		Next
 
+		a.MainModule.SaveSymbols ()
 		AssemblyFactory.SaveAssembly (a, destination)
 
 		Console.WriteLine ("Assembly successfully written to {0}", destination)

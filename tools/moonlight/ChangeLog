@@ -1,3 +1,7 @@
+2009-04-21  Jb Evain  <jbevain@novell.com>
+
+	* tuner.vb: tune symbols as well.
+
 2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Create the build directory for the dll if it
