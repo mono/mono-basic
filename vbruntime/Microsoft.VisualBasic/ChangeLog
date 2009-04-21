@@ -1,3 +1,9 @@
+2009-04-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AssemblyInfo.vb, Makefile: Use winfx3.pub as the key file and set 
+	  the correct assembly version for moonlight.
+	* winfx3.pub, mono.snk: Added.
+
 2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Microsoft.VisualBasic.dll.moonlight.sources: Remove more

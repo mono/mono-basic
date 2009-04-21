@@ -5,6 +5,7 @@ LIBRARY = Microsoft.VisualBasic.dll
 
 ifeq ("$(PROFILE)", "moonlight")
 LOCAL_VBNC_FLAGS = @vbruntime-moonlight.rsp $(EXTRA_VBRUNTIME_FLAGS)
+LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
 else
 ifeq ("$(FXVERSION)", "1")
 LOCAL_VBNC_FLAGS = @vbruntime1.rsp $(EXTRA_VBRUNTIME_FLAGS)
@@ -32,6 +33,8 @@ include ../../build/library.make
 DISTFILES =	\
 	AssemblyInfo.vb				\
 	msfinal.pub				\
+	winfx3.pub				\
+	mono.snk				\
 	strings.txt				\
 	strings-only1.txt			\
 	strings-only2.txt			\

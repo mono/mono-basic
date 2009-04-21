@@ -54,8 +54,7 @@ Imports System.Security
 
 
 #If MOONLIGHT Then
-<Assembly: AssemblyVersion("1.1.20806.0")> 
-<Assembly: AssemblyVersion("8.1.0.0")> 
+<Assembly: AssemblyVersion("2.0.5.0")> 
 <Assembly: ComVisible(True)> 
 <Assembly: CLSCompliant(True)> 
 <Assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default Or DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)> 
@@ -92,6 +91,10 @@ Imports System.Security
 #If DONTSIGN = False Then
 <Assembly: AssemblyDelaySign(True)> 
 #If TARGET_JVM = False And INDEVENV = False Then
+#If MOONLIGHT Then
+<Assembly: AssemblyKeyFile("winfx3.pub")> 
+#Else
 <Assembly: AssemblyKeyFile("msfinal.pub")> 
+#End If
 #End If
 #End If
