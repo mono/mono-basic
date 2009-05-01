@@ -138,11 +138,12 @@ Namespace Microsoft.VisualBasic
         Public Const vbMsgBoxRight As MsgBoxStyle = MsgBoxStyle.MsgBoxRight
         Public Const vbMsgBoxRtlReading As MsgBoxStyle = MsgBoxStyle.MsgBoxRtlReading
         Public Const vbMsgBoxSetForeground As MsgBoxStyle = MsgBoxStyle.MsgBoxSetForeground
-
+#End If
         Public Const vbFalse As TriState = TriState.False
         Public Const vbTrue As TriState = TriState.True
         Public Const vbUseDefault As TriState = TriState.UseDefault
 
+#If Not MOONLIGHT Then
         Public Const vbHide As AppWinStyle = AppWinStyle.Hide
         Public Const vbNormalFocus As AppWinStyle = AppWinStyle.NormalFocus
         Public Const vbMinimizedFocus As AppWinStyle = AppWinStyle.MinimizedFocus

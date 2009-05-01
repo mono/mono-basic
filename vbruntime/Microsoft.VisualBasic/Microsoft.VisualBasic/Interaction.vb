@@ -70,7 +70,6 @@ Namespace Microsoft.VisualBasic
             Return Nothing
         End Function
 
-#If Not MOONLIGHT Then
         Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
             If (Choice.Rank <> 1) Then
@@ -88,6 +87,7 @@ Namespace Microsoft.VisualBasic
                 Return Nothing
             End If
         End Function
+#If Not MOONLIGHT Then
         Public Function Command() As String
             'TODO: OS Specific
             Return String.Join(" ", Environment.GetCommandLineArgs)
@@ -182,6 +182,7 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Function
+#End If
         Public Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
             If Expression Then
                 Return TruePart
@@ -190,6 +191,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
+#If Not MOONLIGHT Then
 #If TARGET_JVM = False Then
         Class InputForm
             Inherits Form
@@ -256,6 +258,7 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Function
+#End If
         Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
             Dim strEnd As String = ""
@@ -327,6 +330,7 @@ Namespace Microsoft.VisualBasic
             Return strStart.PadLeft(nSpaces) + ":" + strEnd.PadLeft(nSpaces)
 
         End Function
+#If Not MOONLIGHT Then
         Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
 
 #If TARGET_JVM = False Then
@@ -346,6 +350,7 @@ Namespace Microsoft.VisualBasic
             'TODO: OS Specific
             Throw New NotImplementedException
         End Function
+#End If
         Public Function Switch(ByVal ParamArray VarExpr() As Object) As Object
             Dim i As Integer
             If VarExpr Is Nothing Then
@@ -361,7 +366,8 @@ Namespace Microsoft.VisualBasic
             Return Nothing
         End Function
 
-        Public Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OKOnly, _
+#If Not MOONLIGHT Then
+        Public Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OkOnly, _
          Optional ByVal Title As Object = Nothing) As MsgBoxResult
 #If TARGET_JVM = False Then
 

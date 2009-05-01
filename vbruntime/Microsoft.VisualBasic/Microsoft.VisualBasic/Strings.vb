@@ -578,8 +578,8 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Function GetChar(ByVal Str As String, ByVal Index As Integer) As Char
-            If Str Is Nothing Then
+        Public Function GetChar(ByVal str As String, ByVal Index As Integer) As Char
+            If str Is Nothing Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
             End If
 
@@ -587,11 +587,11 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'Index' must be greater than or equal to 1.")
             End If
 
-            If Index > Str.Length Then
+            If Index > str.Length Then
                 Throw New ArgumentException("Argument 'Index' must be less than or equal to the length of argument 'String'.")
             End If
 
-            Return Str.Chars(Index - 1)
+            Return str.Chars(Index - 1)
 
         End Function
 
@@ -728,21 +728,21 @@ Namespace Microsoft.VisualBasic
             Return Value.ToLower()
         End Function
 
-        Public Function Left(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Left(ByVal str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero.")
             End If
 
-            If Str Is Nothing Or Length = 0 Then
+            If str Is Nothing Or Length = 0 Then
                 Return String.Empty
             End If
 
-            If Length > Str.Length Then
-                Length = Str.Length
+            If Length > str.Length Then
+                Length = str.Length
             End If
 
-            Return Str.Substring(0, Length)
+            Return str.Substring(0, Length)
 
         End Function
 
@@ -856,13 +856,13 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function LTrim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function LTrim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.TrimStart(carr)
+            Return str.TrimStart(carr)
         End Function
 
         Public Function Mid(ByVal str As String, ByVal Start As Integer, ByVal Length As Integer) As String
@@ -960,21 +960,21 @@ Namespace Microsoft.VisualBasic
         End Function
 
 
-        Public Function Right(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Right(ByVal str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero")
             End If
 
-            If Str Is Nothing Or Str = String.Empty Then
+            If str Is Nothing Or str = String.Empty Then
                 Return String.Empty
             End If
 
-            If Length >= Str.Length Then
-                Return Str
+            If Length >= str.Length Then
+                Return str
             End If
 
-            Return Str.Substring(Str.Length - Length)
+            Return str.Substring(str.Length - Length)
 
         End Function
 
@@ -990,13 +990,13 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function RTrim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function RTrim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.TrimEnd(carr)
+            Return str.TrimEnd(carr)
         End Function
 
         Public Function Space(ByVal Number As Integer) As String
@@ -1240,13 +1240,13 @@ Namespace Microsoft.VisualBasic
             Return New String(carr)
         End Function
 
-        Public Function Trim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function Trim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.Trim(carr)
+            Return str.Trim(carr)
         End Function
 
         Public Function UCase(ByVal Value As Char) As Char

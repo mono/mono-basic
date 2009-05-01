@@ -78,14 +78,19 @@ Namespace Microsoft.VisualBasic
             'logic
             IsMappedExceptionToNumber = False
         End Sub
+
         ' store values in ErrObject
         ' create and throw a new exception object
+#If Moonlight = False Then
         Public Sub Raise(ByVal Number As Integer, _
                         Optional ByVal Source As System.Object = Nothing, _
                         Optional ByVal Description As System.Object = Nothing, _
                         Optional ByVal HelpFile As System.Object = Nothing, _
                         Optional ByVal HelpContext As System.Object = Nothing)
-
+#Else
+        Public Sub Raise(ByVal Number As Integer, _
+                        Optional ByVal Description As System.Object = Nothing)
+#End If
             If Number > 65535 Or Number = 0 Then
                 Throw New ArgumentException("Argument 'Number' is not a valid value.")
             End If
@@ -108,7 +113,6 @@ Namespace Microsoft.VisualBasic
                 m_Source = Convert.ToString(Source)
                 m_Exception.Source = m_Source
             End If
-#End If
 
             If Not (HelpFile Is Nothing) Then
                 m_HelpFile = Convert.ToString(HelpFile)
@@ -119,6 +123,7 @@ Namespace Microsoft.VisualBasic
                 m_HelpContext = Convert.ToInt32(HelpContext)
                 'TODO: implement me: HelpContext
             End If
+#End If
 
             Throw m_Exception
 

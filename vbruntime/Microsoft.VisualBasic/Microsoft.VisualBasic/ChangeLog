@@ -1,3 +1,14 @@
+2009-05-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Strings.vb:
+	* ErrObject.vb:
+	* Constants.vb:
+	* Collection.vb:
+	* FileSystem.vb:
+	* DateAndTime.vb:
+	* Interaction.vb: Rename paramaters and shuffle some "#If
+	Moonlight Then" around to match SL api exactly.
+
 2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Hashtable.vb:

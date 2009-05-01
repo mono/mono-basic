@@ -1,3 +1,8 @@
+2009-05-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Operators.vb: Rename paramaters and shuffle some "#If
+	Moonlight Then" around to match SL api exactly.
+
 2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Utils.vb:
