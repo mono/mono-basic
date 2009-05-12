@@ -118,7 +118,7 @@ Public Class GetRefExpression
                             'Emitter.EmitStoreElement(Info, elementtype, arrtype)
                         End If
                     Else
-                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                         'Dim method As MethodInfo = ArrayElementInitializer.GetSetMethod(arrtype)
 
                         'If isnonprimitivevaluetype Then
@@ -138,10 +138,10 @@ Public Class GetRefExpression
                     ElseIf TypeOf varC.Expression Is GetRefExpression AndAlso varC.Expression IsNot Me Then
                         result = varC.Expression.GenerateCode(Info) AndAlso result
                     Else
-                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                     End If
                 Else
-                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                 End If
             Case ExpressionClassification.Classifications.Value
                 result = m_Expression.GenerateCode(Info.Clone(Me, m_Expression.ExpressionType)) AndAlso result
@@ -151,11 +151,11 @@ Public Class GetRefExpression
                 Emitter.EmitStoreVariable(Info, local)
                 Emitter.EmitLoadVariableLocation(Info, local)
             Case ExpressionClassification.Classifications.PropertyAccess
-                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             Case ExpressionClassification.Classifications.MethodPointer
-                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
             Case Else
-                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
         End Select
 
         Return result

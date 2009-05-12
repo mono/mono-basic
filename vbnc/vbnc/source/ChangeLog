@@ -1,3 +1,12 @@
+2009-05-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ChangeLog: 
+
+2009-05-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Expressions/GetRefExpression.vb: Report the correct location
+	  for errors.
+
 2009-03-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc9.vbproj:
