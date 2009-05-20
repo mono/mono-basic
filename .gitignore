@@ -9,3 +9,6 @@ build/deps/*
 *.mdb
 *.dll
 tmp
+testoutput/
+vbnc/vbnc/version.tmp
+
