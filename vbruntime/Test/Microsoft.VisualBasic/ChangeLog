@@ -1,3 +1,10 @@
+2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Interaction.cs|vb: Port the C# tests to VB to not have two classes with
+	the same name (annoying when running tests in VS, since referencing both
+	the CS and VB project doesn't build).
+
+
 2008-12-12  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringsTest.vb: TestChrWorker: Use GetMaxByteCount on profile 1.x that
