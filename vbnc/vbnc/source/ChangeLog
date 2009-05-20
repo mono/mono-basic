@@ -1,5 +1,12 @@
 2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/Helper.vb: Private types are accessible to siblings.
+	Fixes #504822.
+
+	Patch submitted by John Lenz (jlenz2@math.uiuc.edu)
+
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Expressions/Conversions/CTypeExpression.vb: Properly box parameters to
 	  methods which takes ValueType parameters.
 

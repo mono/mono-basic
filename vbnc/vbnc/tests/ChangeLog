@@ -1,5 +1,10 @@
 2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Bugs/bug-504822.vb:
+	* Bugs/bug-504822.response: Added test case for #504822.
+
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* CompileTime2/ValueType1.vb: New test.
 
 2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>

@@ -1981,8 +1981,14 @@ Public Class Helper
 
         'If the called type is not a nested type it is accessible.
         If CalledType.DeclaringType Is Nothing Then Return True
-        'If the called type is a private nested type it is inaccessible
-        If CalledType.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, CallerType)
+
+        'The caller can descend once into a private type, check if that is the case
+        If CalledType.IsNestedPrivate Then
+            'don't fail here, because could be the private nesting is further up the hierarchy
+            If Helper.CompareType(CalledType.DeclaringType, CallerType) Then
+                Return True
+            End If
+        End If
 
         'Add all the surrounding types of the caller type to a list.
         Dim callerHierarchy As New Generic.List(Of Type)
@@ -1995,6 +2001,9 @@ Public Class Helper
         Dim tmpCaller As Type = CalledType.DeclaringType
         Do Until tmpCaller Is Nothing
             If callerHierarchy.Contains(tmpCaller) Then
+                'The caller can descend once into a private type, check that here.
+                If CalledType.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, tmpCaller)
+
                 'We've reached a common surrounding type.
                 'No matter what accessibility level this type has 
                 'it is accessible.
@@ -2006,6 +2015,9 @@ Public Class Helper
             End If
             tmpCaller = tmpCaller.DeclaringType
         Loop
+
+        'If the called type is a private nested type and the above checks failed, it is inaccessible
+        If CalledType.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, CallerType)
 
         'There is no common surrounding type, and the access level of all 
         'surrounding types of the called types are non-private, so the type
@@ -4024,3 +4036,4 @@ Public Class Helper
         Return False
     End Function
 End Class
+
