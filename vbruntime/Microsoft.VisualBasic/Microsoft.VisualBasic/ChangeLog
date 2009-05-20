@@ -1,3 +1,10 @@
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Interaction.vb: In MsgBox we need to return the value
+	from the call to MessageBox.
+
+	Modified patch from Lachlan Keown (lachlankeown@gmail.com).
+
 2009-05-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Strings.vb:

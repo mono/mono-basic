@@ -425,7 +425,7 @@ Namespace Microsoft.VisualBasic
                 wf_options = wf_options Or MessageBoxOptions.RtlReading
             End If
 
-            MessageBox.Show(Prompt.ToString, Title.ToString(), wf_buttons, wf_icon, wf_default, wf_options)
+            Return CType(MessageBox.Show(Prompt.ToString, Title.ToString(), wf_buttons, wf_icon, wf_default, wf_options), MsgBoxResult)
 #Else
             Throw New NotImplementedException
 #End If

@@ -1,5 +1,9 @@
 2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
+	* InteractionTests.vb: Added tests for MsgBox.
+
+2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
 	* Interaction.cs|vb: Port the C# tests to VB to not have two classes with
 	the same name (annoying when running tests in VS, since referencing both
 	the CS and VB project doesn't build).

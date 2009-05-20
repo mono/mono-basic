@@ -85,6 +85,26 @@ Public Class InteractionTests
 
 #End Region
 
+#If Not TARGET_JVM Then
+#Region "MsgBox tests"
+    <Category("UI")> _
+    <Test()> _
+    Public Sub MsgBoxTest()
+        Dim abort As MsgBoxResult = MsgBoxResult.Abort
+        Dim b As MsgBoxResult = MsgBoxResult.Cancel
+        Dim c As MsgBoxResult = MsgBoxResult.Ignore
+
+        Assert.AreEqual(MsgBoxResult.Abort, MsgBox("Press Abort", MsgBoxStyle.AbortRetryIgnore), "abort")
+        Assert.AreEqual(MsgBoxResult.Retry, MsgBox("Press Retry", MsgBoxStyle.AbortRetryIgnore), "retry")
+        Assert.AreEqual(MsgBoxResult.Ignore, MsgBox("Press Ignore", MsgBoxStyle.AbortRetryIgnore), "ignore")
+        Assert.AreEqual(MsgBoxResult.Ok, MsgBox("Press OK", MsgBoxStyle.OkCancel), "ok")
+        Assert.AreEqual(MsgBoxResult.Cancel, MsgBox("Press Cancel", MsgBoxStyle.OkCancel), "cancel")
+        Assert.AreEqual(MsgBoxResult.Yes, MsgBox("Press Yes", MsgBoxStyle.YesNo), "yes")
+        Assert.AreEqual(MsgBoxResult.No, MsgBox("Press No", MsgBoxStyle.YesNoCancel), "no")
+    End Sub
+#End Region
+#End If
+
 #Region "Partition tests"
 
     <Test()> _
