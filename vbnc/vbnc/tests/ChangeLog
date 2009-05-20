@@ -1,3 +1,7 @@
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* CompileTime2/ValueType1.vb: New test.
+
 2008-12-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Errors/30456.vb:

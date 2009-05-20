@@ -1,6 +1,7 @@
-2009-05-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	* ChangeLog: 
+	* Expressions/Conversions/CTypeExpression.vb: Properly box parameters to
+	  methods which takes ValueType parameters.
 
 2009-05-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
