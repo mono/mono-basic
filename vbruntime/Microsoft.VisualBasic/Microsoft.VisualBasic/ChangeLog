@@ -1,5 +1,10 @@
 2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* VBFixedStringAttribute.vb:
+	* VBFixedArrayAttribute.vb: Implemented.
+
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Interaction.vb: In MsgBox we need to return the value
 	from the call to MessageBox.
 

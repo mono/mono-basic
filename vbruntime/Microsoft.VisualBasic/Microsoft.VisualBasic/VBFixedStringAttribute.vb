@@ -36,12 +36,17 @@ Namespace Microsoft.VisualBasic
     <AttributeUsage(AttributeTargets.Field, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class VBFixedStringAttribute
         Inherits Attribute
+        Private m_Length As Integer
+
         Public Sub New(ByVal Length As Integer)
-            Throw New NotImplementedException
+            If Length <= 0 Then Throw New ArgumentException("Arguments to 'VBFixedStringAttribute' are not valid.")
+            If Length > Short.MaxValue Then Throw New ArgumentException("Arguments to 'VBFixedStringAttribute' are not valid.")
+            m_Length = Length
         End Sub
+
         Public ReadOnly Property Length() As Integer
             Get
-                Throw New NotImplementedException
+                Return m_Length
             End Get
         End Property
     End Class

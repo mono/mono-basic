@@ -1,4 +1,8 @@
 2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
+	* VBFixedStringAttributeTest.vb:
+	* VBFixedArrayAttributeTest.vb: Added.
+
+2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* InteractionTests.vb: Added tests for MsgBox.
 
