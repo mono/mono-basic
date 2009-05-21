@@ -1,3 +1,8 @@
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* 2008VB.vbproj:
+	* 2008VB.sln: Added.
+
 2009-04-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* AssemblyInfo.vb, Makefile: Use winfx3.pub as the key file and set 
