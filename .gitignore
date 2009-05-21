@@ -11,4 +11,9 @@ build/deps/*
 tmp
 testoutput/
 vbnc/vbnc/version.tmp
+*.pidb
+*.usertasks
+*.userprefs
+class/lib/vbnc/
+scripts/vbnc
 
