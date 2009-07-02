@@ -1,3 +1,8 @@
+2009-07-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* library.make: When building a library, create the destination
+	directory since it may not exist (if using git).
+
 2007-08-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* library.make: If there's a specific sources file for a profile,
