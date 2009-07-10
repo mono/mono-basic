@@ -186,7 +186,7 @@ Namespace Microsoft.VisualBasic.FileIO
 #Else
                             Using reader As New IO.StreamReader(New IO.FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024))
 #End If
-                currentChar = Microsoft.VisualBasic.ChrW(reader.Read)
+                currentChar = Microsoft.VisualBasic.Strings.ChrW(reader.Read)
                 Do Until currentChar = Char.MinValue
 
                     If (ignoreCase AndAlso Char.ToUpperInvariant(currentChar) = text(0)) OrElse (currentChar = text(0)) Then
@@ -209,7 +209,7 @@ Namespace Microsoft.VisualBasic.FileIO
                             For i As Integer = tmp.Length To text.Length - 2
                                 If reader.EndOfStream Then Return False
 
-                                Dim tmpChar As Char = Microsoft.VisualBasic.ChrW(reader.Read)
+                                Dim tmpChar As Char = Microsoft.VisualBasic.Strings.ChrW(reader.Read)
 
                                 If tmpChar = Char.MinValue Then Return False
                                 peekedChar.Enqueue(tmpChar)
@@ -226,7 +226,7 @@ Namespace Microsoft.VisualBasic.FileIO
                     If peekedChar.Count > 0 Then
                         currentChar = peekedChar.Dequeue
                     Else
-                        currentChar = Microsoft.VisualBasic.ChrW(reader.Read)
+                        currentChar = Microsoft.VisualBasic.Strings.ChrW(reader.Read)
                     End If
                 Loop
             End Using

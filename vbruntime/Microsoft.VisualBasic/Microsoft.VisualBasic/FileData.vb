@@ -445,7 +445,7 @@ Namespace Microsoft.VisualBasic
                 Case FileVariableType.Byte ' 17 
                     Value = BinaryReader.ReadByte
                 Case FileVariableType.Char ' 18
-                    Value = Chr(BinaryReader.ReadByte)
+                    Value = Strings.Chr(BinaryReader.ReadByte)
                 Case FileVariableType.Short ' 2
                     Value = BinaryReader.ReadInt16
                 Case FileVariableType.Integer ' 3 
@@ -487,7 +487,7 @@ Namespace Microsoft.VisualBasic
                 Case FileVariableType.Byte ' 17 
                     Value = BinaryReader.ReadByte
                 Case FileVariableType.Char ' 18
-                    Value = Chr(BinaryReader.ReadByte)
+                    Value = Strings.Chr(BinaryReader.ReadByte)
                 Case FileVariableType.Short ' 2
                     Value = BinaryReader.ReadInt16
                 Case FileVariableType.Integer ' 3 
@@ -842,12 +842,12 @@ Namespace Microsoft.VisualBasic
 
             Try
                 ch = BinaryReader.ReadChar()
-                While ch <> ","c AndAlso ch <> CChar(vbCr) AndAlso ch <> CChar(vbLf)
+                While ch <> ","c AndAlso ch <> CChar(Constants.vbCr) AndAlso ch <> CChar(Constants.vbLf)
                     If ch <> Nothing Then builder.Append(ch)
                     ch = BinaryReader.ReadChar()
                 End While
 
-                If ch = vbCr AndAlso Chr(BinaryReader.PeekChar) = CChar(vbLf) Then
+                If ch = Constants.vbCr AndAlso Strings.Chr(BinaryReader.PeekChar) = CChar(Constants.vbLf) Then
                     BinaryReader.ReadChar()
                 End If
             Catch ex As EndOfStreamException
@@ -879,18 +879,18 @@ Namespace Microsoft.VisualBasic
             Try
                 ch = BinaryReader.ReadChar()
                 If ch = "#"c Then
-                    While ch <> ","c AndAlso ch <> CChar(vbCr) AndAlso ch <> CChar(vbLf) AndAlso ch <> " "c
+                    While ch <> ","c AndAlso ch <> CChar(Constants.vbCr) AndAlso ch <> CChar(Constants.vbLf) AndAlso ch <> " "c
                         If ch <> Nothing Then builder.Append(ch)
                         ch = BinaryReader.ReadChar()
                     End While
                 Else
-                    While ch <> ","c AndAlso ch <> CChar(vbCr) AndAlso ch <> CChar(vbLf)
+                    While ch <> ","c AndAlso ch <> CChar(Constants.vbCr) AndAlso ch <> CChar(Constants.vbLf)
                         If ch <> Nothing Then builder.Append(ch)
                         ch = BinaryReader.ReadChar
                     End While
                 End If
 
-                If ch = vbCr AndAlso Chr(BinaryReader.PeekChar) = vbLf Then
+                If ch = Constants.vbCr AndAlso Strings.Chr(BinaryReader.PeekChar) = Constants.vbLf Then
                     BinaryReader.ReadChar()
                 End If
 
@@ -1142,7 +1142,7 @@ Namespace Microsoft.VisualBasic
             VerifyFileModes(OpenMode.Append, OpenMode.Output, OpenMode.Random)
             VerifyWriteAccess()
             Print(Output)
-            Writer.Write(vbCrLf)
+            Writer.Write(Constants.vbCrLf)
         End Sub
 
         Public Function Seek() As Long
@@ -1258,7 +1258,7 @@ Namespace Microsoft.VisualBasic
         End Sub
 
         Public Sub WriteLine(ByVal ParamArray Output() As Object)
-            WriteInternal(vbCrLf, Output)
+            WriteInternal(Constants.vbCrLf, Output)
         End Sub
     End Class
 End Namespace

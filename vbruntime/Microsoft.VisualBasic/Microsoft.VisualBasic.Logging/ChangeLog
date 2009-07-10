@@ -1,3 +1,8 @@
+2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileLogTraceListener.vb: Use full "path" to access members in modules, since modules
+	will be changed to classes.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	

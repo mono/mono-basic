@@ -117,7 +117,7 @@ Namespace Microsoft.VisualBasic.Logging
             If data Is Nothing Then
                 TraceEvent(eventCache, source, eventType, id, String.Empty)
             Else
-                TraceEvent(eventCache, source, eventType, id, Microsoft.VisualBasic.Join(data, m_Delimiter))
+                TraceEvent(eventCache, source, eventType, id, Microsoft.VisualBasic.Strings.Join(data, m_Delimiter))
             End If
         End Sub
 
