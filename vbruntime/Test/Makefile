@@ -12,8 +12,7 @@ DISTFILES = \
 	2008VB_test_VB.dll.sources	\
 	2008VB_test_VB.dll.sources.win	\
 	2008VB_test_VB.vbproj		\
-	ChangeLog			\
-	Make.cmd
+	ChangeLog
 
 DISTFILES += $(wildcard *.vb) $(wildcard *.cs) $(wildcard */*.vb) $(wildcard */*.cs)
 DISTFILES += $(wildcard bin/*config)
