@@ -80,7 +80,6 @@ Public Class TypeManager
 
     Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.Helper.StringComparer)
     Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
-    Private Shared m_TypeDescriptorsOfTypes2 As New Generic.Dictionary(Of Integer, TypeDescriptor)
 
     Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
     Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
@@ -503,14 +502,12 @@ Public Class TypeManager
     Sub RegisterReflectionType(ByVal ReflectionType As Type, ByVal Descriptor As TypeDescriptor)
         If m_TypeDescriptorsOfTypes.ContainsKey(ReflectionType) = False Then
             m_TypeDescriptorsOfTypes.Add(ReflectionType, Descriptor)
-            m_TypeDescriptorsOfTypes2.Add(ReflectionType.GetHashCode, Descriptor)
         End If
     End Sub
 
     Function GetRegisteredType(ByVal Type As Type) As Type
         If Type Is Nothing Then Return Nothing
         If TypeOf Type Is TypeDescriptor Then Return Type
-        If m_TypeDescriptorsOfTypes2.ContainsKey(Type.GetHashCode) Then Return m_TypeDescriptorsOfTypes2(Type.GetHashCode)
         If m_TypeDescriptorsOfTypes.ContainsKey(Type) Then Return m_TypeDescriptorsOfTypes(Type)
         For Each key As Type In m_TypeDescriptorsOfTypes.Keys
             If key Is Type Then
