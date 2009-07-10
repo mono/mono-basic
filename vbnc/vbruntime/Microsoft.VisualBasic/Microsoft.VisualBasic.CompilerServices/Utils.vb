@@ -42,6 +42,33 @@ Namespace Microsoft.VisualBasic.CompilerServices
             'Nobody should see constructor
         End Sub
 
+#If Moonlight = False Then
+        Friend Shared Function Array_GetLength(ByVal array As System.Array) As Long
+            Return array.LongLength
+        End Function
+
+        Friend Shared Function Array_GetLength(ByVal array As System.Array, ByVal dimension As Integer) As Long
+            Return array.GetLongLength(dimension)
+        End Function
+
+        Friend Shared Sub Array_Copy(ByVal sourceArray As System.Array, ByVal sourceIndex As Long, ByVal destinationArray As System.Array, ByVal destinationIndex As Long, ByVal length As Long)
+            System.Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length)
+        End Sub
+
+#Else
+        Friend Shared Function Array_GetLength (array As System.Array) As Integer
+            Return array.Length
+        End Function
+
+        Friend Shared Function Array_GetLength(ByVal array As System.Array, ByVal dimension As Integer) As Integer
+            Return array.GetLength(dimension)
+        End Function
+
+        Friend Shared Sub Array_Copy(ByVal sourceArray As System.Array, ByVal sourceIndex As Integer, ByVal destinationArray As System.Array, ByVal destinationIndex As Integer, ByVal length As Integer)
+            System.Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length)
+        End Sub
+#End If
+
         Public Shared Function CopyArray(ByVal arySrc As System.Array, ByVal aryDest As System.Array) As System.Array
 
             If arySrc Is Nothing Then
@@ -67,14 +94,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             'Check that all but the last dimension have the same length
             For i As Integer = 0 To lastRank - 1
-                If arySrc.GetLongLength(i) <> aryDest.GetLongLength(i) Then
+                If Array_GetLength(arySrc, i) <> Array_GetLength(aryDest, i) Then
                     Throw New InvalidCastException("'ReDim' can only change the rightmost dimension.")
                 End If
             Next
 
             If destLength = srcLength Then
                 'All dimensions have the same size, copy the entire array
-                Array.Copy(arySrc, aryDest, arySrc.LongLength)
+                Array.Copy(arySrc, aryDest, Array_GetLength(arySrc))
                 Return aryDest
             End If
 
@@ -86,10 +113,10 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return aryDest
             End If
 
-            copies = arySrc.LongLength \ srcLength
+            copies = Array_GetLength(arySrc) \ srcLength
 
             For i As Long = 0 To copies - 1
-                Array.Copy(arySrc, i * srcLength, aryDest, i * destLength, lastLength)
+                Array_Copy(arySrc, i * srcLength, aryDest, i * destLength, lastLength)
             Next
 
             Return aryDest

@@ -35,6 +35,7 @@ endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
+the_lib_dir = $(topdir)/class/lib/$(PROFILE)/
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
@@ -260,7 +261,7 @@ endif
 
 # The library
 
-$(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES)
+$(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES) $(the_lib_dir)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
@@ -329,3 +330,5 @@ updated-dll-sources:
 	ls */*.cs >> $(LIBRARY).sources
 	cd Test; ls */*.cs > ../$(LIBRARY:.dll=_test.dll).sources; cd ..
 
+$(the_lib_dir):
+	mkdir -p $(the_lib_dir)

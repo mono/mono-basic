@@ -32,6 +32,7 @@
 Imports System
 Imports System.Collections
 Imports System.Text
+Imports System.Threading
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CompilerServices
@@ -76,75 +77,130 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Function Asc(ByVal c As Char) As Integer
-            Dim enc As System.Text.Encoding
-            enc = System.Text.Encoding.GetEncoding(Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage)
-
-            Dim bytes() As Byte
-            bytes = enc.GetBytes(New Char() {c})
-            Return bytes(0)
-        End Function
-
-        Public Function AscW(ByVal c As Char) As Integer
-            ' Compiled as if it were "Return CInt(c)" when /novbruntimeref is used;
-            ' No AscW or other method is called.
-            Return AscW(c)
-        End Function
-
-        Public Function Asc(ByVal s As String) As Integer
-            If (s Is Nothing) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            If (s.Length.Equals(0)) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            Return Asc(s.Chars(0))
-        End Function
-
-        Public Function AscW(ByVal s As String) As Integer
-            If (s Is Nothing) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            If (s.Length.Equals(0)) Then
-                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
-            End If
-
-            Return AscW(s.Chars(0))
-        End Function
-
-        'MONOTODO: Chr should use the Encoding class in the System.Text. see the Chr documentation.
-        Public Function Chr(ByVal CharCode As Integer) As Char
-
-            'FIXME: The docs state that CharCode can be: (CharCode >= -32768) OR (CharCode <= 65535)
-            ' but .NET throws ArgumentException for: (CharCode < 0) AND (CharCode > 255)
-            If ((CharCode < 0) Or (CharCode > 255)) Then
-                Throw New System.ArgumentException("Procedure call or argument is not valid.")
-            End If
-
-            If ((CharCode < -32768) Or (CharCode > 65535)) Then
-                Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
-            End If
-
-            Return System.Convert.ToChar(CharCode)
-
-        End Function
-        Public Function ChrW(ByVal CharCode As Integer) As Char
-#If TRACE Then
-            Console.WriteLine("ChrW (Integer): " & CharCode.ToString)
+#If Moonlight = False Then
+        Public Function Asc(ByVal [String] As Char) As Integer
+#If NET_VER >= 2.0 Then
+            ' Convert.ToUInt16 with ldarg.0 and ret is a good candidate for
+            ' inlining and unsigned comparison will be performed later.
+            Dim charCode As UShort = Convert.ToUInt16([String])
+#Else
+            Dim charCode As Integer = AscW([String])
 #End If
-            If ((CharCode < -32768) Or (CharCode > 65535)) Then
-                Throw New ArgumentException("must be within the range of -32768 to 65535.", "CharCode")
+
+            ' Fast path for ASCII that also makes Asc incompatible with
+            ' non-ASCII-compatible encodings.
+            If charCode <= CByte(127) Then
+                Return charCode
             End If
 
-            ' -32768 through -1 is the same as +32768 through +65535
-            If (CharCode >= -32768) And (CharCode <= -1) Then
-                CharCode = CharCode + 65536
+            Dim enc As Encoding = Encoding.Default
+            Dim chars As Char() = New Char() {[String]}
+            Dim bytes As Byte() = New Byte(1) {}
+
+            ' ArgumentException is thrown when more than two bytes are required.
+            If enc.GetBytes(chars, 0, 1, bytes, 0) = 1 Then
+                Return bytes(0)
             End If
 
-            Return System.Convert.ToChar(CharCode)
+            ' Zero is returned when no characters were encoded.
+            Return (CInt(bytes(0)) << 8) Or bytes(1)
+        End Function
+#End If
+
+        Public Function AscW(ByVal [String] As Char) As Integer
+            ' Compiled as if it were "Return CInt([String])" when /novbruntimeref is used;
+            ' No AscW or other method is called.
+            Return AscW([String])
+        End Function
+
+        '#If Moonlight = False Then
+        Public Function Asc(ByVal [String] As String) As Integer
+            If [String] Is Nothing OrElse [String].Length = 0 Then
+                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
+            End If
+
+            Return Asc([String].Chars(0))
+        End Function
+        '#End If
+
+        Public Function AscW(ByVal [String] As String) As Integer
+            If [String] Is Nothing OrElse [String].Length = 0 Then
+                Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
+            End If
+
+            Return AscW([String].Chars(0))
+        End Function
+
+#If Moonlight = False Then
+        Public Function Chr(ByVal CharCode As Integer) As Char
+            ' Fast path for ASCII that also makes Chr incompatible with
+            ' non-ASCII-compatible encodings.
+            If CharCode >= 0 AndAlso CharCode <= 127 Then
+                ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
+#If NET_VER >= 2.0 Then
+                Return Convert.ToChar(CUShort(CharCode))
+#Else
+                Return Convert.ToChar(CByte(CharCode))
+#End If
+            End If
+
+            If CharCode < -32768 OrElse CharCode > 65535 Then
+                Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
+            End If
+
+            ' Unlike Asc, Chr is using ANSICodePage that makes them incompatible.
+            Dim enc As Encoding = Encoding.GetEncoding(Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage)
+            Dim bytes As Byte()
+            Dim byteCount As Integer
+
+            If CharCode >= 0 AndAlso CharCode <= 255 Then
+                bytes = New Byte() {CByte(CharCode)}
+                byteCount = 1
+            Else
+#If NET_VER >= 2.0 Then
+                ' GetMaxByteCount includes possible fallback characters from EncoderFallback
+                If enc.IsSingleByte Then
+#Else
+                If enc.GetMaxByteCount(1) = 1 Then
+#End If
+                    Throw New ArgumentException("Procedure call or argument is not valid.")
+                End If
+
+                ' Two bytes are allowed for multi-byte encodings even when
+                ' the first byte represents a character by itself.
+                bytes = New Byte() {CByte((CharCode And &HFF00) >> 8), CByte(CharCode And &HFF)}
+                byteCount = 2
+            End If
+
+            Dim chars As Char() = New Char(1) {}
+
+            ' No execption is thrown by Decoders on left over bytes.
+            ' ArgumentException is thrown when more than two characters are required.
+            enc.GetDecoder().GetChars(bytes, 0, byteCount, chars, 0)
+
+            ' The second character (if present) is ignored.
+            ' Zero is returned when no characters were decoded.
+            Return chars(0)
+        End Function
+#Else
+        Public Function Chr(CharCode As Integer) As Char
+            'Silverlight doesn't include Chr, but vbnc crashes without it
+            'This is a dummy implementation until vbnc is fixed
+            Return ChrW (CharCode) 
+        End Function
+#End If
+
+        Public Function ChrW(ByVal CharCode As Integer) As Char
+            If CharCode < -32768 OrElse CharCode > 65535 Then
+                Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
+            End If
+
+#If NET_VER >= 2.0 Then
+            ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
+            Return Convert.ToChar(CUShort(CharCode And &HFFFF))
+#Else
+            Return Convert.ToChar(CharCode And &HFFFF)
+#End If
         End Function
 
         Public Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
@@ -233,7 +289,7 @@ Namespace Microsoft.VisualBasic
                 Return String.Format(PredefinedStyle.ToString(), Expression)
             End If
 
-            If String.Compare(Style, "Yes/No", True) = 0 Then
+            If String_Compare(Style, "Yes/No", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "No"
                 Else
@@ -241,7 +297,7 @@ Namespace Microsoft.VisualBasic
                 End If
             End If
 
-            If String.Compare(Style, "True/False", True) = 0 Then
+            If String_Compare(Style, "True/False", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "False"
                 Else
@@ -249,7 +305,7 @@ Namespace Microsoft.VisualBasic
                 End If
             End If
 
-            If String.Compare(Style, "On/Off", True) = 0 Then
+            If String_Compare(Style, "On/Off", True) = 0 Then
                 If Expression.Equals(0) Then
                     Return "Off"
                 Else
@@ -522,8 +578,8 @@ Namespace Microsoft.VisualBasic
 
         End Sub
 
-        Public Function GetChar(ByVal Str As String, ByVal Index As Integer) As Char
-            If Str Is Nothing Then
+        Public Function GetChar(ByVal str As String, ByVal Index As Integer) As Char
+            If str Is Nothing Then
                 Throw New ArgumentException("Length of argument 'String' must be greater than zero.")
             End If
 
@@ -531,11 +587,11 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'Index' must be greater than or equal to 1.")
             End If
 
-            If Index > Str.Length Then
+            If Index > str.Length Then
                 Throw New ArgumentException("Argument 'Index' must be less than or equal to the length of argument 'String'.")
             End If
 
-            Return Str.Chars(Index - 1)
+            Return str.Chars(Index - 1)
 
         End Function
 
@@ -672,21 +728,21 @@ Namespace Microsoft.VisualBasic
             Return Value.ToLower()
         End Function
 
-        Public Function Left(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Left(ByVal str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero.")
             End If
 
-            If Str Is Nothing Or Length = 0 Then
+            If str Is Nothing Or Length = 0 Then
                 Return String.Empty
             End If
 
-            If Length > Str.Length Then
-                Length = Str.Length
+            If Length > str.Length Then
+                Length = str.Length
             End If
 
-            Return Str.Substring(0, Length)
+            Return str.Substring(0, Length)
 
         End Function
 
@@ -800,13 +856,13 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function LTrim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function LTrim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.TrimStart(carr)
+            Return str.TrimStart(carr)
         End Function
 
         Public Function Mid(ByVal str As String, ByVal Start As Integer, ByVal Length As Integer) As String
@@ -887,7 +943,7 @@ Namespace Microsoft.VisualBasic
             Dim sb As StringBuilder = New StringBuilder(Expression.Length)
 
             While (replaced < Count Or Count = -1) And current < Expression.Length
-                Dim res As Integer = String.Compare(Expression, current, Find, 0, Find.Length, IgnoreCase)
+                Dim res As Integer = String_Compare(Expression, current, Find, 0, Find.Length, IgnoreCase)
                 If res = 0 Then
                     sb.Append(Replacement)
                     current = current + Find.Length
@@ -904,21 +960,21 @@ Namespace Microsoft.VisualBasic
         End Function
 
 
-        Public Function Right(ByVal Str As String, ByVal Length As Integer) As String
+        Public Function Right(ByVal str As String, ByVal Length As Integer) As String
 
             If Length < 0 Then
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero")
             End If
 
-            If Str Is Nothing Or Str = String.Empty Then
+            If str Is Nothing Or str = String.Empty Then
                 Return String.Empty
             End If
 
-            If Length >= Str.Length Then
-                Return Str
+            If Length >= str.Length Then
+                Return str
             End If
 
-            Return Str.Substring(Str.Length - Length)
+            Return str.Substring(str.Length - Length)
 
         End Function
 
@@ -934,13 +990,13 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function RTrim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function RTrim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.TrimEnd(carr)
+            Return str.TrimEnd(carr)
         End Function
 
         Public Function Space(ByVal Number As Integer) As String
@@ -1006,7 +1062,7 @@ Namespace Microsoft.VisualBasic
             If Limit = -1 Then
                 Limit = 0
                 While current < Expression.Length
-                    Dim res As Integer = String.Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
+                    Dim res As Integer = String_Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
                     If res = 0 Then
                         current = current + Delimiter.Length
                         Limit = Limit + 1
@@ -1022,7 +1078,7 @@ Namespace Microsoft.VisualBasic
             Dim previous As Integer = 0
             current = 0
             While current < Expression.Length And count < Limit - 1
-                Dim res As Integer = String.Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
+                Dim res As Integer = String_Compare(Expression, current, Delimiter, 0, Delimiter.Length, IgnoreCase)
                 If res = 0 Then
                     sarr(count) = Expression.Substring(previous, current - previous)
                     current = current + Delimiter.Length
@@ -1040,6 +1096,22 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
+        Friend Function String_Compare(ByVal strA As String, ByVal strB As String, ByVal ignoreCase As Boolean) As Integer
+#If NET_VER < 2.0 Then
+            Return String.Compare(strA, strB, ignoreCase)
+#Else
+            Return String.Compare(strA, strB, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
+#End If
+        End Function
+
+        Friend Function String_Compare(ByVal strA As String, ByVal indexA As Integer, ByVal strB As String, ByVal indexB As Integer, ByVal length As Integer, ByVal ignoreCase As Boolean) As Integer
+#If NET_VER < 2.0 Then
+            Return String.Compare(strA, indexA, strB, indexB, length, True)
+#Else
+            Return String.Compare(strA, indexA, strB, indexB, length, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
+#End If
+        End Function
+
         Public Function StrComp(ByVal String1 As String, ByVal String2 As String, _
                         <OptionCompare()> Optional ByVal Compare As CompareMethod = 0) As Integer
 
@@ -1055,7 +1127,7 @@ Namespace Microsoft.VisualBasic
             If Compare = CompareMethod.Binary Then
                 res = String.CompareOrdinal(String1, String2)
             Else
-                res = String.Compare(String1, String2, True)
+                res = String_Compare(String1, String2, True)
             End If
 
             If res > 0 Then
@@ -1168,13 +1240,13 @@ Namespace Microsoft.VisualBasic
             Return New String(carr)
         End Function
 
-        Public Function Trim(ByVal Str As String) As String
-            If Str Is Nothing Then
+        Public Function Trim(ByVal str As String) As String
+            If str Is Nothing Then
                 Return String.Empty
             End If
 
             Dim carr() As Char = {" "c}
-            Return Str.Trim(carr)
+            Return str.Trim(carr)
         End Function
 
         Public Function UCase(ByVal Value As Char) As Char

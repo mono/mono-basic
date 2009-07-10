@@ -497,57 +497,57 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return o1 + o2
         End Function
 
-        Public Shared Function AddObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function AddObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Return 0
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
-                o2 = CreateNullObjectType(o1)
+            If (Right Is Nothing) Then
+                Right = CreateNullObjectType(Left)
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpAdd(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpAdd(Left, Right)
             Try
                 Select Case destTc
                     'Case TypeCode.Empty -> break
                     Case TypeCode.Boolean
-                        Return AddBooleans(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
+                        Return AddBooleans(VBConvert.ToBoolean(Left), VBConvert.ToBoolean(Right))
                     Case TypeCode.Byte
-                        Return AddBytes(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
+                        Return AddBytes(VBConvert.ToByte(Left), VBConvert.ToByte(Right))
                     Case TypeCode.Char
-                        Return AddChars(VBConvert.ToChar(o1), VBConvert.ToChar(o2))
+                        Return AddChars(VBConvert.ToChar(Left), VBConvert.ToChar(Right))
                     Case TypeCode.DateTime
-                        Return AddDateTimes(VBConvert.ToDateTime(o1), VBConvert.ToDateTime(o2))
+                        Return AddDateTimes(VBConvert.ToDateTime(Left), VBConvert.ToDateTime(Right))
                     Case TypeCode.Decimal
-                        Return AddDecimals(VBConvert.ToDecimal(o1), VBConvert.ToDecimal(o2))
+                        Return AddDecimals(VBConvert.ToDecimal(Left), VBConvert.ToDecimal(Right))
                     Case TypeCode.Double
-                        Return AddDoubles(VBConvert.ToDouble(o1), VBConvert.ToDouble(o2))
+                        Return AddDoubles(VBConvert.ToDouble(Left), VBConvert.ToDouble(Right))
                     Case TypeCode.Int16
-                        Return AddInt16s(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
+                        Return AddInt16s(VBConvert.ToInt16(Left), VBConvert.ToInt16(Right))
                     Case TypeCode.Int32
-                        Return AddInt32s(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
+                        Return AddInt32s(VBConvert.ToInt32(Left), VBConvert.ToInt32(Right))
                     Case TypeCode.Int64
-                        Return AddInt64s(VBConvert.ToInt64(o1), VBConvert.ToInt64(o2))
+                        Return AddInt64s(VBConvert.ToInt64(Left), VBConvert.ToInt64(Right))
                     Case TypeCode.SByte
-                        Return AddSBytes(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
+                        Return AddSBytes(VBConvert.ToSByte(Left), VBConvert.ToSByte(Right))
                     Case TypeCode.Single
-                        Return AddSingles(VBConvert.ToSingle(o1), VBConvert.ToSingle(o2))
+                        Return AddSingles(VBConvert.ToSingle(Left), VBConvert.ToSingle(Right))
                     Case TypeCode.String
-                        Return AddStrings(VBConvert.ToString(o1), VBConvert.ToString(o2))
+                        Return AddStrings(VBConvert.ToString(Left), VBConvert.ToString(Right))
                     Case TypeCode.UInt16
-                        Return AddUInt16s(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
+                        Return AddUInt16s(VBConvert.ToUInt16(Left), VBConvert.ToUInt16(Right))
                     Case TypeCode.UInt32
-                        Return AddUInt32s(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
+                        Return AddUInt32s(VBConvert.ToUInt32(Left), VBConvert.ToUInt32(Right))
                     Case TypeCode.UInt64
-                        Return AddUInt64s(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
+                        Return AddUInt64s(VBConvert.ToUInt64(Left), VBConvert.ToUInt64(Right))
 
                 End Select
-                Return AddObjects(o1, o2)
+                Return AddObjects(Left, Right)
             Catch ex As Exception
             End Try
-            Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
         End Function
 
 
@@ -829,35 +829,35 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
         End Function
 
-        Public Shared Function ConcatenateObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) Then
-                o1 = ""
+        Public Shared Function ConcatenateObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) Then
+                Left = ""
             Else
-                Dim tc1 As TypeCode = GetTypeCode(o1)
+                Dim tc1 As TypeCode = GetTypeCode(Left)
                 If (tc1.Equals(TypeCode.DBNull) Or tc1.Equals(TypeCode.Empty)) Then
-                    o1 = ""
+                    Left = ""
                 End If
             End If
 
-            If (o2 Is Nothing) Or (TypeOf o1 Is DBNull) Then
-                o2 = ""
+            If (Right Is Nothing) Or (TypeOf Left Is DBNull) Then
+                Right = ""
             Else
-                Dim tc2 As TypeCode = GetTypeCode(o2)
+                Dim tc2 As TypeCode = GetTypeCode(Right)
                 If (tc2.Equals(TypeCode.DBNull) Or tc2.Equals(TypeCode.Empty)) Then
-                    o2 = ""
+                    Right = ""
                 End If
             End If
 
             Dim ret As Object = Nothing
             Try
-                If (InvokeBinaryOperator(o1, o2, "op_Concatenate", ret)) Then
+                If (InvokeBinaryOperator(Left, Right, "op_Concatenate", ret)) Then
                     Return ret
                 End If
             Catch ex As Exception
-                Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+                Throw New InvalidCastException("Operator '+' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
             End Try
 
-            Return String.Concat(VBConvert.ToString(o1), VBConvert.ToString(o2))
+            Return String.Concat(VBConvert.ToString(Left), VBConvert.ToString(Right))
 
         End Function
 
@@ -938,9 +938,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return ret
         End Function
 
-        Private Shared Function MultiplyObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
+        Private Shared Function MultiplyObjects(ByVal Left As Object, ByVal Right As Object) As Object
             Dim ret As Object = Nothing
-            If Not (InvokeBinaryOperator(o1, o2, "op_Multiply", ret)) Then
+            If Not (InvokeBinaryOperator(Left, Right, "op_Multiply", ret)) Then
                 Throw New InvalidOperationException()
             End If
             Return ret
@@ -954,31 +954,31 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return ret
         End Function
 
-        Public Shared Function DivideObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function DivideObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Return Double.NaN
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
-                o2 = CreateNullObjectType(o1)
+            If (Right Is Nothing) Then
+                Right = CreateNullObjectType(Left)
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpDivide(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpDivide(Left, Right)
             Try
                 Select Case destTc
                     Case TypeCode.Decimal
-                        Return VBConvert.ToDecimal(o1) / VBConvert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(Left) / VBConvert.ToDecimal(Right)
                     Case TypeCode.Double
-                        Return VBConvert.ToDouble(o1) / VBConvert.ToDouble(o2)
+                        Return VBConvert.ToDouble(Left) / VBConvert.ToDouble(Right)
                     Case TypeCode.Single
-                        Return VBConvert.ToSingle(o1) / VBConvert.ToSingle(o2)
+                        Return VBConvert.ToSingle(Left) / VBConvert.ToSingle(Right)
                 End Select
-                Return DivideObjects(o1, o2)
+                Return DivideObjects(Left, Right)
             Catch ex As Exception
             End Try
-            Throw New InvalidCastException("Operator '/' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '/' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
         End Function
 
         Public Shared Function ExponentObject(ByVal Left As Object, ByVal Right As Object) As Object
@@ -1004,55 +1004,55 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
 
-        Public Shared Function IntDivideObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function IntDivideObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Return Double.NaN
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
-                o2 = CreateNullObjectType(o1)
+            If (Right Is Nothing) Then
+                Right = CreateNullObjectType(Left)
             End If
 
-            Dim resUnsign As Boolean = IsUnsignNum(o1) Or IsUnsignNum(o2)
-            Dim tc As TypeCode = GetTypeCode(o1)
+            Dim resUnsign As Boolean = IsUnsignNum(Left) Or IsUnsignNum(Right)
+            Dim tc As TypeCode = GetTypeCode(Left)
             If (tc = TypeCode.Boolean) Then
-                If (VBConvert.ToBoolean(o1)) Then
-                    o1 = -1
+                If (VBConvert.ToBoolean(Left)) Then
+                    Left = -1
                 Else
-                    o1 = 0
+                    Left = 0
                 End If
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpIntDivide(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpIntDivide(Left, Right)
 
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return VBConvert.ToByte(o1) \ VBConvert.ToByte(o2)
+                        Return VBConvert.ToByte(Left) \ VBConvert.ToByte(Right)
                     Case TypeCode.Int16
-                        Return VBConvert.ToInt16(o1) \ VBConvert.ToInt16(o2)
+                        Return VBConvert.ToInt16(Left) \ VBConvert.ToInt16(Right)
                     Case TypeCode.Int32
-                        Return VBConvert.ToInt32(o1) \ VBConvert.ToInt32(o2)
+                        Return VBConvert.ToInt32(Left) \ VBConvert.ToInt32(Right)
                     Case TypeCode.Int64
-                        Return VBConvert.ToInt64(o1) \ VBConvert.ToInt64(o2)
+                        Return VBConvert.ToInt64(Left) \ VBConvert.ToInt64(Right)
                     Case TypeCode.SByte
-                        Return VBConvert.ToSByte(o1) \ VBConvert.ToSByte(o2)
+                        Return VBConvert.ToSByte(Left) \ VBConvert.ToSByte(Right)
                     Case TypeCode.UInt16
-                        Return VBConvert.ToUInt16(o1) \ VBConvert.ToUInt16(o2)
+                        Return VBConvert.ToUInt16(Left) \ VBConvert.ToUInt16(Right)
                     Case TypeCode.UInt32
-                        Return VBConvert.ToUInt32(o1) \ VBConvert.ToUInt32(o2)
+                        Return VBConvert.ToUInt32(Left) \ VBConvert.ToUInt32(Right)
                     Case TypeCode.UInt64
-                        Return VBConvert.ToUInt64(o1) \ VBConvert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(Left) \ VBConvert.ToUInt64(Right)
                 End Select
-                Return IntDivideObjects(o1, o2)
+                Return IntDivideObjects(Left, Right)
             Catch ex As Exception
                 If (TypeOf ex Is DivideByZeroException) Then
                     Throw ex
                 End If
             End Try
-            Throw New InvalidCastException("Operator '\' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '\' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
 
         End Function
 
@@ -1133,50 +1133,50 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return StringType.StrLike(Source, Pattern, CompareOption)
         End Function
 
-        Public Shared Function ModObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function ModObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Throw New DivideByZeroException()
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
+            If (Right Is Nothing) Then
                 Throw New DivideByZeroException()
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpDivide(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpDivide(Left, Right)
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return VBConvert.ToByte(o1) Mod VBConvert.ToByte(o2)
+                        Return VBConvert.ToByte(Left) Mod VBConvert.ToByte(Right)
                     Case TypeCode.Int16
-                        Return VBConvert.ToInt16(o1) Mod VBConvert.ToInt16(o2)
+                        Return VBConvert.ToInt16(Left) Mod VBConvert.ToInt16(Right)
                     Case TypeCode.Int32
-                        Return VBConvert.ToInt32(o1) Mod VBConvert.ToInt32(o2)
+                        Return VBConvert.ToInt32(Left) Mod VBConvert.ToInt32(Right)
                     Case TypeCode.Int64
-                        Return VBConvert.ToInt64(o1) Mod VBConvert.ToInt64(o2)
+                        Return VBConvert.ToInt64(Left) Mod VBConvert.ToInt64(Right)
                     Case TypeCode.SByte
-                        Return VBConvert.ToSByte(o1) Mod VBConvert.ToSByte(o2)
+                        Return VBConvert.ToSByte(Left) Mod VBConvert.ToSByte(Right)
                     Case TypeCode.UInt16
-                        Return VBConvert.ToUInt16(o1) Mod VBConvert.ToUInt16(o2)
+                        Return VBConvert.ToUInt16(Left) Mod VBConvert.ToUInt16(Right)
                     Case TypeCode.UInt32
-                        Return VBConvert.ToUInt32(o1) Mod VBConvert.ToUInt32(o2)
+                        Return VBConvert.ToUInt32(Left) Mod VBConvert.ToUInt32(Right)
                     Case TypeCode.UInt64
-                        Return VBConvert.ToUInt64(o1) Mod VBConvert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(Left) Mod VBConvert.ToUInt64(Right)
                     Case TypeCode.Decimal
-                        Return VBConvert.ToDecimal(o1) Mod VBConvert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(Left) Mod VBConvert.ToDecimal(Right)
                     Case TypeCode.Double
-                        Return VBConvert.ToDouble(o1) Mod VBConvert.ToDouble(o2)
+                        Return VBConvert.ToDouble(Left) Mod VBConvert.ToDouble(Right)
                     Case TypeCode.Single
-                        Return VBConvert.ToSingle(o1) Mod VBConvert.ToSingle(o2)
+                        Return VBConvert.ToSingle(Left) Mod VBConvert.ToSingle(Right)
                 End Select
-                Return ModObjects(o1, o2)
+                Return ModObjects(Left, Right)
             Catch ex As Exception
                 If (TypeOf ex Is DivideByZeroException) Then
                     Throw ex
                 End If
             End Try
-            Throw New InvalidCastException("Operator 'Mod' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator 'Mod' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
         End Function
 
         Private Shared Function SizeDown(ByVal num As Long, ByVal minTC As TypeCode) As Object
@@ -1239,47 +1239,47 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Friend Shared Function MultiplyAndSize(ByVal o1 As Long, ByVal o2 As Long, ByVal tc As TypeCode) As Object
             Return SizeDown(o1 * o2, tc)
         End Function
-        Public Shared Function MultiplyObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function MultiplyObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Return 0
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
-                o2 = CreateNullObjectType(o1)
+            If (Right Is Nothing) Then
+                Right = CreateNullObjectType(Left)
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpMultiply(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpMultiply(Left, Right)
             Try
                 Select Case destTc
                     Case TypeCode.Byte
-                        Return MultiplyAndSize(VBConvert.ToByte(o1), VBConvert.ToByte(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToByte(Left), VBConvert.ToByte(Right), destTc)
                     Case TypeCode.Int16
-                        Return MultiplyAndSize(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToInt16(Left), VBConvert.ToInt16(Right), destTc)
                     Case TypeCode.Int32
-                        Return MultiplyAndSize(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToInt32(Left), VBConvert.ToInt32(Right), destTc)
                     Case TypeCode.Int64
-                        Return VBConvert.ToInt64(o1) * VBConvert.ToInt64(o2)
+                        Return VBConvert.ToInt64(Left) * VBConvert.ToInt64(Right)
                     Case TypeCode.SByte
-                        Return MultiplyAndSize(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToSByte(Left), VBConvert.ToSByte(Right), destTc)
                     Case TypeCode.UInt16
-                        Return MultiplyAndSize(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToUInt16(Left), VBConvert.ToUInt16(Right), destTc)
                     Case TypeCode.UInt32
-                        Return MultiplyAndSize(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2), destTc)
+                        Return MultiplyAndSize(VBConvert.ToUInt32(Left), VBConvert.ToUInt32(Right), destTc)
                     Case TypeCode.UInt64
-                        Return VBConvert.ToUInt64(o1) * VBConvert.ToUInt64(o2)
+                        Return VBConvert.ToUInt64(Left) * VBConvert.ToUInt64(Right)
                     Case TypeCode.Decimal
-                        Return VBConvert.ToDecimal(o1) * VBConvert.ToDecimal(o2)
+                        Return VBConvert.ToDecimal(Left) * VBConvert.ToDecimal(Right)
                     Case TypeCode.Double
-                        Return VBConvert.ToDouble(o1) * VBConvert.ToDouble(o2)
+                        Return VBConvert.ToDouble(Left) * VBConvert.ToDouble(Right)
                     Case TypeCode.Single
-                        Return VBConvert.ToSingle(o1) * VBConvert.ToSingle(o2)
+                        Return VBConvert.ToSingle(Left) * VBConvert.ToSingle(Right)
                 End Select
-                Return MultiplyObjects(o1, o2)
+                Return MultiplyObjects(Left, Right)
             Catch ex As Exception
             End Try
-            Throw New InvalidCastException("Operator '*' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '*' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
 
         End Function
 
@@ -1553,8 +1553,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Select
         End Function
 
-        Public Shared Function OrObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            Return BitWiseOpObject(o1, o2, New OrHandler())
+        Public Shared Function OrObject(ByVal Left As Object, ByVal Right As Object) As Object
+            Return BitWiseOpObject(Left, Right, New OrHandler())
         End Function
 
         Friend Class OrHandler
@@ -1889,52 +1889,52 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return New TimeSpan(CType(o1, DateTime).Ticks - CType(o2, DateTime).Ticks)
         End Function
 
-        Public Shared Function SubtractObject(ByVal o1 As Object, ByVal o2 As Object) As Object
-            If (o1 Is Nothing) And (o2 Is Nothing) Then
+        Public Shared Function SubtractObject(ByVal Left As Object, ByVal Right As Object) As Object
+            If (Left Is Nothing) And (Right Is Nothing) Then
                 Return 0
             End If
-            If (o1 Is Nothing) Then
-                o1 = CreateNullObjectType(o2)
+            If (Left Is Nothing) Then
+                Left = CreateNullObjectType(Right)
             End If
-            If (o2 Is Nothing) Then
-                o2 = CreateNullObjectType(o1)
+            If (Right Is Nothing) Then
+                Right = CreateNullObjectType(Left)
             End If
 
-            Dim destTc As TypeCode = DestTypeCodeOpSubtract(o1, o2)
+            Dim destTc As TypeCode = DestTypeCodeOpSubtract(Left, Right)
             Try
                 Select Case destTc
                     Case TypeCode.Boolean
-                        Return SubtractBooleans(VBConvert.ToBoolean(o1), VBConvert.ToBoolean(o2))
+                        Return SubtractBooleans(VBConvert.ToBoolean(Left), VBConvert.ToBoolean(Right))
                     Case TypeCode.Byte
-                        Return SubtractBytes(VBConvert.ToByte(o1), VBConvert.ToByte(o2))
+                        Return SubtractBytes(VBConvert.ToByte(Left), VBConvert.ToByte(Right))
                     Case TypeCode.Decimal
-                        Return SubtractDecimals(VBConvert.ToDecimal(o1), VBConvert.ToDecimal(o2))
+                        Return SubtractDecimals(VBConvert.ToDecimal(Left), VBConvert.ToDecimal(Right))
                     Case TypeCode.Double
-                        Return SubtractDoubles(VBConvert.ToDouble(o1), VBConvert.ToDouble(o2))
+                        Return SubtractDoubles(VBConvert.ToDouble(Left), VBConvert.ToDouble(Right))
                     Case TypeCode.Int16
-                        Return SubtractInt16s(VBConvert.ToInt16(o1), VBConvert.ToInt16(o2))
+                        Return SubtractInt16s(VBConvert.ToInt16(Left), VBConvert.ToInt16(Right))
                     Case TypeCode.Int32
-                        Return SubtractInt32s(VBConvert.ToInt32(o1), VBConvert.ToInt32(o2))
+                        Return SubtractInt32s(VBConvert.ToInt32(Left), VBConvert.ToInt32(Right))
                     Case TypeCode.Int64
-                        Return SubtractInt64s(VBConvert.ToInt64(o1), VBConvert.ToInt64(o2))
+                        Return SubtractInt64s(VBConvert.ToInt64(Left), VBConvert.ToInt64(Right))
                     Case TypeCode.SByte
-                        Return SubtractSBytes(VBConvert.ToSByte(o1), VBConvert.ToSByte(o2))
+                        Return SubtractSBytes(VBConvert.ToSByte(Left), VBConvert.ToSByte(Right))
                     Case TypeCode.Single
-                        Return SubtractSingles(VBConvert.ToSingle(o1), VBConvert.ToSingle(o2))
+                        Return SubtractSingles(VBConvert.ToSingle(Left), VBConvert.ToSingle(Right))
                     Case TypeCode.UInt16
-                        Return SubtractUInt16s(VBConvert.ToUInt16(o1), VBConvert.ToUInt16(o2))
+                        Return SubtractUInt16s(VBConvert.ToUInt16(Left), VBConvert.ToUInt16(Right))
                     Case TypeCode.UInt32
-                        Return SubtractUInt32s(VBConvert.ToUInt32(o1), VBConvert.ToUInt32(o2))
+                        Return SubtractUInt32s(VBConvert.ToUInt32(Left), VBConvert.ToUInt32(Right))
                     Case TypeCode.UInt64
-                        Return SubtractUInt64s(VBConvert.ToUInt64(o1), VBConvert.ToUInt64(o2))
+                        Return SubtractUInt64s(VBConvert.ToUInt64(Left), VBConvert.ToUInt64(Right))
                     Case TypeCode.DateTime
-                        Return SubtractDateTime(VBConvert.ToDateTime(o1), VBConvert.ToDateTime(o2))
+                        Return SubtractDateTime(VBConvert.ToDateTime(Left), VBConvert.ToDateTime(Right))
 
                 End Select
-                Return SubtractObjects(o1, o2)
+                Return SubtractObjects(Left, Right)
             Catch ex As Exception
             End Try
-            Throw New InvalidCastException("Operator '-' is not defined for type '" + GetTypeCode(o1).ToString() + "' and type '" + GetTypeCode(o2).ToString() + "'.")
+            Throw New InvalidCastException("Operator '-' is not defined for type '" + GetTypeCode(Left).ToString() + "' and type '" + GetTypeCode(Right).ToString() + "'.")
 
         End Function
 

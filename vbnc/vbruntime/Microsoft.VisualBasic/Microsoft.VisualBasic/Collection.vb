@@ -52,6 +52,9 @@ Namespace Microsoft.VisualBasic
         Implements ISerializable
         Implements IDeserializationCallback
 #End If
+#If Moonlight Then
+        Implements IEnumerable
+#End If
         ' Declarations
         Private m_Hashtable As Hashtable = New Hashtable
         Private m_HashIndexers As ArrayList = New ArrayList
@@ -195,17 +198,17 @@ Namespace Microsoft.VisualBasic
 
 #If NET_VER >= 2.0 Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
-        Default Public Overloads ReadOnly Property Item(ByVal index As Object) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal Index As Object) As Object
 #Else
-        Default Public Overloads ReadOnly Property Item(ByVal index As Object) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal Index As Object) As Object
 #End If
             Get
-                If index Is Nothing Then Throw New IndexOutOfRangeException("Argument 'Index' is not a valid index.")
+                If Index Is Nothing Then Throw New IndexOutOfRangeException("Argument 'Index' is not a valid index.")
 
-                If TypeOf index Is Integer Then
-                    Return Item(CInt(index))
+                If TypeOf Index Is Integer Then
+                    Return Item(CInt(Index))
                 Else
-                    Dim idx As Integer = m_HashIndexers.IndexOf(index)
+                    Dim idx As Integer = m_HashIndexers.IndexOf(Index)
                     If idx = -1 Then
                         Throw New ArgumentException("Argument 'Index' is not a valid value.")
                     End If
@@ -214,23 +217,23 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-        Default Public Overloads ReadOnly Property Item(ByVal index As Integer) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal Index As Integer) As Object
             Get
                 'The behaviour of Collection.Item is NOT the same as the IList.Item interface implementation.
-                index = index - 1
+                Index = Index - 1
 
-                If index > Count - 1 Or index < 0 Then
+                If Index > Count - 1 Or Index < 0 Then
                     Throw New IndexOutOfRangeException("Collection1 index must be in the range 1 to the size of the collection.")
                 End If
 
-                Return m_Hashtable(m_HashIndexers(index))
+                Return m_Hashtable(m_HashIndexers(Index))
             End Get
         End Property
 
 #If NET_VER >= 2.0 Then
-        Default Public Overloads ReadOnly Property Item(ByVal index As String) As Object
+        Default Public Overloads ReadOnly Property Item(ByVal Key As String) As Object
             Get
-                Return Item(CObj(index))
+                Return Item(CObj(Key))
             End Get
         End Property
 #End If
@@ -299,8 +302,8 @@ Namespace Microsoft.VisualBasic
         End Function
 
 #If NET_VER >= 2.0 Then
-        Public Function Contains(ByVal key As String) As Boolean
-            Return m_Hashtable.ContainsKey(key)
+        Public Function Contains(ByVal Key As String) As Boolean
+            Return m_Hashtable.ContainsKey(Key)
         End Function
 #End If
 

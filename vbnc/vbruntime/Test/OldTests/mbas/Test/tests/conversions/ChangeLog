@@ -1,7 +1,3 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* ChangeLog, Changelog: Merge with head.
-
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ChangeLog, Changelog: Rename Changelog to ChangeLog to avoid confusing MD.

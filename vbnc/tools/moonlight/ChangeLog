@@ -1,0 +1,13 @@
+2009-04-21  Jb Evain  <jbevain@novell.com>
+
+	* tuner.vb: tune symbols as well.
+
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Create the build directory for the dll if it
+	  doesn't exist.
+
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tuner.vb, Makefile: Added simple program to convert
+	  MS.VB.dll's 2.0.0.0 references into 2.0.5.0 references.

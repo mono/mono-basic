@@ -123,6 +123,7 @@
     <Compile Include="Microsoft.VisualBasic\Helper.vb" />
     <Compile Include="Microsoft.VisualBasic\InformationTests.vb" />
     <Compile Include="Microsoft.VisualBasic\InteractionTests.vb" />
+    <Compile Include="Microsoft.VisualBasic\StringsTest.vb" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />

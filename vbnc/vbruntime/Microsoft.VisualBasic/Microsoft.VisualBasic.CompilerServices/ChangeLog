@@ -1,8 +1,27 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+2009-05-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	* LateBinder.vb, DoubleType.vb, DecimalType.vb, DateType.vb, ChangeLog,
-	  BooleanType.vb, SingleType.vb, IntegerType.vb, LongType.vb,
-	  ShortType.vb, ByteType.vb: Merge with head.
+	* Operators.vb: Rename paramaters and shuffle some "#If
+	Moonlight Then" around to match SL api exactly.
+
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Utils.vb:
+	* LateBinder.vb:
+	* ProjectData.vb:
+	* Conversions.vb:
+	* LateBinding.vb: Try to only use methods in corlib which are
+	present in all profiles, or add moonlight-specific code
+	conditionally otherwse.
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBinding.vb: LateIndexGet: Use our own late binder instead of the
+	  default one. Fixes #417557.
+
+2008-10-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* LateBinder.vb: BindToMethod: If no methods passed in, return Nothing.
+	  Fixes #417750.
 
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 

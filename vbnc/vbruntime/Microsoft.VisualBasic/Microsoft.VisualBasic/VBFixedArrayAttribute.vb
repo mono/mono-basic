@@ -31,25 +31,45 @@
 Imports System
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
-'MONOTODO:("What should it do?")
+
 Namespace Microsoft.VisualBasic
     <AttributeUsage(AttributeTargets.Field, Inherited:=False, AllowMultiple:=False)> _
     Public NotInheritable Class VBFixedArrayAttribute
         Inherits Attribute
+
+        Private m_UpperBound1 As Integer
+        Private m_UpperBound2 As Integer
+
         Public Sub New(ByVal UpperBound1 As Integer)
-            Throw New NotImplementedException
+            If UpperBound1 < 0 Then Throw New ArgumentException("Arguments to 'VBFixedArrayAttribute' are not valid.")
+            m_UpperBound1 = UpperBound1
+            m_UpperBound2 = Integer.MinValue
         End Sub
+
         Public Sub New(ByVal UpperBound1 As Integer, ByVal UpperBound2 As Integer)
-            Throw New NotImplementedException
+            If UpperBound1 < 0 Then Throw New ArgumentException("Arguments to 'VBFixedArrayAttribute' are not valid.")
+            If UpperBound2 < 0 Then Throw New ArgumentException("Arguments to 'VBFixedArrayAttribute' are not valid.")
+            m_UpperBound1 = UpperBound1
+            m_UpperBound2 = UpperBound2
         End Sub
+
         Public ReadOnly Property Bounds() As Integer()
             Get
-                Throw New NotImplementedException
+                If m_UpperBound2 = Integer.MinValue Then
+                    Return New Integer() {m_UpperBound1}
+                Else
+                    Return New Integer() {m_UpperBound1, m_UpperBound2}
+                End If
             End Get
         End Property
+
         Public ReadOnly Property Length() As Integer
             Get
-                Throw New NotImplementedException
+                If m_UpperBound2 = Integer.MinValue Then
+                    Return m_UpperBound1 + 1
+                Else
+                    Return (m_UpperBound1 + 1) * (m_UpperBound2 + 1)
+                End If
             End Get
         End Property
     End Class

@@ -46,7 +46,7 @@ Microsoft.VisualBasic.CompilerServices/IntegerType.vb
 Microsoft.VisualBasic.CompilerServices/LateBinder.vb
 Microsoft.VisualBasic.CompilerServices/LateBinding.vb
 Microsoft.VisualBasic.CompilerServices/LongType.vb
-Microsoft.VisualBasic.CompilerServices/ObjectType.vb
+#Microsoft.VisualBasic.CompilerServices/ObjectType.vb
 Microsoft.VisualBasic.CompilerServices/Operators.vb
 Microsoft.VisualBasic.CompilerServices/ProjectData.vb
 Microsoft.VisualBasic.CompilerServices/ShortType.vb
@@ -100,9 +100,9 @@ Microsoft.VisualBasic.CompilerServices/Utils.vb
 #Microsoft.VisualBasic.MyServices/RegistryProxy.jvm.vb
 #Microsoft.VisualBasic.MyServices/RegistryProxy.vb
 #Microsoft.VisualBasic.MyServices/SpecialDirectoriesProxy.vb
-Microsoft.VisualBasic.OSSpecific/LinuxDriver.vb
-Microsoft.VisualBasic.OSSpecific/OSDriver.vb
-Microsoft.VisualBasic.OSSpecific/Win32Driver.vb
+#Microsoft.VisualBasic.OSSpecific/LinuxDriver.vb
+#Microsoft.VisualBasic.OSSpecific/OSDriver.vb
+#Microsoft.VisualBasic.OSSpecific/Win32Driver.vb
 #Microsoft.VisualBasic/AppWinStyle.vb
 Microsoft.VisualBasic/CallType.vb
 Microsoft.VisualBasic/Collection.vb
@@ -141,4 +141,6 @@ Microsoft.VisualBasic/TriState.vb
 Microsoft.VisualBasic/VariantType.vb
 Microsoft.VisualBasic/VBMath.vb
 #Microsoft.VisualBasic/VbStrConv.vb
+Microsoft.VisualBasic/Hashtable.vb
+Microsoft.VisualBasic/ArrayList.vb
 MonoTODOAttribute.vb

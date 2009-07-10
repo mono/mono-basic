@@ -42,7 +42,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If (TargetType.IsInstanceOfType(Expression)) Then
                 Return Expression
             End If
-            Return System.Convert.ChangeType(Expression, TargetType)
+            Return System.Convert.ChangeType(Expression, TargetType, CultureInfo.CurrentCulture)
         End Function
 
         Public Shared Function FromCharAndCount(ByVal Value As Char, ByVal Count As Integer) As String

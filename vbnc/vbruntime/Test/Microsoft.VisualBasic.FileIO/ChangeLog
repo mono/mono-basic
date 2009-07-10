@@ -1,7 +1,3 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* ChangeLog, FileSystemTest.vb: Merge with head.
-
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileSystemTest.vb: Set default culture to en-US.

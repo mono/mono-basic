@@ -1,3 +1,7 @@
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* moonlight: Added
+
 2007-03-15  Wade Berrier  <wberrier@novell.com>
 
 	* extract-source/Makefile: don't install on 'make install'

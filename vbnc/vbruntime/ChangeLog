@@ -1,7 +1,3 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* Make.cmd, ChangeLog, InitPaths.cmd, VB.build.bat: Merge with head.
-
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Make.cmd, InitPaths.cmd: Find resgen too.

@@ -1,11 +1,18 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	* Microsoft.VisualBasic.dll.sources, 2005VB.sln, makefile.build,
-	  2008VB.JavaEE.vbproj, Makefile, 2005VB.vbproj, strings1.resources,
-	  strings2.resources, ChangeLog, vbruntime1.rsp, vbruntime2.rsp,
-	  Microsoft.VisualBasic.dll.sources.win, strings.resources,
-	  strings-only1.txt, strings-only2.txt, vbruntime.rsp: Merge with
-	  head.
+	* 2008VB.vbproj:
+	* 2008VB.sln: Added.
+
+2009-04-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AssemblyInfo.vb, Makefile: Use winfx3.pub as the key file and set 
+	  the correct assembly version for moonlight.
+	* winfx3.pub, mono.snk: Added.
+
+2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Microsoft.VisualBasic.dll.moonlight.sources: Remove more
+	files from moonlight build.
 
 2008-03-17  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 

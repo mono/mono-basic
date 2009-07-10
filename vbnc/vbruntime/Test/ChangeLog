@@ -1,8 +1,33 @@
-2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+2009-05-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	* Make.cmd, 2005VB_test_VB.dll.rsp, ChangeLog,
-	  2005VB_test_VB.dll.sources.win, 2005VB_test_VB.dll.sources,
-	  2005VB_test_VB.vbproj, Tester.vb: Merge with head.
+	* Makefile:
+	* 2005VB_test_CS.csproj:
+	* 2005VB_test_CS.dll.rsp:
+	* 2005VB_test_CS.dll.sources:
+	* 2005VB_test_CS.dll.sources.win:
+	* 2005VB_test_VB.dll.rsp:
+	* 2005VB_test_VB.dll.sources:
+	* 2005VB_test_VB.dll.sources.win:
+	* 2005VB_test_VB.rsp:
+	* 2005VB_test_VB.vbproj:
+	* 2005VB_tester.vbproj:
+	* 2008VB_test_CS.dll.rsp:
+	* 2008VB_test_CS.dll.sources:
+	* 2008VB_test_CS.dll.sources.win:
+	* 2008VB_test_VB.dll.rsp:
+	* 2008VB_test_VB.dll.sources:
+	* 2008VB_test_VB.dll.sources.win: Move to VS 2008 project files.
+
+2008-11-15  Kornél Pál  <kornelpal@gmail.com>
+
+	* 2003VB_test.vbproj, 2005VB_test_VB.dll.sources,
+	  2005VB_test_VB.dll.sources.win, 2005VB_test_VB.JavaEE.vbproj,
+	  2005VB_test_VB.vbproj: Added Microsoft.VisualBasic\StringsTest.vb.
+
+2008-10-27  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Makefile: Don't include binary files in source tarball, 
+	  wget them from svn whenever needed.
 
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 

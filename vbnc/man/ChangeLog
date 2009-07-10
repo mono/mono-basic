@@ -2,13 +2,9 @@
 
 	* Makefile: Honor DESTDIR.
 
-	[Backport of r121582].
-
 2008-12-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Fix duplication of install-local.
-
-	[Backport of r121506].
 
 2008-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 

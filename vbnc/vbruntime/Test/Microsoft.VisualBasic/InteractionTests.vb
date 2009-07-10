@@ -32,6 +32,7 @@ Imports System
 Imports System.IO
 Imports System.Collections
 Imports Microsoft.VisualBasic
+Imports Microsoft.Win32
 
 <TestFixture()> _
 Public Class InteractionTests
@@ -84,6 +85,115 @@ Public Class InteractionTests
 
 #End Region
 
+#If Not TARGET_JVM Then
+#Region "MsgBox tests"
+    <Category("UI")> _
+    <Test()> _
+    Public Sub MsgBoxTest()
+        Dim abort As MsgBoxResult = MsgBoxResult.Abort
+        Dim b As MsgBoxResult = MsgBoxResult.Cancel
+        Dim c As MsgBoxResult = MsgBoxResult.Ignore
+
+        Assert.AreEqual(MsgBoxResult.Abort, MsgBox("Press Abort", MsgBoxStyle.AbortRetryIgnore), "abort")
+        Assert.AreEqual(MsgBoxResult.Retry, MsgBox("Press Retry", MsgBoxStyle.AbortRetryIgnore), "retry")
+        Assert.AreEqual(MsgBoxResult.Ignore, MsgBox("Press Ignore", MsgBoxStyle.AbortRetryIgnore), "ignore")
+        Assert.AreEqual(MsgBoxResult.Ok, MsgBox("Press OK", MsgBoxStyle.OkCancel), "ok")
+        Assert.AreEqual(MsgBoxResult.Cancel, MsgBox("Press Cancel", MsgBoxStyle.OkCancel), "cancel")
+        Assert.AreEqual(MsgBoxResult.Yes, MsgBox("Press Yes", MsgBoxStyle.YesNo), "yes")
+        Assert.AreEqual(MsgBoxResult.No, MsgBox("Press No", MsgBoxStyle.YesNoCancel), "no")
+    End Sub
+#End Region
+#End If
+
+#Region "Partition tests"
+
+    <Test()> _
+    Public Sub Partition_1()
+        Dim str1 As String
+        str1 = Interaction.Partition(1, 0, 9, 5)
+        str1 = str1 + Interaction.Partition(1, 0, 9, 5)
+        str1 = str1 + Interaction.Partition(1, 20, 199, 10)
+        str1 = str1 + Interaction.Partition(1, 100, 1010, 20)
+
+        Assert.AreEqual(" 0: 4 0: 4   : 19    :  99", str1)
+    End Sub
+
+    <Test()> _
+    <ExpectedException(GetType(ArgumentException))> _
+    Public Sub Partition_2()
+        Dim str_tmp As String
+        str_tmp = Interaction.Partition(12, 5, 3, 2)
+    End Sub
+
+    <Test()> _
+    <ExpectedException(GetType(ArgumentException))> _
+  Public Sub Partition_3()
+        Dim str_tmp As String
+        str_tmp = Interaction.Partition(12, 5, 7, 0)
+    End Sub
+
+    <Test()> _
+  Public Sub Partition_4()
+        Dim str1 As String = ""
+        str1 = str1 + Interaction.Partition(267, 100, 24469, 1)
+
+        Assert.AreEqual("  267:  267", str1)
+    End Sub
+
+#End Region
+
+#If Not TARGET_JVM Then
+#Region "GetAllSettings tests"
+
+    <Test()> _
+Public Sub GetAllSettings_1()
+        Dim res_setting As String(,)
+        Dim index, elm_count As Integer
+        Dim tmp_str As String
+        Dim regk As RegistryKey
+        Dim arr_str As String()
+
+
+        regk = Registry.CurrentUser
+        regk = regk.CreateSubKey("Test_APP")
+        regk = regk.OpenSubKey("GetAllSettings_1")
+
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go1", "Val_Go1")
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go2", "Val_Go2")
+        Interaction.SaveSetting("Test_APP", "GetAllSettings_1", "Go3", "Val_Go3")
+
+        res_setting = Interaction.GetAllSettings("Test_APP", "GetAllSettings_1")
+
+        Assert.AreEqual("Go2", res_setting(1, 0))
+        Assert.AreEqual("Val_Go2", res_setting(1, 1))
+
+    End Sub
+
+    <Test()> _
+  Public Sub GetAllSettings_2()
+        Dim res_setting As String(,)
+
+        res_setting = Interaction.GetAllSettings("Test_APP", "rterr")
+
+        Assert.AreEqual(Nothing, res_setting)
+    End Sub
+
+    <Test()> _
+    <ExpectedException(GetType(ArgumentException))> _
+    Public Sub GetAllSettings_3()
+        Dim str_tmp As String(,)
+        str_tmp = Interaction.GetAllSettings("", "TEST2")
+    End Sub
+
+    <Test()> _
+    <ExpectedException(GetType(ArgumentException))> _
+    Public Sub GetAllSettings_4()
+        Dim str_tmp As String(,)
+        str_tmp = Interaction.GetAllSettings("TEST", Nothing)
+    End Sub
+
+#End Region
+#End If
 End Class
 
 

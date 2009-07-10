@@ -129,7 +129,7 @@ Module extract_source
         sources = GetSources(VBProjFileName, basepath, exclude_resource)
         Select Case mode.ToUpperInvariant
             Case "W"
-                IO.File.WriteAllText(DestinationFile, Join(sources, vbCrLf).Replace("/"c, "\"c))
+                IO.File.WriteAllText(DestinationFile, Join(sources, vbCrLf))
             Case "L"
                 IO.File.WriteAllText(DestinationFile, Join(sources, vbLf).Replace("\"c, "/"c))
             Case Else
