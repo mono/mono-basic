@@ -112,7 +112,7 @@ Namespace Microsoft.VisualBasic
             Dim str_parent_dir As String = Nothing
             Dim str_pattern As String = Nothing
             Dim di As DirectoryInfo
-            Dim dirs As DirectoryInfo() = nothing
+            Dim dirs As DirectoryInfo() = Nothing
             Dim files As FileInfo()
             Dim result As String
             Dim length As Integer
