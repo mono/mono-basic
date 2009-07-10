@@ -1,5 +1,11 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Financial.vb:
+	* FileSystem.vb:
+	* Strings.vb: VS-format.
+
+2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* VBFixedStringAttribute.vb:
 	* VBFixedArrayAttribute.vb:  Fix eol issues.
 

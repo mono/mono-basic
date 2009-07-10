@@ -207,7 +207,7 @@ Namespace Microsoft.VisualBasic
 
         Public Shared Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
                         <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
-            Dim Temp(Source.Length-1) As String
+            Dim Temp(Source.Length - 1) As String
 
             If Compare = CompareMethod.Text Then
                 Match = Match.ToLower
@@ -254,9 +254,9 @@ Namespace Microsoft.VisualBasic
             Select Case (Type.GetTypeCode(Expression.GetType()))
                 'Case TypeCode.Boolean
 
-            Case TypeCode.Byte, TypeCode.Decimal, TypeCode.Double, TypeCode.Int16, _
-                TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.Single, _
-                TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                Case TypeCode.Byte, TypeCode.Decimal, TypeCode.Double, TypeCode.Int16, _
+                    TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.Single, _
+                    TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                     Return FormatNumeric(Expression, Style)
                     'Case TypeCode.Char
                 Case TypeCode.DateTime
@@ -357,8 +357,8 @@ Namespace Microsoft.VisualBasic
             End If
 
 
-            If NumDigitsAfterDecimal = -1 And IncludeLeadingDigit = TriState.Usedefault _
-                And UseParensForNegativeNumbers = TriState.UseDefault And GroupDigits = Tristate.UseDefault Then
+            If NumDigitsAfterDecimal = -1 And IncludeLeadingDigit = TriState.UseDefault _
+                And UseParensForNegativeNumbers = TriState.UseDefault And GroupDigits = TriState.UseDefault Then
                 Return String.Format("{0:C}", Expression)
             End If
 
@@ -683,10 +683,10 @@ Namespace Microsoft.VisualBasic
             Dim i As Integer
             Dim sb As StringBuilder = New StringBuilder
 
-            If (SourceArray Is Nothing)  Then
+            If (SourceArray Is Nothing) Then
                 Return Nothing
             End If
-            If (SourceArray.Length = 0)  Then
+            If (SourceArray.Length = 0) Then
                 Return Nothing
             End If
 
@@ -1154,9 +1154,9 @@ Namespace Microsoft.VisualBasic
             Select Case Conversion
                 Case VbStrConv.None
                     Return str
-                Case VbStrConv.UpperCase
+                Case VbStrConv.Uppercase
                     Return str.ToUpper()
-                Case VbStrConv.LowerCase
+                Case VbStrConv.Lowercase
                     Return str.ToLower()
                 Case VbStrConv.ProperCase
                     Dim carr() As Char = str.ToCharArray()
