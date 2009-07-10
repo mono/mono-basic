@@ -8,7 +8,9 @@
     <ProjectGuid>{3F2C04ED-C36A-4EF9-9479-0227E9CA7824}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
+    <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <MyType>Windows</MyType>
     <NoStdLib>true</NoStdLib>
     <OutputPath>../bin/</OutputPath>
@@ -16,74 +18,20 @@
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
     <RootNamespace>
     </RootNamespace>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <NoVBRuntimeReference>true</NoVBRuntimeReference><!--          NoVBRuntimeReference="$(NoVBRuntimeReference)"-->
+    <NoVBRuntimeReference>true</NoVBRuntimeReference>
+    <NoWarn>41008,40010</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-<!--    <CompilerResponseFile>2005VB.rsp</CompilerResponseFile>-->
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>false</DefineTrace>
-    <NoWarn>
-    </NoWarn>
-    <DefineConstants>NET_2_0=True,_MYTYPE="Empty",mono_not_yet=true,INDEVENV=true,NET_VER=2.0</DefineConstants>
+    <DefineConstants>NET_2_0=True,_MYTYPE="_Empty",INDEVENV=true,NET_VER=2.0</DefineConstants>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <Optimize>true</Optimize>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <WarningLevel>4</WarningLevel>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
-    <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin\</OutputPath>
-    <RootNamespace>
-    </RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-<!--    <CompilerResponseFile>2005VB.rsp</CompilerResponseFile> -->
-    <DebugType>pdbonly</DebugType>
-    <DefineDebug>false</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <Optimize>true</Optimize>
-    <NoWarn>
-    </NoWarn>
-    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DebugSymbols>true</DebugSymbols>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin\</OutputPath>
-    <RootNamespace>
-    </RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
-    <RootNamespace>dummy_root</RootNamespace>
-    <OutputType>Library</OutputType>
-    <AssemblyName>Microsoft.VisualBasic</AssemblyName>
-    <OutputPath>..\bin\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>INDEVENV=true,NET_2_0=true,NET_VER=2.0</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

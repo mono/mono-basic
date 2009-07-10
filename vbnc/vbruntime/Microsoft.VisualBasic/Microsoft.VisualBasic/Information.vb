@@ -33,12 +33,13 @@ Imports Microsoft.VisualBasic.CompilerServices
 Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic
-    Public Module Information
+    <StandardModule()> _
+    Public NotInheritable Class Information
         <EditorBrowsable(EditorBrowsableState.Never)> _
-        Public Function Erl() As Integer
+        Public Shared Function Erl() As Integer
             Return Err.Erl
         End Function
-        Public Function Err() As Microsoft.VisualBasic.ErrObject
+        Public Shared Function Err() As Microsoft.VisualBasic.ErrObject
             ' VB Err keyword is compiled into ErrObject which is stored at ProjectData.
             ' ProjectData is a singelton for all VB library.
             Dim pd As CompilerServices.ProjectData
@@ -46,7 +47,7 @@ Namespace Microsoft.VisualBasic
 
             Return pd.ProjectError
         End Function
-        Public Function IsArray(ByVal VarName As Object) As Boolean
+        Public Shared Function IsArray(ByVal VarName As Object) As Boolean
             If VarName Is Nothing Then
                 Return False
             End If
@@ -56,7 +57,7 @@ Namespace Microsoft.VisualBasic
                 Return False
             End If
         End Function
-        Public Function IsDate(ByVal Expression As Object) As Boolean
+        Public Shared Function IsDate(ByVal Expression As Object) As Boolean
             If Expression Is Nothing Then Return False
             If TypeOf Expression Is Date Then Return True
             If TypeOf Expression Is String Then
@@ -69,7 +70,7 @@ Namespace Microsoft.VisualBasic
 
             End If
         End Function
-        Public Function IsDBNull(ByVal Expression As Object) As Boolean
+        Public Shared Function IsDBNull(ByVal Expression As Object) As Boolean
             If Expression Is Nothing Then
                 Return False
             End If
@@ -80,21 +81,21 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Function
-        Public Function IsError(ByVal Expression As Object) As Boolean
+        Public Shared Function IsError(ByVal Expression As Object) As Boolean
             If TypeOf Expression Is System.Exception Then
                 Return True
             Else
                 Return False
             End If
         End Function
-        Public Function IsNothing(ByVal Expression As Object) As Boolean
+        Public Shared Function IsNothing(ByVal Expression As Object) As Boolean
             If Expression Is Nothing Then
                 Return True
             Else
                 Return False
             End If
         End Function
-        Public Function IsNumeric(ByVal Expression As Object) As Boolean
+        Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean
 
             If Expression Is Nothing Then Return False
 
@@ -115,14 +116,14 @@ Namespace Microsoft.VisualBasic
 
             Return False
         End Function
-        Public Function IsReference(ByVal Expression As Object) As Boolean
+        Public Shared Function IsReference(ByVal Expression As Object) As Boolean
             If TypeOf Expression Is ValueType Then
                 Return False
             Else
                 Return True
             End If
         End Function
-        Public Function LBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
+        Public Shared Function LBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
             ' VB rank start at 1, but System.Array.Rank starts at 0
             Dim RealRank As Integer
             RealRank = Rank - 1
@@ -130,7 +131,7 @@ Namespace Microsoft.VisualBasic
 
             Return Array.GetLowerBound(RealRank)
         End Function
-        Public Function QBColor(ByVal Color As Integer) As Integer
+        Public Shared Function QBColor(ByVal Color As Integer) As Integer
             If (Color < 0 Or Color > 15) Then Throw New System.ArgumentException("Argument 'Color' is not a valid value")
             Dim tmp_arr() As Integer = {0, 8388608, 32768, 8421376, 128, 8388736, 32896, _
                                         12632256, 8421504, 16711680, 65280, 16776960, 255, _
@@ -138,7 +139,7 @@ Namespace Microsoft.VisualBasic
             Return tmp_arr(Color)
 
         End Function
-        Public Function RGB(ByVal Red As Integer, ByVal Green As Integer, ByVal Blue As Integer) As Integer
+        Public Shared Function RGB(ByVal Red As Integer, ByVal Green As Integer, ByVal Blue As Integer) As Integer
             Dim tempStr As String = ""
             Dim res As Integer
 
@@ -163,7 +164,7 @@ Namespace Microsoft.VisualBasic
 
             Return res
         End Function
-        Public Function SystemTypeName(ByVal VbName As String) As String
+        Public Shared Function SystemTypeName(ByVal VbName As String) As String
 
             Select Case VbName.ToLower()
                 Case "boolean"
@@ -195,7 +196,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Friend Function VBName(ByVal tp As Type) As String
+        Friend Shared Function VBName(ByVal tp As Type) As String
             Select Case Type.GetTypeCode(tp)
                 Case TypeCode.Boolean
                     Return "Boolean"
@@ -240,7 +241,7 @@ Namespace Microsoft.VisualBasic
             End Select
         End Function
 
-        Public Function TypeName(ByVal VarName As Object) As String
+        Public Shared Function TypeName(ByVal VarName As Object) As String
 
             Dim TmpObjType1, TmpObjType2, tmpstr As String
             Dim RetObjType As String
@@ -300,7 +301,7 @@ Namespace Microsoft.VisualBasic
             Return (RetObjType + ArrCh)
 
         End Function
-        Public Function UBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
+        Public Shared Function UBound(ByVal Array As System.Array, Optional ByVal Rank As Integer = 1) As Integer
 
             ' VB rank start at 1, but System.Array.Rank starts at 0
             Dim RealRank As Integer
@@ -309,7 +310,7 @@ Namespace Microsoft.VisualBasic
 
             Return Array.GetUpperBound(RealRank)
         End Function
-        Public Function VarType(ByVal VarName As Object) As Microsoft.VisualBasic.VariantType
+        Public Shared Function VarType(ByVal VarName As Object) As Microsoft.VisualBasic.VariantType
 
             Dim tmpVar As VariantType = VariantType.Empty
             Dim TmpObjType, TmpStr, TmpObjType2 As String
@@ -378,7 +379,7 @@ Namespace Microsoft.VisualBasic
             Return tmpVar
 
         End Function
-        Public Function VbTypeName(ByVal UrtName As String) As String
+        Public Shared Function VbTypeName(ByVal UrtName As String) As String
 
             Dim tmpStr As String
             Dim RetObjType As String
@@ -418,5 +419,5 @@ Namespace Microsoft.VisualBasic
 
             Return RetObjType
         End Function
-    End Module
+    End Class
 End Namespace

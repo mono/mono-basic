@@ -26,14 +26,15 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 Namespace Microsoft.VisualBasic
-    Public Module Globals
-        Public ReadOnly Property ScriptEngine() As String
+    <Microsoft.VisualBasic.CompilerServices.StandardModule()> _
+    Public NotInheritable Class Globals
+        Public Shared ReadOnly Property ScriptEngine() As String
             Get
                 Return "VB"
             End Get
         End Property
 
-        Public ReadOnly Property ScriptEngineBuildVersion() As Integer
+        Public Shared ReadOnly Property ScriptEngineBuildVersion() As Integer
             Get
 #If NET_VER >= 2.0 Then
                 Return 50727
@@ -43,7 +44,7 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-        Public ReadOnly Property ScriptEngineMajorVersion() As Integer
+        Public Shared ReadOnly Property ScriptEngineMajorVersion() As Integer
             Get
 #If NET_VER >= 2.0 Then
                 Return 8
@@ -53,7 +54,7 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-        Public ReadOnly Property ScriptEngineMinorVersion() As Integer
+        Public Shared ReadOnly Property ScriptEngineMinorVersion() As Integer
             Get
 #If NET_VER >= 2.0 Then
                 Return 0
@@ -64,6 +65,6 @@ Namespace Microsoft.VisualBasic
 #End If
             End Get
         End Property
-    End Module
+    End Class
 End Namespace
 

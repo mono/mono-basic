@@ -1,3 +1,7 @@
+2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Fix distcheck.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Make.cmd, InitPaths.cmd: Find resgen too.
