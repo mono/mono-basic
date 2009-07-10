@@ -81,7 +81,6 @@ Public Class TypeManager
     Private Shared m_GenericTypeCache As New Generic.Dictionary(Of String, GenericTypeDescriptor)(vbnc.Helper.StringComparer)
     Private Shared m_TypeDescriptorsOfTypes As New Generic.Dictionary(Of Type, TypeDescriptor)(New TypeComparer)
 
-    Private Shared m_MemberDescriptorsOfMembers As New Generic.Dictionary(Of Integer, MemberInfo)
     Private Shared m_MemberDescriptorsOfMembers2 As New Generic.Dictionary(Of MemberInfo, MemberInfo)(New MemberComparer)
 
     Public MemberCache As New Generic.Dictionary(Of Type, MemberCache)(New TypeComparer)
@@ -535,8 +534,7 @@ Public Class TypeManager
         'Else
         'Console.WriteLine(">Descriptor = " & Descriptor.Name)
         'End If
-        If m_MemberDescriptorsOfMembers.ContainsKey(ReflectionMember.GetHashCode) = False Then
-            m_MemberDescriptorsOfMembers.Add(ReflectionMember.GetHashCode, Descriptor)
+        If m_MemberDescriptorsOfMembers2.ContainsKey(ReflectionMember) = False Then
             m_MemberDescriptorsOfMembers2.Add(ReflectionMember, Descriptor)
         End If
     End Sub
@@ -551,7 +549,6 @@ Public Class TypeManager
         If TypeOf Member Is TypeDescriptor Then Return Member
         If TypeOf Member Is EventDescriptor Then Return Member
 
-        If m_MemberDescriptorsOfMembers.ContainsKey(Member.GetHashCode) Then Return m_MemberDescriptorsOfMembers(Member.GetHashCode)
         If m_MemberDescriptorsOfMembers2.ContainsKey(Member) Then Return m_MemberDescriptorsOfMembers2(Member)
         For Each item As Generic.KeyValuePair(Of MemberInfo, MemberInfo) In m_MemberDescriptorsOfMembers2
             If item.Key Is Member Then

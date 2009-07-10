@@ -1,5 +1,10 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/TypeManager.vb: Remove another hash table keyed on
+	hash code.
+	
+2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/TypeManager.vb: Don't have a hash table keyed on the
 	hash code of an object, there is no guarantee the hash code is
 	different for different objects.
