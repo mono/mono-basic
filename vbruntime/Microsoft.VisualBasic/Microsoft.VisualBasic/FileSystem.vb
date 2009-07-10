@@ -34,11 +34,12 @@ Imports Microsoft.VisualBasic.CompilerServices
 Imports System.Collections
 
 Namespace Microsoft.VisualBasic
-    Public Module FileSystem
+    <StandardModule()> _
+    Public NotInheritable Class FileSystem
 
         ' Dir private members
-        Private m_Index As Integer
-        Private m_FileSystemInfos As FileSystemInfo()
+        Private Shared m_Index As Integer
+        Private Shared m_FileSystemInfos As FileSystemInfo()
         'Private m_files As FileInfo()
         'Private m_dirs As DirectoryInfo()
         'Private m_IsFile As Boolean = True
@@ -46,9 +47,9 @@ Namespace Microsoft.VisualBasic
         'Private m_len As Integer = 0
         'Private m_IsLastElem As Boolean = Nothing
 
-        Private m_OpenFiles As Hashtable
+        Private Shared m_OpenFiles As Hashtable
 
-        Public Sub ChDir(ByVal Path As String)
+        Public Shared Sub ChDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
 
             Dim fileinfo As New FileInfo(Path)
@@ -62,7 +63,7 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Sub
-        Public Sub ChDrive(ByVal Drive As Char)
+        Public Shared Sub ChDrive(ByVal Drive As Char)
             If (Drive = "") Then Return
             If Not Char.IsLetter(Drive) Then Throw New System.ArgumentException("Argument 'Drive' is not a valid value.")
 
@@ -74,16 +75,16 @@ Namespace Microsoft.VisualBasic
             End Try
 
         End Sub
-        Public Sub ChDrive(ByVal Drive As String)
+        Public Shared Sub ChDrive(ByVal Drive As String)
             If (Drive Is Nothing) Or (Drive = "") Then Return
             Dim ch As Char = CChar(Drive.Substring(0, 1))
             FileSystem.ChDrive(ch)
 
         End Sub
-        Public Function CurDir() As String
+        Public Shared Function CurDir() As String
             Return Directory.GetCurrentDirectory()
         End Function
-        Public Function CurDir(ByVal Drive As Char) As String
+        Public Shared Function CurDir(ByVal Drive As Char) As String
             If Not Char.IsLetter(Drive) Then Throw New System.ArgumentException("Argument 'Drive' is not a valid value.")
             Try
                 Directory.SetCurrentDirectory(Drive + Path.VolumeSeparatorChar)
@@ -93,7 +94,7 @@ Namespace Microsoft.VisualBasic
 
             Return Path.GetFullPath(Convert.ToString(Drive))
         End Function
-        Public Function Dir() As String
+        Public Shared Function Dir() As String
             If m_FileSystemInfos Is Nothing Then
                 Throw New System.ArgumentException("'Dir' function must first be called with a 'Pathname' argument.")
             ElseIf m_FileSystemInfos.Length < m_Index Then
@@ -107,7 +108,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
+        Public Shared Function Dir(ByVal Pathname As String, Optional ByVal Attributes As Microsoft.VisualBasic.FileAttribute = 0) As String
             Dim str_parent_dir As String = Nothing
             Dim str_pattern As String = Nothing
             Dim di As DirectoryInfo
@@ -168,7 +169,7 @@ Namespace Microsoft.VisualBasic
             Return result
         End Function
 
-        Private Function FindFileData(ByVal FileNumber As Integer) As FileData
+        Private Shared Function FindFileData(ByVal FileNumber As Integer) As FileData
             If m_OpenFiles Is Nothing OrElse m_OpenFiles.ContainsKey(FileNumber) = False Then
                 Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
             End If
@@ -176,15 +177,15 @@ Namespace Microsoft.VisualBasic
             Return DirectCast(m_OpenFiles(FileNumber), FileData)
         End Function
 
-        Public Function EOF(ByVal FileNumber As Integer) As Boolean
+        Public Shared Function EOF(ByVal FileNumber As Integer) As Boolean
             Return FindFileData(FileNumber).EOF
         End Function
 
-        Public Function FileAttr(ByVal FileNumber As Integer) As Microsoft.VisualBasic.OpenMode
+        Public Shared Function FileAttr(ByVal FileNumber As Integer) As Microsoft.VisualBasic.OpenMode
             Return FindFileData(FileNumber).Mode
         End Function
 
-        Public Sub FileClose(ByVal ParamArray FileNumbers() As Integer)
+        Public Shared Sub FileClose(ByVal ParamArray FileNumbers() As Integer)
             If m_OpenFiles Is Nothing OrElse m_OpenFiles.Count = 0 Then Return
 
             If FileNumbers Is Nothing OrElse FileNumbers.Length = 0 Then
@@ -208,11 +209,11 @@ Namespace Microsoft.VisualBasic
             Next
         End Sub
 
-        Public Sub FileCopy(ByVal Source As String, ByVal Destination As String)
+        Public Shared Sub FileCopy(ByVal Source As String, ByVal Destination As String)
             '' seems File.Copy throw the same exceptions VB requires 
             File.Copy(Source, Destination, True)
         End Sub
-        Public Function FileDateTime(ByVal PathName As String) As Date
+        Public Shared Function FileDateTime(ByVal PathName As String) As Date
             If (PathName = "") Then Throw New System.IO.FileNotFoundException("File " + "'" + "'" + " not found.")
 
             Dim InvalidChars() As Char
@@ -233,49 +234,49 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Boolean, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Boolean, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Byte, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Byte, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Char, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Char, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Date, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Date, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Decimal, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Decimal, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Double, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Double, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Integer, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Integer, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Long, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Long, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Short, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Short, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Single, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As Single, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGet(ByVal FileNumber As Integer, ByRef Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGet(Value, RecordNumber)
         End Sub
-        Public Sub FileGetObject(ByVal FileNumber As Integer, ByRef Value As Object, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FileGetObject(ByVal FileNumber As Integer, ByRef Value As Object, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FileGetObject(Value, RecordNumber)
         End Sub
-        Public Function FileLen(ByVal PathName As String) As Long
+        Public Shared Function FileLen(ByVal PathName As String) As Long
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.IO.FileNotFoundException("File " + "'" + PathName + "'" + " not found.")
             Dim fi As New FileInfo(PathName)
             If (fi.Exists) Then
@@ -286,7 +287,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-        Public Sub FileOpen(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, Optional ByVal Access As Microsoft.VisualBasic.OpenAccess = Microsoft.VisualBasic.OpenAccess.[Default], Optional ByVal Share As Microsoft.VisualBasic.OpenShare = Microsoft.VisualBasic.OpenShare.[Default], Optional ByVal RecordLength As Integer = -1)
+        Public Shared Sub FileOpen(ByVal FileNumber As Integer, ByVal FileName As String, ByVal Mode As Microsoft.VisualBasic.OpenMode, Optional ByVal Access As Microsoft.VisualBasic.OpenAccess = Microsoft.VisualBasic.OpenAccess.[Default], Optional ByVal Share As Microsoft.VisualBasic.OpenShare = Microsoft.VisualBasic.OpenShare.[Default], Optional ByVal RecordLength As Integer = -1)
 
             If FileNumber <= 0 OrElse FileNumber > 255 OrElse ((Not m_OpenFiles Is Nothing) AndAlso m_OpenFiles.ContainsKey(FileNumber)) Then
                 Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR52_Bad_file_name_or_number)
@@ -331,61 +332,61 @@ Namespace Microsoft.VisualBasic
             'data.CreateStream()
         End Sub
 
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Boolean, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Boolean, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Byte, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Byte, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Char, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Char, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Date, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Date, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Decimal, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Decimal, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Double, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Double, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Integer, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Integer, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Long, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Long, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Short, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Short, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Single, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As Single, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As String, Optional ByVal RecordNumber As Long = -1, Optional ByVal StringIsFixedLength As Boolean = False)
             FindFileData(FileNumber).FilePut(Value, RecordNumber, StringIsFixedLength)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.Array, Optional ByVal RecordNumber As Long = -1, Optional ByVal ArrayIsDynamic As Boolean = False, Optional ByVal StringIsFixedLength As Boolean = False)
             FindFileData(FileNumber).FilePut(Value, RecordNumber, ArrayIsDynamic, StringIsFixedLength)
         End Sub
-        Public Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
 #If NET_VER >= 2.0 Then
         <Obsolete("This member has been deprectated. Try FilePutObject.")> _
-        Public Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
 #Else
-        Public Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
+        Public Shared Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
 #End If
             Throw New ArgumentException("Use 'FilePutObject' instead of 'FilePut' when using argument of type 'Object'.")
         End Sub
-        Public Sub FilePutObject(ByVal FileNumber As Integer, ByVal Value As Object, Optional ByVal RecordNumber As Long = -1)
+        Public Shared Sub FilePutObject(ByVal FileNumber As Integer, ByVal Value As Object, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePutObject(Value, RecordNumber)
         End Sub
-        Public Sub FileWidth(ByVal FileNumber As Integer, ByVal RecordWidth As Integer)
+        Public Shared Sub FileWidth(ByVal FileNumber As Integer, ByVal RecordWidth As Integer)
             FindFileData(FileNumber).FileWidth(RecordWidth)
         End Sub
 
-        Public Function FreeFile() As Integer
+        Public Shared Function FreeFile() As Integer
             If m_OpenFiles Is Nothing Then Return 1
 
             For i As Integer = 1 To 255
@@ -397,7 +398,7 @@ Namespace Microsoft.VisualBasic
             Throw Microsoft.VisualBasic.CompilerServices.ExceptionUtils.GetVBException(VBErrors.ERR67_Too_many_files)
         End Function
 
-        Public Function GetAttr(ByVal PathName As String) As Microsoft.VisualBasic.FileAttribute
+        Public Shared Function GetAttr(ByVal PathName As String) As Microsoft.VisualBasic.FileAttribute
 
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
@@ -423,46 +424,46 @@ Namespace Microsoft.VisualBasic
 
             Return CType(attr, Microsoft.VisualBasic.FileAttribute)
         End Function
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Boolean)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Boolean)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Byte)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Byte)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Char)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Char)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Date)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Date)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Decimal)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Decimal)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Double)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Double)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Integer)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Integer)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Long)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Long)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Object)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Object)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Short)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Short)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As Single)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As Single)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Sub Input(ByVal FileNumber As Integer, ByRef Value As String)
+        Public Shared Sub Input(ByVal FileNumber As Integer, ByRef Value As String)
             FindFileData(FileNumber).Input(Value)
         End Sub
-        Public Function InputString(ByVal FileNumber As Integer, ByVal CharCount As Integer) As String
+        Public Shared Function InputString(ByVal FileNumber As Integer, ByVal CharCount As Integer) As String
             Return FindFileData(FileNumber).InputString(CharCount)
         End Function
-        Public Sub Kill(ByVal PathName As String)
+        Public Shared Sub Kill(ByVal PathName As String)
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
             Dim str_parent_dir, str_file_to_delete As String
             Dim last_ch, i As Integer
@@ -489,25 +490,25 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Sub
-        Public Function LineInput(ByVal FileNumber As Integer) As String
+        Public Shared Function LineInput(ByVal FileNumber As Integer) As String
             Return FindFileData(FileNumber).LineInput
         End Function
-        Public Function Loc(ByVal FileNumber As Integer) As Long
+        Public Shared Function Loc(ByVal FileNumber As Integer) As Long
             Return FindFileData(FileNumber).Loc()
         End Function
-        Public Sub Lock(ByVal FileNumber As Integer)
+        Public Shared Sub Lock(ByVal FileNumber As Integer)
             FindFileData(FileNumber).Lock()
         End Sub
-        Public Sub Lock(ByVal FileNumber As Integer, ByVal Record As Long)
+        Public Shared Sub Lock(ByVal FileNumber As Integer, ByVal Record As Long)
             FindFileData(FileNumber).Lock(Record)
         End Sub
-        Public Sub Lock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
+        Public Shared Sub Lock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
             FindFileData(FileNumber).Lock(FromRecord, ToRecord)
         End Sub
-        Public Function LOF(ByVal FileNumber As Integer) As Long
+        Public Shared Function LOF(ByVal FileNumber As Integer) As Long
             FindFileData(FileNumber).LOF()
         End Function
-        Public Sub MkDir(ByVal Path As String)
+        Public Shared Sub MkDir(ByVal Path As String)
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
             Dim di As New DirectoryInfo(Path)
             If (di.Exists) Then
@@ -517,13 +518,13 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Sub
-        Public Sub Print(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
+        Public Shared Sub Print(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             FindFileData(FileNumber).Print(Output)
         End Sub
-        Public Sub PrintLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
+        Public Shared Sub PrintLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             FindFileData(FileNumber).PrintLine(Output)
         End Sub
-        Public Sub Rename(ByVal OldPath As String, ByVal NewPath As String)
+        Public Shared Sub Rename(ByVal OldPath As String, ByVal NewPath As String)
             If ((OldPath = "") Or (OldPath Is Nothing) Or (NewPath = "") Or (NewPath Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim fiNew As New FileInfo(NewPath)
@@ -564,10 +565,10 @@ Namespace Microsoft.VisualBasic
                 End Try
             End If
         End Sub
-        Public Sub Reset()
+        Public Shared Sub Reset()
             FileClose()
         End Sub
-        Public Sub RmDir(ByVal Path As String)
+        Public Shared Sub RmDir(ByVal Path As String)
             Dim fi As FileInfo()
 
             If ((Path = "") Or (Path Is Nothing)) Then Throw New System.ArgumentException("Argument 'Path' is Nothing or empty.")
@@ -580,13 +581,13 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Sub
-        Public Function Seek(ByVal FileNumber As Integer) As Long
+        Public Shared Function Seek(ByVal FileNumber As Integer) As Long
             Return FindFileData(FileNumber).Seek
         End Function
-        Public Sub Seek(ByVal FileNumber As Integer, ByVal Position As Long)
+        Public Shared Sub Seek(ByVal FileNumber As Integer, ByVal Position As Long)
             FindFileData(FileNumber).Seek(Position)
         End Sub
-        Public Sub SetAttr(ByVal PathName As String, ByVal Attributes As Microsoft.VisualBasic.FileAttribute)
+        Public Shared Sub SetAttr(ByVal PathName As String, ByVal Attributes As Microsoft.VisualBasic.FileAttribute)
 
             If ((PathName = "") Or (PathName Is Nothing)) Then Throw New System.ArgumentException("The path is not of a legal form.")
 
@@ -612,37 +613,35 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Sub
-        Public Function SPC(ByVal Count As Short) As Microsoft.VisualBasic.SpcInfo
+        Public Shared Function SPC(ByVal Count As Short) As Microsoft.VisualBasic.SpcInfo
             Dim info As Microsoft.VisualBasic.SpcInfo
             info.Count = Count
             Return info
         End Function
-        Public Function TAB() As Microsoft.VisualBasic.TabInfo
+        Public Shared Function TAB() As Microsoft.VisualBasic.TabInfo
             Dim info As TabInfo
             info.Column = -1 'TODO: Add test
             Return info
         End Function
-        Public Function TAB(ByVal Column As Short) As Microsoft.VisualBasic.TabInfo
+        Public Shared Function TAB(ByVal Column As Short) As Microsoft.VisualBasic.TabInfo
             Dim info As TabInfo
             info.Column = Column
             Return info
         End Function
-        Public Sub Unlock(ByVal FileNumber As Integer)
+        Public Shared Sub Unlock(ByVal FileNumber As Integer)
             FindFileData(FileNumber).Unlock()
         End Sub
-        Public Sub Unlock(ByVal FileNumber As Integer, ByVal Record As Long)
+        Public Shared Sub Unlock(ByVal FileNumber As Integer, ByVal Record As Long)
             FindFileData(FileNumber).Unlock(Record)
         End Sub
-        Public Sub Unlock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
+        Public Shared Sub Unlock(ByVal FileNumber As Integer, ByVal FromRecord As Long, ByVal ToRecord As Long)
             FindFileData(FileNumber).Unlock(FromRecord, ToRecord)
         End Sub
-        Public Sub Write(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
+        Public Shared Sub Write(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             FindFileData(FileNumber).Write(Output)
         End Sub
-        Public Sub WriteLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
+        Public Shared Sub WriteLine(ByVal FileNumber As Integer, ByVal ParamArray Output() As Object)
             FindFileData(FileNumber).WriteLine(Output)
         End Sub
-
-  
-    End Module
+    End Class
 End Namespace

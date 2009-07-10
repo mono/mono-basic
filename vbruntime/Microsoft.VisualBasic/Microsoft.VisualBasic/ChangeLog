@@ -1,5 +1,19 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* VBMath.vb:
+	* Strings.vb:
+	* Interaction.vb:
+	* Information.vb:
+	* Financial.vb:
+	* FileSystem.vb:
+	* DateAndTime.vb:
+	* Conversion.vb:
+	* Constants.vb: Don't use Module, use Class and make all
+	members static. First step in making vbruntime compilable with
+	vb9.
+
+2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* FileData.vb: Use full "path" to access members in modules, since modules
 	will be changed to classes.
 

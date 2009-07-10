@@ -35,19 +35,20 @@ Imports System
 Imports Microsoft.VisualBasic.CompilerServices
 
 Namespace Microsoft.VisualBasic
-    Public Module VBMath
+    <StandardModule()> _
+    Public NotInheritable Class VBMath
 
         ' Declarations
         ' Constructors
         ' Properties
-        Private m_rnd As Random = New Random
-        Private m_last As Single = CType(m_rnd.NextDouble(), Single)
+        Private Shared m_rnd As Random = New Random
+        Private Shared m_last As Single = CType(m_rnd.NextDouble(), Single)
         ' Methods
-        Public Function Rnd() As Single
+        Public Shared Function Rnd() As Single
             m_last = CType(m_rnd.NextDouble(), Single)
             Return m_last
         End Function
-        Public Function Rnd(ByVal Number As Single) As Single
+        Public Shared Function Rnd(ByVal Number As Single) As Single
             If Number = 0.0 Then
                 Return m_last
             ElseIf Number < 0.0 Then
@@ -59,13 +60,13 @@ Namespace Microsoft.VisualBasic
             End If
             Return Rnd()
         End Function
-        Public Sub Randomize()
+        Public Shared Sub Randomize()
             m_rnd = New Random
         End Sub
         'TODO: Rethink the double => int conversion
-        Public Sub Randomize(ByVal Number As Double)
+        Public Shared Sub Randomize(ByVal Number As Double)
             m_rnd = New Random(CType(Number, Integer))
         End Sub
         ' Events
-    End Module
+    End Class
 End Namespace

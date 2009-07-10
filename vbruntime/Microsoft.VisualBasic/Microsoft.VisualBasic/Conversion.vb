@@ -35,11 +35,12 @@ Imports System.Globalization
 
 
 Namespace Microsoft.VisualBasic
-    Public Module Conversion
-        Public Function ErrorToString() As String
+    <StandardModule()> _
+    Public NotInheritable Class Conversion
+        Public Shared Function ErrorToString() As String
             Return Information.Err.Description
         End Function
-        Public Function ErrorToString(ByVal ErrorNumber As Integer) As String
+        Public Shared Function ErrorToString(ByVal ErrorNumber As Integer) As String
             Dim rm As New Resources.ResourceManager("strings", [Assembly].GetExecutingAssembly())
 
             Dim strDescription As String
@@ -66,19 +67,19 @@ Namespace Microsoft.VisualBasic
 
             Return strDescription
         End Function
-        Public Function Fix(ByVal Number As Decimal) As Decimal
+        Public Shared Function Fix(ByVal Number As Decimal) As Decimal
             Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
         End Function
-        Public Function Fix(ByVal Number As Double) As Double
+        Public Shared Function Fix(ByVal Number As Double) As Double
             Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
         End Function
-        Public Function Fix(ByVal Number As Integer) As Integer
+        Public Shared Function Fix(ByVal Number As Integer) As Integer
             Return Number
         End Function
-        Public Function Fix(ByVal Number As Long) As Long
+        Public Shared Function Fix(ByVal Number As Long) As Long
             Return Number
         End Function
-        Public Function Fix(ByVal Number As Object) As Object
+        Public Shared Function Fix(ByVal Number As Object) As Object
             'FIXME:ArgumentException 5 Number is not a numeric type. 
             If Number Is Nothing Then
                 Throw New ArgumentNullException("Number", "Value can not be null.")
@@ -112,30 +113,30 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Function
-        Public Function Fix(ByVal Number As Short) As Short
+        Public Shared Function Fix(ByVal Number As Short) As Short
             Return Number
         End Function
-        Public Function Fix(ByVal Number As Single) As Single
+        Public Shared Function Fix(ByVal Number As Single) As Single
             Return Math.Sign(Number) * Conversion.Int(System.Math.Abs(Number))
         End Function
 
-        Public Function Hex(ByVal Number As Byte) As String
+        Public Shared Function Hex(ByVal Number As Byte) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
 
-        Public Function Hex(ByVal Number As Integer) As String
+        Public Shared Function Hex(ByVal Number As Integer) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
 
-        Public Function Hex(ByVal Number As Long) As String
+        Public Shared Function Hex(ByVal Number As Long) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
 
-        Public Function Hex(ByVal Number As Short) As String
+        Public Shared Function Hex(ByVal Number As Short) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
 
-        Public Function Hex(ByVal Number As Object) As String
+        Public Shared Function Hex(ByVal Number As Object) As String
 
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
@@ -192,7 +193,7 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Private Function SizeDown(ByVal num As Long) As Object
+        Private Shared Function SizeDown(ByVal num As Long) As Object
             'If (num <= Byte.MaxValue And num >= 0) Then
             '    Return CType(num, Byte)
             'End If
@@ -220,19 +221,19 @@ Namespace Microsoft.VisualBasic
             Return num
         End Function
 
-        Public Function Int(ByVal Number As Decimal) As Decimal
+        Public Shared Function Int(ByVal Number As Decimal) As Decimal
             Return Decimal.Floor(Number)
         End Function
-        Public Function Int(ByVal Number As Double) As Double
+        Public Shared Function Int(ByVal Number As Double) As Double
             Return Math.Floor(Number)
         End Function
-        Public Function Int(ByVal Number As Integer) As Integer
+        Public Shared Function Int(ByVal Number As Integer) As Integer
             Return Number
         End Function
-        Public Function Int(ByVal Number As Long) As Long
+        Public Shared Function Int(ByVal Number As Long) As Long
             Return Number
         End Function
-        Public Function Int(ByVal Number As Object) As Object
+        Public Shared Function Int(ByVal Number As Object) As Object
             'FIXME:ArgumentException 5 Number is not a numeric type. 
             If Number Is Nothing Then
                 Throw New ArgumentNullException("Number", "Value can not be null.")
@@ -263,22 +264,22 @@ Namespace Microsoft.VisualBasic
             End If
 
         End Function
-        Public Function Int(ByVal Number As Short) As Short
+        Public Shared Function Int(ByVal Number As Short) As Short
             Return Number
         End Function
-        Public Function Int(ByVal Number As Single) As Single
+        Public Shared Function Int(ByVal Number As Single) As Single
             Return System.Convert.ToSingle(Math.Floor(Number))
         End Function
-        Public Function Oct(ByVal Number As Byte) As String
+        Public Shared Function Oct(ByVal Number As Byte) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
-        Public Function Oct(ByVal Number As Integer) As String
+        Public Shared Function Oct(ByVal Number As Integer) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
-        Public Function Oct(ByVal Number As Long) As String
+        Public Shared Function Oct(ByVal Number As Long) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
-        Public Function Oct(ByVal Number As Object) As String
+        Public Shared Function Oct(ByVal Number As Object) As String
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
             End If
@@ -334,11 +335,11 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 
-        Public Function Oct(ByVal Number As Short) As String
+        Public Shared Function Oct(ByVal Number As Short) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
 
-        Public Function Str(ByVal Number As Object) As String
+        Public Shared Function Str(ByVal Number As Object) As String
             If Number Is Nothing Then
                 Throw New System.ArgumentNullException("Number", "Value cannot be null.")
             End If
@@ -391,7 +392,7 @@ Namespace Microsoft.VisualBasic
                 Throw New System.InvalidCastException("Argument 'Number' cannot be converted to a numeric value.")
             End If
         End Function
-        Public Function Val(ByVal Expression As Char) As Integer
+        Public Shared Function Val(ByVal Expression As Char) As Integer
             'only '0' - '9' are acceptable
             If Strings.Asc(Expression) >= Strings.Asc("0"c) And Strings.Asc(Expression) <= Strings.Asc("9"c) Then
                 Return Strings.Asc(Expression) - Strings.Asc("0"c)
@@ -400,7 +401,7 @@ Namespace Microsoft.VisualBasic
                 Return 0
             End If
         End Function
-        Public Function Val(ByVal Expression As Object) As Double
+        Public Shared Function Val(ByVal Expression As Object) As Double
             If Expression Is Nothing Then
                 Return Val("")
             End If
@@ -416,7 +417,7 @@ Namespace Microsoft.VisualBasic
                 Throw New System.ArgumentException("Argument 'Expression' cannot be converted to type '" + Expression.GetType.FullName + "'.")
             End If
         End Function
-        Public Function Val(ByVal InputStr As String) As Double
+        Public Shared Function Val(ByVal InputStr As String) As Double
 
             If InputStr Is Nothing Then
                 InputStr = ""
@@ -600,37 +601,37 @@ Namespace Microsoft.VisualBasic
         End Function
 #If NET_VER >= 2.0 Then
         <CLSCompliant(False)> _
-        Public Function Hex(ByVal Number As SByte) As String
+        Public Shared Function Hex(ByVal Number As SByte) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Hex(ByVal Number As UShort) As String
+        Public Shared Function Hex(ByVal Number As UShort) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Hex(ByVal Number As UInteger) As String
+        Public Shared Function Hex(ByVal Number As UInteger) As String
             Return Convert.ToString(Number, 16).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Hex(ByVal Number As ULong) As String
+        Public Shared Function Hex(ByVal Number As ULong) As String
             Return Convert.ToString(CLng(Number), 16).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Oct(ByVal Number As SByte) As String
+        Public Shared Function Oct(ByVal Number As SByte) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Oct(ByVal Number As UShort) As String
+        Public Shared Function Oct(ByVal Number As UShort) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Oct(ByVal Number As UInteger) As String
+        Public Shared Function Oct(ByVal Number As UInteger) As String
             Return Convert.ToString(Number, 8).ToUpper
         End Function
         <CLSCompliant(False)> _
-        Public Function Oct(ByVal Number As ULong) As String
+        Public Shared Function Oct(ByVal Number As ULong) As String
             Return Convert.ToString(CLng(Number), 8).ToUpper
         End Function
 #End If
-    End Module
+    End Class
 End Namespace

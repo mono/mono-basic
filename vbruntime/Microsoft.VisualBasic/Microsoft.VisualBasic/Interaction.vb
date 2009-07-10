@@ -38,25 +38,26 @@ Imports System.Drawing
 #End If
 
 Namespace Microsoft.VisualBasic
-    Public Module Interaction
+    <StandardModule()> _
+    Public NotInheritable Class Interaction
 
 #If Not MOONLIGHT Then
-        Public Sub AppActivate(ByVal ProcessId As Integer)
+        Public Shared Sub AppActivate(ByVal ProcessId As Integer)
             'TODO: OS Specific
             Throw New NotImplementedException
         End Sub
-        Public Sub AppActivate(ByVal Title As String)
+        Public Shared Sub AppActivate(ByVal Title As String)
             'TODO: OS Specific
             Throw New NotImplementedException
         End Sub
-        Public Sub Beep()
+        Public Shared Sub Beep()
             'TODO: OS Specific
             ' Removed Throw exception, as it does not really harm that the beep does not work.
         End Sub
 
 #End If
         <MonoLimitation("CallType.Let options is not supported.")> _
-        Public Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
+        Public Shared Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
             Select Case UseCallType
                 Case CallType.Get
                     Return LateBinding.LateGet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing, Nothing)
@@ -70,7 +71,7 @@ Namespace Microsoft.VisualBasic
             Return Nothing
         End Function
 
-        Public Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
+        Public Shared Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
 
             If (Choice.Rank <> 1) Then
                 Throw New ArgumentException
@@ -88,15 +89,15 @@ Namespace Microsoft.VisualBasic
             End If
         End Function
 #If Not MOONLIGHT Then
-        Public Function Command() As String
+        Public Shared Function Command() As String
             'TODO: OS Specific
             Return String.Join(" ", Environment.GetCommandLineArgs)
         End Function
-        Public Function CreateObject(ByVal ProgId As String, Optional ByVal ServerName As String = "") As Object
+        Public Shared Function CreateObject(ByVal ProgId As String, Optional ByVal ServerName As String = "") As Object
             'TODO: COM
             Throw New NotImplementedException
         End Function
-        Public Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
+        Public Shared Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
 
 #If TARGET_JVM = False Then
 
@@ -119,15 +120,15 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Sub
-        Public Function Environ(ByVal Expression As Integer) As String
+        Public Shared Function Environ(ByVal Expression As Integer) As String
             Throw New NotImplementedException
         End Function
-        Public Function Environ(ByVal Expression As String) As String
+        Public Shared Function Environ(ByVal Expression As String) As String
             Return Environment.GetEnvironmentVariable(Expression)
         End Function
 
         <MonoLimitation("If this function is used the assembly have to be recompiled when you switch platforms.")> _
-        Public Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
+        Public Shared Function GetAllSettings(ByVal AppName As String, ByVal Section As String) As String(,)
 
 #If TARGET_JVM = False Then
 
@@ -167,11 +168,11 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Function
-        Public Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
+        Public Shared Function GetObject(Optional ByVal PathName As String = Nothing, Optional ByVal [Class] As String = Nothing) As Object
             'TODO: COM
             Throw New NotImplementedException
         End Function
-        Public Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
+        Public Shared Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
 #If TARGET_JVM = False Then
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
@@ -183,7 +184,7 @@ Namespace Microsoft.VisualBasic
 #End If
         End Function
 #End If
-        Public Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
+        Public Shared Function IIf(ByVal Expression As Boolean, ByVal TruePart As Object, ByVal FalsePart As Object) As Object
             If Expression Then
                 Return TruePart
             Else
@@ -249,7 +250,7 @@ Namespace Microsoft.VisualBasic
         End Class
 #End If
 
-        Public Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
+        Public Shared Function InputBox(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1) As String
 #If TARGET_JVM = False Then
             Dim f As InputForm
             f = New InputForm(Prompt, Title, DefaultResponse, XPos, YPos)
@@ -259,7 +260,7 @@ Namespace Microsoft.VisualBasic
 #End If
         End Function
 #End If
-        Public Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
+        Public Shared Function Partition(ByVal Number As Long, ByVal Start As Long, ByVal [Stop] As Long, ByVal Interval As Long) As String
 
             Dim strEnd As String = ""
             Dim strStart As String = ""
@@ -331,7 +332,7 @@ Namespace Microsoft.VisualBasic
 
         End Function
 #If Not MOONLIGHT Then
-        Public Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
+        Public Shared Sub SaveSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)
 
 #If TARGET_JVM = False Then
 
@@ -346,12 +347,12 @@ Namespace Microsoft.VisualBasic
             Throw New NotImplementedException
 #End If
         End Sub
-        Public Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
+        Public Shared Function Shell(ByVal Pathname As String, Optional ByVal Style As Microsoft.VisualBasic.AppWinStyle = Microsoft.VisualBasic.AppWinStyle.MinimizedFocus, Optional ByVal Wait As Boolean = False, Optional ByVal Timeout As Integer = -1) As Integer
             'TODO: OS Specific
             Throw New NotImplementedException
         End Function
 #End If
-        Public Function Switch(ByVal ParamArray VarExpr() As Object) As Object
+        Public Shared Function Switch(ByVal ParamArray VarExpr() As Object) As Object
             Dim i As Integer
             If VarExpr Is Nothing Then
                 Return Nothing
@@ -367,7 +368,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
 #If Not MOONLIGHT Then
-        Public Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OkOnly, _
+        Public Shared Function MsgBox(ByVal Prompt As Object, Optional ByVal Button As MsgBoxStyle = MsgBoxStyle.OkOnly, _
          Optional ByVal Title As Object = Nothing) As MsgBoxResult
 #If TARGET_JVM = False Then
 
@@ -432,5 +433,5 @@ Namespace Microsoft.VisualBasic
 
         End Function
 #End If
-    End Module
+    End Class
 End Namespace
