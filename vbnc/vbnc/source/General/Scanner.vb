@@ -953,8 +953,6 @@ Public Class Scanner
                     Case "b"c, "B"c 'Binary
                         Base = IntegerBase.Binary
 #End If
-                    Case "d"c, "D"c 'Decimal
-                        Base = IntegerBase.Decimal
                     Case "h"c, "H"c 'Hex
                         Base = IntegerBase.Hex
                     Case "o"c, "O"c 'Octal
@@ -1433,7 +1431,7 @@ Public Class Scanner
 #If EXTENDED Then
                         Case "b"c, "B"c, "h"c, "H"c, "o"c, "O"c, "d"c, "D"c
 #Else
-                        Case "h"c, "H"c, "o"c, "O"c, "d"c, "D"c
+                        Case "h"c, "H"c, "o"c, "O"c
 #End If
                             Result = GetNumber()
                         Case Else 'Not a number, but operator
