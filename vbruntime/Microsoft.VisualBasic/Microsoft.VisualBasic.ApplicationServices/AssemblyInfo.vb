@@ -59,7 +59,13 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         Public ReadOnly Property CompanyName() As String
             Get
-                Return m_CurrentAssembly.GetName.Name
+                Dim attrib As AssemblyCompanyAttribute
+                attrib = GetAttribute(Of AssemblyCompanyAttribute)()
+                If attrib IsNot Nothing Then
+                    Return attrib.Company
+                Else
+                    Return String.Empty
+                End If
             End Get
         End Property
 
