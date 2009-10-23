@@ -1511,7 +1511,9 @@ Partial Public Class Emitter
                 Return True
             Case TypeCode.Object
                 EmitLoadI4Value(tmp, Value)
-                EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
+                If Info.DesiredType.IsValueType = False Then
+                    EmitBox(Info, Info.Compiler.TypeCache.System_Int32)
+                End If
                 Return True
         End Select
         Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)

@@ -1828,39 +1828,48 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function GetConversionOperators(ByVal Compiler As Compiler, ByVal Names As Generic.Queue(Of String), ByVal Type As Type, ByVal ReturnType As Type) As Generic.List(Of MethodInfo)
+    Shared Function GetConversionOperators(ByVal Compiler As Compiler, ByVal Names As Generic.List(Of String), ByVal Type As Type, ByVal ReturnType As Type) As Generic.List(Of MethodInfo)
         Dim ops As Generic.List(Of MethodInfo)
 
         ops = GetOperators(Compiler, Names, Type)
 
-        For i As Integer = ops.Count - 1 To 0 Step -1
-            If CompareType(ops(i).ReturnType, ReturnType) = False Then ops.RemoveAt(i)
-        Next
+        If ops Is Nothing Then
+            ops = GetOperators(Compiler, Names, ReturnType)
+        Else
+            ops.AddRange(GetOperators(Compiler, Names, ReturnType))
+        End If
+
+        If ops IsNot Nothing Then
+            For i As Integer = ops.Count - 1 To 0 Step -1
+                If CompareType(ops(i).ReturnType, ReturnType) = False Then
+                    ops.RemoveAt(i)
+                ElseIf CompareType(ops(i).GetParameters()(0).ParameterType, Type) = False Then
+                    ops.RemoveAt(i)
+                End If
+            Next
+        End If
 
         Return ops
     End Function
 
 
     Shared Function GetWideningConversionOperators(ByVal Compiler As Compiler, ByVal Type As Type, ByVal ReturnType As Type) As Generic.List(Of MethodInfo)
-        Return GetConversionOperators(Compiler, New Generic.Queue(Of String)(New String() {"op_Implicit"}), Type, ReturnType)
+        Return GetConversionOperators(Compiler, New Generic.List(Of String)(New String() {"op_Implicit"}), Type, ReturnType)
     End Function
 
     Shared Function GetNarrowingConversionOperators(ByVal Compiler As Compiler, ByVal Type As Type, ByVal ReturnType As Type) As Generic.List(Of MethodInfo)
-        Return GetConversionOperators(Compiler, New Generic.Queue(Of String)(New String() {"op_Explicit"}), Type, ReturnType)
+        Return GetConversionOperators(Compiler, New Generic.List(Of String)(New String() {"op_Explicit"}), Type, ReturnType)
     End Function
 
-    Shared Function GetOperators(ByVal Compiler As Compiler, ByVal Names As Generic.Queue(Of String), ByVal Type As Type) As Generic.List(Of MethodInfo)
+    Shared Function GetOperators(ByVal Compiler As Compiler, ByVal Names As Generic.List(Of String), ByVal Type As Type) As Generic.List(Of MethodInfo)
         Dim result As New Generic.List(Of MethodInfo)
-        Dim testName As String
 
         'Dim members() As MemberInfo
         Dim members As Generic.List(Of MemberInfo)
         'members = Type.GetMembers(BindingFlags.Static Or BindingFlags.Public Or BindingFlags.NonPublic)
         members = Compiler.TypeManager.GetCache(Type).FlattenedCache.GetAllMembers
 
-        Do Until Names.Count = 0
-            testName = Names.Dequeue
-
+        For Each testName As String In Names
             For Each member As MemberInfo In members
                 If member.MemberType = MemberTypes.Method Then
                     Dim method As MethodInfo = DirectCast(member, MethodInfo)
@@ -1869,22 +1878,22 @@ Public Class Helper
                     End If
                 End If
             Next
-            If result.Count > 0 Then Exit Do
-        Loop
+            If result.Count > 0 Then Exit For
+        Next
 
         Return result
     End Function
 
     Shared Function GetUnaryOperators(ByVal Compiler As Compiler, ByVal Op As UnaryOperators, ByVal Type As Type) As Generic.List(Of MethodInfo)
         Dim opName As String
-        Dim opNameAlternatives As New Generic.Queue(Of String)
+        Dim opNameAlternatives As New Generic.List(Of String)
 
         opName = Enums.GetStringAttribute(Op).Value
-        opNameAlternatives.Enqueue(opName)
+        opNameAlternatives.Add(opName)
 
         Select Case Op
             Case UnaryOperators.Not
-                opNameAlternatives.Enqueue("op_LogicalNot")
+                opNameAlternatives.Add("op_LogicalNot")
         End Select
 
         Return GetOperators(Compiler, opNameAlternatives, Type)
@@ -1892,21 +1901,21 @@ Public Class Helper
 
     Shared Function GetBinaryOperators(ByVal Compiler As Compiler, ByVal Op As BinaryOperators, ByVal Type As Type) As Generic.List(Of MethodInfo)
         Dim opName As String
-        Dim opNameAlternatives As New Generic.Queue(Of String)
+        Dim opNameAlternatives As New Generic.List(Of String)
 
         opName = Enums.GetStringAttribute(Op).Value
-        opNameAlternatives.Enqueue(opName)
+        opNameAlternatives.Add(opName)
 
         Select Case Op
             Case BinaryOperators.And
-                opNameAlternatives.Enqueue("op_LogicalAnd")
+                opNameAlternatives.Add("op_LogicalAnd")
             Case BinaryOperators.Or
-                opNameAlternatives.Enqueue("op_LogicalOr")
+                opNameAlternatives.Add("op_LogicalOr")
             Case BinaryOperators.ShiftLeft
                 'See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconOperatorOverloadingUsageGuidelines.asp
-                opNameAlternatives.Enqueue("op_SignedRightShift")
+                opNameAlternatives.Add("op_SignedRightShift")
             Case BinaryOperators.ShiftRight
-                opNameAlternatives.Enqueue("op_UnsignedRightShift")
+                opNameAlternatives.Add("op_UnsignedRightShift")
         End Select
 
         Return GetOperators(Compiler, opNameAlternatives, Type)
@@ -2255,39 +2264,39 @@ Public Class Helper
     End Function
 
     <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As MethodBuilder)
-        Dim Compiler As Compiler = Context.Compiler
-        Dim rettype As Type = Method.ReturnType
-        Dim strrettype As String
-        If rettype IsNot Nothing Then
-            If rettype.FullName Is Nothing Then
-                strrettype = rettype.Name
-            Else
-                strrettype = rettype.FullName
-            End If
-        Else
-            strrettype = ""
-        End If
-        Dim tp As Type = Method.DeclaringType
-        Dim paramstypes As Type() = Helper.GetParameterTypes(context, Method)
-        Dim attribs As MethodAttributes = Method.Attributes
-        Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
-        Dim name As String = tp.FullName & ":" & Method.Name
+        '        Dim Compiler As Compiler = Context.Compiler
+        '        Dim rettype As Type = Method.ReturnType
+        '        Dim strrettype As String
+        '        If rettype IsNot Nothing Then
+        '            If rettype.FullName Is Nothing Then
+        '                strrettype = rettype.Name
+        '            Else
+        '                strrettype = rettype.FullName
+        '            End If
+        '        Else
+        '            strrettype = ""
+        '        End If
+        '        Dim tp As Type = Method.DeclaringType
+        '        Dim paramstypes As Type() = Helper.GetParameterTypes(context, Method)
+        '        Dim attribs As MethodAttributes = Method.Attributes
+        '        Dim impl As MethodImplAttributes = Method.GetMethodImplementationFlags
+        '        Dim name As String = tp.FullName & ":" & Method.Name
 
-#If EXTENDEDDEBUG Then
-        Try
-            System.Console.ForegroundColor = ConsoleColor.Red
-        Catch ex As Exception
+        '#If EXTENDEDDEBUG Then
+        '        Try
+        '            System.Console.ForegroundColor = ConsoleColor.Red
+        '        Catch ex As Exception
 
-        End Try
+        '        End Try
 
-        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined method '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
+        '        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Defined method '{0}'. Attributes: '{1}'. ImplAttributes: '{2}'. Parameters: '{3}', ReturnType: '{4}'", name, attribs.ToString.Replace("PrivateScope, ", ""), impl.ToString, TypesToString(paramstypes), strrettype))
 
-        Try
-            System.Console.ResetColor()
-        Catch ex As Exception
+        '        Try
+        '            System.Console.ResetColor()
+        '        Catch ex As Exception
 
-        End Try
-#End If
+        '        End Try
+        '#End If
     End Sub
 
     <Diagnostics.Conditional("DEBUG")> Sub DumpDefine(ByVal Context As BaseObject, ByVal Method As ConstructorBuilder)

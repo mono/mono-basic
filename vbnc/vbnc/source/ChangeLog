@@ -1,3 +1,14 @@
+2009-10-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* General/Helper.vb: When getting operators, check both source and 
+	destination type.
+
+	* Expressions/Conversions/CTypeExpression.vb: Check for user defined
+	conversions before throwing an exception.
+
+	* Emit/Emitter.vb: Don't emit a box instruction if we want a integer
+	to valuetype conversion.
+
 2009-07-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Expressions/LateBoundAccessToExpression.vb: Fix emission of late
