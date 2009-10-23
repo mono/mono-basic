@@ -255,7 +255,21 @@ Public Class CTypeExpression
             ElseIf Helper.CompareType(CecilHelper.FindDefinition(SourceType).BaseType, DestinationType) Then
                 Emitter.EmitBox(Info, DestinationType)
             Else
-                Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                Dim operators As Generic.List(Of Mono.Cecil.MethodReference)
+                operators = Helper.GetWideningConversionOperators(Info.Compiler, SourceType, DestinationType)
+                If operators Is Nothing OrElse operators.Count = 0 Then
+                    Helper.AddWarning("using narrowing operators")
+                    operators = Helper.GetNarrowingConversionOperators(Info.Compiler, SourceType, DestinationType)
+                End If
+                If operators IsNot Nothing AndAlso operators.Count > 0 Then
+                    If operators.Count = 1 Then
+                        Emitter.EmitCall(Info, operators(0))
+                    Else
+                        Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                    End If
+                Else
+                    Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                End If
             End If
         ElseIf Helper.IsInterface(Compiler, SourceType) Then
             If CecilHelper.IsGenericParameter(DestinationType) Then
