@@ -2,6 +2,10 @@
 
 	* CompileTime2/FunctionReturnVariable1.vb: Added.
 
+2009-10-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* SelfTest/SelfCompile.files.windows: Fixed to work again.
+
 2009-10-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Bugs/bug-547165.vb: Added test case.

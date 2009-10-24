@@ -4,7 +4,6 @@
 ..\..\source\AutoGen\ZCompilerCodeGenerator.vb
 ..\..\source\Code\CodeBlock.vb
 ..\..\source\Code\ImplicitCodeBlock.vb
-..\..\source\ConditionalCompilation\ConditionalCompilation.vb
 ..\..\source\ConditionalCompilation\ConditionalConstant.vb
 ..\..\source\ConditionalCompilation\ConditionalConstants.vb
 ..\..\source\ConditionalCompilation\ConditionalExpression.vb
@@ -277,6 +276,7 @@
 ..\..\source\General\CommandLine.OptionCompareTypes.vb
 ..\..\source\General\CommandLine.OptionExplicitTypes.vb
 ..\..\source\General\CommandLine.OptionStrictTypes.vb
+..\..\source\General\CommandLine.OptionInferTypes.vb
 ..\..\source\General\CommandLine.Targets.vb
 ..\..\source\General\Compiler.CompilerSequence.vb
 ..\..\source\General\Compiler.vb
@@ -290,7 +290,6 @@
 ..\..\source\General\Namespaces.vb
 ..\..\source\General\TooManyErrorsException.vb
 ..\..\source\General\vbncException.vb
-..\..\source\Members\AttributeMember.vb
 ..\..\source\General\Index.vb
 ..\..\source\General\Message.vb
 ..\..\source\General\MessageAttribute.vb
@@ -380,7 +379,6 @@
 ..\..\source\Expressions\Expression.vb
 ..\..\source\General\Helper.vb
 ..\..\source\General\Main.vb
-..\..\source\Members\AttributeMembers.vb
 ..\..\source\Members\EnumMemberDeclaration.vb
 ..\..\source\Members\PropertyGetDeclaration.vb
 ..\..\source\Members\PropertySetDeclaration.vb
