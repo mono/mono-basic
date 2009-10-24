@@ -225,7 +225,7 @@ Public Class MemberAccessExpression
         Helper.Assert(Name IsNot Nothing AndAlso Name <> "")
 
         If m_First IsNot Nothing Then
-            result = m_First.ResolveExpression(Info) AndAlso result
+            result = m_First.ResolveExpression(New ResolveInfo(Info.Compiler, False, Info.CanFail, Info.CanBeImplicitSimpleName)) AndAlso result
         Else
             '* If E is omitted, then the expression from the immediately containing With statement is substituted for
             '  E and the member access is performed. If there is no containing With statement, a compile-time 
