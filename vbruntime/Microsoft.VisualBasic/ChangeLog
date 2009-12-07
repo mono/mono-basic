@@ -1,3 +1,7 @@
+2009-12-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Include vbruntime-moonlight.rsp in DISTFILES.
+
 2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* 2008VB.vbproj:
