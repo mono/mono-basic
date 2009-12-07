@@ -48,6 +48,7 @@ DISTFILES =	\
 	vbruntime.rsp				\
 	vbruntime1.rsp				\
 	vbruntime2.rsp				\
+	vbruntime-moonlight.rsp			\
 	Helper.vb				\
 	2005VB.sln
 

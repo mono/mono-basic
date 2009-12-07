@@ -10,7 +10,7 @@ clean-local:
 
 PLATFORMS = linux win32
 
-PROFILES = bootstrap vbnc
+PROFILES = bootstrap vbnc moonlight
 
 DISTFILES = \
 	config-default.make		\
