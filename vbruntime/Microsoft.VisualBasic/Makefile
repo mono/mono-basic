@@ -45,6 +45,7 @@ DISTFILES =	\
 	Makefile				\
 	Microsoft.VisualBasic.dll.sources	\
 	Microsoft.VisualBasic.dll.sources.win	\
+	Microsoft.VisualBasic.dll.moonlight.sources\
 	vbruntime.rsp				\
 	vbruntime1.rsp				\
 	vbruntime2.rsp				\

@@ -1,5 +1,7 @@
 AssemblyInfo.vb
 Helper.vb
+Microsoft.VisualBasic/Hashtable.vb
+Microsoft.VisualBasic/ArrayList.vb
 Microsoft.VisualBasic.ApplicationServices/ApplicationBase.vb
 Microsoft.VisualBasic.ApplicationServices/AssemblyInfo.vb
 Microsoft.VisualBasic.ApplicationServices/AuthenticationMode.vb

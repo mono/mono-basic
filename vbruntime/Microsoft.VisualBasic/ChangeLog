@@ -1,5 +1,12 @@
 2009-12-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Microsoft.VisualBasic.dll.sources: Add Hashtable.vb and ArrayList.vb
+	to the build so that they're disted.
+
+	* Makefile: Dist the *.moonlight.sources too.
+
+2009-12-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Makefile: Include vbruntime-moonlight.rsp in DISTFILES.
 
 2009-05-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
