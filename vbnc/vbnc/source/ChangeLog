@@ -1,5 +1,10 @@
 2009-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc9.vbproj: Remove reference to cecil, that's what the cecil branch
+	is for.
+
+2009-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TypeDeclarations/TypeDeclaration.vb: Store the grouped field for
 	Is/IsNot expressions.
 
