@@ -1669,6 +1669,8 @@ Public Class Helper
 
         needsConstrained = InstanceExpression IsNot Nothing AndAlso CecilHelper.IsGenericParameter(InstanceExpression.ExpressionType)
 
+        Helper.Assert(Method IsNot Nothing)
+
         If InstanceExpression IsNot Nothing Then
             Dim ieDesiredType As Mono.Cecil.TypeReference
             Dim ieInfo As EmitInfo

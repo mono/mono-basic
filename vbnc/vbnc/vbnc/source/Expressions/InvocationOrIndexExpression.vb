@@ -547,6 +547,15 @@ Public Class InvocationOrIndexExpression
                 End If
             End If
 
+            If mgc.InstanceExpression Is Nothing AndAlso CecilHelper.IsStatic(methodInfo) = False Then
+                Dim mae As MemberAccessExpression = TryCast(m_Expression, MemberAccessExpression)
+                If mae IsNot Nothing AndAlso mae.FirstExpression.Classification.IsTypeClassification AndAlso mae.FirstExpression.Classification.AsTypeClassification.CanBeExpression Then
+                    Dim exp As Expression = Nothing
+                    result = mae.FirstExpression.Classification.AsTypeClassification.CreateAliasExpression(mae.FirstExpression, exp) AndAlso result
+                    mgc.InstanceExpression = exp
+                End If
+            End If
+
             If methodInfo.ReturnType Is Nothing OrElse Helper.CompareType(methodInfo.ReturnType.ReturnType, Compiler.TypeCache.System_Void) Then
                 Classification = New VoidClassification(Me)
             Else

@@ -82,6 +82,8 @@ Public Class PropertyAccessClassification
             method = CecilHelper.GetCorrectMember(CecilHelper.FindDefinition(m_Property).GetMethod, m_Property.DeclaringType)
         End If
 
+        Helper.Assert(method IsNot Nothing)
+
         'If m_InstanceExpression IsNot Nothing Then
         '    rside = rside.Clone(m_Property.DeclaringType)
         '    result = m_InstanceExpression.GenerateCode(rside) AndAlso result

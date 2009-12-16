@@ -1,0 +1,1 @@
+-target:winexe DefaultInstance1.vb -define:_MYTYPE=\"WindowsFormsWithCustomSubMain\" -target:exe

@@ -57,6 +57,16 @@ Public MustInherit Class TypeDeclaration
     Private m_FullName As String
 
     Private m_AddHandlers As New Generic.List(Of AddOrRemoveHandlerStatement)
+    Private m_MyGroupField As TypeVariableDeclaration
+
+    Property MyGroupField() As TypeVariableDeclaration
+        Get
+            Return m_MyGroupField
+        End Get
+        Set(ByVal value As TypeVariableDeclaration)
+            m_MyGroupField = value
+        End Set
+    End Property
 
     Property Serializable() As Boolean
         Get

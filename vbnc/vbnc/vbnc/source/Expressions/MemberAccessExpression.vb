@@ -379,7 +379,12 @@ Public Class MemberAccessExpression
                 '** If I identifies one or more properties, then the result is a property group with no associated 
                 '   instance expression.
                 If Helper.IsPropertyDeclaration(first) Then
-                    Classification = New PropertyGroupClassification(Me, Nothing, members)
+                    Dim instanceExpression As Expression = Nothing
+                    If m_First.Classification.AsTypeClassification.CanBeExpression Then
+                        'Ignore failures here, not sure if failures can actually happen for valid code
+                        m_First.Classification.AsTypeClassification.CreateAliasExpression(m_First, instanceExpression)
+                    End If
+                    Classification = New PropertyGroupClassification(Me, instanceExpression, members)
                     Return True
                 End If
 
@@ -402,12 +407,17 @@ Public Class MemberAccessExpression
                         fld = var.FieldBuilder
                     End If
                     Dim constructor As ConstructorDeclaration = Me.FindFirstParent(Of ConstructorDeclaration)()
+                    Dim instanceExpression As Expression = Nothing
+
+                    If Not CecilHelper.IsStatic(fld) AndAlso m_First.Classification.IsTypeClassification AndAlso m_First.Classification.AsTypeClassification.CanBeExpression Then
+                        result = m_First.Classification.AsTypeClassification.CreateAliasExpression(m_First, instanceExpression) AndAlso result
+                    End If
 
                     If Helper.IsShared(fld) AndAlso CBool(CecilHelper.FindDefinition(fld).Attributes And Mono.Cecil.FieldAttributes.InitOnly) AndAlso (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                         Classification = New ValueClassification(Me, fld, Nothing)
                         Return True
                     Else
-                        Classification = New VariableClassification(Me, fld, Nothing)
+                        Classification = New VariableClassification(Me, fld, instanceExpression)
                         Return True
                     End If
                 End If

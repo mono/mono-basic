@@ -169,10 +169,13 @@ Public Class MethodGroupClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property InstanceExpression() As Expression
+    Property InstanceExpression() As Expression
         Get
             Return m_InstanceExpression
         End Get
+        Set(ByVal value As Expression)
+            m_InstanceExpression = value
+        End Set
     End Property
 
     ''' <summary>
