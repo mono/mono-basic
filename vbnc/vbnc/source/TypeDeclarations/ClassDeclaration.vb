@@ -367,7 +367,7 @@ Public Class ClassDeclaration
             If classType Is Nothing Then Continue For
             If classType.TypeParameters IsNot Nothing AndAlso classType.TypeParameters.Parameters.Count > 0 Then Continue For
 
-            If Helper.CompareType(type.BaseType, collectType) Then
+            If Helper.IsSubclassOf(collectType, type.TypeDescriptor) Then
                 typesCollected.Add(type)
                 If namesUsed.ContainsKey(type.Name) Then
                     namesClashed.Add(type.Name, Nothing)
@@ -394,6 +394,8 @@ Public Class ClassDeclaration
 
             field.Init(Nothing, modifiers, fieldName, type.TypeDescriptor)
             prop.Init(Nothing, modifiers, propertyName, type.TypeDescriptor)
+
+            type.MyGroupField = field
 
             Dim setter As MethodDeclaration
             Dim getter As MethodDeclaration

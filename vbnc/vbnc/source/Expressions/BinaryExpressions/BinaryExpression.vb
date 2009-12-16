@@ -284,7 +284,9 @@ Public MustInherit Class BinaryExpression
     Protected Sub New(ByVal Parent As ParsedObject, ByVal LExp As Expression, ByVal RExp As Expression)
         MyBase.New(Parent)
         m_LeftExpression = LExp
+        m_LeftExpression.Parent = Me
         m_RightExpression = RExp
+        m_RightExpression.Parent = Me
     End Sub
 
     Protected Sub Init(ByVal LExp As Expression, ByVal RExp As Expression)

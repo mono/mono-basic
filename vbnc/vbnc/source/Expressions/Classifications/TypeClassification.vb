@@ -32,19 +32,44 @@ Public Class TypeClassification
 
     ReadOnly Property MyGroup() As MyGroupData
         Get
-            If Not CanBeExpression() Then Return Nothing
+            If m_Group Is Nothing Then
+                If Not CanBeExpression() Then Return Nothing
+            End If
             Return m_Group
         End Get
     End Property
 
     ReadOnly Property Expression() As Expression
         Get
-
-            If Not CanBeExpression() Then Return Nothing
-            If m_Group Is Nothing Then Return Nothing
+            If m_Group Is Nothing Then
+                If Not CanBeExpression() Then Return Nothing
+                If m_Group Is Nothing Then Return Nothing
+            End If
             Return m_Group.DefaultInstanceAlias
         End Get
     End Property
+
+    Function CreateAliasExpression(ByVal SharedExpression As Expression, ByRef result As Expression) As Boolean
+        Dim sne As SimpleNameExpression = TryCast(SharedExpression, SimpleNameExpression)
+        Dim mae As MemberAccessExpression
+        Dim maeIE As MemberAccessExpression
+
+        If TypeOf SharedExpression.Parent Is Is_IsNotExpression Then
+            Dim fieldLoad As New LoadFieldExpression(SharedExpression, DirectCast(m_Type, TypeDescriptor).Declaration.MyGroupField.FieldDescriptor, m_Group.DefaultInstanceAlias)
+            result = fieldLoad
+        Else
+            If sne IsNot Nothing Then
+                maeIE = New MemberAccessExpression(SharedExpression.Parent)
+                maeIE.Init(Expression, New IdentifierOrKeyword(SharedExpression.Parent, Token.CreateIdentifierToken(sne.Location, sne.Identifier.Identifier)))
+            Else
+                mae = TryCast(SharedExpression, MemberAccessExpression)
+                maeIE = New MemberAccessExpression(SharedExpression.Parent)
+                maeIE.Init(Expression, mae.SecondExpression)
+            End If
+            result = maeIE
+        End If
+        Return result.ResolveExpression(ResolveInfo.Default(SharedExpression.Compiler))
+    End Function
 
     ReadOnly Property CanBeExpression() As Boolean
         Get
@@ -59,7 +84,7 @@ Public Class TypeClassification
             For Each data As MyGroupData In Compiler.Assembly.GroupedClasses
                 If data.DefaultInstanceAlias Is Nothing Then Continue For
                 If data.TypeToCollect Is Nothing Then Continue For
-                If Helper.CompareType(data.TypeToCollect, m_Type.BaseType) = False Then Continue For
+                If Helper.IsSubclassOf(data.TypeToCollect, m_Type) = False Then Continue For
 
                 m_Group = data
 

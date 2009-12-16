@@ -1414,9 +1414,11 @@ Public Class Helper
         Dim needsConstrained As Boolean
         Dim constrainedLocal As LocalBuilder = Nothing
 
+        Helper.Assert(Method IsNot Nothing)
+
         needsConstrained = InstanceExpression IsNot Nothing AndAlso InstanceExpression.ExpressionType.IsGenericParameter
 
-        If InstanceExpression IsNot Nothing Then
+        If InstanceExpression IsNot Nothing AndAlso Method.IsStatic = False Then
             Dim ieDesiredType As Type
             Dim ieInfo As EmitInfo
 

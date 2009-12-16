@@ -391,7 +391,18 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.Void
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Type
-                Throw New InternalException(Me)
+                Dim exp As Expression = Nothing
+                If m_Classification.AsTypeClassification.CreateAliasExpression(Me, exp) = False Then
+                    Throw New InternalException(Me)
+                End If
+                If exp.Classification.IsPropertyGroupClassification Then
+                    exp = exp.ReclassifyToPropertyAccessExpression
+                    If exp.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
+                        Throw New InternalException(Me)
+                    End If
+                End If
+                Helper.Assert(exp.Classification.IsPropertyAccessClassification)
+                Return exp
             Case ExpressionClassification.Classifications.Namespace
                 Throw New InternalException(Me)
             Case Else
@@ -440,19 +451,11 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.Void
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Type
-                Dim exp As MemberAccessExpression
-                Dim mae As MemberAccessExpression = TryCast(Me, MemberAccessExpression)
-                If mae IsNot Nothing Then
-                    exp = New MemberAccessExpression(Me)
-                    exp.Init(m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias, mae.SecondExpression)
-                    If Not exp.ResolveExpression(ResolveInfo.Default(Compiler)) Then
-                        Helper.AddError(Me)
-                        Return Nothing
-                    End If
-                    Return exp.ReclassifyToValueExpression
-                Else
-                    Return m_Classification.AsTypeClassification.MyGroup.DefaultInstanceAlias.ReclassifyToValueExpression
+                Dim exp As Expression = Nothing
+                If m_Classification.AsTypeClassification.CreateAliasExpression(Me, exp) = False Then
+                    Throw New InternalException(Me)
                 End If
+                Return exp
             Case ExpressionClassification.Classifications.Namespace
                 Throw New InternalException(Me)
             Case Else

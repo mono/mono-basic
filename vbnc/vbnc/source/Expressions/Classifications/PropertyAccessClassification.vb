@@ -82,6 +82,8 @@ Public Class PropertyAccessClassification
             method = m_Property.GetGetMethod(True)
         End If
 
+        Helper.Assert(method IsNot Nothing)
+
         'If m_InstanceExpression IsNot Nothing Then
         '    rside = rside.Clone(m_Property.DeclaringType)
         '    result = m_InstanceExpression.GenerateCode(rside) AndAlso result

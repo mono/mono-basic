@@ -1,3 +1,43 @@
+2009-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TypeDeclarations/TypeDeclaration.vb: Store the grouped field for
+	Is/IsNot expressions.
+
+	* TypeDeclarations/ClassDeclaration.vb: Include all ancestors when
+	checking if a class is a grouped class.
+
+	* General/AssemblyInfo.vb: Bump version.
+
+	* Expressions/MemberAccessExpression.vb: Implement resolution of
+	mygroup collectors on member access expressions.
+
+	* Expressions/LoadFieldExpression.vb: Add support for instance
+	expressions.
+
+	* Expressions/InvocationOrIndexExpression.vb: Implement resolution of
+	mygroup collectors on method invocation.
+
+	* Expressions/Expression.vb: Implement reclassification of Type to
+	PropertyAccessClassification.
+
+	* Expressions/Classifications/TypeClassification.vb: Added a
+	CreateAliasExpression helper method, and when checking if a class is a
+	grouped class include all ancestors, not only the direct base class.
+
+	* Expressions/Classifications/MethodGroupClassification.vb: Make
+	InstanceEpxression read/write to accomodate my group resolution, where
+	we may end up with an instance expression after creating the
+	classification.
+
+	* Expressions/Classifications/ExpressionClassification.vb: Implement
+	reclassifcation from Type -> ExpressionClassification.
+
+	* Expressions/BinaryExpressions/BinaryExpression.vb: Ensure the parents
+	are correctly set on the left/right expressions.
+
+	* General/Helper.vb: EmitArgumentsAndCallOrCallVirt: don't emit an
+	instance expression even if we have one if the method is static.
+
 2009-10-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Expressions/MemberAccessExpression.vb: When resolving the first part

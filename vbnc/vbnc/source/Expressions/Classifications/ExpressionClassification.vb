@@ -248,9 +248,12 @@ Public Class ExpressionClassification
                     Return True
                 Case Classifications.LateBoundAccess
                     Return True
+                Case Classifications.Type
+                    Dim tc As TypeClassification = AsTypeClassification
+                    Return tc.CanBeExpression AndAlso tc.Expression.Classification.CanBePropertyAccessClassification
                 Case Classifications.Value, Classifications.Variable, Classifications.EventAccess, _
 Classifications.LateBoundAccess, Classifications.MethodGroup, _
-Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.Void, Classifications.Type, Classifications.Namespace
+Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.Void, Classifications.Namespace
                     Return False
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
