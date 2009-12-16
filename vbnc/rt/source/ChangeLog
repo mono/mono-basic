@@ -1,3 +1,9 @@
+2009-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rt9.vbproj: Updated.
+
+	* Test.vb: Add support for PEVerify in other locations.
+
 2008-05-06  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Added support for having a list of known failures,
@@ -112,4 +118,3 @@
 	- Tests can now optionally be loaded recursively or not.
 	* ExternalProcessExecutor.vb:
 	- Use "mono" as executable when running on Mono.
-

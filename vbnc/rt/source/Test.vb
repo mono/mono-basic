@@ -19,7 +19,8 @@
 
 <Serializable()> _
 Public Class Test
-    Private Const PEVerifyPath As String = "%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe"
+    Private ReadOnly PEVerifyPath As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe")
+    Private ReadOnly PEVerifyPath2 As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft SDKs\\Windows\v6.0A\bin\PEVerify.exe")
     ''' <summary>
     ''' The files that contains this test.
     ''' </summary>
@@ -628,7 +629,8 @@ Public Class Test
 
             If Parent.VBNCPath <> "" Then filesToCheck.Add(Parent.VBNCPath)
             If Parent.VBCPath <> "" Then filesToCheck.Add(Parent.VBCPath)
-            If PEVerifyPath <> "" Then filesToCheck.Add(PEVerifyPath)
+            If PEVerifyPath <> "" AndAlso System.IO.File.Exists(PEVerifyPath) Then filesToCheck.Add(PEVerifyPath)
+            If PEVerifyPath2 <> "" AndAlso System.IO.File.Exists(PEVerifyPath2) Then filesToCheck.Add(PEVerifyPath2)
             If GetACPath <> "" Then filesToCheck.Add(GetACPath)
 
             For Each item As String In filesToCheck
@@ -751,9 +753,13 @@ Public Class Test
                 m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
             End If
 
-            Dim peverify As String
-            peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
-            If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
+            Dim peverify As String = Nothing
+            If PEVerifyPath <> String.Empty AndAlso System.IO.File.Exists(PEVerifyPath) Then
+                peverify = PEVerifyPath
+            ElseIf PEVerifyPath2 <> String.Empty AndAlso System.IO.File.Exists(PEVerifyPath2) Then
+                peverify = PEVerifyPath2
+            End If
+            If peverify IsNot Nothing Then
                 Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
                 peV.Name = "Type Safety and Security Verification"
                 peV.Process.DependentFiles.AddRange(m_References)
