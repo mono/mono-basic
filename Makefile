@@ -48,7 +48,7 @@ test-installed-compiler:
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=default TEST_RUNTIME=mono MCS=mcs run-test
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=net_2_0 TEST_RUNTIME=mono MCS=gmcs run-test
 
-package := mono-basic-$(VERSION)
+package := mono-basic-moonlight-$(VERSION)
 
 dist-local: dist-default
 
