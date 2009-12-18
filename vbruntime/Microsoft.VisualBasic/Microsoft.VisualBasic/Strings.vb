@@ -56,7 +56,7 @@ Namespace Microsoft.VisualBasic
                                                     ".000000000", _
                                                     ".0000000000"}
 
-        Sub New()
+        Shared Sub New()
             PredefinedNumericFormats = New Hashtable
             PredefinedNumericFormats.Add("General Number", "{0:G}")
             PredefinedNumericFormats.Add("Currency", "{0:C}")
@@ -285,7 +285,11 @@ Namespace Microsoft.VisualBasic
 
 
         Private Shared Function FormatNumeric(ByVal Expression As Object, ByVal Style As String) As String
-            Dim PredefinedStyle As Object = PredefinedNumericFormats(Style)
+            Dim PredefinedStyle As Object = Nothing
+
+            If PredefinedNumericFormats.ContainsKey(Style) Then
+                PredefinedStyle = PredefinedNumericFormats(Style)
+            End If
 
             If Not PredefinedStyle Is Nothing Then
                 Return String.Format(PredefinedStyle.ToString(), Expression)
