@@ -1,3 +1,7 @@
+2009-12-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* deps/.gitignore: Add dummy file for git to create this directory.
+
 2009-12-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Include moonlight in PROFILES so that the moonlight.make
