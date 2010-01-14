@@ -533,6 +533,7 @@ Partial Public Class Parser
                 If decl.IsVariableDeclaration Then
                     m_Code.Variables.Add(decl.VariableDeclaration)
                 End If
+                decl.Parent = m_Code
             Next
         End If
 

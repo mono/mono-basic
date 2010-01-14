@@ -1,3 +1,12 @@
+2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Parser/Parser(Statements).vb: The parent of a UsingDeclarator needs
+	to be the CodeBlock in the UsingStatement, since a UsingDeclarator
+	variable can use a variable declared in another UsingDeclarator.
+
+	Thanks to John Lenz (jlenz2@math.uiuc.edu) for providing an initial
+	patch which this patch is based on.
+
 2009-12-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* TypeDeclarations/TypeDeclaration.vb: Store the grouped field for

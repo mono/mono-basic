@@ -1,3 +1,7 @@
+2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* CompileTime2/UsingStatement6.vb: Added.
+
 2009-10-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* CompileTime2/FunctionReturnVariable1.vb: Added.
