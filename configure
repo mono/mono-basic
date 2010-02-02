@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=2.6
+VERSION=2.6.2
 prefix=/usr/local
 while test x$1 != x; do
         case $1 in
