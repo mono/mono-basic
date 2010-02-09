@@ -1,3 +1,7 @@
+2010-02-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WindowsApplication1/My Project/AssemblyInfo.vb: Fix copyright.
+
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WindowsApplication1: Added, is the default VB Windows Application created by VS2005.

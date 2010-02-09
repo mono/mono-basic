@@ -6,9 +6,9 @@ Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
-<Assembly: AssemblyCompany("bbbb")> 
+<Assembly: AssemblyCompany("Novell")> 
 <Assembly: AssemblyProduct("WindowsApplication1")> 
-<Assembly: AssemblyCopyright("Copyright © bbbb 2007")> 
+<Assembly: AssemblyCopyright("Copyright © Rolf Bjarne Kvinge 2007")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

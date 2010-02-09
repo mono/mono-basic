@@ -1,3 +1,7 @@
+2010-02-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Bugs/bug-333403.vb: Fix copyright.
+
 2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* CompileTime2/UsingStatement6.vb: Added.
