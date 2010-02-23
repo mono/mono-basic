@@ -119,7 +119,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Parse(Value, NumberFormat)
         End Function
         Public Shared Function Parse(ByVal Value As String, ByVal NumberFormat As System.Globalization.NumberFormatInfo) As Decimal
-            Return Decimal.Parse(Value, NumberFormat)
+            Return Decimal.Parse(Value, System.Globalization.NumberStyles.Any, NumberFormat)
         End Function
     End Class
 
