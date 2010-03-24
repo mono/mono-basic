@@ -1,3 +1,9 @@
+2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Statements/DoStatement.vb: Add proper error handling.
+
+	* Emit/Emitter.vb: Handle Integer -> Boolean conversions.
+
 2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Parser/Parser(Statements).vb: The parent of a UsingDeclarator needs
