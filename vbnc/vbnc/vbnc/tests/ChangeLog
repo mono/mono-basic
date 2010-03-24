@@ -1,3 +1,8 @@
+2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Errors/30512.vb:
+	* CompileTime/DoLoopWhile3.vb: Added test cases.
+
 2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* CompileTime2/UsingStatement6.vb: Added.
