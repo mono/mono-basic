@@ -1,3 +1,9 @@
+2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Statements/DoStatement.vb: Add proper error handling.
+
+	* Emit/Emitter.vb: Handle Integer -> Boolean conversions.
+
 2009-07-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Expressions/LateBoundAccessToExpression.vb: Fix emission of late
