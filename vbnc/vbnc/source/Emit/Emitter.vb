@@ -1008,12 +1008,8 @@ Partial Public Class Emitter
             Case TypeCombinations.Object_String
                 Emitter.EmitCastClass(Info, Info.Compiler.TypeCache.System_Object, Info.Compiler.TypeCache.System_String)
                 converted = True
-            Case TypeCombinations.Int32_Boolean
-                'Nothing to do here
-                converted = True
             Case Else
                 Info.Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Missed option: " & Switch.ToString)
-                Info.Compiler.Report.WriteLine(Report.ReportLevels.Debug, Info.Method.Location.ToString(Info.Compiler))
                 Helper.Stop()
         End Select
 
