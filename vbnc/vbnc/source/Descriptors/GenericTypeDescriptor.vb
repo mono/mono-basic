@@ -212,6 +212,14 @@ Public Class GenericTypeDescriptor
                 m_AllDeclaredMembers = New Generic.List(Of MemberInfo)
                 m_AllDeclaredMembers.AddRange(m_OpenType.GetMembers(Helper.ALLNOBASEMEMBERS))
 
+                If m_OpenType.Assembly Is Compiler.AssemblyBuilder = False Then
+                    For i As Integer = m_AllDeclaredMembers.Count - 1 To 0 Step -1
+                        If Helper.IsPrivate(m_AllDeclaredMembers(i)) Then
+                            m_AllDeclaredMembers.RemoveAt(i)
+                        End If
+                    Next
+                End If
+
                 For i As Integer = 0 To m_AllDeclaredMembers.Count - 1
                     Dim minfo As MethodInfo = TryCast(m_AllDeclaredMembers(i), MethodInfo)
                     Dim cinfo As ConstructorInfo = TryCast(m_AllDeclaredMembers(i), ConstructorInfo)

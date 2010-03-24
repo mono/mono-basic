@@ -1,5 +1,10 @@
 2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Descriptors/GenericTypeDescriptor.vb: AllDeclaredMembers: optimize a bit by
+	not including private members of imported assemblies.
+
+2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Statements/DoStatement.vb: Add proper error handling.
 
 	* Emit/Emitter.vb: Handle Integer -> Boolean conversions.
