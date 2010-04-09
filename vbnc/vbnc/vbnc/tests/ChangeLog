@@ -1,5 +1,9 @@
 2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* CompileTime/DefaultMember1.vb: Added test.
+
+2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* CompileTime2/MultDimArray1.vb: Added test.
 
 2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>

@@ -1806,6 +1806,8 @@ Public Class Helper
         Dim members As Generic.List(Of Mono.Cecil.MemberReference)
         Dim defaultName As String = Nothing
 
+        If tp Is Nothing Then Return False
+
         properties = New Generic.List(Of Mono.Cecil.PropertyReference)
         members = Compiler.TypeManager.GetCache(tp).Cache.GetAllMembers()
 
@@ -1843,7 +1845,17 @@ Public Class Helper
         Next
 
         If properties.Count = 0 AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, tp) = False Then
-            Return HasDefaultProperty(Context, CecilHelper.GetBaseType(tp), properties)
+            If CecilHelper.IsInterface(tp) Then
+                Dim interfaces As Mono.Cecil.InterfaceCollection = CecilHelper.GetInterfaces(tp, False)
+                Dim result As Boolean
+                If interfaces IsNot Nothing Then
+                    For i As Integer = 0 To interfaces.Count - 1
+                        result = HasDefaultProperty(Context, interfaces(i), properties) OrElse result
+                    Next
+                End If
+            Else
+                Return HasDefaultProperty(Context, CecilHelper.GetBaseType(tp), properties)
+            End If
         End If
 
         Return properties.Count > 0

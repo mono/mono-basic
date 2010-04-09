@@ -1,5 +1,12 @@
 2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/Helper.vb: Find DefaultMemberAttribute in implemented interfaces
+	too.
+
+	Modified patch by John Lenz (jlenz2@math.uiuc.edu).
+
+2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Expressions/GetRefExpression.vb:
 	* Members/ArrayElementInitializer.vb: Implement support for getting address
 	of an element in a multi-dimensional array.
