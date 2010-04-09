@@ -1,3 +1,11 @@
+2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Expressions/GetRefExpression.vb:
+	* Members/ArrayElementInitializer.vb: Implement support for getting address
+	of an element in a multi-dimensional array.
+
+	Modified patch by John Lenz <jlenz2@math.uiuc.edu>.
+
 2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Statements/DoStatement.vb: Add proper error handling.

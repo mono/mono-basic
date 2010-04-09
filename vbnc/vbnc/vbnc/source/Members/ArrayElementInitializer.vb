@@ -214,6 +214,23 @@ Public Class ArrayElementInitializer
         Return result
     End Function
 
+    Shared Function GetAddressMethod(ByVal Compiler As Compiler, ByVal ArrayType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
+        Dim result As Mono.Cecil.MethodReference
+        Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
+        Dim ranks As Integer = CecilHelper.GetArrayRank(ArrayType)
+        Dim methodtypes As Mono.Cecil.TypeReference() = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Compiler.TypeCache.System_Int32, ranks)
+
+        ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
+        elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
+        result = New Mono.Cecil.MethodReference("Address", ArrayType, CecilHelper.MakeByRefType(elementType), True, False, Mono.Cecil.MethodCallingConvention.Default)
+
+        For i As Integer = 1 To ranks
+            result.Parameters.Add(New Mono.Cecil.ParameterDefinition(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int32)))
+        Next
+
+        Return result
+    End Function
+
     Private Function GetRegularInitializer(ByVal indices As Generic.List(Of Integer)) As Expression
         Dim ai As ArrayElementInitializer = Me
         Dim result As Expression
