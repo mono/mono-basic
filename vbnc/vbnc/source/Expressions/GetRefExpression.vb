@@ -118,15 +118,8 @@ Public Class GetRefExpression
                             'Emitter.EmitStoreElement(Info, elementtype, arrtype)
                         End If
                     Else
-                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
-                        'Dim method As MethodInfo = ArrayElementInitializer.GetSetMethod(arrtype)
-
-                        'If isnonprimitivevaluetype Then
-                        '    Helper.NotImplemented()
-                        'Else
-                        '    result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
-                        '    Emitter.EmitCallVirt(Info, method)
-                        'End If
+                        Dim method As MethodInfo = ArrayElementInitializer.GetAddressMethod(Compiler, arrtype)
+                        Emitter.EmitCallVirt(Info, method)
                     End If
                 ElseIf varC.Expression IsNot Nothing Then
                     If TypeOf varC.Expression Is MeExpression Then

@@ -215,6 +215,23 @@ Public Class ArrayElementInitializer
         Return result
     End Function
 
+    Shared Function GetAddressMethod(ByVal Compiler As Compiler, ByVal ArrayType As Type) As MethodInfo
+        Dim result As MethodInfo
+        Dim elementType As Type = ArrayType.GetElementType
+        Dim ranks As Integer = ArrayType.GetArrayRank
+        Dim methodtypes As Type() = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, ranks)
+
+        If Compiler.Assembly.IsDefinedHere(ArrayType) OrElse Compiler.Assembly.IsDefinedHere(elementType) Then
+            ArrayType = Helper.GetTypeOrTypeBuilder(ArrayType)
+            elementType = Helper.GetTypeOrTypeBuilder(elementType)
+            result = Compiler.ModuleBuilder.GetArrayMethod(ArrayType, "Address", CallingConventions.HasThis Or CallingConventions.Standard, elementType.MakeByRefType, methodtypes)
+        Else
+            result = ArrayType.GetMethod("Address", BindingFlags.ExactBinding Or BindingFlags.Instance Or BindingFlags.Public Or BindingFlags.DeclaredOnly, Nothing, methodtypes, Nothing)
+        End If
+
+        Return result
+    End Function
+
     Private Function GetRegularInitializer(ByVal indices As Generic.List(Of Integer)) As Expression
         Dim ai As ArrayElementInitializer = Me
         Dim result As Expression
