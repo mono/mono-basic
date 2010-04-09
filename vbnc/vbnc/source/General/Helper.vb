@@ -1559,7 +1559,15 @@ Public Class Helper
             Helper.Assert(Type IsNot Nothing)
             attrib = CType(System.Attribute.GetCustomAttribute(Type, GetType(DefaultMemberAttribute), True), DefaultMemberAttribute)
 
-            If attrib Is Nothing Then Return False
+            If attrib Is Nothing Then
+                Dim result As Boolean
+                If Type.IsInterface Then
+                    For Each iface As Type In Type.GetInterfaces()
+                        result = HasDefaultProperty(Context, iface, DefaultProperties) OrElse result
+                    Next
+                End If
+                Return result
+            End If
 
             'members = Helper.FilterByName(Type.GetMembers(), attrib.MemberName)
             members = Compiler.TypeManager.GetCache(Type).LookupFlattenedMembers(attrib.MemberName)
