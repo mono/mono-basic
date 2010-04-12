@@ -1,3 +1,8 @@
+2010-04-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* class/lib/bootstrap/vbnc.exe: Updated, old binary does not execute with
+	newer mono.
+
 2009-07-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Make.cmd:
