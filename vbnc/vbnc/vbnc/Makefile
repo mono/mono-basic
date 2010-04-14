@@ -17,6 +17,7 @@ DISTFILES = \
 	vbnc.sln  		\
 	vbnc.vbnc.rsp		\
 	source/vbnc.vbproj	\
+	source/vbnc9.vbproj	\
 	bin/vbnc.rsp            \
 	source/Resources/Errors.resx \
 	source/vbnc.rsp		\
