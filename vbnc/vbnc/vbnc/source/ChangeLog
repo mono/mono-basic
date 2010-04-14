@@ -1,3 +1,8 @@
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Expressions/GetRefExpression.vb: Report the correct location
+	  for errors.
+
 2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* General/Helper.vb: Find DefaultMemberAttribute in implemented interfaces
