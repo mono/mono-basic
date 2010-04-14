@@ -1,0 +1,871 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9D92F531-6418-47AA-BBE5-BE458CD46BE8}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>vbnc</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Exe</OutputType>
+    <OptionCompare>Binary</OptionCompare>
+    <RootNamespace>vbnc</RootNamespace>
+    <StartupObject>vbnc.Main</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <FallbackCulture>en-US</FallbackCulture>
+    <UpdateUrlEnabled>false</UpdateUrlEnabled>
+    <ApplicationRevision>0</ApplicationRevision>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <SignAssembly>false</SignAssembly>
+    <PublishUrl>http://localhost/vbnc</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>false</MapFileExtensions>
+    <ApplicationVersion>0.0.0.0</ApplicationVersion>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <OptionStrict>On</OptionStrict>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\bin\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DebugSymbols>true</DebugSymbols>
+    <IncrementalBuild>true</IncrementalBuild>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <TreatSpecificWarningsAsErrors>42016,42017,42018,42019,42020,42021,42022,42028,42104,42030,42024</TreatSpecificWarningsAsErrors>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <NoWarn>
+    </NoWarn>
+    <RunFxCop>false</RunFxCop>
+    <FxCopRules>
+    </FxCopRules>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DefineConstants>GENERATOR,DEVGENERATOR,ENABLECECIL=FALSE,DEBUGREFLECTION=false</DefineConstants>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>..\bin\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>
+    </DefineConstants>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DebugSymbols>false</DebugSymbols>
+    <IncrementalBuild>false</IncrementalBuild>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
+    <OutputPath>..\bin\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <NoWarn>42004,42026</NoWarn>
+    <WarningsAsErrors>42016,42017,42018,42019,42032,42020,42021,42022</WarningsAsErrors>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>SELF=1</DefineConstants>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DebugSymbols>true</DebugSymbols>
+    <IncrementalBuild>true</IncrementalBuild>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>..\bin\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <WarningLevel>1</WarningLevel>
+    <NoWarn>42004,42026</NoWarn>
+    <WarningsAsErrors>42016,42017,42018,42019,42032,42020,42021,42022</WarningsAsErrors>
+    <FxCopLogFile>obj\Debug\FxCopLog.xml</FxCopLogFile>
+    <FxCopRuleAssemblies>DesignRules.dll;GlobalizationRules.dll;InteroperabilityRules.dll;MaintainabilityRules.dll;NamingRules.dll;PerformanceRules.dll;ReliabilityRules.dll;SecurityRules.dll;UsageRules.dll</FxCopRuleAssemblies>
+    <FxCopInputAssembly>obj\Debug\vbnc.exe</FxCopInputAssembly>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>
+    </DefineConstants>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <RunFxCop>false</RunFxCop>
+    <FxCopRules>
+    </FxCopRules>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <OutputPath>..\bin\</OutputPath>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>1</WarningLevel>
+    <NoWarn>
+    </NoWarn>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Self Compile|AnyCPU' ">
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <OutputPath>.\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>1</WarningLevel>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RuntimeTests|AnyCPU' ">
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DocumentationFile>vbnc.xml</DocumentationFile>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>vbnc</AssemblyName>
+    <OutputPath>.\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>vbnc</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>1</WarningLevel>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <ItemGroup>
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Reflection" />
+    <Import Include="System.Reflection.Emit" />
+    <Import Include="VB=Microsoft.VisualBasic" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\tests\Generated\Constants.vb">
+      <Link>AutoGen\Constants.vb</Link>
+    </Compile>
+    <Compile Include="..\tests\Generated\Conversions.vb">
+      <Link>AutoGen\Conversions.vb</Link>
+    </Compile>
+    <Compile Include="..\tests\Generated\Operators.vb">
+      <Link>AutoGen\Operators.vb</Link>
+    </Compile>
+    <Compile Include="AutoGen\ZCompilerCodeGenerator.vb" />
+    <Compile Include="Code\CodeBlock.vb" />
+    <Compile Include="Code\ImplicitCodeBlock.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
+    <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
+    <Compile Include="Descriptors\ArrayTypeDescriptor.vb" />
+    <Compile Include="Descriptors\ByRefTypeDescriptor.vb" />
+    <Compile Include="Descriptors\ConstructorDescriptor.vb" />
+    <Compile Include="Descriptors\EventDescriptor.vb" />
+    <Compile Include="Descriptors\FieldDescriptor.vb" />
+    <Compile Include="Descriptors\GenericConstructorDescriptor.vb" />
+    <Compile Include="Descriptors\GenericFieldDescriptor.vb" />
+    <Compile Include="Descriptors\GenericParameterDescriptor.vb" />
+    <Compile Include="Descriptors\GenericPropertyDescriptor.vb" />
+    <Compile Include="Descriptors\GenericTypeDescriptor.vb" />
+    <Compile Include="Descriptors\MethodDescriptor.vb" />
+    <Compile Include="Descriptors\ParameterDescriptor.vb" />
+    <Compile Include="Descriptors\PropertyDescriptor.vb" />
+    <Compile Include="Descriptors\TypeParameterDescriptor.vb" />
+    <Compile Include="Emit\EmitInfo.vb" />
+    <Compile Include="Emit\EmitStack.vb" />
+    <Compile Include="Emit\Emitter.DecimalFields.vb" />
+    <Compile Include="Enums\BuiltInDataTypes.vb" />
+    <Compile Include="Enums\Constants.vb" />
+    <Compile Include="Enums\EnumStringAttribute.vb" />
+    <Compile Include="Enums\IntegerBase.vb" />
+    <Compile Include="Enums\KS.vb" />
+    <Compile Include="Enums\KSEnumStringAttribute.vb" />
+    <Compile Include="Enums\LiteralTypeCharacters.vb" />
+    <Compile Include="Enums\ModifierMasks.vb" />
+    <Compile Include="Enums\Operators.vb" />
+    <Compile Include="Enums\TokenType.vb" />
+    <Compile Include="Enums\TypeCharacters.vb" />
+    <Compile Include="Expressions\AddressOfExpression.vb" />
+    <Compile Include="Expressions\Argument.vb" />
+    <Compile Include="Expressions\ArgumentList.vb" />
+    <Compile Include="Expressions\ArrayInitializerExpression.vb" />
+    <Compile Include="Expressions\BoxExpression.vb" />
+    <Compile Include="Expressions\CachedExpression.vb" />
+    <Compile Include="Expressions\CastExpression.vb" />
+    <Compile Include="Expressions\Classifications\EventAccessClassification.vb" />
+    <Compile Include="Expressions\Classifications\ExpressionClassification.vb" />
+    <Compile Include="Expressions\Classifications\LateBoundAccessClassification.vb" />
+    <Compile Include="Expressions\Classifications\MethodGroupClassification.vb" />
+    <Compile Include="Expressions\Classifications\MethodPointerClassification.vb" />
+    <Compile Include="Expressions\Classifications\NamespaceClassification.vb" />
+    <Compile Include="Expressions\Classifications\PropertyAccessClassification.vb" />
+    <Compile Include="Expressions\Classifications\PropertyGroupClassification.vb" />
+    <Compile Include="Expressions\Classifications\TypeClassification.vb" />
+    <Compile Include="Expressions\Classifications\ValueClassification.vb" />
+    <Compile Include="Expressions\Classifications\VariableClassification.vb" />
+    <Compile Include="Expressions\Classifications\VoidClassification.vb" />
+    <Compile Include="Expressions\ClassModifiers.vb" />
+    <Compile Include="Expressions\CompilerGeneratedExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToPropertyAccessExpression.vb" />
+    <Compile Include="Expressions\DelegateOrObjectCreationExpression.vb" />
+    <Compile Include="Expressions\DeRefExpression.vb" />
+    <Compile Include="Expressions\GetRefExpression.vb" />
+    <Compile Include="Expressions\LateBoundAccessToValueExpression.vb" />
+    <Compile Include="Expressions\LoadFieldExpression.vb" />
+    <Compile Include="Expressions\MethodGroupToValueExpression.vb" />
+    <Compile Include="Expressions\MethodPointerToValueExpression.vb" />
+    <Compile Include="Expressions\NothingConstantExpression.vb" />
+    <Compile Include="Expressions\OperatorExpression.vb" />
+    <Compile Include="Expressions\PropertyAccessToValueExpression.vb" />
+    <Compile Include="Expressions\PropertyGroupToPropertyAccessExpression.vb" />
+    <Compile Include="Expressions\PropertyGroupToValueExpression.vb" />
+    <Compile Include="Expressions\SimpleExpression.vb" />
+    <Compile Include="Expressions\VariableExpression.vb" />
+    <Compile Include="Expressions\VariableToValueExpression.vb" />
+    <Compile Include="General\Dumper.vb" />
+    <Compile Include="General\DumperXML.vb" />
+    <Compile Include="General\IndentedTextWriter.vb" />
+    <Compile Include="General\MemberCache.vb">
+    </Compile>
+    <Compile Include="General\MethodBaseDeclaration.vb" />
+    <Compile Include="General\MyGenerator.vb" />
+    <Compile Include="General\MyGroupData.vb" />
+    <Compile Include="General\NamespaceDictionary.vb" />
+    <Compile Include="General\NothingType.vb" />
+    <Compile Include="General\TypeDictionary.vb" />
+    <Compile Include="General\TypeList.vb" />
+    <Compile Include="Descriptors\GenericMethodDescriptor.vb" />
+    <Compile Include="General\Version.vb" />
+    <Compile Include="Infos\ExpressionResolveInfo.vb" />
+    <Compile Include="Interfaces\IHasImplicitMembers.vb" />
+    <Compile Include="Interfaces\IHasImplicitTypes.vb" />
+    <Compile Include="Members\EventHandlerDeclaration.vb" />
+    <Compile Include="Members\EventDeclaration.vb" />
+    <Compile Include="Members\MemberDeclaration.vb" />
+    <Compile Include="Members\MethodDeclaration.vb" />
+    <Compile Include="Members\MethodResolver.vb" />
+    <Compile Include="Members\PropertyDeclaration.vb" />
+    <Compile Include="Members\PropertyHandlerDeclaration.vb" />
+    <Compile Include="Names\Identifier.vb" />
+    <Compile Include="Parser\ParsedObject.vb" />
+    <Compile Include="Parser\Parser%28Events%29.vb" />
+    <Compile Include="Parser\Parser%28Expressions%29.vb" />
+    <Compile Include="Parser\Parser%28Members%29.vb" />
+    <Compile Include="Parser\Parser%28Members2%29.vb" />
+    <Compile Include="Parser\Parser%28Statements%29.vb" />
+    <Compile Include="Parser\Parser%28Types%29.vb" />
+    <Compile Include="Parser\Parser.vb" />
+    <Compile Include="Parser\ExpressionParseInfo.vb" />
+    <Compile Include="Parser\ParseTypeInfo.vb" />
+    <Compile Include="Parser\ParseAttributableInfo.vb" />
+    <Compile Include="Infos\ResolveInfo.vb" />
+    <Compile Include="General\TypeCombinations.vb" />
+    <Compile Include="General\TypeConverter.vb" />
+    <Compile Include="Interfaces\IConstructorMember.vb" />
+    <Compile Include="Interfaces\ICreatableType.vb" />
+    <Compile Include="Interfaces\IFieldMember.vb" />
+    <Compile Include="Interfaces\IMemberDescriptor.vb" />
+    <Compile Include="Interfaces\IAttributableDeclaration.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IAttributableNamedDeclaration.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IBaseObject.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IDefinableType.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IEmittable.vb" />
+    <Compile Include="Interfaces\IEventMemberDeclaration.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IDefinableMember.vb" />
+    <Compile Include="Interfaces\IMember.vb" />
+    <Compile Include="Interfaces\IMethod.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\INameable.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\INonTypeMember.vb" />
+    <Compile Include="Interfaces\IPropertyMember.vb" />
+    <Compile Include="Interfaces\IType.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\ITypeContainer.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Members\BaseList.vb" />
+    <Compile Include="Members\NamedBaseList.vb" />
+    <Compile Include="Members\RegularEventHandlerDeclaration.vb" />
+    <Compile Include="Statements\AssignStatements\CompoundAssignmentStatement.vb" />
+    <Compile Include="Statements\BlockStatement.vb" />
+    <Compile Include="Tokens\IdentifierOrKeyword.vb" />
+    <Compile Include="Expressions\InvocationOrIndexExpression.vb" />
+    <Compile Include="Expressions\NamedArgument.vb" />
+    <Compile Include="Expressions\PositionalArgument.vb" />
+    <Compile Include="Expressions\ArrayCreationExpression.vb" />
+    <Compile Include="Emit\Emitter.vb" />
+    <Compile Include="General\TypeManager.vb" />
+    <Compile Include="Members\CustomEventHandlerDeclaration.vb" />
+    <Compile Include="Members\AliasClause.vb" />
+    <Compile Include="Members\ArrayElementInitializer.vb" />
+    <Compile Include="Members\ArrayNameModifier.vb" />
+    <Compile Include="Members\ArraySizeInitializationModifier.vb" />
+    <Compile Include="Members\ArrayTypeModifier.vb" />
+    <Compile Include="Members\ArrayTypeModifiers.vb" />
+    <Compile Include="Members\Attribute.vb" />
+    <Compile Include="Members\AttributeArgumentExpression.vb" />
+    <Compile Include="Members\AttributeArguments.vb" />
+    <Compile Include="Members\AttributeList.vb" />
+    <Compile Include="Members\AttributePositionalArgumentList.vb" />
+    <Compile Include="Members\Attributes.vb" />
+    <Compile Include="Members\BaseList~1.vb" />
+    <Compile Include="Members\OperatorDeclaration.vb" />
+    <Compile Include="Members\BoundList.vb" />
+    <Compile Include="Members\ConstantDeclaration.vb" />
+    <Compile Include="Members\ConstantDeclarations.vb" />
+    <Compile Include="Members\ConstantModifiers.vb" />
+    <Compile Include="Members\ConversionOperatorDeclaration.vb" />
+    <Compile Include="Members\CustomEventDeclaration.vb" />
+    <Compile Include="Members\EventAccessorDeclarations.vb" />
+    <Compile Include="Members\EventHandlesList.vb" />
+    <Compile Include="Members\EventMemberSpecifier.vb" />
+    <Compile Include="Members\ExternalFunctionDeclaration.vb" />
+    <Compile Include="Members\ExternalSubDeclaration.vb" />
+    <Compile Include="Members\FunctionDeclaration.vb" />
+    <Compile Include="Members\FunctionSignature.vb" />
+    <Compile Include="Members\HandlesClause.vb" />
+    <Compile Include="Members\HandlesOrImplements.vb" />
+    <Compile Include="Members\InterfaceBases.vb" />
+    <Compile Include="Members\InterfaceEventMemberDeclaration.vb" />
+    <Compile Include="Members\InterfaceFunctionDeclaration.vb" />
+    <Compile Include="Members\InterfaceMemberDeclarations.vb" />
+    <Compile Include="Members\InterfaceMemberSpecifier.vb" />
+    <Compile Include="Members\InterfaceMethodMemberDeclaration.vb" />
+    <Compile Include="Members\InterfacePropertyMemberDeclaration.vb" />
+    <Compile Include="Members\InterfaceSubDeclaration.vb" />
+    <Compile Include="Members\LibraryClause.vb" />
+    <Compile Include="Members\MemberDeclarations.vb" />
+    <Compile Include="Members\Modifiers.vb" />
+    <Compile Include="Members\MustOverridePropertyDeclaration.vb" />
+    <Compile Include="Members\Operand.vb" />
+    <Compile Include="Members\Parameter.vb" />
+    <Compile Include="Members\ParameterList.vb" />
+    <Compile Include="Members\ParameterModifiers.vb" />
+    <Compile Include="Members\ParametersOrType.vb" />
+    <Compile Include="Members\ParemeterIdentifier.vb" />
+    <Compile Include="Members\RegularEventDeclaration.vb" />
+    <Compile Include="Members\RegularPropertyDeclaration.vb" />
+    <Compile Include="Members\SubDeclaration.vb" />
+    <Compile Include="Members\SubSignature.vb" />
+    <Compile Include="Members\VariableDeclaration.vb" />
+    <Compile Include="Members\VariableIdentifier.vb" />
+    <Compile Include="Members\VariableIdentifiers.vb" />
+    <Compile Include="Members\VariableInitializer.vb" />
+    <Compile Include="Members\VariableInitializerList.vb" />
+    <Compile Include="Members\VariableModifiers.vb" />
+    <Compile Include="Members\VariablePropertyInitializer.vb" />
+    <Compile Include="Members\VariablePropertyInitializerList.vb" />
+    <Compile Include="Tokens\IdentifierOrKeywordWithTypeArguments.vb" />
+    <Compile Include="TypeDeclarations\GenericTypeDeclaration.vb" />
+    <Compile Include="TypeDeclarations\PartialTypeDeclaration.vb" />
+    <Compile Include="TypeDeclarations\TypeDeclaration.vb" />
+    <Compile Include="Types\IModifiable.vb" />
+    <Compile Include="Types\RestorablePoint.vb" />
+    <Compile Include="Types\TypeArityList.vb" />
+    <Compile Include="Types\TypeNameResolutionInfo.vb" />
+    <Compile Include="Names\QualifiedIdentifier.vb" />
+    <Compile Include="Statements\AddOrRemoveHandlerStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\AddAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\AssignmentStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\ConcatAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\DivisionAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\IntDivisionAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\LShiftAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\MidAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\MultiplicationAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\PowerAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\RShiftAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\AssignStatements\SubtractionAssignStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\CallStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\CaseClause.vb" />
+    <Compile Include="Statements\CaseClauses.vb" />
+    <Compile Include="Statements\CaseStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\CatchStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ContinueStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\DoStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ElseIfStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\EndStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\EraseStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ErrorStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ExitStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ExpressionList.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ForEachStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ForStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\GotoStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\IfStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\LabelDeclarationStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\LoopControlVariable.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\OnErrorStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\OptionCompareStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\OptionExplicitStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\OptionStrictStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\RaiseEventStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\RedimClause.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\RedimClauses.vb" />
+    <Compile Include="Statements\ReDimStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ResumeStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ReturnStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\SelectStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\Statement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\StopStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\SyncLockStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\ThrowStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\TryStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\UsingDeclaration.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\UsingDeclarator.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\UsingStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\WhileStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Statements\WithStatement.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Types\ArrayTypeName.vb" />
+    <Compile Include="Types\BuiltInTypeName.vb" />
+    <Compile Include="Types\Constraint.vb" />
+    <Compile Include="Types\ConstructedTypeName.vb" />
+    <Compile Include="Types\GetTypeTypeName.vb" />
+    <Compile Include="Expressions\InstanceExpression.vb" />
+    <Compile Include="Expressions\MissingExpression.vb" />
+    <Compile Include="Expressions\SimpleNameExpression.vb" />
+    <Compile Include="Expressions\UnaryExpressions\Expressions.vb" />
+    <Compile Include="General\CodeFiles.vb" />
+    <Compile Include="General\CommandLine.DebugTypes.vb" />
+    <Compile Include="General\CommandLine.OptionCompareTypes.vb" />
+    <Compile Include="General\CommandLine.OptionExplicitTypes.vb" />
+    <Compile Include="General\CommandLine.OptionStrictTypes.vb" />
+    <Compile Include="General\CommandLine.Targets.vb" />
+    <Compile Include="General\Compiler.CompilerSequence.vb" />
+    <Compile Include="General\Compiler.vb" />
+    <Compile Include="General\Define.vb" />
+    <Compile Include="General\Defines.vb" />
+    <Compile Include="Emit\EmitLog.vb" />
+    <!--    
+	 <Compile Include="General\Emitter.vb" />
+-->
+    <Compile Include="General\GlobalNamespace.vb" />
+    <Compile Include="General\Index.IndexList.vb" />
+    <Compile Include="General\InternalException.vb" />
+    <Compile Include="General\Namespace.vb" />
+    <Compile Include="General\Namespaces.vb" />
+    <Compile Include="General\TooManyErrorsException.vb" />
+    <Compile Include="General\vbncException.vb" />
+    <Compile Include="General\Index.vb" />
+    <Compile Include="General\Message.vb" />
+    <Compile Include="General\MessageAttribute.vb" />
+    <Compile Include="General\MessageLevel.vb" />
+    <Compile Include="General\Messages.vb" />
+    <Compile Include="General\Resource.vb" />
+    <Compile Include="General\Resources.vb" />
+    <Compile Include="Members\ParamArrayAttributeMember.vb" />
+    <Compile Include="Expressions\BinaryExpressions\AndAlsoExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\AndExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\BinaryAddExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\BinaryExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\BinarySubExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\ConcatExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\EqualsExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\ExponentExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\GEExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\GTExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\IntDivisionExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\Is_IsNotExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\LEExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\LikeExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\LShiftExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\LTExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\ModExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\MultExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\NotEqualsExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\OrElseExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\OrExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\RealDivisionExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\RShiftExpression.vb" />
+    <Compile Include="Expressions\BinaryExpressions\XorExpression.vb" />
+    <Compile Include="Expressions\BooleanLiteralExpression.vb" />
+    <Compile Include="Expressions\BuiltInTypeExpression.vb" />
+    <Compile Include="Expressions\CaseComparisonExpression.vb" />
+    <Compile Include="Expressions\CaseRangeExpression.vb" />
+    <Compile Include="Expressions\ConstantExpression.vb" />
+    <Compile Include="Expressions\Conversions\CBoolExpression.vb" />
+    <Compile Include="Expressions\Conversions\CByteExpression.vb" />
+    <Compile Include="Expressions\Conversions\CCharExpression.vb" />
+    <Compile Include="Expressions\Conversions\CDateExpression.vb" />
+    <Compile Include="Expressions\Conversions\CDblExpression.vb" />
+    <Compile Include="Expressions\Conversions\CDecExpression.vb" />
+    <Compile Include="Expressions\Conversions\CIntExpression.vb" />
+    <Compile Include="Expressions\Conversions\CLngExpression.vb" />
+    <Compile Include="Expressions\Conversions\CObjExpression.vb" />
+    <Compile Include="Expressions\Conversions\ConversionExpression.vb" />
+    <Compile Include="Expressions\Conversions\CSByteExpression.vb" />
+    <Compile Include="Expressions\Conversions\CShortExpression.vb" />
+    <Compile Include="Expressions\Conversions\CSngExpression.vb" />
+    <Compile Include="Expressions\Conversions\CStrExpression.vb" />
+    <Compile Include="Expressions\Conversions\CTypeExpression.vb" />
+    <Compile Include="Expressions\Conversions\CUIntExpression.vb" />
+    <Compile Include="Expressions\Conversions\CULngExpression.vb" />
+    <Compile Include="Expressions\Conversions\CUShortExpression.vb" />
+    <Compile Include="Expressions\Conversions\DirectCastExpression.vb" />
+    <Compile Include="Expressions\Conversions\TryCastExpression.vb" />
+    <Compile Include="Expressions\DictionaryAccessExpression.vb" />
+    <Compile Include="Expressions\DotAccessExpression.vb" />
+    <Compile Include="Expressions\EnumConstantExpression.vb" />
+    <Compile Include="Expressions\GetTypeExpression.vb" />
+    <Compile Include="Expressions\GlobalExpression.vb" />
+    <Compile Include="Expressions\LiteralExpression.vb" />
+    <Compile Include="Expressions\MeExpression.vb" />
+    <Compile Include="Expressions\MyBaseExpression.vb" />
+    <Compile Include="Expressions\MyClassExpression.vb" />
+    <Compile Include="Expressions\NamespaceExpression.vb" />
+    <Compile Include="Expressions\NewExpression.vb" />
+    <Compile Include="Expressions\ParenthesizedExpression.vb" />
+    <Compile Include="Expressions\MemberAccessExpression.vb" />
+    <Compile Include="Expressions\TypeExpression.vb" />
+    <Compile Include="Expressions\TypeOfExpression.vb" />
+    <Compile Include="Expressions\UnaryExpressions\UnaryNotExpression.vb" />
+    <Compile Include="Expressions\UnaryExpressions\UnaryMinusExpression.vb" />
+    <Compile Include="Expressions\UnaryExpressions\UnaryPlusExpression.vb" />
+    <Compile Include="Expressions\UnaryExpressions\UnaryExpression.vb" />
+    <Compile Include="General\AssemblyInfo.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="app.config" />
+    <Compile Include="General\TypeCache.vb" />
+    <Compile Include="Members\MemberParameter.vb" />
+    <Compile Include="Members\MemberParameters.vb" />
+    <Compile Include="General\BaseObject.vb" />
+    <Compile Include="General\BaseObjects`1.vb" />
+    <Compile Include="General\CodeFile.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CommandLine.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Enums\Enums.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Resources\Errors.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Expressions\Expression.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\Helper.vb" />
+    <Compile Include="General\Main.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="Notes.txt" />
+    <Compile Include="Members\EnumMemberDeclaration.vb" />
+    <Compile Include="Members\PropertyGetDeclaration.vb" />
+    <Compile Include="Members\PropertySetDeclaration.vb" />
+    <Compile Include="General\Report.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\Scanner.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Testing\Testing.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CommandLine.OptionInferTypes.vb" />
+    <None Include="General\TypeCache.in" />
+    <None Include="Resources\Source.xml" />
+    <Content Include="Todo.txt" />
+    <Compile Include="Tokens\Span.vb" />
+    <Compile Include="Tokens\Token.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TypeDeclarations\AssemblyDeclaration.vb" />
+    <Compile Include="Types\AttributeBaseType.vb" />
+    <Compile Include="Members\AttributeBlock.vb" />
+    <Compile Include="Members\BaseMember.vb" />
+    <Compile Include="TypeDeclarations\ClassDeclaration.vb" />
+    <Compile Include="Members\ConstructorDeclaration.vb" />
+    <Compile Include="TypeDeclarations\DelegateDeclaration.vb" />
+    <Compile Include="TypeDeclarations\EnumDeclaration.vb" />
+    <Compile Include="Types\IConstructable.vb" />
+    <Compile Include="Members\MemberImplementsList.vb" />
+    <Compile Include="Members\MemberImplementsClause.vb" />
+    <Compile Include="Types\ImportsAliasClause.vb" />
+    <Compile Include="Types\ImportsClause.vb" />
+    <Compile Include="Types\ImportsClauses.vb" />
+    <Compile Include="Types\ImportsNamespaceClause.vb" />
+    <Compile Include="Types\ImportsStatement.vb" />
+    <Compile Include="TypeDeclarations\InterfaceDeclaration.vb" />
+    <Compile Include="Types\MissingType.vb" />
+    <Compile Include="TypeDeclarations\ModuleDeclaration.vb" />
+    <Compile Include="Types\Nameables.vb" />
+    <Compile Include="Types\NonArrayTypeName.vb" />
+    <Compile Include="Types\SimpleTypeName.vb" />
+    <Compile Include="TypeDeclarations\StructureDeclaration.vb" />
+    <Compile Include="Types\TokenManager.vb" />
+    <Compile Include="Types\TypeArgumentList.vb" />
+    <Compile Include="Types\ConstraintList.vb" />
+    <Compile Include="Descriptors\TypeDescriptor.vb" />
+    <Compile Include="Types\TypeImplementsClauses.vb" />
+    <Compile Include="Types\TypeName.vb" />
+    <Compile Include="Types\TypeParameter.vb" />
+    <Compile Include="Types\TypeParameterConstraints.vb" />
+    <Compile Include="Types\TypeParameterList.vb" />
+    <Compile Include="Types\TypeParameters.vb" />
+    <Compile Include="General\TypeResolution.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Expressions\Classifications\ExpressionClassification.Classifications.vb" />
+    <None Include="My Project\app.manifest" />
+    <EmbeddedResource Include="vbnc.rsp" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="My Application\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperFile Include="Microsoft.Net.Framework.2.0">
+      <InProject>False</InProject>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperFile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\..\..\cecil\lib\Mono.Cecil.csproj">
+      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+  </ItemGroup>-->
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <ProjectGuid>{9D92F531-6418-47AA-BBE5-BE458CD46BE8}</ProjectGuid>
+    <RootNamespace>vbnc</RootNamespace>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
