@@ -289,7 +289,7 @@ Namespace Microsoft.VisualBasic
 
                 ' also allow value comparison to work for types that do not 
                 ' override equality operator
-                If (enTry.Value.GetType().Name = value.GetType().Name) Then
+                If enTry.Value.GetType() Is value.GetType() Then
                     If Object.Equals(enTry.Value, value) Then
                         index = m_HashIndexers.IndexOf(enTry.Key)
                         Exit For
