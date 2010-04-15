@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* SelfTest/SelfCompile.files.linux:
+	* SelfTest/SelfCompile.files.windows: Updated.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Updated and added new tests.
 
 	* CompileTime2/AttributeFileVersion.vb: New test.
