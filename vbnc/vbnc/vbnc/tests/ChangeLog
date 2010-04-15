@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* NUnitTests/ArrayCreation1.vb: Fix typos.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Bugs/bug-428340.vb: Fixed to not have eol issues.
 
 2010-04-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
