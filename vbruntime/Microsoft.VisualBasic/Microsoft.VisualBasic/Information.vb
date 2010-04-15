@@ -165,35 +165,35 @@ Namespace Microsoft.VisualBasic
             Return res
         End Function
         Public Shared Function SystemTypeName(ByVal VbName As String) As String
+            Dim lower As String = VbName.ToLower()
 
-            Select Case VbName.ToLower()
-                Case "boolean"
-                    Return "System.Boolean"
-                Case "byte"
-                    Return "System.Byte"
-                Case "char"
-                    Return "System.Char"
-                Case "date"
-                    Return "System.DateTime"
-                Case "decimal"
-                    Return "System.Decimal"
-                Case "double"
-                    Return "System.Double"
-                Case "integer"
-                    Return "System.Int32"
-                Case "long"
-                    Return "System.Int64"
-                Case "object"
-                    Return "System.Object"
-                Case "short"
-                    Return "System.Int16"
-                Case "single"
-                    Return "System.Single"
-                Case "string"
-                    Return "System.String"
-                Case Else
-                    Return Nothing
-            End Select
+            If String.Equals(lower, "boolean") Then
+                Return "System.Boolean"
+            ElseIf String.Equals(lower, "byte") Then
+                Return "System.Byte"
+            ElseIf String.Equals(lower, "char") Then
+                Return "System.Char"
+            ElseIf String.Equals(lower, "date") Then
+                Return "System.DateTime"
+            ElseIf String.Equals(lower, "decimal") Then
+                Return "System.Decimal"
+            ElseIf String.Equals(lower, "double") Then
+                Return "System.Double"
+            ElseIf String.Equals(lower, "integer") Then
+                Return "System.Int32"
+            ElseIf String.Equals(lower, "long") Then
+                Return "System.Int64"
+            ElseIf String.Equals(lower, "object") Then
+                Return "System.Object"
+            ElseIf String.Equals(lower, "short") Then
+                Return "System.Int16"
+            ElseIf String.Equals(lower, "single") Then
+                Return "System.Single"
+            ElseIf String.Equals(lower, "string") Then
+                Return "System.String"
+            Else
+                Return Nothing
+            End If
         End Function
 
         Friend Shared Function VBName(ByVal tp As Type) As String
@@ -259,34 +259,33 @@ Namespace Microsoft.VisualBasic
             Else
                 TmpObjType2 = TmpObjType1
             End If
-            Select Case TmpObjType2
-                Case "string"
-                    RetObjType = "String"
-                Case "int32"
-                    RetObjType = "Integer"
-                Case "int16"
-                    RetObjType = "Short"
-                Case "int64"
-                    RetObjType = "Long"
-                Case "byte"
-                    RetObjType = "Byte"
-                Case "boolean"
-                    RetObjType = "Boolean"
-                Case "char"
-                    RetObjType = "Char"
-                Case "datetime"
-                    RetObjType = "Date"
-                Case "single"
-                    RetObjType = "Single"
-                Case "object"
-                    RetObjType = "Object"
-                Case "decimal"
-                    RetObjType = "Decimal"
-                Case "double"
-                    RetObjType = "Double"
-                Case Else
-                    RetObjType = TmpObjType1
-            End Select
+            If String.Equals(TmpObjType2, "string") Then
+                RetObjType = "String"
+            ElseIf String.Equals(TmpObjType2, "int32") Then
+                RetObjType = "Integer"
+            ElseIf String.Equals(TmpObjType2, "int16") Then
+                RetObjType = "Short"
+            ElseIf String.Equals(TmpObjType2, "int64") Then
+                RetObjType = "Long"
+            ElseIf String.Equals(TmpObjType2, "byte") Then
+                RetObjType = "Byte"
+            ElseIf String.Equals(TmpObjType2, "boolean") Then
+                RetObjType = "Boolean"
+            ElseIf String.Equals(TmpObjType2, "char") Then
+                RetObjType = "Char"
+            ElseIf String.Equals(TmpObjType2, "datetime") Then
+                RetObjType = "Date"
+            ElseIf String.Equals(TmpObjType2, "single") Then
+                RetObjType = "Single"
+            ElseIf String.Equals(TmpObjType2, "object") Then
+                RetObjType = "Object"
+            ElseIf String.Equals(TmpObjType2, "decimal") Then
+                RetObjType = "Decimal"
+            ElseIf String.Equals(TmpObjType2, "double") Then
+                RetObjType = "Double"
+            Else
+                RetObjType = TmpObjType1
+            End If
 
             If VarName.GetType.IsArray Then
                 ArrCh = "()"
@@ -332,39 +331,38 @@ Namespace Microsoft.VisualBasic
             Else
                 TmpObjType2 = TmpObjType
             End If
-            Select Case TmpObjType2
-                Case "string"
-                    tmpVar = VariantType.String
-                Case "dbnull"
-                    tmpVar = VariantType.Null
-                Case "boolean"
-                    tmpVar = VariantType.Boolean
-                Case "int16"
-                    tmpVar = VariantType.Short
-                Case "int32"
-                    tmpVar = VariantType.Integer
-                Case "int64"
-                    tmpVar = VariantType.Long
-                Case "decimal"
-                    tmpVar = VariantType.Decimal
-                Case "char"
-                    tmpVar = VariantType.Char
-                Case "byte"
-                    tmpVar = VariantType.Byte
-                Case "double"
-                    tmpVar = VariantType.Double
-                Case "single"
-                    tmpVar = VariantType.Single
-                Case "datetime"
-                    tmpVar = VariantType.Date
-                Case Else
-                    'class(Ref) or struct(Val)
-                    If VarName.GetType.IsValueType Then
-                        tmpVar = VariantType.UserDefinedType
-                    Else '' probably class
-                        tmpVar = VariantType.Object
-                    End If
-            End Select
+            If String.Equals(TmpObjType2, "string") Then
+                tmpVar = VariantType.String
+            ElseIf String.Equals(TmpObjType2, "dbnull") Then
+                tmpVar = VariantType.Null
+            ElseIf String.Equals(TmpObjType2, "boolean") Then
+                tmpVar = VariantType.Boolean
+            ElseIf String.Equals(TmpObjType2, "int16") Then
+                tmpVar = VariantType.Short
+            ElseIf String.Equals(TmpObjType2, "int32") Then
+                tmpVar = VariantType.Integer
+            ElseIf String.Equals(TmpObjType2, "int64") Then
+                tmpVar = VariantType.Long
+            ElseIf String.Equals(TmpObjType2, "decimal") Then
+                tmpVar = VariantType.Decimal
+            ElseIf String.Equals(TmpObjType2, "char") Then
+                tmpVar = VariantType.Char
+            ElseIf String.Equals(TmpObjType2, "byte") Then
+                tmpVar = VariantType.Byte
+            ElseIf String.Equals(TmpObjType2, "double") Then
+                tmpVar = VariantType.Double
+            ElseIf String.Equals(TmpObjType2, "single") Then
+                tmpVar = VariantType.Single
+            ElseIf String.Equals(TmpObjType2, "datetime") Then
+                tmpVar = VariantType.Date
+            Else
+                'class(Ref) or struct(Val)
+                If VarName.GetType.IsValueType Then
+                    tmpVar = VariantType.UserDefinedType
+                Else '' probably class
+                    tmpVar = VariantType.Object
+                End If
+            End If
 
 
             '' Check If got Array Of Arrays then should return VariantType.Array | VariantType.Object 
@@ -388,34 +386,33 @@ Namespace Microsoft.VisualBasic
             tmpStr = UrtName.ToLower
             If UrtName.ToLower.StartsWith("system.") Then tmpStr = UrtName.ToLower.Substring(7)
 
-            Select Case tmpStr
-                Case "string"
-                    RetObjType = "String"
-                Case "int32"
-                    RetObjType = "Integer"
-                Case "int16"
-                    RetObjType = "Short"
-                Case "int64"
-                    RetObjType = "Long"
-                Case "byte"
-                    RetObjType = "Byte"
-                Case "boolean"
-                    RetObjType = "Boolean"
-                Case "double"
-                    RetObjType = "Double"
-                Case "char"
-                    RetObjType = "Char"
-                Case "datetime"
-                    RetObjType = "Date"
-                Case "single"
-                    RetObjType = "Single"
-                Case "object"
-                    RetObjType = "Object"
-                Case "decimal"
-                    RetObjType = "Decimal"
-                Case Else
-                    RetObjType = Nothing
-            End Select
+            If String.Equals(tmpStr, "string") Then
+                RetObjType = "String"
+            ElseIf String.Equals(tmpStr, "int32") Then
+                RetObjType = "Integer"
+            ElseIf String.Equals(tmpStr, "int16") Then
+                RetObjType = "Short"
+            ElseIf String.Equals(tmpStr, "int64") Then
+                RetObjType = "Long"
+            ElseIf String.Equals(tmpStr, "byte") Then
+                RetObjType = "Byte"
+            ElseIf String.Equals(tmpStr, "boolean") Then
+                RetObjType = "Boolean"
+            ElseIf String.Equals(tmpStr, "double") Then
+                RetObjType = "Double"
+            ElseIf String.Equals(tmpStr, "char") Then
+                RetObjType = "Char"
+            ElseIf String.Equals(tmpStr, "datetime") Then
+                RetObjType = "Date"
+            ElseIf String.Equals(tmpStr, "single") Then
+                RetObjType = "Single"
+            ElseIf String.Equals(tmpStr, "object") Then
+                RetObjType = "Object"
+            ElseIf String.Equals(tmpStr, "decimal") Then
+                RetObjType = "Decimal"
+            Else
+                RetObjType = Nothing
+            End If
 
             Return RetObjType
         End Function

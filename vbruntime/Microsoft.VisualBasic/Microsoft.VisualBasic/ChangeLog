@@ -1,5 +1,10 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Information.vb:
+	* DateAndTime.vb: Use if instead of select on strings.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Strings.vb:
 	* Interaction.vb:
 	* FileSystem.vb:

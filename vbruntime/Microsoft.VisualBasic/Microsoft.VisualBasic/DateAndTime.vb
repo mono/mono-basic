@@ -343,30 +343,29 @@ Namespace Microsoft.VisualBasic
 
         Friend Shared Function DateIntervalFromString( _
                         ByVal Interval As String) As DateInterval
-            Select Case Interval
-                Case "yyyy"
-                    Return DateInterval.Year
-                Case "q"
-                    Return DateInterval.Quarter
-                Case "m"
-                    Return DateInterval.Month
-                Case "ww"
-                    Return DateInterval.WeekOfYear
-                Case "w"
-                    Return DateInterval.Weekday
-                Case "d"
-                    Return DateInterval.Day
-                Case "y"
-                    Return DateInterval.DayOfYear
-                Case "h"
-                    Return DateInterval.Hour
-                Case "n"
-                    Return DateInterval.Minute
-                Case "s"
-                    Return DateInterval.Second
-                Case Else
-                    Throw New ArgumentException("Argument 'Interval' is not a valid value")
-            End Select
+            If String.Equals(Interval, "yyyy") Then
+                Return DateInterval.Year
+            ElseIf String.Equals(Interval, "q") Then
+                Return DateInterval.Quarter
+            ElseIf String.Equals(Interval, "m") Then
+                Return DateInterval.Month
+            ElseIf String.Equals(Interval, "ww") Then
+                Return DateInterval.WeekOfYear
+            ElseIf String.Equals(Interval, "w") Then
+                Return DateInterval.Weekday
+            ElseIf String.Equals(Interval, "d") Then
+                Return DateInterval.Day
+            ElseIf String.Equals(Interval, "y") Then
+                Return DateInterval.DayOfYear
+            ElseIf String.Equals(Interval, "h") Then
+                Return DateInterval.Hour
+            ElseIf String.Equals(Interval, "n") Then
+                Return DateInterval.Minute
+            ElseIf String.Equals(Interval, "s") Then
+                Return DateInterval.Second
+            Else
+                Throw New ArgumentException("Argument 'Interval' is not a valid value")
+            End If
         End Function
 
         Public Shared Function DateAdd(ByVal Interval As String, _
