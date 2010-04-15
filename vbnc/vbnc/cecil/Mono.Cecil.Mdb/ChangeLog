@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil.Mdb.csproj: Renamed to VB.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Makefile: Make it build.
 
 2010-01-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
