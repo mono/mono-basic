@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Types/TypeNameResolutionInfo.vb: Fix test bug-428340-2.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.sln:
 	* vbnc.vbproj: Updated.
 

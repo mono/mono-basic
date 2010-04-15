@@ -632,10 +632,6 @@ Public Class TypeNameResolutionInfo
         'Dim nsDotR As String = ns & dotR
         Do
             If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(ns), TypeArgumentCount) Then Return True
-            If Helper.CompareName(ns, R) Then
-                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
-                Return True
-            End If
 
             If ns.Length > R.Length + 1 AndAlso ns.EndsWith(R, Helper.StringComparison) AndAlso ns(ns.Length - R.Length - 1) = "."c Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
@@ -649,6 +645,11 @@ Public Class TypeNameResolutionInfo
                     m_FoundObjects.Add(nSpace)
                     Return True
                 End If
+            End If
+
+            If Helper.CompareName(ns, R) Then
+                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
+                Return True
             End If
             ns = vbnc.Helper.GetNamespaceParent(ns)
             'nsDotR = ns & dotR
