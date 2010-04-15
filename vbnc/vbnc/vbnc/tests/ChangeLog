@@ -1,3 +1,10 @@
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* SelfTest/boot.sh:
+	* SelfTest/rerun.sh: Copy all dependencies.
+	* SelfTest/SelfCompile.general.response: Need to reference
+	Mono.Cecil.VB.Mdb.dll too.
+
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* SelfTest/rerun.sh: Don't overwrite executing assembly while compiling.
