@@ -458,7 +458,7 @@ Public Class AssemblyDeclaration
         Dim cab As Mono.Cecil.CustomAttribute
 
         If Compiler.CommandLine.Define.IsDefined("DEBUG") Then
-            cab = New Mono.Cecil.CustomAttribute(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes)
+            cab = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes))
             cab.ConstructorParameters.Add(System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default)
             Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cab)
         End If
