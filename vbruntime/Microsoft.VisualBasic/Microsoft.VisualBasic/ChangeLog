@@ -1,5 +1,9 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* ControlChars.vb: Reduce the number of (ignorable) errors in VS.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Collection.vb: Fix type checking, no way this can be right.
 
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
