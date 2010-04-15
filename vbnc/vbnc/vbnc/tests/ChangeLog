@@ -1,5 +1,11 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Updated and added new tests.
+
+	* CompileTime2/AttributeFileVersion.vb: New test.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Remove spurios eols.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
