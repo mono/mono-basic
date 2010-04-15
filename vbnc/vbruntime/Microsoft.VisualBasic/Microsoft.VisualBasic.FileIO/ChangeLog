@@ -1,5 +1,11 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* SpecialDirectories.vb: Remove all uses of CType (and relatives): for primitive
+	types call the corresponding conversion method, for other types call
+	DirectCast.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MalformedLineException.vb:
 	* FileSystemOperationUI.vb:
 	* FileSystemOperation.vb:

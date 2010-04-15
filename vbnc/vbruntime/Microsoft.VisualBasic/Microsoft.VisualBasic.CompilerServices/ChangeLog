@@ -1,5 +1,14 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Versioned.vb:
+	* Operators.vb:
+	* LateBinder.vb:
+	* FlowControl.vb: Remove all uses of CType (and relatives): for primitive
+	types call the corresponding conversion method, for other types call
+	DirectCast.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Conversions.vb: Simplify type checking and conversion.
 
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>

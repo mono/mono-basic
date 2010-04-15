@@ -899,27 +899,27 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Public Shared Function ConditionalCompareObjectEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectEqual(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectEqual(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectGreater(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectGreater(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectGreater(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectGreaterEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectGreaterEqual(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectGreaterEqual(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectLess(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectLess(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectLess(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectLessEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectLessEqual(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectLessEqual(Left, Right, TextCompare))
         End Function
 
         Public Shared Function ConditionalCompareObjectNotEqual(ByVal Left As Object, ByVal Right As Object, ByVal TextCompare As Boolean) As Boolean
-            Return CBool(CompareObjectNotEqual(Left, Right, TextCompare))
+            Return Conversions.ToBoolean(CompareObjectNotEqual(Left, Right, TextCompare))
         End Function
 
         Private Shared Function DivideObjects(ByVal o1 As Object, ByVal o2 As Object) As Object
@@ -2005,7 +2005,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToSByte(ByVal obj As Object) As SByte
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2015,7 +2015,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToInt16(ByVal obj As Object) As Short
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2029,7 +2029,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToInt32(ByVal obj As Object) As Integer
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2043,7 +2043,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToInt64(ByVal obj As Object) As Long
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2057,7 +2057,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToSingle(ByVal obj As Object) As Single
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2067,7 +2067,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToDouble(ByVal obj As Object) As Double
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0
@@ -2077,7 +2077,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Public Shared Function ToDecimal(ByVal obj As Object) As Decimal
                 If (GetTypeCode(obj) = TypeCode.Boolean) Then
-                    If (CBool(obj)) Then
+                    If (Conversions.ToBoolean(obj)) Then
                         Return -1
                     End If
                     Return 0

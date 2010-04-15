@@ -469,78 +469,78 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If type1.IsPrimitive And type2.IsPrimitive Then
                 Select Case Type.GetTypeCode(type2)
                     Case TypeCode.Boolean
-                        Return CBool(value)
+                        Return Conversions.ToBoolean(value)
                     Case TypeCode.Byte
-                        Return CByte(value)
+                        Return Conversions.ToByte(value)
 #If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
-                        Return CSByte(value)
+                        Return Conversions.ToSByte(value)
 #End If
                     Case TypeCode.Char
-                        Return CChar(value)
+                        Return Conversions.ToChar(value)
                     Case TypeCode.DateTime
-                        Return CDate(value)
+                        Return Conversions.ToDate(value)
                     Case TypeCode.Double
-                        Return CDbl(value)
+                        Return Conversions.ToDouble(value)
                     Case TypeCode.Decimal
-                        Return (CDec(value))
+                        Return Conversions.ToDecimal(value)
                     Case TypeCode.Int32
-                        Return CInt(value)
+                        Return Conversions.ToInteger(value)
                     Case TypeCode.Int16
-                        Return CShort(value)
+                        Return Conversions.ToShort(value)
                     Case TypeCode.Int64
-                        Return CLng(value)
+                        Return Conversions.ToLong(value)
 #If NET_VER >= 2.0 Then
                     Case TypeCode.UInt32
-                        Return CUInt(value)
+                        Return Conversions.ToUInteger(value)
                     Case TypeCode.UInt16
-                        Return CUShort(value)
+                        Return Conversions.ToUShort(value)
                     Case TypeCode.UInt64
-                        Return CULng(value)
+                        Return Conversions.ToULong(value)
 #End If
                     Case TypeCode.Single
-                        Return CSng(value)
+                        Return Conversions.ToSingle(value)
                 End Select
                 Return Convert.ChangeType(value, type2, CultureInfo.CurrentCulture)
             Else
                 If type2 Is GetType(String) Then
-                    Return CStr(value)
+                    Return StringType.FromObject(value)
                 End If
 
                 If type1 Is GetType(String) And type2.IsPrimitive Then
                     Select Case Type.GetTypeCode(type2)
                         Case TypeCode.Boolean
-                            Return CBool(value)
+                            Return Conversions.ToBoolean(value)
                         Case TypeCode.Byte
-                            Return CByte(value)
+                            Return Conversions.ToByte(value)
 #If NET_VER >= 2.0 Then
                         Case TypeCode.SByte
-                            Return CSByte(value)
+                            Return Conversions.ToSByte(value)
 #End If
                         Case TypeCode.Char
-                            Return CChar(value)
+                            Return Conversions.ToChar(value)
                         Case TypeCode.DateTime
-                            Return CDate(value)
+                            Return Conversions.ToDate(value)
                         Case TypeCode.Double
-                            Return CDbl(value)
+                            Return Conversions.ToDouble(value)
                         Case TypeCode.Decimal
-                            Return (CDec(value))
+                            Return Conversions.ToDecimal(value)
                         Case TypeCode.Int32
-                            Return CInt(value)
+                            Return Conversions.ToInteger(value)
                         Case TypeCode.Int16
-                            Return CShort(value)
+                            Return Conversions.ToShort(value)
                         Case TypeCode.Int64
-                            Return CLng(value)
+                            Return Conversions.ToLong(value)
 #If NET_VER >= 2.0 Then
                         Case TypeCode.UInt32
-                            Return CUInt(value)
+                            Return Conversions.ToUInteger(value)
                         Case TypeCode.UInt16
-                            Return CUShort(value)
+                            Return Conversions.ToUShort(value)
                         Case TypeCode.UInt64
-                            Return CULng(value)
+                            Return Conversions.ToULong(value)
 #End If
                         Case TypeCode.Single
-                            Return CSng(value)
+                            Return Conversions.ToSingle(value)
                     End Select
                 End If
             End If

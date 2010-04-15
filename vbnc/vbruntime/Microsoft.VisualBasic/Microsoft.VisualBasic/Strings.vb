@@ -215,7 +215,7 @@ Namespace Microsoft.VisualBasic
 
             Dim j As Integer = 0
             For i As Integer = 0 To Source.Length - 1
-                Dim s As String = CStr(Source(i))
+                Dim s As String = Conversions.ToString(Source(i))
 
                 If Compare = CompareMethod.Text Then
                     s = s.ToLower
@@ -224,7 +224,7 @@ Namespace Microsoft.VisualBasic
                 Dim comparisonResult As Boolean = (s.IndexOf(Match) >= 0)
 
                 If comparisonResult = Include Then
-                    Temp(j) = CStr(Source(i))
+                    Temp(j) = Conversions.ToString(Source(i))
                     j = j + 1
                 End If
             Next
@@ -331,17 +331,17 @@ Namespace Microsoft.VisualBasic
             Try
                 If TypeOf Expression Is String Then
                     Dim tmpstr1 As String
-                    Dim tmpstr2 As String = CStr(Expression)
+                    Dim tmpstr2 As String = Conversions.ToString(Expression)
                     If ((tmpstr2.StartsWith("(")) And (tmpstr2.EndsWith(")"))) Then
                         tmpstr1 = tmpstr2.Substring(1, tmpstr2.Length - 1)
                         tmpstr2 = tmpstr1.Substring(0, tmpstr1.Length - 2)
 
                         Dim obj As CultureInfo = System.Globalization.CultureInfo.CurrentCulture()
                         Dim currSym As String = obj.NumberFormat.CurrencySymbol()
-                        Dim ch1 As Char = CChar(tmpstr2.Substring(0, 1))
+                        Dim ch1 As Char = tmpstr2.Chars(0)
 
                         If Not Char.IsDigit(ch1) Then
-                            tmpstr2.TrimStart(CChar(currSym))
+                            tmpstr2.TrimStart(currSym.Chars(0))
                         End If
                     End If
                     Convert.ToDouble(tmpstr2)
@@ -438,7 +438,7 @@ Namespace Microsoft.VisualBasic
 
             Try
                 If TypeOf Expression Is String Then
-                    Dim tmpstr2 As String = CStr(Expression)
+                    Dim tmpstr2 As String = Conversions.ToString(Expression)
                     Convert.ToDouble(tmpstr2)
                 End If
 
@@ -524,7 +524,7 @@ Namespace Microsoft.VisualBasic
 
             Try
                 If TypeOf Expression Is String Then
-                    Dim tmpstr2 As String = CStr(Expression)
+                    Dim tmpstr2 As String = Conversions.ToString(Expression)
                     Convert.ToDouble(tmpstr2)
                 End If
 
@@ -700,7 +700,7 @@ Namespace Microsoft.VisualBasic
             End If
 
             For i = 0 To SourceArray.Length - 2
-                sb.Append(CStr(SourceArray(i)))
+                sb.Append(Conversions.ToString(SourceArray(i)))
                 If Not Delimiter Is Nothing Then
                     sb.Append(Delimiter)
                 End If
@@ -835,7 +835,7 @@ Namespace Microsoft.VisualBasic
                 Case TypeCode.Single
                     Return 4
                 Case TypeCode.String
-                    Return CStr(Expression).Length
+                    Return Conversions.ToString(Expression).Length
                 Case TypeCode.UInt16
                     Return 2
                 Case TypeCode.UInt32
