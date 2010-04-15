@@ -524,7 +524,7 @@ Namespace Microsoft.VisualBasic
                 Case FileVariableType.DBNull
                     BinaryWriter.Write(1S)
                 Case FileVariableType.Boolean
-                    If CBool(Value) Then
+                    If Conversions.ToBoolean(Value) Then
                         BinaryWriter.Write(-1S)
                     Else
                         BinaryWriter.Write(0S)
@@ -847,7 +847,7 @@ Namespace Microsoft.VisualBasic
                     ch = BinaryReader.ReadChar()
                 End While
 
-                If ch = Constants.vbCr AndAlso Strings.Chr(BinaryReader.PeekChar) = CChar(Constants.vbLf) Then
+                If ch = Conversions.ToChar(Constants.vbCr) AndAlso Strings.Chr(BinaryReader.PeekChar) = Conversions.ToChar(Constants.vbLf) Then
                     BinaryReader.ReadChar()
                 End If
             Catch ex As EndOfStreamException
@@ -864,7 +864,7 @@ Namespace Microsoft.VisualBasic
             ElseIf String.CompareOrdinal("#FALSE#", record) = 0 Then
                 Return False
             ElseIf record.StartsWith("#ERROR") AndAlso record.EndsWith("#") Then
-                Return CInt(record.Substring(6, record.Length - 7))
+                Return Conversions.ToInteger(record.Substring(6, record.Length - 7))
             Else
                 Return record
             End If
@@ -890,7 +890,7 @@ Namespace Microsoft.VisualBasic
                     End While
                 End If
 
-                If ch = Constants.vbCr AndAlso Strings.Chr(BinaryReader.PeekChar) = Constants.vbLf Then
+                If ch = Conversions.ToChar(Constants.vbCr) AndAlso Strings.Chr(BinaryReader.PeekChar) = Conversions.ToChar(Constants.vbLf) Then
                     BinaryReader.ReadChar()
                 End If
 
@@ -905,56 +905,56 @@ Namespace Microsoft.VisualBasic
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
             If Mode = OpenMode.Input Then
-                Value = CBool(ParseRecord(ReadStringRecord))
+                Value = Conversions.ToBoolean(ParseRecord(ReadStringRecord))
             Else 'If Mode = OpenMode.Binary Then
-                Value = CBool(ReadStringRecord())
+                Value = Conversions.ToBoolean(ReadStringRecord())
             End If
         End Sub
 
         Public Sub Input(ByRef Value As Byte)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CByte(ReadRecord())
+            Value = Conversions.ToByte(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Char)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CChar(ReadRecord())
+            Value = Conversions.ToChar(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Date)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
             If Mode = OpenMode.Input Then
-                Value = CDate(ParseRecord(ReadStringRecord()))
+                Value = Conversions.ToDate(ParseRecord(ReadStringRecord()))
             Else 'If Mode = OpenMode.Binary Then
-                Value = CDate(ReadStringRecord())
+                Value = Conversions.ToDate(ReadStringRecord())
             End If
         End Sub
 
         Public Sub Input(ByRef Value As Decimal)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CDec(ReadRecord())
+            Value = Conversions.ToDecimal(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Double)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CDbl(ReadRecord())
+            Value = Conversions.ToDouble(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Integer)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CInt(ReadRecord())
+            Value = Conversions.ToInteger(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Long)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CLng(ReadRecord())
+            Value = Conversions.ToLong(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Object)
@@ -997,13 +997,13 @@ Namespace Microsoft.VisualBasic
         Public Sub Input(ByRef Value As Short)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CShort(ReadRecord())
+            Value = Conversions.ToShort(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As Single)
             VerifyFileModes(OpenMode.Input, OpenMode.Binary)
             VerifyReadAccess()
-            Value = CSng(ReadRecord())
+            Value = Conversions.ToSingle(ReadRecord())
         End Sub
 
         Public Sub Input(ByRef Value As String)
@@ -1243,7 +1243,7 @@ Namespace Microsoft.VisualBasic
 #End If
                         Case TypeCode.Object
                             If TypeOf item Is ErrObject Then
-                                Writer.Write("#ERROR " & DirectCast(item, ErrObject).Number & "#")
+                                Writer.Write("#ERROR " & DirectCast(item, ErrObject).Number.ToString() & "#")
                             Else
                                 Throw New NotImplementedException("Can't write object of type: " & item.GetType().FullName)
                             End If

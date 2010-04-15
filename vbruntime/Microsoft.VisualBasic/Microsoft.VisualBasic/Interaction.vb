@@ -309,16 +309,16 @@ Namespace Microsoft.VisualBasic
             If String.Equals(strEnd, "Out Of Range") Then
                 strEnd = ""
             Else
-                strEnd = CStr(lEnd)
+                strEnd = Conversions.ToString(lEnd)
             End If
 
             If String.Equals(strStart, "Out Of Range") Then
                 strStart = ""
             Else
-                strStart = CStr(lStart)
+                strStart = Conversions.ToString(lStart)
             End If
 
-            strStop = CStr([Stop])
+            strStop = Conversions.ToString([Stop])
 
             If (strEnd.Length > strStop.Length) Then
                 nSpaces = strEnd.Length
@@ -362,7 +362,7 @@ Namespace Microsoft.VisualBasic
                 Throw New System.ArgumentException("Argument 'VarExpr' is not a valid value.")
             End If
             For i = 0 To VarExpr.Length Step 2
-                If CBool(VarExpr(i)) Then Return VarExpr(i + 1)
+                If Conversions.ToBoolean(VarExpr(i)) Then Return VarExpr(i + 1)
             Next
             Return Nothing
         End Function

@@ -125,9 +125,9 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Public Shared Function ForNextCheckObj(ByVal Counter As Object, ByVal LoopObj As Object, ByRef CounterResult As Object) As Boolean
 
             ' Counter is a CounterObject
-            Dim d_Counter As Decimal = CType(Counter, Decimal)
-            Dim lfo As LoopForObject = CType(LoopObj, LoopForObject)
-            Dim d_CounterResult As Decimal = CType(CounterResult, Decimal)
+            Dim d_Counter As Decimal = DecimalType.FromObject(Counter)
+            Dim lfo As LoopForObject = DirectCast(LoopObj, LoopForObject)
+            Dim d_CounterResult As Decimal = DecimalType.FromObject(CounterResult)
 
             ' increment the counter with a step
             d_CounterResult = d_Counter + lfo.StepValue

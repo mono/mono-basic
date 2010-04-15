@@ -210,7 +210,7 @@ Namespace Microsoft.VisualBasic.Logging
                 End If
             End If
 #if Not TARGET_JVM
-            If New System.IO.DriveInfo(Me.FullLogFileName(0)).TotalFreeSpace - msgSize < m_ReserveDiskSpace Then
+            If New System.IO.DriveInfo(Me.FullLogFileName(0).ToString()).TotalFreeSpace - msgSize < m_ReserveDiskSpace Then
                 If m_DiskSpaceExhaustedBehaviour = DiskSpaceExhaustedOption.ThrowException Then
                     Throw New InvalidOperationException("No more disk space for log file")
                 Else

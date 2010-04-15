@@ -206,7 +206,7 @@ Namespace Microsoft.VisualBasic
                 If Index Is Nothing Then Throw New IndexOutOfRangeException("Argument 'Index' is not a valid index.")
 
                 If TypeOf Index Is Integer Then
-                    Return Item(CInt(Index))
+                    Return Item(DirectCast(Index, Integer))
                 Else
                     Dim idx As Integer = m_HashIndexers.IndexOf(Index)
                     If idx = -1 Then

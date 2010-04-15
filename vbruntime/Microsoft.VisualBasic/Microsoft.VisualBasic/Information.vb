@@ -109,7 +109,7 @@ Namespace Microsoft.VisualBasic
                 Case TypeCode.String
                     Return Double.TryParse(DirectCast(Expression, String), Globalization.NumberStyles.Float Or Globalization.NumberStyles.AllowThousands, Nothing, 0)
                 Case TypeCode.Char
-                    Return Double.TryParse(DirectCast(Expression, Char), Globalization.NumberStyles.Float Or Globalization.NumberStyles.AllowThousands, Nothing, 0)
+                    Return Double.TryParse(DirectCast(Expression, Char).ToString(), Globalization.NumberStyles.Float Or Globalization.NumberStyles.AllowThousands, Nothing, 0)
                 Case Else
                     Return False
             End Select

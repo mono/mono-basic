@@ -68,9 +68,9 @@ Namespace Microsoft.VisualBasic
             If Not Char.IsLetter(Drive) Then Throw New System.ArgumentException("Argument 'Drive' is not a valid value.")
 
             Try
-                Directory.SetCurrentDirectory(Drive + Path.VolumeSeparatorChar)
+                Directory.SetCurrentDirectory(Drive.ToString() & Path.VolumeSeparatorChar.ToString())
             Catch ex As DirectoryNotFoundException
-                Throw New System.IO.IOException("Drive " + "'" + Drive + "'" + " not found.")
+                Throw New System.IO.IOException("Drive " + "'" + Drive.ToString() + "'" + " not found.")
 
             End Try
 
@@ -87,9 +87,9 @@ Namespace Microsoft.VisualBasic
         Public Shared Function CurDir(ByVal Drive As Char) As String
             If Not Char.IsLetter(Drive) Then Throw New System.ArgumentException("Argument 'Drive' is not a valid value.")
             Try
-                Directory.SetCurrentDirectory(Drive + Path.VolumeSeparatorChar)
+                Directory.SetCurrentDirectory(Drive.ToString() & Path.VolumeSeparatorChar.ToString())
             Catch ex As DirectoryNotFoundException
-                Throw New System.IO.IOException("Drive " + "'" + Drive + "'" + " not found.")
+                Throw New System.IO.IOException("Drive " + "'" + Drive.ToString() + "'" + " not found.")
             End Try
 
             Return Path.GetFullPath(Convert.ToString(Drive))
@@ -483,7 +483,7 @@ Namespace Microsoft.VisualBasic
             tmpFile = di.GetFiles(str_file_to_delete)
             If Not (tmpFile.Length = 0) Then
                 For i = 0 To tmpFile.Length - 1
-                    File.Delete(str_parent_dir + Path.DirectorySeparatorChar + tmpFile(i).Name)
+                    File.Delete(str_parent_dir & Path.DirectorySeparatorChar.ToString() & tmpFile(i).Name)
                 Next
             Else
                 Throw New System.IO.FileNotFoundException(" No files found matching: " + PathName)

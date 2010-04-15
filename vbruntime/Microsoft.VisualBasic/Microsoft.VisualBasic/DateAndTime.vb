@@ -374,11 +374,8 @@ Namespace Microsoft.VisualBasic
             If (DateValue Is Nothing) Then
                 Throw New ArgumentNullException("DateValue", "Value can not be null.")
             End If
-            If (Not (TypeOf DateValue Is DateTime)) Then
-                Throw New InvalidCastException
-            End If
 
-            Return DateAdd(DateIntervalFromString(Interval), Number, CType(DateValue, DateTime))
+            Return DateAdd(DateIntervalFromString(Interval), Number, DirectCast(DateValue, Date))
         End Function
 
         Public Shared Function DateDiff(ByVal Interval As String, _
@@ -392,15 +389,9 @@ Namespace Microsoft.VisualBasic
             If (Date2 Is Nothing) Then
                 Throw New ArgumentNullException("Date2", "Value can not be null.")
             End If
-            If (Not (TypeOf Date1 Is DateTime)) Then
-                Throw New InvalidCastException
-            End If
-            If (Not (TypeOf Date2 Is DateTime)) Then
-                Throw New InvalidCastException
-            End If
 
-            Return DateDiff(DateIntervalFromString(Interval), CType(Date1, DateTime), _
-                                                CType(Date2, DateTime), DayOfWeek, WeekOfYear)
+            Return DateDiff(DateIntervalFromString(Interval), DirectCast(Date1, Date), _
+                                                DirectCast(Date2, Date), DayOfWeek, WeekOfYear)
 
         End Function
 
@@ -412,13 +403,9 @@ Namespace Microsoft.VisualBasic
             If (DateValue Is Nothing) Then
                 Throw New ArgumentNullException("DateValue", "Value can not be null.")
             End If
-            If (Not (TypeOf DateValue Is DateTime)) Then
-                Throw New InvalidCastException
-            End If
-
 
             Return DatePart(DateIntervalFromString(Interval), _
-                    CType(DateValue, DateTime), DayOfWeek, WeekOfYear)
+                    DirectCast(DateValue, Date), DayOfWeek, WeekOfYear)
 
         End Function
 

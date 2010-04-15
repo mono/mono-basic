@@ -55,7 +55,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Case TypeCode.String
                     Return Double.TryParse(DirectCast(Expression, String), 0)
                 Case TypeCode.Char
-                    Return Double.TryParse(DirectCast(Expression, Char), 0)
+                    Return Double.TryParse(DirectCast(Expression, Char).ToString(), 0)
                 Case Else
                     Return False
             End Select
