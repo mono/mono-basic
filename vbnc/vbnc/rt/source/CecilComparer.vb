@@ -496,7 +496,7 @@ Public Class CecilComparer
             strTmp = item.Name
             constraints = item.Constraints
             Dim tmpC As New Generic.List(Of String)
-            For Each citem As TypeDefinition In constraints
+            For Each citem As TypeReference In constraints
                 tmpC.Add(TypeAsString(citem))
             Next
             tmpC.Sort()

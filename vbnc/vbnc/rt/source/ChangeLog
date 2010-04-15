@@ -1,5 +1,9 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* CecilComparer.vb: Type constraints are TypeReferences.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* frmMain.vb: Set default reflector path to what we know.
 
 	* Settings.vb: Don't clobber settings for old rt version.
