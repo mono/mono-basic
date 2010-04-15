@@ -90,12 +90,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return ToCharArrayRankOne("")
             End If
 
-            If (GetType(Char()).Equals(Value.GetType())) Then
-                Return CType(Value, Char())
+            If TypeOf Value Is Char() Then
+                Return DirectCast(Value, Char())
             End If
 
-            If (GetType(String).Equals(Value.GetType())) Then
-                Return ToCharArrayRankOne(CType(Value, String))
+            If TypeOf Value Is String Then
+                Return ToCharArrayRankOne(DirectCast(Value, String))
             End If
 
             Throw New InvalidCastException("Conversion from type '" + Value.GetType().Name + "' to type 'Char()' is not valid.")
