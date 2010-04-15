@@ -190,6 +190,10 @@ Public Class ExternalProcessExecutor
             process.StartInfo.CreateNoWindow = True
             process.StartInfo.WorkingDirectory = m_WorkingDirectory
 
+            If Not String.IsNullOrEmpty(m_WorkingDirectory) AndAlso Not IO.Directory.Exists(m_WorkingDirectory) Then
+                IO.Directory.CreateDirectory(m_WorkingDirectory)
+            End If
+
             If IO.File.Exists(m_Executable) = False Then
                 'm_StdOut.Append("Executable '" & m_Executable & "' does not exist.")
             Else
