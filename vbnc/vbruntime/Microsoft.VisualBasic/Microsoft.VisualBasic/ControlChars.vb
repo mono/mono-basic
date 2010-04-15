@@ -33,17 +33,18 @@ Imports MS_VB = Microsoft.VisualBasic
 
 Namespace Microsoft.VisualBasic
     Public NotInheritable Class ControlChars
-        Public Const Back As Char = MS_VB.Strings.Chr(8)
+        ' If you're building in Visual Studio and see errors here, you can ignore them
+        ' building the project using F5 will succeed.
+        Public Const Back As Char = Strings.Chr(8)
         Public Const Cr As Char = MS_VB.Strings.Chr(13)
-        Public Const CrLf As String = MS_VB.Strings.Chr(13) & MS_VB.Strings.Chr(10)
+        Public Const CrLf As String = Cr & Lf
         Public Const FormFeed As Char = MS_VB.Strings.Chr(12)
         Public Const Lf As Char = MS_VB.Strings.Chr(10)
-        'FIXME: platform specific can be NewLine = Strings.Chr(10) 
-        Public Const NewLine As String = MS_VB.Strings.Chr(13) & MS_VB.Strings.Chr(10)
-        Public Const NullChar As Char = MS_VB.Strings.Chr(0)
+        Public Const NewLine As String = CrLf
+        Public Const NullChar As Char = Char.MinValue
         Public Const Tab As Char = MS_VB.Strings.Chr(9)
         Public Const VerticalTab As Char = MS_VB.Strings.Chr(11)
-        Public Const Quote As Char = MS_VB.Strings.Chr(34)
+        Public Const Quote As Char = """"c
     End Class
 
 End Namespace
