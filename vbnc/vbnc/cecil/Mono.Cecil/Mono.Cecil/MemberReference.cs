@@ -54,6 +54,11 @@ namespace Mono.Cecil {
 			set { m_token = value; }
 		}
 
+		public IDictionary Annotations
+		{
+			get { return ((IAnnotationProvider) this).Annotations; }
+		}
+
 		IDictionary IAnnotationProvider.Annotations {
 			get {
 				if (m_annotations == null)
