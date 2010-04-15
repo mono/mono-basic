@@ -64,7 +64,6 @@ Namespace Microsoft.VisualBasic
 
         End Sub
         Public Shared Sub ChDrive(ByVal Drive As Char)
-            If (Drive = "") Then Return
             If Not Char.IsLetter(Drive) Then Throw New System.ArgumentException("Argument 'Drive' is not a valid value.")
 
             Try
@@ -77,7 +76,7 @@ Namespace Microsoft.VisualBasic
         End Sub
         Public Shared Sub ChDrive(ByVal Drive As String)
             If Drive Is Nothing OrElse Drive.Length = 0 Then Return
-            Dim ch As Char = CChar(Drive.Substring(0, 1))
+            Dim ch As Char = Drive(0)
             FileSystem.ChDrive(ch)
 
         End Sub

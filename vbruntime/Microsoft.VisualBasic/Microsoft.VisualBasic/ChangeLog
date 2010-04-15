@@ -1,5 +1,11 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* FileSystem.vb: A character can never be equal to an empty string, remove
+	condition. Also to get the first character in a string just use the indexed
+	Chars property instead of substring and converting that string back to a character.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* ChangeLog:
 	* Conversion.vb: Use character constants whenever possible when comparing characters
 	instead of converting characters to strings and comparing that. Also do an explicit
