@@ -963,7 +963,7 @@ Namespace Microsoft.VisualBasic
             Dim record As String = ReadStringRecord()
             If record Is Nothing Then
                 Value = Nothing
-            ElseIf record = String.Empty Then
+            ElseIf record Is Nothing OrElse record.Length = 0 Then
                 If Mode = OpenMode.Input Then
                     Value = Nothing
                 Else

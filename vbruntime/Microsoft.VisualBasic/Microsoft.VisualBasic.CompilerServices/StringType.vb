@@ -212,11 +212,11 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
         Public Shared Function StrLike(ByVal Source As String, ByVal Pattern As String, ByVal CompareOption As Microsoft.VisualBasic.CompareMethod) As Boolean
 
-            If Source = String.Empty And Pattern = String.Empty Then
+            If (Source Is Nothing OrElse Source.Length = 0) AndAlso (Pattern Is Nothing OrElse Pattern.Length = 0) Then
                 Return True
                 ' LAMESPEC : MSDN states "if either string or pattern is an empty string, the result is False."
                 ' but "" Like "[]" returns True
-            ElseIf (Source = String.Empty Or Pattern = String.Empty) And (Not Pattern = "[]") Then
+            ElseIf ((Source Is Nothing OrElse Source.Length = 0) OrElse (Pattern Is Nothing OrElse Pattern.Length = 0)) AndAlso String.Compare(Pattern, "[]") <> 0 Then
                 Return False
             End If
 

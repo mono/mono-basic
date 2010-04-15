@@ -276,7 +276,7 @@ Namespace Microsoft.VisualBasic
             If Not PredefinedStyle Is Nothing Then
                 Return String.Format(PredefinedStyle.ToString(), Expression)
             End If
-            If Style = "" Then
+            If Style Is Nothing OrElse Style.Length = 0 Then
                 Return String.Format("{0}", Expression)
             Else
                 Return String.Format("{0:" + Style + "}", Expression)
@@ -881,7 +881,7 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'Length' is not a valid value.")
             End If
 
-            If str Is Nothing Or str = String.Empty Or Length = 0 Then
+            If str Is Nothing OrElse str.Length = 0 OrElse Length = 0 Then
                 Return String.Empty
             End If
 
@@ -917,7 +917,7 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'Start' must be greater than zero.")
             End If
 
-            If Expression Is Nothing Or Expression = String.Empty Then
+            If Expression Is Nothing OrElse Expression.Length = 0 Then
                 Return Nothing
             End If
 
@@ -925,7 +925,7 @@ Namespace Microsoft.VisualBasic
                 Return Nothing
             End If
 
-            If Find Is Nothing Or Find = String.Empty Then
+            If Find Is Nothing OrElse Find.Length = 0 Then
                 Return Expression
             End If
 
@@ -972,7 +972,7 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'Length' must be greater or equal to zero")
             End If
 
-            If str Is Nothing Or str = String.Empty Then
+            If str Is Nothing OrElse str.Length = 0 Then
                 Return String.Empty
             End If
 
@@ -1046,13 +1046,13 @@ Namespace Microsoft.VisualBasic
                 Optional ByVal Limit As Integer = -1, _
                 <OptionCompare()> Optional ByVal Compare As CompareMethod = CompareMethod.Binary) As String()
 
-            If Expression Is Nothing Or Expression = String.Empty Then
+            If Expression Is Nothing OrElse Expression.Length = 0 Then
                 Dim r(0) As String
                 r(0) = String.Empty
                 Return r
             End If
 
-            If Delimiter Is Nothing Or Delimiter = String.Empty Then
+            If Delimiter Is Nothing OrElse Expression.Length = 0 Then
                 Dim r(0) As String
                 r(0) = Expression
                 Return r
@@ -1237,7 +1237,7 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Public Shared Function StrReverse(ByVal Expression As String) As String
-            If Expression Is Nothing Or Expression = String.Empty Then
+            If Expression Is Nothing OrElse Expression.Length = 0 Then
                 Return String.Empty
             End If
 

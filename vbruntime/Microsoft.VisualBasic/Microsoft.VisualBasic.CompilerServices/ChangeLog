@@ -1,3 +1,12 @@
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* StringType.vb:
+	* ObjectType.vb:
+	* CharType.vb:
+	* BooleanType.vb: Use String.Compare/Length instead of equality operator.
+	Second step in making the vbruntime compile in vb9 (by not being
+	self-referential).
+
 2009-05-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Operators.vb: Rename paramaters and shuffle some "#If
@@ -151,4 +160,3 @@
 
 	* StaticLocalInitFlag.vb: The "State" is actually a field, not a
 	property, hope this fixes the VB compiler.
-

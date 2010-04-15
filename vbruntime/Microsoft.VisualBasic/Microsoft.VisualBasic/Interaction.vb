@@ -103,10 +103,10 @@ Namespace Microsoft.VisualBasic
 
             Dim rkey As RegistryKey
             rkey = Registry.CurrentUser
-            If Section = Nothing Then
+            If Section Is Nothing Then
                 rkey.DeleteSubKeyTree(AppName)
             Else
-                If Key = Nothing Then
+                If Key Is Nothing Then
                     rkey.DeleteSubKeyTree(Section)
                 Else
                     rkey = rkey.OpenSubKey(Section)
@@ -132,8 +132,8 @@ Namespace Microsoft.VisualBasic
 
 #If TARGET_JVM = False Then
 
-            If (AppName = "") Or (AppName Is Nothing) Then Throw New System.ArgumentException(" Argument 'AppName' is Nothing or empty.")
-            If (Section = "") Or (Section Is Nothing) Then Throw New System.ArgumentException(" Argument 'Section' is Nothing or empty.")
+            If AppName Is Nothing OrElse AppName.Length = 0 Then Throw New System.ArgumentException(" Argument 'AppName' is Nothing or empty.")
+            If Section Is Nothing OrElse Section.Length = 0 Then Throw New System.ArgumentException(" Argument 'Section' is Nothing or empty.")
 
             Dim res_setting(,) As String
             Dim index, elm_count As Integer
@@ -306,13 +306,13 @@ Namespace Microsoft.VisualBasic
                 lEnd = lStart + Interval - 1
             End If
 
-            If strEnd = "Out Of Range" Then
+            If String.Equals(strEnd, "Out Of Range") Then
                 strEnd = ""
             Else
                 strEnd = CStr(lEnd)
             End If
 
-            If strStart = "Out Of Range" Then
+            If String.Equals(strStart, "Out Of Range") Then
                 strStart = ""
             Else
                 strStart = CStr(lStart)
