@@ -62,7 +62,7 @@ Public Class ExternalProcessVerification
         End If
 
         If m_Process.TimedOut = False Then
-            If (m_Process.ExitCode = 0 AndAlso Me.ExpectedExitCode <> 0) OrElse (m_Process.ExitCode <> 0 AndAlso Me.ExpectedExitCode = 0) Then
+            If m_Process.ExitCode <> Me.ExpectedExitCode Then
                 MyBase.DescriptiveMessage = Name & " failed, expected exit code " & Me.ExpectedExitCode & " but process exited with exit code " & m_Process.ExitCode & vbNewLine
                 result = False
             ElseIf Me.ExpectedErrorCode <> 0 Then

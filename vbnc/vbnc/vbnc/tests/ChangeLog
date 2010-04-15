@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Updated.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* NUnitTests/NUnit1.vb: Deleted.
 	* NUnitTests/Main.vb: Added. We're compiling all the files in NUnitTests
 	into one binary now.
