@@ -61,44 +61,42 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End Select
         End Function
         Public Shared Function SystemTypeName(ByVal VbName As String) As String
-
-            Select Case VbName.ToLower()
-                Case "boolean"
-                    Return "System.Boolean"
-                Case "byte"
-                    Return "System.Byte"
-                Case "sbyte"
-                    Return "System.SByte"
-                Case "char"
-                    Return "System.Char"
-                Case "date"
-                    Return "System.DateTime"
-                Case "decimal"
-                    Return "System.Decimal"
-                Case "double"
-                    Return "System.Double"
-                Case "integer"
-                    Return "System.Int32"
-                Case "uinteger"
-                    Return "System.UInt32"
-                Case "long"
-                    Return "System.Int64"
-                Case "ulong"
-                    Return "System.UInt64"
-                Case "object"
-                    Return "System.Object"
-                Case "short"
-                    Return "System.Int16"
-                Case "ushort"
-                    Return "System.UInt16"
-                Case "single"
-                    Return "System.Single"
-                Case "string"
-                    Return "System.String"
-                Case Else
-                    Return Nothing
-            End Select
-
+            Dim lower As String = VbName.ToLower()
+            If String.Equals(lower, "boolean") Then
+                Return "System.Boolean"
+            ElseIf String.Equals(lower, "byte") Then
+                Return "System.Byte"
+            ElseIf String.Equals(lower, "sbyte") Then
+                Return "System.SByte"
+            ElseIf String.Equals(lower, "char") Then
+                Return "System.Char"
+            ElseIf String.Equals(lower, "date") Then
+                Return "System.DateTime"
+            ElseIf String.Equals(lower, "decimal") Then
+                Return "System.Decimal"
+            ElseIf String.Equals(lower, "double") Then
+                Return "System.Double"
+            ElseIf String.Equals(lower, "integer") Then
+                Return "System.Int32"
+            ElseIf String.Equals(lower, "uinteger") Then
+                Return "System.UInt32"
+            ElseIf String.Equals(lower, "long") Then
+                Return "System.Int64"
+            ElseIf String.Equals(lower, "ulong") Then
+                Return "System.UInt64"
+            ElseIf String.Equals(lower, "object") Then
+                Return "System.Object"
+            ElseIf String.Equals(lower, "short") Then
+                Return "System.Int16"
+            ElseIf String.Equals(lower, "ushort") Then
+                Return "System.UInt16"
+            ElseIf String.Equals(lower, "single") Then
+                Return "System.Single"
+            ElseIf String.Equals(lower, "string") Then
+                Return "System.String"
+            Else
+                Return Nothing
+            End If
         End Function
         Public Shared Function TypeName(ByVal Expression As Object) As String
 
@@ -116,42 +114,41 @@ Namespace Microsoft.VisualBasic.CompilerServices
             End If
             TmpObjType = Expression.GetType().Name.ToLower
 
-            Select Case TmpObjType
-                Case "string"
-                    RetObjType = "String"
-                Case "int32"
-                    RetObjType = "Integer"
-                Case "uint32"
-                    RetObjType = "UInteger"
-                Case "int16"
-                    RetObjType = "Short"
-                Case "uint16"
-                    RetObjType = "UShort"
-                Case "int64"
-                    RetObjType = "Long"
-                Case "uint64"
-                    RetObjType = "ULong"
-                Case "byte"
-                    RetObjType = "Byte"
-                Case "sbyte"
-                    RetObjType = "SByte"
-                Case "boolean"
-                    RetObjType = "Boolean"
-                Case "char"
-                    RetObjType = "Char"
-                Case "datetime"
-                    RetObjType = "Date"
-                Case "single"
-                    RetObjType = "Single"
-                Case "double"
-                    RetObjType = "Double"
-                Case "decimal"
-                    RetObjType = "Decimal"
-                Case "object"
-                    RetObjType = "Object"
-                Case Else
-                    RetObjType = TmpObjType
-            End Select
+            If String.Equals(TmpObjType, "string") Then
+                RetObjType = "String"
+            ElseIf String.Equals(TmpObjType, "int32") Then
+                RetObjType = "Integer"
+            ElseIf String.Equals(TmpObjType, "uint32") Then
+                RetObjType = "UInteger"
+            ElseIf String.Equals(TmpObjType, "int16") Then
+                RetObjType = "Short"
+            ElseIf String.Equals(TmpObjType, "uint16") Then
+                RetObjType = "UShort"
+            ElseIf String.Equals(TmpObjType, "int64") Then
+                RetObjType = "Long"
+            ElseIf String.Equals(TmpObjType, "uint64") Then
+                RetObjType = "ULong"
+            ElseIf String.Equals(TmpObjType, "byte") Then
+                RetObjType = "Byte"
+            ElseIf String.Equals(TmpObjType, "sbyte") Then
+                RetObjType = "SByte"
+            ElseIf String.Equals(TmpObjType, "boolean") Then
+                RetObjType = "Boolean"
+            ElseIf String.Equals(TmpObjType, "char") Then
+                RetObjType = "Char"
+            ElseIf String.Equals(TmpObjType, "datetime") Then
+                RetObjType = "Date"
+            ElseIf String.Equals(TmpObjType, "single") Then
+                RetObjType = "Single"
+            ElseIf String.Equals(TmpObjType, "double") Then
+                RetObjType = "Double"
+            ElseIf String.Equals(TmpObjType, "decimal") Then
+                RetObjType = "Decimal"
+            ElseIf String.Equals(TmpObjType, "object") Then
+                RetObjType = "Object"
+            Else
+                RetObjType = TmpObjType
+            End If
 
             Return (RetObjType + ArrCh)
 
@@ -165,42 +162,41 @@ Namespace Microsoft.VisualBasic.CompilerServices
             tmpStr = SystemName.ToLower
             If SystemName.ToLower.StartsWith("system.") Then tmpStr = SystemName.ToLower.Substring(7)
 
-            Select Case tmpStr
-                Case "string"
-                    RetObjType = "String"
-                Case "int32"
-                    RetObjType = "Integer"
-                Case "uint32"
-                    RetObjType = "UInteger"
-                Case "int16"
-                    RetObjType = "Short"
-                Case "uint16"
-                    RetObjType = "UShort"
-                Case "int64"
-                    RetObjType = "Long"
-                Case "uint64"
-                    RetObjType = "ULong"
-                Case "byte"
-                    RetObjType = "Byte"
-                Case "sbyte"
-                    RetObjType = "SByte"
-                Case "boolean"
-                    RetObjType = "Boolean"
-                Case "char"
-                    RetObjType = "Char"
-                Case "datetime"
-                    RetObjType = "Date"
-                Case "single"
-                    RetObjType = "Single"
-                Case "double"
-                    RetObjType = "Double"
-                Case "decimal"
-                    RetObjType = "Decimal"
-                Case "object"
-                    RetObjType = "Object"
-                Case Else
-                    RetObjType = tmpStr
-            End Select
+            If String.Equals(tmpStr, "string") Then
+                RetObjType = "String"
+            ElseIf String.Equals(tmpStr, "int32") Then
+                RetObjType = "Integer"
+            ElseIf String.Equals(tmpStr, "uint32") Then
+                RetObjType = "UInteger"
+            ElseIf String.Equals(tmpStr, "int16") Then
+                RetObjType = "Short"
+            ElseIf String.Equals(tmpStr, "uint16") Then
+                RetObjType = "UShort"
+            ElseIf String.Equals(tmpStr, "int64") Then
+                RetObjType = "Long"
+            ElseIf String.Equals(tmpStr, "uint64") Then
+                RetObjType = "ULong"
+            ElseIf String.Equals(tmpStr, "byte") Then
+                RetObjType = "Byte"
+            ElseIf String.Equals(tmpStr, "sbyte") Then
+                RetObjType = "SByte"
+            ElseIf String.Equals(tmpStr, "boolean") Then
+                RetObjType = "Boolean"
+            ElseIf String.Equals(tmpStr, "char") Then
+                RetObjType = "Char"
+            ElseIf String.Equals(tmpStr, "datetime") Then
+                RetObjType = "Date"
+            ElseIf String.Equals(tmpStr, "single") Then
+                RetObjType = "Single"
+            ElseIf String.Equals(tmpStr, "double") Then
+                RetObjType = "Double"
+            ElseIf String.Equals(tmpStr, "decimal") Then
+                RetObjType = "Decimal"
+            ElseIf String.Equals(tmpStr, "object") Then
+                RetObjType = "Object"
+            Else
+                RetObjType = tmpStr
+            End If
 
             Return RetObjType
 
