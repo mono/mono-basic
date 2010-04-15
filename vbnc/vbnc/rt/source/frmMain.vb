@@ -709,7 +709,7 @@ Class frmMain
         Dim path As String
         path = GetSetting(Application.ProductName, Me.Name, "Reflector", Environment.ExpandEnvironmentVariables("%PROGRAMFILES%\Reflector\Reflector.exe"))
         If IO.File.Exists(path) = False Then
-            path = InputBox("Path of reflector: ")
+            path = InputBox("Path of reflector: ", "Reflector", path)
         End If
         If path <> "" Then
             SaveSetting(Application.ProductName, Me.Name, "Reflector", path)

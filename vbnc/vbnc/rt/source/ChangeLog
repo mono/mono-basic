@@ -1,5 +1,11 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* frmMain.vb: Set default reflector path to what we know.
+
+	* Settings.vb: Don't clobber settings for old rt version.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Test.vb:
 	* ExternalProcessExecutor.vb: A few mono/rt-console fixes.
 

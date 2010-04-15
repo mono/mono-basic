@@ -43,26 +43,26 @@ Namespace My
         End Property
         Shared Property txtVBCCompiler_Text() As String
             Get
-                Return GetSetting("txtVBCCompiler_Text", "")
+                Return GetSetting("txtVBCCompiler_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtVBCCompiler_Text", value)
+                SaveSetting("txtVBCCompiler_Text2", value)
             End Set
         End Property
         Shared Property txtVBNCCompiler_Text() As String
             Get
-                Return GetSetting("txtVBNCCompiler_Text", "")
+                Return GetSetting("txtVBNCCompiler_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtVBNCCompiler_Text", value)
+                SaveSetting("txtVBNCCompiler_Text2", value)
             End Set
         End Property
         Shared Property txtBasePath_Text() As String
             Get
-                Return GetSetting("txtBasePath_Text", "")
+                Return GetSetting("txtBasePath_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtBasePath_Text", value)
+                SaveSetting("txtBasePath_Text2", value)
             End Set
         End Property
         Shared Property TestsListView_colPath_Width() As Integer
