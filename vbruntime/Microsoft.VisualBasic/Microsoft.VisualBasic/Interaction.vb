@@ -155,8 +155,8 @@ Namespace Microsoft.VisualBasic
                 If elm_count = 0 Then Return Nothing
             End If
 
-            ReDim Preserve arr_str(elm_count)
-            ReDim Preserve res_setting(elm_count - 1, 1)
+            ReDim arr_str(elm_count)
+            ReDim res_setting(elm_count - 1, 1)
             arr_str = regk.GetValueNames()
             For index = 0 To elm_count - 1
                 res_setting(index, 0) = arr_str(index)

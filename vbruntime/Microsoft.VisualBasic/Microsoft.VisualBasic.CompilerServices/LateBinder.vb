@@ -347,7 +347,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Dim index As Integer = args.Length - 1
                             Dim pcount As Integer = CType(args(args.Length - 1), Array).Length
                             Dim arr As Object = args(index)
-                            ReDim Preserve preparedArguments(index + pcount - 1)
+                            preparedArguments = DirectCast (Utils.CopyArray (preparedArguments, new Object (index + pcount - 1) {}), Object ())
                             For i As Integer = 0 To pcount - 1
                                 preparedArguments(index + i) = CType(arr, Array).GetValue(i)
                             Next
@@ -843,7 +843,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 Return Nothing
             End If
 
-            ReDim Preserve match(matchCount - 1)
+            match = DirectCast (Utils.CopyArray(match, new MethodBase (matchCount - 1) {}), MethodBase ())
             Return match
         End Function
 
@@ -946,7 +946,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     ' thre are more that 1 narrowing methods and this is the best
                     Throw New AmbiguousMatchException
                 End If
-                ReDim Preserve filteredMethods(methodsCount - 1)
+                filteredMethods = DirectCast(Utils.CopyArray(filteredMethods, New MethodBase(methodsCount - 1) {}), MethodBase())
                 Return filteredMethods
             End If
         End Function

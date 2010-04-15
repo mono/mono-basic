@@ -1,5 +1,10 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* LateBinder.vb: Call Utils.CopyArray manually instead of using
+	Redim Preserve.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Versioned.vb:
 	* Operators.vb:
 	* LateBinder.vb:
