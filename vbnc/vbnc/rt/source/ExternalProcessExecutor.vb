@@ -108,10 +108,13 @@ Public Class ExternalProcessExecutor
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property StdOut() As String
+    Property StdOut() As String
         Get
             Return m_StdOut.ToString & vbNewLine & m_StdErr.ToString
         End Get
+        Set(ByVal value As String)
+            m_StdOut = New System.Text.StringBuilder(value)
+        End Set
     End Property
 
     ReadOnly Property UnexpandedCommandLine() As String
@@ -140,7 +143,7 @@ Public Class ExternalProcessExecutor
         m_ExpandedCmdLine = Environment.ExpandEnvironmentVariables(m_ExpandedCmdLine)
         m_TimeOut = TimeOut * 4
         m_WorkingDirectory = WorkingDirectory
-        If IO.File.Exists(m_Executable) Then m_Version = FileVersionInfo.GetVersionInfo(m_Executable)
+        'If IO.File.Exists(m_Executable) Then m_Version = FileVersionInfo.GetVersionInfo(m_Executable)
     End Sub
 
     Sub ExpandCmdLine()

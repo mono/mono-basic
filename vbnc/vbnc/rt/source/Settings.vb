@@ -113,6 +113,14 @@ Namespace My
                 SaveSetting("TestsListView_colDate_Width", value)
             End Set
         End Property
+        Shared Property TestsListView_colKnownFailureReason_Width() As Integer
+            Get
+                Return CInt(GetSetting("TestsListView_colKnownFailureReason_Width", 80))
+            End Get
+            Set(ByVal value As Integer)
+                SaveSetting("TestsListView_colKnownFailureReason_Width", value)
+            End Set
+        End Property
         Shared Sub Upgrade()
 
         End Sub

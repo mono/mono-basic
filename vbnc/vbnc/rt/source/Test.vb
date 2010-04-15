@@ -131,9 +131,51 @@ Public Class Test
         Return node.InnerText
     End Function
 
+    Public Sub SetResult(ByVal result As String)
+        If result Is Nothing Then result = String.Empty
+        Select Case result.ToLower()
+            Case Nothing, "", "notrun"
+                m_Result = Results.NotRun
+            Case Else
+                m_Result = CType([Enum].Parse(GetType(Results), result, True), Results)
+        End Select
+    End Sub
+
+    Public Sub LoadResult(ByVal xml As XmlNode)
+        Dim result As String = GetAttributeValue(xml.Attributes("result"))
+        For Each vb As XmlNode In xml.SelectNodes("Verification")
+            Dim type As String = GetAttributeValue(vb.Attributes("Type"))
+            Dim name As String = GetAttributeValue(vb.Attributes("Name"))
+            Dim executable As String
+            Dim expandablecommandline As String
+            Dim verification As VerificationBase
+            Select Case type
+                Case GetType(ExternalProcessVerification).FullName
+                    Dim extvb As ExternalProcessVerification
+                    Dim process As XmlNode = vb.SelectSingleNode("Process")
+                    executable = GetAttributeValue(process.Attributes("Executable"))
+                    expandablecommandline = GetAttributeValue(process.Attributes("UnexpandedCommandLine"))
+                    extvb = New ExternalProcessVerification(Me, executable, expandablecommandline)
+                    extvb.Process.StdOut = process.SelectSingleNode("StdOut").Value
+                    verification = extvb
+                Case GetType(CecilCompare).FullName
+                    Dim cecilvb As CecilCompare
+                    cecilvb = New CecilCompare(Me)
+                    verification = cecilvb
+                Case Else
+                    Throw New NotImplementedException(type)
+            End Select
+            verification.DescriptiveMessage = GetAttributeValue(vb.Attributes("DescriptiveMessage"))
+            verification.Name = name
+            verification.Result = CBool(GetAttributeValue(vb.Attributes("Result")))
+            verification.Run = CBool(GetAttributeValue(vb.Attributes("Run")))
+            Me.m_Verifications.Add(verification)
+        Next
+        SetResult(result)
+    End Sub
+
     Public Sub Load(ByVal xml As XmlNode)
         Dim target As String
-        Dim result As String
 
         m_ID = xml.Attributes("id").Value
         m_Name = xml.Attributes("name").Value
@@ -146,14 +188,8 @@ Public Class Test
         m_ExpectedExitCode = CInt(GetAttributeValue(xml.Attributes("expectedexitcode")))
         m_WorkingDirectory = GetAttributeValue(xml.Attributes("workingdirectory"))
 
-        result = GetAttributeValue(xml.Attributes("result"))
-        If result Is Nothing Then result = String.Empty
-        Select Case result.ToLower()
-            Case Nothing, "", "notrun"
-                m_Result = Results.NotRun
-            Case Else
-                m_Result = CType([Enum].Parse(GetType(Results), result, True), Results)
-        End Select
+        SetResult(GetAttributeValue(xml.Attributes("result")))
+
 
         '    'Test to see if it is a negative test.
         '    'Negative tests are:
@@ -206,56 +242,54 @@ Public Class Test
 
     End Sub
 
-    Public Sub Save(ByVal xml As Xml.XmlWriter)
+    Public Sub Save(ByVal xml As Xml.XmlWriter, ByVal results As Boolean)
         xml.WriteStartElement("test")
         xml.WriteAttributeString("id", m_ID)
-        xml.WriteAttributeString("name", m_Name)
-        xml.WriteAttributeString("category", m_Category)
-        xml.WriteAttributeString("priority", m_Priority.ToString())
-        If Not String.IsNullOrEmpty(m_KnownFailure) Then
-            xml.WriteAttributeString("knownfailure", m_KnownFailure)
+        If results = False Then
+            xml.WriteAttributeString("name", m_Name)
+            xml.WriteAttributeString("category", m_Category)
+            xml.WriteAttributeString("priority", m_Priority.ToString())
+            If Not String.IsNullOrEmpty(m_KnownFailure) Then
+                xml.WriteAttributeString("knownfailure", m_KnownFailure)
+            End If
+
+            If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())
+            If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
+
+            xml.WriteAttributeString("target", m_Target.ToString().ToLower())
+            If Not String.IsNullOrEmpty(m_WorkingDirectory) Then xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
+            xml.WriteElementString("arguments", m_Arguments)
+            For Each file As String In m_Files
+                xml.WriteElementString("file", file)
+            Next
+        Else
+            xml.WriteAttributeString("result", m_Result.ToString().ToLower())
+            For Each vb As VerificationBase In Me.Verifications
+                xml.WriteStartElement("Verification")
+                xml.WriteAttributeString("Type", vb.GetType().FullName)
+                xml.WriteAttributeString("Name", vb.Name)
+                xml.WriteAttributeString("DescriptiveMessage", vb.DescriptiveMessage)
+                xml.WriteAttributeString("ExpectedErrorCode", vb.ExpectedErrorCode.ToString())
+                xml.WriteAttributeString("ExpectedExitCode", vb.ExpectedExitCode.ToString())
+                xml.WriteAttributeString("Result", vb.Result.ToString())
+                xml.WriteAttributeString("Run", vb.Run.ToString())
+
+                Dim extvb As ExternalProcessVerification = TryCast(vb, ExternalProcessVerification)
+                If extvb IsNot Nothing Then
+                    If extvb.Process IsNot Nothing Then
+                        xml.WriteStartElement("Process")
+                        xml.WriteAttributeString("Executable", extvb.Process.Executable)
+                        xml.WriteAttributeString("UnexpandedCommandLine", extvb.Process.UnexpandedCommandLine)
+                        xml.WriteElementString("StdOut", extvb.Process.StdOut)
+                        xml.WriteEndElement()
+                    End If
+                End If
+
+                xml.WriteEndElement()
+            Next
         End If
-
-        If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())
-        If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
-
-        xml.WriteAttributeString("target", m_Target.ToString().ToLower())
-        xml.WriteAttributeString("result", m_Result.ToString().ToLower())
-        xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
-        xml.WriteElementString("arguments", m_Arguments)
-        For Each file As String In m_Files
-            xml.WriteElementString("file", file)
-        Next
         xml.WriteEndElement()
     End Sub
-
-    'Public Sub SaveInternal(ByVal Directory As String, ByVal xml As Xml.XmlWriter)
-    '    xml.WriteStartElement("test")
-    '    xml.WriteAttributeString("id", m_ID)
-    '    xml.WriteAttributeString("name", m_Name)
-    '    xml.WriteAttributeString("category", IO.Path.GetFileName(m_BasePath))
-    '    If m_BasePath.Contains("1Declarations") Then
-    '        xml.WriteAttributeString("priority", "10")
-    '    Else
-    '        xml.WriteAttributeString("priority", "20")
-    '    End If
-    '    If m_RspFile <> "" Then
-    '        xml.WriteElementString("arguments", IO.File.ReadAllText(m_RspFile).TrimEnd())
-    '    Else
-    '        If m_DefaultRspFile <> "" Then
-    '            xml.WriteElementString("arguments", IO.File.ReadAllText(m_DefaultRspFile).TrimEnd())
-    '        End If
-    '        If m_ResponseFile <> "" Then
-    '            xml.WriteElementString("arguments", IO.File.ReadAllText(m_ResponseFile).TrimEnd())
-    '        End If
-    '    End If
-    '    For Each file As String In Files
-    '        file = file.Substring(Directory.Length)
-    '        If file.StartsWith("\") Then file = file.Substring(1)
-    '        xml.WriteElementString("file", file)
-    '    Next
-    '    xml.WriteEndElement()
-    'End Sub
 
     Property ExpectedExitCode() As Integer
         Get

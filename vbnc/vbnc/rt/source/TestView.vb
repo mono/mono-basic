@@ -42,12 +42,10 @@ Friend Class TestView
 
         newItem.ImageIndex = m_Form.GetIconIndex(rt.Test.Results.NotRun)
         newItem.SubItems.Add("")
-        newItem.SubItems.Add("") 'Compiler
-        newItem.SubItems.Add("") 'Result
-        newItem.SubItems.Add("") 'OldResult
-        newItem.SubItems.Add("") 'Failed Verification
-        newItem.SubItems.Add("") 'Date
-        newItem.SubItems.Add("") 'Path
+        newItem.SubItems.Add("")
+        newItem.SubItems.Add("")
+        newItem.SubItems.Add("")
+        newItem.SubItems.Add(Test.KnownFailure)
 
         Update(newItem)
 
@@ -75,6 +73,7 @@ Friend Class TestView
             Item.SubItems(2).Text = "Running..."
             Item.SubItems(3).Text = ""
             Item.SubItems(4).Text = ""
+            Item.SubItems(5).Text = Test.KnownFailure
         Catch ex As Exception
             MsgBox(ex.ToString)
         End Try
@@ -96,21 +95,19 @@ Friend Class TestView
             Else
                 testresult = test.Result
             End If
-            Item.SubItems(1).Text = ""
-            Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
+            If test.LastRun.Date <> Date.MinValue Then
+                Item.SubItems(4).Text = test.LastRun.ToString(datetimeformat)
+            End If
             Item.ImageIndex = m_Form.GetIconIndex(testresult)
-            Item.SubItems(3).Text = test.Category
-            'If test.Run AndAlso test.VBNCVerification IsNot Nothing AndAlso test.VBNCVerification.Process IsNot Nothing AndAlso test.VBNCVerification.Process.FileVersion IsNot Nothing Then
-            '    Item.SubItems(1).Text = test.VBNCVerification.Process.FileVersion.FileVersion & " (" & test.VBNCVerification.Process.LastWriteDate.ToString(datetimeformat) & ")"
-            'End If
+            Item.SubItems(2).Text = test.Category
 
-            Item.SubItems(2).Text = test.Result.ToString
+            Item.SubItems(1).Text = test.Result.ToString
             If test.FailedVerificationMessage <> "" Then
                 Dim idx As Integer = test.FailedVerificationMessage.IndexOf(vbNewLine)
                 If idx < 0 Then idx = test.FailedVerificationMessage.Length
-                Item.SubItems(4).Text = test.FailedVerificationMessage.Substring(0, idx)
+                Item.SubItems(3).Text = test.FailedVerificationMessage.Substring(0, idx)
             Else
-                Item.SubItems(4).Text = ""
+                Item.SubItems(3).Text = ""
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)

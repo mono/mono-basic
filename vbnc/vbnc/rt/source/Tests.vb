@@ -17,6 +17,8 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+Imports System.IO
+
 ''' <summary>
 ''' A list of tests.
 ''' </summary>
@@ -25,6 +27,7 @@ Public Class Tests
     Inherits Generic.Dictionary(Of String, Test)
 
     Private m_Filename As String
+    Private m_ResultsFilename As String
     Private m_Document As XmlDocument
     Private m_VBCPath As String
     Private m_VBNCPath As String
@@ -45,6 +48,7 @@ Public Class Tests
 
     Public Sub Load(ByVal Filename As String)
         m_Filename = Filename
+        m_ResultsFilename = Path.Combine(Path.GetDirectoryName(m_Filename), Path.GetFileNameWithoutExtension(m_Filename) + ".results" + Path.GetExtension(m_Filename))
         m_Document = New XmlDocument()
         m_Document.Load(Filename)
         For Each node As XmlNode In m_Document.SelectNodes("/rt/test")
@@ -55,23 +59,48 @@ Public Class Tests
                 Add(test)
             End If
         Next
+        m_Document = New XmlDocument()
+        m_Document.Load(m_ResultsFilename)
+        For Each node As XmlNode In m_Document.SelectNodes("/rt/test")
+            Dim id As String = node.Attributes("id").Value
+            Dim test As Test = Nothing
+
+            If Me.TryGetValue(id, test) Then
+                test.LoadResult(node)
+            End If
+        Next
     End Sub
 
-    Private Sub CreateBackup()
-        Dim path As String = IO.Path.GetDirectoryName(m_Filename)
-        Dim name As String = IO.Path.GetFileNameWithoutExtension(m_Filename)
-        Dim ext As String = IO.Path.GetExtension(m_Filename)
+    Private Shared Sub CreateBackup(ByVal fn As String)
+        Dim path As String
+        Dim name As String
+        Dim ext As String
         Dim counter As Integer
         Dim filename As String
 
+        counter = 0
+        path = IO.Path.GetDirectoryName(fn)
+        name = IO.Path.GetFileNameWithoutExtension(fn)
+        ext = IO.Path.GetExtension(fn)
         Do
             counter += 1
             filename = IO.Path.Combine(path, name & "." & counter.ToString() & ext)
         Loop While IO.File.Exists(filename)
-        IO.File.Copy(m_Filename, filename, False)
+        IO.File.Copy(fn, filename, False)
+    End Sub
+
+    Private Sub CreateBackup()
+        CreateBackup(m_Filename)
+        CreateBackup(m_ResultsFilename)
     End Sub
 
     Public Sub Save()
+        CreateBackup()
+        Save(False)
+        Save(True)
+    End Sub
+
+    Public Sub Save(ByVal results As Boolean)
         Dim settings As New XmlWriterSettings
         Dim writer As XmlWriter
 
@@ -83,12 +112,15 @@ Public Class Tests
         settings.NewLineOnAttributes = False
         settings.OmitXmlDeclaration = False
 
-        CreateBackup()
-        writer = XmlWriter.Create(m_Filename, settings)
+        If results Then
+            writer = XmlWriter.Create(m_ResultsFilename, settings)
+        Else
+            writer = XmlWriter.Create(m_Filename, settings)
+        End If
 
         writer.WriteStartElement("rt")
         For Each Test As Test In Me.Values
-            Test.Save(writer)
+            Test.Save(writer, results)
         Next
         writer.WriteEndElement()
         writer.Close()

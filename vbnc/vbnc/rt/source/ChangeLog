@@ -1,3 +1,7 @@
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* (all files): Rework this to use a xml storage for the tests.
+
 2008-11-29  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* AssemblyInfo.vb: Fix breakage in last backports from trunk.

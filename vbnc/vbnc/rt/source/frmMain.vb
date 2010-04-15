@@ -105,12 +105,11 @@ Class frmMain
         If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
 
 
-        colCompiler.Width = My.Settings.TestsListView_colCompiler_Width
         colDate.Width = My.Settings.TestsListView_colDate_Width
         colFailedVerification.Width = My.Settings.TestsListView_colFailedVerification_Width
         colName.Width = My.Settings.TestsListView_colName_Width
         colResult.Width = My.Settings.TestsListView_colResult_Width
-        colPath.Width = My.Settings.TestsListView_colPath_Width
+        colKnownFailureReason.Width = My.Settings.TestsListView_colKnownFailureReason_Width
 
         If My.Settings.txtVBCCompiler_Text <> "" Then
             cmbCompiler.Text = My.Settings.txtVBCCompiler_Text
@@ -333,7 +332,6 @@ Class frmMain
             item.SubItems(2).Text = ""
             item.SubItems(3).Text = ""
             item.SubItems(4).Text = ""
-            item.SubItems(5).Text = ""
             '(not implemnted in winforms yet)'item.StateImageIndex = m_BlueIndex
         End If
     End Sub
@@ -344,7 +342,7 @@ Class frmMain
 
     Private Sub cmdRun_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdRun.Click
         Try
-            'm_Tests.RunAsync()
+            AddWork(m_Tests.Values, True)
             UpdateState()
         Catch ex As Exception
             MsgBox(String.Format("Error while executing tests: ") & ex.Message)
@@ -477,12 +475,11 @@ Class frmMain
         Try
             StopWork()
 
-            My.Settings.TestsListView_colCompiler_Width = colCompiler.Width
             My.Settings.TestsListView_colDate_Width = colDate.Width
             My.Settings.TestsListView_colFailedVerification_Width = colFailedVerification.Width
             My.Settings.TestsListView_colName_Width = colName.Width
             My.Settings.TestsListView_colResult_Width = colResult.Width
-            My.Settings.TestsListView_colPath_Width = colPath.Width
+            My.Settings.TestsListView_colKnownFailureReason_Width = colKnownFailureReason.Width
 
             My.Settings.txtVBCCompiler_Text = cmbCompiler.Text
             My.Settings.txtVBNCCompiler_Text = cmbVBCCompiler.Text
@@ -778,6 +775,7 @@ Class frmMain
         If Test Is Nothing Then
             txtTestResult.Text = ""
             txtMessage.Text = ""
+            txtTestMessage.Text = ""
         Else
             'Test.Initialize()
             If Test.Run Then
@@ -790,6 +788,7 @@ Class frmMain
                 txtTestResult.Text = "NotRun"
             End If
             txtMessage.Text = Test.FailedVerificationMessage
+            txtTestMessage.Text = txtMessage.Text
             tabMain.Visible = False
             For Each file As String In Test.Files
                 tabMain.TabPages.Add(New FileTabPage(Test, file))
