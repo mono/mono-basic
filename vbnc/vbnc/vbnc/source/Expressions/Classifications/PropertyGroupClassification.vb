@@ -37,6 +37,13 @@ Public Class PropertyGroupClassification
     Private m_ResolvedProperty As Mono.Cecil.PropertyReference
     Private m_Resolved As Boolean
     Private m_Resolver As MethodResolver
+    Private m_FinalSourceArguments As ArgumentList
+
+    ReadOnly Property FinalArguments() As ArgumentList
+        Get
+            Return m_FinalSourceArguments
+        End Get
+    End Property
 
     ReadOnly Property Parameters() As ArgumentList
         Get
@@ -50,7 +57,7 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument)) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList) As Boolean
         Dim result As Boolean = True
         Dim destinationParameterTypes()() As Mono.Cecil.TypeReference
         Dim destinationParameters() As Mono.Cecil.ParameterDefinitionCollection
@@ -76,7 +83,7 @@ Public Class PropertyGroupClassification
 
         If result Then
             If m_Resolver.IsLateBound = False Then
-                FinalSourceArguments = m_Resolver.ResolvedCandidate.ExactArguments
+                m_FinalSourceArguments = New ArgumentList(Me.Parent, m_Resolver.ResolvedCandidate.ExactArguments)
                 resolvedGroup.Add(m_Resolver.ResolvedMember)
             End If
         End If

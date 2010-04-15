@@ -23,6 +23,7 @@ Public MustInherit Class PartialTypeDeclaration
     Public IsPartial As Boolean
 
     Private m_TypeImplementsClauses As TypeImplementsClauses
+    Private m_InterfacesImplemented As Boolean
 
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
         MyBase.new(Parent, [Namespace])
@@ -57,11 +58,12 @@ Public MustInherit Class PartialTypeDeclaration
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        If m_TypeImplementsClauses IsNot Nothing Then
+        If m_InterfacesImplemented = False AndAlso m_TypeImplementsClauses IsNot Nothing Then
             result = m_TypeImplementsClauses.ResolveTypeReferences AndAlso result
             For i As Integer = 0 To m_TypeImplementsClauses.Clauses.Count - 1
                 AddInterface(m_TypeImplementsClauses.Clauses(i).ResolvedType)
             Next
+            m_InterfacesImplemented = True
         End If
 
         result = MyBase.ResolveTypeReferences AndAlso result

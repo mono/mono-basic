@@ -41,6 +41,13 @@ Public Class Attribute
     Private m_IsResolved As Boolean
 
     Private m_Instance As System.Attribute
+    Private m_CecilBuilder As Mono.Cecil.CustomAttribute
+
+    ReadOnly Property CecilBuilder() As Mono.Cecil.CustomAttribute
+        Get
+            Return m_CecilBuilder
+        End Get
+    End Property
 
     ''' <summary>
     ''' Returns the specified argument, or nothing if index is out of range
@@ -126,6 +133,74 @@ Public Class Attribute
         result.m_ResolvedTypeConstructor = m_ResolvedTypeConstructor
 
         Return result
+    End Function
+
+    Private Function ConvertArgument(ByVal constant As Object, ByVal Type As Mono.Cecil.TypeReference) As Object
+        If Helper.IsEnum(Compiler, Type) = False Then Return constant
+
+        Dim enumCecilAssembly As Mono.Cecil.AssemblyNameReference = CecilHelper.GetAssemblyRef(Type)
+        Dim enumAssembly As Assembly = System.Reflection.Assembly.Load(enumCecilAssembly.FullName)
+        Dim enumType As Type = enumAssembly.GetType(Type.FullName)
+
+        If enumType.IsEnum = False Then Return constant
+
+        Return System.Enum.ToObject(enumType, constant)
+    End Function
+
+    Function Instantiate(ByVal errorNumber As Messages, ByRef instantiation As Object) As Boolean
+        Dim attribModule As Mono.Cecil.ModuleDefinition = TryCast(ResolvedType.Scope, Mono.Cecil.ModuleDefinition)
+        Dim attribAssembly As Assembly
+        Dim attribType As Type
+        Dim attribInstance As Object
+
+        If attribModule Is Nothing Then
+            Return Compiler.Report.ShowMessage(errorNumber, Location, "The attribute isn't defined in an assembly.")
+        End If
+
+        attribAssembly = System.Reflection.Assembly.Load(attribModule.Assembly.Name.FullName)
+
+        If attribAssembly Is Nothing Then
+            Return Compiler.Report.ShowMessage(errorNumber, Location, String.Format("Could not load the assembly '{0}' where this attribute is stored.", attribModule.Assembly.Name.FullName))
+        End If
+
+        attribType = attribAssembly.GetType(ResolvedType.FullName, False, False)
+
+        If attribType Is Nothing Then
+            Return Compiler.Report.ShowMessage(errorNumber, Location, String.Format("Could not load the type '{0}' from the assembly '{1}'.", ResolvedType.FullName, attribAssembly.FullName))
+        End If
+
+        Dim args As Object()
+        ReDim args(Me.m_Arguments.Length)
+        ReDim args(Me.m_Arguments.Length - 1)
+        For i As Integer = 0 To m_Arguments.Length - 1
+            args(i) = ConvertArgument(m_Arguments(i), m_ResolvedTypeConstructor.Parameters(i).ParameterType)
+        Next
+        attribInstance = Activator.CreateInstance(attribType, args)
+
+        For i As Integer = 0 To m_Fields.Count - 1
+            Dim fieldInfo As FieldInfo
+            fieldInfo = attribType.GetField(m_Fields(i).Name, BindingFlags.Instance Or BindingFlags.Public)
+            If fieldInfo Is Nothing Then
+                Return Compiler.Report.ShowMessage(errorNumber, Location, String.Format("Could not find the field '{0}' on the type '{1}'.", m_Fields(i).Name, attribType.FullName))
+            End If
+
+            fieldInfo.SetValue(attribInstance, m_FieldValues(i))
+        Next
+
+        For i As Integer = 0 To m_Properties.Count - 1
+            Dim propInfo As PropertyInfo
+            propInfo = attribType.GetProperty(m_Properties(i).Name, Type.EmptyTypes)
+            If propInfo Is Nothing Then
+                Return Compiler.Report.ShowMessage(errorNumber, Location, String.Format("Could not find the property '{0}' on the type '{1}'.", m_Properties(i).Name, attribType.FullName))
+            End If
+            If propInfo.CanWrite = False Then
+                Return Compiler.Report.ShowMessage(errorNumber, Location, String.Format("The property '{0}' on the type '{1}' is ReadOnly.", propInfo.Name, attribType.FullName))
+            End If
+            propInfo.SetValue(attribInstance, m_PropertyValues(i), Nothing)
+        Next
+
+        instantiation = attribInstance
+        Return True
     End Function
 
     ReadOnly Property AttributeType() As Mono.Cecil.TypeReference
@@ -245,18 +320,32 @@ Public Class Attribute
             m_Arguments(i) = argList(i).Expression.ConstantValue
             If TypeOf m_Arguments(i) Is DBNull Then
                 m_Arguments(i) = Nothing
+            ElseIf TypeOf m_Arguments(i) Is Mono.Cecil.TypeReference Then
+                Dim argType As Mono.Cecil.TypeReference = DirectCast(m_Arguments(i), Mono.Cecil.TypeReference)
+                Dim moduleScope As Mono.Cecil.ModuleDefinition = TryCast(argType.Scope, Mono.Cecil.ModuleDefinition)
+
+                If moduleScope IsNot Nothing Then
+                    If moduleScope Is Compiler.ModuleBuilderCecil Then
+                        m_Arguments(i) = argType.FullName
+                    Else
+                        m_Arguments(i) = argType.FullName & ", " & moduleScope.Assembly.Name.FullName
+                    End If
+                Else
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                    result = False
+                End If
+
             End If
         Next
 
         m_IsResolved = result
 
-        Dim cecilBuilder As Mono.Cecil.CustomAttribute
-        cecilBuilder = GetAttributeBuilderCecil()
+        m_CecilBuilder = GetAttributeBuilderCecil()
 
         If m_IsAssembly Then
-            Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cecilBuilder)
+            Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(CecilBuilder)
         ElseIf m_IsModule Then
-            Me.Compiler.ModuleBuilderCecil.CustomAttributes.Add(cecilBuilder)
+            Me.Compiler.ModuleBuilderCecil.CustomAttributes.Add(CecilBuilder)
         Else
             Dim memberparent As IAttributableDeclaration = Me.FindFirstParent(Of IAttributableDeclaration)()
             If memberparent IsNot Nothing Then
@@ -271,16 +360,30 @@ Public Class Attribute
                 Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
 
                 If tp IsNot Nothing Then
-                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_SerializableAttribute) Then
+                    If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_SerializableAttribute) Then
                         tp.Serializable = True
+                    ElseIf Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_StructLayoutAttribute) Then
+                        Dim layout As System.Runtime.InteropServices.LayoutKind
+                        layout = CType(CecilBuilder.ConstructorParameters(0), System.Runtime.InteropServices.LayoutKind)
+                        Select Case layout
+                            Case Runtime.InteropServices.LayoutKind.Auto
+                                tp.CecilType.IsAutoLayout = True
+                            Case Runtime.InteropServices.LayoutKind.Explicit
+                                tp.CecilType.IsExplicitLayout = True
+                            Case Runtime.InteropServices.LayoutKind.Sequential
+                                tp.CecilType.IsSequentialLayout = True
+                            Case Else
+                                Compiler.Report.ShowMessage(Messages.VBNC30127, Me.Location, CecilBuilder.Constructor.DeclaringType.FullName, "Invalid argument.")
+                                Return False
+                        End Select
                     Else
-                        tp.CecilType.CustomAttributes.Add(cecilBuilder)
+                        tp.CecilType.CustomAttributes.Add(CecilBuilder)
                     End If
                 ElseIf mthd IsNot Nothing Then
-                    If Helper.CompareType(cecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
-                        Dim values As IDictionary = cecilBuilder.Fields
+                    If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
+                        Dim values As IDictionary = CecilBuilder.Fields
                         Dim entry As String = DirectCast(values("EntryPoint"), String)
-                        Dim modRef As Mono.Cecil.ModuleReference = New Mono.Cecil.ModuleReference(DirectCast(cecilBuilder.ConstructorParameters(0), String))
+                        Dim modRef As Mono.Cecil.ModuleReference = New Mono.Cecil.ModuleReference(DirectCast(CecilBuilder.ConstructorParameters(0), String))
 
                         If entry = String.Empty Then entry = mthd.Name
                         Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences.Add(modRef)
@@ -335,16 +438,22 @@ Public Class Attribute
                         mthd.CecilBuilder.PInvokeInfo.SupportsLastError = setlasterror
                         mthd.CecilBuilder.PInvokeInfo.IsNoMangle = True
                     Else
-                        mthd.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                        mthd.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                     End If
                 ElseIf ctro IsNot Nothing Then
-                    ctro.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                    ctro.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 ElseIf fld IsNot Nothing Then
-                    fld.FieldBuilder.CustomAttributes.Add(cecilBuilder)
+                    If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_MarshalAsAttribute) Then
+                        fld.FieldBuilder.MarshalSpec = New Mono.Cecil.MarshalSpec(CType(CecilBuilder.ConstructorParameters(0), Mono.Cecil.NativeType), fld.FieldBuilder)
+                    ElseIf Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_FieldOffsetAttribute) Then
+                        fld.FieldBuilder.Offset = CType(CecilBuilder.ConstructorParameters(0), UInteger)
+                    Else
+                        fld.FieldBuilder.CustomAttributes.Add(CecilBuilder)
+                    End If
                 ElseIf prop IsNot Nothing Then
-                    prop.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                    prop.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 ElseIf param IsNot Nothing Then
-                    param.CecilBuilder.CustomAttributes.Add(cecilBuilder)
+                    param.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 Else
                     Throw New InternalException(Me)
                 End If

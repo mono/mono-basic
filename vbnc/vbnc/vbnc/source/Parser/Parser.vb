@@ -983,45 +983,90 @@ Partial Public Class Parser
 
         If m_SimpleTypeName.IsQualifiedIdentifier AndAlso tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of Then
             Dim m_TypeArgumentList As TypeArgumentList
+            Dim m_Q As QualifiedIdentifier
+            Dim m_NestedTypeName As ConstructedTypeName
 
             m_TypeArgumentList = ParseTypeArgumentList(result)
             If m_TypeArgumentList Is Nothing Then Return Nothing
-            m_ConstructedTypeName = New ConstructedTypeName(result, m_SimpleTypeName.AsQualifiedIdentifier, m_TypeArgumentList)
+            m_ConstructedTypeName = New ConstructedTypeName(result)
+            m_ConstructedTypeName.Init(m_SimpleTypeName.AsQualifiedIdentifier, m_TypeArgumentList)
+
+            Do While tm.Accept(KS.Dot)
+                m_Q = ParseQualifiedIdentifier(result)
+                m_TypeArgumentList = Nothing
+
+                m_NestedTypeName = New ConstructedTypeName(m_ConstructedTypeName)
+
+                If tm.Accept(KS.LParenthesis) Then
+                    tm.AcceptIfNotError(KS.Of)
+
+                    m_TypeArgumentList = New TypeArgumentList(m_NestedTypeName)
+                    If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
+                        Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                    End If
+
+                    tm.AcceptIfNotError(KS.RParenthesis)
+                End If
+
+                m_NestedTypeName.Init(m_ConstructedTypeName, m_Q, m_TypeArgumentList)
+
+                m_ConstructedTypeName = m_NestedTypeName
+            Loop
+
             result.Init(m_ConstructedTypeName)
         Else
             result.Init(m_SimpleTypeName)
         End If
 
-
         Return result
     End Function
 
     ''' <summary>
-    ''' ConstructedTypeName ::=	QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+    ''' ConstructedTypeName ::=	
+    '''     QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+    '''     ConstructedTypeName "." QualifiedIdentifier [LAMESPEC]
+    '''     ConstructedTypeName "." QualifiedIdentifier "(" "Of" TypeArgumentList ")" [LAMESPEC]
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseConstructedTypeName(ByVal Parent As ParsedObject) As ConstructedTypeName
-        Dim result As New ConstructedTypeName(Parent)
+        Dim result As ConstructedTypeName
+        Dim current As ConstructedTypeName
 
-        Dim m_QualifiedIdentifier As QualifiedIdentifier = Nothing
-        Dim m_TypeArgumentList As TypeArgumentList = Nothing
+        Dim m_QualifiedIdentifier As QualifiedIdentifier
+        Dim m_TypeArgumentList As TypeArgumentList
 
-        m_QualifiedIdentifier = ParseQualifiedIdentifier(result)
-        If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        current = Nothing
 
-        tm.AcceptIfNotInternalError(KS.LParenthesis)
-        tm.AcceptIfNotInternalError(KS.Of)
+        Do
 
-        If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-        End If
+            If current Is Nothing Then
+                result = New ConstructedTypeName(Parent)
+            Else
+                result = New ConstructedTypeName(current)
+            End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            m_QualifiedIdentifier = ParseQualifiedIdentifier(result)
+            If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            m_TypeArgumentList = Nothing
 
-        result.Init(m_QualifiedIdentifier, m_TypeArgumentList)
+            If tm.Accept(KS.LParenthesis) Then
+                tm.AcceptIfNotError(KS.Of)
+
+                If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                End If
+
+                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            End If
+
+            result.Init(current, m_QualifiedIdentifier, m_TypeArgumentList)
+
+            current = result
+        Loop While tm.Accept(KS.Dot)
 
         Return result
     End Function
+
 
     ''' <summary>
     ''' TypeArgumentList ::=	"("  "Of"  TypeArgumentList  ")"
@@ -1468,7 +1513,10 @@ Partial Public Class Parser
             Dim newType As TypeDeclaration
             newType = ParseTypeDeclaration(Parent, attributes, currentNameSpace)
             If newType IsNot Nothing Then
-                Parent.Members.Add(newType)
+                If Not Parent.Members.Contains(newType) Then
+                    'This may be false for partial types
+                    Parent.Members.Add(newType)
+                End If
             ElseIf tm.Accept(KS.Namespace) Then
                 Dim qi As QualifiedIdentifier
                 qi = ParseQualifiedIdentifier(Parent)

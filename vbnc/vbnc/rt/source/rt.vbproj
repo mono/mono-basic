@@ -11,21 +11,9 @@
     <AssemblyName>rt</AssemblyName>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <OptionStrict>On</OptionStrict>
-    <PublishUrl>http://localhost/Regression Tester</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
     <FallbackCulture>en-US</FallbackCulture>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
     <UpdateUrlEnabled>false</UpdateUrlEnabled>
-    <ApplicationVersion>1.0.0.*</ApplicationVersion>
-    <ApplicationRevision>0</ApplicationRevision>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
@@ -34,6 +22,20 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <PublishUrl>http://localhost/Regression Tester</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -52,8 +54,7 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>GUI</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
@@ -100,12 +101,12 @@
     <Import Include="System.Drawing" />
     <Import Include="System.Diagnostics" />
     <Import Include="System.Windows.Forms" />
+    <Import Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="CecilCompare.vb" />
     <Compile Include="CecilComparer.vb" />
-    <Compile Include="CommandLine.vb" />
     <Compile Include="CompilerHelper.vb" />
     <Compile Include="EnhancedProgressBar.Designer.vb">
       <DependentUpon>EnhancedProgressBar.vb</DependentUpon>
@@ -128,22 +129,10 @@
     <Compile Include="frmAssemblyDiff.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmDiff.Designer.vb">
-      <DependentUpon>frmDiff.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frmDiff.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="frmMain.Designer.vb">
       <DependentUpon>frmMain.vb</DependentUpon>
     </Compile>
     <Compile Include="frmMain.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmNewTest.Designer.vb">
-      <DependentUpon>frmNewTest.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frmNewTest.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmTestEditor.Designer.vb">
@@ -154,21 +143,17 @@
     </Compile>
     <Compile Include="Helper.vb">
     </Compile>
-    <Compile Include="HostedCompiler.vb" />
     <Compile Include="ListViewItemComparer.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="OldResult.vb" />
     <Compile Include="Settings.vb" />
     <Compile Include="Test.Results.vb" />
+    <Compile Include="Test.Targets.vb" />
     <Compile Include="Test.vb" />
     <Compile Include="TestExecutor.vb" />
-    <Compile Include="TestList.vb" />
     <Compile Include="Tests.vb" />
-    <Compile Include="TestStatistics.vb" />
     <Compile Include="TestView.vb" />
     <Compile Include="VerificationBase.vb" />
-    <Compile Include="XmlCompare.vb" />
-    <Compile Include="XMLVerifier.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FileTabPage.resx">
@@ -179,17 +164,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>frmAssemblyDiff.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmDiff.resx">
-      <DependentUpon>frmDiff.vb</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.vb</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmNewTest.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>frmNewTest.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTestEditor.resx">
       <SubType>Designer</SubType>
@@ -198,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ChangeLog" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Project\" />
@@ -208,6 +186,36 @@
       <ProductName>.NET Framework 2.0</ProductName>
       <Install>true</Install>
     </BootstrapperFile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sample.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />

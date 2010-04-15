@@ -333,10 +333,10 @@ Public Class MemberAccessExpression
         '** If I identifies an enumeration member, then the result is the value of that enumeration member.
         '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
         If m_First.Classification.IsTypeClassification Then
-            If m_Second.IsKeyword AndAlso m_Second.Token.Equals(KS.[New]) Then
-                '** If I is the keyword New, then a compile-time error occurs.
-                Helper.AddError(Me)
-            End If
+            'If m_Second.IsKeyword AndAlso m_Second.Keyword = KS.New Then
+            '    '** If I is the keyword New, then a compile-time error occurs.
+            '    Helper.AddError(Me)
+            'End If
             Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
             Dim entry As MemberCacheEntry
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
@@ -510,7 +510,7 @@ Public Class MemberAccessExpression
             '** If I is the keyword New and E is an instance expression (Me, MyBase, or MyClass), then the result is 
             '   a method group representing the instance constructors of the type of E with an associated 
             '   instance expression of E and no type argument list. Otherwise, a compile-time error occurs.
-            If m_Second.IsKeyword AndAlso m_Second.Token.Equals(KS.[New]) Then
+            If m_Second.IsKeyword AndAlso m_Second.Keyword = KS.New Then
                 If TypeOf m_First Is InstanceExpression Then
                     Classification = New MethodGroupClassification(Me, m_First, Nothing, Helper.GetInstanceConstructors(T))
                     Return True

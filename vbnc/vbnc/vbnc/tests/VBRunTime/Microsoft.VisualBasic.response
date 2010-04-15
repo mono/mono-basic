@@ -15,7 +15,6 @@
 -nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005 
 -optionstrict+ 
 -imports:System,System.Diagnostics,System.Collections,System.Collections.Generic,System.Data
--out:Microsoft.VisualBasic.dll
 
 #Non-general arguments
 -debug:full

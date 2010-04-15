@@ -36,12 +36,36 @@ Public Class ArgumentList
 
     Private m_Arguments As New BaseObjects(Of Argument)(Me)
 
-    Sub ReplaceArguments(ByVal NewArguments As Generic.List(Of Argument))
-        m_Arguments.Clear()
-        If NewArguments IsNot Nothing Then m_Arguments.AddRange(NewArguments)
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.New(Parent)
     End Sub
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As Generic.List(Of Argument), ByVal Method As Mono.Cecil.MethodReference) As Boolean
+    Sub New(ByVal Parent As ParsedObject, ByVal ParamArray Expressions() As Expression)
+        MyBase.New(Parent)
+        If Expressions IsNot Nothing Then
+            For Each item As Expression In Expressions
+                m_Arguments.Add(New PositionalArgument(Me, m_Arguments.Count, item))
+            Next
+        End If
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal Arguments As Generic.List(Of Argument))
+        MyBase.New(Parent)
+        If Arguments IsNot Nothing Then
+            m_Arguments.AddRange(Arguments)
+        End If
+    End Sub
+
+    Sub Init(ByVal Arguments As BaseObjects(Of Argument))
+        m_Arguments = Arguments
+    End Sub
+
+    Sub ReplaceArguments(ByVal NewArguments As ArgumentList)
+        m_Arguments.Clear()
+        If NewArguments IsNot Nothing Then m_Arguments.AddRange(NewArguments.Arguments)
+    End Sub
+
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
@@ -50,7 +74,7 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As Generic.List(Of Argument), ByVal Method As Mono.Cecil.PropertyReference) As Boolean
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.PropertyReference) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
@@ -199,23 +223,6 @@ Public Class ArgumentList
             Return result
         End Get
     End Property
-
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
-    End Sub
-
-    Sub New(ByVal Parent As ParsedObject, ByVal ParamArray Expressions() As Expression)
-        MyBase.New(Parent)
-        If Expressions IsNot Nothing Then
-            For Each item As Expression In Expressions
-                m_Arguments.Add(New PositionalArgument(Me, m_Arguments.Count, item))
-            Next
-        End If
-    End Sub
-
-    Sub Init(ByVal Arguments As BaseObjects(Of Argument))
-        m_Arguments = Arguments
-    End Sub
 
     Function ToTypes() As Mono.Cecil.TypeReference()
         Dim result(m_Arguments.Count - 1) As Mono.Cecil.TypeReference

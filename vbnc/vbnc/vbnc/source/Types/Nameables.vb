@@ -62,8 +62,11 @@ Public Class Nameables(Of T As INameable)
     ''' <param name="Base"></param>
     ''' <remarks></remarks>
     Shadows Sub Add(ByVal Base As T)
+        'This is a workaround for #463303
+        Dim B As INameable = DirectCast(Base, INameable)
+
 #If DEBUG Then
-        If Base.Name = "" Then Throw New InternalException(Base)
+        If B.Name = "" Then Throw New InternalException(Base)
 #End If
         MyBase.Add(Base)
         m_Index.Add(Base)

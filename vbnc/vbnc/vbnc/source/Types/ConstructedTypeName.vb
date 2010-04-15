@@ -18,12 +18,19 @@
 ' 
 
 ''' <summary>
-''' ConstructedTypeName ::=	QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+''' ConstructedTypeName ::=	
+'''     QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+'''     ConstructedTypeName "." QualifiedIdentifier [LAMESPEC]
+'''     ConstructedTypeName "." QualifiedIdentifier "(" "Of" TypeArgumentList ")" [LAMESPEC]
+''' 
+''' LAMESPEC:
+'''   A(Of T).B.C(Of S).D.E(Of U)
 ''' </summary>
 ''' <remarks></remarks>
 Public Class ConstructedTypeName
     Inherits ParsedObject
 
+    Private m_ConstructedTypeName As ConstructedTypeName
     Private m_QualifiedIdentifier As QualifiedIdentifier
     Private m_TypeArgumentList As TypeArgumentList
 
@@ -41,6 +48,12 @@ Public Class ConstructedTypeName
         m_TypeArgumentList = TypeArgumentList
     End Sub
 
+    Sub Init(ByVal ConstructedTypeName As ConstructedTypeName, ByVal QualifiedIdentifier As QualifiedIdentifier, ByVal TypeArgumentList As TypeArgumentList)
+        m_ConstructedTypeName = ConstructedTypeName
+        m_QualifiedIdentifier = QualifiedIdentifier
+        m_TypeArgumentList = TypeArgumentList
+    End Sub
+
     Sub Init(ByVal QualifiedIdentifier As QualifiedIdentifier, ByVal TypeArgumentList As TypeArgumentList)
         m_QualifiedIdentifier = QualifiedIdentifier
         m_TypeArgumentList = TypeArgumentList
@@ -52,6 +65,12 @@ Public Class ConstructedTypeName
         result.Init(m_QualifiedIdentifier.Clone(result), m_TypeArgumentList.Clone(result))
         Return result
     End Function
+
+    Public ReadOnly Property ConstructedTypeName() As ConstructedTypeName
+        Get
+            Return m_ConstructedTypeName
+        End Get
+    End Property
 
     ReadOnly Property OpenResolvedType() As Mono.Cecil.TypeReference
         Get
@@ -86,28 +105,105 @@ Public Class ConstructedTypeName
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        result = m_TypeArgumentList.ResolveTypeReferences AndAlso result
+        If m_TypeArgumentList IsNot Nothing Then result = m_TypeArgumentList.ResolveTypeReferences AndAlso result
+        If m_ConstructedTypeName IsNot Nothing Then result = m_ConstructedTypeName.ResolveTypeReferences AndAlso result
 
-        Dim nri As New TypeNameResolutionInfo(Me, Me, m_TypeArgumentList.Count)
-        result = nri.Resolve AndAlso result
+        If result = False Then Return False
 
-        If result = False Then Return result
+        If m_ConstructedTypeName IsNot Nothing Then
+            Dim cache As MemberCache
+            Dim entry As MemberCacheEntry
+            Dim stack As New Generic.Stack(Of QualifiedIdentifier)
+            Dim argumentCount As Integer
 
-        If nri.FoundOnlyOneObject Then
-            'If nri.FoundIs(Of TypeDescriptor)() Then
-            '    m_OpenResolvedType = nri.FoundAs(Of TypeDescriptor)()
-            'Else
-            If nri.FoundIs(Of IType)() Then
-                m_OpenResolvedType = nri.FoundAs(Of IType).CecilType
-            ElseIf nri.FoundIs(Of Mono.Cecil.TypeReference)() Then
-                m_OpenResolvedType = nri.FoundAsType
+            argumentCount = CecilHelper.GetGenericArguments(m_ConstructedTypeName.ResolvedType).Length
+            cache = Compiler.TypeManager.GetCache(m_ConstructedTypeName.ResolvedType)
+
+            Dim tmp As QualifiedIdentifier = m_QualifiedIdentifier
+
+            While tmp.IsFirstQualifiedIdentifier
+                stack.Push(tmp)
+                tmp = tmp.FirstAsQualifiedIdentifier
+            End While
+
+            Do
+                If tmp.IsFirstIdentifier Then
+                    Dim id As Identifier = tmp.FirstAsIdentifier
+                    If tmp Is m_QualifiedIdentifier AndAlso m_TypeArgumentList IsNot Nothing Then
+                        argumentCount = m_TypeArgumentList.Count
+                    Else
+                        argumentCount = 0
+                    End If
+                    entry = cache.LookupFlattened(Helper.CreateGenericTypename(id.Name, argumentCount), Me.FindFirstParent_IType.CecilType)
+                    If entry Is Nothing OrElse entry.Members.Count = 0 Then
+                        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                        Return False
+                    ElseIf entry.Members.Count > 1 Then
+                        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                        Return False
+                    Else
+                        Dim memberType As Mono.Cecil.TypeReference = TryCast(entry.Members(0), Mono.Cecil.TypeReference)
+                        If memberType IsNot Nothing Then
+                            Dim nextCache As MemberCache
+
+                            nextCache = Compiler.TypeManager.GetCache(memberType)
+                            argumentCount += CecilHelper.GetGenericArguments(memberType).Length
+
+
+                            cache = nextCache
+                        Else
+                            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                            Return False
+                        End If
+                    End If
+                ElseIf tmp.IsFirstGlobal Then
+                    Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                    Return False
+                Else
+                    Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Internal compiler error.")
+                    Return False
+                End If
+
+                If stack.Count = 0 Then Exit Do
+                tmp = stack.Pop
+            Loop While True
+
+            Dim nextCacheGenericInstance As Mono.Cecil.GenericInstanceType
+            nextCacheGenericInstance = TryCast(cache.Type, Mono.Cecil.GenericInstanceType)
+            If m_TypeArgumentList IsNot Nothing AndAlso nextCacheGenericInstance IsNot Nothing Then
+                Dim gi As New Mono.Cecil.GenericInstanceType(nextCacheGenericInstance.ElementType)
+                For i As Integer = 0 To nextCacheGenericInstance.GenericArguments.Count - 1
+                    gi.GenericArguments.Add(nextCacheGenericInstance.GenericArguments(i))
+                Next
+                For i As Integer = 0 To m_TypeArgumentList.Count - 1
+                    gi.GenericArguments.Add(Helper.GetTypeOrTypeReference(Me.Compiler, m_TypeArgumentList(i).ResolvedType))
+                Next
+                m_ResolvedType = gi
+            Else
+                m_ResolvedType = cache.Type
+            End If
+
+        ElseIf m_TypeArgumentList IsNot Nothing Then
+            Dim nri As New TypeNameResolutionInfo(Me, Me, m_TypeArgumentList.Count)
+            result = nri.Resolve AndAlso result
+
+            If result = False Then Return result
+
+            If nri.FoundOnlyOneObject Then
+                If nri.FoundIs(Of IType)() Then
+                    m_OpenResolvedType = nri.FoundAs(Of IType).CecilType
+                ElseIf nri.FoundIs(Of Mono.Cecil.TypeReference)() Then
+                    m_OpenResolvedType = nri.FoundAsType
+                Else
+                    Helper.AddError(Me)
+                End If
+                m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, m_TypeArgumentList.ArgumentCollection)
+                m_ResolvedType = m_ClosedResolvedType
             Else
                 Helper.AddError(Me)
             End If
-            m_ClosedResolvedType = Compiler.TypeManager.MakeGenericType(Me, m_OpenResolvedType, m_TypeArgumentList.ArgumentCollection)
-            m_ResolvedType = m_ClosedResolvedType
         Else
-            Helper.AddError(Me)
+            Helper.Stop()
         End If
 
         Return result

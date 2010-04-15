@@ -31,7 +31,6 @@ Public Class ExternalProcessExecutor
     Private m_WorkingDirectory As String
 
     Private m_UseTemporaryExecutable As Boolean
-    Private m_Stats As TestStatistics
 
     Private m_LastWriteDate As Date
     Private m_Version As FileVersionInfo
@@ -52,12 +51,6 @@ Public Class ExternalProcessExecutor
     ReadOnly Property LastWriteDate() As Date
         Get
             Return m_LastWriteDate
-        End Get
-    End Property
-
-    ReadOnly Property Statistics() As TestStatistics
-        Get
-            Return m_Stats
         End Get
     End Property
 
@@ -271,7 +264,6 @@ Public Class ExternalProcessExecutor
                 process.Kill()
             End If
             m_ExitCode = process.ExitCode
-            m_Stats = New TestStatistics(process)
 
             process.Close()
             'process.CancelOutputRead()

@@ -355,7 +355,6 @@ Public Class TypeManager
     '    types.Add(Type)
     'End Sub
 
-#If ENABLECECIL Then
     ''' <summary>
     ''' Load the type into the various lists.
     ''' </summary>
@@ -375,25 +374,18 @@ Public Class TypeManager
         If Helper.IsModule(Compiler, Type) Then
             m_CecilModuleTypes.Add(Type)
             m_CecilModulesByNamespace.AddType(Type)
+        Else
+            Helper.Assert(Type.Annotations(Compiler) Is Nothing OrElse Not TypeOf Type.Annotations(Compiler) Is ModuleDeclaration)
         End If
 
     End Sub
-#End If
+
     ''' <summary>
     ''' Finds all the public non-nested types in the referenced assemblies and loads them into the lists.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function LoadReferencedTypes() As Boolean
-        'For Each ass As Reflection.Assembly In Assemblies
-        '    Dim types() As Type = ass.GetTypes
-        '    For Each type As Type In types
-        '        If type.IsPublic Then
-        '            LoadType(type)
-        '        End If
-        '    Next
-        'Next
-#If ENABLECECIL Then
         For Each ass As Mono.Cecil.AssemblyDefinition In CecilAssemblies
             Dim types As Mono.Cecil.TypeDefinitionCollection = ass.MainModule.Types
             For Each type As Mono.Cecil.TypeDefinition In types
@@ -402,7 +394,7 @@ Public Class TypeManager
                 End If
             Next
         Next
-#End If
+
         Return True
     End Function
 
@@ -424,12 +416,15 @@ Public Class TypeManager
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function GetModulesByNamespace(ByVal [Namespace] As String) As TypeDictionary
+        Dim result As TypeDictionary = Nothing
+
         If [Namespace] Is Nothing Then [Namespace] = ""
         If [Namespace].StartsWith("Global.") Then [Namespace] = [Namespace].Substring(7)
-        If m_CecilModulesByNamespace.ContainsKey([Namespace]) Then
-            Return m_CecilModulesByNamespace([Namespace])
+
+        If m_CecilModulesByNamespace.TryGetValue([Namespace], result) Then
+            Return result
         Else
-            Return New TypeDictionary()
+            Return Nothing
         End If
     End Function
 

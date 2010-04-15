@@ -114,7 +114,8 @@ Public Class EnumDeclaration
 
         TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
         'FIXME: Use the type cache when #351879 is fixed.
-        BaseType = Compiler.AssemblyBuilderCecil.MainModule.Import(GetType(System.Enum)) ' Compiler.CecilTypeCache.System_Enum
+        'BaseType = Compiler.AssemblyBuilderCecil.MainModule.Import(GetType(System.Enum)) ' Compiler.CecilTypeCache.System_Enum
+        BaseType = Compiler.TypeCache.System_Enum
 
         If m_ValueField Is Nothing AndAlso m_QualifiedName <> KS.None Then
             m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType), Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName)

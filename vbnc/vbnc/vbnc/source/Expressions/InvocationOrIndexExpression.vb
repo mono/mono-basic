@@ -345,10 +345,9 @@ Public Class InvocationOrIndexExpression
             result = ResolveDelegateInvocation(Context, VariableType)
         ElseIf Helper.HasDefaultProperty(Me, VariableType, defaultProperties) Then
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
-            Dim finalArguments As Generic.List(Of Argument) = Nothing
-            result = propGroup.ResolveGroup(m_ArgumentList, finalArguments)
+            result = propGroup.ResolveGroup(m_ArgumentList)
             If result Then
-                m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, propGroup.ResolvedProperty)
+                m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty)
             End If
             Classification = New PropertyAccessClassification(propGroup)
             'Classification = propGroup
@@ -449,10 +448,10 @@ Public Class InvocationOrIndexExpression
 
     Private Function ResolvePropertyGroupInvocation() As Boolean
         Dim result As Boolean = True
-
-        Dim finalArguments As Generic.List(Of Argument) = Nothing
+        Dim propGroup As PropertyGroupClassification = m_Expression.Classification.AsPropertyGroup
         Dim tmpResult As Boolean
-        tmpResult = m_Expression.Classification.AsPropertyGroup.ResolveGroup(m_ArgumentList, finalArguments)
+
+        tmpResult = propGroup.ResolveGroup(m_ArgumentList)
 
         If tmpResult = False Then
             tmpResult = ResolveReclassifyToValueThenIndex()
@@ -461,10 +460,10 @@ Public Class InvocationOrIndexExpression
 
             Return tmpResult
         Else
-            result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_Expression.Classification.AsPropertyGroup.ResolvedProperty) AndAlso result
+            result = m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty) AndAlso result
         End If
 
-        Classification = New PropertyAccessClassification(m_Expression.Classification.AsPropertyGroup)
+        Classification = New PropertyAccessClassification(propGroup)
 
         Return result
     End Function
@@ -513,14 +512,13 @@ Public Class InvocationOrIndexExpression
         If reclassifyToIndex Then
             Return ResolveReclassifyToValueThenIndex()
         Else
-            Dim finalArguments As Generic.List(Of Argument) = Nothing
-            result = mgc.ResolveGroup(m_ArgumentList, finalArguments)
+            result = mgc.ResolveGroup(m_ArgumentList)
             If result Then
                 If mgc.IsLateBound = False Then
-                    m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+                    m_ArgumentList.ReplaceAndVerifyArguments(mgc.FinalArguments, mgc.ResolvedMethod)
                 End If
             Else
-                mgc.ResolveGroup(m_ArgumentList, finalArguments, , True)
+                mgc.ResolveGroup(m_ArgumentList, , True)
                 Return False
             End If
         End If

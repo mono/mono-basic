@@ -73,7 +73,7 @@ Public Class VariableClassification
             Helper.Assert(IsConstant)
             If Me.FieldInfo IsNot Nothing Then
                 If Me.FieldDefinition.IsLiteral Then
-                    If Me.FieldDefinition.HasConstant = False Then
+                    If Me.FieldDefinition.HasConstant = False OrElse Me.FieldDefinition.Constant Is Nothing Then
                         Dim field As IFieldMember = TryCast(Me.FieldInfo.Annotations(Compiler), IFieldMember)
                         Dim value As Object = Nothing
                         If field.ResolveAndGetConstantValue(value) Then

@@ -79,6 +79,24 @@ Public Class TypeParameter
         Return result
     End Function
 
+    Shared Function Clone(ByVal Builder As Mono.Cecil.GenericParameter, ByVal Owner As Mono.Cecil.IGenericParameterProvider, ByVal Position As Integer) As Mono.Cecil.GenericParameter
+        Dim result As New Mono.Cecil.GenericParameter(Builder.Name, Owner)
+
+        For i As Integer = 0 To Builder.Constraints.Count - 1
+            result.Constraints.Add(Builder.Constraints(i))
+        Next
+
+        result.HasDefaultConstructorConstraint = Builder.HasDefaultConstructorConstraint
+        result.HasNotNullableValueTypeConstraint = Builder.HasNotNullableValueTypeConstraint
+        result.HasReferenceTypeConstraint = Builder.HasReferenceTypeConstraint
+        result.IsContravariant = Builder.IsContravariant
+        result.IsCovariant = Builder.IsCovariant
+        result.IsNonVariant = Builder.IsNonVariant
+        result.Position = Position
+
+        Return result
+    End Function
+
     Property Identifier() As Identifier
         Get
             Return m_Identifier

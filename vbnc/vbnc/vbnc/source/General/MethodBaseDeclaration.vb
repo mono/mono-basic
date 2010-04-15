@@ -17,6 +17,9 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+Imports System.Security
+Imports System.Security.Permissions
+
 Public MustInherit Class MethodBaseDeclaration
     Inherits MemberDeclaration
     Implements IMethod
@@ -28,6 +31,9 @@ Public MustInherit Class MethodBaseDeclaration
 
     Private m_MethodOverrides As Mono.Cecil.MethodReference
     Private m_CecilBuilder As Mono.Cecil.MethodDefinition
+
+    Private m_HasSecurityCustomAttribute As Nullable(Of Boolean)
+    Private m_DefinedSecurityDeclarations As Boolean
 
     Protected Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
@@ -83,12 +89,124 @@ Public MustInherit Class MethodBaseDeclaration
         End If
 
         MethodAttributes = Helper.GetAttributes(Me)
-        If TypeOf Me Is ExternalSubDeclaration Then
+        If IsExternalDeclaration Then
             MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.PreserveSig
         Else
             MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
         End If
     End Sub
+
+    Public ReadOnly Property IsExternalDeclaration() As Boolean
+        Get
+            If TypeOf Me Is ExternalSubDeclaration Then Return True
+            If CustomAttributes Is Nothing Then Return False
+            For i As Integer = 0 To CustomAttributes.Count - 1
+                If CustomAttributes(i).ResolvedType Is Nothing Then Continue For
+                If Helper.CompareType(CustomAttributes(i).ResolvedType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then Return True
+            Next
+            Return False
+        End Get
+    End Property
+
+    Private Function DefineSecurityDeclarations() As Boolean
+        Dim result As Boolean = True
+        Dim checkedAll As Boolean = True
+
+        If m_DefinedSecurityDeclarations Then Return True
+
+        If CustomAttributes Is Nothing Then Return True
+
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            If CustomAttributes(i).ResolvedType Is Nothing Then
+                checkedAll = False
+                Exit For
+            End If
+        Next
+
+        If Not checkedAll Then Return True
+
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            Dim attrib As Attribute = CustomAttributes(i)
+
+            If Not Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, attrib.ResolvedType) Then Continue For
+
+            If attrib.ResolvedType.Scope Is Compiler.ModuleBuilderCecil Then
+                Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, "Security attributes cannot be defined in the same assembly as the code being compiled")
+                result = False
+                Continue For
+            End If
+
+            Try
+                Dim sec As Mono.Cecil.SecurityDeclaration
+                Dim attribInstantiation As Object = Nothing
+                Dim attribInstance As SecurityAttribute
+                Dim attribAction As Mono.Cecil.SecurityAction
+                Dim attribPermission As IPermission
+                Dim attribPermissionSetAttribute As PermissionSetAttribute
+
+                If attrib.Instantiate(Messages.VBNC30128, attribInstantiation) = False Then
+                    'Attribute.Instantiate prints an error message
+                    result = False
+                    Continue For
+                End If
+
+                attribInstance = TryCast(attribInstantiation, SecurityAttribute)
+                If attribInstance Is Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, "Security attribute does not inherit from System.Security.Permissions.SecurityAttribute")
+                    result = False
+                    Continue For
+                End If
+
+                attribAction = CType(attribInstance.Action, Mono.Cecil.SecurityAction)
+                attribPermissionSetAttribute = TryCast(attribInstance, PermissionSetAttribute)
+
+                sec = New Mono.Cecil.SecurityDeclaration(attribAction)
+
+                If attribPermissionSetAttribute IsNot Nothing Then
+                    sec.PermissionSet = attribPermissionSetAttribute.CreatePermissionSet()
+                Else
+                    attribPermission = attribInstance.CreatePermission
+                    sec.PermissionSet = New System.Security.PermissionSet(PermissionState.None)
+                    sec.PermissionSet.AddPermission(attribPermission)
+                End If
+
+                CecilBuilder.SecurityDeclarations.Add(sec)
+                CustomAttributes.Remove(attrib)
+                CecilBuilder.CustomAttributes.Remove(attrib.CecilBuilder)
+            Catch ex As Exception
+                Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, ex.Message)
+                result = False
+            End Try
+
+        Next
+
+        m_DefinedSecurityDeclarations = True
+
+        Return result
+    End Function
+
+    ReadOnly Property HasSecurityCustomAttribute() As Boolean
+        Get
+            Dim checkedAll As Boolean = True
+
+            If CustomAttributes Is Nothing Then Return False
+
+            If m_HasSecurityCustomAttribute.HasValue Then Return m_HasSecurityCustomAttribute.Value
+
+            For i As Integer = 0 To CustomAttributes.Count - 1
+                If CustomAttributes(i).ResolvedType Is Nothing Then
+                    checkedAll = False
+                ElseIf Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, CustomAttributes(i).ResolvedType) Then
+                    m_HasSecurityCustomAttribute = True
+                    Return True
+                End If
+            Next
+
+            If checkedAll Then m_HasSecurityCustomAttribute = False
+
+            Return False
+        End Get
+    End Property
 
     Property ReturnType() As Mono.Cecil.TypeReference
         Get
@@ -162,13 +280,6 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    'Public MustOverride ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator Implements IMethod.ILGenerator
-    'Public ReadOnly Property MethodBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.MethodBuilder
-    '    Get
-    '        Return m_CecilBuilder
-    '    End Get
-    'End Property
-
     Public ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.CecilBuilder
         Get
             Return m_CecilBuilder
@@ -193,12 +304,6 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    'Public ReadOnly Property MethodDescriptor() As Mono.Cecil.MethodDefinition Implements IMethod.MethodDescriptor
-    '    Get
-    '        Return m_CecilBuilder
-    '    End Get
-    'End Property
-
     Public ReadOnly Property Signature() As SubSignature Implements IMethod.Signature
         Get
             Return m_Signature
@@ -212,7 +317,7 @@ Public MustInherit Class MethodBaseDeclaration
 
         result = m_Signature.ResolveTypeReferences AndAlso result
         If result = False Then Return result
-        'm_ParameterTypes = m_Signature.Parameters.ToTypeArray
+
         ReturnType = m_Signature.ReturnType
 
         If m_Code IsNot Nothing Then result = m_Code.ResolveTypeReferences AndAlso result
@@ -244,6 +349,8 @@ Public MustInherit Class MethodBaseDeclaration
 
     Public Overridable Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
+
+        result = DefineSecurityDeclarations() AndAlso result
 
         Return result
     End Function

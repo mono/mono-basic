@@ -160,7 +160,9 @@ Public Class AssemblyDeclaration
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        For Each type As TypeDeclaration In m_TypeDeclarations
+        For i As Integer = 0 To m_TypeDeclarations.Length - 1
+            Dim type As TypeDeclaration = m_TypeDeclarations(i)
+
 #If EXTENDEDDEBUG Then
             Dim iCount As Integer
             iCount += 1
@@ -463,8 +465,8 @@ Public Class AssemblyDeclaration
     End Sub
 
     Sub SetFileVersion()
-    	'TOOD: This is not ready yet, it creates invalid binaries somehow.
-    	Return
+        'TOOD: This is not ready yet, it creates invalid binaries somehow.
+        Return
         Dim product As String = String.Empty
         Dim productversion As String = String.Empty
         Dim company As String = String.Empty
@@ -501,7 +503,7 @@ Public Class AssemblyDeclaration
         If Not has_rsrc Then
             Dim s As New Mono.Cecil.Binary.Section()
             s.Name = Mono.Cecil.Binary.Section.Resources
-            Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.add(s)
+            Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Add(s)
         End If
         Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot = New Mono.Cecil.Binary.ResourceDirectoryTable()
         Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot.Entries.Add(r1)

@@ -131,7 +131,6 @@ Module MainModule
         End If
     End Function
 
-
     Sub ShowHelp(ByVal Type As Type)
         Dim properties As PropertyInfo()
 
@@ -415,15 +414,34 @@ Class rt_console
             Console.WriteLine("Checking " & parentDir & " for KnownFailures.txt")
             If IO.File.Exists(knownFailures) Then
                 Console.WriteLine(" Found KnownFailures.txt in parent directory (" & parentDir & "), loading that directory too...")
-                Parent = New Tests(Nothing, parentDir, m_Compiler, m_VBC, False)
+                Parent = New Tests(Nothing, parentDir, m_Compiler, m_VBC, True)
             End If
         Catch ex As Exception
         End Try
 
-        tests = New Tests(Parent, Directory, m_Compiler, m_VBC, False)
+        tests = New Tests(Parent, Directory, m_Compiler, m_VBC, True)
         If m_PrintStatus = False Then
             Console.WriteLine(tests.Count & " tests found.")
         End If
+
+        Dim xmlsettings As New XmlWriterSettings
+        Dim xmldir As String = Directory
+        xmlsettings.CheckCharacters = True
+        xmlsettings.CloseOutput = True
+        xmlsettings.ConformanceLevel = ConformanceLevel.Document
+        xmlsettings.Indent = True
+        xmlsettings.IndentChars = vbTab
+        xmlsettings.NewLineChars = vbCrLf
+        xmlsettings.NewLineHandling = NewLineHandling.Entitize
+        xmlsettings.NewLineOnAttributes = False
+        xmlsettings.OmitXmlDeclaration = False
+
+        Using Xml As XmlWriter = XmlWriter.Create(IO.Path.Combine(Directory, "tests.xml"), xmlsettings)
+            tests.Save(Directory, Xml)
+        End Using
+
+        Return result
+
         For Each test As Test In tests
             result = RunTest(test) AndAlso result
         Next
@@ -448,8 +466,6 @@ Class rt_console
 
     Private Function ShowStatus(ByVal t As Test) As Boolean
         Dim status As String
-
-        t.LoadOldResults()
 
         status = t.OldResult.ToString()
 

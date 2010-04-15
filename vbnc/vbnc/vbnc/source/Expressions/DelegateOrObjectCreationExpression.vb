@@ -176,15 +176,15 @@ Public Class DelegateOrObjectCreationExpression
                 m_IsGenericConstructor = True
             ElseIf CecilHelper.IsClass(resolvedType) OrElse CecilHelper.IsValueType(resolvedType) Then
                 Dim ctors As Mono.Cecil.MemberReferenceCollection
-                Dim finalArguments As Generic.List(Of Argument) = m_ArgumentList.Arguments
+
                 ctors = CecilHelper.GetConstructors(resolvedType)
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
-                result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, finalArguments) AndAlso result
+                result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList) AndAlso result
                 If result = False Then
-                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, finalArguments, , True) AndAlso result
+                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, , True) AndAlso result
                     Helper.AddError(Me, "Delegate problems 3, " & Me.Location.ToString(Compiler) & ">" & Me.Parent.Location.ToString(Compiler))
                 Else
-                    result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
+                    result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
             Else
                 Helper.AddError(Me, "Delegate problems 4, " & Me.Location.ToString(Compiler))

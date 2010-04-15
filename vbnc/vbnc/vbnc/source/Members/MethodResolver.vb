@@ -623,15 +623,27 @@ Public Class MemberCandidate
         For j As Integer = 0 To InputParameters.Count - 1
             Dim arg As Argument
             Dim param As Mono.Cecil.ParameterDefinition
+            Dim IsConvertible As Boolean
+            Dim elementType As Mono.Cecil.TypeReference
+            Dim initializer As Expression
 
             param = InputParameters(j)
             arg = ExactArguments(j)
 
             If ExceptObject AndAlso Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.System_Object) Then Continue For
 
-            Dim IsConvertible As Boolean
-            'IsConvertible = Helper.IsConvertible(Compiler, arg, param)
-            IsConvertible = Compiler.TypeResolution.IsImplicitlyConvertible(arg, arg.Expression.ExpressionType, param.ParameterType)
+            If m_IsParamArray AndAlso j = InputParameters.Count - 1 AndAlso ParamArrayExpression IsNot Nothing Then
+                'To match the automatically created array for the paramarray parameter each argument has to be 
+                'implicitly convertible to the element type of the paramarray parameter type.
+                IsConvertible = True
+                elementType = CType(param.ParameterType, Mono.Cecil.ArrayType).ElementType
+                For k As Integer = 0 To ParamArrayExpression.ArrayElementInitalizer.Initializers.Count - 1
+                    initializer = ParamArrayExpression.ArrayElementInitalizer.Initializers(k).AsRegularInitializer
+                    IsConvertible = IsConvertible AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(arg, initializer.ExpressionType, elementType)
+                Next
+            Else
+                IsConvertible = Compiler.TypeResolution.IsImplicitlyConvertible(arg, arg.Expression.ExpressionType, param.ParameterType)
+            End If
 
             If IsConvertible = False Then
                 Return True

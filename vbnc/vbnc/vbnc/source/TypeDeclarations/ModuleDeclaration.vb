@@ -37,6 +37,8 @@ Public Class ModuleDeclaration
 
         If m_DefinedStandardModuleAttribute Then Return True
 
+        If Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute Is Nothing Then Return True
+
         newAttrib = New Attribute(Me, Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
         result = newAttrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
 

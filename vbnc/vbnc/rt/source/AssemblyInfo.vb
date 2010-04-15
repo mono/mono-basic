@@ -31,7 +31,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Regression Tester used to test the vbnc compiler.")> 
 <Assembly: AssemblyCompany("Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyProduct("rt")> 
-<Assembly: AssemblyCopyright("Copyright @ 2004 Rolf Bjarne Kvinge")> 
+<Assembly: AssemblyCopyright("Copyright @ 2004 - 2009 Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
@@ -50,6 +50,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.0.0.300")>
+<Assembly: AssemblyVersion("0.0.0.362")>
 
 <Assembly: AssemblyFileVersion("0.0.0.1")> 

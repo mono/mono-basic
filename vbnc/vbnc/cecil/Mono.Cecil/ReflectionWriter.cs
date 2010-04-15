@@ -679,6 +679,12 @@ namespace Mono.Cecil {
 					t = Enum.GetUnderlyingType (t);
 
 				et = GetCorrespondingType (string.Concat (t.Namespace, '.', t.Name));
+			} else if ((type is GenericInstanceType) && (type as GenericInstanceType).ElementType is TypeDefinition && ((type as GenericInstanceType).ElementType as TypeDefinition).IsEnum) {
+				Type t = hc.Constant.GetType ();
+				if (t.IsEnum)
+					t = Enum.GetUnderlyingType (t);
+
+				et = GetCorrespondingType (string.Concat (t.Namespace, '.', t.Name));
 			} else
 				et = GetCorrespondingType (type.FullName);
 

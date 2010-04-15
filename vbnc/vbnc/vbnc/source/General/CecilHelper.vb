@@ -40,7 +40,7 @@ Public Class CecilHelper
 
 #If ENABLECECIL And Debug Then
     Public Shared Sub Test()
-        Dim a As AssemblyDefinition
+        Dim a As AssemblyDefinition = Nothing
         For Each Type As TypeDefinition In a.MainModule.Types
             System.Diagnostics.Debug.WriteLine(Type.FullName)
             For Each field As FieldDefinition In Type.Fields
@@ -254,6 +254,15 @@ Public Class CecilHelper
         result = New Mono.Cecil.GenericInstanceType(Member)
         result.DeclaringType = FindDefinition(Type)
 
+        Dim tGI As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
+        If Member.DeclaringType IsNot Nothing AndAlso tGI IsNot Nothing AndAlso Helper.CompareType(Member.DeclaringType, tGI.ElementType) Then
+            'Nested generic type
+            For i As Integer = 0 To tGI.GenericArguments.Count - 1
+                result.GenericArguments.Add(Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, tGI.GenericArguments(i)))
+            Next
+            Return result
+        End If
+
         For i As Integer = 0 To Member.GenericParameters.Count - 1
             Dim found As Boolean = False
             For j As Integer = 0 To genericType.ElementType.GenericParameters.Count - 1
@@ -264,6 +273,7 @@ Public Class CecilHelper
                     Exit For
                 End If
             Next
+
             If Not found Then Throw New NotImplementedException
         Next
 
@@ -311,6 +321,7 @@ Public Class CecilHelper
         Dim parameters As GenericParameterCollection
         Dim arguments As GenericArgumentCollection
         Dim genericCollection As GenericInstanceType = TryCast(container, GenericInstanceType)
+        Dim containerDef As TypeDefinition
 
         If genericCollection Is Nothing Then
             Return original
@@ -331,7 +342,13 @@ Public Class CecilHelper
             Return result
         End If
 
-        parameters = genericCollection.ElementType.GenericParameters
+        containerDef = CecilHelper.FindDefinition(container)
+
+        If containerDef IsNot Nothing Then
+            parameters = containerDef.GenericParameters
+        Else
+            parameters = genericCollection.ElementType.GenericParameters
+        End If
         arguments = genericCollection.GenericArguments
 
         If parameters.Count <> arguments.Count Then
@@ -347,9 +364,19 @@ Public Class CecilHelper
 
         If genericType IsNot Nothing Then
             Dim result As New GenericInstanceType(genericType.ElementType)
-            For i As Integer = 0 To genericType.ElementType.GenericParameters.Count - 1
+            'originalDef = CecilHelper.FindDefinition(original)
+            'For i As Integer = 0 To originalDef.GenericParameters.Count - 1
+            '    For j As Integer = 0 To parameters.Count - 1
+            '        If parameters(j) Is originalDef.GenericParameters(i) Then
+            '            result.GenericArguments.Add(InflateType(originalDef.GenericParameters(i), container))
+            '            Exit For
+            '        End If
+            '    Next
+            'Next
+            For i As Integer = 0 To genericType.GenericArguments.Count - 1
                 result.GenericArguments.Add(InflateType(genericType.GenericArguments(i), container))
             Next
+            'Helper.Assert(result.GenericArguments.Count = parameters.Count)
             Return result
         End If
 
@@ -634,6 +661,21 @@ Public Class CecilHelper
         Dim tG As GenericInstanceType = TryCast(Method.DeclaringType, GenericInstanceType)
 
         If genM Is Nothing AndAlso tG Is Nothing Then
+            If Method.DeclaringType.GenericParameters.Count > 0 Then
+                tG = New GenericInstanceType(Method.DeclaringType)
+                For i As Integer = 0 To Method.DeclaringType.GenericParameters.Count - 1
+                    tG.GenericArguments.Add(Method.DeclaringType.GenericParameters(i))
+                Next
+
+                Dim mR As New Mono.Cecil.MethodReference(Method.Name, tG, Method.ReturnType.ReturnType, Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
+                For i As Integer = 0 To Method.Parameters.Count - 1
+                    Dim param As Mono.Cecil.ParameterDefinition
+                    param = New Mono.Cecil.ParameterDefinition(Method.Parameters(i).ParameterType)
+                    mR.Parameters.Add(param)
+                Next
+                Return mR
+            End If
+
             Return Method
         End If
 
@@ -666,6 +708,16 @@ Public Class CecilHelper
             Next
             Return result
         End If
+    End Function
+
+    Public Shared Function GetAssemblyRef(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.AssemblyNameReference
+        Dim modDef As ModuleDefinition = TryCast(Type.Scope, ModuleDefinition)
+        If modDef IsNot Nothing Then Return modDef.Assembly.Name
+
+        Dim assemblyRef As Mono.Cecil.AssemblyNameReference = TryCast(Type.Scope, AssemblyNameReference)
+        If assemblyRef IsNot Nothing Then Return assemblyRef
+
+        Throw New NotImplementedException
     End Function
 
     Public Shared Function MakeByRefType(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.ReferenceType
@@ -937,7 +989,7 @@ Public Class CecilHelper
 
         If genericType IsNot Nothing Then
             For i As Integer = 0 To result.Count - 1
-                tmp = CecilHelper.ResolveType(result(i), genericType.ElementType.GenericParameters, genericType.GenericArguments)
+                tmp = CecilHelper.ResolveType(result(i), CecilHelper.FindDefinition(genericType).GenericParameters, genericType.GenericArguments)
                 result.Item(i) = tmp
             Next
         End If
@@ -1003,9 +1055,20 @@ Public Class CecilHelper
 
     Public Shared Function IsClass(ByVal Type As TypeReference) As Boolean
         Dim tD As Mono.Cecil.TypeDefinition
+        Dim tG As Mono.Cecil.GenericParameter
+
         If IsValueType(Type) Then Return False
         If TypeOf Type Is Mono.Cecil.ArrayType Then Return True
+
+        tG = TryCast(Type, Mono.Cecil.GenericParameter)
+        If tG IsNot Nothing Then
+            If tG.HasReferenceTypeConstraint Then Return True
+            If tG.HasNotNullableValueTypeConstraint Then Return False
+            Return True
+        End If
+
         tD = FindDefinition(Type)
+
         Return tD.IsClass
     End Function
 

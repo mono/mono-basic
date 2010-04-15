@@ -216,13 +216,23 @@ Public Class Helper
             result = result Or Mono.Cecil.MethodAttributes.PInvokeImpl
         End If
 
+        If m_Declaration.HasSecurityCustomAttribute Then
+            result = result Or Mono.Cecil.MethodAttributes.HasSecurity
+        End If
+
         Return result
     End Function
 
 
     Public Shared Function GetAttributes(ByVal Compiler As Compiler, ByVal m_Declaration As IFieldMember) As Mono.Cecil.FieldAttributes
         Dim result As Mono.Cecil.FieldAttributes
-        result = m_Declaration.Modifiers.GetFieldAttributeScope(DirectCast(m_Declaration, BaseObject).FindFirstParent(Of TypeDeclaration))
+
+        If m_Declaration.Modifiers.Is(ModifierMasks.WithEvents) Then
+            result = Mono.Cecil.FieldAttributes.Private
+        Else
+            result = m_Declaration.Modifiers.GetFieldAttributeScope(DirectCast(m_Declaration, BaseObject).FindFirstParent(Of TypeDeclaration))
+        End If
+
         If m_Declaration.Modifiers.Is(ModifierMasks.Static) Then
             result = result Or Mono.Cecil.FieldAttributes.SpecialName
             If DirectCast(m_Declaration, BaseObject).FindFirstParent(Of IMethod).IsShared Then
@@ -367,8 +377,6 @@ Public Class Helper
     '    Return result
     'End Function
 
-#If ENABLECECIL Then
-
     Shared Function IsEmittableMember(ByVal Compiler As Compiler, ByVal Member As Mono.Cecil.MemberReference) As Boolean
         Dim result As Boolean
 
@@ -407,7 +415,6 @@ Public Class Helper
             Return type.Module.Assembly
         End If
     End Function
-#End If
 
     'Shared Function IsEmittableMember(ByVal Members() As MemberInfo) As Boolean
     '    If Members Is Nothing Then Return True
@@ -743,12 +750,19 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function GetMembersOfTypes(ByVal Compiler As Compiler, ByVal Types As TypeDictionary, ByVal Name As String) As Generic.List(Of Mono.Cecil.MemberReference)
-        Dim result As New Generic.List(Of Mono.Cecil.MemberReference)
+        Dim result As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
+
+        If Types Is Nothing Then Return Nothing
+
         For Each type As Mono.Cecil.TypeReference In Types.Values
             Dim members As Generic.List(Of Mono.Cecil.MemberReference)
             members = Compiler.TypeManager.GetCache(type).LookupFlattenedMembers(Name)
-            If members IsNot Nothing Then result.AddRange(members)
+            If members IsNot Nothing Then
+                If result Is Nothing Then result = New Generic.List(Of Mono.Cecil.MemberReference)
+                result.AddRange(members)
+            End If
         Next
+
         Return result
     End Function
 
@@ -758,12 +772,19 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function GetMembersOfTypes(ByVal Compiler As Compiler, ByVal Types As TypeList, ByVal Name As String) As Generic.List(Of Mono.Cecil.MemberReference)
-        Dim result As New Generic.List(Of Mono.Cecil.MemberReference)
+        Dim result As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
+
+        If Types Is Nothing Then Return Nothing
+
         For Each type As Mono.Cecil.TypeReference In Types
             Dim members As Generic.List(Of Mono.Cecil.MemberReference)
             members = Compiler.TypeManager.GetCache(type).LookupFlattenedMembers(Name)
-            If members IsNot Nothing Then result.AddRange(members)
+            If members IsNot Nothing AndAlso members.Count > 0 Then
+                If result Is Nothing Then result = New Generic.List(Of Mono.Cecil.MemberReference)
+                result.AddRange(members)
+            End If
         Next
+
         Return result
     End Function
 
@@ -1093,7 +1114,6 @@ Public Class Helper
         ''End Select
     End Function
 
-#If ENABLECECIL Then
     Shared Function IsPrivate(ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Dim mD As Mono.Cecil.MethodDefinition
 
@@ -1121,7 +1141,7 @@ Public Class Helper
 
         Throw New NotImplementedException
     End Function
-#End If
+
     Shared Function IsPublic(ByVal Member As Mono.Cecil.MemberReference) As Boolean
         Return GetAccessibility(Member) = ModifierMasks.Public
         'Select Case Member.MemberType
@@ -1413,7 +1433,6 @@ Public Class Helper
     '    End If
     'End Function
 
-#If ENABLECECIL Then
     ''' <summary>
     ''' Checks if the specified type is a VB Module.
     ''' </summary>
@@ -1422,12 +1441,14 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function IsModule(ByVal Compiler As Compiler, ByVal type As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean
+        Dim annotation As Object = type.Annotations(Compiler)
+
+        If annotation IsNot Nothing AndAlso TypeOf annotation Is ModuleDeclaration Then Return True
 
         result = CecilHelper.IsClass(type) AndAlso Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute IsNot Nothing AndAlso CecilHelper.IsDefined(type.CustomAttributes, Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute)
 
         Return result
     End Function
-#End If
 
     '''' <summary>
     '''' Checks if the specified type is a VB Module.
@@ -1966,7 +1987,6 @@ Public Class Helper
     '    Return result
     'End Function
 
-#If ENABLECECIL Then
     Shared Function GetTypeDefinition(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Return CecilHelper.FindDefinition(Type)
     End Function
@@ -1985,7 +2005,7 @@ Public Class Helper
     Private Shared Function GetTypeReference(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Return GetTypeOrTypeReference(Compiler, Type)
     End Function
-#End If
+
     Shared Sub ApplyTypeArguments(ByVal Context As BaseObject, ByVal Members As Generic.List(Of Mono.Cecil.MemberReference), ByVal TypeArguments As TypeArgumentList)
         If TypeArguments Is Nothing OrElse TypeArguments.Count = 0 Then Return
 
@@ -2488,6 +2508,17 @@ Public Class Helper
             Dim member As Mono.Cecil.MemberReference = grp(i)
             Dim paramtypes As Mono.Cecil.TypeReference() = Helper.GetParameterTypes(Context, member)
             If Helper.CompareTypes(paramtypes, params) Then Return member
+
+            If paramtypes.Length <> params.Length Then Continue For
+
+            Dim found As Boolean = True
+            For j As Integer = 0 To paramtypes.Length - 1
+                If Helper.IsSubclassOf(paramtypes(j), params(j)) = False Then
+                    found = False
+                    Exit For
+                End If
+            Next
+            If found Then Return member
         Next
 
         Return Nothing
@@ -3047,7 +3078,6 @@ Public Class Helper
         Return GetMethodOrMethodReference(Compiler, Method)
     End Function
 
-#If ENABLECECIL Then
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
         Helper.Assert(Method IsNot Nothing)
         Helper.Assert(Method.DeclaringType IsNot Nothing)
@@ -3079,7 +3109,6 @@ Public Class Helper
             Return Compiler.AssemblyBuilderCecil.MainModule.Import(field)
         End If
     End Function
-#End If
 
     Shared Function GetPropertyOrPropertyBuilder(ByVal Compiler As Compiler, ByVal [Property] As Mono.Cecil.PropertyReference) As Mono.Cecil.PropertyReference
         If Compiler.Assembly.IsDefinedHere([Property]) Then
@@ -3186,7 +3215,8 @@ Public Class Helper
         ElseIf IsInterface(Context, ToType) Then
             Dim ifaces As Mono.Cecil.InterfaceCollection = CecilHelper.GetInterfaces(FromType, True)
             If ifaces IsNot Nothing Then
-                For Each iface As Mono.Cecil.TypeReference In ifaces
+                For i As Integer = 0 To ifaces.Count - 1
+                    Dim iface As Mono.Cecil.TypeReference = ifaces(i)
                     If Helper.CompareType(iface, ToType) Then Return True
                     If Helper.IsAssignable(Context, iface, ToType) Then Return True
                     If Helper.IsSubclassOf(ToType, iface) Then Return True

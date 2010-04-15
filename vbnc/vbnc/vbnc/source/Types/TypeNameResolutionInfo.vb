@@ -353,7 +353,7 @@ Public Class TypeNameResolutionInfo
                 '** If R matches the name of a namespace or type in N, 
                 '** then the qualified name refers to that namespace or type.
                 Dim tp As Mono.Cecil.TypeReference = Qualifier.FoundAs(Of Mono.Cecil.TypeReference)()
-                Dim nestedtp As Mono.Cecil.TypeReference = CecilHelper.GetNestedType(tp, R)
+                Dim nestedtp As Mono.Cecil.TypeReference = CecilHelper.GetNestedType(tp, Helper.CreateGenericTypename(R, TypeArgumentCount))
 
                 If nestedtp IsNot Nothing Then m_FoundObjects.Add(nestedtp)
 
@@ -772,7 +772,8 @@ Public Class TypeNameResolutionInfo
                 If tp IsNot Nothing AndAlso Helper.IsModule(FromWhere.Compiler, tp) Then modules.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName
-                modules.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(nsName).ToTypeList)
+                Dim importedModules As TypeDictionary = FromWhere.Compiler.TypeManager.GetModulesByNamespace(nsName)
+                If importedModules IsNot Nothing Then modules.AddRange(importedModules.ToTypeList)
             Else
                 Continue For
             End If

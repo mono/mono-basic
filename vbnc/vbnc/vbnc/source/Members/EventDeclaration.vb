@@ -237,7 +237,7 @@ Public Class EventDeclaration
         MyBase.UpdateDefinition()
 
         If m_CecilBuilder Is Nothing Then
-            m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, Nothing, Mono.Cecil.EventAttributes.SpecialName)
+            m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, Nothing, 0)
             m_CecilBuilder.Annotations.Add(Compiler, Me)
             FindFirstParent(Of TypeDeclaration).CecilType.Events.Add(m_CecilBuilder)
         End If

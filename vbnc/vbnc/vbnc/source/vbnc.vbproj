@@ -108,72 +108,6 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
-    <OutputPath>..\bin\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
-    <NoWarn>42004,42026</NoWarn>
-    <WarningsAsErrors>42016,42017,42018,42019,42032,42020,42021,42022</WarningsAsErrors>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>SELF=1</DefineConstants>
-    <DefineDebug>true</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <DebugSymbols>true</DebugSymbols>
-    <IncrementalBuild>true</IncrementalBuild>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>1</WarningLevel>
-    <DebugType>
-    </DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc</AssemblyName>
-    <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DefineDebug>true</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <OutputPath>..\bin\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
-    <WarningLevel>1</WarningLevel>
-    <NoWarn>42004,42026</NoWarn>
-    <WarningsAsErrors>42016,42017,42018,42019,42032,42020,42021,42022</WarningsAsErrors>
-    <FxCopLogFile>obj\Debug\FxCopLog.xml</FxCopLogFile>
-    <FxCopRuleAssemblies>DesignRules.dll;GlobalizationRules.dll;InteroperabilityRules.dll;MaintainabilityRules.dll;NamingRules.dll;PerformanceRules.dll;ReliabilityRules.dll;SecurityRules.dll;UsageRules.dll</FxCopRuleAssemblies>
-    <FxCopInputAssembly>obj\Debug\vbnc.exe</FxCopInputAssembly>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>
-    </DefineConstants>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <DebugType>
-    </DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <RunFxCop>false</RunFxCop>
-    <FxCopRules>
-    </FxCopRules>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc</AssemblyName>
-    <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DebugSymbols>true</DebugSymbols>
@@ -191,44 +125,6 @@
     <WarningLevel>1</WarningLevel>
     <NoWarn>
     </NoWarn>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Self Compile' ">
-    <NoWarn>
-    </NoWarn>
-    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc</AssemblyName>
-    <OutputPath>.\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
-    <WarningLevel>1</WarningLevel>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'RuntimeTests' ">
-    <NoWarn>
-    </NoWarn>
-    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <DocumentationFile>vbnc.xml</DocumentationFile>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>vbnc</AssemblyName>
-    <OutputPath>.\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>vbnc</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
-    <WarningLevel>1</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
@@ -635,8 +531,6 @@
     <EmbeddedResource Include="Resources\Errors.resx" />
     <EmbeddedResource Include="vbnc.rsp" />
     <Content Include="Notes.txt" />
-    <Content Include="Todo.txt" />
-    <None Include="app.config" />
     <None Include="General\TypeCache.in" />
     <None Include="Resources\Source.xml" />
   </ItemGroup>

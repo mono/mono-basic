@@ -37,7 +37,6 @@ Public MustInherit Class VariableDeclaration
 
     Private m_VariableType As Mono.Cecil.TypeReference
 
-    Private m_WithEventsRedirect As PropertyDeclaration
     Private m_HandledEvents As New Generic.List(Of Mono.Cecil.EventReference)
 
     Sub New(ByVal Parent As ParsedObject)

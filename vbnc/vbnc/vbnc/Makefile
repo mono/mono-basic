@@ -26,10 +26,14 @@ DISTFILES = \
 version.tmp: $(topdir)/configure setversion.sh
 	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
 
-all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp
+all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp Mono.Cecil.VB.dll
 
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
+
+Mono.Cecil.VB.dll: $(wildcard ../cecil/*/.cs) $(wildcard ../cecil/*/*/.cs) ../cecil/Mono.Cecil.VB.dll.sources
+	$(MAKE) -C ../cecil
+	cp ../cecil/Mono.Cecil.VB.dll .
 
 vbnc.vbnc.rsp: source/vbnc.rsp
 	cp source/vbnc.rsp vbnc.vbnc.rsp

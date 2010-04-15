@@ -27,7 +27,6 @@ Partial Class frmMain
 
     Friend WithEvents mnuMain As System.Windows.Forms.MenuStrip
     Friend WithEvents mnuTools As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents mnuToolsChangeOutputToVerified As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents lblBasepath As System.Windows.Forms.Label
     Friend WithEvents dlgBasepath As System.Windows.Forms.FolderBrowserDialog
     Private components As System.ComponentModel.IContainer
@@ -41,7 +40,6 @@ Partial Class frmMain
         Me.components = New System.ComponentModel.Container
         Me.mnuMain = New System.Windows.Forms.MenuStrip
         Me.mnuTools = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuToolsChangeOutputToVerified = New System.Windows.Forms.ToolStripMenuItem
         Me.cmnuViewCode = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuToolsRefresh = New System.Windows.Forms.ToolStripMenuItem
         Me.NewTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -61,27 +59,23 @@ Partial Class frmMain
         Me.cmnuDebugTest = New System.Windows.Forms.ToolStripMenuItem
         Me.EditThisTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
-        Me.cmnuOutputToVerified = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuIldasm = New System.Windows.Forms.ToolStripMenuItem
+        Me.mnuIldasmBoth = New System.Windows.Forms.ToolStripMenuItem
         Me.ReflectToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.VBNCAssemblyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.VBCAssemblyToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.BothAssembliesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator
         Me.CreateNewTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.CreateNewTestCopyingThisTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
-        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.MakeErrorTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.cmdPause = New System.Windows.Forms.Button
         Me.cmdRun = New System.Windows.Forms.Button
         Me.cmdExit = New System.Windows.Forms.Button
         Me.cmdStop = New System.Windows.Forms.Button
-        Me.cmdCopySummaryToClipboard = New System.Windows.Forms.Button
         Me.Label14 = New System.Windows.Forms.Label
         Me.Label16 = New System.Windows.Forms.Label
         Me.cmdVBCCompiler = New System.Windows.Forms.Button
         Me.cmdReload = New System.Windows.Forms.Button
-        Me.tmrContinuous = New System.Windows.Forms.Timer(Me.components)
-        Me.treeTests = New System.Windows.Forms.TreeView
         Me.cmnuTree = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.RunTestsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.AllTestsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
@@ -136,13 +130,9 @@ Partial Class frmMain
         Me.cmbVBCCompiler = New System.Windows.Forms.ComboBox
         Me.cmbBasepath = New System.Windows.Forms.ComboBox
         Me.EnhancedProgressBar1 = New rt.EnhancedProgressBar
-        Me.chkContinuous = New System.Windows.Forms.CheckBox
-        Me.chkHosted = New System.Windows.Forms.CheckBox
-        Me.chkDontTestIfNothingHasChanged = New System.Windows.Forms.CheckBox
-        Me.cmdSelfTest = New System.Windows.Forms.Button
         Me.worker = New System.ComponentModel.BackgroundWorker
-        Me.mnuIldasm = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuIldasmBoth = New System.Windows.Forms.ToolStripMenuItem
+        Me.cmdSave = New System.Windows.Forms.Button
+        Me.cmnuDeleteTest = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.cmnuTree.SuspendLayout()
@@ -166,41 +156,35 @@ Partial Class frmMain
         '
         'mnuTools
         '
-        Me.mnuTools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuToolsChangeOutputToVerified, Me.cmnuViewCode, Me.mnuToolsRefresh, Me.NewTestToolStripMenuItem, Me.ViewQueuedTestsToolStripMenuItem})
+        Me.mnuTools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuViewCode, Me.mnuToolsRefresh, Me.NewTestToolStripMenuItem, Me.ViewQueuedTestsToolStripMenuItem})
         Me.mnuTools.Name = "mnuTools"
         Me.mnuTools.Size = New System.Drawing.Size(44, 20)
         Me.mnuTools.Text = "Tools"
         '
-        'mnuToolsChangeOutputToVerified
-        '
-        Me.mnuToolsChangeOutputToVerified.Name = "mnuToolsChangeOutputToVerified"
-        Me.mnuToolsChangeOutputToVerified.Size = New System.Drawing.Size(295, 22)
-        Me.mnuToolsChangeOutputToVerified.Text = "Change output xml files to verified xml files."
-        '
         'cmnuViewCode
         '
         Me.cmnuViewCode.Name = "cmnuViewCode"
-        Me.cmnuViewCode.Size = New System.Drawing.Size(295, 22)
+        Me.cmnuViewCode.Size = New System.Drawing.Size(173, 22)
         Me.cmnuViewCode.Text = "View code"
         '
         'mnuToolsRefresh
         '
         Me.mnuToolsRefresh.Name = "mnuToolsRefresh"
         Me.mnuToolsRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5
-        Me.mnuToolsRefresh.Size = New System.Drawing.Size(295, 22)
+        Me.mnuToolsRefresh.Size = New System.Drawing.Size(173, 22)
         Me.mnuToolsRefresh.Text = "&Refresh"
         '
         'NewTestToolStripMenuItem
         '
         Me.NewTestToolStripMenuItem.Name = "NewTestToolStripMenuItem"
         Me.NewTestToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(295, 22)
+        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(173, 22)
         Me.NewTestToolStripMenuItem.Text = "New test"
         '
         'ViewQueuedTestsToolStripMenuItem
         '
         Me.ViewQueuedTestsToolStripMenuItem.Name = "ViewQueuedTestsToolStripMenuItem"
-        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(295, 22)
+        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(173, 22)
         Me.ViewQueuedTestsToolStripMenuItem.Text = "View queued tests"
         '
         'lstImages
@@ -215,7 +199,7 @@ Partial Class frmMain
         Me.lblBasepath.Name = "lblBasepath"
         Me.lblBasepath.Size = New System.Drawing.Size(100, 21)
         Me.lblBasepath.TabIndex = 5
-        Me.lblBasepath.Text = "&Base path:"
+        Me.lblBasepath.Text = "Tests:"
         '
         'dlgBasepath
         '
@@ -254,9 +238,9 @@ Partial Class frmMain
         '
         'cmnuTest
         '
-        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.cmnuOutputToVerified, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.CreateNewTestCopyingThisTestToolStripMenuItem, Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem, Me.MakeErrorTestToolStripMenuItem})
+        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem})
         Me.cmnuTest.Name = "cmnuTest"
-        Me.cmnuTest.Size = New System.Drawing.Size(379, 308)
+        Me.cmnuTest.Size = New System.Drawing.Size(379, 264)
         '
         'cmnuRunTest
         '
@@ -298,11 +282,18 @@ Partial Class frmMain
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
         Me.ToolStripSeparator3.Size = New System.Drawing.Size(375, 6)
         '
-        'cmnuOutputToVerified
+        'mnuIldasm
         '
-        Me.cmnuOutputToVerified.Name = "cmnuOutputToVerified"
-        Me.cmnuOutputToVerified.Size = New System.Drawing.Size(378, 22)
-        Me.cmnuOutputToVerified.Text = "Change output files to verified files"
+        Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth})
+        Me.mnuIldasm.Name = "mnuIldasm"
+        Me.mnuIldasm.Size = New System.Drawing.Size(378, 22)
+        Me.mnuIldasm.Text = "Ildasm"
+        '
+        'mnuIldasmBoth
+        '
+        Me.mnuIldasmBoth.Name = "mnuIldasmBoth"
+        Me.mnuIldasmBoth.Size = New System.Drawing.Size(161, 22)
+        Me.mnuIldasmBoth.Text = "Both assemblies"
         '
         'ReflectToolStripMenuItem
         '
@@ -339,18 +330,6 @@ Partial Class frmMain
         Me.CreateNewTestToolStripMenuItem.Name = "CreateNewTestToolStripMenuItem"
         Me.CreateNewTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
         Me.CreateNewTestToolStripMenuItem.Text = "Create new test"
-        '
-        'CreateNewTestCopyingThisTestToolStripMenuItem
-        '
-        Me.CreateNewTestCopyingThisTestToolStripMenuItem.Name = "CreateNewTestCopyingThisTestToolStripMenuItem"
-        Me.CreateNewTestCopyingThisTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
-        Me.CreateNewTestCopyingThisTestToolStripMenuItem.Text = "Create new test copying this test"
-        '
-        'CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem
-        '
-        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Name = "CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem"
-        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
-        Me.CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem.Text = "Create new test using this test as base name"
         '
         'MakeErrorTestToolStripMenuItem
         '
@@ -399,16 +378,6 @@ Partial Class frmMain
         Me.cmdStop.Tag = ""
         Me.cmdStop.Text = "Stop"
         '
-        'cmdCopySummaryToClipboard
-        '
-        Me.cmdCopySummaryToClipboard.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdCopySummaryToClipboard.Location = New System.Drawing.Point(863, 522)
-        Me.cmdCopySummaryToClipboard.Name = "cmdCopySummaryToClipboard"
-        Me.cmdCopySummaryToClipboard.Size = New System.Drawing.Size(75, 25)
-        Me.cmdCopySummaryToClipboard.TabIndex = 31
-        Me.cmdCopySummaryToClipboard.Tag = ""
-        Me.cmdCopySummaryToClipboard.Text = "Copy"
-        '
         'Label14
         '
         Me.Label14.Location = New System.Drawing.Point(9, 122)
@@ -443,25 +412,6 @@ Partial Class frmMain
         Me.cmdReload.TabIndex = 39
         Me.cmdReload.Tag = ""
         Me.cmdReload.Text = "&Reload list"
-        '
-        'tmrContinuous
-        '
-        Me.tmrContinuous.Enabled = True
-        Me.tmrContinuous.Interval = 1000
-        '
-        'treeTests
-        '
-        Me.treeTests.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.treeTests.ContextMenuStrip = Me.cmnuTree
-        Me.treeTests.HideSelection = False
-        Me.treeTests.ImageIndex = 0
-        Me.treeTests.ImageList = Me.lstImages
-        Me.treeTests.Location = New System.Drawing.Point(10, 138)
-        Me.treeTests.Name = "treeTests"
-        Me.treeTests.SelectedImageIndex = 0
-        Me.treeTests.Size = New System.Drawing.Size(233, 442)
-        Me.treeTests.TabIndex = 42
         '
         'cmnuTree
         '
@@ -533,10 +483,10 @@ Partial Class frmMain
         Me.tabMain.Controls.Add(Me.pageTests)
         Me.tabMain.Controls.Add(Me.pageTestResult)
         Me.tabMain.Controls.Add(Me.pageOldResults)
-        Me.tabMain.Location = New System.Drawing.Point(259, 138)
+        Me.tabMain.Location = New System.Drawing.Point(12, 138)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SelectedIndex = 0
-        Me.tabMain.Size = New System.Drawing.Size(598, 442)
+        Me.tabMain.Size = New System.Drawing.Size(845, 442)
         Me.tabMain.TabIndex = 43
         '
         'pageSummary
@@ -546,7 +496,7 @@ Partial Class frmMain
         Me.pageSummary.Location = New System.Drawing.Point(4, 22)
         Me.pageSummary.Name = "pageSummary"
         Me.pageSummary.Padding = New System.Windows.Forms.Padding(3)
-        Me.pageSummary.Size = New System.Drawing.Size(590, 416)
+        Me.pageSummary.Size = New System.Drawing.Size(837, 416)
         Me.pageSummary.TabIndex = 0
         Me.pageSummary.Text = "Summary"
         Me.pageSummary.UseVisualStyleBackColor = True
@@ -573,14 +523,14 @@ Partial Class frmMain
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel2.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
-        Me.TableLayoutPanel2.Size = New System.Drawing.Size(572, 142)
+        Me.TableLayoutPanel2.Size = New System.Drawing.Size(819, 142)
         Me.TableLayoutPanel2.TabIndex = 6
         '
         'txtRedTests
         '
         Me.txtRedTests.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtRedTests.AutoSize = True
-        Me.txtRedTests.Location = New System.Drawing.Point(432, 81)
+        Me.txtRedTests.Location = New System.Drawing.Point(617, 81)
         Me.txtRedTests.Name = "txtRedTests"
         Me.txtRedTests.Size = New System.Drawing.Size(0, 13)
         Me.txtRedTests.TabIndex = 7
@@ -619,7 +569,7 @@ Partial Class frmMain
         '
         Me.txtGreenTests.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtGreenTests.AutoSize = True
-        Me.txtGreenTests.Location = New System.Drawing.Point(432, 46)
+        Me.txtGreenTests.Location = New System.Drawing.Point(617, 46)
         Me.txtGreenTests.Name = "txtGreenTests"
         Me.txtGreenTests.Size = New System.Drawing.Size(0, 13)
         Me.txtGreenTests.TabIndex = 3
@@ -628,7 +578,7 @@ Partial Class frmMain
         '
         Me.txtYellowTests.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtYellowTests.AutoSize = True
-        Me.txtYellowTests.Location = New System.Drawing.Point(432, 11)
+        Me.txtYellowTests.Location = New System.Drawing.Point(617, 11)
         Me.txtYellowTests.Name = "txtYellowTests"
         Me.txtYellowTests.Size = New System.Drawing.Size(0, 13)
         Me.txtYellowTests.TabIndex = 5
@@ -637,7 +587,7 @@ Partial Class frmMain
         '
         Me.txtQueue.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtQueue.AutoSize = True
-        Me.txtQueue.Location = New System.Drawing.Point(432, 117)
+        Me.txtQueue.Location = New System.Drawing.Point(617, 117)
         Me.txtQueue.Name = "txtQueue"
         Me.txtQueue.Size = New System.Drawing.Size(0, 13)
         Me.txtQueue.TabIndex = 9
@@ -674,7 +624,7 @@ Partial Class frmMain
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
         Me.TableLayoutPanel1.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
-        Me.TableLayoutPanel1.Size = New System.Drawing.Size(572, 144)
+        Me.TableLayoutPanel1.Size = New System.Drawing.Size(819, 144)
         Me.TableLayoutPanel1.TabIndex = 5
         '
         'lblNumberOfTests
@@ -691,7 +641,7 @@ Partial Class frmMain
         '
         Me.txtAverageExecutionTime.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtAverageExecutionTime.AutoSize = True
-        Me.txtAverageExecutionTime.Location = New System.Drawing.Point(432, 119)
+        Me.txtAverageExecutionTime.Location = New System.Drawing.Point(617, 119)
         Me.txtAverageExecutionTime.Name = "txtAverageExecutionTime"
         Me.txtAverageExecutionTime.Size = New System.Drawing.Size(0, 13)
         Me.txtAverageExecutionTime.TabIndex = 7
@@ -710,7 +660,7 @@ Partial Class frmMain
         '
         Me.txtExecutionTime.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtExecutionTime.AutoSize = True
-        Me.txtExecutionTime.Location = New System.Drawing.Point(432, 83)
+        Me.txtExecutionTime.Location = New System.Drawing.Point(617, 83)
         Me.txtExecutionTime.Name = "txtExecutionTime"
         Me.txtExecutionTime.Size = New System.Drawing.Size(0, 13)
         Me.txtExecutionTime.TabIndex = 5
@@ -729,7 +679,7 @@ Partial Class frmMain
         '
         Me.txtNumberOfTests.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtNumberOfTests.AutoSize = True
-        Me.txtNumberOfTests.Location = New System.Drawing.Point(432, 11)
+        Me.txtNumberOfTests.Location = New System.Drawing.Point(617, 11)
         Me.txtNumberOfTests.Name = "txtNumberOfTests"
         Me.txtNumberOfTests.Size = New System.Drawing.Size(0, 13)
         Me.txtNumberOfTests.TabIndex = 2
@@ -738,7 +688,7 @@ Partial Class frmMain
         '
         Me.txtTestsRun.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.txtTestsRun.AutoSize = True
-        Me.txtTestsRun.Location = New System.Drawing.Point(432, 47)
+        Me.txtTestsRun.Location = New System.Drawing.Point(617, 47)
         Me.txtTestsRun.Name = "txtTestsRun"
         Me.txtTestsRun.Size = New System.Drawing.Size(0, 13)
         Me.txtTestsRun.TabIndex = 3
@@ -759,7 +709,7 @@ Partial Class frmMain
         Me.pageTests.Location = New System.Drawing.Point(4, 22)
         Me.pageTests.Name = "pageTests"
         Me.pageTests.Padding = New System.Windows.Forms.Padding(3)
-        Me.pageTests.Size = New System.Drawing.Size(590, 416)
+        Me.pageTests.Size = New System.Drawing.Size(837, 416)
         Me.pageTests.TabIndex = 2
         Me.pageTests.Text = "Tests"
         Me.pageTests.UseVisualStyleBackColor = True
@@ -774,7 +724,7 @@ Partial Class frmMain
         Me.lstTests.LargeImageList = Me.lstImages
         Me.lstTests.Location = New System.Drawing.Point(3, 3)
         Me.lstTests.Name = "lstTests"
-        Me.lstTests.Size = New System.Drawing.Size(584, 410)
+        Me.lstTests.Size = New System.Drawing.Size(831, 410)
         Me.lstTests.SmallImageList = Me.lstImages
         Me.lstTests.StateImageList = Me.lstImages
         Me.lstTests.TabIndex = 33
@@ -822,7 +772,7 @@ Partial Class frmMain
         Me.pageTestResult.Location = New System.Drawing.Point(4, 22)
         Me.pageTestResult.Name = "pageTestResult"
         Me.pageTestResult.Padding = New System.Windows.Forms.Padding(3)
-        Me.pageTestResult.Size = New System.Drawing.Size(590, 416)
+        Me.pageTestResult.Size = New System.Drawing.Size(837, 416)
         Me.pageTestResult.TabIndex = 1
         Me.pageTestResult.Text = "Test result"
         Me.pageTestResult.UseVisualStyleBackColor = True
@@ -836,7 +786,7 @@ Partial Class frmMain
         Me.GroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.GroupBox1.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(584, 410)
+        Me.GroupBox1.Size = New System.Drawing.Size(831, 410)
         Me.GroupBox1.TabIndex = 35
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Test Summary:"
@@ -850,7 +800,7 @@ Partial Class frmMain
         Me.gridTestProperties.Location = New System.Drawing.Point(6, 66)
         Me.gridTestProperties.Name = "gridTestProperties"
         Me.gridTestProperties.PropertySort = System.Windows.Forms.PropertySort.Alphabetical
-        Me.gridTestProperties.Size = New System.Drawing.Size(570, 101)
+        Me.gridTestProperties.Size = New System.Drawing.Size(817, 101)
         Me.gridTestProperties.TabIndex = 11
         Me.gridTestProperties.ToolbarVisible = False
         '
@@ -862,7 +812,7 @@ Partial Class frmMain
         Me.txtTestResult.Location = New System.Drawing.Point(6, 40)
         Me.txtTestResult.Name = "txtTestResult"
         Me.txtTestResult.ReadOnly = True
-        Me.txtTestResult.Size = New System.Drawing.Size(570, 21)
+        Me.txtTestResult.Size = New System.Drawing.Size(817, 21)
         Me.txtTestResult.TabIndex = 10
         '
         'Label13
@@ -885,7 +835,7 @@ Partial Class frmMain
         Me.txtMessage.Name = "txtMessage"
         Me.txtMessage.ReadOnly = True
         Me.txtMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txtMessage.Size = New System.Drawing.Size(570, 231)
+        Me.txtMessage.Size = New System.Drawing.Size(817, 231)
         Me.txtMessage.TabIndex = 8
         Me.txtMessage.WordWrap = False
         '
@@ -896,7 +846,7 @@ Partial Class frmMain
         Me.pageOldResults.Location = New System.Drawing.Point(4, 22)
         Me.pageOldResults.Name = "pageOldResults"
         Me.pageOldResults.Padding = New System.Windows.Forms.Padding(3)
-        Me.pageOldResults.Size = New System.Drawing.Size(590, 416)
+        Me.pageOldResults.Size = New System.Drawing.Size(837, 416)
         Me.pageOldResults.TabIndex = 3
         Me.pageOldResults.Text = "Old results"
         Me.pageOldResults.UseVisualStyleBackColor = True
@@ -979,81 +929,37 @@ Partial Class frmMain
         Me.EnhancedProgressBar1.TabIndex = 0
         Me.EnhancedProgressBar1.ValueCount = 3
         '
-        'chkContinuous
-        '
-        Me.chkContinuous.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkContinuous.AutoSize = True
-        Me.chkContinuous.Checked = True
-        Me.chkContinuous.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContinuous.Location = New System.Drawing.Point(863, 242)
-        Me.chkContinuous.Name = "chkContinuous"
-        Me.chkContinuous.Size = New System.Drawing.Size(80, 17)
-        Me.chkContinuous.TabIndex = 41
-        Me.chkContinuous.Text = "Continuous"
-        '
-        'chkHosted
-        '
-        Me.chkHosted.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkHosted.AutoSize = True
-        Me.chkHosted.Location = New System.Drawing.Point(863, 219)
-        Me.chkHosted.Name = "chkHosted"
-        Me.chkHosted.Size = New System.Drawing.Size(60, 17)
-        Me.chkHosted.TabIndex = 40
-        Me.chkHosted.Text = "Hosted"
-        '
-        'chkDontTestIfNothingHasChanged
-        '
-        Me.chkDontTestIfNothingHasChanged.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkDontTestIfNothingHasChanged.Location = New System.Drawing.Point(859, 265)
-        Me.chkDontTestIfNothingHasChanged.Name = "chkDontTestIfNothingHasChanged"
-        Me.chkDontTestIfNothingHasChanged.Size = New System.Drawing.Size(77, 61)
-        Me.chkDontTestIfNothingHasChanged.TabIndex = 44
-        Me.chkDontTestIfNothingHasChanged.Text = "Don't test if nothing has changed"
-        Me.chkDontTestIfNothingHasChanged.UseVisualStyleBackColor = False
-        '
-        'cmdSelfTest
-        '
-        Me.cmdSelfTest.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdSelfTest.Location = New System.Drawing.Point(863, 373)
-        Me.cmdSelfTest.Name = "cmdSelfTest"
-        Me.cmdSelfTest.Size = New System.Drawing.Size(75, 25)
-        Me.cmdSelfTest.TabIndex = 39
-        Me.cmdSelfTest.Tag = ""
-        Me.cmdSelfTest.Text = "Self test"
-        '
         'worker
         '
         '
-        'mnuIldasm
+        'cmdSave
         '
-        Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth})
-        Me.mnuIldasm.Name = "mnuIldasm"
-        Me.mnuIldasm.Size = New System.Drawing.Size(378, 22)
-        Me.mnuIldasm.Text = "Ildasm"
+        Me.cmdSave.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cmdSave.Location = New System.Drawing.Point(863, 369)
+        Me.cmdSave.Name = "cmdSave"
+        Me.cmdSave.Size = New System.Drawing.Size(75, 25)
+        Me.cmdSave.TabIndex = 44
+        Me.cmdSave.Tag = ""
+        Me.cmdSave.Text = "&Save list"
         '
-        'mnuIldasmBoth
+        'cmnuDeleteTest
         '
-        Me.mnuIldasmBoth.Name = "mnuIldasmBoth"
-        Me.mnuIldasmBoth.Size = New System.Drawing.Size(161, 22)
-        Me.mnuIldasmBoth.Text = "Both assemblies"
+        Me.cmnuDeleteTest.Name = "cmnuDeleteTest"
+        Me.cmnuDeleteTest.Size = New System.Drawing.Size(378, 22)
+        Me.cmnuDeleteTest.Text = "Delete test"
         '
         'frmMain
         '
         Me.ClientSize = New System.Drawing.Size(940, 621)
-        Me.Controls.Add(Me.chkContinuous)
-        Me.Controls.Add(Me.treeTests)
-        Me.Controls.Add(Me.chkHosted)
+        Me.Controls.Add(Me.cmdSave)
         Me.Controls.Add(Me.tabMain)
         Me.Controls.Add(Me.cmbCompiler)
         Me.Controls.Add(Me.cmbVBCCompiler)
         Me.Controls.Add(Me.cmdVBCCompiler)
         Me.Controls.Add(Me.cmdReload)
         Me.Controls.Add(Me.mnuMain)
-        Me.Controls.Add(Me.cmdSelfTest)
         Me.Controls.Add(Me.Label16)
-        Me.Controls.Add(Me.cmdCopySummaryToClipboard)
         Me.Controls.Add(Me.cmdExit)
-        Me.Controls.Add(Me.chkDontTestIfNothingHasChanged)
         Me.Controls.Add(Me.cmdStop)
         Me.Controls.Add(Me.cmdRun)
         Me.Controls.Add(Me.EnhancedProgressBar1)
@@ -1090,7 +996,6 @@ Partial Class frmMain
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents cmnuOutputToVerified As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuToolsRefresh As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cmbBasepath As System.Windows.Forms.ComboBox
     Friend WithEvents cmbCompiler As System.Windows.Forms.ComboBox
@@ -1100,25 +1005,18 @@ Partial Class frmMain
     Friend WithEvents cmdStop As System.Windows.Forms.Button
     Friend WithEvents EnhancedProgressBar1 As rt.EnhancedProgressBar
     Friend WithEvents cmnuViewCodeAndDebugTest As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents cmdCopySummaryToClipboard As System.Windows.Forms.Button
     Friend WithEvents Label14 As System.Windows.Forms.Label
     Friend WithEvents Label16 As System.Windows.Forms.Label
     Friend WithEvents cmbVBCCompiler As System.Windows.Forms.ComboBox
     Friend WithEvents cmdVBCCompiler As System.Windows.Forms.Button
     Friend WithEvents cmdReload As System.Windows.Forms.Button
-    Friend WithEvents CreateNewTestCopyingThisTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateNewTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents EditThisTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents chkHosted As System.Windows.Forms.CheckBox
     Friend WithEvents ReflectToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VBNCAssemblyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VBCAssemblyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents BothAssembliesToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents chkContinuous As System.Windows.Forms.CheckBox
-    Friend WithEvents tmrContinuous As System.Windows.Forms.Timer
     Friend WithEvents NewTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents CreateNewTestUsingThisTestAsBaseNameToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents treeTests As System.Windows.Forms.TreeView
     Friend WithEvents tabMain As System.Windows.Forms.TabControl
     Friend WithEvents pageSummary As System.Windows.Forms.TabPage
     Friend WithEvents pageTestResult As System.Windows.Forms.TabPage
@@ -1165,7 +1063,6 @@ Partial Class frmMain
     Friend WithEvents txtQueue As System.Windows.Forms.Label
     Friend WithEvents lblQueue As System.Windows.Forms.Label
     Friend WithEvents colPath As System.Windows.Forms.ColumnHeader
-    Friend WithEvents chkDontTestIfNothingHasChanged As System.Windows.Forms.CheckBox
     Friend WithEvents OnlyRefreshToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents pageOldResults As System.Windows.Forms.TabPage
     Friend WithEvents lstOldResults As System.Windows.Forms.ListView
@@ -1173,10 +1070,11 @@ Partial Class frmMain
     Friend WithEvents colOldCompiler As System.Windows.Forms.ColumnHeader
     Friend WithEvents txtOldResult As System.Windows.Forms.TextBox
     Friend WithEvents colOldResult2 As System.Windows.Forms.ColumnHeader
-    Friend WithEvents cmdSelfTest As System.Windows.Forms.Button
     Friend WithEvents worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents MakeErrorTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CreateKnownFailurestxtToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuIldasm As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuIldasmBoth As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents cmdSave As System.Windows.Forms.Button
+    Friend WithEvents cmnuDeleteTest As System.Windows.Forms.ToolStripMenuItem
 End Class

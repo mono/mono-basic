@@ -130,6 +130,7 @@ Friend Class TestExecutor
         SyncLock m_Queue
             If m_Thread Is Nothing Then
                 m_Thread = New Threading.Thread(New Threading.ThreadStart(AddressOf Runner))
+                m_Thread.IsBackground = True
                 m_Thread.Start()
             End If
         End SyncLock
@@ -189,12 +190,6 @@ Friend Class TestExecutor
                     End If
                 End If
             Next
-            Dim tp As Tests = TryCast(Tests, Tests)
-            If tp IsNot Nothing Then
-                For Each tl As TestList In tp.ContainedTests
-                    RunAsync(tl, Priority)
-                Next
-            End If
         End SyncLock
         StartThread()
     End Sub
@@ -204,10 +199,7 @@ Friend Class TestExecutor
     ''' </summary>
     ''' <remarks></remarks>
     Sub RunAsyncTree(ByVal Tests As Tests)
-        RunAsync(Tests)
-        For Each List As Tests In Tests.ContainedTests
-            RunAsyncTree(List)
-        Next
+        RunAsync(Tests.Values)
     End Sub
     ''' <summary>
     ''' Returns true if a test is running.

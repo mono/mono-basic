@@ -92,22 +92,19 @@ Friend Class TestView
             Const datetimeformat As String = "dd/MM/yyyy HH:mm"
             Dim testresult As Test.Results
             If test.Result = rt.Test.Results.NotRun Then
-                testresult = test.OldResult
-            ElseIf test.Result = rt.Test.Results.Failed AndAlso (test.OldResult = rt.Test.Results.Regressed OrElse test.OldResult = rt.Test.Results.Success) Then
-                testresult = rt.Test.Results.Regressed
+                testresult = rt.Test.Results.NotRun
             Else
                 testresult = test.Result
             End If
             Item.SubItems(1).Text = ""
             Item.SubItems(5).Text = test.LastRun.ToString(datetimeformat)
             Item.ImageIndex = m_Form.GetIconIndex(testresult)
-
+            Item.SubItems(3).Text = test.Category
             'If test.Run AndAlso test.VBNCVerification IsNot Nothing AndAlso test.VBNCVerification.Process IsNot Nothing AndAlso test.VBNCVerification.Process.FileVersion IsNot Nothing Then
             '    Item.SubItems(1).Text = test.VBNCVerification.Process.FileVersion.FileVersion & " (" & test.VBNCVerification.Process.LastWriteDate.ToString(datetimeformat) & ")"
             'End If
 
             Item.SubItems(2).Text = test.Result.ToString
-            Item.SubItems(3).Text = test.OldResult.ToString
             If test.FailedVerificationMessage <> "" Then
                 Dim idx As Integer = test.FailedVerificationMessage.IndexOf(vbNewLine)
                 If idx < 0 Then idx = test.FailedVerificationMessage.Length
@@ -115,7 +112,6 @@ Friend Class TestView
             Else
                 Item.SubItems(4).Text = ""
             End If
-            Item.SubItems(6).Text = test.BasePath
         Catch ex As Exception
             MsgBox(ex.ToString)
         End Try

@@ -22,7 +22,6 @@ Public Class MethodGroupToValueExpression
 
     Private m_MethodGroup As MethodGroupClassification
     Private m_ExpressionType As Mono.Cecil.TypeReference
-    Private m_FinalArguments As ArgumentList
 
     Sub New(ByVal Parent As ParsedObject, ByVal MethodGroupClassification As MethodGroupClassification)
         MyBase.new(Parent)
@@ -44,21 +43,18 @@ Public Class MethodGroupToValueExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
         Dim arguments As ArgumentList = New ArgumentList(Me.Parent)
-        Dim finalArguments As Generic.List(Of Argument) = Nothing
 
         If m_MethodGroup.Resolved = False Then
-            result = m_MethodGroup.ResolveGroup(arguments, finalArguments) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments, Nothing) AndAlso result
+        Else
+            'm_FinalArguments = m_MethodGroup.
         End If
 
         If result = False Then
-            result = m_MethodGroup.ResolveGroup(arguments, finalArguments, , True) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments, , True) AndAlso result
             Return False
         End If
 
-        If finalArguments IsNot Nothing Then
-            arguments.Arguments.AddRange(finalArguments)
-        End If
-        m_FinalArguments = arguments
         Helper.Assert(m_MethodGroup.ResolvedMethod IsNot Nothing)
 
         If m_MethodGroup.ResolvedMethodInfo IsNot Nothing Then
@@ -81,7 +77,7 @@ Public Class MethodGroupToValueExpression
 
         Helper.Assert(m_MethodGroup.Resolved)
 
-        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, m_FinalArguments, Helper.GetMethodOrMethodReference(Compiler, m_MethodGroup.ResolvedMethod))
+        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, m_MethodGroup.FinalArguments, Helper.GetMethodOrMethodReference(Compiler, m_MethodGroup.ResolvedMethod))
 
         Return result
     End Function

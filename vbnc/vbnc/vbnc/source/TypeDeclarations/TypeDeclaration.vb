@@ -320,6 +320,49 @@ Public MustInherit Class TypeDeclaration
             If prop.SetDeclaration IsNot Nothing AndAlso prop.SetDeclaration.Code IsNot Nothing Then prop.SetDeclaration.Code.FindStaticVariables(m_StaticVariables)
         Next
 
+        'Create nested generic type parameters
+        If Me.IsNestedType Then
+            Dim parentType As TypeDeclaration = DeclaringType
+            Dim parentGenericType As GenericTypeDeclaration
+            Dim stack As New Generic.Stack(Of TypeParameter)
+            Dim insertAt As Integer = 0
+
+            Do
+                parentGenericType = TryCast(parentType, GenericTypeDeclaration)
+                If parentGenericType IsNot Nothing AndAlso parentGenericType.TypeParameters IsNot Nothing Then
+                    For i As Integer = parentGenericType.TypeParameters.Parameters.Count - 1 To 0 Step -1
+                        stack.Push(parentGenericType.TypeParameters.Parameters(i))
+                    Next
+                End If
+                parentType = parentType.DeclaringType
+            Loop While parentType IsNot Nothing
+
+            Dim typeParameter As TypeParameter
+
+            Do While stack.Count > 0
+                typeParameter = stack.Pop
+                CecilType.GenericParameters.Insert(insertAt, typeParameter.Clone(typeParameter.CecilBuilder, CecilType, CecilType.GenericParameters.Count))
+                insertAt += 1
+            Loop
+
+            For i As Integer = 0 To CecilType.GenericParameters.Count - 1
+                CecilType.GenericParameters(i).Position = i
+            Next
+
+            Dim enumDecl As EnumDeclaration = TryCast(Me, EnumDeclaration)
+            If enumDecl IsNot Nothing AndAlso CecilType.GenericParameters.Count > 0 Then
+                Dim enumFieldType As New Mono.Cecil.GenericInstanceType(CecilType)
+                For i As Integer = 0 To CecilType.GenericParameters.Count - 1
+                    enumFieldType.GenericArguments.Add(CecilType.GenericParameters(i))
+                Next
+                For i As Integer = 0 To enumDecl.Members.Count - 1
+                    Dim enumField As EnumMemberDeclaration = TryCast(enumDecl.Members(i), EnumMemberDeclaration)
+                    If enumField Is Nothing Then Continue For
+                    enumField.FieldBuilder.FieldType = enumFieldType
+                Next
+            End If
+        End If
+
         Return result
     End Function
 

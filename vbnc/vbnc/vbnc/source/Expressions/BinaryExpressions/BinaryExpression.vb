@@ -251,7 +251,7 @@ Public MustInherit Class BinaryExpression
             If result = False Then Return result
         End If
         methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
-        result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression), Nothing) AndAlso result
+        result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression)) AndAlso result
         result = methodClassification.SuccessfullyResolved AndAlso result
         If result = False Then Return result
         m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType.ReturnType

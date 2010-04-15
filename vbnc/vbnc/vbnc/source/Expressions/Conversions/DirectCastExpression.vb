@@ -50,6 +50,12 @@ Public Class DirectCastExpression
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 Emitter.EmitUnbox(Info, ExpressionType)
                 Emitter.EmitLoadObject(Info, ExpressionType)
+            ElseIf CecilHelper.IsGenericParameter(Expression.ExpressionType) Then
+                result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
+                If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
+                    Emitter.EmitBox(Info, Expression.ExpressionType)
+                    Emitter.EmitCastClass(Info, Expression.ExpressionType, ExpressionType)
+                End If
             Else
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then

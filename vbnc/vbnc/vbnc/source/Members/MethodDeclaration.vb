@@ -23,6 +23,7 @@
 
 Public MustInherit Class MethodDeclaration
     Inherits MethodBaseDeclaration
+
     Private added As Boolean
 
     Protected Sub New(ByVal Parent As TypeDeclaration)
@@ -37,17 +38,10 @@ Public MustInherit Class MethodDeclaration
         MyBase.new(Parent)
     End Sub
 
-    ReadOnly Property Descriptor() As Mono.Cecil.MethodDefinition
-        Get
-            Return CecilBuilder
-        End Get
-    End Property
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         result = MyBase.ResolveTypeReferences AndAlso result
-        'vbnc.Helper.Assert(result = (Report.Errors = 0))
         UpdateDefinition()
 
         Return result
@@ -76,7 +70,6 @@ Public MustInherit Class MethodDeclaration
 
         If Not added Then
             added = True
-            'If DeclaringType.Name = "Emitter" Then Helper.StopIfDebugging()
             DeclaringType.CecilType.Methods.Add(CecilBuilder)
         End If
 
@@ -93,68 +86,9 @@ Public MustInherit Class MethodDeclaration
     Public Overrides Function DefineMember() As Boolean
         Dim result As Boolean = True
 
-        'Helper.StopIfDebugging(Me.Name = "GetSpecificMembers")
-
         result = MyBase.DefineMember AndAlso result
 
-        'Helper.Assert(ParameterTypes IsNot Nothing)
         Helper.Assert(Me.DeclaringType IsNot Nothing)
-        'Helper.Assert(Me.DeclaringType.TypeBuilder IsNot Nothing)
-        'Helper.Assert(m_MethodBuilder Is Nothing)
-
-#If EXTENDEDDEBUG Then
-        If Me.DeclaringType IsNot Nothing Then
-            Compiler.Report.WriteLine("$Defining method " & Name & " on type=" & Me.DeclaringType.FullName & " with attributes=" & Attributes.ToString & ", = " & CInt(Attributes))
-        Else
-            Compiler.Report.WriteLine("$Defining method " & Name & " with attributes=" & Attributes.ToString & ", = " & CInt(Attributes))
-        End If
-#End If
-        'm_MethodBuilder = DeclaringType.TypeBuilder.DefineMethod(Name, Attributes)
-
-        '#If ENABLECECIL Then
-        '        m_CecilBuilder.Attributes = CType(Attributes, Mono.Cecil.MethodAttributes)
-        '#End If
-
-        '#If DEBUGREFLECTION Then
-        '        Helper.DebugReflection_AppendLine("{0} = {1}.DefineMethod(""{2}"", CType({3}, System.Reflection.MethodAttributes))", m_MethodBuilder, DeclaringType.TypeBuilder, Name, CInt(Attributes).ToString())
-        '#End If
-        'Compiler.TypeManager.RegisterReflectionMember(m_MethodBuilder, Me.MemberDescriptor)
-
-        'If Signature.TypeParameters IsNot Nothing Then
-        '    result = Signature.TypeParameters.Parameters.DefineGenericParameters(m_MethodBuilder) AndAlso result
-        'End If
-
-        'If ReturnType IsNot Nothing Then
-        '    ReturnType = Helper.GetTypeOrTypeBuilder(Compiler, ReturnType)
-        'End If
-        '#If EXTENDEDDEBUG Then
-        '            If ReturnType Is Nothing Then
-        '                Compiler.Report.WriteLine("$>Setting return type to nothing")
-        '            Else
-        '                Compiler.Report.WriteLine("$>Setting return type to:" & ReturnType.FullName)
-        '            End If
-        '#End If
-        'm_MethodBuilder.SetReturnType(ReturnType)
-        '#If ENABLECECIL Then
-        '        If ReturnType Is Nothing Then
-        '            m_CecilBuilder.ReturnType.ReturnType = Helper.GetTypeOrTypeReference(Compiler, Compiler.CecilTypeCache.System_Void)
-        '        Else
-        '            m_CecilBuilder.ReturnType.ReturnType = Helper.GetTypeOrTypeReference(Compiler, ReturnType)
-        '        End If
-        '#End If
-        'Helper.SetTypeOrTypeBuilder(ParameterTypes)
-        'm_MethodBuilder.SetParameters(ParameterTypes)
-
-        '        If MethodImplAttributes.HasValue Then
-        '#If EXTENDEDDEBUG Then
-        '                Compiler.Report.WriteLine("$>Setting impl attributes= " & MethodImplAttributes.ToString)
-        '#End If
-        '            'm_MethodBuilder.SetImplementationFlags(MethodImplAttributes.Value)
-        '#If ENABLECECIL Then
-        '            m_CecilBuilder.ImplAttributes = CType(MethodImplAttributes.Value, Mono.Cecil.MethodImplAttributes)
-        '#End If
-        '        End If
-
 
         Return result
     End Function
@@ -169,12 +103,7 @@ Public MustInherit Class MethodDeclaration
                 result = Signature.Parameters(i).GenerateCode(Info) AndAlso result
             Next
         End If
+
         Return result
     End Function
-
-    'Public Overrides ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator
-    '    Get
-    '        Throw New NotImplementedException 'Return m_MethodBuilder.GetILGenerator
-    '    End Get
-    'End Property
 End Class

@@ -465,7 +465,9 @@ Public Class SimpleNameExpression
             'members in more than one standard module, a compile-time error occurs.
             Dim modulemembers As Generic.List(Of Mono.Cecil.MemberReference)
             modulemembers = Helper.GetMembersOfTypes(Compiler, Compiler.TypeManager.GetModulesByNamespace(currentNS), Name)
-            If modulemembers.Count = 1 Then
+            If modulemembers Is Nothing Then
+                'do nothing
+            ElseIf modulemembers.Count = 1 Then
                 Return SetClassificationOfModuleMembers(modulemembers)
             ElseIf modulemembers.Count > 1 Then
                 Return Helper.AddError(Me)
@@ -871,7 +873,7 @@ Public Class SimpleNameExpression
     End Function
 
     Private Function SetClassificationOfModuleMembers(ByVal found As Generic.List(Of Mono.Cecil.MemberReference)) As Boolean
-        If found.Count <= 0 Then
+        If found Is Nothing OrElse found.Count <= 0 Then
             Return False
         End If
 

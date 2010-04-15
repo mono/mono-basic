@@ -1122,26 +1122,7 @@ Public Class CommandLine
         m_lstAllArgs.AddRange(Args)
         For Each s As String In Args
             If s.StartsWith("@") Then
-                Dim strResponseFile As String = s.Substring(1)
-                '#If DEBUG Then
-                'Hack for the testing to work in VS since the current directory is set to where the compiler
-                'is, not where the test is.
-                If strResponseFile.EndsWith("debug.rsp") AndAlso System.Diagnostics.Debugger.IsAttached Then
-                    strResponseFile = IO.Path.GetFullPath(strResponseFile)
-                    For Each str As String In IO.File.ReadAllLines(strResponseFile)
-                        For Each arg As String In Helper.ParseLine(str)
-                            If arg.StartsWith("@") Then
-                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg.Substring(1))
-                                Exit For
-                            ElseIf arg.IndexOfAny(IO.Path.GetInvalidFileNameChars) = -1 AndAlso IO.File.Exists(arg) Then
-                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg)
-                                Exit For
-                            End If
-                        Next
-                    Next
-                End If
-                '#End If
-                result = ParseResponseFile(strResponseFile) AndAlso result
+                result = ParseResponseFile(s.Substring(1)) AndAlso result
                 Continue For
             End If
 

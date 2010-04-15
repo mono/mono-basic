@@ -139,6 +139,8 @@ Public Class ConstructorDeclaration
             ctor = ie.Expression.Classification.AsMethodGroupClassification.ResolvedConstructor
             If ctor Is Nothing Then Return Nothing
 
+            If Helper.CompareNameOrdinal(ctor.Name, ConstructorDeclaration.ConstructorName) = False Then Return Nothing
+
             If Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.BaseType) Then
                 Return ctor
             ElseIf Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.CecilType) Then
@@ -164,9 +166,7 @@ Public Class ConstructorDeclaration
 
         If Me.IsShared = False AndAlso Me.HasMethodBody AndAlso Me.HasExplicitCtorCall = False Then
             CreateDefaultCtorCall()
-#If ENABLECECIL Then
             CreateDefaultCtorCallCecil()
-#End If
         ElseIf Code IsNot Nothing AndAlso Me.HasExplicitCtorCall Then
             m_BaseCtorCall = Code.FirstStatement
             If m_BaseCtorCall IsNot Nothing Then Code.RemoveStatement(m_BaseCtorCall)

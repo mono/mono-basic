@@ -104,6 +104,12 @@ Public Class MemberCache
         Flatten()
     End Sub
 
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
+        Get
+            Return m_Type
+        End Get
+    End Property
+
     ReadOnly Property Compiler() As Compiler
         Get
             Return m_Compiler

@@ -241,6 +241,8 @@ Public MustInherit Class BaseObject
                 m_Compiler = DirectCast(m_Parent, Compiler)
             ElseIf TypeOf Me Is Compiler Then
                 m_Compiler = DirectCast(Me, vbnc.Compiler)
+            ElseIf m_Parent Is Nothing Then
+                Return Nothing
             Else
                 Helper.Assert(m_Parent IsNot Nothing)
                 m_Compiler = m_Parent.Compiler

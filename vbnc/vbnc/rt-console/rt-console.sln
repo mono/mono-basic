@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "rt-console9", "rt-console9.vbproj", "{899D1D30-26FD-42C5-9423-C16B87C44BE9}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "rt-console", "rt-console.vbproj", "{899D1D30-26FD-42C5-9423-C16B87C44BE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

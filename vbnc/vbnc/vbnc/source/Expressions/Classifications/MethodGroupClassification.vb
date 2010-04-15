@@ -62,6 +62,8 @@ Public Class MethodGroupClassification
     Private m_Resolved As Boolean
     Private m_Resolver As MethodResolver
 
+    Private m_FinalArguments As ArgumentList
+
 #If DEBUG Then
 
     Private m_OriginalGroup As Generic.List(Of Mono.Cecil.MemberReference)
@@ -74,6 +76,12 @@ Public Class MethodGroupClassification
     <Diagnostics.Conditional("DEBUGMETHODRESOLUTION")> Sub LogResolutionMessage(ByVal msg As String)
         Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, msg)
     End Sub
+
+    ReadOnly Property FinalArguments() As ArgumentList
+        Get
+            Return m_FinalArguments
+        End Get
+    End Property
 
     ReadOnly Property Parameters() As Expression()
         Get
@@ -412,8 +420,9 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <param name="SourceParameters"></param>
     ''' <remarks></remarks>
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument), Optional ByVal TypeArguments As TypeArgumentList = Nothing, Optional ByVal ShowErrors As Boolean = False) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal TypeArguments As TypeArgumentList = Nothing, Optional ByVal ShowErrors As Boolean = False) As Boolean
         Dim result As Boolean = True
+        Dim FinalSourceArguments As ArgumentList = Nothing
 
         If SourceParameters Is Nothing Then Throw New InternalException("SourceParameters is nothing.")
         If Resolved Then
@@ -430,7 +439,7 @@ Public Class MethodGroupClassification
 
         If result Then
             If m_Resolver.IsLateBound = False Then
-                FinalSourceArguments = m_Resolver.ResolvedCandidate.ExactArguments
+                FinalSourceArguments = New ArgumentList(Me.Parent, m_Resolver.ResolvedCandidate.ExactArguments)
                 resolvedGroup.Add(m_Resolver.ResolvedMember)
             End If
         End If
@@ -457,6 +466,8 @@ Public Class MethodGroupClassification
             Compiler.Report.WriteLine("...................................................")
 #End If
         End If
+
+        m_FinalArguments = FinalSourceArguments
 
         Return result
     End Function

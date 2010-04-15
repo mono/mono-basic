@@ -32,6 +32,11 @@ Public Class TryCastExpression
         Dim result As Boolean = True
 
         result = Expression.GenerateCode(Info.Clone(Me, ExpressionType)) AndAlso result
+
+        If CecilHelper.IsGenericParameter(Expression.ExpressionType) Then
+            Emitter.EmitBox(Info, Expression.ExpressionType)
+        End If
+
         Emitter.EmitIsInst(Info, Expression.ExpressionType, ExpressionType)
 
         Return result

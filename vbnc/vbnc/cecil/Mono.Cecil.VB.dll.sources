@@ -27,11 +27,14 @@
 ./Mono.Cecil/DefaultImporter.cs
 ./Mono.Cecil/EmbeddedResource.cs
 ./Mono.Cecil/EventAttributes.cs
+./Mono.Cecil/EventDefExtendedTable.cs
 ./Mono.Cecil/EventDefinition.cs
 ./Mono.Cecil/EventDefinitionCollection.cs
 ./Mono.Cecil/EventReference.cs
+./Mono.Cecil/ExtendedMetadata.cs
 ./Mono.Cecil/ExternTypeCollection.cs
 ./Mono.Cecil/FieldAttributes.cs
+./Mono.Cecil/FieldDefExtendedTable.cs
 ./Mono.Cecil/FieldDefinition.cs
 ./Mono.Cecil/FieldDefinitionCollection.cs
 ./Mono.Cecil/FieldReference.cs
@@ -67,13 +70,16 @@
 ./Mono.Cecil/IReflectionVisitable.cs
 ./Mono.Cecil/IReflectionVisitor.cs
 ./Mono.Cecil/IRequireResolving.cs
+./Mono.Cecil/LazyReflectionReader.cs
 ./Mono.Cecil/LinkedResource.cs
 ./Mono.Cecil/ManifestResourceAttributes.cs
 ./Mono.Cecil/MarshalSpec.cs
 ./Mono.Cecil/MemberReference.cs
 ./Mono.Cecil/MemberReferenceCollection.cs
+./Mono.Cecil/MetadataResolver.cs
 ./Mono.Cecil/MethodAttributes.cs
 ./Mono.Cecil/MethodCallingConvention.cs
+./Mono.Cecil/MethodDefExtendedTable.cs
 ./Mono.Cecil/MethodDefinition.cs
 ./Mono.Cecil/MethodDefinitionCollection.cs
 ./Mono.Cecil/MethodImplAttributes.cs
@@ -90,6 +96,7 @@
 ./Mono.Cecil/NestedTypeCollection.cs
 ./Mono.Cecil/NullReferenceImporter.cs
 ./Mono.Cecil/OverrideCollection.cs
+./Mono.Cecil/ParamDefExtendedTable.cs
 ./Mono.Cecil/ParameterAttributes.cs
 ./Mono.Cecil/ParameterDefinition.cs
 ./Mono.Cecil/ParameterDefinitionCollection.cs
@@ -99,6 +106,7 @@
 ./Mono.Cecil/PInvokeInfo.cs
 ./Mono.Cecil/PointerType.cs
 ./Mono.Cecil/PropertyAttributes.cs
+./Mono.Cecil/PropertyDefExtendedTable.cs
 ./Mono.Cecil/PropertyDefinition.cs
 ./Mono.Cecil/PropertyDefinitionCollection.cs
 ./Mono.Cecil/PropertyReference.cs
@@ -120,6 +128,7 @@
 ./Mono.Cecil/TableComparers.cs
 ./Mono.Cecil/TargetRuntime.cs
 ./Mono.Cecil/TypeAttributes.cs
+./Mono.Cecil/TypeDefExtendedTable.cs
 ./Mono.Cecil/TypeDefinition.cs
 ./Mono.Cecil/TypeDefinitionCollection.cs
 ./Mono.Cecil/TypeReference.cs

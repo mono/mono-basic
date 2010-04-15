@@ -514,6 +514,8 @@ Public Partial Class CecilTypeCache
     Public System_Runtime_CompilerServices_DecimalConstantAttribute As Mono.Cecil.TypeDefinition
     Public System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32 As Mono.Cecil.MethodDefinition
     Public System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32 As Mono.Cecil.MethodDefinition
+    Public System_Runtime_CompilerServices_AccessedThroughPropertyAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_CompilerServices_AccessedThroughPropertyAttribute__ctor_String As Mono.Cecil.MethodDefinition
     Public System_Decimal__Compare_Decimal_Decimal As Mono.Cecil.MethodDefinition
     Public System_DateTime__Compare_DateTime_DateTime As Mono.Cecil.MethodDefinition
     Public System_Decimal__Add_Decimal_Decimal As Mono.Cecil.MethodDefinition
@@ -549,6 +551,10 @@ Public Partial Class CecilTypeCache
     Public System_Math__Round_Double As Mono.Cecil.MethodDefinition
     Public System_Math__Pow_Double_Double As Mono.Cecil.MethodDefinition
     Public System_Runtime_InteropServices_DllImportAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_InteropServices_MarshalAsAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_InteropServices_StructLayoutAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_InteropServices_FieldOffsetAttribute As Mono.Cecil.TypeDefinition
+    Public System_Security_Permissions_SecurityAttribute As Mono.Cecil.TypeDefinition
     Public System_Windows_Forms_Form As Mono.Cecil.TypeDefinition
     Public System_Windows_Forms_Application As Mono.Cecil.TypeDefinition
     Public System_Windows_Forms_Application__Run As Mono.Cecil.MethodDefinition
@@ -777,6 +783,8 @@ Public Partial Class CecilTypeCache
         System_Runtime_CompilerServices_DecimalConstantAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.DecimalConstantAttribute")
         System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32 = GetConstructor(System_Runtime_CompilerServices_DecimalConstantAttribute, System_Byte, System_Byte, System_UInt32, System_UInt32, System_UInt32)
         System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32 = GetConstructor(System_Runtime_CompilerServices_DecimalConstantAttribute, System_Byte, System_Byte, System_Int32, System_Int32, System_Int32)
+        System_Runtime_CompilerServices_AccessedThroughPropertyAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.AccessedThroughPropertyAttribute")
+        System_Runtime_CompilerServices_AccessedThroughPropertyAttribute__ctor_String = GetConstructor(System_Runtime_CompilerServices_AccessedThroughPropertyAttribute, System_String)
         System_Decimal__Compare_Decimal_Decimal = GetMethod(System_Decimal, "Compare", System_Decimal, System_Decimal)
         System_DateTime__Compare_DateTime_DateTime = GetMethod(System_DateTime, "Compare", System_DateTime, System_DateTime)
         System_Decimal__Add_Decimal_Decimal = GetMethod(System_Decimal, "Add", System_Decimal, System_Decimal)
@@ -812,6 +820,10 @@ Public Partial Class CecilTypeCache
         System_Math__Round_Double = GetMethod(System_Math, "Round", System_Double)
         System_Math__Pow_Double_Double = GetMethod(System_Math, "Pow", System_Double, System_Double)
         System_Runtime_InteropServices_DllImportAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.DllImportAttribute")
+        System_Runtime_InteropServices_MarshalAsAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.MarshalAsAttribute")
+        System_Runtime_InteropServices_StructLayoutAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.StructLayoutAttribute")
+        System_Runtime_InteropServices_FieldOffsetAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.FieldOffsetAttribute")
+        System_Security_Permissions_SecurityAttribute = [GetType](mscorlib, "System.Security.Permissions.SecurityAttribute")
         System_Windows_Forms_Form = [GetType](winforms, "System.Windows.Forms.Form")
         System_Windows_Forms_Application = [GetType](winforms, "System.Windows.Forms.Application")
         System_Windows_Forms_Application__Run = GetMethod(System_Windows_Forms_Application, "Run", System_Windows_Forms_Form)

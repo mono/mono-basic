@@ -40,13 +40,18 @@ Public Class IdentifierOrKeywordWithTypeArguments
         m_TypeArguments = TypeArguments
     End Sub
 
+    Shadows Sub Init(ByVal Identifier As String, ByVal Keyword As KS, ByVal TypeArguments As TypeArgumentList)
+        MyBase.Init(Identifier, Keyword)
+        m_TypeArguments = TypeArguments
+    End Sub
+
     Shadows Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As IdentifierOrKeywordWithTypeArguments
         If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
         Dim result As New IdentifierOrKeywordWithTypeArguments(NewParent)
         If m_TypeArguments IsNot Nothing Then
-            result.Init(MyBase.Token, m_TypeArguments.Clone(result))
+            result.Init(Me.Identifier, Me.Keyword, m_TypeArguments.Clone(result))
         Else
-            result.Init(MyBase.Token, Nothing)
+            result.Init(Me.Identifier, Me.Keyword, Nothing)
         End If
         Return result
     End Function

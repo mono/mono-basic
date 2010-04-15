@@ -33,30 +33,6 @@ Namespace My
                 SaveSetting("IsFirstRun", value)
             End Set
         End Property
-        Shared Property ContinuousTest() As Boolean
-            Get
-                Return CBool(GetSetting("ContinuousTest", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("ContinuousTest", value)
-            End Set
-        End Property
-        Shared Property HostedTest() As Boolean
-            Get
-                Return CBool(GetSetting("HostedTest", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("HostedTest", value)
-            End Set
-        End Property
-        Shared Property DontTestIfNothingHasChanged() As Boolean
-            Get
-                Return CBool(GetSetting("DontTestIfNothingHasChanged", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("DontTestIfNothingHasChanged", value)
-            End Set
-        End Property
         Shared Property ModifyRegistry() As String
             Get
                 Return GetSetting("ModifyRegistry", "N")

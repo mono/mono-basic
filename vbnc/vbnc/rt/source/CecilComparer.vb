@@ -1,4 +1,4 @@
-﻿' 
+' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -209,7 +209,7 @@ Public Class CecilComparer
             End If
         Loop
 
-        CompareAttributeList(lst1, lst2, AddressOf CompareAttribute, AddressOf AreAttributesEqual, "attribute", AddressOf AttributeAsString, M1, M2)
+        CompareAttributeList(Of CustomAttribute)(lst1, lst2, New ComparerMethod(Of CustomAttribute)(AddressOf CompareAttribute), New EqualChecker(Of CustomAttribute)(AddressOf AreAttributesEqual), "attribute", New AsString(Of CustomAttribute)(AddressOf AttributeAsString), M1, M2)
     End Sub
 
     Private Sub CompareAttributeList(Of T)(ByVal Lst1 As Generic.List(Of T), ByVal Lst2 As Generic.List(Of T), ByVal Comparer As ComparerMethod(Of T), ByVal EqualCheck As EqualChecker(Of T), ByVal Name As String, ByVal ItemToString As AsString(Of T), ByVal M1 As MemberReference, ByVal M2 As MemberReference)
@@ -255,6 +255,14 @@ Public Class CecilComparer
             Return DirectCast(Member, TypeDefinition).CustomAttributes
         ElseIf TypeOf Member Is MethodDefinition Then
             Return DirectCast(Member, MethodDefinition).CustomAttributes
+        ElseIf TypeOf Member Is FieldDefinition Then
+            Return DirectCast(Member, FieldDefinition).CustomAttributes
+        ElseIf TypeOf Member Is PropertyDefinition Then
+            Return DirectCast(Member, PropertyDefinition).CustomAttributes
+        ElseIf TypeOf Member Is EventDefinition Then
+            Return DirectCast(Member, EventDefinition).CustomAttributes
+        ElseIf Member Is Nothing Then
+            Return Nothing
         Else
             Throw New NotImplementedException
         End If
@@ -391,7 +399,79 @@ Public Class CecilComparer
         CompareProperties(Type1.Properties, Type2.Properties)
 
         CompareTypes(Type1.NestedTypes, Type2.NestedTypes)
+
+        CompareGenericParameters(Type1.GenericParameters, Type2.GenericParameters)
     End Sub
+
+    Private Sub CompareGenericParameters(ByVal ListA As GenericParameterCollection, ByVal ListB As GenericParameterCollection)
+        CompareList(Of GenericParameter)(CloneCollection(Of GenericParameter)(ListA), CloneCollection(Of GenericParameter)(ListB), New ComparerMethod(Of GenericParameter)(AddressOf CompareGenericParameters), New EqualChecker(Of GenericParameter)(AddressOf AreGenericParametersSame), "GenericParameter", New AsString(Of GenericParameter)(AddressOf GenericParameterAsString))
+    End Sub
+
+    Private Function GetFullName(ByVal owner As IGenericParameterProvider) As String
+        Dim t As TypeReference = TryCast(owner, TypeReference)
+        If t IsNot Nothing Then Return t.FullName
+        Throw New NotImplementedException
+    End Function
+
+    Private Function CompareGenericParameters(ByVal P1 As GenericParameter, ByVal P2 As GenericParameter) As Boolean
+        If P1.Name <> P2.Name Then
+            SaveMessage("Generic parameter #{0} in {1} has the name '{2}', while generic parameter #{0} in {3} has the name '{4}'", P1.Position, GetFullName(P1.Owner), P1.Name, GetFullName(P2.Owner), P2.Name)
+        End If
+
+        If P1.Constraints.Count <> P2.Constraints.Count Then
+            SaveMessage("Generic parameter #{0} in {1} has {2} constraints, while generic parameter #{0} in {3} has the {4} constraints.", P1.Position, GetFullName(P1.Owner), P1.Constraints.Count, P2.DeclaringType.FullName, P2.Constraints.Count)
+        ElseIf P1.Constraints.Count > 0 Then
+            For i As Integer = 0 To P1.Constraints.Count - 1
+                If AreSameTypes(P1.Constraints(i), P2.Constraints(i)) = False Then
+                    SaveMessage("Generic parameter #{0}'s constraint #{1} in {2} is '{3}', while generic parameter #{0}'s constraint #{1} in {4} is '{5}'", P1.Position, i, GetFullName(P1.Owner), P1.Constraints(i).FullName, GetFullName(P2.Owner), P2.Constraints(i).FullName)
+                End If
+            Next
+        End If
+
+        If P1.HasDefaultConstructorConstraint <> P2.HasDefaultConstructorConstraint Then
+            SaveMessage("Generic parameter #{0} in {1} HasDefaultConstructorConstraint = {2}, while generic parameter #{0} in {3} HasDefaultConstructorConstraint = {4}", P1.Position, GetFullName(P1.Owner), P1.HasDefaultConstructorConstraint, GetFullName(P2.Owner), P2.HasDefaultConstructorConstraint)
+        End If
+
+        If P1.HasNotNullableValueTypeConstraint <> P2.HasNotNullableValueTypeConstraint Then
+            SaveMessage("Generic parameter #{0} in {1} HasNotNullableValueTypeConstraint = {2}, while generic parameter #{0} in {3} HasNotNullableValueTypeConstraint = {4}", P1.Position, GetFullName(P1.Owner), P1.HasNotNullableValueTypeConstraint, GetFullName(P2.Owner), P2.HasNotNullableValueTypeConstraint)
+        End If
+
+        If P1.HasReferenceTypeConstraint <> P2.HasReferenceTypeConstraint Then
+            SaveMessage("Generic parameter #{0} in {1} HasReferenceTypeConstraint = {2}, while generic parameter #{0} in {3} HasReferenceTypeConstraint = {4}", P1.Position, GetFullName(P1.Owner), P1.HasReferenceTypeConstraint, GetFullName(P2.Owner), P2.HasReferenceTypeConstraint)
+        End If
+
+        If P1.IsContravariant <> P2.IsContravariant Then
+            SaveMessage("Generic parameter #{0} in {1} IsContravariant = {2}, while generic parameter #{0} in {3} IsContravariant = {4}", P1.Position, GetFullName(P1.Owner), P1.IsContravariant, GetFullName(P2.Owner), P2.IsContravariant)
+        End If
+
+        If P1.IsCovariant <> P2.IsCovariant Then
+            SaveMessage("Generic parameter #{0} in {1} IsCovariant = {2}, while generic parameter #{0} in {3} IsCovariant = {4}", P1.Position, GetFullName(P1.Owner), P1.IsCovariant, GetFullName(P2.Owner), P2.IsCovariant)
+        End If
+
+        If P1.IsNonVariant <> P2.IsNonVariant Then
+            SaveMessage("Generic parameter #{0} in {1} IsNonVariant = {2}, while generic parameter #{0} in {3} IsNonVariant = {4}", P1.Position, GetFullName(P1.Owner), P1.IsNonVariant, GetFullName(P2.Owner), P2.IsNonVariant)
+        End If
+    End Function
+
+    Private Function AreGenericParametersSame(ByVal P1 As GenericParameter, ByVal P2 As GenericParameter) As Boolean
+        Return P1.Position = P2.Position
+    End Function
+
+    Private Function GenericParameterAsString(ByVal Parameter As GenericParameter) As String
+        Dim result As String
+
+        result = Parameter.Name
+        If Parameter.Constraints.Count > 0 Then
+            result &= "{"
+            For i As Integer = 0 To Parameter.Constraints.Count - 1
+                If i > 0 Then result &= ", "
+                result &= Parameter.Constraints(i).FullName
+            Next
+            result &= "}"
+        End If
+
+        Return result
+    End Function
 
     Private Function MethodAsString(ByVal Info As MethodReference) As String
         Dim result As String
@@ -432,7 +512,7 @@ Public Class CecilComparer
         Return result
     End Function
 
-    Private Function AreSameMethod(ByVal Type1 As MethodReference, ByVal Type2 As MethodReference) As Boolean
+    Private Function AreSameMethod(ByVal Type1 As MethodDefinition, ByVal Type2 As MethodDefinition) As Boolean
         If Type1 Is Nothing AndAlso Type2 IsNot Nothing Then Return False
         If Type2 Is Nothing AndAlso Type1 IsNot Nothing Then Return False
         If Type1 Is Nothing AndAlso Type2 Is Nothing Then Return True
@@ -440,6 +520,16 @@ Public Class CecilComparer
     End Function
 
     Private Sub CompareMethod(ByVal Method1 As MethodReference, ByVal Method2 As MethodReference)
+        Dim mD1 As MethodDefinition = TryCast(Method1, MethodDefinition)
+        Dim mD2 As MethodDefinition = TryCast(Method2, MethodDefinition)
+
+        If Method1 Is Nothing AndAlso Method2 Is Nothing Then Return
+
+        If mD1 IsNot Nothing AndAlso mD2 IsNot Nothing Then
+            CompareMethod(mD1, mD2)
+            Return
+        End If
+
         Throw New NotImplementedException
     End Sub
 
@@ -468,16 +558,12 @@ Public Class CecilComparer
             SaveMessage("'(%a1%).{0}' has return type '{1}', while '(%a2%).{2}' has return type '{3}'", Method1, Method1.ReturnType, Method2, Method2.ReturnType)
         End If
 
-        If Method1.GenericParameters.Count <> Method2.GenericParameters.Count Then
-            SaveMessage("'{0}' contains {1} generic parameters, while '{2}' contains {3} generic parameters.", Method1, Method1.GenericParameters.Count, Method2, Method2.GenericParameters.Count)
-        ElseIf Method1.GenericParameters.Count > 0 AndAlso Method2.GenericParameters.Count > 0 Then
-            SaveMessage("Comparison of generic parameters is not implemented.")
-        End If
+        CompareGenericParameters(Method1.GenericParameters, Method2.GenericParameters)
 
     End Sub
 
     Private Sub CompareMethods(ByVal Methods1 As MethodDefinitionCollection, ByVal Methods2 As MethodDefinitionCollection)
-        CompareList(CloneCollection(Of MethodDefinition)(Methods1), CloneCollection(Of MethodDefinition)(Methods2), AddressOf CompareMethod, AddressOf AreSameMethod, "Method", AddressOf MethodAsString)
+        CompareList(Of MethodDefinition)(CloneCollection(Of MethodDefinition)(Methods1), CloneCollection(Of MethodDefinition)(Methods2), New ComparerMethod(Of MethodDefinition)(AddressOf CompareMethod), New EqualChecker(Of MethodDefinition)(AddressOf AreSameMethod), "Method", New AsString(Of MethodDefinition)(AddressOf MethodAsString))
     End Sub
 
     Private Function FieldAsString(ByVal Info As FieldReference) As String
@@ -523,7 +609,7 @@ Public Class CecilComparer
     End Sub
 
     Private Sub CompareFields(ByVal Fields1 As FieldDefinitionCollection, ByVal Fields2 As FieldDefinitionCollection)
-        CompareList(CloneCollection(Of FieldDefinition)(Fields1), CloneCollection(Of FieldDefinition)(Fields2), AddressOf CompareField, AddressOf AreSameField, "Field", AddressOf FieldAsString)
+        CompareList(Of FieldDefinition)(CloneCollection(Of FieldDefinition)(Fields1), CloneCollection(Of FieldDefinition)(Fields2), New ComparerMethod(Of FieldDefinition)(AddressOf CompareField), New EqualChecker(Of FieldDefinition)(AddressOf AreSameField), "Field", New AsString(Of FieldDefinition)(AddressOf FieldAsString))
     End Sub
 
     Private Function CtorAsString(ByVal Info As MethodReference) As String
@@ -538,7 +624,7 @@ Public Class CecilComparer
     End Function
 
     Private Sub CompareConstructors(ByVal Ctors1 As ConstructorCollection, ByVal Ctors2 As ConstructorCollection)
-        CompareList(CloneCollection(Of MethodDefinition)(Ctors1), CloneCollection(Of MethodDefinition)(Ctors2), AddressOf CompareMethod, AddressOf AreSameCtor, "Constructor", AddressOf CtorAsString)
+        CompareList(Of MethodDefinition)(CloneCollection(Of MethodDefinition)(Ctors1), CloneCollection(Of MethodDefinition)(Ctors2), New ComparerMethod(Of MethodDefinition)(AddressOf CompareMethod), New EqualChecker(Of MethodDefinition)(AddressOf AreSameCtor), "Constructor", New AsString(Of MethodDefinition)(AddressOf CtorAsString))
     End Sub
 
     Private Shared _assemblies As New Hashtable
@@ -635,7 +721,7 @@ Public Class CecilComparer
     End Sub
 
     Private Sub CompareEvents(ByVal Events1 As EventDefinitionCollection, ByVal Events2 As EventDefinitionCollection)
-        CompareList(CloneCollection(Of EventDefinition)(Events1), CloneCollection(Of EventDefinition)(Events2), AddressOf CompareEvent, AddressOf AreSameEvent, "Event", AddressOf EventAsString)
+        CompareList(Of EventDefinition)(CloneCollection(Of EventDefinition)(Events1), CloneCollection(Of EventDefinition)(Events2), New ComparerMethod(Of EventDefinition)(AddressOf CompareEvent), New EqualChecker(Of EventDefinition)(AddressOf AreSameEvent), "Event", New AsString(Of EventDefinition)(AddressOf EventAsString))
     End Sub
 
     Private Function PropertyAsString(ByVal Info As PropertyDefinition) As String
@@ -669,7 +755,7 @@ Public Class CecilComparer
     End Sub
 
     Private Sub CompareProperties(ByVal Props1 As PropertyDefinitionCollection, ByVal Props2 As PropertyDefinitionCollection)
-        CompareList(CloneCollection(Of PropertyDefinition)(Props1), CloneCollection(Of PropertyDefinition)(Props2), AddressOf CompareProperty, AddressOf AreSameProperty, "Property", AddressOf PropertyAsString)
+        CompareList(Of PropertyDefinition)(CloneCollection(Of PropertyDefinition)(Props1), CloneCollection(Of PropertyDefinition)(Props2), New ComparerMethod(Of PropertyDefinition)(AddressOf CompareProperty), New EqualChecker(Of PropertyDefinition)(AddressOf AreSameProperty), "Property", New AsString(Of PropertyDefinition)(AddressOf PropertyAsString))
     End Sub
 
     Private Sub CompareList(Of T As MemberReference)(ByVal Lst1 As Generic.List(Of T), ByVal Lst2 As Generic.List(Of T), ByVal Comparer As ComparerMethod(Of T), ByVal EqualCheck As EqualChecker(Of T), ByVal Name As String, ByVal ItemToString As AsString(Of T))
@@ -688,6 +774,9 @@ Public Class CecilComparer
 
                 Lst1.Remove(type1)
             Else
+                If type1 IsNot Nothing AndAlso type2 IsNot Nothing Then
+                    Comparer(type1, type2)
+                End If
                 Lst1.Remove(type1)
                 Lst2.Remove(type2)
             End If

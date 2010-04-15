@@ -1,4 +1,4 @@
-﻿' 
+' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -31,7 +31,6 @@ Public Class TypeVariableDeclaration
 
     Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
-    Private m_WithEventsRedirect As PropertyDeclaration
     Private m_HandledEvents As New Generic.List(Of Mono.Cecil.EventReference)
 
     Sub New(ByVal Parent As ParsedObject)
@@ -129,6 +128,7 @@ Public Class TypeVariableDeclaration
     End Function
 
     Overrides Sub UpdateDefinition()
+        If Compiler Is Nothing Then Return
         MyBase.UpdateDefinition()
         Dim result As Boolean = True
 
@@ -136,6 +136,7 @@ Public Class TypeVariableDeclaration
             m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetTypeOrTypeReference(Compiler, FieldType), Helper.GetAttributes(Compiler, Me))
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If
+        m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
         If VariableType IsNot Nothing AndAlso m_FieldBuilderCecil.FieldType Is Nothing Then
             m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, VariableType)
         End If
@@ -195,17 +196,25 @@ Public Class TypeVariableDeclaration
 
         Dim parentType As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
         Dim propertyAccessor As New PropertyDeclaration(parentType)
-        Dim modifiers As New Modifiers(ModifierMasks.Private)
+        Dim modifiers As Modifiers
 
-        If Me.Modifiers.Is(ModifierMasks.Shared) Then
+        If Me.IsShared Then
             modifiers.AddModifiers(ModifierMasks.Shared)
+        Else
+            modifiers.AddModifier(KS.Overridable)
         End If
-        modifiers.AddModifiers(Me.Modifiers.Mask And ModifierMasks.AccessModifiers)
+        If (Me.Modifiers.Mask And ModifierMasks.AccessModifiers) = 0 Then
+            modifiers.AddModifier(KS.Private)
+        Else
+            modifiers.AddModifiers(Me.Modifiers.Mask And ModifierMasks.AccessModifiers)
+        End If
 
         propertyAccessor.Init(modifiers, Name, Me.TypeName)
         result = propertyAccessor.ResolveTypeReferences() AndAlso result
         propertyAccessor.HandlesField = Me
+        propertyAccessor.SetDeclaration.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Synchronized
 
+        Me.CustomAttributes.Add(New Attribute(Me, Compiler.TypeCache.System_Runtime_CompilerServices_AccessedThroughPropertyAttribute, Name))
         Rename("_" & Name)
 
         parentType.Members.Add(propertyAccessor)
