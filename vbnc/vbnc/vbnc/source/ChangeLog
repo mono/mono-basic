@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/Compiler.vb: Set correct module name.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TypeDeclarations/AssemblyDeclaration.vb: Fix fileversion attributes.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

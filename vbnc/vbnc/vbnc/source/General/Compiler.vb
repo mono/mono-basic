@@ -296,39 +296,7 @@ Public Class Compiler
         Return True
     End Function
 
-    Private Function Compile_FinishAssemblyAndModuleBuilders() As Boolean
-        Dim result As Boolean = True
-        Dim assemblyName As String
-
-        assemblyName = IO.Path.GetFileNameWithoutExtension(OutFileName)
-
-        AssemblyBuilderCecil.Name.Name = assemblyName
-
-        Return result
-    End Function
-
     Private Function Compile_CreateAssemblyAndModuleBuilders() As Boolean
-
-
-        'AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
-        'ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
-        'If Helper.IsOnMono Then
-        '    AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save Or CType(&H800, System.Reflection.Emit.AssemblyBuilderAccess), IO.Path.GetDirectoryName(m_OutFilename))
-        'Else
-        '    AssemblyBuilder = System.AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, System.Reflection.Emit.AssemblyBuilderAccess.Save, IO.Path.GetDirectoryName(m_OutFilename))
-        'End If
-        '
-        'ModuleBuilder = AssemblyBuilder.DefineDynamicModule(assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo)
-
-        '#If DEBUGREFLECTION Then
-        '        vbnc.Helper.DebugReflection_AppendLine("{0} = System.AppDomain.CurrentDomain.DefineDynamicAssembly({1}, System.Reflection.Emit.AssemblyBuilderAccess.Save, ""{2}"")", AssemblyBuilder, assemblyName, IO.Path.GetDirectoryName(m_OutFilename))
-        '        vbnc.Helper.DebugReflection_AppendLine("{0} = {4}.DefineDynamicModule(""{1}"", ""DEBUGREFLECTED{2}"", {3})", ModuleBuilder, assemblyName.Name, IO.Path.GetFileName(m_OutFilename), EmittingDebugInfo, AssemblyBuilder)
-        '#End If
-
-        'If m_CommandLine.DebugInfo <> vbnc.CommandLine.DebugTypes.None Then
-        '    m_SymbolWriter = ModuleBuilder.GetSymWriter
-        'End If
-
         Dim kind As Mono.Cecil.AssemblyKind
         Select Case CommandLine.Target
             Case vbnc.CommandLine.Targets.Console
@@ -344,8 +312,9 @@ Public Class Compiler
                 kind = Mono.Cecil.AssemblyKind.Console
         End Select
 
-        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly("vbnc", Mono.Cecil.TargetRuntime.NET_2_0, kind)
+        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(IO.Path.GetFileNameWithoutExtension(OutFileName), Mono.Cecil.TargetRuntime.NET_2_0, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
+        ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
 
         Return Compiler.Report.Errors = 0
     End Function
@@ -507,7 +476,6 @@ Public Class Compiler
             result = Compile_Resolve() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
-            result = Me.Compile_FinishAssemblyAndModuleBuilders() AndAlso result
             result = Me.Assembly.SetCecilName(AssemblyBuilderCecil.Name) AndAlso result
 
             result = AddResources() AndAlso result
