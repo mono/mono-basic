@@ -4,10 +4,8 @@ source/ConditionalCompilation/ConditionalConstant.vb
 source/ConditionalCompilation/ConditionalConstants.vb
 source/ConditionalCompilation/ConditionalExpression.vb
 source/Emit/EmitInfo.vb
-source/Emit/EmitStack.vb
 source/Emit/Emitter.DecimalFields.vb
 source/Enums/BuiltInDataTypes.vb
-source/Enums/Constants.vb
 source/Enums/EnumStringAttribute.vb
 source/Enums/IntegerBase.vb
 source/Enums/KS.vb
@@ -36,7 +34,6 @@ source/Expressions/Classifications/TypeClassification.vb
 source/Expressions/Classifications/ValueClassification.vb
 source/Expressions/Classifications/VariableClassification.vb
 source/Expressions/Classifications/VoidClassification.vb
-source/Expressions/ClassModifiers.vb
 source/Expressions/CompilerGeneratedExpression.vb
 source/Expressions/LateBoundAccessToExpression.vb
 source/Expressions/LateBoundAccessToPropertyAccessExpression.vb
@@ -46,7 +43,6 @@ source/Expressions/GetRefExpression.vb
 source/Expressions/LateBoundAccessToValueExpression.vb
 source/Expressions/LoadFieldExpression.vb
 source/Expressions/MethodGroupToValueExpression.vb
-source/Expressions/MethodPointerToValueExpression.vb
 source/Expressions/NothingConstantExpression.vb
 source/Expressions/OperatorExpression.vb
 source/Expressions/PropertyAccessToValueExpression.vb
@@ -62,7 +58,6 @@ source/General/MethodBaseDeclaration.vb
 source/General/MyGenerator.vb
 source/General/MyGroupData.vb
 source/General/NamespaceDictionary.vb
-source/General/NothingType.vb
 source/General/TypeDictionary.vb
 source/General/TypeList.vb
 source/Infos/ExpressionResolveInfo.vb
@@ -136,7 +131,6 @@ source/Members/OperatorDeclaration.vb
 source/Members/BoundList.vb
 source/Members/ConstantDeclaration.vb
 source/Members/ConstantDeclarations.vb
-source/Members/ConstantModifiers.vb
 source/Members/ConversionOperatorDeclaration.vb
 source/Members/CustomEventDeclaration.vb
 source/Members/EventAccessorDeclarations.vb
@@ -152,7 +146,6 @@ source/Members/InterfaceBases.vb
 source/Members/InterfaceEventMemberDeclaration.vb
 source/Members/InterfaceFunctionDeclaration.vb
 source/Members/InterfaceMemberSpecifier.vb
-source/Members/InterfaceMethodMemberDeclaration.vb
 source/Members/InterfacePropertyMemberDeclaration.vb
 source/Members/InterfaceSubDeclaration.vb
 source/Members/LibraryClause.vb
@@ -162,7 +155,6 @@ source/Members/MustOverridePropertyDeclaration.vb
 source/Members/Operand.vb
 source/Members/Parameter.vb
 source/Members/ParameterList.vb
-source/Members/ParameterModifiers.vb
 source/Members/ParametersOrType.vb
 source/Members/ParemeterIdentifier.vb
 source/Members/RegularEventDeclaration.vb
@@ -174,7 +166,6 @@ source/Members/VariableIdentifier.vb
 source/Members/VariableIdentifiers.vb
 source/Members/VariableInitializer.vb
 source/Members/VariableInitializerList.vb
-source/Members/VariableModifiers.vb
 source/Members/VariablePropertyInitializer.vb
 source/Members/VariablePropertyInitializerList.vb
 source/Tokens/IdentifierOrKeywordWithTypeArguments.vb
@@ -271,7 +262,6 @@ source/General/MessageLevel.vb
 source/General/Messages.vb
 source/General/Resource.vb
 source/General/Resources.vb
-source/Members/ParamArrayAttributeMember.vb
 source/Expressions/BinaryExpressions/AndAlsoExpression.vb
 source/Expressions/BinaryExpressions/AndExpression.vb
 source/Expressions/BinaryExpressions/BinaryAddExpression.vb
@@ -323,7 +313,6 @@ source/Expressions/Conversions/DirectCastExpression.vb
 source/Expressions/Conversions/TryCastExpression.vb
 source/Expressions/DictionaryAccessExpression.vb
 source/Expressions/DotAccessExpression.vb
-source/Expressions/EnumConstantExpression.vb
 source/Expressions/GetTypeExpression.vb
 source/Expressions/GlobalExpression.vb
 source/Expressions/LiteralExpression.vb

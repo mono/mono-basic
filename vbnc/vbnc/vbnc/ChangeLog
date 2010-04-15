@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.vbnc.rsp: Don't include the My namespace in the compiler.
+	* vbnc.exe.sources: Updated.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Makefile: Dist vbnc9.vbproj.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

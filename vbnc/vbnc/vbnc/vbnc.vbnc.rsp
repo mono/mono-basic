@@ -3,3 +3,4 @@
 -r:System.Web.dll
 -imports:System
 -imports:Microsoft.VisualBasic
+-define:_MYTYPE=\"Empty\"
