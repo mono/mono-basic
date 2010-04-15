@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,6 @@
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-
-Imports System.Reflection
-Imports System.Reflection.Emit
 
 #Const DEBUGEMIT = 0
 
@@ -201,7 +198,7 @@ Public Class EmitLog
         CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
         If block.EndTry Is Nothing Then block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
         If block.Handlers.Count > 0 Then
-            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop) ' cilBody.Instructions(CilBody.Instructions.Count - 1) ' CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
         End If
 
         ex.FilterStart = CilBody.Instructions(CilBody.Instructions.Count - 1)

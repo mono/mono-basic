@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -109,8 +109,6 @@ Public Class EnumDeclaration
         MyBase.UpdateDefinition()
 
         TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
-        'FIXME: Use the type cache when #351879 is fixed.
-        'BaseType = Compiler.AssemblyBuilderCecil.MainModule.Import(GetType(System.Enum)) ' Compiler.CecilTypeCache.System_Enum
         BaseType = Compiler.TypeCache.System_Enum
 
         If m_ValueField Is Nothing AndAlso m_QualifiedName <> KS.None Then

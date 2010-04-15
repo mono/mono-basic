@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -37,100 +37,6 @@ End Class
 
 Public Class CecilHelper
     Private Shared _assemblies As New Hashtable
-
-#If ENABLECECIL And Debug Then
-    Public Shared Sub Test()
-        Dim a As AssemblyDefinition = Nothing
-        For Each Type As TypeDefinition In a.MainModule.Types
-            System.Diagnostics.Debug.WriteLine(Type.FullName)
-            For Each field As FieldDefinition In Type.Fields
-                System.Diagnostics.Debug.WriteLine(field.Name)
-            Next
-            For Each method As MethodDefinition In Type.Methods
-                System.Diagnostics.Debug.WriteLine(method.Name)
-            Next
-        Next
-    End Sub
-
-    Shared m As ModuleDefinition
-    Shared tested As New Generic.List(Of Object)
-
-    Private Shared Sub TestMember(ByVal Member As MemberReference)
-        Try
-            If tested.Contains(Member) Then Return
-            tested.Add(Member)
-
-            If TypeOf Member Is TypeSpecification Then
-                Dim ts As TypeSpecification = DirectCast(Member, TypeSpecification)
-                If Not TypeOf ts Is Mono.Cecil.GenericInstanceType Then
-                    Dim str As String = ts.ToString()
-                    If tested.Contains(str) Then Return
-                    tested.Add(str)
-                End If
-            End If
-
-            If (TypeOf Member Is MethodReference) Then
-                Dim m1 As MethodReference = DirectCast(Member, MethodReference)
-                m.Import(m1)
-                For Each t1 As TypeReference In m1.GenericParameters
-                    TestMember(t1)
-                Next
-                For Each p1 As ParameterDefinition In m1.Parameters
-                    TestMember(p1.ParameterType)
-                Next
-            ElseIf TypeOf Member Is FieldReference Then
-                Dim f1 As FieldReference = DirectCast(Member, FieldReference)
-                m.Import(f1)
-                TestMember(f1.FieldType)
-            ElseIf TypeOf Member Is TypeReference Then
-                Dim t1 As TypeReference = DirectCast(Member, TypeReference)
-                Dim tD As TypeDefinition = TryCast(Member, TypeDefinition)
-                m.Import(t1)
-                For Each t2 As TypeReference In t1.GenericParameters
-                    TestMember(t2)
-                Next
-                If tD IsNot Nothing Then
-                    For Each t2 As TypeDefinition In tD.NestedTypes
-                        TestMember(t2)
-                    Next
-                    For Each m1 As MethodDefinition In tD.Methods
-                        TestMember(m1)
-                    Next
-                    For Each m1 As MethodDefinition In tD.Constructors
-                        TestMember(m1)
-                    Next
-                    For Each f1 As FieldDefinition In tD.Fields
-                        TestMember(f1)
-                    Next
-                End If
-            Else
-                Throw New NotImplementedException
-            End If
-        Catch ex As Exception
-            If TypeOf Member Is TypeReference Then
-                Debug.WriteLine(String.Format("{2} {0}: {1}", DirectCast(Member, TypeReference).FullName, ex.Message, Member.GetType().FullName))
-            Else
-                Debug.WriteLine(String.Format("{3} {0}.{1}: {2}", Member.DeclaringType.FullName, Member.Name, ex.Message, Member.GetType().FullName))
-            End If
-        End Try
-    End Sub
-
-    Public Shared Sub TestCecil()
-        Dim a As Mono.Cecil.AssemblyDefinition
-        Dim corlib As Mono.Cecil.AssemblyDefinition = AssemblyFactory.GetAssembly("\\linux\mono\main\git\mono-basic\vbnc\vbnc\bin\testoutput\Event_dll.dll")
-
-        System.Threading.Thread.CurrentThread.CurrentUICulture = New Globalization.CultureInfo("en-US")
-        System.Threading.Thread.CurrentThread.CurrentCulture = New Globalization.CultureInfo("en-US")
-
-        a = Mono.Cecil.AssemblyFactory.DefineAssembly("test", AssemblyKind.Dll)
-        m = a.MainModule
-
-        For Each t1 As Mono.Cecil.TypeDefinition In corlib.MainModule.Types
-            'Debug.WriteLine(t1.FullName)
-            TestMember(t1)
-        Next
-    End Sub
-#End If
 
     Private Class resolver
         Inherits BaseAssemblyResolver

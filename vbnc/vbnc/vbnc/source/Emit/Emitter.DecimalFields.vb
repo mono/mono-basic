@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,6 @@
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-
-Imports System.Reflection
-Imports System.Reflection.Emit
 
 Partial Public Class Emitter
     Structure DecimalFields
@@ -53,11 +50,11 @@ Partial Public Class Emitter
             Get
                 Dim result(4) As Object
 
-                result(0) = Scale ' CByte((bits(3) >> 16) And &HFF)
-                result(1) = Sign ' CByte((bits(3) >> 31) And 1) << 7
-                result(2) = Hi 'BitConverter.ToUInt32(BitConverter.GetBytes(bits(2)), 0)
-                result(3) = Mid 'BitConverter.ToUInt32(BitConverter.GetBytes(bits(1)), 0)
-                result(4) = Lo 'BitConverter.ToUInt32(BitConverter.GetBytes(bits(0)), 0)
+                result(0) = Scale
+                result(1) = Sign
+                result(2) = Hi
+                result(3) = Mid
+                result(4) = Lo
 
 #If DEBUG Then
 				Dim test As New Runtime.CompilerServices.DecimalConstantAttribute(Scale, Sign, Hi, Mid, Lo)

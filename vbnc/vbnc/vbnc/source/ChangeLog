@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* */*.vb: Removed dead files. Removed commented out code. Updated license
+	until 2010. Make source files non-executable.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TypeDeclarations/AssemblyDeclaration.vb: Get a MethodReference for external
 	methods when emitting DebuggableAttribute.
 

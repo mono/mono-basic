@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,6 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Imports System.Reflection
-Imports System.Reflection.Emit
 Imports OpCodes = Mono.Cecil.Cil.OpCodes
 
 #If DEBUG Then
@@ -1578,11 +1576,6 @@ Partial Public Class Emitter
         End If
     End Sub
 
-    'Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Variable As LocalBuilder)
-    '    Info.ILGen.Emit(OpCodes.Ldloca, Variable)
-    '    Info.Stack.Push(Info.Compiler.TypeManager.MakeByRefType(CType(Info.Method, ParsedObject), Variable.LocalType))
-    'End Sub
-
     Shared Sub EmitLoadVariableLocation(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Ldloca, Variable)
     End Sub
@@ -1633,20 +1626,6 @@ Partial Public Class Emitter
         If CecilHelper.IsStatic(Parameter.Method) = False Then
             position += 1
         End If
-        'Dim methodmember As MethodInfo = TryCast(member, MethodInfo)
-        'Dim constructormember As ConstructorInfo = TryCast(member, ConstructorInfo)
-        'If methodmember IsNot Nothing Then
-        '    If methodmember.IsStatic = False Then
-        '        position += 1
-        '    End If
-        'ElseIf constructormember IsNot Nothing Then
-        '    If constructormember.IsStatic = False Then
-        '        position += 1
-        '    End If
-        'Else
-        '    Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
-        '    'do nothing
-        'End If
         Return position
     End Function
 
@@ -1798,11 +1777,6 @@ Partial Public Class Emitter
     Shared Sub EmitRet(ByVal Info As EmitInfo)
         Info.ILGen.Emit(OpCodes.Ret)
     End Sub
-
-    'Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As LocalBuilder)
-    '    Info.ILGen.Emit(OpCodes.Ldloc, Variable)
-    '    Info.Stack.Push(Variable.LocalType)
-    'End Sub
 
     Shared Sub EmitLoadVariable(ByVal Info As EmitInfo, ByVal Variable As Mono.Cecil.Cil.VariableDefinition)
         Info.ILGen.Emit(OpCodes.Ldloc, Variable)
@@ -1991,11 +1965,9 @@ Partial Public Class Emitter
         Next
 
 
-#If ENABLECECIL Then
         'Check if the object comparison above is true for cecil as well (that is if same method may have multiple object references)
         'This will assert while compiling the compiler if object comparison doesn't hold for cecil.
         Helper.Assert(UnversionedMethod.Name <> "IsNumeric")
-#End If
 
         Return UnversionedMethod
     End Function

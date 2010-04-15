@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -139,13 +139,8 @@ Public Class TypeClassification
         End If
     End Sub
 
-    'Sub New(ByVal Parent As ParsedObject, ByVal Type As TypeDescriptor)
-    '    Me.New(Parent)
-    '    m_Type = Type
-    'End Sub
-
     Sub New(ByVal Parent As ParsedObject, ByVal Type As Mono.Cecil.TypeDefinition)
         MyBase.New(Classifications.Type, Parent)
-        m_Type = Type ' New TypeDescriptor(Type)
+        m_Type = Type
     End Sub
 End Class

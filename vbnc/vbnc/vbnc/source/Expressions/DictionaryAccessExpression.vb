@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -115,8 +115,7 @@ Public Class DictionaryAccessExpression
             Return True
         End If
         Dim attr As Mono.Cecil.CustomAttribute = Helper.GetDefaultMemberAttribute(Compiler, firsttp)
-        'Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, True)
-        If attr IsNot Nothing Then '.Length = 1 Then
+        If attr IsNot Nothing Then
             Dim name As String = DirectCast(attr.ConstructorParameters(0), String)
             Dim props As Mono.Cecil.PropertyDefinition() = CecilHelper.FindDefinition(firsttp).Properties.GetProperties(name)
             If props IsNot Nothing AndAlso props.Length = 1 Then
@@ -127,13 +126,11 @@ Public Class DictionaryAccessExpression
             Else
                 result = Helper.AddError(Me) AndAlso result
             End If
-            'ElseIf attr.Length > 1 Then
-            'Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Else
             Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If
 
-            Return result
+        Return result
     End Function
 
     Shared Function IsBinaryMe(ByVal tm As tm) As Boolean

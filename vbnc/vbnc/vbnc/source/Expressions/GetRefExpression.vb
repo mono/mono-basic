@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -43,8 +43,6 @@ Public Class GetRefExpression
         MyBase.new(Parent)
         m_Expression = Expression
         m_ExpressionType = Parent.Compiler.TypeManager.MakeByRefType(Parent, Expression.ExpressionType)
-
-        'Helper.Assert(Expression.Classification.IsVariableClassification = False OrElse TypeOf Expression.Classification.AsVariableClassification.Expression Is GetRefExpression = False)
 
         If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then
             Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-#Const SUPPORT_CSTYLE_COMMENTS = 1
 #If DEBUG Then
 #Const DOEOFCHECK = 0
 #Const EXTENDEDDEBUG = 0
@@ -715,53 +714,6 @@ Public Class Scanner
             Case COMMENTCHAR1, COMMENTCHAR2, COMMENTCHAR3 'Traditional VB comment
                 EatLine(False) 'do not eat newline, it needs to be added as a token
                 Return
-#If SUPPORT_CSTYLE_COMMENTS Then
-            Case "/"c 'C-style comment
-                NextChar()
-                Select Case CurrentChar()
-                    Case "/"c 'Single line comment
-                        EatLine(False) 'do not eat newline, it needs to be added as a token
-                        Return
-                    Case "*"c 'Nestable, multiline comment.
-                        Dim iNesting As Integer = 1
-                        NextChar()
-                        Do
-                            Select Case CurrentChar()
-                                Case "*"c
-                                    If PeekChar() = "/"c Then
-                                        'End of comment found (if iNesting is 0)
-                                        NextChar()
-                                        NextChar()
-                                        iNesting -= 1
-                                    Else
-                                        NextChar()
-                                    End If
-                                Case "/"c
-                                    If PeekChar() = "*"c Then
-                                        'a nested comment was found
-                                        NextChar()
-                                        iNesting += 1
-                                    ElseIf PeekChar() = "/"c Then
-                                        EatLine(True)
-                                    Else
-                                        NextChar()
-                                    End If
-                                Case nl0
-                                    Compiler.Report.ShowMessage(Messages.VBNC90022)
-                                    Return
-                                Case Else
-                                    If IsNewLine() Then
-                                        EatNewLine() 'To update the line variable
-                                    Else
-                                        NextChar()
-                                    End If
-                            End Select
-                        Loop While (iNesting <> 0)
-                    Case Else
-                        'Function should never be called if not a comment
-                        Throw New InternalException("EatComment called with no comment.")
-                End Select
-#End If
             Case Else
                 REM is taken care of some other place.
                 'Function should never be called if not a comment
@@ -1506,22 +1458,14 @@ Public Class Scanner
                         Result = GetDate()
                     End If
                 Case "/"c
-#If SUPPORT_CSTYLE_COMMENTS Then
-                    If (PeekChar() = "/"c OrElse PeekChar() = "*"c) Then 'Comment
-                        EatComment()
-                    Else 'Division
-#End If
+                    NextChar()
+                    EatWhiteSpace()
+                    If (CurrentChar() = "="c) Then
                         NextChar()
-                        EatWhiteSpace()
-                        If (CurrentChar() = "="c) Then
-                            NextChar()
-                            Result = NewToken(KS.RealDivAssign)
-                        Else
-                            Result = NewToken(KS.RealDivision)
-                        End If
-#If SUPPORT_CSTYLE_COMMENTS Then
+                        Result = NewToken(KS.RealDivAssign)
+                    Else
+                        Result = NewToken(KS.RealDivision)
                     End If
-#End If
                 Case " "c 'Space
                     NextChar()
                     If (CurrentChar() = "_"c) Then '

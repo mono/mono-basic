@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -72,59 +72,3 @@ Public Class TypeDictionary
     End Property
 End Class
 
-'#If ENABLECECIL Then
-'Public Class CecilTypeDictionary
-'    Inherits Generic.Dictionary(Of String, Mono.Cecil.TypeDefinition)
-
-'    Public Shared ReadOnly EmptyDictionary As New CecilTypeDictionary()
-
-'    Sub New()
-'        MyBase.new(Helper.StringComparer)
-'    End Sub
-
-'    Shadows Sub Add(ByVal Type As Mono.Cecil.TypeDefinition)
-'        If MyBase.ContainsKey(Type.Name) Then
-'            System.Console.WriteLine("Already added type: " & Type.FullName)
-'        Else
-'            MyBase.Add(Type.Name, Type)
-'        End If
-'    End Sub
-
-'    Shadows Sub AddRange(ByVal Types As Generic.IEnumerable(Of Mono.Cecil.TypeDefinition))
-'        For Each Type As Mono.Cecil.TypeDefinition In Types
-'            Add(Type)
-'        Next
-'    End Sub
-
-'    Function TypesAsArray() As Mono.Cecil.TypeDefinition()
-'        Dim result() As Mono.Cecil.TypeDefinition
-'        ReDim result(Me.Count - 1)
-'        MyBase.Values.CopyTo(result, 0)
-'        Return result
-'    End Function
-
-'    Function ToTypeList() As TypeList
-'        Dim result As New TypeList()
-'        result.AddRange(Me.Values)
-'        Return result
-'    End Function
-
-'    ''' <summary>
-'    ''' Returns nothing if the specified key is not found.
-'    ''' </summary>
-'    ''' <param name="key"></param>
-'    ''' <value></value>
-'    ''' <returns></returns>
-'    ''' <remarks></remarks>
-'    Default Shadows ReadOnly Property Item(ByVal key As String) As Mono.Cecil.TypeDefinition
-'        Get
-'            If MyBase.ContainsKey(key) Then
-'                Return MyBase.Item(key)
-'            Else
-'                Return Nothing
-'            End If
-'        End Get
-'    End Property
-'End Class
-
-'#End If

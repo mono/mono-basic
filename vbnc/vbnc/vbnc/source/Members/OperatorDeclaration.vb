@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -145,12 +145,6 @@ Public Class OperatorDeclaration
             Return m_Operand2
         End Get
     End Property
-
-    'ReadOnly Property [Operator]() As token
-    '    Get
-    '        Return m_Operator
-    '    End Get
-    'End Property
 
     ''' <summary>
     ''' OverloadableBinaryOperator  ::=

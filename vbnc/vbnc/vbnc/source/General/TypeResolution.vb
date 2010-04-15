@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -1002,55 +1002,6 @@ Public Class TypeResolution
                 Throw New InternalException("")
         End Select
     End Function
-
-    '    Function TypeResolver(ByVal sender As Object, ByVal args As ResolveEventArgs) As System.Reflection.Assembly
-    '        'Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Resolve event fired for type '" & args.Name & "'")
-    '#If EXTENDEDDEBUG Then
-    '        Compiler.Report.WriteLine("Looking for type: " & args.Name)
-    '#End If
-    '        Dim types As Generic.List(Of Type)
-    '        types = Me.Compiler.TypeManager.GetType(args.Name, True)
-
-    '        If types.Count = 0 Then
-    '            Throw New InternalException("Type '" & args.Name & "' was been referenced while compiling, but it wasn't found...")
-    '        ElseIf types.Count = 1 Then
-    '            If TypeOf types(0) Is TypeDescriptor Then
-    '                Dim result As Boolean = True
-    '                result = DirectCast(types(0), TypeDescriptor).Declaration.CreateType() AndAlso result
-    '                If result = False Then
-    '                    Throw New InternalException()
-    '                End If
-    '            Else
-    '                Throw New InternalException("Found type " & args.Name & ", but it isn't a TypeDescriptor!")
-    '            End If
-    '        Else
-    '            Helper.AddError(Compiler, Span.CommandLineSpan, "Compiler cannot decide between several types with the name " & args.Name)
-    '        End If
-
-    '        Return Compiler.AssemblyBuilder
-    '    End Function
-
-    '''' <summary>
-    '''' Looks up the specified type in the current compiling assembly.
-    '''' This function looks up the name in the code / referenced assemblies
-    '''' and returns an arraylist of found objects.
-    '''' Can be anything:
-    '''' If found in the parsing code, any Type* Object
-    '''' If not found in the parsing code, but found in referenced assemblies, could be any of the following Reflection classes:
-    ''''   MemberInfo
-    ''''   Module
-    '''' If a namespace was found, a string variable is returned with the name of the namespace.
-    '''' </summary>
-    '''' <param name="Name"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Function LookupType(ByVal Name As String) As ArrayList
-    '    Dim result As New ArrayList
-
-    '    result.Add(Compiler.AssemblyBuilder.GetType(Name))
-
-    '    Return result
-    'End Function
 End Class
 
 Public Enum ConversionType

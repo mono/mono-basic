@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -141,12 +141,6 @@ Public Class Compiler
         End Get
     End Property
 
-    'ReadOnly Property SymbolWriter() As System.Diagnostics.SymbolStore.ISymbolWriter
-    '    Get
-    '        Return m_SymbolWriter
-    '    End Get
-    'End Property
-
     ''' <summary>
     ''' Contains info about all the types and namespaces available.
     ''' </summary>
@@ -202,12 +196,6 @@ Public Class Compiler
         End Get
     End Property
 
-    'Friend ReadOnly Property ConditionalCompiler() As ConditionalCompiler
-    '    Get
-    '        Return m_ConditionalCompiler
-    '    End Get
-    'End Property
-
     Friend ReadOnly Property Helper() As Helper
         Get
             Return m_Helper
@@ -260,10 +248,6 @@ Public Class Compiler
             Return 1
         End If
         Return Compile()
-        'Catch ex As Exception
-        '    ShowExceptionInfo(ex)
-        '    Return -1
-        'End Try
     End Function
 
     Friend Function Compile(ByVal Options As CommandLine) As Boolean
@@ -776,28 +760,20 @@ EndOfCompilation:
 
             'Report.WriteLine("Defining resource, FileName=" & r.Filename & ", Identifier=" & r.Identifier & ", reader is nothing=" & (reader Is Nothing).ToString())
             If reader IsNot Nothing Then
-                'Dim writer As System.Resources.IResourceWriter = ModuleBuilder.DefineResource(resourceName, resourceDescription, attrib)
-#If ENABLECECIL Then
                 Dim cecilStream As New IO.MemoryStream()
                 Dim cecilWriter As New System.Resources.ResourceWriter(cecilStream)
                 Dim cecilResource As New Mono.Cecil.EmbeddedResource(resourceName, Mono.Cecil.ManifestResourceAttributes.Public) 'FIXME: accesibility
-#End If
 
                 For Each resource As System.Collections.DictionaryEntry In reader
                     'Report.WriteLine(">" & resource.Key.ToString & "=" & resource.Value.ToString)
-                    'writer.AddResource(resource.Key.ToString, resource.Value)
-#If ENABLECECIL Then
                     cecilWriter.AddResource(resource.Key.ToString, resource.Value)
-#End If
                 Next
                 reader.Dispose()
-#If ENABLECECIL Then
                 cecilWriter.Generate()
                 cecilResource.Data = cecilStream.ToArray
                 AssemblyBuilderCecil.MainModule.Resources.Add(cecilResource)
                 cecilWriter.Dispose()
                 cecilStream.Dispose()
-#End If
             Else
                 'Report.WriteLine(">Writing ManifestResource")
                 'ModuleBuilder.DefineManifestResource(resourceName, New IO.FileStream(r.Filename, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read), attrib)

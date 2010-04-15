@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Visual Basic.Net Compiler")> 
 <Assembly: AssemblyCompany("Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyProduct("Visual Basic.Net Compiler")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2004-2008 Rolf Bjarne Kvinge. All rights reserved.")> 
+<Assembly: AssemblyCopyright("Copyright (C) 2004-2010 Rolf Bjarne Kvinge. All rights reserved.")> 
 <Assembly: AssemblyTrademark("")> 
 <Assembly: CLSCompliant(False)> 
 

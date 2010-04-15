@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -386,68 +386,7 @@ Public MustInherit Class MethodBaseDeclaration
     Overridable Function ResolveOverrides() As Boolean
         Dim result As Boolean = True
 
-        If Me.Modifiers.Is(ModifierMasks.Overrides) = False Then Return result
-
         Return result
-
-        'Dim cache As MemberCacheEntry
-        'Dim members As Generic.List(Of MemberInfo)
-        'Dim member As MemberInfo
-        'Dim Name As String
-        'Dim params As ParameterInfo()
-
-        'Dim phd As PropertyHandlerDeclaration = TryCast(Me, PropertyHandlerDeclaration)
-        'If phd IsNot Nothing Then
-        '    Name = phd.Parent.Name
-        '    params = phd.Parent.Signature.Parameters.AsParameterInfo
-        'Else
-        '    params = Me.GetParameters
-        '    Name = Me.Name
-        'End If
-
-        'cache = Compiler.TypeManager.GetCache(Compiler.TypeManager.GetRegisteredType(DeclaringType.BaseType)).LookupFlattened(Name)
-        'If cache Is Nothing Then
-        '    result = Compiler.Report.ShowMessage(Messages.VBNC30284, Me.Location, Me.Name) AndAlso result
-        '    If result = False Then Return result
-        'End If
-
-        'members = cache.Members
-        'member = Helper.ResolveGroupExact(Compiler, members, Helper.GetTypes(params))
-
-        'If member Is Nothing Then
-        '    result = Compiler.Report.ShowMessage(Messages.VBNC30284, Me.Location, Me.Name) AndAlso result
-        '    If result = False Then Return result
-        'End If
-
-        'If member Is Nothing Then Return result
-
-        'Dim methodI As MethodInfo
-        'methodI = TryCast(member, MethodInfo)
-        'If methodI IsNot Nothing Then
-        '    If CBool(methodI.Attributes And Reflection.MethodAttributes.Abstract) Then
-        '        m_MethodOverrides = methodI
-        '    End If
-        '    Return result
-        'End If
-
-        'Dim propI As PropertyInfo
-        'propI = TryCast(member, PropertyInfo)
-        'If propI IsNot Nothing Then
-        '    If CBool(Helper.GetPropertyAttributes(propI) And Reflection.MethodAttributes.Abstract) Then
-        '        If TypeOf Me Is PropertyGetDeclaration Then
-        '            m_MethodOverrides = propI.GetGetMethod(True)
-        '        ElseIf TypeOf Me Is PropertySetDeclaration Then
-        '            m_MethodOverrides = propI.GetSetMethod(True)
-        '        Else
-        '            Throw New InternalException("?")
-        '        End If
-        '    End If
-        '    Return result
-        'End If
-
-        'Helper.NotImplemented()
-
-        'Return result
     End Function
 
     Overridable Function DefineOverrides() As Boolean
@@ -455,8 +394,6 @@ Public MustInherit Class MethodBaseDeclaration
 
         If m_MethodOverrides IsNot Nothing Then
             Throw New NotImplementedException
-            'm_MethodOverrides = Helper.GetMethodOrMethodBuilder(Compiler, m_MethodOverrides)
-            'DeclaringType.TypeBuilder.DefineMethodOverride(MethodBuilder, m_MethodOverrides)
         End If
 
         Return result
@@ -508,7 +445,6 @@ Public MustInherit Class MethodBaseDeclaration
                 result = item.GenerateCode(info, False) AndAlso result
             Next
             Emitter.MarkLabel(info, endRemoveLabel)
-
 
             'Store the variable
             If Me.IsShared = False Then

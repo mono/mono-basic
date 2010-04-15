@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -308,44 +308,6 @@ Public Class TypeManager
         '  End Try
         Return Nothing
     End Function
-
-    '''' <summary>
-    '''' Load the type into the various lists.
-    '''' </summary>
-    '''' <param name="Type"></param>
-    '''' <remarks></remarks>
-    'Private Sub LoadType(ByVal Type As Type)
-    '    'Add the type to the list of all types.
-    '    Me.Types.Add(Type)
-
-    '    'Add the namespace to the list of all namespaces.
-    '    Me.Namespaces.AddAllNamespaces(Compiler, Type.Namespace, True)
-
-    '    'Add the type to the list of types by namespace.
-    '    m_TypesByNamespace.AddType(Type)
-
-    '    'If it is a module add it to the list of all modules and to the list of modules by namespace.
-    '    If Helper.IsModule(Compiler, Type) Then
-    '        m_ModuleTypes.Add(Type)
-    '        m_ModulesByNamespace.AddType(Type)
-    '    End If
-
-    '    Dim name As String
-    '    Dim fullname As String
-    '    Dim types As Generic.List(Of Type) = Nothing
-    '    name = Type.Name
-    '    fullname = Type.FullName
-    '    If m_TypesByName.TryGetValue(name, types) = False Then
-    '        types = New Generic.List(Of Type)
-    '        m_TypesByName(name) = types
-    '    End If
-    '    types.Add(Type)
-    '    If m_TypesByFullName.TryGetValue(fullname, types) = False Then
-    '        types = New Generic.List(Of Type)
-    '        m_TypesByFullName(fullname) = types
-    '    End If
-    '    types.Add(Type)
-    'End Sub
 
     ''' <summary>
     ''' Load the type into the various lists.

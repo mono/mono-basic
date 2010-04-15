@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -43,10 +43,6 @@ Public Class CStrExpression
 
     Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
-
-        'Dim expType As Type = SourceType
-        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
-        'Dim ExpressionType As Type = Info.Compiler.TypeCache.String
 
         Return result
     End Function
@@ -129,7 +125,7 @@ Public Class CStrExpression
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-            Return Compiler.TypeCache.System_String '_Descriptor
+            Return Compiler.TypeCache.System_String
         End Get
     End Property
 End Class

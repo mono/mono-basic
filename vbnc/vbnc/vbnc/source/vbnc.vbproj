@@ -74,7 +74,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>ENABLECECIL=TRUE,DEBUGREFLECTION=false</DefineConstants>
+    <DefineConstants>DEBUGREFLECTION=false</DefineConstants>
     <OutputType>Exe</OutputType>
     <AssemblyName>vbnc</AssemblyName>
     <RootNamespace>vbnc</RootNamespace>
@@ -141,10 +141,8 @@
     <Compile Include="ConditionalCompilation\ConditionalConstants.vb" />
     <Compile Include="ConditionalCompilation\ConditionalExpression.vb" />
     <Compile Include="Emit\EmitInfo.vb" />
-    <Compile Include="Emit\EmitStack.vb" />
     <Compile Include="Emit\Emitter.DecimalFields.vb" />
     <Compile Include="Enums\BuiltInDataTypes.vb" />
-    <Compile Include="Enums\Constants.vb" />
     <Compile Include="Enums\EnumStringAttribute.vb" />
     <Compile Include="Enums\IntegerBase.vb" />
     <Compile Include="Enums\KS.vb" />
@@ -173,7 +171,6 @@
     <Compile Include="Expressions\Classifications\ValueClassification.vb" />
     <Compile Include="Expressions\Classifications\VariableClassification.vb" />
     <Compile Include="Expressions\Classifications\VoidClassification.vb" />
-    <Compile Include="Expressions\ClassModifiers.vb" />
     <Compile Include="Expressions\CompilerGeneratedExpression.vb" />
     <Compile Include="Expressions\LateBoundAccessToExpression.vb" />
     <Compile Include="Expressions\LateBoundAccessToPropertyAccessExpression.vb" />
@@ -183,7 +180,6 @@
     <Compile Include="Expressions\LateBoundAccessToValueExpression.vb" />
     <Compile Include="Expressions\LoadFieldExpression.vb" />
     <Compile Include="Expressions\MethodGroupToValueExpression.vb" />
-    <Compile Include="Expressions\MethodPointerToValueExpression.vb" />
     <Compile Include="Expressions\NothingConstantExpression.vb" />
     <Compile Include="Expressions\OperatorExpression.vb" />
     <Compile Include="Expressions\PropertyAccessToValueExpression.vb" />
@@ -199,7 +195,6 @@
     <Compile Include="General\MyGenerator.vb" />
     <Compile Include="General\MyGroupData.vb" />
     <Compile Include="General\NamespaceDictionary.vb" />
-    <Compile Include="General\NothingType.vb" />
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
@@ -273,7 +268,6 @@
     <Compile Include="Members\BoundList.vb" />
     <Compile Include="Members\ConstantDeclaration.vb" />
     <Compile Include="Members\ConstantDeclarations.vb" />
-    <Compile Include="Members\ConstantModifiers.vb" />
     <Compile Include="Members\ConversionOperatorDeclaration.vb" />
     <Compile Include="Members\CustomEventDeclaration.vb" />
     <Compile Include="Members\EventAccessorDeclarations.vb" />
@@ -289,7 +283,6 @@
     <Compile Include="Members\InterfaceEventMemberDeclaration.vb" />
     <Compile Include="Members\InterfaceFunctionDeclaration.vb" />
     <Compile Include="Members\InterfaceMemberSpecifier.vb" />
-    <Compile Include="Members\InterfaceMethodMemberDeclaration.vb" />
     <Compile Include="Members\InterfacePropertyMemberDeclaration.vb" />
     <Compile Include="Members\InterfaceSubDeclaration.vb" />
     <Compile Include="Members\LibraryClause.vb" />
@@ -299,7 +292,6 @@
     <Compile Include="Members\Operand.vb" />
     <Compile Include="Members\Parameter.vb" />
     <Compile Include="Members\ParameterList.vb" />
-    <Compile Include="Members\ParameterModifiers.vb" />
     <Compile Include="Members\ParametersOrType.vb" />
     <Compile Include="Members\ParemeterIdentifier.vb" />
     <Compile Include="Members\RegularEventDeclaration.vb" />
@@ -311,7 +303,6 @@
     <Compile Include="Members\VariableIdentifiers.vb" />
     <Compile Include="Members\VariableInitializer.vb" />
     <Compile Include="Members\VariableInitializerList.vb" />
-    <Compile Include="Members\VariableModifiers.vb" />
     <Compile Include="Members\VariablePropertyInitializer.vb" />
     <Compile Include="Members\VariablePropertyInitializerList.vb" />
     <Compile Include="Tokens\IdentifierOrKeywordWithTypeArguments.vb" />
@@ -408,7 +399,6 @@
     <Compile Include="General\Messages.vb" />
     <Compile Include="General\Resource.vb" />
     <Compile Include="General\Resources.vb" />
-    <Compile Include="Members\ParamArrayAttributeMember.vb" />
     <Compile Include="Expressions\BinaryExpressions\AndAlsoExpression.vb" />
     <Compile Include="Expressions\BinaryExpressions\AndExpression.vb" />
     <Compile Include="Expressions\BinaryExpressions\BinaryAddExpression.vb" />
@@ -460,7 +450,6 @@
     <Compile Include="Expressions\Conversions\TryCastExpression.vb" />
     <Compile Include="Expressions\DictionaryAccessExpression.vb" />
     <Compile Include="Expressions\DotAccessExpression.vb" />
-    <Compile Include="Expressions\EnumConstantExpression.vb" />
     <Compile Include="Expressions\GetTypeExpression.vb" />
     <Compile Include="Expressions\GlobalExpression.vb" />
     <Compile Include="Expressions\LiteralExpression.vb" />

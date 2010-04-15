@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -552,12 +552,10 @@ Public Class CodeBlock
 
         For i As Integer = 0 To m_Variables.Count - 1
             result = m_Variables(i).ResolveTypeReferences AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
-        For Each obj As Statement In m_Statements
-            result = obj.ResolveTypeReferences AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
+        For i As Integer = 0 To m_Statements.Count - 1
+            result = m_Statements(i).ResolveTypeReferences AndAlso result
         Next
 
         Return result
@@ -567,9 +565,7 @@ Public Class CodeBlock
         Dim result As Boolean = True
 
         For i As Integer = 0 To m_Variables.Count - 1
-            'result = m_Variables(i).ResolveMember(Info) AndAlso result
             result = m_Variables(i).ResolveCode(Info) AndAlso result
-            'Helper.Assert(result = (Compiler.Report.Errors = 0))
         Next
 
         'We may add statements as we go.

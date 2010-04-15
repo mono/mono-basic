@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@
 #Const EXTENDEDDEBUG = 0
 #End If
 
-Imports System.Reflection
 ''' <summary>
 ''' A set of methods overloaded on the same name. 
 ''' A method group may have an associated instance expression and
@@ -126,30 +125,6 @@ Public Class MethodGroupClassification
         Dim result As Boolean = True
 
         Helper.Assert(m_Resolved)
-
-        'If m_InstanceExpression IsNot Nothing Then
-        '    Dim instanceExpType As Type
-        '    If ResolvedMethod.DeclaringType.IsValueType Then
-        '        instanceExpType = ResolvedMethod.DeclaringType.MakeByRefType
-        '    Else
-        '        instanceExpType = ResolvedMethod.DeclaringType
-        '    End If
-        '    result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, instanceExpType)) AndAlso result
-        '    'Emitter.EmitConversion(instanceExpType, Info)
-        'End If
-        'Helper.Assert(Type IsNot Nothing)
-        'If m_Parameters IsNot Nothing Then
-        '    Helper.Assert(ResolvedMethod.GetParameters.Length = m_Parameters.Length)
-        '    Dim expInfo As EmitInfo
-        '    For i As Integer = 0 To m_Parameters.GetUpperBound(0)
-        '        expInfo = Info.Clone(True, False, ResolvedMethod.GetParameters(i).ParameterType)
-        '        result = m_Parameters(i).GenerateCode(Info) AndAlso result
-        '    Next
-        'Else
-        '    Helper.Assert(ResolvedMethod.GetParameters.Length = 0)
-        'End If
-
-        'Emitter.EmitCallOrCallVirt(Info, ResolvedMethod)
 
         Helper.EmitArgumentsAndCallOrCallVirt(Info, m_InstanceExpression, New ArgumentList(Parent, m_Parameters), ResolvedMethod)
 
@@ -323,16 +298,6 @@ Public Class MethodGroupClassification
         m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
 #End If
     End Sub
-    '    Private Sub SetMethods(ByVal lst As Generic.List(Of MethodBase))
-    '        m_Group = New Generic.List(Of MemberInfo)
-    '        For i As Integer = 0 To lst.Count - 1
-    '            Dim method As MethodBase = lst(i)
-    '            m_Group.Add(method)
-    '        Next
-    '#If DEBUG Then
-    '        m_OriginalGroup = New Generic.List(Of MemberInfo)(lst.ToArray)
-    '#End If
-    '    End Sub
 
     ''' <summary>
     ''' The name of the method. (Any method actually, since they should all have the same name).

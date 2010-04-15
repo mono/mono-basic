@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -372,10 +372,4 @@ Public Class ConstructorDeclaration
         If tm.PeekToken(i).Equals(KS.Sub) = False Then Return False
         Return tm.PeekToken(i + 1).Equals(KS.[New])
     End Function
-
-    'Public Overrides ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator
-    '    Get
-    '        Throw New NotImplementedException 'Return m_ConstructorBuilder.GetILGenerator
-    '    End Get
-    'End Property
 End Class

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -69,17 +69,6 @@ Public Class InternalException
         End If
         StopOnInternalException()
     End Sub
-
-    '<Diagnostics.DebuggerHidden()> _
-    'Sub New(ByVal Obj As MemberInfo)
-    '    MyBase.new()
-    '    If False Then 'Obj IsNot Nothing AndAlso Obj.Location IsNot Nothing Then
-    '        'm_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
-    '    Else
-    '        m_Message = "There has been an internal error in the compiler."
-    '    End If
-    '    StopOnInternalException()
-    'End Sub
 
     <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal InnerException As Exception)

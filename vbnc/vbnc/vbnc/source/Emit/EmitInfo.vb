@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -48,12 +48,6 @@ Public Class EmitInfo
     ''' </summary>
     ''' <remarks></remarks>
     Private m_Method As IMethod
-
-    ''' <summary>
-    ''' The type of the values at the stack.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Stack As EmitStack
 
     ''' <summary>
     ''' The desired type to emit.
@@ -200,7 +194,6 @@ Public Class EmitInfo
     ''' <remarks></remarks>
     Sub New(ByVal Method As IMethod)
         m_Method = Method
-        m_Stack = New EmitStack(Compiler)
     End Sub
 
     ''' <summary>
@@ -257,7 +250,6 @@ Public Class EmitInfo
         Me.m_IsExplicitConversion = Info.m_IsExplicitConversion
         Me.m_IsRHS = Info.m_IsRHS
         Me.m_Method = Info.m_Method
-        Me.m_Stack = Info.m_Stack
         Me.m_RHSExpression = Info.m_RHSExpression
     End Sub
 End Class
