@@ -43,7 +43,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             If value Is Nothing Then
                 Return Strings.Chr(0)
             End If
-            If value = "" Then
+            If value.Length = 0 Then
                 Return Strings.Chr(0)
             End If
             Return value.Chars(0)

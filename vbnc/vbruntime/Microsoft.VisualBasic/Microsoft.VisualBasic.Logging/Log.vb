@@ -90,7 +90,7 @@ Namespace Microsoft.VisualBasic.Logging
 
             If ex Is Nothing Then Throw New ArgumentNullException("ex")
             msg = ex.Message
-            If additionalInfo <> String.Empty Then
+            If Not String.IsNullOrEmpty(additionalInfo) Then
                 msg &= " " & additionalInfo
             End If
             WriteEntry(msg, severity, id)

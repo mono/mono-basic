@@ -147,7 +147,7 @@ Namespace Microsoft.VisualBasic.FileIO
                 Next
             End If
 
-            If containsText <> "" Then
+            If Not containsText Is Nothing AndAlso containsText.Length <> 0 Then
                 For Each file As String In files
                     If FileContainsText(file, containsText, ignoreCase) Then
                         result.Add(file)
@@ -176,7 +176,7 @@ Namespace Microsoft.VisualBasic.FileIO
             Dim currentChar As Char
             Dim peekedChar As Generic.Queue(Of Char)
 
-            If text Is Nothing OrElse text = String.Empty Then Return True
+            If text Is Nothing OrElse text.Length = 0 Then Return True
 
             peekedChar = New Generic.Queue(Of Char)
             If ignoreCase Then text = text.ToUpperInvariant()

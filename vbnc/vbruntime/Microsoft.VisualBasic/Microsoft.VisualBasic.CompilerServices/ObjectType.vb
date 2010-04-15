@@ -819,8 +819,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 s1 = Convert.ToString(o1)
                 s2 = Convert.ToString(o2)
 
-                If s1 = "" Then s1 = "0"
-                If s2 = "" Then s2 = "0"
+                If s1 Is Nothing OrElse s1.Length = 0 Then s1 = "0"
+                If s2 Is Nothing OrElse s2.Length = 0 Then s2 = "0"
 
                 dbl1 = Convert.ToDouble(s1)
                 dbl2 = Convert.ToDouble(s2)
@@ -926,8 +926,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 s1 = Convert.ToString(o1)
                 s2 = Convert.ToString(o2)
 
-                If s1 = "" Then s1 = "0"
-                If s2 = "" Then s2 = "0"
+                If s1 Is Nothing OrElse s1.Length = 0 Then s1 = "0"
+                If s2 Is Nothing OrElse s2.Length = 0 Then s2 = "0"
 
                 dbl1 = Convert.ToDouble(s1)
                 dbl2 = Convert.ToDouble(s2)
@@ -1035,8 +1035,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 s1 = Convert.ToString(o1)
                 s2 = Convert.ToString(o2)
 
-                If s1 = "" Then s1 = "0"
-                If s2 = "" Then s2 = "0"
+                If s1 Is Nothing OrElse s1.Length = 0 Then s1 = "0"
+                If s2 Is Nothing OrElse s2.Length = 0 Then s2 = "0"
 
                 dbl1 = Convert.ToDouble(s1)
                 dbl2 = Convert.ToDouble(s2)
@@ -1145,8 +1145,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                 s1 = Convert.ToString(o1)
                 s2 = Convert.ToString(o2)
 
-                If s1 = "" Then s1 = "0"
-                If s2 = "" Then s2 = "0"
+                If s1 Is Nothing OrElse s1.Length = 0 Then s1 = "0"
+                If s2 Is Nothing OrElse s2.Length = 0 Then s2 = "0"
 
                 dbl1 = Convert.ToDouble(s1)
                 dbl2 = Convert.ToDouble(s2)

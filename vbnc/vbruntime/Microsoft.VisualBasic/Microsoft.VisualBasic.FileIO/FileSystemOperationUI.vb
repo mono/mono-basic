@@ -82,7 +82,7 @@ Namespace Microsoft.VisualBasic.FileIO
 
             If (Date.Now - m_LastUpdate).TotalSeconds < 1 Then Return
 
-            If DestinationDirectory <> String.Empty Then
+            If Not DestinationDirectory Is Nothing AndAlso DestinationDirectory.Length <> 0 Then
                 lblDirs.Text = String.Format("From '{0}' to '{1}'", Path.GetFileName(SourceDirectory), Path.GetFileName(DestinationDirectory))
                 lblFile.Text = File
             Else

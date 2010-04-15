@@ -422,7 +422,7 @@ Namespace Microsoft.VisualBasic
             If (Not Before Is Nothing) And (Not After Is Nothing) Then
                 Throw New ArgumentException("'Before' and 'After' arguments cannot be combined.")
             End If
-            If Key <> Nothing And m_HashIndexers.IndexOf(Key) <> -1 Then
+            If Not Key Is Nothing And m_HashIndexers.IndexOf(Key) <> -1 Then
                 Throw New ArgumentException
             End If
             If Not Before Is Nothing Then

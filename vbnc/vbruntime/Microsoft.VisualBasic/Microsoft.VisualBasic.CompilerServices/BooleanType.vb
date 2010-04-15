@@ -105,17 +105,17 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Console.WriteLine("TRACE:BooleanType.FromString:input:" + Value.ToString())
 #End If
 
-            If Value = "0" Then
+            If String.Compare(Value, "0") = 0 Then
                 Return False
             End If
 
 
             ' if Value is 'True' or 'False'
-            If (Value.ToLower() = "true") Then
+            If String.Compare(Value.ToLower(), "true") = 0 Then
                 Return True
             End If
 
-            If (Value.ToLower() = "false") Then
+            If String.Compare(Value.ToLower(), "false") = 0 Then
                 Return False
             End If
 
