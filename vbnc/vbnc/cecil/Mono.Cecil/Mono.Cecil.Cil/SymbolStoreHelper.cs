@@ -78,13 +78,13 @@ namespace Mono.Cecil.Cil {
 		static string GetSymbolSupportType (out string assembly)
 		{
 			string kind = GetSymbolKind ();
-			assembly = "Mono.Cecil." + kind;
+			assembly = "Mono.Cecil.VB." + kind;
 			return string.Format (assembly + "." + kind + "Factory");
 		}
 
 		static string GetSymbolKind ()
 		{
-			return OnMono () ? "Mdb" : "Pdb";
+			return (true || OnMono ()) ? "Mdb" : "Pdb";
 		}
 
 		static bool OnMono ()
