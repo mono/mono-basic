@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* SelfTest/rerun.sh: Don't overwrite executing assembly while compiling.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* SelfTest/SelfCompile.files.linux:
 	* SelfTest/SelfCompile.files.windows: Updated.
 
