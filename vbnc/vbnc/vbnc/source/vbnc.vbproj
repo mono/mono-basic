@@ -565,7 +565,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\cecil\Mono.Cecil.VB.csproj">
+    <ProjectReference Include="..\..\cecil\Mono.Cecil.Mdb\Mono.Cecil.VB.Mdb.csproj">
+      <Project>{C5D12431-9C20-4789-8FEC-46094B0F81B5}</Project>
+      <Name>Mono.Cecil.VB.Mdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cecil\Mono.Cecil\Mono.Cecil.VB.csproj">
       <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
       <Name>Mono.Cecil.VB</Name>
     </ProjectReference>

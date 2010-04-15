@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.vbproj: Updated reference to Mono.Cecil.VB and added reference to
+	Mono.Cecil.VB.Mdb.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/Compiler.vb: Emit debug infos.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
