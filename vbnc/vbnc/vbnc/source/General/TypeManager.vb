@@ -280,14 +280,14 @@ Public Class TypeManager
         Dim refAss As Mono.Cecil.AssemblyDefinition
         '  Try
         If IO.File.Exists(Filename) Then
-            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename, True)
+            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
 
         If Reflection.Assembly.GetExecutingAssembly.Location <> String.Empty AndAlso IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
             Filename = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
-            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename, True)
+            refAss = Mono.Cecil.AssemblyFactory.GetAssembly(Filename)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
@@ -297,7 +297,7 @@ Public Class TypeManager
             Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
             Try
                 If IO.File.Exists(strFullPath) Then
-                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath, False) ' True)
+                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath)
                     'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
                     Return refAss
                 End If

@@ -1,5 +1,15 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Emit/Emitter.vb:
+	* General/Helper.vb:
+	* Members/Attribute.vb:
+	* General/TypeManager.vb:
+	* General/CecilHelper.vb:
+	* Members/MemberImplementsClause.vb:
+	* TypeDeclarations/TypeDeclaration.vb: Updated to work with cecil from trunk.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.vbproj: Updated reference to Mono.Cecil.VB and added reference to
 	Mono.Cecil.VB.Mdb.
 

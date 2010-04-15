@@ -137,10 +137,6 @@ Public MustInherit Class TypeDeclaration
         End If
         m_CecilType.Name = Name
 
-        If DeclaringType IsNot Nothing AndAlso m_CecilType.DeclaringType Is Nothing Then
-            m_CecilType.DeclaringType = DeclaringType.CecilType
-        End If
-
         If CecilType.Module Is Nothing AndAlso Me.Name IsNot Nothing Then
             Compiler.ModuleBuilderCecil.Types.Add(CecilType)
             If IsNestedType Then

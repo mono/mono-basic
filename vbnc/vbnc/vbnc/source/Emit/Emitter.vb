@@ -346,8 +346,7 @@ Partial Public Class Emitter
     Shared Sub EmitNew(ByVal Info As EmitInfo, ByVal Constructor As Mono.Cecil.MethodReference)
         Dim vOriginalConstructor As Mono.Cecil.MethodReference = Constructor
         Helper.Assert(Constructor IsNot Nothing)
-        'PopParameters(Info, Helper.GetParameters(Info.Compiler, Constructor))
-        Constructor = Helper.GetCtorOrCtorBuilder(Info.Compiler, Constructor)
+        Constructor = CecilHelper.MakeEmittable(Constructor)
         Info.ILGen.Emit(OpCodes.Newobj, Constructor)
     End Sub
 
@@ -838,7 +837,7 @@ Partial Public Class Emitter
         Dim mD As Mono.Cecil.MethodDefinition
 
         minfo = SwitchVersionedMethods(Info, Method)
-        minfo = Helper.GetMethodOrMethodBuilder(Info.Compiler, minfo)
+        minfo = Helper.GetMethodOrMethodReference(Info.Compiler, minfo)
 
         If minfo.OriginalMethod Is Nothing Then
             minfo.OriginalMethod = Method.OriginalMethod
@@ -916,7 +915,7 @@ Partial Public Class Emitter
         Dim mD As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(Method)
 
         If mD IsNot Nothing Then
-            Method = Helper.GetMethodOrMethodBuilder(Info.Compiler, Method)
+            Method = Helper.GetMethodOrMethodReference(Info.Compiler, Method)
             Method = SwitchVersionedMethods(Info, Method)
             Method = CecilHelper.MakeEmittable(Method)
         End If

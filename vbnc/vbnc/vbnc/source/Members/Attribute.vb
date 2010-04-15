@@ -478,7 +478,7 @@ Public Class Attribute
         Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
-        m_ResolvedTypeConstructor = Helper.GetCtorOrCtorBuilder(Compiler, m_ResolvedTypeConstructor)
+        m_ResolvedTypeConstructor = Helper.GetMethodOrMethodReference(Compiler, m_ResolvedTypeConstructor)
 
         Dim cecilArguments As Object()
         ReDim cecilArguments(m_Arguments.Length - 1)

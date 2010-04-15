@@ -1361,8 +1361,33 @@ Public Class Helper
 
         If Compiler.Assembly.IsDefinedHere(Type) Then
             Return Type
+        ElseIf TypeOf Type Is Mono.Cecil.ReferenceType Then
+            Dim refType As Mono.Cecil.ReferenceType = DirectCast(Type, Mono.Cecil.ReferenceType)
+            Dim elementType As Mono.Cecil.TypeReference
+            elementType = GetTypeOrTypeReference(Compiler, refType.ElementType)
+            If elementType Is refType.ElementType Then Return Type
+            Return New Mono.Cecil.ReferenceType(elementType)
+        ElseIf TypeOf Type Is Mono.Cecil.ArrayType Then
+            Dim arrType As Mono.Cecil.ArrayType = DirectCast(Type, Mono.Cecil.ArrayType)
+            Dim elementType As Mono.Cecil.TypeReference
+            elementType = GetTypeOrTypeReference(Compiler, arrType.ElementType)
+            If elementType Is arrType.ElementType Then Return Type
+            Dim result As Mono.Cecil.ArrayType = New Mono.Cecil.ArrayType(elementType, arrType.Rank)
+            For i As Integer = 0 To arrType.Rank - 1
+                result.Dimensions(i).LowerBound = arrType.Dimensions(i).LowerBound
+                result.Dimensions(i).UpperBound = arrType.Dimensions(i).UpperBound
+            Next
+            Return result
+        ElseIf TypeOf Type Is Mono.Cecil.GenericInstanceType Then
+            Dim git As Mono.Cecil.GenericInstanceType = DirectCast(Type, Mono.Cecil.GenericInstanceType)
+            Dim elementType As Mono.Cecil.TypeReference = GetTypeOrTypeReference(Compiler, git.ElementType)
+            Dim result As New Mono.Cecil.GenericInstanceType(elementType)
+            For i As Integer = 0 To git.GenericArguments.Count - 1
+                result.GenericArguments.Add(GetTypeOrTypeReference(Compiler, git.GenericArguments(i)))
+            Next
+            Return result
         Else
-            Return Compiler.AssemblyBuilderCecil.MainModule.Import(Type)
+            Return Compiler.AssemblyBuilderCecil.MainModule.Import(CecilHelper.FindDefinition(Type))
         End If
     End Function
 
@@ -2401,20 +2426,6 @@ Public Class Helper
         Return GetTypeOrTypeReference(Compiler, Type)
     End Function
 
-    ''' <summary>
-    ''' If the argument is a typedescriptor, looks up the 
-    ''' </summary>
-    ''' <param name="Ctor"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Shared Function GetCtorOrCtorBuilder(ByVal Compiler As Compiler, ByVal Ctor As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
-        Return GetMethodOrMethodReference(Compiler, Ctor)
-    End Function
-
-    Shared Function GetMethodOrMethodBuilder(ByVal Compiler As Compiler, ByVal Method As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
-        Return GetMethodOrMethodReference(Compiler, Method)
-    End Function
-
     Shared Function GetMethodOrMethodReference(ByVal Compiler As Compiler, ByVal Method As Mono.Cecil.MethodReference) As Mono.Cecil.MethodReference
         Helper.Assert(Method IsNot Nothing)
         Helper.Assert(Method.DeclaringType IsNot Nothing)
@@ -2433,7 +2444,7 @@ Public Class Helper
         If Compiler.AssemblyBuilderCecil Is upper.Module.Assembly Then
             Return Method
         Else
-            Return Compiler.AssemblyBuilderCecil.MainModule.Import(Method)
+            Return CecilHelper.MakeEmittable(Method)
         End If
     End Function
 

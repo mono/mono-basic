@@ -60,16 +60,16 @@ Public Class MemberImplementsClause
             Dim raiseMethod As Mono.Cecil.MethodReference = Nothing
             Dim raiseMethodI As Mono.Cecil.MethodReference = Nothing
 
-            addMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.AddMethod)
-            removeMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.RemoveMethod)
+            addMethodI = Helper.GetMethodOrMethodReference(Compiler, eventI.AddMethod)
+            removeMethodI = Helper.GetMethodOrMethodReference(Compiler, eventI.RemoveMethod)
             If eventI.InvokeMethod IsNot Nothing Then
-                raiseMethodI = Helper.GetMethodOrMethodBuilder(Compiler, eventI.InvokeMethod)
+                raiseMethodI = Helper.GetMethodOrMethodReference(Compiler, eventI.InvokeMethod)
             End If
 
-            addMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.AddDefinition)
-            removeMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.RemoveDefinition)
+            addMethod = Helper.GetMethodOrMethodReference(Compiler, Declaration.AddDefinition)
+            removeMethod = Helper.GetMethodOrMethodReference(Compiler, Declaration.RemoveDefinition)
             If Declaration.RaiseDefinition IsNot Nothing Then
-                raiseMethod = Helper.GetMethodOrMethodBuilder(Compiler, Declaration.RaiseDefinition)
+                raiseMethod = Helper.GetMethodOrMethodReference(Compiler, Declaration.RaiseDefinition)
             End If
 
             Helper.Assert((addMethodI Is Nothing Xor addMethod Is Nothing) = False)
@@ -78,15 +78,15 @@ Public Class MemberImplementsClause
 
             If addMethod IsNot Nothing AndAlso addMethodI IsNot Nothing Then
                 Dim methodDef As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(addMethod)
-                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, addMethodI))
+                methodDef.Overrides.Add(CecilHelper.MakeEmittable(addMethodI))
             End If
             If removeMethod IsNot Nothing AndAlso removeMethodI IsNot Nothing Then
                 Dim methodDef As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(removeMethod)
-                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, removeMethodI))
+                methodDef.Overrides.Add(CecilHelper.MakeEmittable(removeMethodI))
             End If
             If raiseMethod IsNot Nothing AndAlso raiseMethodI IsNot Nothing Then
                 Dim methodDef As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(raiseMethod)
-                methodDef.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, raiseMethodI))
+                methodDef.Overrides.Add(CecilHelper.MakeEmittable(raiseMethodI))
             End If
         Next
 
@@ -105,7 +105,7 @@ Public Class MemberImplementsClause
             Dim propertyDef As Mono.Cecil.PropertyDefinition = Nothing
 
             If ispec.ResolvedMethodInfo IsNot Nothing Then
-                methodI = Helper.GetMethodOrMethodBuilder(Compiler, ispec.ResolvedMethodInfo)
+                methodI = Helper.GetMethodOrMethodReference(Compiler, ispec.ResolvedMethodInfo)
             End If
 
             If ispec.ResolvedPropertyInfo IsNot Nothing Then
@@ -116,7 +116,7 @@ Public Class MemberImplementsClause
             Helper.Assert(propertyI Is Nothing Xor methodI Is Nothing)
 
             If propertyI IsNot Nothing Then
-                'This is be a property
+                'This is a property
                 If Method.Name.StartsWith("get_") Then
                     methodI = CecilHelper.GetCorrectMember(propertyDef.GetMethod, propertyI.DeclaringType)
                 ElseIf Method.Name.StartsWith("set_") Then
@@ -124,13 +124,13 @@ Public Class MemberImplementsClause
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
                 End If
-                methodI = Helper.GetMethodOrMethodBuilder(Compiler, methodI)
+                methodI = Helper.GetMethodOrMethodReference(Compiler, methodI)
             End If
 
 
             Helper.Assert(methodI IsNot Nothing)
 
-            Method.Overrides.Add(Helper.GetMethodOrMethodReference(Compiler, methodI))
+            Method.Overrides.Add(CecilHelper.MakeEmittable(methodI))
 
 #If EXTENDEDDEBUG Then
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Defined method override '" & Builder.FullName & ":" & Method.Name & "' overrides or implements '" & methodI.DeclaringType.FullName & ":" & methodI.Name & "'")
