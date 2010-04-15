@@ -87,6 +87,7 @@ Public Class SimpleTypeName
         ElseIf IsQualifiedIdentifier Then
             Dim tpParam As Mono.Cecil.GenericParameter
             result = AsQualifiedIdentifier.ResolveAsTypeName(AsAttributeTypeName) AndAlso result
+            If result = False Then Return result
             m_ResolvedType = AsQualifiedIdentifier.ResolvedType
             tpParam = TryCast(m_ResolvedType, Mono.Cecil.GenericParameter)
             If tpParam IsNot Nothing Then

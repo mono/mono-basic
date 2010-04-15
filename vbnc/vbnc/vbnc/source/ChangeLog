@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Types/SimpleTypeName.vb: Shortcircuit failure a bit.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/TypeManager.vb:
 	* General/TypeCache.vb:
 	* General/MyGenerator.vb:
