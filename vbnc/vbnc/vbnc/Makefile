@@ -49,6 +49,7 @@ uninstall-extras:
 
 install-binary: default
 	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
+	cp ../../class/lib/vbnc/Mono.Cecil.VB.* ../../class/lib/bootstrap
 
 boot-from-ms:
 	cd tests/SelfTest/ && boot.sh && rerun.sh

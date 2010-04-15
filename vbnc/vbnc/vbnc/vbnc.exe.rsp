@@ -2,7 +2,8 @@
 /r:Microsoft.VisualBasic.dll
 /r:System.Xml.dll
 /r:System.Windows.Forms.dll
-/r:../../class/lib/vbnc/Mono.Cecil.VB.dll
+/r:Mono.Cecil.VB.dll
+/r:Mono.Cecil.VB.Mdb.dll
 /imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit
 /rootnamespace:vbnc
 /t:exe

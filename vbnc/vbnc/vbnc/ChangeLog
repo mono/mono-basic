@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Makefile: Copy dependencies to class/lib/bootstrap too.
+	* vbnc.exe.rsp: Add references to Mono.Cecil.VB.[Mdb.].dll
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.vbnc.rsp: Don't include the My namespace in the compiler.
 	* vbnc.exe.sources: Updated.
 
