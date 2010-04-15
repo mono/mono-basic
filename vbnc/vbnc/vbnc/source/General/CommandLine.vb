@@ -291,12 +291,6 @@ Public Class CommandLine
     ''' </summary>
     Private m_bNoConfig As Boolean
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_NoVBRuntimeRef As Boolean
-
     ' - ADVANCED -
 
     ''' <summary>
@@ -353,6 +347,8 @@ Public Class CommandLine
     ''' /utf8output[+|-]        Emit compiler output in UTF8 character encoding.
     ''' </summary>
     Private m_bUTF8Output As Boolean
+
+    Private m_VBRuntime As String = "Microsoft.VisualBasic.dll"
 
     ''' <summary>
     ''' /vbversion:[7|7.1|8]    Which version of the VB language to target. 7 and 7.1 will emit v1.0 assemblies (not supported yet), and 8 will emit v2.0 assemblies. Default is latest (8).
@@ -610,9 +606,9 @@ Public Class CommandLine
         End Get
     End Property
 
-    ReadOnly Property NoVBRuntimeRef() As Boolean
+    ReadOnly Property VBRuntime() As String
         Get
-            Return m_NoVBRuntimeRef
+            Return m_VBRuntime
         End Get
     End Property
 
@@ -1067,7 +1063,13 @@ Public Class CommandLine
             Case "utf8output-"
                 m_bUTF8Output = False
             Case "novbruntimeref"
-                m_NoVBRuntimeRef = True
+                m_VBRuntime = Nothing
+            Case "vbruntime-"
+                m_VBRuntime = Nothing
+            Case "vbruntime+"
+                m_VBRuntime = "Microsoft.VisualBasic.dll"
+            Case "vbruntime"
+                m_VBRuntime = strValue
             Case "errorreport"
                 result = Compiler.Report.SaveMessage(Messages.VBNC99998, "/errorreport isn't implemented yet.") AndAlso result
             Case "vbversion"

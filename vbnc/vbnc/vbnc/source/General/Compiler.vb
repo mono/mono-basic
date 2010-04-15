@@ -469,8 +469,9 @@ Public Class Compiler
             If Not CommandLine.References.Contains("mscorlib.dll") Then
                 CommandLine.References.Add("mscorlib.dll")
             End If
-            If CommandLine.NoVBRuntimeRef = False AndAlso CommandLine.References.Contains("Microsoft.VisualBasic.dll") = False Then
-                CommandLine.References.Add("Microsoft.VisualBasic.dll")
+
+            If Not String.IsNullOrEmpty(CommandLine.VBRuntime) Then
+                CommandLine.References.Add(CommandLine.VBRuntime)
             End If
 
             m_Helper = New Helper(Me)
@@ -499,7 +500,7 @@ Public Class Compiler
 
             m_TypeManager.LoadCompiledTypes()
 
-            If CommandLine.NoVBRuntimeRef Then
+            If String.IsNullOrEmpty(CommandLine.VBRuntime) Then
                 m_TypeCache.InitInternalVB()
             End If
 

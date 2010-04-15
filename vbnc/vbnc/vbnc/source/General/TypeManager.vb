@@ -233,24 +233,16 @@ Public Class TypeManager
     ''' <remarks></remarks>
     Function LoadReferenced() As Boolean
         Dim result As Boolean = True
+
         result = LoadReferencedAssemblies() AndAlso result
         If result = False Then Return result
 
-
-        Dim loadVB As Boolean
-        loadVB = Compiler.CommandLine.NoVBRuntimeRef = False
-        If Not loadVB Then
-            For Each ass As Mono.Cecil.AssemblyDefinition In CecilAssemblies
-                If Helper.CompareNameOrdinal(ass.Name.Name, "Microsoft.VisualBasic") Then
-                    loadVB = True
-                    Exit For
-                End If
-            Next
-        End If
-
-        If loadVB Then
-            Compiler.TypeCache.InitInternalVB()
-        End If
+        For Each ass As Mono.Cecil.AssemblyDefinition In CecilAssemblies
+            If Helper.CompareNameOrdinal(ass.Name.Name, "Microsoft.VisualBasic") Then
+                Compiler.TypeCache.InitInternalVB()
+                Exit For
+            End If
+        Next
 
         result = LoadReferencedTypes() AndAlso result
 

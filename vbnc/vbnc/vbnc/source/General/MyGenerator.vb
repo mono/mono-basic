@@ -53,7 +53,7 @@ Public Class MyGenerator
         Dim _MyTypeDefine As Define
         Dim _MyType As String
 
-        If Compiler.CommandLine.NoVBRuntimeRef Then Return result
+        If String.IsNullOrEmpty(Compiler.CommandLine.VBRuntime) Then Return result
 
         _MyTypeDefine = Compiler.CommandLine.Define("_MYTYPE")
         If _MyTypeDefine Is Nothing Then

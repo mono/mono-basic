@@ -1,5 +1,14 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/TypeManager.vb:
+	* General/TypeCache.vb:
+	* General/MyGenerator.vb:
+	* General/Compiler.vb:
+	* General/CommandLine.vb:
+	* Expressions/InvocationOrIndexExpression.vb: Add support for /vbruntime:
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Types/TypeNameResolutionInfo.vb: Fix test bug-428340-2.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

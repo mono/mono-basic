@@ -349,7 +349,7 @@ Public Class CecilTypeCache
     Protected Function GetVBType(ByVal Name As String) As Mono.Cecil.TypeDefinition
         Dim result As Mono.Cecil.TypeDefinition = Nothing
 
-        If Compiler.CommandLine.NoVBRuntimeRef AndAlso vbruntime Is Nothing Then
+        If String.IsNullOrEmpty(Compiler.CommandLine.VBRuntime) AndAlso vbruntime Is Nothing Then
             Dim tps As Generic.List(Of Mono.Cecil.TypeReference)
             tps = Compiler.TypeManager.GetType(Name, True)
 

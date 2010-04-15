@@ -630,7 +630,7 @@
 	<test id="161" name="bug-428340" category="Bugs" priority="20" target="exe">
 		<file>Bugs\bug-428340.vb</file>
 	</test>
-	<test id="162" name="bug-428340-2" category="Bugs" priority="20" knownfailure="todo" target="exe">
+	<test id="162" name="bug-428340-2" category="Bugs" priority="20" target="exe">
 		<arguments>/rootnamespace:A</arguments>
 		<file>Bugs\bug-428340-2.vb</file>
 	</test>
@@ -1040,8 +1040,8 @@
 		<arguments>/r:System.dll,System.Xml.dll  /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime\CUShortConstantExpression1.vb</file>
 	</test>
-	<test id="268" name="DataSet1" category="CompileTime" priority="20" knownfailure="todo" target="library">
-		<arguments>/r:System.dll,System.Xml.dll  /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+	<test id="268" name="DataSet1" category="CompileTime" priority="20" target="library">
+		<arguments>/noconfig /r:System.dll,System.Xml.dll,System.Data.dll  /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime\DataSet1.vb</file>
 	</test>
 	<test id="269" name="DelegateCreationExpression1" category="CompileTime" priority="20" target="library">
