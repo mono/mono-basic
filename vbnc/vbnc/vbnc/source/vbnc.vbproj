@@ -196,6 +196,7 @@
     <Compile Include="Expressions\VariableExpression.vb" />
     <Compile Include="Expressions\VariableToValueExpression.vb" />
     <Compile Include="General\CecilHelper.vb" />
+    <Compile Include="General\CommandLine.OptionInferTypes.vb" />
     <Compile Include="General\MemberCache.vb" />
     <Compile Include="General\MethodBaseDeclaration.vb" />
     <Compile Include="General\MyGenerator.vb" />

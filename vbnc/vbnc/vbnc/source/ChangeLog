@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.sln:
+	* vbnc.vbproj: Updated.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/Helper.vb: Fix compilation.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
