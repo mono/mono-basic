@@ -691,6 +691,10 @@ Public Class CecilHelper
         '    genericParameters = tD.GenericParameters
         'End If
 
+        If genericParameters Is Nothing AndAlso genericArguments Is Nothing AndAlso tD Is Type AndAlso tD.Module Is Compiler.CurrentCompiler.ModuleBuilderCecil Then
+            Return Member
+        End If
+
         If Emittable Then
             returnType = Member.ReturnType.ReturnType
         Else

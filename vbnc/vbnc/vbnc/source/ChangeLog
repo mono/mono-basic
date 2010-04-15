@@ -1,5 +1,11 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/CecilHelper.vb:
+	* General/MemberImplementsClause.vb: Resolve property getters properly.
+	Fixes both GenericEnumerator2 and InterfaceH.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Members/ArrayElementInitializer.vb:
 	* Expressions/ArrayCreationExpression.vb: Build with NET 3.5.
 

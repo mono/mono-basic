@@ -118,11 +118,9 @@ Public Class MemberImplementsClause
             If propertyI IsNot Nothing Then
                 'This is be a property
                 If Method.Name.StartsWith("get_") Then
-                    'methodI = CecilHelper.GetCorrectMember(propertyDef.GetMethod, propertyI.DeclaringType)
-                    methodI = propertyDef.GetMethod
+                    methodI = CecilHelper.GetCorrectMember(propertyDef.GetMethod, propertyI.DeclaringType)
                 ElseIf Method.Name.StartsWith("set_") Then
-                    'methodI = CecilHelper.GetCorrectMember(propertyDef.SetMethod, propertyI.DeclaringType)
-                    methodI = propertyDef.SetMethod
+                    methodI = CecilHelper.GetCorrectMember(propertyDef.SetMethod, propertyI.DeclaringType)
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
                 End If
