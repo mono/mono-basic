@@ -299,6 +299,7 @@ Public Class Compiler
         AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(IO.Path.GetFileNameWithoutExtension(OutFileName), Mono.Cecil.TargetRuntime.NET_2_0, kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
         ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
+        If EmittingDebugInfo Then ModuleBuilderCecil.SaveSymbols()
 
         Return Compiler.Report.Errors = 0
     End Function
