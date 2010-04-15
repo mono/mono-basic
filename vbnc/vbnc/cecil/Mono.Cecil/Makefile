@@ -1,7 +1,10 @@
-thisdir = class/Mono.Cecil
-include ../../build/rules.make
+thisdir = vbnc/cecil/Mono.Cecil
+SUBDIRS = 
 
-LIBRARY = Mono.Cecil.dll
+include ../../../build/rules.make
+
+MCS = gmcs
+LIBRARY = Mono.Cecil.VB.dll
 LIBRARY_SNK = ../mono.snk
 LIBRARY_PACKAGE = none
 
@@ -13,4 +16,4 @@ ifneq (net_2_0, $(PROFILE))
 NO_INSTALL = yes
 endif
 
-include ../../build/library.make
+include ../../../build/library.make

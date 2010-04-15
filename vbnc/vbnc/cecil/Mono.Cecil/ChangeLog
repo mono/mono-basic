@@ -1,3 +1,7 @@
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Make it build.
+
 2010-02-13  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs: don't cache everything

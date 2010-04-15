@@ -1,3 +1,8 @@
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* cecil/Makefile:
+	* cecil/mono.snk: Added.
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* rt.sln: Updated test harness to compare assemblies using cecil

@@ -1,11 +1,12 @@
-thisdir = class/Mono.Cecil.Mdb
-include ../../build/rules.make
+thisdir = vbnc/cecil/Mono.Cecil.Mdb
+include ../../../build/rules.make
 
-LIBRARY = Mono.Cecil.Mdb.dll
+MCS = gmcs
+LIBRARY = Mono.Cecil.VB.Mdb.dll
 LIBRARY_SNK = ../mono.snk
 LIBRARY_PACKAGE = none
 
-CECIL = $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
+CECIL = $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
 LIB_MCS_FLAGS = /r:$(corlib) /r:$(CECIL) /d:CECIL -keyfile:$(LIBRARY_SNK)
 
@@ -15,4 +16,4 @@ ifneq (net_1_1, $(PROFILE))
 NO_INSTALL = yes
 endif
 
-include ../../build/library.make
+include ../../../build/library.make
