@@ -108,7 +108,7 @@ Public Class Tests
         settings.ConformanceLevel = ConformanceLevel.Document
         settings.Indent = True
         settings.IndentChars = vbTab
-        settings.NewLineHandling = NewLineHandling.Entitize
+        settings.NewLineHandling = NewLineHandling.None
         settings.NewLineOnAttributes = False
         settings.OmitXmlDeclaration = False
 

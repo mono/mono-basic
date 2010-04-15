@@ -747,31 +747,6 @@ Public Class Test
         End Get
     End Property
 
-    'Sub Initialize()
-    '    Dim rsp As String
-
-    '    rsp = IO.Path.Combine(m_BasePath, Name) & ".response"
-    '    If IO.File.Exists(rsp) Then m_ResponseFile = rsp Else m_ResponseFile = ""
-    '    rsp = IO.Path.Combine(m_BasePath, Name) & ".rsp"
-    '    If IO.File.Exists(rsp) Then m_RspFile = rsp Else m_RspFile = ""
-    '    rsp = IO.Path.Combine(m_BasePath, "all.rsp")
-    '    If IO.File.Exists(rsp) Then m_DefaultRspFile = rsp Else m_DefaultRspFile = ""
-
-    '    'Find the target of the test (exe, winexe, library, module)
-    '    m_Target = "exe" 'default target.
-    '    If m_RspFile <> "" Then
-    '        ParseResponseFile(m_RspFile)
-    '    Else
-    '        If m_DefaultRspFile <> "" Then
-    '            ParseResponseFile(m_DefaultRspFile)
-    '        End If
-    '        If m_ResponseFile <> "" Then
-    '            ParseResponseFile(m_ResponseFile)
-    '        End If
-    '    End If
-    '    m_TargetExtension = GetTargetExtension(m_Target)
-    'End Sub
-
     Function GetExecutor() As String
         Return IO.Path.GetFullPath("..\..\rt-execute\rt-execute.exe".Replace("\", IO.Path.DirectorySeparatorChar))
     End Function

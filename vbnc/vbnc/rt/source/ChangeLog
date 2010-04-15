@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Test.vb: Remove some dead code.
+	* Tests.vb: Handle newlines in the xml file correctly.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Test.vb: Implement different logic for vbc.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
