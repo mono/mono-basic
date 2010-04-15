@@ -34,13 +34,9 @@ Public Class ExternalProcessExecutor
 
     Private m_LastWriteDate As Date
     Private m_Version As FileVersionInfo
-    Private m_DependentFiles As New Generic.List(Of String)
 
-    ReadOnly Property DependentFiles() As Generic.List(Of String)
-        Get
-            Return m_DependentFiles
-        End Get
-    End Property
+    Private m_DirsToDelete As Generic.List(Of String)
+    Private m_Retries As Integer
 
     ReadOnly Property FileVersion() As FileVersionInfo
         Get
@@ -184,7 +180,6 @@ Public Class ExternalProcessExecutor
 
     Public Function RunProcess() As Boolean
         Dim process As New Process
-        Dim filesToDelete As New Generic.List(Of String)
 
         Try
             If Helper.IsOnMono Then
@@ -212,41 +207,27 @@ Public Class ExternalProcessExecutor
             End If
 
             If m_UseTemporaryExecutable Then
+                Dim srcdir As String
                 Dim tmpdir As String
-                Dim tmpsourcefile As String
-                Dim tmppdbfile As String
                 Dim sourcefile As String
-                Dim sourcepdbfile As String
 
                 tmpdir = System.IO.Path.GetTempFileName()
                 IO.File.Delete(tmpdir)
                 IO.Directory.CreateDirectory(tmpdir)
+                If m_DirsToDelete Is Nothing Then m_DirsToDelete = New Generic.List(Of String)
+                m_DirsToDelete.Add(tmpdir)
 
                 sourcefile = process.StartInfo.FileName
-                sourcepdbfile = IO.Path.Combine(IO.Path.GetDirectoryName(sourcefile), IO.Path.GetFileNameWithoutExtension(process.StartInfo.FileName) & ".pdb")
+                srcdir = IO.Path.GetDirectoryName(sourcefile)
 
-                tmpsourcefile = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcefile))
-                tmppdbfile = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcepdbfile))
-
-                System.IO.File.Copy(sourcefile, tmpsourcefile, True)
-                If IO.File.Exists(sourcepdbfile) Then
-                    IO.File.Copy(sourcepdbfile, tmppdbfile)
-                End If
-                process.StartInfo.FileName = tmpsourcefile
+                Dim patterns() As String = New String() {"*.exe", "*.dll", "*.pdb"}
+                For Each pattern As String In patterns
+                    For Each file As String In IO.Directory.GetFiles(srcdir, pattern)
+                        IO.File.Copy(file, IO.Path.Combine(tmpdir, IO.Path.GetFileName(file)))
+                    Next
+                Next
+                process.StartInfo.FileName = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcefile))
             End If
-
-            For Each file As String In m_DependentFiles
-                If IO.File.Exists(file) Then
-                    Dim destination As String
-                    destination = IO.Path.GetFullPath(IO.Path.Combine(process.StartInfo.WorkingDirectory, IO.Path.GetFileName(file)))
-                    If IO.File.Exists(destination) = False Then
-                        IO.File.Copy(file, destination)
-                        filesToDelete.Add(destination)
-                    End If
-                Else
-                    Console.WriteLine("Could not copy the dependent file: " & file)
-                End If
-            Next
 
             'Console.WriteLine("Executing: FileName={0}, Arguments={1}", process.StartInfo.FileName, process.StartInfo.Arguments)
 
@@ -271,16 +252,6 @@ Public Class ExternalProcessExecutor
             process.Close()
             'process.CancelOutputRead()
             'RemoveHandler process.OutputDataReceived, AddressOf OutputReader
-
-            If m_UseTemporaryExecutable Then
-                Try
-                    System.IO.Directory.Delete(IO.Path.GetDirectoryName(process.StartInfo.FileName), True)
-                Catch ex As UnauthorizedAccessException
-                    'Ignore this exception.
-                Catch ex As IO.IOException
-                    'Ignore this exception
-                End Try
-            End If
         Catch ex As Exception
             m_ExitCode = Integer.MinValue
             m_StdOut.AppendLine("Exception while executing process: ")
@@ -288,15 +259,36 @@ Public Class ExternalProcessExecutor
             m_StdOut.AppendLine(ex.StackTrace)
         Finally
             If process IsNot Nothing Then process.Dispose()
-            If filesToDelete IsNot Nothing Then
-                For Each file As String In filesToDelete
-                    Try
-                        IO.File.Delete(file)
-                    Catch 'Ignore any errors whatsoever
-                    End Try
-                Next
-            End If
+            DeleteFilesAndDirectories(Me)
         End Try
         Return True
     End Function
+
+    Private Sub DeleteFilesAndDirectories(ByVal state As Object)
+        'Don't retry indefinitively
+        If m_Retries > 10 Then
+            Debug.WriteLine("Too many file/directory deletion retries, bailing out")
+            Return
+        End If
+
+        'Don't retry too often, wait a bit.
+        If m_Retries > 0 Then Threading.Thread.Sleep(m_Retries * 100)
+
+        If m_DirsToDelete IsNot Nothing Then
+            For i As Integer = m_DirsToDelete.Count - 1 To 0
+                Try
+                    IO.Directory.Delete(m_DirsToDelete(i), True)
+                    m_DirsToDelete.RemoveAt(i)
+                Catch ex As Exception 'Ignore any errors whatsoever
+                    Debug.WriteLine(m_Retries & " Could not delete directory: " & ex.ToString)
+                End Try
+            Next
+        End If
+
+        If m_DirsToDelete IsNot Nothing AndAlso m_DirsToDelete.Count > 0 Then
+            m_Retries += 1
+            System.Threading.ThreadPool.QueueUserWorkItem(AddressOf DeleteFilesAndDirectories, Me)
+        End If
+    End Sub
+
 End Class

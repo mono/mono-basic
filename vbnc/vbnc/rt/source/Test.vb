@@ -841,7 +841,7 @@ Public Class Test
         m_Compilation = external_compilation
 
         m_Compilation.Name = "VBNC Compile"
-        'm_Compilation.Process.UseTemporaryExecutable = True
+        external_compilation.Process.UseTemporaryExecutable = True
         m_Compilation.ExpectedErrorCode = m_ExpectedErrorCode
         m_Compilation.ExpectedExitCode = m_ExpectedExitCode
 

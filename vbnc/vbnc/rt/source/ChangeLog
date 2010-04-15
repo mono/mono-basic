@@ -1,5 +1,12 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Test.vb:
+	* ExternalProcessExecutor.vb: Copy binary (and related files) to temporary
+	directory before execution, this way we can still rebuild the compiler even it
+	it's being used for running tests.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Test.vb: Remove some dead code.
 	* Tests.vb: Handle newlines in the xml file correctly.
 
