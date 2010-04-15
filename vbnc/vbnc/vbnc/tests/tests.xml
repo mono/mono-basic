@@ -7181,4 +7181,10 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 	<test id="922" name="AttributeFileVersion" category="" priority="0" target="exe">
 		<file>CompileTime2\AttributeFileVersion.vb</file>
 	</test>
+	<test id="1716" name="ConstantBounds1" category="" priority="0" target="library">
+		<file>CompileTime\ConstantBounds1.vb</file>
+	</test>
+	<test id="1717" name="42020" category="" priority="0" expectederrorcode="42020" target="library">
+		<file>Errors\42020.vb</file>
+	</test>
 </rt>

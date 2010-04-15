@@ -1,5 +1,11 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml:
+	* Errors/42020.vb:
+	* CompileTime/ConstantBounds1.vb: New tests.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* KnownFailures.txt: Deleted, this information is in tests.xml now.
 	* Makefile: Updated according to rt-console changes.
 

@@ -1,3 +1,18 @@
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Expressions/ArrayCreationExpression.vb: Convert array bound literals to
+	integer using an implicit CInt expression. Fixes #592362.
+
+	* Resources/License.txt: Update license year.
+
+	* Resources/GenerateCodeAndResX.sh: Messages.vb is stored in unix format on
+	linux - convert properly.
+
+	* General/Messages.vb: 
+	* Resources/Source.xml:
+	* Resources/Errors.resx:
+	* Members/VariableDeclaration.vb: Added support for reporting 42020.
+
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Emit/Emitter.vb:

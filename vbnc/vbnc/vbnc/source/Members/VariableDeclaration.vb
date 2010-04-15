@@ -172,7 +172,7 @@ Public MustInherit Class VariableDeclaration
                 If Me.Location.File(Compiler).IsOptionStrictOn Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
                 Else
-                    Helper.AddWarning("Variable type should be specified.")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC42020, Me.Location) AndAlso result
                 End If
                 m_VariableType = Compiler.TypeCache.System_Object
             End If

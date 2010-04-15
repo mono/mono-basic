@@ -93,23 +93,20 @@ Public Class ArrayCreationExpression
     End Sub
 
     Public Shared Sub EmitArrayCreation(ByVal Parent As ParsedObject, ByVal Info As EmitInfo, ByVal ArrayType As Mono.Cecil.TypeReference, ByVal asim As ArraySizeInitializationModifier)
-        If asim.ArrayTypeModifiers Is Nothing OrElse True Then
-            Dim Ranks As Integer = asim.BoundList.Expressions.Length
-            For i As Integer = 0 To Ranks - 1
-                Dim litexp As New ConstantExpression(Parent, 1, Parent.Compiler.TypeCache.System_Int32)
-                Dim exp As BinaryAddExpression
+        Dim Ranks As Integer = asim.BoundList.Expressions.Length
+        For i As Integer = 0 To Ranks - 1
+            Dim litexp As New ConstantExpression(Parent, 1, Parent.Compiler.TypeCache.System_Int32)
+            Dim exp As Expression
 
-                exp = New BinaryAddExpression(Parent, asim.BoundList.Expressions(i), litexp)
+            exp = New BinaryAddExpression(Parent, asim.BoundList.Expressions(i), litexp)
+            exp = New CIntExpression(Parent, exp)
 
-                If exp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) = False Then Throw New InternalException(Parent)
-                If exp.GenerateCode(Info.Clone(Parent, True)) = False Then Throw New InternalException(Parent)
+            If exp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) = False Then Throw New InternalException(Parent)
+            If exp.GenerateCode(Info.Clone(Parent, True)) = False Then Throw New InternalException(Parent)
 
-                Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.System_Int32, Info)
-            Next
-            EmitArrayConstructor(Info, ArrayType, Ranks)
-        Else
-            Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
-        End If
+            'Emitter.EmitConversion(exp.ExpressionType, Parent.Compiler.TypeCache.System_Int32, Info)
+        Next
+        EmitArrayConstructor(Info, ArrayType, Ranks)
     End Sub
 
 

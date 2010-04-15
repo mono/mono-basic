@@ -961,6 +961,7 @@
   <data name="42013"><value>CHANGEME</value></data>
   <data name="42014"><value>CHANGEME</value></data>
   <data name="42015"><value>CHANGEME</value></data>
+  <data name="42020"><value>Variable declaration without an 'As' clause; Object type assumed.</value></data>
   <data name="42024"><value>Function without an 'As' clause; Object return type assumed.</value></data>
   <data name="42101"><value>CHANGEME</value></data>
   <data name="42102"><value>CHANGEME</value></data>

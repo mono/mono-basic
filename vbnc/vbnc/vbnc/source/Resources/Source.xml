@@ -4652,6 +4652,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>'|1.|2' is already implemented by the base class '|3'. Re-implementation of |4 assumed.</VBValue>
 	</Message>
+  <Message id="42020" level="Warning">
+    <Comment>NC</Comment>
+    <VBNCValue>Variable declaration without an 'As' clause; Object type assumed.</VBNCValue>
+    <VBValue>Variable declaration without an 'As' clause; type of Object assumed.</VBValue>
+  </Message>
   <Message id="42024" level="Warning">
     <Comment>NC</Comment>
     <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
