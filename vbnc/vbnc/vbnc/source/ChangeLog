@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Members/ArrayElementInitializer.vb:
+	* Expressions/ArrayCreationExpression.vb: Build with NET 3.5.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/MyGenerator.vb: Fix some STAThread bugs.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

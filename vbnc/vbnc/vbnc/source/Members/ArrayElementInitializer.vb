@@ -91,8 +91,8 @@ Public Class ArrayElementInitializer
         m_Elements = New Generic.List(Of Integer)
         If m_VariableInitializerList IsNot Nothing Then
             If m_VariableInitializerList.List.ToArray.Length > 0 Then
-                If m_VariableInitializerList.List.ToArray(0).IsArrayElementInitializer Then
-                    m_Elements.AddRange(m_VariableInitializerList.List.ToArray(0).AsArrayElementInitializer.Elements)
+                If m_VariableInitializerList.List.ToArray()(0).IsArrayElementInitializer Then
+                    m_Elements.AddRange(m_VariableInitializerList.List.ToArray()(0).AsArrayElementInitializer.Elements)
                 End If
                 m_Elements.Insert(0, m_VariableInitializerList.List.ToArray.Length)
             End If
@@ -239,13 +239,13 @@ Public Class ArrayElementInitializer
         For i As Integer = 0 To indices.Count - 2
             index = indices(i)
             Helper.Assert(ai.m_VariableInitializerList.List.ToArray.Length > index)
-            Helper.Assert(ai.m_VariableInitializerList.List.ToArray(index).IsArrayElementInitializer)
-            ai = ai.m_VariableInitializerList.List.ToArray(index).AsArrayElementInitializer
+            Helper.Assert(ai.m_VariableInitializerList.List.ToArray()(index).IsArrayElementInitializer)
+            ai = ai.m_VariableInitializerList.List.ToArray()(index).AsArrayElementInitializer
         Next
         index = indices(indices.Count - 1)
         Helper.Assert(ai.m_VariableInitializerList.List.ToArray.Length > index)
-        Helper.Assert(ai.m_VariableInitializerList.List.ToArray(index).IsRegularInitializer)
-        result = ai.m_VariableInitializerList.List.ToArray(index).AsRegularInitializer
+        Helper.Assert(ai.m_VariableInitializerList.List.ToArray()(index).IsRegularInitializer)
+        result = ai.m_VariableInitializerList.List.ToArray()(index).AsRegularInitializer
 
         Return result
     End Function

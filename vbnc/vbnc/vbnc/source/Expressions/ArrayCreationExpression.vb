@@ -173,7 +173,7 @@ Public Class ArrayCreationExpression
                 Dim indices As New Generic.List(Of Integer)
                 For i As Integer = 0 To .List.ToArray.GetUpperBound(0)
                     indices.Add(i)
-                    result = EmitElementInitializer(Info, .List.ToArray(i), 1, i, tmpVar, ArrayType, indices) AndAlso result
+                    result = EmitElementInitializer(Info, .List.ToArray()(i), 1, i, tmpVar, ArrayType, indices) AndAlso result
                     indices.RemoveAt(indices.Count - 1)
                 Next
             End With
@@ -214,7 +214,7 @@ Public Class ArrayCreationExpression
         ElseIf vi.IsArrayElementInitializer Then
             For i As Integer = 0 To vi.AsArrayElementInitializer.Initializers.List.ToArray.GetUpperBound(0)
                 Indices.Add(i)
-                result = EmitElementInitializer(Info, vi.AsArrayElementInitializer.Initializers.List.ToArray(i), CurrentDepth + 1, i, ArrayVariable, ArrayType, Indices) AndAlso result
+                result = EmitElementInitializer(Info, vi.AsArrayElementInitializer.Initializers.List.ToArray()(i), CurrentDepth + 1, i, ArrayVariable, ArrayType, Indices) AndAlso result
                 Indices.RemoveAt(Indices.Count - 1)
             Next
         Else
