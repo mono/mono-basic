@@ -173,7 +173,7 @@ Public Class Test
             Dim expandablecommandline As String
             Dim verification As VerificationBase
             Select Case type
-                Case GetType(ExternalProcessVerification).FullName
+                Case "rt.ExternalProcessVerification"
                     Dim extvb As ExternalProcessVerification
                     Dim process As XmlNode = vb.SelectSingleNode("Process")
                     executable = GetAttributeValue(process.Attributes("Executable"))
@@ -181,7 +181,7 @@ Public Class Test
                     extvb = New ExternalProcessVerification(Me, executable, expandablecommandline)
                     extvb.Process.StdOut = process.SelectSingleNode("StdOut").Value
                     verification = extvb
-                Case GetType(CecilCompare).FullName
+                Case "rt.CecilCompare"
                     Dim cecilvb As CecilCompare
                     cecilvb = New CecilCompare(Me)
                     verification = cecilvb
@@ -707,7 +707,7 @@ Public Class Test
 
         If IncludeFiles Then
             For Each file As String In Files
-                result.Add(file)
+                result.Add(file.Replace("\"c, IO.Path.DirectorySeparatorChar))
             Next
         End If
 
@@ -869,10 +869,19 @@ Public Class Test
 
         If m_ExpectedExitCode = 0 Then
             Dim peverify As String
-            peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
-            If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
-            If peverify <> String.Empty AndAlso IO.File.Exists(peverify) Then
-                Dim peV As New ExternalProcessVerification(Me, peverify, """" & OutputAssemblyFull & """ /nologo /verbose")
+            If Helper.IsOnMono Then
+                peverify = "peverify"
+            Else
+                peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
+                If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
+            End If
+            If peverify <> String.Empty AndAlso (Helper.IsOnMono OrElse IO.File.Exists(peverify)) Then
+                Dim peV As ExternalProcessVerification
+                If Helper.IsOnMono Then
+                    peV = New ExternalProcessVerification(Me, peverify, "--verify all """ & OutputAssemblyFull & """")
+                Else
+                    peV = New ExternalProcessVerification(Me, peverify, """" & OutputAssemblyFull & """ /nologo /verbose")
+                End If
                 peV.Name = "Type Safety and Security Verification"
                 peV.Process.WorkingDirectory = Me.OutputPath
                 m_Verifications.Add(peV)

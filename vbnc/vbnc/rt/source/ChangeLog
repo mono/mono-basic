@@ -1,3 +1,10 @@
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Test.vb:
+	* ExternalProcessExecutor.vb: A few mono/rt-console fixes.
+
+	* CecilComparer.vb: No more lazy loading.
+
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Test.vb:

@@ -1,5 +1,10 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* KnownFailures.txt: Deleted, this information is in tests.xml now.
+	* Makefile: Updated according to rt-console changes.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* SelfTest/boot.sh:
 	* SelfTest/rerun.sh: Copy all dependencies.
 	* SelfTest/SelfCompile.general.response: Need to reference

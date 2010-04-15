@@ -180,15 +180,9 @@ Public Class ExternalProcessExecutor
 
     Public Function RunProcess() As Boolean
         Dim process As New Process
+        Dim realExecutable As String
 
         Try
-            If Helper.IsOnMono Then
-                process.StartInfo.FileName = "mono"
-                process.StartInfo.Arguments = "--debug " & m_Executable & " " & m_ExpandedCmdLine
-            Else
-                process.StartInfo.FileName = m_Executable
-                process.StartInfo.Arguments = m_ExpandedCmdLine
-            End If
             process.StartInfo.RedirectStandardOutput = True
             process.StartInfo.RedirectStandardError = True
             process.StartInfo.UseShellExecute = False
@@ -197,13 +191,12 @@ Public Class ExternalProcessExecutor
             process.StartInfo.WorkingDirectory = m_WorkingDirectory
 
             If IO.File.Exists(m_Executable) = False Then
-                m_StdOut.Append("Executable '" & m_Executable & "' does not exist.")
-                Return False
-            End If
-
-            m_LastWriteDate = IO.File.GetLastWriteTime(m_Executable)
-            If m_Version Is Nothing Then
-                m_Version = FileVersionInfo.GetVersionInfo(m_Executable)
+                'm_StdOut.Append("Executable '" & m_Executable & "' does not exist.")
+            Else
+                m_LastWriteDate = IO.File.GetLastWriteTime(m_Executable)
+                If m_Version Is Nothing Then
+                    m_Version = FileVersionInfo.GetVersionInfo(m_Executable)
+                End If
             End If
 
             If m_UseTemporaryExecutable Then
@@ -217,7 +210,7 @@ Public Class ExternalProcessExecutor
                 If m_DirsToDelete Is Nothing Then m_DirsToDelete = New Generic.List(Of String)
                 m_DirsToDelete.Add(tmpdir)
 
-                sourcefile = process.StartInfo.FileName
+                sourcefile = m_Executable
                 srcdir = IO.Path.GetDirectoryName(sourcefile)
 
                 Dim patterns() As String = New String() {"*.exe", "*.dll", "*.pdb"}
@@ -226,9 +219,20 @@ Public Class ExternalProcessExecutor
                         IO.File.Copy(file, IO.Path.Combine(tmpdir, IO.Path.GetFileName(file)))
                     Next
                 Next
-                process.StartInfo.FileName = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcefile))
+
+                realExecutable = IO.Path.Combine(tmpdir, IO.Path.GetFileName(sourcefile))
+            Else
+                realExecutable = m_Executable
             End If
 
+            If Helper.IsOnMono AndAlso realExecutable.EndsWith(".exe") Then
+                process.StartInfo.FileName = "mono"
+                process.StartInfo.Arguments = "--debug " & realExecutable & " " & m_ExpandedCmdLine
+            Else
+
+                process.StartInfo.FileName = realExecutable
+                process.StartInfo.Arguments = m_ExpandedCmdLine
+            End If
             'Console.WriteLine("Executing: FileName={0}, Arguments={1}", process.StartInfo.FileName, process.StartInfo.Arguments)
 
             process.Start()

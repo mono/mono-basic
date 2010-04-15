@@ -1,3 +1,9 @@
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile:
+	* rt-console.vbproj:
+	* rt-console.exe.sources: Updated.
+
 2008-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* rt-console9.vbproj, rt-console.sln, rt-console.vbproj,

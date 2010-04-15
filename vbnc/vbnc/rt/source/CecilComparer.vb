@@ -82,9 +82,9 @@ Public Class CecilComparer
     End Property
 
     Function Compare() As Boolean
-        m_Assembly1 = AssemblyFactory.GetAssembly(m_File1, True)
+        m_Assembly1 = AssemblyFactory.GetAssembly(m_File1)
         If m_Assembly1 Is Nothing Then Throw New Exception(String.Format("Could not load assembly '{0}'", m_File1))
-        m_Assembly2 = AssemblyFactory.GetAssembly(m_File2, True)
+        m_Assembly2 = AssemblyFactory.GetAssembly(m_File2)
         If m_Assembly2 Is Nothing Then Throw New Exception(String.Format("Coult not load assembly '{0}'", m_File2))
 
         CompareAssemblies()

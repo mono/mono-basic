@@ -4,8 +4,20 @@ include ../../build/rules.make
 
 NO_INSTALL = yes
 
+REFERENCES = \
+	-r:System.Xml.dll				\
+	-r:System.dll					\
+	-r:System.Drawing.dll				\
+	-r:../../class/lib/vbnc/Mono.Cecil.VB.dll
+
+IMPORTS = \
+	-imports:System,Microsoft.VisualBasic	\
+	-imports:System.Collections		\
+	-imports:System.Collections.Generic	\
+	-imports:System.Diagnostics,System.Xml
+
 PROGRAM = rt-console.exe
-PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics
+PROGRAM_COMPILE = $(BOOT_COMPILE) $(REFERENCES) $(IMPORTS)
 
 include ../../build/executable.make
 

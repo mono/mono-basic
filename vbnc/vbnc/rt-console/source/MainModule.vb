@@ -202,12 +202,10 @@ End Class
 Class rt_console
 
     Private m_AC As String
-    Private m_BasePath As String
+    Private m_FileName As String
     Private m_Compiler As String
     Private m_FailedOutput As Boolean = True
-    Private m_GenerateDir As String
     Private m_PEVerify As String
-    Private m_Recursive As Boolean = True
     Private m_VBC As String
     Private m_Verbosity As String = "All"
     Private m_PrintStatus As Boolean
@@ -305,33 +303,13 @@ Class rt_console
         End Set
     End Property
 
-    <Argument("Path to test or test directory to run")> _
-    Property BasePath() As String
+    <Argument("Filename of tests.xml")> _
+    Property FileName() As String
         Get
-            Return m_BasePath
+            Return m_FileName
         End Get
         Set(ByVal value As String)
-            m_BasePath = value
-        End Set
-    End Property
-
-    <Argument("Path to directory of test generators")> _
-    Property GenerateDir() As String
-        Get
-            Return m_GenerateDir
-        End Get
-        Set(ByVal value As String)
-            m_GenerateDir = value
-        End Set
-    End Property
-
-    <Argument("Recurse test directory for tests", True)> _
-    Property Recursive() As Boolean
-        Get
-            Return m_Recursive
-        End Get
-        Set(ByVal value As Boolean)
-            m_Recursive = value
+            m_FileName = value
         End Set
     End Property
 
@@ -358,125 +336,89 @@ Class rt_console
     End Sub
 
     Function Run() As Boolean
+        Dim result As Boolean = True
+        Dim start As Date = Date.Now
+
         ValidateArguments()
 
-        If IO.File.Exists(m_BasePath) = False AndAlso IO.Directory.Exists(m_BasePath) = False Then
-            Throw New IO.FileNotFoundException("File or directory '" & m_BasePath & "' does not exist (Basepath)")
+        If IO.File.Exists(m_FileName) = False Then
+            Throw New IO.FileNotFoundException("FileName  '" & m_FileName & "' does not exist")
         End If
 
         ReDim m_Counters([Enum].GetValues(GetType(Test.Results)).Length - 1)
 
-        m_BasePath = IO.Path.GetFullPath(m_BasePath)
-        Test.DirectoriesToSkip = m_Skip.Split(";"c)
+        m_FileName = IO.Path.GetFullPath(m_FileName)
 
-        If CBool(IO.File.GetAttributes(m_BasePath) And IO.FileAttributes.Directory) Then
-            If IO.Path.GetDirectoryName(m_BasePath) <> Environment.CurrentDirectory Then
-                Environment.CurrentDirectory = m_BasePath
-            End If
-            Return RunDirectory()
-        Else
-            If IO.Path.GetDirectoryName(m_BasePath) <> Environment.CurrentDirectory Then
-                Environment.CurrentDirectory = IO.Path.GetDirectoryName(m_BasePath)
-                m_BasePath = IO.Path.GetFileName(m_BasePath)
-            End If
-
-            Return RunFile()
+        If IO.Path.GetDirectoryName(m_FileName) <> Environment.CurrentDirectory Then
+            Environment.CurrentDirectory = IO.Path.GetDirectoryName(m_FileName)
         End If
-    End Function
 
-    Private Function RunDirectory() As Boolean
-        Dim result As Boolean = True
-        Dim start As Date = Date.Now
-
-        result = RunDirectory(Nothing, m_BasePath) AndAlso result
+        result = RunTests(FileName)
 
         ShowSummary(Date.Now - start)
 
         Return result
     End Function
 
-    Private Function RunDirectory(ByVal Parent As Tests, ByVal Directory As String) As Boolean
+    Private Function RunTests(ByVal FileName As String) As Boolean
         Dim tests As Tests
         Dim result As Boolean = True
 
         If m_PrintStatus = False Then
-            Console.WriteLine("Loading directory " & Directory & "... ")
+            Console.WriteLine("Loading " & FileName & "... ")
         End If
 
-        Try
-            If Parent IsNot Nothing Then Exit Try
+        tests = New Tests()
+        tests.Load(FileName)
+        tests.VBNCPath = m_Compiler
+        tests.VBCPath = m_VBC
 
-            Dim parentDir As String = IO.Path.GetDirectoryName(Directory)
-            If Directory.EndsWith(IO.Path.DirectorySeparatorChar) Then
-                parentDir = IO.Path.GetDirectoryName(parentDir)
-            End If
-            Dim knownFailures As String = IO.Path.Combine(parentDir, "KnownFailures.txt")
-            Console.WriteLine("Checking " & parentDir & " for KnownFailures.txt")
-            If IO.File.Exists(knownFailures) Then
-                Console.WriteLine(" Found KnownFailures.txt in parent directory (" & parentDir & "), loading that directory too...")
-                Parent = New Tests(Nothing, parentDir, m_Compiler, m_VBC, True)
-            End If
-        Catch ex As Exception
-        End Try
-
-        tests = New Tests(Parent, Directory, m_Compiler, m_VBC, True)
         If m_PrintStatus = False Then
             Console.WriteLine(tests.Count & " tests found.")
         End If
 
-        Dim xmlsettings As New XmlWriterSettings
-        Dim xmldir As String = Directory
-        xmlsettings.CheckCharacters = True
-        xmlsettings.CloseOutput = True
-        xmlsettings.ConformanceLevel = ConformanceLevel.Document
-        xmlsettings.Indent = True
-        xmlsettings.IndentChars = vbTab
-        xmlsettings.NewLineChars = vbCrLf
-        xmlsettings.NewLineHandling = NewLineHandling.Entitize
-        xmlsettings.NewLineOnAttributes = False
-        xmlsettings.OmitXmlDeclaration = False
+        'Dim xmlsettings As New XmlWriterSettings
+        'Dim xmldir As String = Directory
+        'xmlsettings.CheckCharacters = True
+        'xmlsettings.CloseOutput = True
+        'xmlsettings.ConformanceLevel = ConformanceLevel.Document
+        'xmlsettings.Indent = True
+        'xmlsettings.IndentChars = vbTab
+        'xmlsettings.NewLineChars = vbCrLf
+        'xmlsettings.NewLineHandling = NewLineHandling.Entitize
+        'xmlsettings.NewLineOnAttributes = False
+        'xmlsettings.OmitXmlDeclaration = False
 
-        Using Xml As XmlWriter = XmlWriter.Create(IO.Path.Combine(Directory, "tests.xml"), xmlsettings)
-            tests.Save(Directory, Xml)
-        End Using
+        'Using Xml As XmlWriter = XmlWriter.Create(IO.Path.Combine(Directory, "tests.xml"), xmlsettings)
+        '    tests.Save(Directory, Xml)
+        'End Using
 
-        Return result
+        'Return result
 
-        For Each test As Test In tests
+        For Each test As Test In tests.Values
             result = RunTest(test) AndAlso result
         Next
 
-        If m_Recursive Then
-            For Each dir As String In tests.GetContainedTestDirectories
-                result = RunDirectory(tests, dir) AndAlso result
-            Next
-        End If
-
         Return result
-    End Function
-
-
-    Private Function RunFile() As Boolean
-        Dim t As Test
-
-        t = New Test(m_BasePath, Nothing)
-
-        Return RunTest(t)
     End Function
 
     Private Function ShowStatus(ByVal t As Test) As Boolean
         Dim status As String
 
-        status = t.OldResult.ToString()
+        status = t.Result.ToString()
 
-        m_Counters(t.OldResult) += 1
+        m_Counters(t.Result) += 1
 
         If m_PrintStatusSkip IsNot Nothing AndAlso m_PrintStatusSkip.Contains(status) Then Return True
 
-        SetColor(t.OldResult)
+        SetColor(t.Result)
         Console.Write("{0,-10} ", status & ":")
         Console.ResetColor()
-        Console.WriteLine(IO.Path.Combine(IO.Path.GetDirectoryName(t.Files(0).Substring(m_BasePath.Length)), t.Name))
+        If Not String.IsNullOrEmpty(t.Category) Then
+            Console.Write(t.Category)
+            Console.Write(".")
+        End If
+        Console.WriteLine(t.Name)
 
         Return True
     End Function
