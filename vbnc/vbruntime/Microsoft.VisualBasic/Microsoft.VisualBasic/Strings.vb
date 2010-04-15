@@ -229,7 +229,7 @@ Namespace Microsoft.VisualBasic
                 End If
             Next
 
-            ReDim Preserve Temp(j - 1)
+            Temp = DirectCast (Utils.CopyArray (Temp, New String (j - 1) {}), String ())
 
             Return Temp
         End Function
@@ -1093,7 +1093,7 @@ Namespace Microsoft.VisualBasic
 
             sarr(count) = Expression.Substring(previous)
 
-            ReDim Preserve sarr(count)
+            sarr = DirectCast (Utils.CopyArray (sarr, New String (count) {}), String ())
             Return sarr
 
         End Function
