@@ -1,5 +1,9 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Added new tests and fix a tag duplicate.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml:
 	* Errors/42020.vb:
 	* CompileTime/ConstantBounds1.vb: New tests.

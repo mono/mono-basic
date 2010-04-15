@@ -677,7 +677,6 @@
 		<file>Bugs\bug-80750.vb</file>
 	</test>
 	<test id="170" name="bug-80752" category="Bugs" priority="20" target="library">
-		<arguments>-r:System.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Drawing.Design.dll,System.Xml.dll,System.Design.dll,System.Data.dll<arguments>
 		<arguments>-r:System.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Drawing.Design.dll,System.Xml.dll,System.Design.dll,System.Data.dll -imports:System,System.Drawing,Microsoft.VisualBasic,System.Data</arguments>
 		<file>Bugs\bug-80752.vb</file>
 	</test>
@@ -7186,5 +7185,12 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 	</test>
 	<test id="1717" name="42020" category="" priority="0" expectederrorcode="42020" target="library">
 		<file>Errors\42020.vb</file>
+	</test>
+	<test id="766" name="MultDimArray1" category="" priority="0" target="exe">
+		<file>CompileTime2\MultDimArray1.vb</file>
+	</test>
+	<test id="923" name="DefaultMember1" category="" priority="0" target="library">
+		<arguments>-r:System.Data.dll</arguments>
+		<file>CompileTime\DefaultMember1.vb</file>
 	</test>
 </rt>
