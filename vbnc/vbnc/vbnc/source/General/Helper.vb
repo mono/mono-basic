@@ -2317,7 +2317,7 @@ Public Class Helper
         Do Until tmpCaller Is Nothing
             If callerHierarchy.Contains(tmpCaller) Then
                 'The caller can descend once into a private type, check that here.
-                If CalledType.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, tmpCaller)
+                If calledTypeD.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, tmpCaller)
 
                 'We've reached a common surrounding type.
                 'No matter what accessibility level this type has 
@@ -2332,7 +2332,7 @@ Public Class Helper
         Loop
 
         'If the called type is a private nested type and the above checks failed, it is inaccessible
-        If CalledType.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, CallerType)
+        If calledTypeD.IsNestedPrivate Then Return Helper.CompareType(CalledType.DeclaringType, CallerType)
 
         'There is no common surrounding type, and the access level of all 
         'surrounding types of the called types are non-private, so the type

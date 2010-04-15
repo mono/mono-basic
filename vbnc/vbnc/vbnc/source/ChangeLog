@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/Helper.vb: Fix compilation.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/Helper.vb: Private types are accessible to siblings.
 	Fixes #504822.
 
