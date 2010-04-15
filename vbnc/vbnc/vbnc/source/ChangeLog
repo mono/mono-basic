@@ -1,5 +1,10 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Expressions/Conversions/CTypeExpression.vb: Properly box parameters to
+	methods which takes ValueType parameters.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc9.vbproj: Updaed.
 
 	* General/CommandLine.OptionInferTypes.vb: Added.

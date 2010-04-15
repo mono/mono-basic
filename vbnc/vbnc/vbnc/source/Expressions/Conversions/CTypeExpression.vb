@@ -252,6 +252,8 @@ Public Class CTypeExpression
             ElseIf Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, DestinationType)
+            ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_ValueType) Then
+                Emitter.EmitBox(Info, SourceType)
             ElseIf Helper.CompareType(CecilHelper.FindDefinition(SourceType).BaseType, DestinationType) Then
                 Emitter.EmitBox(Info, DestinationType)
             Else
