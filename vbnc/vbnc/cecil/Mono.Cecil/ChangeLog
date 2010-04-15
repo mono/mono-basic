@@ -1,5 +1,12 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil.Binary/Image.cs:
+	* Mono.Cecil.Binary/Section.cs:
+	* Mono.Cecil.Binary/SectionCollection.cs: Make some API required to emit
+	native VERSIONINFO resources correctly public.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil/ReflectionWriter.cs:
 	* Mono.Cecil/PropertyDefinition.cs: Make Get/SetMethod and DeclaringType
 	*Reference instead of *Definition, to accomodate for vbnc shortcomings.

@@ -48,7 +48,7 @@ namespace Mono.Cecil.Binary {
 		public string Name;
 		public byte [] Data;
 
-		internal Section ()
+		public Section ()
 		{
 		}
 
