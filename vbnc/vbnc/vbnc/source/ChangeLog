@@ -1,5 +1,9 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Expressions/Conversions/CTypeExpression.vb: Fix test case 30311.vb.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Expressions/ArrayCreationExpression.vb: Convert array bound literals to
 	integer using an implicit CInt expression. Fixes #592362.
 

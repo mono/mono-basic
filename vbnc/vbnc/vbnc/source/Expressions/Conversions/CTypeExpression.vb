@@ -267,10 +267,10 @@ Public Class CTypeExpression
                     If operators.Count = 1 Then
                         Emitter.EmitCall(Info, operators(0))
                     Else
-                        Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
                     End If
                 Else
-                    Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
                 End If
             End If
         ElseIf Helper.IsInterface(Compiler, SourceType) Then
