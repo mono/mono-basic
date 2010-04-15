@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil/ParameterReference.cs: Make the Annotations property public.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil.Cil/SymbolStoreHelper.cs: Our dll is named Mono.Cecil.VB. Always
 	load the mdb symbol writer, since I can't find the pdb one.
 
