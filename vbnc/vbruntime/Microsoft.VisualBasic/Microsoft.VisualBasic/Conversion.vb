@@ -164,9 +164,9 @@ Namespace Microsoft.VisualBasic
                         Dim strNumber As String
                         strNumber = Number.ToString
                         If strNumber.StartsWith("&") Then
-                            If strNumber.Substring(1, 1).ToUpper = "O" Then
+                            If Char.ToUpper(strNumber.Chars(1)) = "O"c Then
                                 Return Hex(SizeDown(Convert.ToInt64(strNumber.Substring(2), 8)))
-                            ElseIf strNumber.Substring(1, 1).ToUpper = "H" Then
+                            ElseIf Char.ToUpper(strNumber.Chars(1)) = "H"c Then
                                 Return Hex(SizeDown(Convert.ToInt64(strNumber.Substring(2), 16)))
                             Else
                                 Return Hex(SizeDown(Convert.ToInt64(Number)))
@@ -306,9 +306,9 @@ Namespace Microsoft.VisualBasic
                         Dim strNumber As String
                         strNumber = Number.ToString
                         If strNumber.StartsWith("&") Then
-                            If strNumber.Substring(1, 1).ToUpper = "O" Then
+                            If Char.ToUpper(strNumber.Chars(1)) = "O"c Then
                                 Return Oct(SizeDown(Convert.ToInt64(strNumber.Substring(2), 8)))
-                            ElseIf strNumber.Substring(1, 1).ToUpper = "H" Then
+                            ElseIf Char.ToUpper(strNumber.Chars(1)) = "H"c Then
                                 Return Oct(SizeDown(Convert.ToInt64(strNumber.Substring(2), 16)))
                             Else
                                 Return Oct(SizeDown(Convert.ToInt64(Number)))
@@ -458,18 +458,18 @@ Namespace Microsoft.VisualBasic
                     'its decimal. exit loop
                     IsDecimal = True
                     pos = InputStr.Length
-                ElseIf CurrentChar = "-" Then
+                ElseIf CurrentChar = "-"c Then
                     IsNegative = True
-                ElseIf CurrentChar = "&" Then
+                ElseIf CurrentChar = "&"c Then
                     'if this is not the last char, 
                     'take the next char and see if radix is H or O
                     If pos < InputStr.Length - 1 Then
                         CurrentChar = Convert.ToChar(InputStr.Substring(pos + 1, 1))
-                        If CurrentChar = "H" Or CurrentChar = "h" Then
+                        If CurrentChar = "H"c Or CurrentChar = "h"c Then
                             'its Hex. exit loop
                             IsHex = True
                             pos = InputStr.Length
-                        ElseIf CurrentChar = "O" Or CurrentChar = "o" Then
+                        ElseIf CurrentChar = "O"c Or CurrentChar = "o"c Then
                             'its Oct. exit loop
                             IsOct = True
                             pos = InputStr.Length
@@ -501,15 +501,15 @@ Namespace Microsoft.VisualBasic
 
                     If System.Char.IsWhiteSpace(CurrentChar) Then
                         'ignore this char
-                    ElseIf CurrentChar = "-" Then
+                    ElseIf CurrentChar = "-"c Then
                         IsNegative = True
                     ElseIf System.Char.IsDigit(CurrentChar) Then
                         'collect this char
-                        NumericString = NumericString + CurrentChar
-                    ElseIf CurrentChar = "." Then
+                        NumericString = NumericString & CurrentChar.ToString()
+                    ElseIf CurrentChar = "."c Then
                         'The Val function recognizes only the period (.) as a valid decimal separator
                         If Not PeriodCollected Then
-                            NumericString = NumericString + CurrentChar
+                            NumericString = NumericString & CurrentChar.ToString()
                             PeriodCollected = True
                         Else
                             'period already collected. exit the loop.
@@ -517,8 +517,8 @@ Namespace Microsoft.VisualBasic
                         End If
                     ElseIf IsE = False AndAlso (CurrentChar = "E"c OrElse CurrentChar = "e"c) Then
                         IsE = True
-                        NumericString &= CurrentChar
-                    ElseIf IsE AndAlso CurrentChar = "+" Then
+                        NumericString &= CurrentChar.ToString()
+                    ElseIf IsE AndAlso CurrentChar = "+"c Then
                         'ignore this
                     Else
                         'exit the loop
@@ -527,18 +527,18 @@ Namespace Microsoft.VisualBasic
 
                 ElseIf IsHex Then
 
-                    If System.Char.IsWhiteSpace(CurrentChar) Or CurrentChar = "&" Or CurrentChar = "H" Or CurrentChar = "h" Then
+                    If System.Char.IsWhiteSpace(CurrentChar) Or CurrentChar = "&"c Or CurrentChar = "H"c Or CurrentChar = "h"c Then
                         'ignore this char
                     ElseIf NumericString.Length = 16 Then
                         'max hex chars is 16. exit the loop.
                         pos = InputStr.Length
                     ElseIf System.Char.IsDigit(CurrentChar) Then
                         'collect this char
-                        NumericString = NumericString + CurrentChar
+                        NumericString = NumericString & CurrentChar.ToString()
                     ElseIf ((CurrentCharAsc >= Strings.Asc("A")) And (CurrentCharAsc <= Strings.Asc("F"))) Or _
                         ((CurrentCharAsc >= Strings.Asc("a")) And (CurrentCharAsc <= Strings.Asc("f"))) Then
                         'collect this char
-                        NumericString = NumericString + CurrentChar
+                        NumericString = NumericString & CurrentChar.ToString()
                     Else
                         'exit the loop.
                         pos = InputStr.Length
@@ -546,11 +546,11 @@ Namespace Microsoft.VisualBasic
 
                 ElseIf IsOct Then
 
-                    If System.Char.IsWhiteSpace(CurrentChar) Or CurrentChar = "&" Or CurrentChar = "O" Or CurrentChar = "o" Then
+                    If System.Char.IsWhiteSpace(CurrentChar) Or CurrentChar = "&"c Or CurrentChar = "O"c Or CurrentChar = "o"c Then
                         'ignore this char
                     ElseIf ((CurrentCharAsc >= Strings.Asc("0")) And (CurrentCharAsc <= Strings.Asc("7"))) Then
                         'collect this char
-                        NumericString = NumericString + CurrentChar
+                        NumericString = NumericString & CurrentChar.ToString()
                     Else
                         'exit the loop
                         pos = InputStr.Length
