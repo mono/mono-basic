@@ -894,7 +894,16 @@ EndOfCompilation:
                 If mainCecil Is Nothing Then
                     mainCecil = entryMethod
                 End If
-                mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, TypeCache.System_STAThreadAttribute__ctor)))
+                Dim foundSTAThreadAttribute As Boolean = False
+                For i As Integer = 0 To mainCecil.CustomAttributes.Count - 1
+                    If Helper.CompareMethod(mainCecil.CustomAttributes(0).Constructor, TypeCache.System_STAThreadAttribute__ctor) = False Then
+                        foundSTAThreadAttribute = True
+                        Exit For
+                    End If
+                Next
+                If foundSTAThreadAttribute = False Then
+                    mainCecil.CustomAttributes.Add(New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, TypeCache.System_STAThreadAttribute__ctor)))
+                End If
                 AssemblyBuilderCecil.EntryPoint = entryMethod
             End If
 

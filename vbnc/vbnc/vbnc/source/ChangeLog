@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/MyGenerator.vb: Fix some STAThread bugs.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Expressions/GetRefExpression.vb: Fix PEFileKind-Console/Winexe.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
