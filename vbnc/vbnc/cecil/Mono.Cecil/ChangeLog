@@ -1,5 +1,13 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil/MethodReference.cs:
+	* Mono.Cecil/MemberReference.cs:
+	* Mono.Cecil/MethodReturnType.cs:
+	* Mono.Cecil/GenericInstanceMethod.cs:
+	* Mono.Cecil/ParameterDefinitionCollection.cs: Add a few generics hacks.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil/FieldDefinition.cs: Add a HasConstant setter.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

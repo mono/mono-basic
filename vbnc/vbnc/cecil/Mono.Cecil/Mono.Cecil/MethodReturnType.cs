@@ -97,5 +97,24 @@ namespace Mono.Cecil {
 		{
 			return String.Format ("[return: {0}]", m_returnType);
 		}
+
+		internal MethodReturnType ResolveGenericTypes (GenericParameterCollection parameters, GenericArgumentCollection arguments)
+		{
+			TypeReference resolved = MemberReference.ResolveType (m_returnType, parameters, arguments);
+			MethodReturnType result;
+
+			if (resolved == m_returnType)
+				return this;
+
+			result = new MethodReturnType (resolved);
+			if (m_param != null) {
+				result.MetadataToken = MetadataToken;
+				result.MarshalSpec = MarshalSpec;
+				result.Constant = Constant;
+				//TODO: result.m_param.CustomAttributes = CustomAttributes;
+			}
+			return result;
+		}
+
 	}
 }

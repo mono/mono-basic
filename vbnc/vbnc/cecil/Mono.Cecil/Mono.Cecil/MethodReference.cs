@@ -35,10 +35,26 @@ namespace Mono.Cecil {
 		ParameterDefinitionCollection m_parameters;
 		MethodReturnType m_returnType;
 
+		public MethodReference OriginalMethod;
 		bool m_hasThis;
 		bool m_explicitThis;
 		MethodCallingConvention m_callConv;
 		GenericParameterCollection m_genparams;
+
+		public virtual ParameterDefinitionCollection ResolvedParameters
+		{
+			get
+			{
+				if (m_parameters == null)
+					m_parameters = Parameters;// new ParameterDefinitionCollection (this);
+				return m_parameters;
+			}
+		}
+
+		public virtual MethodReturnType ResolvedReturnType
+		{
+			get { return m_returnType; }
+		}
 
 		public virtual bool HasThis {
 			get { return m_hasThis; }
@@ -118,7 +134,7 @@ namespace Mono.Cecil {
 
 		public virtual MethodReference GetOriginalMethod ()
 		{
-			return this;
+			return (OriginalMethod == null ? this : OriginalMethod);
 		}
 
 		public int GetSentinel ()
