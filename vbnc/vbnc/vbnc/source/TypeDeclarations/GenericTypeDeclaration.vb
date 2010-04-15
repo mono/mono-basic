@@ -23,23 +23,15 @@ Public MustInherit Class GenericTypeDeclaration
 
     Private m_TypeParameters As TypeParameters
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.new(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.new(Parent, [Namespace], Name)
+        m_TypeParameters = TypeParameters
     End Sub
 
     Public Overrides Sub Initialize(ByVal Parent As BaseObject)
         MyBase.Initialize(Parent)
 
         If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
-    End Sub
-
-    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
-        Dim TypeArgumentCount As Integer
-        If TypeParameters IsNot Nothing Then
-            TypeArgumentCount = TypeParameters.Parameters.Count
-        End If
-        MyBase.Init(Name, TypeArgumentCount)
-        m_TypeParameters = TypeParameters
     End Sub
 
     ReadOnly Property TypeParameters() As TypeParameters Implements IConstructable.TypeParameters

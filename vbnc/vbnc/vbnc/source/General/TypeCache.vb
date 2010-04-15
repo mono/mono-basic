@@ -846,7 +846,14 @@ Public Partial Class CecilTypeCache
         MS_VB_CS_StandardModuleAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute")
         MS_VB_CS_Operators = GetVBType("Microsoft.VisualBasic.CompilerServices.Operators")
         MS_VB_CS_ObjectFlowControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl")
-        MS_VB_CS_ObjectFlowControl_ForLoopControl = GetVBType("Microsoft.VisualBasic.CompilerServices.ObjectFlowControl+ForLoopControl")
+        If MS_VB_CS_ObjectFlowControl IsNot Nothing Then
+            For i As Integer = 0 To MS_VB_CS_ObjectFlowControl.NestedTypes.Count - 1
+                If MS_VB_CS_ObjectFlowControl.NestedTypes(i).Name = "ForLoopControl" Then
+                    MS_VB_CS_ObjectFlowControl_ForLoopControl = MS_VB_CS_ObjectFlowControl.NestedTypes(i)
+                    Exit For
+                End If
+            Next
+        End If
         MS_VB_CS_Utils = GetVBType("Microsoft.VisualBasic.CompilerServices.Utils")
         MS_VB_CS_OptionCompareAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute")
         MS_VB_CS_OptionTextAttribute = GetVBType("Microsoft.VisualBasic.CompilerServices.OptionTextAttribute")

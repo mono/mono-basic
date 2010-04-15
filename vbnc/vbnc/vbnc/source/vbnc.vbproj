@@ -135,9 +135,6 @@
     <Import Include="VB=Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
-    <!--    
-	 <Compile Include="General\Emitter.vb" />
--->
     <Compile Include="Code\CodeBlock.vb" />
     <Compile Include="Code\ImplicitCodeBlock.vb" />
     <Compile Include="ConditionalCompilation\ConditionalConstant.vb" />

@@ -1982,6 +1982,7 @@ Partial Public Class Emitter
 
         For i As Integer = 0 To check.Length - 1
             If unv(i) Is Nothing Then Continue For
+            If check(i) Is Nothing Then Continue For
             If Helper.CompareName(unv(i).Name, check(i).Name) = False Then Continue For
             If Helper.CompareName(unv(i).DeclaringType.Name, check(i).DeclaringType.Name) = False Then Continue For
             If Helper.CompareName(unv(i).DeclaringType.Namespace, check(i).DeclaringType.Namespace) = False Then Continue For

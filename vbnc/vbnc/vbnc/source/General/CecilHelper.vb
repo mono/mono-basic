@@ -117,7 +117,7 @@ Public Class CecilHelper
 
     Public Shared Sub TestCecil()
         Dim a As Mono.Cecil.AssemblyDefinition
-        Dim corlib As Mono.Cecil.AssemblyDefinition = AssemblyFactory.GetAssembly(GetType(Integer).Assembly.Location)
+        Dim corlib As Mono.Cecil.AssemblyDefinition = AssemblyFactory.GetAssembly("\\linux\mono\main\git\mono-basic\vbnc\vbnc\bin\testoutput\Event_dll.dll")
 
         System.Threading.Thread.CurrentThread.CurrentUICulture = New Globalization.CultureInfo("en-US")
         System.Threading.Thread.CurrentThread.CurrentCulture = New Globalization.CultureInfo("en-US")
@@ -182,7 +182,8 @@ Public Class CecilHelper
         If arr IsNot Nothing Then
             result = New Mono.Cecil.MemberReferenceCollection(Type.Module)
             For Each member As MemberReference In GetMembers(BaseObject.m_Compiler.TypeCache.System_Array)
-                result.Add(GetCorrectMember(member, Type))
+                'result.Add(GetCorrectMember(member, Type))
+                result.Add(member)
             Next
             Return result
         End If
@@ -312,6 +313,51 @@ Public Class CecilHelper
         Return result
     End Function
 
+    Public Shared Sub GetGenericArgsAndParams(ByVal Type As TypeReference, ByRef GenericParameters As GenericParameterCollection, ByRef GenericArguments As GenericArgumentCollection)
+        Dim declType As TypeReference = Nothing
+        Dim genericType As GenericInstanceType
+        Dim genericTypeDefinition As TypeDefinition
+        Dim cloned As Boolean
+
+        Do
+            If declType Is Nothing Then
+                declType = Type
+            Else
+                declType = declType.DeclaringType
+            End If
+
+            genericType = TryCast(declType, Mono.Cecil.GenericInstanceType)
+
+            If genericType IsNot Nothing Then
+                genericTypeDefinition = CecilHelper.FindDefinition(genericType)
+
+                Helper.Assert(genericType.GenericArguments.Count = genericTypeDefinition.GenericParameters.Count)
+
+                If genericArguments Is Nothing Then
+                    genericArguments = genericType.GenericArguments
+                    genericParameters = genericTypeDefinition.GenericParameters
+                Else
+                    If cloned = False Then
+                        Dim tmp1 As New GenericArgumentCollection(Nothing)
+                        Dim tmp2 As New GenericParameterCollection(Nothing)
+                        For i As Integer = 0 To genericArguments.Count - 1
+                            tmp1.Add(genericArguments(i))
+                            tmp2.Add(genericParameters(i))
+                        Next
+                        genericArguments = tmp1
+                        genericParameters = tmp2
+                        cloned = True
+                    End If
+
+                    For i As Integer = 0 To genericType.GenericArguments.Count - 1
+                        genericArguments.Insert(i, genericType.GenericArguments(i))
+                        genericParameters.Insert(i, genericTypeDefinition.GenericParameters(i))
+                    Next
+                End If
+            End If
+        Loop While declType.IsNested
+    End Sub
+
     Public Shared Function InflateType(ByVal original As TypeReference, ByVal container As TypeReference) As TypeReference
         Dim spec As TypeSpecification = TryCast(original, TypeSpecification)
         Dim array As ArrayType = TryCast(original, ArrayType)
@@ -407,6 +453,8 @@ Public Class CecilHelper
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
         Dim originalDef As TypeDefinition = TryCast(original, TypeDefinition)
 
+        If parameters Is Nothing AndAlso arguments Is Nothing Then Return original
+
         If originalDef IsNot Nothing Then
             If originalDef.GenericParameters.Count = 0 Then Return original
             Dim result As New GenericInstanceType(originalDef)
@@ -501,14 +549,25 @@ Public Class CecilHelper
             Else
                 Throw New System.NotImplementedException()
             End If
-        Else
-            For i As Integer = 0 To parameters.Count - 1
-                If parameters(i) Is original Then
-                    Return arguments(i)
-                End If
-            Next
-            Return original
         End If
+
+        For i As Integer = 0 To parameters.Count - 1
+            If parameters(i) Is original Then
+                Return arguments(i)
+            End If
+        Next
+
+        If original.IsNested Then
+            Dim parentType As TypeReference = InflateType(original.DeclaringType, parameters, arguments)
+            If parentType IsNot original Then
+                Dim tD As TypeDefinition = FindDefinition(original)
+                Dim result As New GenericInstanceType(tD)
+                result.DeclaringType = Compiler.CurrentCompiler.ModuleBuilderCecil.Import(parentType)
+                Return result
+            End If
+        End If
+
+        Return original
     End Function
 
     Public Shared Function GetCorrectMember(ByVal Member As FieldDefinition, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.FieldReference
@@ -607,22 +666,49 @@ Public Class CecilHelper
     Public Shared Function GetCorrectMember(ByVal Member As MethodDefinition, ByVal Type As Mono.Cecil.TypeReference, Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
         Dim tD As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(Type)
-        Dim genericType As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
+        Dim genericArguments As GenericArgumentCollection = Nothing
+        Dim genericParameters As GenericParameterCollection = Nothing
         Dim returnType As Mono.Cecil.TypeReference
         Dim reflectableMember As Mono.Cecil.MethodReference
+        Dim declType As TypeReference = Nothing
 
-        If genericType Is Nothing Then Return Member
+        GetGenericArgsAndParams(Type, genericParameters, genericArguments)
+
+        'If genericType Is Nothing Then
+        '    Dim declType As TypeReference = Type
+        '    While declType.IsNested
+        '        Dim genType As GenericInstanceType = TryCast(declType, Mono.Cecil.GenericInstanceType)
+        '        If genType IsNot Nothing Then
+        '            If genericArguments Is Nothing Then genericArguments = New GenericArgumentCollection(Nothing)
+        '            For Each arg As TypeReference In genType.GenericArguments
+        '                genericArguments.Add(arg)
+        '            Next
+        '        End If
+        '    End While
+        '    Return Member
+        'Else
+        '    genericArguments = genericType.GenericArguments
+        '    genericParameters = tD.GenericParameters
+        'End If
 
         If Emittable Then
             returnType = Member.ReturnType.ReturnType
         Else
-            returnType = CecilHelper.ResolveType(Member.ReturnType.ReturnType, tD.GenericParameters, genericType.GenericArguments)
+            returnType = CecilHelper.InflateType(Member.ReturnType.ReturnType, genericParameters, genericArguments)
         End If
         returnType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, returnType)
-        result = New Mono.Cecil.MethodReference(Member.Name, genericType, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
-        reflectableMember = New Mono.Cecil.MethodReference(Member.Name, genericType, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
+        result = New Mono.Cecil.MethodReference(Member.Name, Type, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
+        reflectableMember = New Mono.Cecil.MethodReference(Member.Name, Type, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
         reflectableMember.OriginalMethod = Member
         result.OriginalMethod = Member
+
+        If Member.DeclaringType.GenericParameters.Count > 0 AndAlso Not TypeOf Member.DeclaringType Is GenericInstanceType Then
+            Dim tmp As New GenericInstanceType(Member.DeclaringType)
+            For i As Integer = 0 To Member.DeclaringType.GenericParameters.Count - 1
+                tmp.GenericArguments.Add(Member.DeclaringType.GenericParameters(i))
+            Next
+            result.DeclaringType = tmp
+        End If
 
         'This is weird, but there is a bug in the lazy reflection reader which 
         'causes parameter types to not be read. Reading the method body
@@ -636,7 +722,7 @@ Public Class CecilHelper
         For i As Integer = 0 To Member.Parameters.Count - 1
             Dim pD As Mono.Cecil.ParameterDefinition = Member.Parameters(i)
             Dim pDType As Mono.Cecil.TypeReference
-            pDType = InflateType(pD.ParameterType, Type)
+            pDType = InflateType(pD.ParameterType, genericParameters, genericArguments)
             If pDType IsNot pD.ParameterType Then
                 Dim newPD As Mono.Cecil.ParameterDefinition
                 Dim pd2 As Mono.Cecil.TypeReference
@@ -1143,7 +1229,13 @@ Public Class CecilHelper
         End If
         Dim moduledef As ModuleDefinition = TryCast(type.Scope, ModuleDefinition)
         If moduledef IsNot Nothing Then
-            Return moduledef.Types(type.FullName)
+            Dim fn As String
+            If type.IsNested Then
+                fn = FindDefinition(type.DeclaringType).FullName + "/" + type.Name
+            Else
+                fn = type.FullName
+            End If
+            Return moduledef.Types(fn)
         End If
         Throw New NotImplementedException
     End Function
@@ -1177,12 +1269,21 @@ Public Class CecilHelper
         If method Is Nothing Then Return Nothing
         Dim type As TypeDefinition
 
+        If TypeOf method Is MethodDefinition Then Return DirectCast(method, MethodDefinition)
+
+        'If TypeOf method.DeclaringType Is ArrayType Then
+        '    type = Compiler.CurrentCompiler.TypeCache.System_Array
+        'Else
         type = FindDefinition(method.DeclaringType)
+        'End If
         If method.OriginalMethod IsNot Nothing Then
             method = method.OriginalMethod
         Else
             method = method.GetOriginalMethod
         End If
+
+        If TypeOf method Is MethodDefinition Then Return DirectCast(method, MethodDefinition)
+
         If Helper.CompareNameOrdinal(method.Name, MethodDefinition.Cctor) OrElse Helper.CompareNameOrdinal(method.Name, MethodDefinition.Ctor) Then
             Return GetMethod(type.Constructors, method)
         Else

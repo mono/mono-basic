@@ -1,5 +1,11 @@
-default: */*.cs */*/*.cs
-	gmcs @Mono.Cecil.VB.dll.sources /r:System.dll /target:library /out:Mono.Cecil.VB.dll
+thisdir = vbnc/cecil
+SUBDIRS = 
 
-install: default
-	mv Mono.Cecil.VB.dll ../../class/vbnc
+include ../../build/rules.make
+
+LIBRARY = Mono.Cecil.VB.dll
+MCS = gmcs
+LOCAL_MCS_FLAGS = /r:System.dll
+NO_SIGN_ASSEMBLY = 1
+
+include ../../build/library.make

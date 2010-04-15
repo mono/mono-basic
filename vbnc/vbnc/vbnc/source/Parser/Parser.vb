@@ -1276,6 +1276,10 @@ Partial Public Class Parser
         Return result
     End Function
 
+    Private Function ParseIdentifier() As Identifier
+        Return ParseIdentifier(CType(Nothing, ParsedObject))
+    End Function
+
     Private Function ParseIdentifier(ByVal Parent As ParsedObject) As Identifier
         Dim result As Identifier
 

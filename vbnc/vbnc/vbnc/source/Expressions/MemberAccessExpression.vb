@@ -289,7 +289,7 @@ Public Class MemberAccessExpression
             'TODO: The spec is missing info about modules in namespaces. Doing check anyway.
             Dim modules As TypeDictionary = Compiler.TypeManager.GetModulesByNamespace(ns.ToString)
             Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Helper.GetMembersOfTypes(Compiler, modules, Name)
-            If members.Count > 0 Then
+            If members IsNot Nothing AndAlso members.Count > 0 Then
                 Dim first As Object = members(0)
                 If Helper.IsMethodDeclaration(first) Then
                     Classification = New MethodGroupClassification(Me, Nothing, Nothing, members)

@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2008 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -15,4 +15,5 @@
 ' You should have received a copy of the GNU Lesser General Public
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-' <Assembly: AssemblyInformationalVersion ("1.9 - r")>
+' 
+<Assembly: AssemblyInformationalVersion ("2.5 - r")>

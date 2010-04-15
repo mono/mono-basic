@@ -72,12 +72,6 @@ Public MustInherit Class MemberDeclaration
         Helper.Assert(m_DeclaringType IsNot Nothing)
     End Sub
 
-    Sub Init(ByVal Name As String)
-        m_Name = Name
-
-        If m_Name Is Nothing Then Throw New InternalException(Me.Location.ToString(Compiler))
-    End Sub
-
     Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String)
         m_Modifiers = Modifiers
         m_Name = Name

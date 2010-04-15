@@ -39,8 +39,9 @@ Public Class ExternalProcessVerification
     ''' <remarks></remarks>
     Sub New(ByVal Test As Test, ByVal Executable As String, Optional ByVal ExpandableCommandLine As String = "%OUTPUTASSEMBLY%")
         MyBase.New(Test)
+        If String.IsNullOrEmpty(ExpandableCommandLine) Then ExpandableCommandLine = "%OUTPUTASSEMBLY%"
         m_Process = New ExternalProcessExecutor(Executable, ExpandableCommandLine)
-        m_Process.ExpandCmdLine(New String() {"%OUTPUTASSEMBLY%", "%OUTPUTVBCASSEMBLY%"}, New String() {Test.GetOutputAssembly(), Test.GetOutputVBCAssembly()})
+        m_Process.ExpandCmdLine(New String() {"%OUTPUTASSEMBLY%", "%OUTPUTVBCASSEMBLY%"}, New String() {Test.OutputAssembly(), Test.OutputVBCAssembly()})
     End Sub
 
     Private Function StdOutContainsNumber(ByVal Number As Integer) As Boolean

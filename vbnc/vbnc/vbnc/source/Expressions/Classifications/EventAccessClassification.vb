@@ -45,7 +45,7 @@ Public Class EventAccessClassification
     ''' <remarks></remarks>
     ReadOnly Property EventType() As Mono.Cecil.TypeReference
         Get
-            Return m_EventInfo.DeclaringType
+            Return m_EventInfo.EventType
         End Get
     End Property
 

@@ -56,6 +56,7 @@ source/Expressions/SimpleExpression.vb
 source/Expressions/VariableExpression.vb
 source/Expressions/VariableToValueExpression.vb
 source/General/CecilHelper.vb
+source/General/CommandLine.OptionInferTypes.vb
 source/General/MemberCache.vb
 source/General/MethodBaseDeclaration.vb
 source/General/MyGenerator.vb
@@ -354,14 +355,10 @@ source/Members/PropertyGetDeclaration.vb
 source/Members/PropertySetDeclaration.vb
 source/General/Report.vb
 source/General/Scanner.vb
-source/Testing/Testing.vb
-source/General/CommandLine.OptionInferTypes.vb
 source/Tokens/Span.vb
 source/Tokens/Token.vb
 source/TypeDeclarations/AssemblyDeclaration.vb
-source/Types/AttributeBaseType.vb
 source/Members/AttributeBlock.vb
-source/Members/BaseMember.vb
 source/TypeDeclarations/ClassDeclaration.vb
 source/Members/ConstructorDeclaration.vb
 source/TypeDeclarations/DelegateDeclaration.vb

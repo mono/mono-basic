@@ -7,7 +7,7 @@
 
     Protected Overrides Function RunVerification() As Boolean
         Try
-            Dim cc As New CecilComparer(Me.Test.GetOutputVBCAssembly, Me.Test.GetOutputAssembly)
+            Dim cc As New CecilComparer(Me.Test.OutputVBCAssemblyFull, Me.Test.OutputAssemblyFull)
             Dim result As Boolean = cc.Compare
 
             For Each Str As String In cc.Errors

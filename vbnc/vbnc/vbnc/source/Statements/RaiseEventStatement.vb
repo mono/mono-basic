@@ -94,7 +94,7 @@ Public Class RaiseEventStatement
 
             'Helper.Assert(eventDeclaration IsNot Nothing)
             'Helper.Assert(TypeOf cl.EventInfo Is EventDescriptor)
-            Helper.Assert(Helper.CompareType(cl.EventType, Me.FindFirstParent(Of IType).CecilType))
+            'Helper.Assert(Helper.CompareType(cl.EventType, Me.FindFirstParent(Of IType).CecilType))
             Helper.Assert(invokemethod IsNot Nothing)
 
             'Load the field of the variable

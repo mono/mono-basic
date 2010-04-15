@@ -45,7 +45,7 @@ namespace Mono.Cecil {
 		public virtual ParameterDefinitionCollection ResolvedParameters {
 			get { 
 				if (m_parameters == null)
-					m_parameters = new ParameterDefinitionCollection (this);
+					m_parameters = Parameters;// new ParameterDefinitionCollection (this);
 				return m_parameters;
 			}
 		}

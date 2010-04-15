@@ -195,7 +195,7 @@ Public Class Helper
 
         If TypeOf m_Declaration.Parent Is EventDeclaration Then
             If DirectCast(m_Declaration.Parent, EventDeclaration).ImplementsClause IsNot Nothing Then
-                result = result Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Strict
+                result = result Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Strict Or Mono.Cecil.MethodAttributes.Final
             End If
         End If
 
@@ -2473,6 +2473,11 @@ Public Class Helper
         Return IsAccessible(Context, CType(FieldAccessability, Mono.Cecil.MethodAttributes), CalledType, CallerType)
     End Function
 
+    Shared Function CreateGenericTypename(ByVal Typename As Identifier, ByVal TypeArguments As TypeParameters) As Identifier
+        If TypeArguments Is Nothing OrElse TypeArguments.Parameters.Count = 0 Then Return Typename
+        Return New Identifier(Typename.Parent, CreateGenericTypename(Typename.Identifier, TypeArguments.Parameters.Count), Typename.Location, TypeCharacters.Characters.None)
+    End Function
+
     Shared Function CreateGenericTypename(ByVal Typename As String, ByVal TypeArgumentCount As Integer) As String
         If TypeArgumentCount = 0 Then
             Return Typename
@@ -3535,6 +3540,10 @@ Public Class Helper
         If r1 IsNot Nothing AndAlso r2 IsNot Nothing Then
             Return Helper.CompareType(r1.ElementType, r2.ElementType)
         ElseIf r1 IsNot Nothing Xor r2 IsNot Nothing Then
+            Return False
+        End If
+
+        If t1.IsNested AndAlso t2.IsNested AndAlso CompareType(t1.DeclaringType, t2.DeclaringType) = False Then
             Return False
         End If
 

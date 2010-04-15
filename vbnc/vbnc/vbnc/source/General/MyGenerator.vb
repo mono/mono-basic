@@ -195,6 +195,7 @@ Public Class MyGenerator
         If Compiler.CommandLine.Target = CommandLine.Targets.Winexe AndAlso baseClass = "Global.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase" Then
             Code.AppendLine("        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Advanced)> _")
             Code.AppendLine("        <Global.System.Diagnostics.DebuggerHidden()> _")
+            Code.AppendLine("        <Global.System.STAThread()> _")
             Code.AppendLine("        Friend Shared Sub Main(ByVal Args As String())")
             Code.AppendLine("            Global.System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(Global.Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.UseCompatibleTextRendering)")
             Code.AppendLine("            $GLOBALMY$.MyProject.Application.Run(Args)")

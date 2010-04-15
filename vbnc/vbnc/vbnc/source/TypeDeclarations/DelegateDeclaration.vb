@@ -45,31 +45,20 @@ Public Class DelegateDeclaration
     Private m_BeginInvoke As FunctionDeclaration
     Private m_EndInvoke As SubDeclaration
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Signature As SubSignature)
+        MyBase.New(Parent, Parent.Namespace, Signature.Identifier, Signature.TypeParameters)
+        m_Signature = Signature
     End Sub
 
-    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal Modifiers As Modifiers, ByVal Parameters As ParameterList, Optional ByVal ReturnType As Mono.Cecil.TypeReference = Nothing)
-        Me.New(Parent, Parent.Namespace)
-
-        If ReturnType Is Nothing Then
-            m_Signature = New SubSignature(Me, Name, Parameters)
-        Else
-            m_Signature = New FunctionSignature(Me, Name, Parameters, ReturnType, Parent.Location)
-        End If
-        Me.Modifiers = Modifiers
-        Me.Init(m_Signature)
+    Public Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Signature As SubSignature)
+        MyBase.New(Parent, [Namespace], Helper.CreateGenericTypename(Signature.Identifier, Signature.TypeParameters), Signature.TypeParameters)
+        m_Signature = Signature
     End Sub
 
     Public Overrides Sub Initialize(ByVal Parent As BaseObject)
         MyBase.Initialize(Parent)
 
         If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
-    End Sub
-
-    Shadows Sub Init(ByVal Signature As SubSignature)
-        MyBase.Init(Signature.Identifier, Signature.TypeParameters)
-        m_Signature = Signature
     End Sub
 
     Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes

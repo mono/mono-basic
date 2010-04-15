@@ -92,6 +92,13 @@ Public Class SimpleTypeName
             If tpParam IsNot Nothing Then
                 m_TypeParameter = DirectCast(tpParam.Annotations(Compiler), TypeParameter)
             End If
+            If Not TypeOf m_ResolvedType Is Mono.Cecil.GenericInstanceType AndAlso m_ResolvedType.GenericParameters.Count > 0 Then
+                Dim tmp As New Mono.Cecil.GenericInstanceType(m_ResolvedType)
+                For i As Integer = 0 To m_ResolvedType.GenericParameters.Count - 1
+                    tmp.GenericArguments.Add(m_ResolvedType.GenericParameters(i))
+                Next
+                m_ResolvedType = tmp
+            End If
         Else
             Throw New InternalException(Me)
         End If

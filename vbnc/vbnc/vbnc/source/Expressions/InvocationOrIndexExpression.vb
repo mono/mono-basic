@@ -533,7 +533,7 @@ Public Class InvocationOrIndexExpression
         ElseIf mgc.ResolvedMethodInfo IsNot Nothing Then
             Dim methodInfo As Mono.Cecil.MethodReference = mgc.ResolvedMethodInfo
 
-            If Compiler.CommandLine.NoVBRuntimeRef AndAlso Compiler.Assembly.IsDefinedHere(methodInfo) AndAlso CecilHelper.FindDefinition(methodInfo).IsStatic AndAlso Helper.CompareNameOrdinal(methodInfo.Name, "AscW") Then
+            If Compiler.CommandLine.NoVBRuntimeRef AndAlso Compiler.Assembly.IsDefinedHere(methodInfo) AndAlso CecilHelper.FindDefinition(methodInfo).IsStatic AndAlso Helper.CompareName(methodInfo.Name, "AscW") Then
                 Dim methodParameters As Mono.Cecil.ParameterDefinitionCollection = Helper.GetParameters(Compiler, methodInfo)
 
                 If methodParameters.Count <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.System_Char) Then

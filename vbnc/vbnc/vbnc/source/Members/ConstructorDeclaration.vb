@@ -141,9 +141,9 @@ Public Class ConstructorDeclaration
 
             If Helper.CompareNameOrdinal(ctor.Name, ConstructorDeclaration.ConstructorName) = False Then Return Nothing
 
-            If Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.BaseType) Then
+            If Helper.CompareType(CecilHelper.FindDefinition(ctor.DeclaringType), CecilHelper.FindDefinition(Me.FindTypeParent.BaseType)) Then
                 Return ctor
-            ElseIf Helper.CompareType(ctor.DeclaringType, Me.FindTypeParent.CecilType) Then
+            ElseIf Helper.CompareType(CecilHelper.FindDefinition(ctor.DeclaringType), CecilHelper.FindDefinition(Me.FindTypeParent.CecilType)) Then
                 Return ctor
             Else
                 Return Nothing

@@ -801,9 +801,9 @@ Partial Class Parser
 
         Do
             Dim tmp As New Generic.List(Of TypeVariableDeclaration)
-            Console.WriteLine("ParseTypeVariableDeclarators...")
+            'Console.WriteLine("ParseTypeVariableDeclarators...")
             tmp = ParseTypeVariableDeclarator(Parent, Modifiers, Info)
-            Console.WriteLine("Got something: {0}", tmp Is Nothing = False)
+            'Console.WriteLine("Got something: {0}", tmp Is Nothing = False)
             If tmp Is Nothing Then
                 Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
@@ -827,9 +827,9 @@ Partial Class Parser
         Dim result As New Generic.List(Of TypeVariableDeclaration)
         Dim tmp As Boolean
 
-        Console.Write("ParseTypeVariableDeclarator...")
+        'Console.Write("ParseTypeVariableDeclarator...")
         tmp = ParseVariableDeclarator(Parent, Modifiers, Info, result, False)
-        Console.WriteLine("tmp: {0}", tmp)
+        'Console.WriteLine("tmp: {0}", tmp)
         If tmp = False Then
             'Console.WriteLine("tmp was false")
             Return Nothing

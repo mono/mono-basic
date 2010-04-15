@@ -126,6 +126,14 @@ Public Class FunctionSignature
                 End If
                 m_ReturnType = Compiler.TypeCache.System_Object
             End If
+
+            If result AndAlso m_ReturnType.GenericParameters.Count > 0 Then
+                Dim tmp As New Mono.Cecil.GenericInstanceType(m_ReturnType)
+                For i As Integer = 0 To m_ReturnType.GenericParameters.Count - 1
+                    tmp.GenericArguments.Add(m_ReturnType.GenericParameters(i))
+                Next
+                m_ReturnType = tmp
+            End If
         End If
 
         Return result

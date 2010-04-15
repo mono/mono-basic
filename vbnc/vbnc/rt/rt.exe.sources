@@ -1,6 +1,6 @@
-source/AssemblyCompare.vb
 source/AssemblyInfo.vb
-source/CommandLine.vb
+source/CecilCompare.vb
+source/CecilComparer.vb
 source/CompilerHelper.vb
 source/EnhancedProgressBar.Designer.vb
 source/EnhancedProgressBar.vb
@@ -11,12 +11,8 @@ source/FileTabPage.Designer.vb
 source/FileTabPage.vb
 source/frmAssemblyDiff.Designer.vb
 source/frmAssemblyDiff.vb
-source/frmDiff.Designer.vb
-source/frmDiff.vb
 source/frmMain.Designer.vb
 source/frmMain.vb
-source/frmNewTest.Designer.vb
-source/frmNewTest.vb
 source/frmTestEditor.Designer.vb
 source/frmTestEditor.vb
 source/Helper.vb
@@ -25,12 +21,9 @@ source/Main.vb
 source/OldResult.vb
 source/Settings.vb
 source/Test.Results.vb
+source/Test.Targets.vb
 source/Test.vb
 source/TestExecutor.vb
-source/TestList.vb
 source/Tests.vb
-source/TestStatistics.vb
 source/TestView.vb
 source/VerificationBase.vb
-source/XmlCompare.vb
-source/XMLVerifier.vb

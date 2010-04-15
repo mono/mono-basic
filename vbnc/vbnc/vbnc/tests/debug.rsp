@@ -1,5 +1,0 @@
-/Debug
-"-out:\\linux\mono\main\branches\cecil-vbnc\vbnc\vbnc\tests\testoutput\MarshalAs.vb.dll"
-"/define:_MYTYPE=\"Empty\""
-"CompileTime\MarshalAs.vb"
-"/target:library"

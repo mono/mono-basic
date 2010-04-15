@@ -13,16 +13,11 @@
     <OptionStrict>On</OptionStrict>
     <FallbackCulture>en-US</FallbackCulture>
     <UpdateUrlEnabled>false</UpdateUrlEnabled>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <PublishUrl>http://localhost/Regression Tester</PublishUrl>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -55,28 +50,6 @@
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>GUI</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <OptionExplicit>On</OptionExplicit>
-    <OptionStrict>On</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugSymbols>False</DebugSymbols>
-    <DefineDebug>false</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <IncrementalBuild>false</IncrementalBuild>
-    <Optimize>True</Optimize>
-    <OutputPath>..\bin</OutputPath>
-    <DocumentationFile>rt.xml</DocumentationFile>
-    <NoWarn>
-    </NoWarn>
-    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <OutputType>WinExe</OutputType>
-    <AssemblyName>rt</AssemblyName>
-    <RootNamespace>rt</RootNamespace>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
     <WarningLevel>4</WarningLevel>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
@@ -179,13 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Project\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperFile Include="Microsoft.Net.Framework.2.0">
-      <InProject>False</InProject>
-      <ProductName>.NET Framework 2.0</ProductName>
-      <Install>true</Install>
-    </BootstrapperFile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Sample.xml" />

@@ -38,6 +38,10 @@ Public Class Identifier
         m_TypeCharacter = TypeCharacter
     End Sub
 
+    Sub New(ByVal Identifier As String)
+        m_Name = Identifier
+    End Sub
+
     Sub Init(ByVal Identifier As String, ByVal Location As Span, ByVal TypeCharacter As TypeCharacters.Characters)
         Me.Location = Location
         m_Name = Identifier

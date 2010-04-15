@@ -347,15 +347,10 @@ Public Class CTypeExpression
                     Else
                         m_IsStringToCharArray = True
                     End If
-                Else
-                    'Helper.NotImplementedYet("") Anything to do here?
                 End If
             Case Else
                 Throw New InternalException(Me)
         End Select
-
-        Return result
-
 
         Return result
     End Function

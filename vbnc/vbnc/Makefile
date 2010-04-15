@@ -1,5 +1,5 @@
 thisdir := vbnc
-SUBDIRS := vbnc
+SUBDIRS := cecil vbnc
 
 rt_files = \
 	rt/Makefile \

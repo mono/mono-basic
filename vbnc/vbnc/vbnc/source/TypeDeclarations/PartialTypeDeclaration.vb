@@ -25,20 +25,17 @@ Public MustInherit Class PartialTypeDeclaration
     Private m_TypeImplementsClauses As TypeImplementsClauses
     Private m_InterfacesImplemented As Boolean
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.new(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.new(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
-    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Implements] As TypeImplementsClauses)
-        MyBase.Init(Name, TypeParameters)
-        m_TypeImplementsClauses = [Implements]
-        If m_TypeImplementsClauses Is Nothing Then m_TypeImplementsClauses = New TypeImplementsClauses(Me)
-    End Sub
-
-    ReadOnly Property [Implements]() As TypeImplementsClauses
+    Property [Implements]() As TypeImplementsClauses
         Get
             Return m_TypeImplementsClauses
         End Get
+        Set(ByVal value As TypeImplementsClauses)
+            m_TypeImplementsClauses = value
+        End Set
     End Property
 
     Private Function GetTypeAttributes() As Mono.Cecil.TypeAttributes

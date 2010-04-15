@@ -74,6 +74,14 @@ Public Class TypeName
         Return result
     End Function
 
+    ReadOnly Property AsString() As String
+        Get
+            If TypeOf m_TypeName Is NonArrayTypeName Then Return AsNonArrayTypeName.Name
+            If TypeOf m_TypeName Is ArrayTypeName Then Return AsArrayTypeName.Name
+            Return DirectCast(m_TypeName, INameable).Name
+        End Get
+    End Property
+
     ReadOnly Property IsNonArrayTypeName() As Boolean
         Get
             Return TypeOf m_TypeName Is NonArrayTypeName
@@ -114,17 +122,6 @@ Public Class TypeName
     ReadOnly Property IsArray() As Boolean
         Get
             Return TypeOf m_TypeName Is ArrayTypeName
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' The name of this type.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    ReadOnly Property Name() As String
-        Get
-            Return DirectCast(m_TypeName, INameable).Name
         End Get
     End Property
 
@@ -169,14 +166,4 @@ Public Class TypeName
 
         Return result
     End Function
-
-    ''' <summary>
-    ''' Converts this type descriptor into a readable string representation (it's name, basically, with any ranks appended.)
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Overrides Function ToString() As String
-        Return Name.ToString
-    End Function
-
 End Class

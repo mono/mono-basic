@@ -26,20 +26,17 @@ DISTFILES = \
 version.tmp: $(topdir)/configure setversion.sh
 	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
 
-all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp Mono.Cecil.VB.dll
+all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp
+	echo abc
 
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
 
-Mono.Cecil.VB.dll: $(wildcard ../cecil/*/.cs) $(wildcard ../cecil/*/*/.cs) ../cecil/Mono.Cecil.VB.dll.sources
-	$(MAKE) -C ../cecil
-	cp ../cecil/Mono.Cecil.VB.dll .
-
 vbnc.vbnc.rsp: source/vbnc.rsp
 	cp source/vbnc.rsp vbnc.vbnc.rsp
 
-vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc9.vbproj vbnc.Errors.resources
-	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc9.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r
+vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
+	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/vbnc.vbproj -d:vbnc.exe.sources -m:l -b:source/ -x:r
 
 install-local: install-extras version.tmp
 install-extras: 

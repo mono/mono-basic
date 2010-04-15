@@ -29,8 +29,8 @@
 Public Class StructureDeclaration
     Inherits PartialTypeDeclaration
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
     Public Overrides Function ResolveTypeReferences() As Boolean

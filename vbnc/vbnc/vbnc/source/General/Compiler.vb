@@ -106,7 +106,7 @@ Public Class Compiler
     End Sub
 
     Public Sub VerifyConsistency(ByVal result As Boolean, ByVal where As String)
-        Console.WriteLine("Verifying consistency: {0}", where)
+        'Console.WriteLine("Verifying consistency: {0}", where)
         If Report.Errors = 0 AndAlso result = False Then
             Report.WriteLine(vbnc.Report.ReportLevels.Debug, where & ": No errors, but compilation failed? ")
             Helper.StopIfDebugging()

@@ -325,7 +325,12 @@ Public Class TypeNameResolutionInfo
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    modules = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS).ToTypeList
+                    Dim dic As TypeDictionary = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS)
+                    If dic IsNot Nothing Then
+                        modules = dic.ToTypeList
+                    Else
+                        modules = Nothing
+                    End If
                     'Return True
                 End If
 

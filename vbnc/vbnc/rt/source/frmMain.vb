@@ -75,6 +75,8 @@ Class frmMain
         ReDim m_Indices(m_Colors.Length - 1)
         ReDim m_Icons(m_Colors.Length - 1)
 
+        Me.barProgress.ValueCount = m_Colors.Length
+
         For i As Integer = 0 To m_Colors.Length - 1
             images(i) = New Bitmap(16, 16, Imaging.PixelFormat.Format32bppArgb)
             Using gr As Graphics = Graphics.FromImage(images(i))
@@ -83,6 +85,9 @@ Class frmMain
             m_Icons(i) = System.Drawing.Icon.FromHandle(images(i).GetHicon)
             lstImages.Images.Add(images(i))
             m_Indices(i) = lstImages.Images.Count - 1
+
+            Me.barProgress.Value(i).ColorBrush = m_Colors(i)
+            Me.barProgress.Value(i).Text = CType(i, Test.Results).ToString() + ": {0} {1:0.00%}"
         Next
     End Sub
 
@@ -102,6 +107,7 @@ Class frmMain
         If IO.Directory.Exists(tmp) Then cmbBasepath.Items.Add(tmp)
 
         tmp = IO.Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "Microsoft.Net\Framework\v2.0.50727\vbc.exe")
+        If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
         tmp = IO.Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "Microsoft.Net\Framework\v3.5\vbc.exe")
         If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
 
@@ -127,10 +133,6 @@ Class frmMain
             cmbBasepath.SelectedIndex = 0
         End If
 
-        Me.EnhancedProgressBar1.Value(0).Color = Color.Red
-        Me.EnhancedProgressBar1.Value(1).Color = Color.Yellow
-        Me.EnhancedProgressBar1.Value(2).Color = Color.Green
-
         LoadTests()
     End Sub
 
@@ -148,7 +150,8 @@ Class frmMain
             End If
 
             m_Tests.Load(cmbBasepath.Text)
-            SelectTestList(m_Tests.Values)
+            PopulateTestList()
+            UpdateSummary()
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -175,7 +178,8 @@ Class frmMain
 
     Private Sub lstTests_DoubleClick(ByVal sender As Object, ByVal e As EventArgs) Handles lstTests.DoubleClick
         Try
-            Me.tabMain.SelectedTab = pageTestResult
+            AddWork(GetSelectedTests, True)
+            UpdateState()
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -233,29 +237,30 @@ Class frmMain
             Else
                 Me.Icon = GetIcon(Test.Results.NotRun)
             End If
-            Me.EnhancedProgressBar1.Value(0).PercentDone = r / total
-            Me.EnhancedProgressBar1.Value(1).PercentDone = y / total
-            Me.EnhancedProgressBar1.Value(2).PercentDone = g / total
-            Me.EnhancedProgressBar1.Invalidate()
 
-            If tabMain.SelectedTab Is pageSummary Then
-                Dim COUNTERFORMAT As String = "{0} ({1:0.#%})"
-                txtRedTests.Text = String.Format(COUNTERFORMAT, r, r / total)
-                txtYellowTests.Text = String.Format(COUNTERFORMAT, y, y / total)
-                txtGreenTests.Text = String.Format(COUNTERFORMAT, g, g / total)
+            For i As Integer = 0 To m_Colors.Length - 1
+                Me.barProgress.Value(i).Number = alltests.GetTestsCount(CType(i, Test.Results), CType(i, Test.Results))
+                Me.barProgress.Value(i).PercentDone = Me.barProgress.Value(i).Number / total
+            Next
+            Me.barProgress.Invalidate()
 
-                txtQueue.Text = m_TestExecutor.QueueCount.ToString
-                txtNumberOfTests.Text = total.ToString
-                txtTestsRun.Text = (r + g).ToString
 
-                Text = String.Format("RT OK: {0} ({5:#0.0}%) / FAILED: {1} ({4:#0.0}%) / NOT RUN: {2}/{3} tests) / IN QUEUE: {6}", g, r, y, total, r * 100 / total, g * 100 / total, m_TestExecutor.QueueCount)
-                Dim exectime As TimeSpan = alltests.ExecutionTime
-                txtExecutionTime.Text = String.Format("{0}", FormatTimespan(exectime))
-                If total > 0 Then
-                    txtAverageExecutionTime.Text = String.Format("{0}", FormatTimespan(New TimeSpan(exectime.Ticks \ CInt(IIf(runcount = 0, 1, runcount)))))
-                Else
-                    txtAverageExecutionTime.Text = "0"
-                End If
+            Dim COUNTERFORMAT As String = "{0} ({1:0.#%})"
+            tblRedTests.Text = "Red tests: " & String.Format(COUNTERFORMAT, r, r / total)
+            tblTestsNotRun.Text = "Tests not run: " & String.Format(COUNTERFORMAT, y, y / total)
+            tblGreenTests.Text = "Green tests: " & String.Format(COUNTERFORMAT, g, g / total)
+
+            tblTestsInQueue.Text = "Tests in queue: " & m_TestExecutor.QueueCount.ToString
+            tblNumberOfTests.Text = "Number of tests: " & total.ToString
+            tblTestsRun.Text = "Tests run: " & (r + g).ToString
+
+            Text = String.Format("RT OK: {0} ({5:#0.0}%) / FAILED: {1} ({4:#0.0}%) / NOT RUN: {2}/{3} tests) / IN QUEUE: {6}", g, r, y, total, r * 100 / total, g * 100 / total, m_TestExecutor.QueueCount)
+            Dim exectime As TimeSpan = alltests.ExecutionTime
+            tblExecutionTime.Text = "Execution time: " & String.Format("{0}", FormatTimespan(exectime))
+            If total > 0 Then
+                tblAverageExecutionTime.Text = "Avg execution time: " & String.Format("{0}", FormatTimespan(New TimeSpan(exectime.Ticks \ CInt(IIf(runcount = 0, 1, runcount)))))
+            Else
+                tblAverageExecutionTime.Text = "Avg execution time: 0"
             End If
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
@@ -296,7 +301,7 @@ Class frmMain
             If lstTests.SelectedItems.Count > 0 AndAlso lstTests.SelectedItems.Contains(item) Then
                 lstTests_SelectedIndexChanged(lstTests, Nothing)
             End If
-            txtQueue.Text = m_TestExecutor.QueueCount.ToString
+            tblTestsInQueue.Text = "Tests in queue: " & m_TestExecutor.QueueCount.ToString
             If lstTests.ListViewItemSorter IsNot Nothing Then lstTests.Sort()
         End If
     End Sub
@@ -337,7 +342,7 @@ Class frmMain
     End Sub
 
     Private Sub UpdateState()
-        txtQueue.Text = m_TestExecutor.QueueCount.ToString
+        tblTestsInQueue.Text = "Tests in queue: " & m_TestExecutor.QueueCount.ToString
     End Sub
 
     Private Sub cmdRun_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdRun.Click
@@ -419,7 +424,7 @@ Class frmMain
         Try
             If Me.IsDisposed Then StopIfDebugging() : Return
             m_TestExecutor.RunAsync(Tests, Priority)
-            txtQueue.Text = m_TestExecutor.QueueCount.ToString
+            tblTestsInQueue.Text = "Tests in queue: " & m_TestExecutor.QueueCount.ToString
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -429,7 +434,7 @@ Class frmMain
         Try
             If Me.IsDisposed Then StopIfDebugging() : Return
             m_TestExecutor.RunAsync(Test, Priority)
-            txtQueue.Text = m_TestExecutor.QueueCount.ToString
+            tblTestsInQueue.Text = "Tests in queue: " & m_TestExecutor.QueueCount.ToString
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -567,7 +572,7 @@ Class frmMain
     Private Sub ViewCode(ByVal Tests As Generic.List(Of Test))
         For Each test As Test In Tests
             For Each File As String In test.Files
-                MainModule.ViewFiles(File)
+                MainModule.ViewFiles(Path.Combine(test.FullWorkingDirectory, File))
             Next
         Next
     End Sub
@@ -582,11 +587,15 @@ Class frmMain
 
         Dim strTestFile As String
         strTestFile = "/Debug" & vbNewLine
-        For Each str As String In test.GetTestCommandLineArguments
+        For Each str As String In test.GetTestCommandLineArguments(, False)
             strTestFile &= """" & str & """" & vbNewLine
         Next
 
-        IO.File.WriteAllText(IO.Path.Combine(Path.GetDirectoryName(m_Tests.Filename), "debug.rsp"), strTestFile)
+        For Each str As String In test.Files
+            strTestFile &= """" & Path.Combine(test.FullWorkingDirectory, str) & """" & vbNewLine
+        Next
+
+        IO.File.WriteAllText(IO.Path.Combine(IO.Path.GetDirectoryName(m_Tests.VBNCPath), "debug.rsp"), strTestFile)
 
     End Sub
 
@@ -686,8 +695,8 @@ Class frmMain
                 MsgBox("Select a test")
                 Return
             End If
-            vbc = test.GetOutputVBCAssembly
-            vbnc = test.GetOutputAssembly
+            vbc = test.OutputVBCAssembly
+            vbnc = test.OutputAssembly
 
             Process.Start(GetReflectorPath, """" & vbc & """ """ & vbnc & """")
 
@@ -728,7 +737,7 @@ Class frmMain
                 MsgBox("Select a test")
                 Return
             End If
-            vbnc = test.GetOutputAssembly
+            vbnc = test.OutputAssembly
 
             Process.Start(GetReflectorPath, """" & vbnc & """")
 
@@ -745,7 +754,7 @@ Class frmMain
                 MsgBox("Select a test")
                 Return
             End If
-            vbc = test.GetOutputVBCAssembly
+            vbc = test.OutputVBCAssembly
 
             Process.Start(GetReflectorPath, """" & vbc & """")
 
@@ -754,7 +763,22 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub SelectTestList(ByVal Tests As Generic.IEnumerable(Of Test))
+    Private Sub PopulateTestList()
+        Dim Tests As Generic.IEnumerable(Of Test)
+
+        If String.IsNullOrEmpty(txtFilter.Text) Then
+            Tests = m_Tests.Values
+        Else
+            Dim tmp As Generic.List(Of Test)
+            tmp = New Generic.List(Of Test)
+            For Each Test As Test In m_Tests.Values
+                If Test.Name.IndexOf(txtFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0 Then
+                    tmp.Add(Test)
+                End If
+            Next
+            Tests = tmp
+        End If
+
         lstTests.BeginUpdate()
         lstTests.Items.Clear()
         Dim items As New Generic.List(Of ListViewItem)
@@ -768,36 +792,16 @@ Class frmMain
     End Sub
 
     Private Sub SelectTest(ByVal Test As Test)
-        While Me.tabMain.TabPages.Count > 4
-            Me.tabMain.TabPages.Remove(Me.tabMain.TabPages(4))
-        End While
-
         If Test Is Nothing Then
-            txtTestResult.Text = ""
-            txtMessage.Text = ""
-            txtTestMessage.Text = ""
+            txtTestMessage.Text = String.Empty
+            gridTestProperties.SelectedObject = Nothing
         Else
-            'Test.Initialize()
-            If Test.Run Then
-                If Test.Success Then
-                    txtTestResult.Text = "Success"
-                Else
-                    txtTestResult.Text = "Failed"
-                End If
-            Else
-                txtTestResult.Text = "NotRun"
+            txtTestMessage.Text = Test.FailedVerificationMessage
+            If txtTestMessage.Text Is Nothing Then
+                txtTestMessage.Text = Test.StdOut
             End If
-            txtMessage.Text = Test.FailedVerificationMessage
-            txtTestMessage.Text = txtMessage.Text
-            tabMain.Visible = False
-            For Each file As String In Test.Files
-                tabMain.TabPages.Add(New FileTabPage(Test, file))
-            Next
-            tabMain.Visible = True
-
-            pageOldResults.Tag = Test
+            gridTestProperties.SelectedObject = Test
         End If
-        gridTestProperties.SelectedObject = Test
     End Sub
 
     Private Sub AllTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AllTestsToolStripMenuItem.Click
@@ -855,34 +859,6 @@ Class frmMain
         End Try
     End Sub
 
-    'Private Sub CreateNewTestInThisFolderToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreateNewTestInThisFolderToolStripMenuItem.Click
-    '    NewTestToolStripMenuItem_Click(Nothing, Nothing)
-    'End Sub
-
-    'Private Sub OnlyRefreshToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OnlyRefreshToolStripMenuItem.Click
-    '    Try
-    '        Dim tests As Tests
-    '        tests = Me.GetSelectedTestList()
-    '        If tests IsNot Nothing Then
-    '            tests.Update()
-    '        End If
-    '        treeTests_AfterSelect(treeTests, New TreeViewEventArgs(treeTests.SelectedNode))
-    '    Catch ex As Exception
-    '        MsgBox(ex.Message & vbNewLine & ex.StackTrace)
-    '    End Try
-    'End Sub
-
-    Private Sub lstOldResults_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstOldResults.SelectedIndexChanged
-        Try
-            If lstOldResults.SelectedItems.Count = 1 Then
-                Dim result As OldResult = TryCast(lstOldResults.SelectedItems(0).Tag, OldResult)
-                txtOldResult.Text = result.Text
-            End If
-        Catch ex As Exception
-            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
-        End Try
-    End Sub
-
     Private Sub worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
         Try
 
@@ -891,11 +867,9 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub tabMain_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabMain.SelectedIndexChanged
+    Private Sub tabMain_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
         Try
-            If tabMain.SelectedTab Is pageSummary Then
-                UpdateSummary()
-            End If
+            UpdateSummary()
         Catch ex As System.Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)
         End Try
@@ -966,7 +940,7 @@ Class frmMain
             new_test.Files.Add(destination)
             m_Tests.Append(new_test)
 
-            SelectTestList(m_Tests.Values)
+            PopulateTestList()
 
             MsgBox("Created test " & name, MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
 
@@ -1029,8 +1003,8 @@ Class frmMain
             vbc = Path.Combine(Path.GetDirectoryName(vbc), "vbc_" & Path.GetFileName(vbc))
             vbnc = Path.Combine(Path.GetDirectoryName(vbnc), "vbnc_" & Path.GetFileName(vbnc))
 
-            IO.File.Copy(test.GetOutputVBCAssembly, vbc, True)
-            IO.File.Copy(test.GetOutputAssembly, vbnc, True)
+            IO.File.Copy(test.OutputVBCAssembly, vbc, True)
+            IO.File.Copy(test.OutputAssembly, vbnc, True)
 
             Process.Start(GetIldasmPath, """" & vbc & """")
             Process.Start(GetIldasmPath, """" & vbnc & """")
@@ -1074,7 +1048,7 @@ Class frmMain
             test = New Test(m_Tests)
             test.Name = name
             m_Tests.Append(test)
-            SelectTestList(m_Tests.Values)
+            PopulateTestList()
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -1086,7 +1060,23 @@ Class frmMain
             For Each Test As Test In tests
                 m_Tests.Remove(Test.ID)
             Next
-            SelectTestList(m_Tests.Values)
+            PopulateTestList()
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub cmdExecute_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        Try
+            cmdRun_Click(sender, e)
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub txtFilter_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFilter.TextChanged
+        Try
+            PopulateTestList()
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try

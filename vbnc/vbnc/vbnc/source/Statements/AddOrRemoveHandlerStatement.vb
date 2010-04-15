@@ -53,6 +53,8 @@ Public Class AddOrRemoveHandlerStatement
         m_Event = [Event]
         m_IsAddHandler = IsAddHandler
 
+        Dim o As Object = CType(CecilHelper.FindDefinition(m_Event.Classification.AsEventAccess.EventType), Mono.Cecil.TypeDefinition).Methods(0).Parameters
+
         Dim eventInfo As Mono.Cecil.EventReference = m_Event.Classification.AsEventAccess.EventInfo
         Dim objCreation As New DelegateOrObjectCreationExpression(Me)
         Dim methodPointer As New AddressOfExpression(Me)

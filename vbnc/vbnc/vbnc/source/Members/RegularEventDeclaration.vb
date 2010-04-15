@@ -43,14 +43,6 @@ Public Class RegularEventDeclaration
         m_ParametersOrType = ParametersOrType
     End Sub
 
-    Shared Function DefineEventType(ByVal Obj As EventDeclaration, ByRef Builder As DelegateDeclaration, ByVal Parameters As ParameterList) As Boolean
-        Dim result As Boolean = True
-
-        Builder = New DelegateDeclaration(Obj.FindFirstParent(Of TypeDeclaration), Obj.Name & "EventHandler", Obj.Modifiers, Parameters)
-
-        Return result
-    End Function
-
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
         While tm.PeekToken(i).Equals(ModifierMasks.EventModifiers)
@@ -141,9 +133,9 @@ Public Class RegularEventDeclaration
             End If
             m_Type = New TypeName(Me, EventType)
         ElseIf m_Parameters IsNot Nothing Then
-            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
+            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace, New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
             m_ImplicitEventDelegate.Modifiers = Me.Modifiers
-            m_ImplicitEventDelegate.Init(New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            m_ImplicitEventDelegate.UpdateDefinition()
             If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
 
             EventType = m_ImplicitEventDelegate.CecilType

@@ -37,12 +37,8 @@ Public Class EnumDeclaration
 
     Public Const EnumTypeMemberName As String = "value__"
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
-    End Sub
-
-    Shadows Sub Init(ByVal Name As Identifier, ByVal EnumType As KS)
-        MyBase.Init(Name, 0)
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal EnumType As KS)
+        MyBase.New(Parent, [Namespace], Name)
         m_QualifiedName = EnumType
     End Sub
 

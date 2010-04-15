@@ -30,13 +30,8 @@ Public Class InterfaceDeclaration
 
     Private m_InterfaceBases As InterfaceBases
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
-    End Sub
-
-    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
-        MyBase.Init(Name, TypeParameters)
-        m_InterfaceBases = InterfaceBases
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
     Public Overrides Sub UpdateDefinition()
@@ -51,10 +46,13 @@ Public Class InterfaceDeclaration
         End Get
     End Property
 
-    ReadOnly Property InterfaceBases() As InterfaceBases
+    Property InterfaceBases() As InterfaceBases
         Get
             Return m_InterfaceBases
         End Get
+        Set(ByVal value As InterfaceBases)
+            m_InterfaceBases = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean

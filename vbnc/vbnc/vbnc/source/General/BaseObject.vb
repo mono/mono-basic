@@ -56,7 +56,7 @@ Public MustInherit Class BaseObject
     ''' </summary>
     Protected Sub New(ByVal Parent As BaseObject)
         m_Parent = Parent
-        Helper.Assert(Not (TypeOf m_Parent Is ClassDeclaration AndAlso TypeOf Me Is FunctionSignature))
+        'Helper.Assert(Not (TypeOf m_Parent Is ClassDeclaration AndAlso TypeOf Me Is FunctionSignature))
         If m_Parent IsNot Nothing AndAlso tm IsNot Nothing AndAlso tm.IsCurrentTokenValid Then m_Location = tm.CurrentLocation
 #If DEBUG Then
         Helper.Assert(Parent IsNot Me)

@@ -305,7 +305,7 @@ Public Class TypeManager
             Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
             Try
                 If IO.File.Exists(strFullPath) Then
-                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath, True)
+                    refAss = Mono.Cecil.AssemblyFactory.GetAssembly(strFullPath, False) ' True)
                     'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
                     Return refAss
                 End If

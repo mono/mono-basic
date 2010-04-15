@@ -25,12 +25,14 @@ Partial Class Parser
 
         'Get the actual name of the type including generic number
         Dim CompleteName As String
+        Dim GenericName As Identifier
         If m_TypeParameters Is Nothing Then
-            CompleteName = m_Identifier.Name
+            GenericName = m_Identifier
         Else
-            CompleteName = Helper.CreateGenericTypename(m_Identifier.Name, m_TypeParameters.Parameters.Count)
+            GenericName = New Identifier(Helper.CreateGenericTypename(m_Identifier.Name, m_TypeParameters.Parameters.Count))
         End If
 
+        CompleteName = GenericName.Name
         If TypeOf Parent Is AssemblyDeclaration AndAlso [Namespace] <> String.Empty Then
             CompleteName = [Namespace] & "." & CompleteName
         End If
@@ -52,11 +54,12 @@ Partial Class Parser
         Else
             'No type with the same name.
             If IsClass Then
-                result = New ClassDeclaration(Parent, [Namespace])
+                result = New ClassDeclaration(Parent, [Namespace], GenericName, m_TypeParameters)
             Else
-                result = New StructureDeclaration(Parent, [Namespace])
+                result = New StructureDeclaration(Parent, [Namespace], GenericName, m_TypeParameters)
             End If
             result.Modifiers = m_Modifiers
+            result.UpdateDefinition()
         End If
 
         Return result
@@ -85,7 +88,6 @@ Partial Class Parser
         Dim m_Identifier As Identifier
         Dim m_TypeParameters As TypeParameters
         Dim m_Inherits As NonArrayTypeName
-        Dim m_TypeImplementsClauses As TypeImplementsClauses
         Dim m_DeclaringType As TypeDeclaration
 
         m_DeclaringType = TryCast(Parent, TypeDeclaration)
@@ -123,9 +125,6 @@ Partial Class Parser
         m_Identifier.Parent = result
         If m_TypeParameters IsNot Nothing Then
             m_TypeParameters.Parent = result
-            result.SetName(m_Identifier, m_TypeParameters.Parameters.Count)
-        Else
-            result.SetName(m_Identifier, 0)
         End If
 
         If tm.Accept(KS.Inherits) Then
@@ -138,10 +137,8 @@ Partial Class Parser
         If m_Inherits IsNot Nothing Then result.AddInheritsClause(m_Inherits)
 
         If TypeImplementsClauses.IsMe(tm) Then
-            m_TypeImplementsClauses = ParseTypeImplementsClauses(result)
-            If m_TypeImplementsClauses Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-        Else
-            m_TypeImplementsClauses = Nothing
+            result.Implements = ParseTypeImplementsClauses(result)
+            If result.Implements Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         If ParseTypeMembers(result) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -154,7 +151,7 @@ Partial Class Parser
         Else
             result.CustomAttributes = Attributes
         End If
-        result.Init(m_DeclaringType, m_Identifier, m_TypeParameters, m_TypeImplementsClauses)
+        result.UpdateDefinition()
 
         Return result
     End Function
@@ -194,29 +191,41 @@ Partial Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseDelegateDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As DelegateDeclaration
-        Dim result As New DelegateDeclaration(Parent, [Namespace])
+        Dim result As DelegateDeclaration
 
         Dim Modifiers As Modifiers
         Dim m_Signature As SubSignature
+        Dim isSub As Boolean
 
         Modifiers = ParseModifiers(ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Delegate)
 
         If tm.Accept(KS.Function) Then
-            m_Signature = ParseFunctionSignature(result)
+            isSub = False
         ElseIf tm.Accept(KS.Sub) Then
-            m_Signature = ParseSubSignature(result)
+            isSub = True
         Else
-            Throw New InternalException(result)
+            Throw New InternalException(Parent)
         End If
+
+        If isSub Then
+            m_Signature = ParseSubSignature(Parent)
+        Else
+            m_Signature = ParseFunctionSignature(Parent)
+        End If
+
+        result = New DelegateDeclaration(Parent, [Namespace], m_Signature)
+
+        m_Signature.Parent = result
+
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
         result.Modifiers = Modifiers
-        result.Init(m_Signature)
+        result.UpdateDefinition()
 
         Return result
     End Function
@@ -259,7 +268,7 @@ Partial Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseEnumDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As EnumDeclaration
-        Dim result As New EnumDeclaration(Parent, [Namespace])
+        Dim result As EnumDeclaration
         Dim m_Modifiers As Modifiers
         Dim m_Identifier As Identifier
         Dim m_QualifiedName As KS = KS.Integer
@@ -268,7 +277,7 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Enum)
 
-        m_Identifier = ParseIdentifier(result)
+        m_Identifier = ParseIdentifier()
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.As) Then
@@ -281,6 +290,8 @@ Partial Class Parser
         End If
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
+        result = New EnumDeclaration(Parent, [Namespace], m_Identifier, m_QualifiedName)
+
         If ParseEnumMembers(result) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.AcceptIfNotError(KS.End, KS.Enum) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -288,7 +299,6 @@ Partial Class Parser
 
         result.CustomAttributes = Attributes
         result.Modifiers = m_Modifiers
-        result.Init(m_Identifier, m_QualifiedName)
 
         Return result
     End Function
@@ -302,33 +312,39 @@ Partial Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseInterfaceDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As InterfaceDeclaration
-        Dim result As New InterfaceDeclaration(Parent, [Namespace])
+        Dim result As InterfaceDeclaration
 
         Dim m_Modifiers As Modifiers
         Dim m_Identifier As Identifier
+        Dim m_GenericName As Identifier
         Dim m_TypeParameters As TypeParameters
-        Dim m_InterfaceBases As InterfaceBases
 
         m_Modifiers = ParseModifiers(ModifierMasks.TypeModifiers)
 
         tm.AcceptIfNotInternalError(KS.Interface)
 
-        m_Identifier = ParseIdentifier(result)
+        m_Identifier = ParseIdentifier()
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.AcceptEndOfStatement = False Then
-            m_TypeParameters = ParseTypeParameters(result)
+            m_TypeParameters = ParseTypeParameters(Parent)
             If m_TypeParameters Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            m_GenericName = Helper.CreateGenericTypename(m_Identifier, m_TypeParameters)
         Else
             m_TypeParameters = Nothing
+            m_GenericName = m_Identifier
+        End If
+
+        result = New InterfaceDeclaration(Parent, [Namespace], m_GenericName, m_TypeParameters)
+
+        If m_TypeParameters IsNot Nothing Then
+            m_TypeParameters.Parent = result
         End If
 
         If InterfaceBases.IsMe(tm) Then
-            m_InterfaceBases = ParseInterfaceBases(result)
-            If m_InterfaceBases Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-        Else
-            m_InterfaceBases = Nothing
+            result.InterfaceBases = ParseInterfaceBases(result)
+            If result.InterfaceBases Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         If ParseInterfaceMembers(result) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -338,7 +354,7 @@ Partial Class Parser
 
         result.CustomAttributes = Attributes
         result.Modifiers = m_Modifiers
-        result.Init(m_Identifier, m_TypeParameters, m_InterfaceBases)
+        result.UpdateDefinition()
 
         Return result
     End Function
@@ -351,7 +367,7 @@ Partial Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseModuleDeclaration(ByVal Parent As ParsedObject, ByVal Attributes As Attributes, ByVal [Namespace] As String) As ModuleDeclaration
-        Dim result As New ModuleDeclaration(Parent, [Namespace])
+        Dim result As ModuleDeclaration
 
         Dim m_Modifiers As Modifiers
         Dim m_Name As Identifier
@@ -360,8 +376,10 @@ Partial Class Parser
 
         tm.AcceptIfNotInternalError(KS.Module)
 
-        m_Name = ParseIdentifier(result)
+        m_Name = ParseIdentifier()
         If m_Name Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+        result = New ModuleDeclaration(Parent, [Namespace], m_Name)
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
@@ -376,7 +394,7 @@ Partial Class Parser
             result.CustomAttributes = Attributes
         End If
         result.Modifiers = m_Modifiers
-        result.Init(m_Name, 0)
+        result.UpdateDefinition()
 
         Return result
     End Function
@@ -396,7 +414,6 @@ Partial Class Parser
         Dim m_Modifiers As Modifiers
         Dim m_Identifier As Identifier
         Dim m_TypeParameters As TypeParameters
-        Dim m_Implements As TypeImplementsClauses
         Dim m_DeclaringType As TypeDeclaration
         Dim m_Attributes As Attributes
 
@@ -435,13 +452,10 @@ Partial Class Parser
         m_Identifier.Parent = result
         If m_TypeParameters IsNot Nothing Then
             m_TypeParameters.Parent = result
-            result.SetName(m_Identifier, m_TypeParameters.Parameters.Count)
-        Else
-            result.SetName(m_Identifier, 0)
         End If
 
-        m_Implements = ParseTypeImplementsClauses(result)
-        If m_Implements Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        result.Implements = ParseTypeImplementsClauses(result)
+        If result.Implements Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If ParseTypeMembers(result) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
@@ -449,7 +463,6 @@ Partial Class Parser
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.CustomAttributes = Attributes
-        result.Init(m_Identifier, m_TypeParameters, m_Implements)
 
         Return result
     End Function

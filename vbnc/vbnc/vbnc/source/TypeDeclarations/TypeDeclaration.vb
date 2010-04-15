@@ -112,32 +112,16 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier)
         MyBase.New(Parent)
-        'm_TypeDescriptor = New TypeDescriptor(Me)
 
         m_Namespace = [Namespace]
+        m_Name = Name
+        MyBase.Name = Name.Name
 
         Helper.Assert(m_Namespace IsNot Nothing)
+        Helper.Assert(m_Name IsNot Nothing)
         UpdateDefinition()
-    End Sub
-
-    Shadows Sub Init(ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
-        MyBase.Init(Helper.CreateGenericTypename(Name.Name, TypeArgumentCount))
-
-        m_Name = Name
-
-        Helper.Assert(DeclaringType IsNot Nothing OrElse TypeOf Me.Parent Is AssemblyDeclaration)
-        Helper.Assert(m_Namespace IsNot Nothing)
-        'Helper.Assert(m_Name IsNot Nothing)
-
-        UpdateDefinition()
-
-    End Sub
-
-    Sub SetName(ByVal Name As Identifier, ByVal TypeArgumentCount As Integer)
-        m_Name = Name
-        MyBase.Name = Helper.CreateGenericTypename(Name.Name, TypeArgumentCount)
     End Sub
 
     Overrides Sub UpdateDefinition()
@@ -153,7 +137,11 @@ Public MustInherit Class TypeDeclaration
         End If
         m_CecilType.Name = Name
 
-        If CecilType.Module Is Nothing Then
+        If DeclaringType IsNot Nothing AndAlso m_CecilType.DeclaringType Is Nothing Then
+            m_CecilType.DeclaringType = DeclaringType.CecilType
+        End If
+
+        If CecilType.Module Is Nothing AndAlso Me.Name IsNot Nothing Then
             Compiler.ModuleBuilderCecil.Types.Add(CecilType)
             If IsNestedType Then
                 DeclaringType.CecilType.NestedTypes.Add(CecilType)

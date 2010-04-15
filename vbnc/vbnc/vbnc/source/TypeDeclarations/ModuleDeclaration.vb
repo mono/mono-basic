@@ -58,8 +58,8 @@ Public Class ModuleDeclaration
         Return result
     End Function
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier)
+        MyBase.New(Parent, [Namespace], Name)
     End Sub
 
     Public Overrides Function ResolveTypeReferences() As Boolean

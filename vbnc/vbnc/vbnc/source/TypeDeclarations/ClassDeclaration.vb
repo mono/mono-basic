@@ -40,12 +40,8 @@ Public Class ClassDeclaration
     Private m_InheritsType As Mono.Cecil.TypeReference
     Private m_CreatedImplicitMembers As Boolean
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
-    End Sub
-
-    Shadows Sub Init(ByVal DeclaringType As TypeDeclaration, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal TypeImplementsClauses As TypeImplementsClauses)
-        MyBase.Init(Name, TypeParameters, TypeImplementsClauses)
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
     Sub AddInheritsClause(ByVal Clause As NonArrayTypeName)

@@ -7,7 +7,7 @@ Class GenericNestedType1
             End Function
         End Class
         Function Test() As Nested
-            Return New Nested()
+            Return New Nested
         End Function
     End Class
 

@@ -1,0 +1,4 @@
+/Debug
+"-out:Z:\main\git\mono-basic\vbnc\vbnc\tests\NUnitTests\testoutput\NUnitTests.exe"
+"-recurse:*.vb"
+"/target:exe"
