@@ -1,4 +1,4 @@
-﻿Class Continue3
+Class Continue3
     Sub Test()
         For i As Integer = 1 To 2
             Try

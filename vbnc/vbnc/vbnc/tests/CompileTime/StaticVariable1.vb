@@ -1,4 +1,4 @@
-﻿Class StaticVariable1
+Class StaticVariable1
     Function T() As Integer
         Static i As Integer
         i = 1

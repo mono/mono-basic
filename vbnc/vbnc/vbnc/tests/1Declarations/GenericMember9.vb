@@ -1,4 +1,4 @@
-﻿Imports System.Collections
+Imports System.Collections
 
 Namespace GenericMember9
     Class B

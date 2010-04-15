@@ -1,4 +1,4 @@
-﻿Class DefaultProperty2
+Class DefaultProperty2
     Class Dictionary
         Inherits system.collections.generic.dictionary(Of String, Integer)
     End Class

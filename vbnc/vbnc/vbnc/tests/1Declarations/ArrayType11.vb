@@ -1,4 +1,4 @@
-﻿Public Class ArrayType11
+Public Class ArrayType11
     Shared Function Main() As Integer
         Dim str As String() = New String() {"A", "AA"}
         Select Case str.Length

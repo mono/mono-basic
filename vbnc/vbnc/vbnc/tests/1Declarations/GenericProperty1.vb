@@ -1,4 +1,4 @@
-﻿Class GenericProperty1
+Class GenericProperty1
     Class Gen(Of T)
         Default ReadOnly Property Value(ByVal index As Integer) As T
             Get

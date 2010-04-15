@@ -1,4 +1,4 @@
-﻿Imports System.Collections.Generic
+Imports System.Collections.Generic
 
 Namespace GenericType3
     Class A(Of X, Y)
