@@ -1,5 +1,9 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* VBRunTime/Microsoft.VisualBasic.response: Clean up a bit.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Added new tests and fix a tag duplicate.
 
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
