@@ -618,10 +618,10 @@ namespace Mono.Cecil {
 			property.MetadataToken = new MetadataToken (TokenType.Property, (uint) pTable.Rows.Count);
 
 			if (property.GetMethod != null)
-				WriteSemantic (MethodSemanticsAttributes.Getter, property, property.GetMethod);
+				WriteSemantic (MethodSemanticsAttributes.Getter, property, (MethodDefinition) property.GetMethod);
 
 			if (property.SetMethod != null)
-				WriteSemantic (MethodSemanticsAttributes.Setter, property, property.SetMethod);
+				WriteSemantic (MethodSemanticsAttributes.Setter, property, (MethodDefinition) property.SetMethod);
 
 			if (property.HasConstant)
 				WriteConstant (property, property.PropertyType);
@@ -1292,9 +1292,9 @@ namespace Mono.Cecil {
 
 			MethodDefinition meth;
 			if (prop.GetMethod != null)
-				meth = prop.GetMethod;
+				meth = (MethodDefinition) prop.GetMethod;
 			else if (prop.SetMethod != null)
-				meth = prop.SetMethod;
+				meth = (MethodDefinition) prop.SetMethod;
 			else
 				meth = null;
 

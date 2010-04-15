@@ -1,5 +1,11 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil/ReflectionWriter.cs:
+	* Mono.Cecil/PropertyDefinition.cs: Make Get/SetMethod and DeclaringType
+	*Reference instead of *Definition, to accomodate for vbnc shortcomings.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil/MemberReference.cs: Make the Annotations property public.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

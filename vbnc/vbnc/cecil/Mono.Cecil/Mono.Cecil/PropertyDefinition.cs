@@ -38,8 +38,8 @@ namespace Mono.Cecil {
 
 		CustomAttributeCollection m_customAttrs;
 
-		MethodDefinition m_getMeth;
-		MethodDefinition m_setMeth;
+		MethodReference m_getMeth;
+		MethodReference m_setMeth;
 
 		bool m_hasConstant;
 		object m_const;
@@ -94,12 +94,12 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public MethodDefinition GetMethod {
+		public MethodReference GetMethod {
 			get { return m_getMeth; }
 			set { m_getMeth = value; }
 		}
 
-		public MethodDefinition SetMethod {
+		public MethodReference SetMethod {
 			get { return m_setMeth; }
 			set { m_setMeth = value; }
 		}
@@ -159,9 +159,15 @@ namespace Mono.Cecil {
 
 		#endregion
 
-		public new TypeDefinition DeclaringType {
-			get { return (TypeDefinition) base.DeclaringType; }
+		public new TypeReference DeclaringType {
+			get { return base.DeclaringType; }
 			set { base.DeclaringType = value; }
+		}
+
+		TypeDefinition Mono.Cecil.IMemberDefinition.DeclaringType
+		{
+			get { return (TypeDefinition) DeclaringType; }
+			set { DeclaringType = value; }
 		}
 
 		public PropertyDefinition (string name, TypeReference propertyType, PropertyAttributes attrs) : base (name, propertyType)
