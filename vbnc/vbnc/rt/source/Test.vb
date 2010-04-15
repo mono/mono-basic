@@ -60,12 +60,14 @@ Public Class Test
     ''' </summary>
     ''' <remarks></remarks>
     Private m_ExpectedExitCode As Integer
+    Private m_ExpectedVBCExitCode As Nullable(Of Integer)
 
     ''' <summary>
     ''' The error (or warning) the compiler should return (0 for none).
     ''' </summary>
     ''' <remarks></remarks>
     Private m_ExpectedErrorCode As Integer
+    Private m_ExpectedVBCErrorCode As Nullable(Of Integer)
 
     ''' <summary>
     ''' The result of the test
@@ -197,6 +199,7 @@ Public Class Test
 
     Public Sub Load(ByVal xml As XmlNode)
         Dim target As String
+        Dim tmp As String
 
         m_ID = xml.Attributes("id").Value
         m_Name = xml.Attributes("name").Value
@@ -211,6 +214,10 @@ Public Class Test
 
         m_ExpectedErrorCode = CInt(GetAttributeValue(xml.Attributes("expectederrorcode")))
         m_ExpectedExitCode = CInt(GetAttributeValue(xml.Attributes("expectedexitcode")))
+        tmp = GetAttributeValue(xml.Attributes("expectedvbcerrorcode"))
+        If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCErrorCode = CInt(tmp)
+        tmp = GetAttributeValue(xml.Attributes("expectedvbcexitcode"))
+        If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCExitCode = CInt(tmp)
         m_WorkingDirectory = GetAttributeValue(xml.Attributes("workingdirectory"))
 
         SetResult(GetAttributeValue(xml.Attributes("result")))
@@ -279,6 +286,8 @@ Public Class Test
 
             If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())
             If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
+            If m_ExpectedVBCExitCode.HasValue Then xml.WriteAttributeString("expectedvbcexitcode", m_ExpectedVBCExitCode.Value.ToString())
+            If m_ExpectedVBCErrorCode.HasValue Then xml.WriteAttributeString("expectedvbcerrorcode", m_ExpectedVBCErrorCode.Value.ToString())
 
             xml.WriteAttributeString("target", m_Target.ToString().ToLower())
             If Not String.IsNullOrEmpty(m_WorkingDirectory) Then xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
@@ -335,6 +344,23 @@ Public Class Test
         End Set
     End Property
 
+    Property ExpectedVBCErrorCode() As Nullable(Of Integer)
+        Get
+            Return m_ExpectedVBCErrorCode
+        End Get
+        Set(ByVal value As Nullable(Of Integer))
+            m_ExpectedVBCErrorCode = value
+        End Set
+    End Property
+
+    Property ExpectedVBCExitCode() As Nullable(Of Integer)
+        Get
+            Return m_ExpectedVBCExitCode
+        End Get
+        Set(ByVal value As Nullable(Of Integer))
+            m_ExpectedVBCExitCode = value
+        End Set
+    End Property
 
     Public Property KnownFailure() As String
         Get
@@ -813,8 +839,16 @@ Public Class Test
 
         If vbc IsNot Nothing Then
             vbc.Name = "VBC Compile (verifies that the test itself is correct)"
-            vbc.ExpectedExitCode = m_ExpectedExitCode
-            vbc.ExpectedErrorCode = m_ExpectedErrorCode
+            If m_ExpectedVBCExitCode.HasValue Then
+                vbc.ExpectedExitCode = m_ExpectedVBCExitCode.Value
+            Else
+                vbc.ExpectedExitCode = m_ExpectedExitCode
+            End If
+            If m_ExpectedVBCErrorCode.HasValue Then
+                vbc.ExpectedErrorCode = m_ExpectedVBCErrorCode.Value
+            Else
+                vbc.ExpectedErrorCode = m_ExpectedErrorCode
+            End If
         End If
 
         compiler = Me.Compiler
@@ -841,7 +875,14 @@ Public Class Test
         If vbc IsNot Nothing Then m_Verifications.Add(vbc)
         m_Verifications.Add(m_Compilation)
 
-        If m_ExpectedExitCode = 0 Then
+        Dim isVbcSuccess As Boolean
+        If m_ExpectedVBCExitCode.HasValue Then
+            isVbcSuccess = m_ExpectedVBCExitCode.Value = 0
+        Else
+            isVbcSuccess = m_ExpectedExitCode = 0
+        End If
+
+        If isVbcSuccess Then
             If vbccompiler <> String.Empty AndAlso Me.m_Target = Targets.Exe AndAlso m_DontExecute = False AndAlso Me.OutputVBCAssembly IsNot Nothing Then
                 Dim testOutputVerification As ExternalProcessVerification
                 testOutputVerification = New ExternalProcessVerification(Me, Me.OutputVBCAssemblyFull, Me.TestArguments)
@@ -849,7 +890,9 @@ Public Class Test
                 testOutputVerification.Process.WorkingDirectory = Me.FullWorkingDirectory
                 m_Verifications.Add(testOutputVerification)
             End If
+        End If
 
+        If m_ExpectedExitCode = 0 Then
             Dim peverify As String
             peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
             If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
@@ -859,14 +902,18 @@ Public Class Test
                 peV.Process.WorkingDirectory = Me.OutputPath
                 m_Verifications.Add(peV)
             End If
+        End If
 
+        If isVbcSuccess Then
             Dim cc As CecilCompare
             If vbccompiler <> String.Empty AndAlso IO.File.Exists(vbccompiler) AndAlso OutputVBCAssembly() IsNot Nothing Then
                 cc = New CecilCompare(Me)
                 cc.Name = "Cecil Assembly Compare"
                 m_Verifications.Add(cc)
             End If
+        End If
 
+        If m_ExpectedExitCode = 0 Then
             If Me.m_Target = Targets.Exe AndAlso m_DontExecute = False Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.OutputAssemblyFull, Me.TestArguments))
                 m_Verifications(m_Verifications.Count - 1).Name = "Output executable verification"
