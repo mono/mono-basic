@@ -1,5 +1,12 @@
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* ChangeLog:
+	* Conversion.vb: Use character constants whenever possible when comparing characters
+	instead of converting characters to strings and comparing that. Also do an explicit
+	ToString on characters when joining them.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* ControlChars.vb: Reduce the number of (ignorable) errors in VS.
 
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
