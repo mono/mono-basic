@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Expressions/GetRefExpression.vb: Fix PEFileKind-Console/Winexe.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Types/SimpleTypeName.vb: Shortcircuit failure a bit.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

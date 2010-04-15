@@ -70,7 +70,12 @@ Public Class GetRefExpression
                 Dim varC As VariableClassification = m_Expression.Classification.AsVariableClassification
 
                 If varC.InstanceExpression IsNot Nothing Then
-                    result = varC.InstanceExpression.GenerateCode(Info.Clone(Me, varC.InstanceExpression.ExpressionType)) AndAlso result
+                    Dim desiredType As Mono.Cecil.TypeReference
+                    desiredType = varC.InstanceExpression.ExpressionType
+                    If CecilHelper.IsValueType(desiredType) AndAlso CecilHelper.IsByRef(desiredType) = False Then
+                        desiredType = CecilHelper.MakeByRefType(desiredType)
+                    End If
+                    result = varC.InstanceExpression.GenerateCode(Info.Clone(Me, desiredType)) AndAlso result
                     'result = varC.InstanceExpression.GenerateCode(refInfo) AndAlso result
                 End If
 
