@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil/FieldDefinition.cs: Add a HasConstant setter.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil/ParameterReference.cs: Make the Annotations property public.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
