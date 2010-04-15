@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* TypeDeclarations/AssemblyDeclaration.vb: Fix fileversion attributes.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/CecilHelper.vb:
 	* General/MemberImplementsClause.vb: Resolve property getters properly.
 	Fixes both GenericEnumerator2 and InterfaceH.
