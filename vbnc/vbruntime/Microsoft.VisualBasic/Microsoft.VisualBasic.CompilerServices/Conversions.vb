@@ -28,13 +28,16 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#If NET_VER >= 2.0 Then
 Imports System
 Imports System.Globalization
 
 Namespace Microsoft.VisualBasic.CompilerServices
+#If NET_VER >= 2.0 Then
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class Conversions
+#Else
+    Friend NotInheritable Class Conversions
+#End If
         Private Sub New()
             'Nobody should see constructor
         End Sub
@@ -236,4 +239,3 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
     End Class
 End Namespace
-#End If
