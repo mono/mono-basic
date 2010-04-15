@@ -1,5 +1,11 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Mono.Cecil.VB.Mdb.csproj: Make default namespace match dll name.
+	* Mono.Cecil.Mdb/MdbFactory.cs: Put factory in default namespace corresponding
+	to dll name.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Mono.Cecil.Mdb.csproj: Renamed to VB.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>

@@ -7,8 +7,8 @@
     <ProjectGuid>{C5D12431-9C20-4789-8FEC-46094B0F81B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mono.Cecil.Mdb</RootNamespace>
-    <AssemblyName>Mono.Cecil.Mdb</AssemblyName>
+    <RootNamespace>Mono.Cecil.VB.Mdb</RootNamespace>
+    <AssemblyName>Mono.Cecil.VB.Mdb</AssemblyName>
     <StartupObject>
     </StartupObject>
     <SignAssembly>true</SignAssembly>
