@@ -1,5 +1,9 @@
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Remove spurios eols.
+
+2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Updated.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
