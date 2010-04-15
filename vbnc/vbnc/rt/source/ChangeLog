@@ -1,5 +1,9 @@
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Tests.vb: Only load/backup results file if it actually exists.
+
+2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* CecilComparer.vb: Type constraints are TypeReferences.
 
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>

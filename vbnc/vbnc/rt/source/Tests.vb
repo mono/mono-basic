@@ -59,16 +59,18 @@ Public Class Tests
                 Add(test)
             End If
         Next
-        m_Document = New XmlDocument()
-        m_Document.Load(m_ResultsFilename)
-        For Each node As XmlNode In m_Document.SelectNodes("/rt/test")
-            Dim id As String = node.Attributes("id").Value
-            Dim test As Test = Nothing
+        If File.Exists(m_ResultsFilename) Then
+            m_Document = New XmlDocument()
+            m_Document.Load(m_ResultsFilename)
+            For Each node As XmlNode In m_Document.SelectNodes("/rt/test")
+                Dim id As String = node.Attributes("id").Value
+                Dim test As Test = Nothing
 
-            If Me.TryGetValue(id, test) Then
-                test.LoadResult(node)
-            End If
-        Next
+                If Me.TryGetValue(id, test) Then
+                    test.LoadResult(node)
+                End If
+            Next
+        End If
     End Sub
 
     Private Shared Sub CreateBackup(ByVal fn As String)
@@ -77,6 +79,8 @@ Public Class Tests
         Dim ext As String
         Dim counter As Integer
         Dim filename As String
+
+        If Not File.Exists(fn) Then Return
 
         counter = 0
         path = IO.Path.GetDirectoryName(fn)
