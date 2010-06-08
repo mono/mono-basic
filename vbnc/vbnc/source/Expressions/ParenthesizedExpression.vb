@@ -103,13 +103,4 @@ Public Class ParenthesizedExpression
             Return m_Expression.IsConstant
         End Get
     End Property
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("(")
-        m_Expression.Dump(Dumper)
-        Dumper.Write(")")
-    End Sub
-#End If
 End Class

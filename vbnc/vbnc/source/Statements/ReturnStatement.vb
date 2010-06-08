@@ -71,12 +71,4 @@ Public Class ReturnStatement
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression Is Nothing OrElse m_Expression.ResolveTypeReferences()
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        dumper.Write("Return ")
-        If m_Expression IsNot Nothing Then m_Expression.Dump(dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
 End Class

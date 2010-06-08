@@ -744,13 +744,4 @@ Public Class MemberAccessExpression
             Return m_First.ToString & "." & m_Second.Name
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_First IsNot Nothing Then m_First.Dump(Dumper)
-        Dumper.Write(".")
-        Compiler.Dumper.Dump(m_Second)
-        'If m_TypeArguments IsNot Nothing Then m_TypeArguments.Dump(Dumper)
-    End Sub
-#End If
 End Class

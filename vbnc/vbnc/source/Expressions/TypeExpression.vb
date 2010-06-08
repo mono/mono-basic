@@ -45,12 +45,6 @@ Public Class TypeExpression
         MyBase.New(Parent)
     End Sub
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(Me.GetType.ToString)
-    End Sub
-#End If
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
     End Function

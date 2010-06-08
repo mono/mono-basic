@@ -404,14 +404,4 @@ Public Class CTypeExpression
         End Get
     End Property
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(Enums.GetKSStringAttribute(GetKeyword).FriendlyValue)
-        Dumper.Write("(")
-        Expression.Dump(Dumper)
-        Dumper.Write(" ,")
-        Compiler.Dumper.Dump(m_DestinationType)
-        Dumper.Write(")")
-    End Sub
-#End If
 End Class

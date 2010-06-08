@@ -146,14 +146,4 @@ Public Class AddOrRemoveHandlerStatement
         Compiler.Helper.AddCheck("The second argument's type must be the delegate type associated with the event access.")
         Return result
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(VB.IIf(m_IsAddHandler, "AddHandler ", "RemoveHandler ").ToString)
-        m_Event.Dump(Dumper)
-        Dumper.Write(", ")
-        m_EventHandler.Dump(Dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
 End Class

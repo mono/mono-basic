@@ -293,18 +293,6 @@ Public Class CodeBlock
         Return result
     End Function
 
-    'Private Sub DumpUnstructuredVars(ByVal Info As EmitInfo, Optional ByVal text As String = "")
-
-    '    Emitter.EmitLoadValue(Info, text & "VB_ActiveHandler: {0}, VB_ResumeTarget: {1}, VB_CurrentInstruction: {2}")
-    '    Emitter.EmitLoadVariable(Info, VB_ActiveHandler)
-    '    Emitter.EmitBox(Info, GetType(Integer))
-    '    Emitter.EmitLoadVariable(Info, VB_ResumeTarget)
-    '    Emitter.EmitBox(Info, GetType(Integer))
-    '    Emitter.EmitLoadVariable(Info, VB_CurrentInstruction)
-    '    Emitter.EmitBox(Info, GetType(Integer))
-    '    Emitter.EmitCall(Info, GetType(System.Console).GetMethod("WriteLine", New Type() {GetType(String), GetType(Object), GetType(Object), GetType(Object)}))
-    'End Sub
-
     Private Function GenerateUnstructuredEnd(ByVal Method As IMethod, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         Dim retvar As LocalBuilder = Method.DefaultReturnVariable
@@ -353,8 +341,6 @@ Public Class CodeBlock
         Dim removedLabel As Label = handlers(0)
         handlers(0) = endHandlers
         Emitter.MarkLabel(Info, VB_ActiveHandlerLabel)
-
-        'DumpUnstructuredVars(Info, "HandlerSelector - ")
 
         If VB_CurrentInstruction IsNot Nothing Then
             Emitter.EmitLoadVariable(Info, VB_CurrentInstruction)
@@ -523,10 +509,6 @@ Public Class CodeBlock
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-#If DEBUG Then
-        Info.Stack.CheckStackEmpty("Start of block " & Me.GetType.Name & " - " & Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
-
         For i As Integer = 0 To m_Variables.Count - 1
             Dim var As VariableDeclaration = m_Variables(i)
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
@@ -536,17 +518,10 @@ Public Class CodeBlock
         For i As Integer = 0 To m_Sequence.Count - 1
             Dim stmt As BaseObject = m_Sequence.Item(i)
 
-#If DEBUG Then
-            Info.Stack.CheckStackEmpty("Start of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
-
             Emitter.MarkSequencePoint(Info, stmt.Location)
 
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
             result = stmt.GenerateCode(Info) AndAlso result
-#If DEBUG Then
-            Info.Stack.CheckStackEmpty("End of statement #" & (i + 1).ToString & " (" & stmt.GetType.Name & " - " & stmt.Location.ToString(Compiler) & ") in " & Info.Method.FullName & " reached, but stack is not empty.")
-#End If
         Next
 
         Return result

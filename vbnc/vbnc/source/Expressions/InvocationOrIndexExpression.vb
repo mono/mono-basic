@@ -580,15 +580,4 @@ Public Class InvocationOrIndexExpression
             Return m_ArgumentList
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_Expression.Dump(Dumper)
-        If m_ArgumentList IsNot Nothing Then
-            Dumper.Write("(")
-            Compiler.Dumper.Dump(m_ArgumentList)
-            Dumper.Write(")")
-        End If
-    End Sub
-#End If
 End Class

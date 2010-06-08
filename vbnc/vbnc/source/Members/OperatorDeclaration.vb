@@ -159,12 +159,6 @@ Public Class OperatorDeclaration
         End Get
     End Property
 
-    'ReadOnly Property [Operator]() As token
-    '    Get
-    '        Return m_Operator
-    '    End Get
-    'End Property
-
     ''' <summary>
     ''' OverloadableBinaryOperator  ::=
     '''	"+" | "-" | "*" |  "/"  |  "\"  |  "&amp;" |  "Like"  |  "Mod"  |  "And"  |  "Or" |  "Xor"  |

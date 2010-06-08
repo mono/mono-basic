@@ -38,12 +38,6 @@ Public Class NamespaceExpression
         m_NS = ns
     End Sub
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(m_NS)
-    End Sub
-#End If
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function

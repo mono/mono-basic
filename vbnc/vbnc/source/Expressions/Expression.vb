@@ -80,14 +80,6 @@ Public MustInherit Class Expression
     ''' <remarks></remarks>
     Private m_Classification As ExpressionClassification
 
-#If DEBUG Then
-    ReadOnly Property Where() As String
-        Get
-            Return Location.ToString(Compiler)
-        End Get
-    End Property
-#End If
-
     ''' <summary>
     ''' First finds a code block, then finds the specified type in the code block.
     ''' </summary>
@@ -468,32 +460,10 @@ Public MustInherit Class Expression
 
 
 #End Region
-    '#If DEBUG Then
-    '    Protected Overrides Sub Finalize()
-    '        If m_Resolving Then
-    '            If Location IsNot Nothing Then
-    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving: " & Me.Location.ToString)
-    '            Else
-    '                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Expression still resolving. (Location is lost already).")
-    '            End If
-    '        End If
-    '    End Sub
-    '#End If
-#If DEBUG Then
-    Overridable Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("<Dump of '" & Me.GetType.Name & "'>")
-    End Sub
-#End If
 
     Overridable ReadOnly Property AsString() As String
         Get
             Return "<String representation of " & Me.GetType.FullName & " not implemented>"
         End Get
     End Property
-
-    'ReadOnly Property IsUnresolved() As Boolean
-    '    Get
-    '        Return
-    '    End Get
-    'End Property
 End Class

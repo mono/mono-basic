@@ -29,15 +29,6 @@ Public Class CaseComparisonExpression
         m_Operator = [Operator]
     End Sub
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Is ")
-        Dumper.Write(Enums.GetKSStringAttribute(m_Operator).FriendlyValue)
-        Dumper.Write(" ")
-        m_Test.Dump(Dumper)
-    End Sub
-#End If
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function

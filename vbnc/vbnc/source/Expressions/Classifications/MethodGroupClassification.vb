@@ -120,30 +120,6 @@ Public Class MethodGroupClassification
 
         Helper.Assert(m_Resolved)
 
-        'If m_InstanceExpression IsNot Nothing Then
-        '    Dim instanceExpType As Type
-        '    If ResolvedMethod.DeclaringType.IsValueType Then
-        '        instanceExpType = ResolvedMethod.DeclaringType.MakeByRefType
-        '    Else
-        '        instanceExpType = ResolvedMethod.DeclaringType
-        '    End If
-        '    result = m_InstanceExpression.GenerateCode(Info.Clone(True, False, instanceExpType)) AndAlso result
-        '    'Emitter.EmitConversion(instanceExpType, Info)
-        'End If
-        'Helper.Assert(Type IsNot Nothing)
-        'If m_Parameters IsNot Nothing Then
-        '    Helper.Assert(ResolvedMethod.GetParameters.Length = m_Parameters.Length)
-        '    Dim expInfo As EmitInfo
-        '    For i As Integer = 0 To m_Parameters.GetUpperBound(0)
-        '        expInfo = Info.Clone(True, False, ResolvedMethod.GetParameters(i).ParameterType)
-        '        result = m_Parameters(i).GenerateCode(Info) AndAlso result
-        '    Next
-        'Else
-        '    Helper.Assert(ResolvedMethod.GetParameters.Length = 0)
-        'End If
-
-        'Emitter.EmitCallOrCallVirt(Info, ResolvedMethod)
-
         Helper.EmitArgumentsAndCallOrCallVirt(Info, m_InstanceExpression, New ArgumentList(Parent, m_Parameters), ResolvedMethod)
 
         Return result

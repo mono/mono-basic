@@ -102,13 +102,4 @@ Public Class TypeOfExpression
             Return Compiler.TypeCache.System_Boolean '_Descriptor
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("TypeOf ")
-        m_Expression.Dump(Dumper)
-        Dumper.Write(" Is ")
-        Compiler.Dumper.Dump(m_Type)
-    End Sub
-#End If
 End Class

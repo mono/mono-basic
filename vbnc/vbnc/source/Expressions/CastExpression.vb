@@ -50,11 +50,4 @@ Public MustInherit Class CastExpression
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
-
-#If DEBUG Then
-    Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-
-    End Sub
-#End If
-
 End Class

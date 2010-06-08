@@ -41,11 +41,6 @@ Public Class GlobalExpression
         Return True
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Global")
-    End Sub
-#End If
     Public Overrides ReadOnly Property AsString() As String
         Get
             Return "Global"

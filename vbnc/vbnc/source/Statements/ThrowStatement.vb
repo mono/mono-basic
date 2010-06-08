@@ -64,16 +64,4 @@ Public Class ThrowStatement
 
         Return result
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_Exception Is Nothing Then
-            Dumper.WriteLine("Throw")
-        Else
-            dumper.Write("Throw ")
-            m_Exception.Dump(Dumper)
-            Dumper.WriteLine("")
-        End If
-    End Sub
-#End If
 End Class

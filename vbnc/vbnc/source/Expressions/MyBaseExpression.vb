@@ -34,12 +34,6 @@ Public Class MyBaseExpression
         MyBase.New(Parent)
     End Sub
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("MyBase")
-    End Sub
-#End If
-
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

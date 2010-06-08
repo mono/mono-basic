@@ -145,14 +145,4 @@ Public Class DictionaryAccessExpression
     Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
         Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        If m_FirstPart IsNot Nothing Then m_FirstPart.Dump(Dumper)
-        Dumper.Write("!")
-        Compiler.Dumper.Dump(m_SecondPart)
-    End Sub
-#End If
-
 End Class

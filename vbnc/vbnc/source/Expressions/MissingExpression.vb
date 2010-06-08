@@ -41,10 +41,4 @@ Public Class MissingExpression
     Sub New(ByVal Parent As Expression)
         MyBase.New(Parent)
     End Sub
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("<Missing>")
-    End Sub
-#End If
 End Class

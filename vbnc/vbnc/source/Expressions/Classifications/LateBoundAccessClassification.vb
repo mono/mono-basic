@@ -95,6 +95,5 @@ Public Class LateBoundAccessClassification
         m_InstanceExpression = InstanceExpression
         m_Name = Name
         m_TypeArguments = TypeArguments
-
     End Sub
 End Class

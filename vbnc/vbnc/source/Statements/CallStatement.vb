@@ -102,12 +102,4 @@ Public Class CallStatement
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Target.ResolveTypeReferences()
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Call ")
-        m_Target.Dump(Dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
 End Class

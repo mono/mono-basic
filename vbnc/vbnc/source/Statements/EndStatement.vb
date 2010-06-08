@@ -45,10 +45,4 @@ Public Class EndStatement
         Compiler.Helper.AddCheck("End statements may not be used in programs that are not executable (for example, DLLs). ")
         Return True
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        dumper.WriteLine("End")
-    End Sub
-#End If
 End Class

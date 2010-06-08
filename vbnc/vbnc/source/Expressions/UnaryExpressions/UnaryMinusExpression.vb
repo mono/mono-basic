@@ -62,13 +62,6 @@ Public Class UnaryMinusExpression
         Return result
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("-")
-        Expression.Dump(Dumper)
-    End Sub
-#End If
-
     Public Overrides ReadOnly Property ConstantValue() As Object
         Get
             Helper.Assert(IsConstant)

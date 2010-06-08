@@ -116,10 +116,4 @@ Public Class ContinueStatement
             Return m_ContinueWhat
         End Get
     End Property
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine("Continue " & Enums.GetKSStringAttribute(m_ContinueWhat).FriendlyValue)
-    End Sub
-#End If
 End Class

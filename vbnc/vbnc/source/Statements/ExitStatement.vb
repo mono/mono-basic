@@ -138,10 +138,4 @@ Public Class ExitStatement
             Return m_ExitWhat
         End Get
     End Property
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine("Exit " & Enums.GetKSStringAttribute(m_ExitWhat).FriendlyValue)
-    End Sub
-#End If
 End Class

@@ -294,12 +294,6 @@ Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.V
     Friend Overridable Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
     End Function
-
-    'Shadows ReadOnly Property Parent() As ParsedObject
-    '    Get
-    '        Return DirectCast(MyBase.Parent, ParsedObject)
-    '    End Get
-    'End Property
 End Class
 
 

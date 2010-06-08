@@ -40,10 +40,4 @@ Public Class StopStatement
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
         Return True
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine("Stop")
-    End Sub
-#End If
 End Class

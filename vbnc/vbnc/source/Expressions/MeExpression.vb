@@ -41,10 +41,4 @@ Public Class MeExpression
         End If
         Return True
     End Function
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Me")
-    End Sub
-#End If
 End Class

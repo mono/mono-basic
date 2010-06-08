@@ -192,15 +192,4 @@ Public Class DelegateOrObjectCreationExpression
 
         Return result
     End Function
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("New ")
-        Compiler.Dumper.Dump(m_NonArrayTypeName)
-        Dumper.Write("(")
-        Compiler.Dumper.Dump(m_ArgumentList)
-        Dumper.Write(")")
-    End Sub
-#End If
-
 End Class

@@ -268,6 +268,4 @@ Public Class ArrayCreationExpression
             End If
         End Get
     End Property
-
-
 End Class

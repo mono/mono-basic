@@ -113,14 +113,6 @@ Public Class AddressOfExpression
             End If
         End Get
     End Property
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("AddressOf ")
-        m_Expression.Dump(Dumper)
-    End Sub
-#End If
-
 End Class
 
 

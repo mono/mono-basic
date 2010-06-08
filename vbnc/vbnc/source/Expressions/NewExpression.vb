@@ -77,11 +77,4 @@ Public Class NewExpression
             Return m_Expression.ExpressionType
         End Get
     End Property
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_Expression.Dump(Dumper)
-    End Sub
-#End If
 End Class

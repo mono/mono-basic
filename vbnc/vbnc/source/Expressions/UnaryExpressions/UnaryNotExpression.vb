@@ -52,13 +52,6 @@ Public Class UnaryNotExpression
         Return result
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Not ")
-        Expression.Dump(Dumper)
-    End Sub
-#End If
-
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
             Return Expression.IsConstant AndAlso Compiler.TypeResolution.IsIntegralType(Expression.ExpressionType)

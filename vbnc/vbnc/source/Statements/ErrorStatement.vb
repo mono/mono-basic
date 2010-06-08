@@ -54,13 +54,4 @@ Public Class ErrorStatement
 
         Return result
     End Function
-
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("Error ")
-        m_ErrNumber.Dump(Dumper)
-        Dumper.WriteLine("")
-    End Sub
-#End If
 End Class

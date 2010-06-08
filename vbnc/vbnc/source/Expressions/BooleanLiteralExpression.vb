@@ -49,11 +49,4 @@ Public Class BooleanLiteralExpression
             Return m_Value
         End Get
     End Property
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(m_Value.ToString)
-    End Sub
-#End If
 End Class

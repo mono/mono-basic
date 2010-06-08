@@ -98,10 +98,6 @@ Public Class ConditionalConstant
         Me.Value = Value
     End Sub
 
-    Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.WriteLine(Name & " = " & Helper.ValueToCodeConstant(Value))
-    End Sub
-
     ''' <summary>
     ''' Returns the name of the constant.
     ''' </summary>

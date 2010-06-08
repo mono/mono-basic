@@ -52,11 +52,4 @@ Public Class BuiltInTypeExpression
             Return False
         End Get
     End Property
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write(m_Type.ToString)
-    End Sub
-#End If
 End Class

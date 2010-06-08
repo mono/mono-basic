@@ -29,14 +29,6 @@ Public Class CaseRangeExpression
         m_To = [To]
     End Sub
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_From.Dump(Dumper)
-        Dumper.Write(" To ")
-        m_To.Dump(Dumper)
-    End Sub
-#End If
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
     End Function

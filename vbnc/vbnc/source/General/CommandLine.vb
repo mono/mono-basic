@@ -1247,21 +1247,6 @@ Public Class CommandLine
             Return m_lstAllArgs
         End Get
     End Property
-
-#If DEBUG Then
-    Sub Dump()
-        Compiler.Report.WriteLine("Commandline dump:")
-        Compiler.Report.WriteLine(" FileNames:")
-        For Each file As CodeFile In m_lstFileNames
-            Compiler.Report.WriteLine("  " & file.FileName)
-        Next
-        Compiler.Report.WriteLine(" Arguments:")
-        For Each s As String In m_lstAllArgs
-            Compiler.Report.WriteLine("  " & s)
-        Next
-        Compiler.Report.WriteLine("End of commandline dump.")
-    End Sub
-#End If
 End Class
 
 

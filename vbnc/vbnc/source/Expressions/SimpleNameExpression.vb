@@ -899,16 +899,4 @@ Public Class SimpleNameExpression
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Return True
     End Function
-
-    '#If DEBUG Then
-    '    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        m_Identifier.Dump(Dumper)
-    '        If m_TypeArgumentList IsNot Nothing Then
-    '            Dumper.Write("(Of ")
-    '            Compiler.Dumper.Dump(m_TypeArgumentList)
-    '            Dumper.Write(")")
-    '        End If
-    '    End Sub
-    '#End If
-
 End Class

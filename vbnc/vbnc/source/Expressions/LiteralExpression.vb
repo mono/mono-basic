@@ -89,10 +89,4 @@ Public Class LiteralExpression
         result.Init(m_Value)
         Return result
     End Function
-
-    '#If DEBUG Then
-    '    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        DirectCast(m_Value, Token).Dump(Dumper)
-    '    End Sub
-    '#End If
 End Class

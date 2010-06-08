@@ -201,12 +201,4 @@ Public Class RedimClause
 
         Return result
     End Function
-
-#If DEBUG Then
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_Expression.Dump(Dumper)
-        Dumper.Write(" ")
-        'm_ArraySizeInitModifier.Dump()
-    End Sub
-#End If
 End Class

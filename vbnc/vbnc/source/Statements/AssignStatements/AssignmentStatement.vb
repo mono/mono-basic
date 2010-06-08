@@ -155,12 +155,6 @@ Public Class AssignmentStatement
             Return KS.Equals
         End Get
     End Property
-    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_LSide.Dump(Dumper)
-        Dumper.Write(" " & Enums.GetKSStringAttribute(AssignmentType).FriendlyValue & " ")
-        m_RSide.Dump(Dumper)
-        Dumper.WriteLine("")
-    End Sub
 #End If
 
 End Class

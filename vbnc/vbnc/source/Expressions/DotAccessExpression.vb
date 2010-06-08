@@ -29,15 +29,6 @@ Public Class DotAccessExpression
         m_Second = Second
     End Sub
 
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        m_First.Dump(Dumper)
-        Dumper.Write(".")
-        m_Second.Dump(Dumper)
-    End Sub
-#End If
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function

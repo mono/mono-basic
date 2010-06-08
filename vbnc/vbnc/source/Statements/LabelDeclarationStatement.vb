@@ -76,15 +76,4 @@ Public Class LabelDeclarationStatement
             Return m_Label
         End Get
     End Property
-
-
-    '#If DEBUG Then
-    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        Dim tmp As Integer = Dumper.IndentLevel
-    '        Dumper.IndentLevel = 0
-    '        m_Label.Dump(Dumper)
-    '        Dumper.WriteLine(":")
-    '        dumper.IndentLevel = tmp
-    '    End Sub
-    '#End If
 End Class

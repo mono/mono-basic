@@ -38,12 +38,6 @@ Public Class MyClassExpression
         Return result
     End Function
 
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("MyClass")
-    End Sub
-#End If
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub

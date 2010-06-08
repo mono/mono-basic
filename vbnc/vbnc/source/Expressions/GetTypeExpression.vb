@@ -75,13 +75,4 @@ Public Class GetTypeExpression
             Return Compiler.TypeCache.System_Type
         End Get
     End Property
-
-
-#If DEBUG Then
-    Public Overrides Sub Dump(ByVal Dumper As IndentedTextWriter)
-        Dumper.Write("GetType(")
-        Compiler.Dumper.Dump(m_TypeName)
-        Dumper.Write(")")
-    End Sub
-#End If
 End Class
