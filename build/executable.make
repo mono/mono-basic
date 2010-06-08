@@ -92,7 +92,7 @@ $(PROGRAM_config): $(base_prog_config)
 endif
 endif
 
-$(makefrag): $(sourcefile)
+$(makefrag): $(sourcefile) $(depsdir)
 	@echo Creating $@ ...
 	@sed -e 's/ /\\ /g'  -e 's,^,$(PROGRAM): ,' $< > $@
 

@@ -1,3 +1,9 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rules.make:
+	* library.make:
+	* executable.make: Create the deps dir if it doesn't exist.
+
 2009-12-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* deps/.gitignore: Add dummy file for git to create this directory.
