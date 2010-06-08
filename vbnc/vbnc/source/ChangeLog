@@ -1,5 +1,9 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.rsp: Add more imports.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* (all files): Merge from vbnc/cecil branch.
 
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
