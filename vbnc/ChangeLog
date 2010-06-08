@@ -1,5 +1,9 @@
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* class/lib/bootstrap/vbnc.rsp: More bootstrapping files.
+
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Makefile: distcheck: don't exclude response files, they do actually occur
 	in the test suite.
 	* class/Makefile: dist all the bootstrapping files.
