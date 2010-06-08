@@ -1,6 +1,6 @@
 ' 
-' Visual Basic.Net COmpiler
-' Copyright (C) 2004 - 2006 Rolf Bjarne Kvinge, rbjarnek at users.sourceforge.net
+' Visual Basic.Net Compiler
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Regression Tester used to test the vbnc compiler.")> 
 <Assembly: AssemblyCompany("Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyProduct("rt")> 
-<Assembly: AssemblyCopyright("Copyright @ 2004 Rolf Bjarne Kvinge")> 
+<Assembly: AssemblyCopyright("Copyright @ 2004 - 2010 Rolf Bjarne Kvinge")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
