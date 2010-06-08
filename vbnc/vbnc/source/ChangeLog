@@ -1,3 +1,7 @@
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* General/Version.vb: Updated.
+
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc.rsp: Add more imports.
