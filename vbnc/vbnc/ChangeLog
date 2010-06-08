@@ -1,5 +1,9 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Makefile: Merge from vbnc/cecil branch.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.exe.rsp: Reference cecil now.
 
 	* vbnc.vbnc.rsp:
