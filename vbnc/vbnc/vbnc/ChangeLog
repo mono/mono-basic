@@ -1,5 +1,9 @@
 2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.Errors.resources: Updated.
+
+2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.exe.rsp: Fix to work.
 
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
