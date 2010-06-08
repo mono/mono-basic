@@ -11,3 +11,4 @@
 /res:vbnc.vbnc.rsp
 /define:DEBUG=false
 /debug:full
+/define:_MYTYPE=\"Empty\"
