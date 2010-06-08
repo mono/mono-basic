@@ -1,3 +1,21 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* class/lib/bootstrap/vbnc.rsp:
+	* class/lib/bootstrap/vbnc.exe[.mdb]:
+	* class/lib/bootstrap/Mono.Cecil.VB.dll[.mdb]:
+	* class/lib/bootstrap/Mono.Cecil.VB.Mdb.dll[.mdb]:
+	* class/lib/bootstrap/Microsoft.VisualBasic.dll[.mdb]:
+	Updated.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* class/lib/bootstrap/vbnc.rsp:
+	* class/lib/bootstrap/vbnc.exe[.mdb]:
+	* class/lib/bootstrap/Mono.Cecil.VB.dll[.mdb]:
+	* class/lib/bootstrap/Mono.Cecil.VB.Mdb.dll[.mdb]:
+	* class/lib/bootstrap/Microsoft.VisualBasic.dll[.mdb]:
+	Updated.
+
 2010-05-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* class/lib/bootstrap/vbnc.*:
