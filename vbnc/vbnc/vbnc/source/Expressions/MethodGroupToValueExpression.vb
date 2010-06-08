@@ -58,7 +58,7 @@ Public Class MethodGroupToValueExpression
         Helper.Assert(m_MethodGroup.ResolvedMethod IsNot Nothing)
 
         If m_MethodGroup.ResolvedMethodInfo IsNot Nothing Then
-            m_ExpressionType = m_MethodGroup.ResolvedMethodInfo.ReturnType.ReturnType
+            m_ExpressionType = m_MethodGroup.ResolvedMethodInfo.ReturnType
         ElseIf m_MethodGroup.ResolvedConstructor IsNot Nothing Then
             m_ExpressionType = m_MethodGroup.ResolvedConstructor.DeclaringType
         Else

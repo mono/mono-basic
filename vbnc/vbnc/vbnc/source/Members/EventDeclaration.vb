@@ -237,14 +237,14 @@ Public Class EventDeclaration
         MyBase.UpdateDefinition()
 
         If m_CecilBuilder Is Nothing Then
-            m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, Nothing, 0)
+            m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, 0, Nothing)
             m_CecilBuilder.Annotations.Add(Compiler, Me)
             FindFirstParent(Of TypeDeclaration).CecilType.Events.Add(m_CecilBuilder)
         End If
         m_CecilBuilder.Name = Name
 
         Dim members As MemberDeclarations = DeclaringType.Members
-        Dim methods As Mono.Cecil.MethodDefinitionCollection = DeclaringType.CecilType.Methods
+        Dim methods As Mono.Collections.Generic.Collection(Of MethodDefinition) = DeclaringType.CecilType.Methods
 
         If m_AddMethod IsNot Nothing Then
             m_AddMethod.UpdateDefinition()

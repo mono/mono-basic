@@ -59,8 +59,8 @@ Public MustInherit Class BinaryExpression
 
     Private Function GetValueType(ByVal tp As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Helper.Assert(tp IsNot Nothing)
-        If TypeOf tp Is Mono.Cecil.ReferenceType Then
-            Return tp.GetOriginalType
+        If TypeOf tp Is ByReferenceType Then
+            Return tp.GetElementType
         Else
             Return tp
         End If
@@ -254,7 +254,7 @@ Public MustInherit Class BinaryExpression
         result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression)) AndAlso result
         result = methodClassification.SuccessfullyResolved AndAlso result
         If result = False Then Return result
-        m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType.ReturnType
+        m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
         Classification = methodClassification
         Return result
     End Function

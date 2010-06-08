@@ -1,3 +1,58 @@
+2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* vbnc.vbproj:
+	* vbnc.sln: Updated.
+
+	* Emit/Emitter.vb:
+	* Emit/EmitLog.vb:
+	* General/Helper.vb:
+	* General/Scanner.vb:
+	* General/Compiler.vb:
+	* General/TypeCache.vb:
+	* Members/Attribute.vb:
+	* Members/Parameter.vb:
+	* General/MemberCache.vb:
+	* General/CecilHelper.vb:
+	* Types/TypeParameter.vb:
+	* General/TypeManager.vb:
+	* General/TypeConverter.vb:
+	* Members/MethodResolver.vb:
+	* Types/TypeArgumentList.vb:
+	* General/TypeResolution.vb:
+	* Expressions/ArgumentList.vb:
+	* Members/EventDeclaration.vb:
+	* Types/ConstructedTypeName.vb:
+	* Members/ArrayTypeModifiers.vb:
+	* Statements/UsingDeclarator.vb:
+	* Members/ConstantDeclaration.vb:
+	* Expressions/DeRefExpression.vb:
+	* Members/PropertyDeclaration.vb:
+	* General/MethodBaseDeclaration.vb:
+	* Members/EnumMemberDeclaration.vb:
+	* Members/ConstructorDeclaration.vb:
+	* Members/ExternalSubDeclaration.vb:
+	* Members/TypeVariableDeclaration.vb:
+	* TypeDeclarations/TypeDeclaration.vb:
+	* TypeDeclarations/EnumDeclaration.vb:
+	* Members/LocalVariableDeclaration.vb:
+	* Expressions/SimpleNameExpression.vb:
+	* Members/InterfaceMemberSpecifier.vb:
+	* Expressions/MemberAccessExpression.vb:
+	* TypeDeclarations/DelegateDeclaration.vb:
+	* TypeDeclarations/AssemblyDeclaration.vb:
+	* Expressions/DictionaryAccessExpression.vb:
+	* Members/ArraySizeInitializationModifier.vb:
+	* Expressions/InvocationOrIndexExpression.vb:
+	* Expressions/MethodGroupToValueExpression.vb:
+	* Expressions/UnaryExpressions/UnaryExpression.vb:
+	* Expressions/DelegateOrObjectCreationExpression.vb:
+	* Expressions/BinaryExpressions/BinaryExpression.vb:
+	* Statements/AssignStatements/AssignmentStatement.vb:
+	* Expressions/Classifications/MethodGroupClassification.vb:
+	* Expressions/Classifications/PropertyGroupClassification.vb:
+	* Expressions/Classifications/MethodPointerClassification.vb: Upgrade to
+	cecil/light.
+
 2010-04-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* General/Helper.vb: Remove unused method and fix a few warnings.

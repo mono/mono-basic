@@ -182,7 +182,7 @@ Public Class PropertyDeclaration
         MyBase.UpdateDefinition()
 
         If m_CecilBuilder Is Nothing Then
-            m_CecilBuilder = New Mono.Cecil.PropertyDefinition(Name, Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType), 0)
+            m_CecilBuilder = New Mono.Cecil.PropertyDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType))
             m_CecilBuilder.Annotations.Add(Compiler, Me)
             DeclaringType.CecilType.Properties.Add(m_CecilBuilder)
         End If

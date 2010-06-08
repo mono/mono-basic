@@ -144,7 +144,7 @@ Public Class DelegateDeclaration
 
         Dim attr As Mono.Cecil.MethodAttributes
         Dim implattr As Mono.Cecil.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
-        attr = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.Strict
+        attr = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.CheckAccessOnOverride
 
         'If Me.DeclaringType IsNot Nothing AndAlso Me.DeclaringType.TypeDescriptor.IsInterface Then
         '    attr = attr Or MethodAttributes.CheckAccessOnOverride

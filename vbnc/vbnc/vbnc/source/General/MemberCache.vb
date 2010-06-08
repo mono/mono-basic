@@ -158,7 +158,7 @@ Public Class MemberCache
     End Sub
 
     Sub Load(ByVal Type As Mono.Cecil.TypeReference)
-        Dim members As Mono.Cecil.MemberReferenceCollection
+        Dim members As Mono.Collections.Generic.Collection(Of MemberReference)
 
         Log("Caching type: " & m_Type.Name & " (current type: " & Type.Name & ")")
 
@@ -250,7 +250,7 @@ Public Class MemberCache
     Sub Flatten(ByVal base As MemberCache)
         If base Is Nothing Then
             If Helper.IsInterface(Compiler, m_Type) AndAlso CecilHelper.IsGenericParameter(m_Type) = False Then
-                Dim ifaces As Mono.Cecil.InterfaceCollection
+                Dim ifaces As Mono.Collections.Generic.Collection(Of TypeReference)
                 Dim icaches() As MemberCache
 
                 ifaces = CecilHelper.GetInterfaces(m_Type, True)
@@ -553,7 +553,7 @@ Public Class MemberCache
     ''' <param name="Name"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function LookupFlattenedMembers(ByVal Name As String) As Generic.List(Of Mono.Cecil.MemberReference)
+    Function LookupFlattenedMembers(ByVal Name As String) As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
         Dim cache As MemberCacheEntry = LookupFlattened(Name)
         If cache Is Nothing Then Return Nothing
         Return cache.Members
@@ -566,8 +566,8 @@ Public Class MemberCache
     ''' <param name="Name"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function LookupMembersFlattened(ByVal Name As String) As Generic.List(Of Mono.Cecil.MemberReference)
-        Dim result As New Generic.List(Of Mono.Cecil.MemberReference)
+    Function LookupMembersFlattened(ByVal Name As String) As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
+        Dim result As New Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
 
         Dim tmp As MemberCacheEntry
         tmp = LookupFlattened(Name)
@@ -688,7 +688,7 @@ End Class
 
 Public Class MemberCacheEntry
     Public Name As String
-    Public Members As New Generic.List(Of Mono.Cecil.MemberReference)
+    Public Members As New Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
 
     Sub New(ByVal Name As String)
         Me.Name = Name
@@ -696,7 +696,9 @@ Public Class MemberCacheEntry
 
     Sub New(ByVal Name As String, ByVal ParamArray Members As Mono.Cecil.MemberReference())
         Me.Name = Name
-        Me.Members.AddRange(Members)
+        For i As Integer = 0 To Members.Length - 1
+            Me.Members.Add(Members(i))
+        Next
     End Sub
 
     Sub New(ByVal Member As Mono.Cecil.MemberReference)

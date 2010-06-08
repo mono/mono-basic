@@ -215,8 +215,6 @@ Public Class Parameter
         m_ParameterBuilderCecil.IsOptional = Modifiers.Is(ModifierMasks.Optional)
 
         If Builder IsNot Nothing AndAlso m_ParameterBuilderCecil.Sequence = -1 Then
-            m_ParameterBuilderCecil.Sequence = Builder.Parameters.Count + 1
-            m_ParameterBuilderCecil.Method = Builder
             Builder.Parameters.Add(m_ParameterBuilderCecil)
         End If
 

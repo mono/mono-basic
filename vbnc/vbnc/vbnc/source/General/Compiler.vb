@@ -281,25 +281,26 @@ Public Class Compiler
     End Function
 
     Private Function Compile_CreateAssemblyAndModuleBuilders() As Boolean
-        Dim kind As Mono.Cecil.AssemblyKind
+        Dim kind As Mono.Cecil.ModuleKind
         Select Case CommandLine.Target
             Case vbnc.CommandLine.Targets.Console
-                kind = Mono.Cecil.AssemblyKind.Console
+                kind = Mono.Cecil.ModuleKind.Console
             Case vbnc.CommandLine.Targets.Library
-                kind = Mono.Cecil.AssemblyKind.Dll
+                kind = Mono.Cecil.ModuleKind.Dll
             Case vbnc.CommandLine.Targets.Module
                 Report.ShowMessage(Messages.VBNC99999, "Compiling modules (-target:module) hasn't been implemented yet.")
-                kind = Mono.Cecil.AssemblyKind.Dll
+                kind = Mono.Cecil.ModuleKind.NetModule
             Case vbnc.CommandLine.Targets.Winexe
-                kind = Mono.Cecil.AssemblyKind.Windows
+                kind = Mono.Cecil.ModuleKind.Windows
             Case Else
-                kind = Mono.Cecil.AssemblyKind.Console
+                kind = Mono.Cecil.ModuleKind.Console
         End Select
 
-        AssemblyBuilderCecil = Mono.Cecil.AssemblyFactory.DefineAssembly(IO.Path.GetFileNameWithoutExtension(OutFileName), Mono.Cecil.TargetRuntime.NET_2_0, kind)
+        Dim an As AssemblyNameDefinition = New AssemblyNameDefinition("dummy", New Version())
+        AssemblyBuilderCecil = AssemblyDefinition.CreateAssembly(an, IO.Path.GetFileNameWithoutExtension(OutFileName), kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
         ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
-        If EmittingDebugInfo Then ModuleBuilderCecil.SaveSymbols()
+        ModuleBuilderCecil.Runtime = TargetRuntime.Net_2_0
 
         Return Compiler.Report.Errors = 0
     End Function
@@ -489,7 +490,14 @@ Public Class Compiler
                 GoTo ShowErrors
             End If
 
-            Mono.Cecil.AssemblyFactory.SaveAssembly(AssemblyBuilderCecil, m_OutFilename)
+            If EmittingDebugInfo Then
+                Dim writerParameters As New WriterParameters()
+                Console.WriteLine("TODO: 'writerParameters.WriteSymbols = True")
+                AssemblyBuilderCecil.Write(m_OutFilename, writerParameters)
+            Else
+                AssemblyBuilderCecil.Write(m_OutFilename)
+            End If
+
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename))
 
 ShowErrors:
@@ -586,10 +594,10 @@ EndOfCompilation:
         'Only methods called 'Main'
         If vbnc.Helper.CompareName(method.Name, "Main") = False Then Return False
         'Only methods with no return type or Integer return type
-        If Helper.CompareType(method.ReturnType.ReturnType, Compiler.TypeCache.System_Void) = False AndAlso Helper.CompareType(method.ReturnType.ReturnType, Compiler.TypeCache.System_Int32) = False Then Return False
+        If Helper.CompareType(method.ReturnType, Compiler.TypeCache.System_Void) = False AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.System_Int32) = False Then Return False
 
         'Only methods with no parameters or methods with one String() parameter
-        Dim params As Mono.Cecil.ParameterDefinitionCollection
+        Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         params = method.Parameters
         If params.Count = 0 Then Return True
         If params.Count > 1 Then Return False
@@ -763,7 +771,6 @@ EndOfCompilation:
             If reader IsNot Nothing Then
                 Dim cecilStream As New IO.MemoryStream()
                 Dim cecilWriter As New System.Resources.ResourceWriter(cecilStream)
-                Dim cecilResource As New Mono.Cecil.EmbeddedResource(resourceName, Mono.Cecil.ManifestResourceAttributes.Public) 'FIXME: accesibility
 
                 For Each resource As System.Collections.DictionaryEntry In reader
                     'Report.WriteLine(">" & resource.Key.ToString & "=" & resource.Value.ToString)
@@ -771,7 +778,9 @@ EndOfCompilation:
                 Next
                 reader.Dispose()
                 cecilWriter.Generate()
-                cecilResource.Data = cecilStream.ToArray
+
+                Dim cecilResource As New Mono.Cecil.EmbeddedResource(resourceName, Mono.Cecil.ManifestResourceAttributes.Public, cecilStream.ToArray()) 'FIXME: accesibility
+
                 AssemblyBuilderCecil.MainModule.Resources.Add(cecilResource)
                 cecilWriter.Dispose()
                 cecilStream.Dispose()
@@ -815,9 +824,9 @@ EndOfCompilation:
 
                 If formConstructor IsNot Nothing Then
                     mainCecil = New Mono.Cecil.MethodDefinition("Main", Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.Static Or Mono.Cecil.MethodAttributes.HideBySig, Helper.GetTypeOrTypeReference(Me, TypeCache.System_Void))
-                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Newobj, formConstructor.CecilBuilder)
-                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
-                    mainCecil.Body.CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Ret)
+                    mainCecil.Body.GetILProcessor.Emit(Mono.Cecil.Cil.OpCodes.Newobj, formConstructor.CecilBuilder)
+                    mainCecil.Body.GetILProcessor.Emit(Mono.Cecil.Cil.OpCodes.Call, Helper.GetMethodOrMethodReference(Me, TypeCache.System_Windows_Forms_Application__Run))
+                    mainCecil.Body.GetILProcessor.Emit(Mono.Cecil.Cil.OpCodes.Ret)
                     mainClass.CecilType.Methods.Add(mainCecil)
                     lstMethods.Add(mainCecil)
                 End If

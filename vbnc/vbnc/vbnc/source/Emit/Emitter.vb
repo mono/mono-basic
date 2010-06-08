@@ -1620,9 +1620,9 @@ Partial Public Class Emitter
     ''' <returns></returns>
     ''' <remarks></remarks>
     Shared Function GetParameterPosition(ByVal Info As EmitInfo, ByVal Parameter As Mono.Cecil.ParameterDefinition) As Integer
-        Dim position As Integer = Parameter.Sequence - 1
-        Dim member As Mono.Cecil.MethodReference = Parameter.Method
-        If CecilHelper.IsStatic(Parameter.Method) = False Then
+        Dim position As Integer = Parameter.Index
+        Dim member As IMethodSignature = Parameter.Method
+        If member.HasThis Then
             position += 1
         End If
         Return position

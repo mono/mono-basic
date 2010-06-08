@@ -17,20 +17,27 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+' Why custom collection instead of list<>?
+' No way to get an inflated propertydefinition/propertyreference
+' don't add nested types in the module types list, though nestedtype.module isn't set when adding it to type.nestedtypes
+
 Imports Mono.Cecil
 Imports System.Diagnostics
 
 Public Class CecilHelper
     Private Shared _assemblies As New Hashtable
 
-    Private Class resolver
-        Inherits BaseAssemblyResolver
+#If DEBUG Then
+    Public Shared Sub Test(ByVal file As String)
+        Dim ass As AssemblyDefinition = AssemblyDefinition.ReadAssembly(file, New ReaderParameters(ReadingMode.Immediate))
+        Console.WriteLine(ass.ToString())
+    End Sub
+#End If
 
-    End Class
-
-    Public Shared Sub GetConstructors(ByVal Type As Mono.Cecil.TypeReference, ByVal result As Mono.Cecil.MemberReferenceCollection)
+    Public Shared Sub GetConstructors(ByVal Type As Mono.Cecil.TypeReference, ByVal result As Mono.Collections.Generic.Collection(Of MethodReference))
         Dim tD As Mono.Cecil.TypeDefinition = FindDefinition(Type)
-        For Each item As Mono.Cecil.MethodDefinition In tD.Constructors
+        For Each item As Mono.Cecil.MethodDefinition In tD.Methods
+            If Not item.IsConstructor Then Continue For
             If item.IsStatic Then Continue For
             If Helper.CompareType(item.DeclaringType, Type) = False Then
                 result.Add(GetCorrectMember(item, Type))
@@ -40,20 +47,20 @@ Public Class CecilHelper
         Next
     End Sub
 
-    Public Shared Function GetConstructors(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.MemberReferenceCollection
-        Dim result As New Mono.Cecil.MemberReferenceCollection(Type.Module)
+    Public Shared Function GetConstructors(ByVal Type As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of MethodReference)
+        Dim result As New Mono.Collections.Generic.Collection(Of MethodReference)
         GetConstructors(Type, result)
         Return result
     End Function
 
-    Private Shared Sub AddRange(ByVal C As Mono.Cecil.MemberReferenceCollection, ByVal C2 As Mono.Cecil.MemberReferenceCollection)
+    Private Shared Sub AddRange(ByVal C As Mono.Collections.Generic.Collection(Of MemberReference), ByVal C2 As Mono.Collections.Generic.Collection(Of MemberReference))
         For i As Integer = 0 To C2.Count - 1
             C.Add(C2(i))
         Next
     End Sub
 
-    Public Shared Function GetMembers(ByVal Type As Mono.Cecil.GenericParameter) As Mono.Cecil.MemberReferenceCollection
-        Dim result As New Mono.Cecil.MemberReferenceCollection(Type.Module)
+    Public Shared Function GetMembers(ByVal Type As Mono.Cecil.GenericParameter) As Mono.Collections.Generic.Collection(Of MemberReference)
+        Dim result As New Mono.Collections.Generic.Collection(Of MemberReference)()
 
         For i As Integer = 0 To Type.Constraints.Count - 1
             AddRange(result, GetMembers(Type.Constraints(i)))
@@ -62,16 +69,16 @@ Public Class CecilHelper
         Return result
     End Function
 
-    Public Shared Function GetMembers(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.MemberReferenceCollection
+    Public Shared Function GetMembers(ByVal Type As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of MemberReference)
         Dim tD As Mono.Cecil.TypeDefinition
-        Dim result As Mono.Cecil.MemberReferenceCollection
+        Dim result As Mono.Collections.Generic.Collection(Of MemberReference)
 
         Dim tG As Mono.Cecil.GenericParameter = TryCast(Type, GenericParameter)
         If tG IsNot Nothing Then Return GetMembers(tG)
 
         Dim arr As Mono.Cecil.ArrayType = TryCast(Type, ArrayType)
         If arr IsNot Nothing Then
-            result = New Mono.Cecil.MemberReferenceCollection(Type.Module)
+            result = New Mono.Collections.Generic.Collection(Of MemberReference)()
             For Each member As MemberReference In GetMembers(BaseObject.m_Compiler.TypeCache.System_Array)
                 'result.Add(GetCorrectMember(member, Type))
                 result.Add(member)
@@ -81,9 +88,9 @@ Public Class CecilHelper
 
         tD = FindDefinition(Type)
 
-        result = New Mono.Cecil.MemberReferenceCollection(Type.Module)
+        result = New Mono.Collections.Generic.Collection(Of MemberReference)()
 
-        For Each list As System.Collections.IList In New System.Collections.IList() {tD.Events, tD.Methods, tD.Properties, tD.NestedTypes, tD.Fields, tD.Constructors}
+        For Each list As System.Collections.IList In New System.Collections.IList() {tD.Events, tD.Methods, tD.Properties, tD.NestedTypes, tD.Fields}
             For Each item As Mono.Cecil.MemberReference In list
                 If Helper.CompareType(item.DeclaringType, Type) = False Then
                     item = GetCorrectMember(item, Type)
@@ -195,8 +202,7 @@ Public Class CecilHelper
         'If propertyType Is Member.PropertyType AndAlso (getMethod Is Nothing OrElse Member.GetMethod Is getMethod) AndAlso (setMethod Is Nothing OrElse Member.SetMethod Is setMethod) Then
         'Return Member
         'End If
-
-        result = New Mono.Cecil.PropertyDefinition(Member.Name, propertyType, Member.Attributes)
+        result = New Mono.Cecil.PropertyDefinition(Member.Name, Member.Attributes, propertyType)
         result.DeclaringType = genericType
         result.SetMethod = setMethod
         result.GetMethod = getMethod
@@ -204,7 +210,7 @@ Public Class CecilHelper
         Return result
     End Function
 
-    Public Shared Sub GetGenericArgsAndParams(ByVal Type As TypeReference, ByRef GenericParameters As GenericParameterCollection, ByRef GenericArguments As GenericArgumentCollection)
+    Public Shared Sub GetGenericArgsAndParams(ByVal Type As TypeReference, ByRef GenericParameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByRef GenericArguments As Mono.Collections.Generic.Collection(Of TypeReference))
         Dim declType As TypeReference = Nothing
         Dim genericType As GenericInstanceType
         Dim genericTypeDefinition As TypeDefinition
@@ -224,25 +230,25 @@ Public Class CecilHelper
 
                 Helper.Assert(genericType.GenericArguments.Count = genericTypeDefinition.GenericParameters.Count)
 
-                If genericArguments Is Nothing Then
-                    genericArguments = genericType.GenericArguments
-                    genericParameters = genericTypeDefinition.GenericParameters
+                If GenericArguments Is Nothing Then
+                    GenericArguments = genericType.GenericArguments
+                    GenericParameters = genericTypeDefinition.GenericParameters
                 Else
                     If cloned = False Then
-                        Dim tmp1 As New GenericArgumentCollection(Nothing)
-                        Dim tmp2 As New GenericParameterCollection(Nothing)
-                        For i As Integer = 0 To genericArguments.Count - 1
-                            tmp1.Add(genericArguments(i))
-                            tmp2.Add(genericParameters(i))
+                        Dim tmp1 As New Mono.Collections.Generic.Collection(Of TypeReference)
+                        Dim tmp2 As New Mono.Collections.Generic.Collection(Of GenericParameter)
+                        For i As Integer = 0 To GenericArguments.Count - 1
+                            tmp1.Add(GenericArguments(i))
+                            tmp2.Add(GenericParameters(i))
                         Next
-                        genericArguments = tmp1
-                        genericParameters = tmp2
+                        GenericArguments = tmp1
+                        GenericParameters = tmp2
                         cloned = True
                     End If
 
                     For i As Integer = 0 To genericType.GenericArguments.Count - 1
-                        genericArguments.Insert(i, genericType.GenericArguments(i))
-                        genericParameters.Insert(i, genericTypeDefinition.GenericParameters(i))
+                        GenericArguments.Insert(i, genericType.GenericArguments(i))
+                        GenericParameters.Insert(i, genericTypeDefinition.GenericParameters(i))
                     Next
                 End If
             End If
@@ -252,11 +258,11 @@ Public Class CecilHelper
     Public Shared Function InflateType(ByVal original As TypeReference, ByVal container As TypeReference) As TypeReference
         Dim spec As TypeSpecification = TryCast(original, TypeSpecification)
         Dim array As ArrayType = TryCast(original, ArrayType)
-        Dim reference As ReferenceType = TryCast(original, ReferenceType)
+        Dim reference As ByReferenceType = TryCast(original, ByReferenceType)
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
         Dim originalDef As TypeDefinition = TryCast(original, TypeDefinition)
-        Dim parameters As GenericParameterCollection
-        Dim arguments As GenericArgumentCollection
+        Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter)
+        Dim arguments As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim genericCollection As GenericInstanceType = TryCast(container, GenericInstanceType)
         Dim containerDef As TypeDefinition
 
@@ -328,7 +334,7 @@ Public Class CecilHelper
             If array IsNot Nothing Then
                 Return New ArrayType(resolved, array.Dimensions.Count)
             ElseIf reference IsNot Nothing Then
-                Return New ReferenceType(resolved)
+                Return New ByReferenceType(resolved)
             Else
                 Throw New System.NotImplementedException()
             End If
@@ -337,10 +343,10 @@ Public Class CecilHelper
         End If
     End Function
 
-    Public Shared Function InflateType(ByVal original As TypeReference, ByVal parameters As GenericParameterCollection, ByVal arguments As GenericArgumentCollection) As TypeReference
+    Public Shared Function InflateType(ByVal original As TypeReference, ByVal parameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByVal arguments As Mono.Collections.Generic.Collection(Of TypeReference)) As TypeReference
         Dim spec As TypeSpecification = TryCast(original, TypeSpecification)
         Dim array As ArrayType = TryCast(original, ArrayType)
-        Dim reference As ReferenceType = TryCast(original, ReferenceType)
+        Dim reference As ByReferenceType = TryCast(original, ByReferenceType)
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
         Dim originalDef As TypeDefinition = TryCast(original, TypeDefinition)
 
@@ -379,8 +385,8 @@ Public Class CecilHelper
         End If
 
         If genericType IsNot Nothing Then
-            Dim result As New GenericInstanceType(genericType.ElementType)
-            For i As Integer = 0 To genericType.ElementType.GenericParameters.Count - 1
+            Dim result As New GenericInstanceType(CecilHelper.FindDefinition(genericType.ElementType))
+            For i As Integer = 0 To result.ElementType.GenericParameters.Count - 1
                 result.GenericArguments.Add(InflateType(genericType.GenericArguments(i), parameters, arguments))
             Next
             Return result
@@ -397,7 +403,7 @@ Public Class CecilHelper
             If array IsNot Nothing Then
                 Return New ArrayType(resolved, array.Dimensions.Count)
             ElseIf reference IsNot Nothing Then
-                Return New ReferenceType(resolved)
+                Return New ByReferenceType(resolved)
             Else
                 Throw New System.NotImplementedException()
             End If
@@ -406,10 +412,10 @@ Public Class CecilHelper
         End If
     End Function
 
-    Public Shared Function ResolveType(ByVal original As TypeReference, ByVal parameters As GenericParameterCollection, ByVal arguments As GenericArgumentCollection) As TypeReference
+    Public Shared Function ResolveType(ByVal original As TypeReference, ByVal parameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByVal arguments As Mono.Collections.Generic.Collection(Of TypeReference)) As TypeReference
         Dim spec As TypeSpecification = TryCast(original, TypeSpecification)
         Dim array As ArrayType = TryCast(original, ArrayType)
-        Dim reference As ReferenceType = TryCast(original, ReferenceType)
+        Dim reference As ByReferenceType = TryCast(original, ByReferenceType)
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
 
         If parameters.Count <> arguments.Count Then
@@ -436,7 +442,7 @@ Public Class CecilHelper
             If array IsNot Nothing Then
                 Return New ArrayType(resolved, array.Dimensions.Count)
             ElseIf (reference IsNot Nothing) Then
-                Return New ReferenceType(resolved)
+                Return New ByReferenceType(resolved)
             Else
                 Throw New System.NotImplementedException()
             End If
@@ -464,13 +470,15 @@ Public Class CecilHelper
     Public Shared Function GetCorrectMember(ByVal Member As FieldDefinition, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.FieldReference
         Dim result As Mono.Cecil.FieldReference
         Dim genericType As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
+        Dim elementType As Mono.Cecil.TypeDefinition
         Dim fieldType As Mono.Cecil.TypeReference
 
         If genericType Is Nothing Then
             Return Member
         End If
 
-        fieldType = CecilHelper.ResolveType(Member.FieldType, genericType.ElementType.GenericParameters, genericType.GenericArguments)
+        elementType = CecilHelper.FindDefinition(genericType.ElementType)
+        fieldType = CecilHelper.ResolveType(Member.FieldType, elementType.GenericParameters, genericType.GenericArguments)
 
         'If fieldType IsNot Member.FieldType Then
         fieldType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, fieldType)
@@ -499,7 +507,7 @@ Public Class CecilHelper
         Throw New NotImplementedException
     End Function
 
-    Public Shared Function GetCorrectMember(ByVal Member As MethodReference, ByVal Arguments As GenericArgumentCollection, Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
+    Public Shared Function GetCorrectMember(ByVal Member As MethodReference, ByVal Arguments As Mono.Collections.Generic.Collection(Of TypeReference), Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
         Dim mD As MethodDefinition = TryCast(Member, MethodDefinition)
 
         If mD IsNot Nothing Then Return GetCorrectMember(mD, Arguments, Emittable)
@@ -511,15 +519,15 @@ Public Class CecilHelper
         Throw New NotImplementedException
     End Function
 
-    Public Shared Function GetCorrectMember(ByVal Member As MethodDefinition, ByVal Arguments As GenericArgumentCollection, Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
+    Public Shared Function GetCorrectMember(ByVal Member As MethodDefinition, ByVal Arguments As Mono.Collections.Generic.Collection(Of TypeReference), Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
-        Dim parameters As Mono.Cecil.GenericParameterCollection = Member.GenericParameters
+        Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter) = Member.GenericParameters
         Dim returnType As Mono.Cecil.TypeReference
         Dim reflectableMember As Mono.Cecil.MethodReference
 
         If Member.GenericParameters.Count = 0 Then Return Member
 
-        returnType = CecilHelper.ResolveType(Member.ReturnType.ReturnType, parameters, Arguments)
+        returnType = CecilHelper.ResolveType(Member.ReturnType, parameters, Arguments)
         returnType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, returnType)
         result = New Mono.Cecil.MethodReference(Member.Name, Member.DeclaringType, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
         reflectableMember = New Mono.Cecil.MethodReference(Member.Name, Member.DeclaringType, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
@@ -539,10 +547,10 @@ Public Class CecilHelper
                 Dim newPD As Mono.Cecil.ParameterDefinition
                 Dim pd2 As Mono.Cecil.TypeReference
                 pDType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, pDType)
-                newPD = New ParameterDefinition(pD.Name, pD.Sequence, pD.Attributes, pDType)
+                newPD = New ParameterDefinition(pD.Name, pD.Attributes, pDType)
                 result.Parameters.Add(newPD)
                 pd2 = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, pD.ParameterType)
-                reflectableMember.Parameters.Add(New ParameterDefinition(pD.Name, pD.Sequence, pD.Attributes, pd2))
+                reflectableMember.Parameters.Add(New ParameterDefinition(pD.Name, pD.Attributes, pd2))
             Else
                 result.Parameters.Add(pD)
                 reflectableMember.Parameters.Add(pD)
@@ -557,8 +565,8 @@ Public Class CecilHelper
     Public Shared Function GetCorrectMember(ByVal Member As MethodDefinition, ByVal Type As Mono.Cecil.TypeReference, Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
         Dim tD As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(Type)
-        Dim genericArguments As GenericArgumentCollection = Nothing
-        Dim genericParameters As GenericParameterCollection = Nothing
+        Dim genericArguments As Mono.Collections.Generic.Collection(Of TypeReference) = Nothing
+        Dim genericParameters As Mono.Collections.Generic.Collection(Of GenericParameter) = Nothing
         Dim returnType As Mono.Cecil.TypeReference
         Dim reflectableMember As Mono.Cecil.MethodReference
         Dim declType As TypeReference = Nothing
@@ -587,9 +595,9 @@ Public Class CecilHelper
         End If
 
         If Emittable Then
-            returnType = Member.ReturnType.ReturnType
+            returnType = Member.ReturnType
         Else
-            returnType = CecilHelper.InflateType(Member.ReturnType.ReturnType, genericParameters, genericArguments)
+            returnType = CecilHelper.InflateType(Member.ReturnType, genericParameters, genericArguments)
         End If
         result = New Mono.Cecil.MethodReference(Member.Name, Type, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
         reflectableMember = New Mono.Cecil.MethodReference(Member.Name, Type, returnType, Member.HasThis, Member.ExplicitThis, Member.CallingConvention)
@@ -604,15 +612,6 @@ Public Class CecilHelper
         '    result.DeclaringType = tmp
         'End If
 
-        'This is weird, but there is a bug in the lazy reflection reader which 
-        'causes parameter types to not be read. Reading the method body
-        'will cause the parameter types to be read.
-        'TODO: Fix the lazy reflection reader bug.
-        'This shows up when getting System.Collection.Generic.Queue(of String)'s constructors, the third ctor
-        '(taking a IEnumerable(of string)) shows up as IEnumerable() (no GenericParameters in the inflated type)
-        'Test case: Cecil/LazyBug1.vb
-        Dim cilbody As Mono.Cecil.Cil.MethodBody = Member.Body
-
         For i As Integer = 0 To Member.Parameters.Count - 1
             Dim pD As Mono.Cecil.ParameterDefinition = Member.Parameters(i)
             Dim pDType As Mono.Cecil.TypeReference
@@ -621,10 +620,10 @@ Public Class CecilHelper
                 Dim newPD As Mono.Cecil.ParameterDefinition
                 Dim pd2 As Mono.Cecil.TypeReference
                 pDType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, pDType)
-                newPD = New ParameterDefinition(pD.Name, pD.Sequence, pD.Attributes, pDType)
+                newPD = New ParameterDefinition(pD.Name, pD.Attributes, pDType)
                 result.Parameters.Add(newPD)
                 pd2 = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, pD.ParameterType)
-                reflectableMember.Parameters.Add(New ParameterDefinition(pD.Name, pD.Sequence, pD.Attributes, pd2))
+                reflectableMember.Parameters.Add(New ParameterDefinition(pD.Name, pD.Attributes, pd2))
             Else
                 result.Parameters.Add(pD)
                 reflectableMember.Parameters.Add(pD)
@@ -648,7 +647,7 @@ Public Class CecilHelper
                     tG.GenericArguments.Add(Method.DeclaringType.GenericParameters(i))
                 Next
 
-                Dim mR As New Mono.Cecil.MethodReference(Method.Name, tG, Method.ReturnType.ReturnType, Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
+                Dim mR As New Mono.Cecil.MethodReference(Method.Name, tG, Method.ReturnType, Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
                 For i As Integer = 0 To Method.Parameters.Count - 1
                     Dim param As Mono.Cecil.ParameterDefinition
                     param = New Mono.Cecil.ParameterDefinition(Method.Parameters(i).ParameterType)
@@ -664,7 +663,7 @@ Public Class CecilHelper
             If TypeOf Method.DeclaringType Is ArrayType Then
                 Dim arrayType As TypeReference
                 arrayType = Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.DeclaringType)
-                result = New MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.DeclaringType), Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.ReturnType.ReturnType), Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
+                result = New MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.DeclaringType), Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.ReturnType), Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
                 For i As Integer = 0 To Method.Parameters.Count - 1
                     Dim pType As Mono.Cecil.TypeReference
                     pType = Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.Parameters(i).ParameterType)
@@ -687,14 +686,14 @@ Public Class CecilHelper
         If genM IsNot Nothing Then
             Dim gimResult As New GenericInstanceMethod(Helper.GetMethodOrMethodReference(BaseObject.m_Compiler, mD))
             gimResult.OriginalMethod = mD
-            gimResult.ReturnType.ReturnType = Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, mD.ReturnType.ReturnType)
+            gimResult.ReturnType = Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, mD.ReturnType)
             For i As Integer = 0 To genM.GenericArguments.Count - 1
                 gimResult.GenericArguments.Add(Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, genM.GenericArguments(i)))
             Next
             Return gimResult
         End If
 
-        result = New MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.DeclaringType), Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, mD.ReturnType.ReturnType), Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
+        result = New MethodReference(Method.Name, Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, Method.DeclaringType), Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, mD.ReturnType), Method.HasThis, Method.ExplicitThis, Method.CallingConvention)
         For i As Integer = 0 To mD.Parameters.Count - 1
             Dim pType As Mono.Cecil.TypeReference
             pType = Helper.GetTypeOrTypeReference(Compiler.CurrentCompiler, mD.Parameters(i).ParameterType)
@@ -722,8 +721,8 @@ Public Class CecilHelper
         Throw New NotImplementedException
     End Function
 
-    Public Shared Function MakeByRefType(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.ReferenceType
-        Return New Mono.Cecil.ReferenceType(Type)
+    Public Shared Function MakeByRefType(ByVal Type As Mono.Cecil.TypeReference) As ByReferenceType
+        Return New ByReferenceType(Type)
     End Function
 
     Public Shared Function MakeGenericMethod(ByVal Method As MethodReference, ByVal Types() As Mono.Cecil.TypeReference) As Mono.Cecil.GenericInstanceMethod
@@ -743,7 +742,7 @@ Public Class CecilHelper
         Return Nothing
     End Function
 
-    Public Shared Function GetNestedTypes(ByVal Type As TypeReference) As NestedTypeCollection
+    Public Shared Function GetNestedTypes(ByVal Type As TypeReference) As Mono.Collections.Generic.Collection(Of TypeDefinition)
         Return FindDefinition(Type).NestedTypes
     End Function
 
@@ -771,7 +770,9 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function MakeArrayType(ByVal Type As Mono.Cecil.TypeReference, Optional ByVal Ranks As Integer = 1) As Mono.Cecil.ArrayType
-        Return New Mono.Cecil.ArrayType(Type, Ranks)
+        Dim result As ArrayType
+        result = New Mono.Cecil.ArrayType(Type, Ranks)
+        Return result
     End Function
 
     Public Overloads Shared Function [GetType](ByVal Compiler As Compiler, ByVal value As Object) As Mono.Cecil.TypeReference
@@ -814,17 +815,17 @@ Public Class CecilHelper
         End Select
     End Function
 
-    Public Shared Function GetCustomAttributes(ByVal Type As Mono.Cecil.TypeDefinition, ByVal AttributeType As Mono.Cecil.TypeReference) As Mono.Cecil.CustomAttributeCollection
+    Public Shared Function GetCustomAttributes(ByVal Type As Mono.Cecil.TypeDefinition, ByVal AttributeType As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of CustomAttribute)
         Return GetCustomAttributes(Type.CustomAttributes, AttributeType)
     End Function
 
-    Public Shared Function GetCustomAttributes(ByVal Attributes As Mono.Cecil.CustomAttributeCollection, ByVal AttributeType As Mono.Cecil.TypeReference) As Mono.Cecil.CustomAttributeCollection
-        Dim result As Mono.Cecil.CustomAttributeCollection = Nothing
+    Public Shared Function GetCustomAttributes(ByVal Attributes As Mono.Collections.Generic.Collection(Of CustomAttribute), ByVal AttributeType As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        Dim result As Mono.Collections.Generic.Collection(Of CustomAttribute) = Nothing
 
         For i As Integer = 0 To Attributes.Count - 1
             Dim attrib As CustomAttribute = Attributes(i)
             If Helper.CompareType(AttributeType, attrib.Constructor.DeclaringType) Then
-                If result Is Nothing Then result = New Mono.Cecil.CustomAttributeCollection(Attributes.Container)
+                If result Is Nothing Then result = New Mono.Collections.Generic.Collection(Of CustomAttribute)()
                 result.Add(attrib)
             End If
         Next
@@ -834,12 +835,12 @@ Public Class CecilHelper
 
     Public Shared Function GetAttributeCtorString(ByVal Attrib As CustomAttribute, ByVal index As Integer) As String
         Dim result As String
-        If Attrib.ConstructorParameters.Count - 1 < index Then Return Nothing
-        result = TryCast(Attrib.ConstructorParameters(index), String)
+        If Attrib.ConstructorArguments.Count - 1 < index Then Return Nothing
+        result = TryCast(Attrib.ConstructorArguments(index).Value, String)
         Return result
     End Function
 
-    Public Shared Function IsDefined(ByVal CustomAttributes As CustomAttributeCollection, ByVal Type As TypeReference) As Boolean
+    Public Shared Function IsDefined(ByVal CustomAttributes As Mono.Collections.Generic.Collection(Of CustomAttribute), ByVal Type As TypeReference) As Boolean
         For i As Integer = 0 To CustomAttributes.Count - 1
             Dim Attribute As CustomAttribute = CustomAttributes(i)
             If Helper.CompareType(Attribute.Constructor.DeclaringType, Type) Then Return True
@@ -847,12 +848,12 @@ Public Class CecilHelper
         Return False
     End Function
 
-    Public Shared Function GetAttributes(ByVal CustomAttributes As CustomAttributeCollection, ByVal Type As TypeReference) As CustomAttributeCollection
-        Dim result As CustomAttributeCollection = Nothing
+    Public Shared Function GetAttributes(ByVal CustomAttributes As Mono.Collections.Generic.Collection(Of CustomAttribute), ByVal Type As TypeReference) As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        Dim result As Mono.Collections.Generic.Collection(Of CustomAttribute) = Nothing
         For i As Integer = 0 To CustomAttributes.Count - 1
             Dim Attribute As CustomAttribute = CustomAttributes(i)
             If Helper.CompareType(Attribute.Constructor.DeclaringType, Type) Then
-                If result Is Nothing Then result = New CustomAttributeCollection(CustomAttributes.Container)
+                If result Is Nothing Then result = New Mono.Collections.Generic.Collection(Of CustomAttribute)()
                 result.Add(Attribute)
             End If
         Next
@@ -880,33 +881,32 @@ Public Class CecilHelper
         Throw New NotImplementedException
     End Function
 
-    Public Shared Function GetTypes(ByVal Params As Mono.Cecil.GenericParameterCollection) As Mono.Cecil.TypeReference()
-        Dim result(Params.Count - 1) As Mono.Cecil.TypeReference
+    Public Shared Function GetTypes(ByVal Params As Mono.Collections.Generic.Collection(Of GenericParameter)) As Mono.Collections.Generic.Collection(Of TypeReference)
+        Dim result As New Mono.Collections.Generic.Collection(Of TypeReference)(Params.Count)
         For i As Integer = 0 To Params.Count - 1
-            result(i) = Params(i)
+            result.Add(Params(i))
         Next
         Return result
     End Function
 
-    Public Shared Function GetTypes(ByVal Params As Mono.Cecil.GenericArgumentCollection) As Mono.Cecil.TypeReference()
-        Dim result(Params.Count - 1) As Mono.Cecil.TypeReference
+    Public Shared Function GetTypes(ByVal Params As Mono.Collections.Generic.Collection(Of TypeReference)) As Mono.Collections.Generic.Collection(Of TypeReference)
+        Dim result As New Mono.Collections.Generic.Collection(Of TypeReference)(Params.Count)
         For i As Integer = 0 To Params.Count - 1
-            result(i) = Params(i)
+            result.Add(Params(i))
         Next
         Return result
     End Function
 
-    Public Shared Function GetGenericArguments(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference()
+    Public Shared Function GetGenericArguments(ByVal Type As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim tR As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
         If tR Is Nothing Then
             Return GetTypes(Type.GenericParameters)
         Else
             Return GetTypes(tR.GenericArguments)
-            Throw New NotImplementedException
         End If
     End Function
 
-    Public Shared Function GetGenericArguments(ByVal Method As Mono.Cecil.MethodReference) As Mono.Cecil.TypeReference()
+    Public Shared Function GetGenericArguments(ByVal Method As Mono.Cecil.MethodReference) As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim mR As Mono.Cecil.GenericInstanceMethod = TryCast(Method, Mono.Cecil.GenericInstanceMethod)
         If mR Is Nothing Then
             Return GetTypes(Method.GenericParameters)
@@ -938,28 +938,28 @@ Public Class CecilHelper
     'Cecil's ValueType property returns true for arrays of value types
     Public Shared Function IsValueType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         If TypeOf Type Is ArrayType Then Return False
-        If TypeOf Type Is ReferenceType Then Return False
+        If TypeOf Type Is ByReferenceType Then Return False
         Return Type.IsValueType
     End Function
 
     Public Shared Function IsByRef(ByVal Type As Mono.Cecil.TypeReference) As Boolean
-        Return TypeOf Type Is Mono.Cecil.ReferenceType
+        Return TypeOf Type Is ByReferenceType
     End Function
 
     Public Shared Function IsArray(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return TypeOf Type Is Mono.Cecil.ArrayType
     End Function
 
-    Public Shared Function GetInterfaces(ByVal Type As Mono.Cecil.TypeReference, ByVal checkBase As Boolean) As Mono.Cecil.InterfaceCollection
+    Public Shared Function GetInterfaces(ByVal Type As Mono.Cecil.TypeReference, ByVal checkBase As Boolean) As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim genericType As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
-        Dim result As Mono.Cecil.InterfaceCollection
+        Dim result As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim tmp As Mono.Cecil.TypeReference
         Dim tD As Mono.Cecil.TypeDefinition
         Dim tG As Mono.Cecil.GenericParameter = TryCast(Type, Mono.Cecil.GenericParameter)
 
         If tG IsNot Nothing Then
             If tG.Constraints.Count = 0 Then Return Nothing
-            result = New Mono.Cecil.InterfaceCollection(Nothing)
+            result = New Mono.Collections.Generic.Collection(Of TypeReference)
             For i As Integer = 0 To tG.Constraints.Count - 1
                 For Each t As TypeReference In GetInterfaces(tG.Constraints(i), checkBase)
                     result.Add(t)
@@ -970,7 +970,7 @@ Public Class CecilHelper
 
         Dim arrD As Mono.Cecil.ArrayType = TryCast(Type, Mono.Cecil.ArrayType)
         If arrD IsNot Nothing Then
-            result = New Mono.Cecil.InterfaceCollection(Nothing)
+            result = New Mono.Collections.Generic.Collection(Of TypeReference)
             For Each tp As TypeReference In GetInterfaces(BaseObject.m_Compiler.TypeCache.System_Array, False)
                 result.Add(tp)
             Next
@@ -984,7 +984,7 @@ Public Class CecilHelper
 
         tD = FindDefinition(Type)
 
-        result = New Mono.Cecil.InterfaceCollection(tD)
+        result = New Mono.Collections.Generic.Collection(Of TypeReference)
         For i As Integer = 0 To tD.Interfaces.Count - 1
             result.Add(InflateType(tD.Interfaces(i), Type))
         Next
@@ -1015,7 +1015,7 @@ Public Class CecilHelper
     End Function
 
     Public Shared Function GetElementType(ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
-        Dim rT As Mono.Cecil.ReferenceType = TryCast(Type, Mono.Cecil.ReferenceType)
+        Dim rT As ByReferenceType = TryCast(Type, ByReferenceType)
         If rT IsNot Nothing Then Return rT.ElementType
         Dim aT As Mono.Cecil.ArrayType = TryCast(Type, Mono.Cecil.ArrayType)
         If aT IsNot Nothing Then Return aT.ElementType
@@ -1103,10 +1103,9 @@ Public Class CecilHelper
                     Return asm
                 End If
             Next
-            Dim base As New resolver
+            Dim base As New DefaultAssemblyResolver()
 
             asm = base.Resolve(name)
-            asm.Resolver = base
             _assemblies(name.Name) = asm
         End If
 
@@ -1130,18 +1129,50 @@ Public Class CecilHelper
         Return result
     End Function
 
+    Public Shared Function FindField(ByVal fields As Mono.Collections.Generic.Collection(Of FieldDefinition), ByVal name As String) As FieldDefinition
+        For i As Integer = 0 To fields.Count - 1
+            If Helper.CompareNameOrdinal(fields(i).Name, name) Then Return fields(i)
+        Next
+        Return Nothing
+    End Function
+
+    Public Shared Function FindProperties(ByVal properties As Mono.Collections.Generic.Collection(Of PropertyDefinition), ByVal name As String) As Mono.Collections.Generic.Collection(Of PropertyDefinition)
+        Dim result As Mono.Collections.Generic.Collection(Of PropertyDefinition) = Nothing
+        For i As Integer = 0 To properties.Count - 1
+            If Helper.CompareNameOrdinal(properties(i).Name, name) Then
+                If result Is Nothing Then result = New Mono.Collections.Generic.Collection(Of PropertyDefinition)
+                result.Add(properties(i))
+            End If
+        Next
+        Return result
+    End Function
+
+    Public Shared Function FindConstructor(ByVal Methods As Mono.Collections.Generic.Collection(Of MethodDefinition), ByVal [Shared] As Boolean, ByVal parameters() As TypeReference) As MethodReference
+        For i As Integer = 0 To Methods.Count - 1
+            Dim mr As MethodDefinition = Methods(i)
+
+            If mr.IsConstructor = False Then Continue For
+            If mr.IsStatic Then
+                If [Shared] Then Return mr
+                Continue For
+            End If
+            If Helper.CompareTypes(Helper.GetParameterTypes(Compiler.CurrentCompiler, mr), parameters) Then Return mr
+        Next
+        Return Nothing
+    End Function
+
     Public Shared Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
         If type Is Nothing Then Return Nothing
         Dim tD As TypeDefinition = TryCast(type, TypeDefinition)
         If tD IsNot Nothing Then Return tD
-        type = type.GetOriginalType
+        type = type.GetElementType
         If TypeOf type Is TypeDefinition Then
             Return DirectCast(type, TypeDefinition)
         End If
         Dim reference As AssemblyNameReference = TryCast(type.Scope, AssemblyNameReference)
         If reference IsNot Nothing Then
             Dim assembly As AssemblyDefinition = FindDefinition(reference)
-            Return assembly.MainModule.Types(type.FullName)
+            Return assembly.MainModule.GetType(type.FullName)
         End If
         Dim moduledef As ModuleDefinition = TryCast(type.Scope, ModuleDefinition)
         If moduledef IsNot Nothing Then
@@ -1151,7 +1182,7 @@ Public Class CecilHelper
             Else
                 fn = type.FullName
             End If
-            Return moduledef.Types(fn)
+            Return moduledef.GetType(fn)
         End If
         Throw New NotImplementedException
     End Function
@@ -1195,16 +1226,12 @@ Public Class CecilHelper
         If method.OriginalMethod IsNot Nothing Then
             method = method.OriginalMethod
         Else
-            method = method.GetOriginalMethod
+            method = method.GetElementMethod
         End If
 
         If TypeOf method Is MethodDefinition Then Return DirectCast(method, MethodDefinition)
 
-        If Helper.CompareNameOrdinal(method.Name, MethodDefinition.Cctor) OrElse Helper.CompareNameOrdinal(method.Name, MethodDefinition.Ctor) Then
-            Return GetMethod(type.Constructors, method)
-        Else
-            Return GetMethod(type, method)
-        End If
+        Return GetMethod(type, method)
     End Function
 
     Public Shared Function FindDefinition(ByVal method As PropertyReference) As PropertyDefinition
@@ -1291,7 +1318,7 @@ Public Class CecilHelper
         Return AreSame(a.Parameters, b.Parameters)
     End Function
 
-    Public Shared Function AreSame(ByVal a As ParameterDefinitionCollection, ByVal b As ParameterDefinitionCollection) As Boolean
+    Public Shared Function AreSame(ByVal a As Mono.Collections.Generic.Collection(Of ParameterDefinition), ByVal b As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         If a.Count <> b.Count Then Return False
         If a.Count = 0 Then Return True
         For i As Integer = 0 To a.Count - 1

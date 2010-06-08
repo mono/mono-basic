@@ -69,7 +69,7 @@ Public Class EnumMemberDeclaration
         MyBase.UpdateDefinition()
 
         If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Parent.CecilType, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.Static Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault)
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.Static Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault, Parent.CecilType)
             m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
             Parent.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If

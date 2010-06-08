@@ -134,7 +134,7 @@ Public Class UsingDeclarator
             UsingVariableType = m_TypeName.ResolvedType
             m_IsVariableDeclaration = True
             If m_IsNew Then
-                Dim grp As New MethodGroupClassification(Me, Nothing, Nothing, CecilHelper.FindDefinition(m_TypeName.ResolvedType).Constructors)
+                Dim grp As New MethodGroupClassification(Me, Nothing, Nothing, CecilHelper.GetConstructors(CecilHelper.FindDefinition(m_TypeName.ResolvedType)))
                 result = grp.ResolveGroup(m_ArgumentList, Nothing) AndAlso result
                 m_Constructor = grp.ResolvedConstructor
                 If m_Constructor Is Nothing Then

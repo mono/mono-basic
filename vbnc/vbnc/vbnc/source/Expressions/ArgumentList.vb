@@ -97,7 +97,7 @@ Public Class ArgumentList
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function VerifyArguments(ByVal parameters As Mono.Cecil.ParameterDefinitionCollection) As Boolean
+    Function VerifyArguments(ByVal parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         Dim result As Boolean = True
 
 #If EXTENDEDDEBUG Then
@@ -171,7 +171,7 @@ Public Class ArgumentList
 
     Function FillWithOptionalParameters(ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Dim result As Boolean = True
-        Dim parameters As Mono.Cecil.ParameterDefinitionCollection
+        Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
 
         If Method Is Nothing Then Return False
 
@@ -299,7 +299,7 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal params As Mono.Cecil.ParameterDefinitionCollection) As Boolean
+    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal params As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(params.Count >= Me.Count)

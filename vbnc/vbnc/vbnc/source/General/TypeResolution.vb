@@ -514,7 +514,7 @@ Public Class TypeResolution
         Helper.Assert(tp IsNot Nothing, "tp Is Nothing")
         If Helper.IsEnum(Compiler, tp) Then
             Dim field As Mono.Cecil.FieldDefinition
-            field = CecilHelper.FindDefinition(tp).Fields.GetField(EnumDeclaration.EnumTypeMemberName)
+            field = CecilHelper.FindField(CecilHelper.FindDefinition(tp).Fields, EnumDeclaration.EnumTypeMemberName)
             Helper.Assert(field IsNot Nothing, "field '" & EnumDeclaration.EnumTypeMemberName & "' Is Nothing of Type '" & tp.FullName & "'")
             Return field.FieldType
         Else

@@ -112,7 +112,7 @@ Public Class EnumDeclaration
         BaseType = Compiler.TypeCache.System_Enum
 
         If m_ValueField Is Nothing AndAlso m_QualifiedName <> KS.None Then
-            m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType), Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName)
+            m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType))
             CecilType.Fields.Add(m_ValueField)
         End If
 

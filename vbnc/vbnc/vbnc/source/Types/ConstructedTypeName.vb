@@ -116,7 +116,7 @@ Public Class ConstructedTypeName
             Dim stack As New Generic.Stack(Of QualifiedIdentifier)
             Dim argumentCount As Integer
 
-            argumentCount = CecilHelper.GetGenericArguments(m_ConstructedTypeName.ResolvedType).Length
+            argumentCount = CecilHelper.GetGenericArguments(m_ConstructedTypeName.ResolvedType).Count
             cache = Compiler.TypeManager.GetCache(m_ConstructedTypeName.ResolvedType)
 
             Dim tmp As QualifiedIdentifier = m_QualifiedIdentifier
@@ -147,7 +147,7 @@ Public Class ConstructedTypeName
                             Dim nextCache As MemberCache
 
                             nextCache = Compiler.TypeManager.GetCache(memberType)
-                            argumentCount += CecilHelper.GetGenericArguments(memberType).Length
+                            argumentCount += CecilHelper.GetGenericArguments(memberType).Count
 
 
                             cache = nextCache

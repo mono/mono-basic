@@ -92,7 +92,7 @@ Public Class InterfaceMemberSpecifier
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim lst As Generic.List(Of Mono.Cecil.MemberReference)
+        Dim lst As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
 
         lst = Compiler.TypeManager.GetCache(m_ResolvedType).LookupFlattenedMembers(m_2.Name)
         'If lst.Count = 0 AndAlso m_ResolvedType.IsInterface Then

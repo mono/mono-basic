@@ -253,7 +253,7 @@ Public Class Attribute
                 For Each item As VariablePropertyInitializer In m_AttributeArguments.VariablePropertyInitializerList
                     Dim name As String
                     Dim member As Mono.Cecil.MemberReference
-                    Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+                    Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
 
                     name = item.Identifier
                     members = cache.LookupFlattenedMembers(name)
@@ -306,8 +306,8 @@ Public Class Attribute
         If m_Properties Is Nothing Then m_Properties = New Generic.List(Of Mono.Cecil.PropertyReference)
         If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
 
-        Dim ctors As Mono.Cecil.ConstructorCollection
-        ctors = Compiler.Helper.GetConstructors(m_ResolvedType)
+        Dim ctors As Mono.Collections.Generic.Collection(Of MethodReference)
+        ctors = CecilHelper.GetConstructors(m_ResolvedType)
 
         Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, ctors)
         result = groupClassification.ResolveGroup(argList, Nothing) AndAlso result
@@ -320,21 +320,6 @@ Public Class Attribute
             m_Arguments(i) = argList(i).Expression.ConstantValue
             If TypeOf m_Arguments(i) Is DBNull Then
                 m_Arguments(i) = Nothing
-            ElseIf TypeOf m_Arguments(i) Is Mono.Cecil.TypeReference Then
-                Dim argType As Mono.Cecil.TypeReference = DirectCast(m_Arguments(i), Mono.Cecil.TypeReference)
-                Dim moduleScope As Mono.Cecil.ModuleDefinition = TryCast(argType.Scope, Mono.Cecil.ModuleDefinition)
-
-                If moduleScope IsNot Nothing Then
-                    If moduleScope Is Compiler.ModuleBuilderCecil Then
-                        m_Arguments(i) = argType.FullName
-                    Else
-                        m_Arguments(i) = argType.FullName & ", " & moduleScope.Assembly.Name.FullName
-                    End If
-                Else
-                    Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-                    result = False
-                End If
-
             End If
         Next
 
@@ -364,7 +349,7 @@ Public Class Attribute
                         tp.Serializable = True
                     ElseIf Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_StructLayoutAttribute) Then
                         Dim layout As System.Runtime.InteropServices.LayoutKind
-                        layout = CType(CecilBuilder.ConstructorParameters(0), System.Runtime.InteropServices.LayoutKind)
+                        layout = CType(CecilBuilder.ConstructorArguments(0).Value, System.Runtime.InteropServices.LayoutKind)
                         Select Case layout
                             Case Runtime.InteropServices.LayoutKind.Auto
                                 tp.CecilType.IsAutoLayout = True
@@ -381,19 +366,44 @@ Public Class Attribute
                     End If
                 ElseIf mthd IsNot Nothing Then
                     If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
-                        Dim values As IDictionary = CecilBuilder.Fields
-                        Dim entry As String = DirectCast(values("EntryPoint"), String)
-                        Dim modRef As Mono.Cecil.ModuleReference = New Mono.Cecil.ModuleReference(DirectCast(CecilBuilder.ConstructorParameters(0), String))
+                        Dim values As Mono.Collections.Generic.Collection(Of Mono.Cecil.CustomAttributeNamedArgument) = CecilBuilder.Fields
+                        Dim modRef As Mono.Cecil.ModuleReference = Nothing
+                        Dim modRefName As String = DirectCast(CecilBuilder.ConstructorArguments(0).Value, String)
+                        Dim entry As String = Nothing
+                        Dim charSetField As Nullable(Of Mono.Cecil.CustomAttributeNamedArgument) = Nothing
+                        Dim entryPointField As Nullable(Of Mono.Cecil.CustomAttributeNamedArgument) = Nothing
+                        Dim callingConventionField As Nullable(Of Mono.Cecil.CustomAttributeNamedArgument) = Nothing
+                        Dim setLastErrorField As Nullable(Of Mono.Cecil.CustomAttributeNamedArgument) = Nothing
+
+                        For i As Integer = 0 To values.Count - 1
+                            If Helper.CompareNameOrdinal(values(i).Name, "CharSet") Then
+                                charSetField = values(i)
+                            ElseIf Helper.CompareNameOrdinal(values(i).Name, "EntryPoint") Then
+                                entryPointField = values(i)
+                                entry = DirectCast(entryPointField.Value.Argument.Value, String)
+                            ElseIf Helper.CompareNameOrdinal(values(i).Name, "CallingConvention") Then
+                                callingConventionField = values(i)
+                            ElseIf Helper.CompareNameOrdinal(values(i).Name, "SetLastError") Then
+                                setLastErrorField = values(i)
+                            End If
+                        Next
 
                         If entry = String.Empty Then entry = mthd.Name
-                        Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences.Add(modRef)
-                        mthd.CecilBuilder.PInvokeInfo = New Mono.Cecil.PInvokeInfo(mthd.CecilBuilder)
-                        mthd.CecilBuilder.PInvokeInfo.EntryPoint = entry
-                        mthd.CecilBuilder.PInvokeInfo.Module = modRef
+                        For i As Integer = 0 To Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences.Count - 1
+                            If Helper.CompareNameOrdinal(Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences(i).Name, modRefName) Then
+                                modRef = Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences(i)
+                                Exit For
+                            End If
+                        Next
+                        If modRef Is Nothing Then
+                            modRef = New Mono.Cecil.ModuleReference(modRefName)
+                            Compiler.AssemblyBuilderCecil.MainModule.ModuleReferences.Add(modRef)
+                        End If
+                        mthd.CecilBuilder.PInvokeInfo = New Mono.Cecil.PInvokeInfo(0, entry, modRef)
 
                         Dim charset As System.Runtime.InteropServices.CharSet
-                        If values.Contains("CharSet") Then
-                            charset = DirectCast(values("CharSet"), System.Runtime.InteropServices.CharSet)
+                        If charSetField.HasValue Then
+                            charset = DirectCast(charSetField.Value.Argument.Value, System.Runtime.InteropServices.CharSet)
                         Else
                             charset = Runtime.InteropServices.CharSet.Auto
                         End If
@@ -411,8 +421,8 @@ Public Class Attribute
                         End Select
 
                         Dim callingconv As System.Runtime.InteropServices.CallingConvention
-                        If values.Contains("CallingConvention") Then
-                            callingconv = DirectCast(values("CallingConvention"), System.Runtime.InteropServices.CallingConvention)
+                        If callingConventionField.HasValue Then
+                            callingconv = DirectCast(callingConventionField.Value.Argument.Value, System.Runtime.InteropServices.CallingConvention)
                         Else
                             callingconv = Runtime.InteropServices.CallingConvention.Winapi
                         End If
@@ -432,8 +442,8 @@ Public Class Attribute
                         End Select
 
                         Dim setlasterror As Boolean = True
-                        If values.Contains("SetLastError") Then
-                            setlasterror = DirectCast(values("SetLastError"), Boolean)
+                        If setLastErrorField.HasValue Then
+                            setlasterror = DirectCast(setLastErrorField.Value.Argument.Value, Boolean)
                         End If
                         mthd.CecilBuilder.PInvokeInfo.SupportsLastError = setlasterror
                         mthd.CecilBuilder.PInvokeInfo.IsNoMangle = True
@@ -444,9 +454,10 @@ Public Class Attribute
                     ctro.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 ElseIf fld IsNot Nothing Then
                     If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_MarshalAsAttribute) Then
-                        fld.FieldBuilder.MarshalSpec = New Mono.Cecil.MarshalSpec(CType(CecilBuilder.ConstructorParameters(0), Mono.Cecil.NativeType), fld.FieldBuilder)
+                        fld.FieldBuilder.MarshalInfo = New MarshalInfo(CType(CecilBuilder.ConstructorArguments(0).Value, Mono.Cecil.NativeType))
+                        fld.FieldBuilder.Attributes = fld.FieldBuilder.Attributes Or Mono.Cecil.FieldAttributes.HasFieldMarshal
                     ElseIf Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_FieldOffsetAttribute) Then
-                        fld.FieldBuilder.Offset = CType(CecilBuilder.ConstructorParameters(0), UInteger)
+                        fld.FieldBuilder.Offset = CType(CecilBuilder.ConstructorArguments(0).Value, Integer)
                     Else
                         fld.FieldBuilder.CustomAttributes.Add(CecilBuilder)
                     End If
@@ -469,12 +480,23 @@ Public Class Attribute
         Return True
     End Function
 
+    Public Function GetSecurityAttribute() As Mono.Cecil.SecurityAttribute
+        Return DirectCast(GetAttribute(True), SecurityAttribute)
+    End Function
+
     Private Function GetAttributeBuilderCecil() As Mono.Cecil.CustomAttribute
-        Dim result As Mono.Cecil.CustomAttribute
+        Return DirectCast(GetAttribute(False), CustomAttribute)
+    End Function
+
+    Private Function GetAttribute(ByVal security As Boolean) As Mono.Cecil.IAttribute
+        Dim result As IAttribute
+        Dim customAttribute As CustomAttribute = Nothing
+        Dim securityAttribute As SecurityAttribute = Nothing
+        Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetParameters(Compiler, m_ResolvedTypeConstructor)
 
         Helper.Assert(m_ResolvedTypeConstructor IsNot Nothing)
         Helper.Assert(m_Arguments IsNot Nothing)
-        Helper.Assert(Helper.GetParameters(Compiler, m_ResolvedTypeConstructor).Count = m_Arguments.Length)
+        Helper.Assert(parameters.Count = m_Arguments.Length)
         Helper.Assert(m_Properties IsNot Nothing AndAlso m_PropertyValues IsNot Nothing AndAlso m_Properties.Count = m_PropertyValues.Count)
         Helper.Assert(m_Fields IsNot Nothing AndAlso m_FieldValues IsNot Nothing AndAlso m_Fields.Count = m_FieldValues.Count)
 
@@ -492,18 +514,25 @@ Public Class Attribute
         Next
 
         Try
-            result = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, m_ResolvedTypeConstructor))
+            If security Then
+                securityAttribute = New SecurityAttribute(Me.AttributeType)
+                result = securityAttribute
+            Else
+                customAttribute = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, m_ResolvedTypeConstructor))
+                result = customAttribute
+            End If
+
             For i As Integer = 0 To m_Fields.Count - 1
-                result.Fields.Add(m_Fields(i).Name, m_FieldValues(i))
-                result.SetFieldType(m_Fields(i).Name, Helper.GetTypeOrTypeReference(Compiler, m_Fields(i).FieldType))
+                result.Fields.Add(New Mono.Cecil.CustomAttributeNamedArgument(m_Fields(i).Name, New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, m_Fields(i).FieldType), m_FieldValues(i))))
             Next
             For i As Integer = 0 To m_Properties.Count - 1
-                result.Properties.Add(m_Properties(i).Name, m_PropertyValues(i))
-                result.SetPropertyType(m_Properties(i).Name, Helper.GetTypeOrTypeReference(Compiler, m_Properties(i).PropertyType))
+                result.Properties.Add(New Mono.Cecil.CustomAttributeNamedArgument(m_Properties(i).Name, New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, m_Properties(i).PropertyType), m_PropertyValues(i))))
             Next
-            For i As Integer = 0 To cecilArguments.Length - 1
-                result.ConstructorParameters.Add(cecilArguments(i))
-            Next
+            If customAttribute IsNot Nothing Then
+                For i As Integer = 0 To cecilArguments.Length - 1
+                    customAttribute.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, parameters(i).ParameterType), cecilArguments(i)))
+                Next
+            End If
         Catch ex As Exception
             Throw
         End Try

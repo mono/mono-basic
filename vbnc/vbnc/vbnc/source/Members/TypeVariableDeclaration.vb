@@ -133,7 +133,7 @@ Public Class TypeVariableDeclaration
         Dim result As Boolean = True
 
         If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetTypeOrTypeReference(Compiler, FieldType), Helper.GetAttributes(Compiler, Me))
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetAttributes(Compiler, Me), Helper.GetTypeOrTypeReference(Compiler, FieldType))
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If
         m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
@@ -157,7 +157,7 @@ Public Class TypeVariableDeclaration
 
             Dim staticName As String
             staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(staticName, Helper.GetTypeOrTypeReference(Compiler, FieldType), Helper.GetAttributes(Compiler, Me))
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(staticName, Helper.GetAttributes(Compiler, Me), Helper.GetTypeOrTypeReference(Compiler, FieldType))
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If
 

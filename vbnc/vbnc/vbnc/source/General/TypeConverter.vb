@@ -822,6 +822,10 @@ Public Class TypeConverter
         Helper.Assert(Source IsNot Nothing)
         Helper.Assert(Destination IsNot Nothing)
 
+        If TypeOf Destination Is ByReferenceType Then
+            Destination = DirectCast(Destination, ByReferenceType).ElementType
+        End If
+
         Dim dtc As TypeCode = Helper.GetTypeCode(Context.Compiler, Destination)
         Dim stc As TypeCode = Helper.GetTypeCode(Context.Compiler, CecilHelper.GetType(Context.Compiler, Source))
 

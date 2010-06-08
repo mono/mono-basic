@@ -175,7 +175,7 @@ Public Class DelegateOrObjectCreationExpression
                 End If
                 m_IsGenericConstructor = True
             ElseIf CecilHelper.IsClass(resolvedType) OrElse CecilHelper.IsValueType(resolvedType) Then
-                Dim ctors As Mono.Cecil.MemberReferenceCollection
+                Dim ctors As Mono.Collections.Generic.Collection(Of Mono.Cecil.MethodReference)
 
                 ctors = CecilHelper.GetConstructors(resolvedType)
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)

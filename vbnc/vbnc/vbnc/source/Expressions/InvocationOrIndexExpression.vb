@@ -334,7 +334,7 @@ Public Class InvocationOrIndexExpression
         Dim result As Boolean = True
         Dim Compiler As Compiler = Context.Compiler
 
-        Dim defaultProperties As Generic.List(Of Mono.Cecil.PropertyReference) = Nothing
+        Dim defaultProperties As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference) = Nothing
 
         If CecilHelper.IsArray(VariableType) Then
             result = ResolveArrayInvocation(Context, VariableType) AndAlso result
@@ -416,7 +416,7 @@ Public Class InvocationOrIndexExpression
     Private Function ResolveDelegateInvocation(ByVal Context As ParsedObject, ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
         Dim invokeMethod As Mono.Cecil.MethodReference
-        Dim params As Mono.Cecil.ParameterDefinitionCollection
+        Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         Dim argTypes As Generic.List(Of Mono.Cecil.TypeReference)
         Dim paramTypes() As Mono.Cecil.TypeReference
         Dim Compiler As Compiler = Context.Compiler
@@ -438,7 +438,7 @@ Public Class InvocationOrIndexExpression
         m_InvocationMethod = invokeMethod
 
         If invokeMethod.ReturnType IsNot Nothing Then
-            Classification = New ValueClassification(Me, invokeMethod.ReturnType.ReturnType)
+            Classification = New ValueClassification(Me, invokeMethod.ReturnType)
         Else
             Classification = New VoidClassification(Me)
         End If
@@ -504,7 +504,7 @@ Public Class InvocationOrIndexExpression
 
             reclassifyToIndex = method IsNot Nothing
             reclassifyToIndex = reclassifyToIndex AndAlso method.ReturnType IsNot Nothing
-            reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType.ReturnType, Compiler.TypeCache.System_Void) = False
+            reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.System_Void) = False
             reclassifyToIndex = reclassifyToIndex AndAlso Helper.GetParameters(Compiler, method).Count = 0
 
         End If
@@ -534,7 +534,7 @@ Public Class InvocationOrIndexExpression
             Dim methodInfo As Mono.Cecil.MethodReference = mgc.ResolvedMethodInfo
 
             If String.IsNullOrEmpty(Compiler.CommandLine.VBRuntime) AndAlso Compiler.Assembly.IsDefinedHere(methodInfo) AndAlso CecilHelper.FindDefinition(methodInfo).IsStatic AndAlso Helper.CompareName(methodInfo.Name, "AscW") Then
-                Dim methodParameters As Mono.Cecil.ParameterDefinitionCollection = Helper.GetParameters(Compiler, methodInfo)
+                Dim methodParameters As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetParameters(Compiler, methodInfo)
 
                 If methodParameters.Count <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.System_Char) Then
                     m_AscWExpression = ArgumentList(0).Expression
@@ -554,10 +554,10 @@ Public Class InvocationOrIndexExpression
                 End If
             End If
 
-            If methodInfo.ReturnType Is Nothing OrElse Helper.CompareType(methodInfo.ReturnType.ReturnType, Compiler.TypeCache.System_Void) Then
+            If methodInfo.ReturnType Is Nothing OrElse Helper.CompareType(methodInfo.ReturnType, Compiler.TypeCache.System_Void) Then
                 Classification = New VoidClassification(Me)
             Else
-                Classification = New ValueClassification(Me, methodInfo.ReturnType.ReturnType)
+                Classification = New ValueClassification(Me, methodInfo.ReturnType)
             End If
         ElseIf mgc.ResolvedConstructor IsNot Nothing Then
             Classification = New VoidClassification(Me)

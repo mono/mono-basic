@@ -116,7 +116,7 @@ Public Class ConstantDeclaration
     End Function
 
     Shared Function GetDecimalConstant(ByVal Compiler As Compiler, ByVal Field As Mono.Cecil.FieldDefinition, ByRef value As Decimal) As Boolean
-        Dim decAttrs As Mono.Cecil.CustomAttributeCollection
+        Dim decAttrs As Mono.Collections.Generic.Collection(Of CustomAttribute)
         decAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute)
         If decAttrs IsNot Nothing AndAlso decAttrs.Count = 1 Then
             Dim attr As Mono.Cecil.CustomAttribute = decAttrs(0)
@@ -124,39 +124,39 @@ Public Class ConstantDeclaration
             Dim hi1 As Integer, mid1 As Integer, low1 As Integer
             Dim isUnsigned As Boolean
 
-            If attr.ConstructorParameters.Count <> 5 Then Return False
-            If TypeOf attr.ConstructorParameters(0) Is Byte = False Then Return False
-            If TypeOf attr.ConstructorParameters(1) Is Byte = False Then Return False
+            If attr.ConstructorArguments.Count <> 5 Then Return False
+            If TypeOf attr.ConstructorArguments(0).Value Is Byte = False Then Return False
+            If TypeOf attr.ConstructorArguments(1).Value Is Byte = False Then Return False
 
-            scale = DirectCast(attr.ConstructorParameters(0), Byte)
-            sign = DirectCast(attr.ConstructorParameters(1), Byte)
+            scale = DirectCast(attr.ConstructorArguments(0).Value, Byte)
+            sign = DirectCast(attr.ConstructorArguments(1).Value, Byte)
 
-            If TypeOf attr.ConstructorParameters(2) Is Integer Then
-                hi1 = DirectCast(attr.ConstructorParameters(2), Integer)
+            If TypeOf attr.ConstructorArguments(2).Value Is Integer Then
+                hi1 = DirectCast(attr.ConstructorArguments(2).Value, Integer)
                 isUnsigned = False
-            ElseIf TypeOf attr.ConstructorParameters(2) Is UInteger Then
-                hi1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(2), UInteger)), 0)
+            ElseIf TypeOf attr.ConstructorArguments(2).Value Is UInteger Then
+                hi1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(2).Value, UInteger)), 0)
                 isUnsigned = True
             Else
                 Return False
             End If
 
-            If TypeOf attr.ConstructorParameters(3) Is Integer Then
+            If TypeOf attr.ConstructorArguments(3).Value Is Integer Then
                 If isUnsigned Then Return False
-                mid1 = DirectCast(attr.ConstructorParameters(3), Integer)
-            ElseIf TypeOf attr.ConstructorParameters(3) Is UInteger Then
+                mid1 = DirectCast(attr.ConstructorArguments(3).Value, Integer)
+            ElseIf TypeOf attr.ConstructorArguments(3).Value Is UInteger Then
                 If isUnsigned = False Then Return False
-                mid1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(3), UInteger)), 0)
+                mid1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(3).Value, UInteger)), 0)
             Else
                 Return False
             End If
 
-            If TypeOf attr.ConstructorParameters(4) Is Integer Then
+            If TypeOf attr.ConstructorArguments(4).Value Is Integer Then
                 If isUnsigned Then Return False
-                low1 = DirectCast(attr.ConstructorParameters(4), Integer)
-            ElseIf TypeOf attr.ConstructorParameters(4) Is UInteger Then
+                low1 = DirectCast(attr.ConstructorArguments(4).Value, Integer)
+            ElseIf TypeOf attr.ConstructorArguments(4).Value Is UInteger Then
                 If isUnsigned = False Then Return False
-                low1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorParameters(4), UInteger)), 0)
+                low1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(4).Value, UInteger)), 0)
             Else
                 Return False
             End If
@@ -168,10 +168,10 @@ Public Class ConstantDeclaration
     End Function
 
     Shared Function GetDateConstant(ByVal Compiler As Compiler, ByVal Field As Mono.Cecil.FieldDefinition, ByRef value As Date) As Boolean
-        Dim dtAttrs As Mono.Cecil.CustomAttributeCollection
+        Dim dtAttrs As Mono.Collections.Generic.Collection(Of CustomAttribute)
         dtAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute)
         If dtAttrs IsNot Nothing AndAlso dtAttrs.Count = 1 Then
-            value = DirectCast(dtAttrs(0).Properties("Value"), Date)
+            value = DirectCast(dtAttrs(0).Properties(0).Argument.Value, Date)
             Return True
         End If
         Return False
@@ -229,29 +229,21 @@ Public Class ConstantDeclaration
     Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
 
-        If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
-            'm_FieldBuilder.SetConstant(Nothing)
-        ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
-            Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
-            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32))
-            Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
-            For i As Integer = 0 To params.Length - 1
-                attrib.ConstructorParameters.Add(params(i))
-            Next
-            m_FieldBuilderCecil.CustomAttributes.Add(attrib) 
-        ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
-            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
-            attrib.ConstructorParameters.Add(DirectCast(m_ConstantValue, Date).Ticks)
-            m_FieldBuilderCecil.CustomAttributes.Add(attrib)
-        Else
-            'If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
-            '    m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)
-            'End If
-
-            'If Helper.IsOnMS Then
-            '    Helper.Assert(Helper.CompareType(m_ConstantValue.GetType, m_FieldBuilder.FieldType), "Constant type and Field Type is not equal (Constant type = " & m_ConstantValue.GetType.Name & ", field type = " & m_FieldBuilder.FieldType.Name & ")")
-            'End If
-            'm_FieldBuilder.SetConstant(m_ConstantValue)
+        If m_ConstantValue IsNot Nothing AndAlso m_ConstantValue IsNot DBNull.Value Then
+            If Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
+                Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
+                Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32
+                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
+                Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
+                For i As Integer = 0 To params.Length - 1
+                    attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
+                Next
+                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
+            ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
+                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
+                attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(m_ConstantValue, Date).Ticks))
+                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
+            End If
         End If
 
         UpdateDefinition()
@@ -263,12 +255,14 @@ Public Class ConstantDeclaration
         MyBase.UpdateDefinition()
 
         If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Nothing, 0)
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, 0, Nothing)
             m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
         End If
 
         If m_RequiresSharedInitialization Then
+            m_FieldBuilderCecil.Constant = Nothing
+        ElseIf m_ConstantValue Is DBNull.Value Then
             m_FieldBuilderCecil.Constant = Nothing
         Else
             m_FieldBuilderCecil.Constant = m_ConstantValue

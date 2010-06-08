@@ -201,7 +201,7 @@ Public Class MethodResolver
         If ShowErrors AndAlso CandidatesLeft = 0 Then
             If m_InitialCandidates.Length = 1 Then
                 Dim argsGiven, argsRequired As Integer
-                Dim params As Mono.Cecil.ParameterDefinitionCollection
+                Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition)
                 params = Helper.GetParameters(Compiler, m_InitialCandidates(0).Member)
                 argsRequired = params.Count
                 argsGiven = m_Arguments.Length
@@ -513,7 +513,7 @@ End Class
 
 Public Class MemberCandidate
     Private m_Member As Mono.Cecil.MemberReference
-    Private m_DefinedParameters As Mono.Cecil.ParameterDefinitionCollection
+    Private m_DefinedParameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
     Private m_DefinedParametersTypes As Mono.Cecil.TypeReference()
     Private m_Parent As MethodResolver
 
@@ -543,7 +543,7 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property DefinedParameters() As Mono.Cecil.ParameterDefinitionCollection
+    ReadOnly Property DefinedParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         Get
             If m_DefinedParameters Is Nothing Then m_DefinedParameters = Helper.GetParameters(Compiler, Member)
             Return m_DefinedParameters
@@ -668,7 +668,7 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property InputParameters() As Mono.Cecil.ParameterDefinitionCollection
+    ReadOnly Property InputParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         Get
             Return DefinedParameters
         End Get
@@ -888,10 +888,10 @@ Public Class MemberCandidate
         'Otherwise, the type arguments are filled in the place of the 
         'type parameters in the signature.
         Dim genericTypeArgumentCount As Integer
-        Dim genericTypeArguments As Mono.Cecil.TypeReference()
+        Dim genericTypeArguments As Mono.Collections.Generic.Collection(Of TypeReference)
         If method IsNot Nothing AndAlso CecilHelper.IsGenericMethod(method) Then
             genericTypeArguments = CecilHelper.GetGenericArguments(method)
-            genericTypeArgumentCount = genericTypeArguments.Length
+            genericTypeArgumentCount = genericTypeArguments.Count
         ElseIf prop IsNot Nothing Then
             'property cannot be generic.
         End If

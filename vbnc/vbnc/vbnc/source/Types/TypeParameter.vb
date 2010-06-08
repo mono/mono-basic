@@ -59,7 +59,6 @@ Public Class TypeParameter
             End While
             Helper.Assert(owner IsNot Nothing)
             m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, owner)
-            m_CecilBuilder.Position = owner.GenericParameters.Count
             m_CecilBuilder.Annotations.Add(Compiler, Me)
             owner.GenericParameters.Add(m_CecilBuilder)
         End If
@@ -92,7 +91,6 @@ Public Class TypeParameter
         result.IsContravariant = Builder.IsContravariant
         result.IsCovariant = Builder.IsCovariant
         result.IsNonVariant = Builder.IsNonVariant
-        result.Position = Position
 
         Return result
     End Function

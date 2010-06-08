@@ -129,18 +129,19 @@ Public MustInherit Class TypeDeclaration
 
         If m_CecilType Is Nothing Then
             If Me.IsNestedType Then
-                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Nothing, 0, Nothing)
+                m_CecilType = New Mono.Cecil.TypeDefinition(Nothing, Me.Name, 0)
             Else
-                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Name, Me.Namespace, 0, Nothing)
+                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Namespace, Me.Name, 0)
             End If
             m_CecilType.Annotations.Add(Compiler, Me)
         End If
         m_CecilType.Name = Name
 
         If CecilType.Module Is Nothing AndAlso Me.Name IsNot Nothing Then
-            Compiler.ModuleBuilderCecil.Types.Add(CecilType)
             If IsNestedType Then
                 DeclaringType.CecilType.NestedTypes.Add(CecilType)
+            Else
+                Compiler.ModuleBuilderCecil.Types.Add(CecilType)
             End If
         End If
     End Sub
@@ -328,10 +329,6 @@ Public MustInherit Class TypeDeclaration
                 CecilType.GenericParameters.Insert(insertAt, typeParameter.Clone(typeParameter.CecilBuilder, CecilType, CecilType.GenericParameters.Count))
                 insertAt += 1
             Loop
-
-            For i As Integer = 0 To CecilType.GenericParameters.Count - 1
-                CecilType.GenericParameters(i).Position = i
-            Next
 
             Dim enumDecl As EnumDeclaration = TryCast(Me, EnumDeclaration)
             If enumDecl IsNot Nothing AndAlso CecilType.GenericParameters.Count > 0 Then

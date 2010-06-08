@@ -123,9 +123,9 @@ Public Class AssignmentStatement
         If result = False Then Return result
 
         If CecilHelper.IsGenericType(m_LSide.ExpressionType) AndAlso Helper.CompareType(Compiler.TypeCache.System_Nullable1, CecilHelper.GetGenericTypeDefinition(m_LSide.ExpressionType)) Then
-            Dim lTypeArg As Mono.Cecil.TypeReference()
+            Dim lTypeArg As Mono.Collections.Generic.Collection(Of Mono.Cecil.TypeReference)
             lTypeArg = CecilHelper.GetGenericArguments(m_LSide.ExpressionType)
-            If lTypeArg.Length = 1 AndAlso Helper.CompareType(lTypeArg(0), m_RSide.ExpressionType) Then
+            If lTypeArg.Count = 1 AndAlso Helper.CompareType(lTypeArg(0), m_RSide.ExpressionType) Then
                 Dim objCreation As DelegateOrObjectCreationExpression
                 objCreation = New DelegateOrObjectCreationExpression(Me)
                 objCreation.Init(m_LSide.ExpressionType, New ArgumentList(objCreation, m_RSide))

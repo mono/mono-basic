@@ -32,7 +32,7 @@ Public Class DeRefExpression
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression)
         MyBase.new(Parent)
 
-        Dim refType As Mono.Cecil.ReferenceType = TryCast(Expression.ExpressionType, Mono.Cecil.ReferenceType)
+        Dim refType As ByReferenceType = TryCast(Expression.ExpressionType, ByReferenceType)
 
         If refType Is Nothing Then Throw New InternalException
 

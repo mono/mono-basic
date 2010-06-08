@@ -108,10 +108,10 @@ Public Class Scanner
     ''' <remarks></remarks>
     Private m_ConditionStack As New Generic.List(Of Integer)
 
-    Private m_Methods As New Generic.Dictionary(Of Mono.Cecil.MethodReference, Mono.Cecil.CustomAttributeCollection)
+    Private m_Methods As New Generic.Dictionary(Of Mono.Cecil.MethodReference, Mono.Collections.Generic.Collection(Of Mono.Cecil.CustomAttribute))
 
     Function IsConditionallyExcluded(ByVal CalledMethod As Mono.Cecil.MethodReference, ByVal AtLocation As Span) As Boolean
-        Dim attribs As Mono.Cecil.CustomAttributeCollection
+        Dim attribs As Mono.Collections.Generic.Collection(Of Mono.Cecil.CustomAttribute)
 
         If m_Methods.ContainsKey(CalledMethod) Then
             attribs = m_Methods(CalledMethod)
@@ -126,10 +126,10 @@ Public Class Scanner
             Dim attrib As Mono.Cecil.CustomAttribute = attribs(i)
             Dim identifier As String
 
-            If attrib.ConstructorParameters.Count <> 1 Then
+            If attrib.ConstructorArguments.Count <> 1 Then
                 Continue For
             End If
-            identifier = TryCast(attrib.ConstructorParameters(0), String)
+            identifier = TryCast(attrib.ConstructorArguments(0).Value, String)
             If identifier = String.Empty Then Continue For
 
             If Not IsDefinedAtLocation(identifier, AtLocation) Then Return True

@@ -372,10 +372,10 @@ Public Class SimpleNameExpression
             End If
 
             Dim cache As MemberCacheEntry
-            Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+            Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
             cache = Compiler.TypeManager.GetCache(container.CecilType).LookupFlattened(Name)
             If cache Is Nothing Then
-                members = New Generic.List(Of Mono.Cecil.MemberReference)
+                members = New Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
             Else
                 members = cache.Members
                 members = Helper.FilterExternalInaccessible(Compiler, members)
@@ -463,7 +463,7 @@ Public Class SimpleNameExpression
             'result is exactly the same as a member access of the form M.E, where M is the standard module 
             'containing the matching member and E is the identifier. If the identifier matches accessible type 
             'members in more than one standard module, a compile-time error occurs.
-            Dim modulemembers As Generic.List(Of Mono.Cecil.MemberReference)
+            Dim modulemembers As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
             modulemembers = Helper.GetMembersOfTypes(Compiler, Compiler.TypeManager.GetModulesByNamespace(currentNS), Name)
             If modulemembers Is Nothing Then
                 'do nothing
@@ -539,7 +539,7 @@ Public Class SimpleNameExpression
         Return False
     End Function
 
-    Private Function GetTypeClassification(ByVal members As Generic.List(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
+    Private Function GetTypeClassification(ByVal members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
         'Otherwise, the result is exactly the same as a member access of the form T.E, where T is the 
         'type containing the matching member and E is the identifier. In this case, it is an error for the 
         'identifier to refer to a non-shared member.
@@ -616,7 +616,7 @@ Public Class SimpleNameExpression
         Return result
     End Function
 
-    Private Function GetMeClassification(ByVal members As Generic.List(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
+    Private Function GetMeClassification(ByVal members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference), ByVal type As IType) As ExpressionClassification
         Dim result As ExpressionClassification
         Dim first As Mono.Cecil.MemberReference = members(0)
 
@@ -753,7 +753,7 @@ Public Class SimpleNameExpression
         If foundNamespace Is Nothing Then Return False
 
         Dim modules As TypeDictionary
-        Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+        Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
         modules = Compiler.TypeManager.GetModulesByNamespace(foundNamespace.ToString)
         members = Helper.GetMembersOfTypes(Compiler, modules, R)
         If members.Count = 1 Then
@@ -799,8 +799,8 @@ Public Class SimpleNameExpression
         '   module containing the matching member and E is the identifier. If the identifier matches 
         '   accessible type members in more than one standard module, a compile-time error occurs.
         '---------------------------------------------------------------------------------------------------------
-        Dim impmembers As New Generic.List(Of Mono.Cecil.MemberReference)
-        Dim result As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
+        Dim impmembers As New Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
+        Dim result As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference) = Nothing
         For Each imp As ImportsClause In imps
             If imp.IsNamespaceClause Then
                 If imp.AsNamespaceClause.IsNamespaceImport Then
@@ -863,7 +863,7 @@ Public Class SimpleNameExpression
         'module containing the matching member and E is the identifier. If the identifier matches 
         'accessible type members in more than one standard module, a compile-time error occurs.
         Dim modules As TypeList = imps.GetModules(Me)
-        Dim found As Generic.List(Of Mono.Cecil.MemberReference)
+        Dim found As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
         found = Helper.GetMembersOfTypes(Compiler, modules, Name)
         If SetClassificationOfModuleMembers(found) Then
             Return True
@@ -872,7 +872,7 @@ Public Class SimpleNameExpression
         Return False
     End Function
 
-    Private Function SetClassificationOfModuleMembers(ByVal found As Generic.List(Of Mono.Cecil.MemberReference)) As Boolean
+    Private Function SetClassificationOfModuleMembers(ByVal found As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)) As Boolean
         If found Is Nothing OrElse found.Count <= 0 Then
             Return False
         End If

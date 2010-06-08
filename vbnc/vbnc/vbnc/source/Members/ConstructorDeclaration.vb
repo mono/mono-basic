@@ -202,7 +202,7 @@ Public Class ConstructorDeclaration
 
         If DeclaringType IsNot Nothing AndAlso DeclaringType.CecilType IsNot Nothing AndAlso m_Added = False Then
             m_Added = True
-            DeclaringType.CecilType.Constructors.Add(CecilBuilder)
+            DeclaringType.CecilType.Methods.Add(CecilBuilder)
         End If
     End Sub
 
@@ -227,7 +227,7 @@ Public Class ConstructorDeclaration
             Emitter.EmitLoadMe(Info, parent.CecilType)
             Emitter.EmitInitObj(Info, parent.CecilType)
         ElseIf m_DefaultBaseConstructor IsNot Nothing Then
-            Dim params As Mono.Cecil.ParameterDefinitionCollection = m_DefaultBaseConstructor.Parameters
+            Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition) = m_DefaultBaseConstructor.Parameters
             Emitter.EmitLoadMe(Info, CecilHelper.FindDefinition(ParentType).BaseType)
             For i As Integer = 0 To params.Count - 1
                 Helper.Assert(params(i).IsOptional)

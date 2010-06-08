@@ -37,9 +37,9 @@ Public Class EmitLog
 
     Private m_CilBody As Mono.Cecil.Cil.MethodBody
 
-    ReadOnly Property CilWorker() As Mono.Cecil.Cil.CilWorker
+    ReadOnly Property CilWorker() As Mono.Cecil.Cil.ILProcessor
         Get
-            Return m_CilBody.CilWorker
+            Return m_CilBody.GetILProcessor
         End Get
     End Property
 
@@ -242,7 +242,7 @@ Public Class EmitLog
 
         Dim TryStart As Mono.Cecil.Cil.Instruction
         TryStart = CilBody.Instructions(block.Start)
-        If block.Handlers(block.Handlers.Count - 1).Type = Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+        If block.Handlers(block.Handlers.Count - 1).HandlerType = Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
             CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfinally)
         End If
         For i As Integer = 0 To block.Handlers.Count - 1
@@ -253,7 +253,7 @@ Public Class EmitLog
                 handler.TryEnd = block.EndTry
             End If
             If handler.HandlerEnd Is Nothing Then
-                If handler.Type <> Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+                If handler.HandlerType <> Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
                     CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
                 End If
                 handler.HandlerEnd = block.EndBlock

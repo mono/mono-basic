@@ -122,8 +122,9 @@ Public Class ExternalSubDeclaration
 
         For i As Integer = 0 To Signature.Parameters.Count - 1
             If Helper.CompareType(Signature.Parameters(i).ParameterType, Compiler.TypeCache.System_String) AndAlso Signature.Parameters(i).CustomAttributes.Count = 0 Then
-                Signature.Parameters(i).ParameterType = New Mono.Cecil.ReferenceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_String))
-                Signature.Parameters(i).CecilBuilder.MarshalSpec = New Mono.Cecil.MarshalSpec(Mono.Cecil.NativeType.BYVALSTR, Signature.Parameters(i).CecilBuilder)
+                Signature.Parameters(i).ParameterType = New ByReferenceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_String))
+                Signature.Parameters(i).CecilBuilder.MarshalInfo = New Mono.Cecil.MarshalInfo(Mono.Cecil.NativeType.ByValStr)
+                Signature.Parameters(i).CecilBuilder.Attributes = Signature.Parameters(i).CecilBuilder.Attributes Or Mono.Cecil.ParameterAttributes.HasFieldMarshal
             End If
         Next
 

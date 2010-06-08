@@ -70,7 +70,7 @@ Public Class MethodPointerClassification
 
         Dim ctor As Mono.Cecil.MethodReference
         Dim dT As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(m_DelegateType)
-        ctor = dT.Constructors.GetConstructor(False, New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr})
+        ctor = CecilHelper.FindConstructor(dT.Methods, False, New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_Object, Compiler.TypeCache.System_IntPtr})
         ctor = CecilHelper.GetCorrectMember(ctor, m_DelegateType)
         Emitter.EmitNew(Info, ctor)
 
@@ -98,7 +98,7 @@ Public Class MethodPointerClassification
 
         If result = False Then Return result
 
-        Dim params As Mono.Cecil.ParameterDefinitionCollection = Helper.GetDelegateArguments(Compiler, DelegateType)
+        Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetDelegateArguments(Compiler, DelegateType)
         Dim paramtypes() As Mono.Cecil.TypeReference = Helper.GetParameterTypes(params)
 
         m_ResolvedMethod = CType(Helper.ResolveGroupExact(Me.Parent, m_MethodGroup.Group, paramtypes), Mono.Cecil.MethodReference)

@@ -66,7 +66,7 @@ Public Class LocalVariableDeclaration
                 staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name & "$Init"
                 If DeclaringMethod.IsShared Then attr = attr Or Mono.Cecil.FieldAttributes.Static
 
-                m_FieldBuilderStaticInit = New Mono.Cecil.FieldDefinition(staticName, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag), attr)
+                m_FieldBuilderStaticInit = New Mono.Cecil.FieldDefinition(staticName, attr, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag))
                 DeclaringType.CecilType.Fields.Add(m_FieldBuilderStaticInit)
             End If
         Else
@@ -86,7 +86,7 @@ Public Class LocalVariableDeclaration
             staticName = "$STATIC$" & Me.FindFirstParent(Of INameable).Name & "$" & Me.ObjectID.ToString & "$" & Me.Name
             If DeclaringMethod.IsShared Then attr = attr Or Mono.Cecil.FieldAttributes.Static
 
-            m_FieldBuilderStatic = New Mono.Cecil.FieldDefinition(staticName, Helper.GetTypeOrTypeReference(Compiler, Me.VariableType), attr)
+            m_FieldBuilderStatic = New Mono.Cecil.FieldDefinition(staticName, attr, Helper.GetTypeOrTypeReference(Compiler, Me.VariableType))
             DeclaringType.CecilType.Fields.Add(m_FieldBuilderStatic)
         End If
 

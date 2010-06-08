@@ -116,6 +116,7 @@ Public MustInherit Class MethodBaseDeclaration
 
         If CustomAttributes Is Nothing Then Return True
 
+
         For i As Integer = 0 To CustomAttributes.Count - 1
             If CustomAttributes(i).ResolvedType Is Nothing Then
                 checkedAll = False
@@ -130,14 +131,9 @@ Public MustInherit Class MethodBaseDeclaration
 
             If Not Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, attrib.ResolvedType) Then Continue For
 
-            If attrib.ResolvedType.Scope Is Compiler.ModuleBuilderCecil Then
-                Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, "Security attributes cannot be defined in the same assembly as the code being compiled")
-                result = False
-                Continue For
-            End If
-
             Try
                 Dim sec As Mono.Cecil.SecurityDeclaration
+                Dim secAtt As Mono.Cecil.SecurityAttribute
                 Dim attribInstantiation As Object = Nothing
                 Dim attribInstance As SecurityAttribute
                 Dim attribAction As Mono.Cecil.SecurityAction
@@ -161,15 +157,8 @@ Public MustInherit Class MethodBaseDeclaration
                 attribPermissionSetAttribute = TryCast(attribInstance, PermissionSetAttribute)
 
                 sec = New Mono.Cecil.SecurityDeclaration(attribAction)
-
-                If attribPermissionSetAttribute IsNot Nothing Then
-                    sec.PermissionSet = attribPermissionSetAttribute.CreatePermissionSet()
-                Else
-                    attribPermission = attribInstance.CreatePermission
-                    sec.PermissionSet = New System.Security.PermissionSet(PermissionState.None)
-                    sec.PermissionSet.AddPermission(attribPermission)
-                End If
-
+                secAtt = attrib.GetSecurityAttribute()
+                sec.SecurityAttributes.Add(secAtt)
                 CecilBuilder.SecurityDeclarations.Add(sec)
                 CustomAttributes.Remove(attrib)
                 CecilBuilder.CustomAttributes.Remove(attrib.CecilBuilder)
@@ -210,10 +199,10 @@ Public MustInherit Class MethodBaseDeclaration
 
     Property ReturnType() As Mono.Cecil.TypeReference
         Get
-            Return m_CecilBuilder.ReturnType.ReturnType
+            Return m_CecilBuilder.ReturnType
         End Get
         Set(ByVal value As Mono.Cecil.TypeReference)
-            m_CecilBuilder.ReturnType.ReturnType = Helper.GetTypeOrTypeReference(Compiler, value)
+            m_CecilBuilder.ReturnType = Helper.GetTypeOrTypeReference(Compiler, value)
         End Set
     End Property
 

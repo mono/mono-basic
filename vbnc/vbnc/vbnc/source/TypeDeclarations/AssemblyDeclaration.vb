@@ -457,7 +457,7 @@ Public Class AssemblyDeclaration
 
         If Compiler.CommandLine.Define.IsDefined("DEBUG") Then
             cab = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes))
-            cab.ConstructorParameters.Add(System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default)
+            cab.ConstructorArguments.Add(New CustomAttributeArgument(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute, System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default))
             Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cab)
         End If
     End Sub
@@ -469,8 +469,8 @@ Public Class AssemblyDeclaration
         Dim copyright As String = String.Empty
         Dim trademark As String = String.Empty
 
-        Dim att As Mono.Cecil.CustomAttributeCollection
-        Dim custom_attributes As Mono.Cecil.CustomAttributeCollection = Me.Compiler.AssemblyBuilderCecil.CustomAttributes
+        Dim att As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        Dim custom_attributes As Mono.Collections.Generic.Collection(Of CustomAttribute) = Me.Compiler.AssemblyBuilderCecil.CustomAttributes
 
         att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyProductAttribute)
         If att IsNot Nothing AndAlso att.Count > 0 Then product = CecilHelper.GetAttributeCtorString(att(0), 0)
@@ -483,40 +483,44 @@ Public Class AssemblyDeclaration
         att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute)
         If att IsNot Nothing AndAlso att.Count > 0 Then trademark = CecilHelper.GetAttributeCtorString(att(0), 0)
 
-        Dim rdt As New Mono.Cecil.Binary.ResourceDirectoryTable()
-        Dim r1 As New Mono.Cecil.Binary.ResourceDirectoryEntry(16)
-        Dim r2 As New Mono.Cecil.Binary.ResourceDirectoryEntry(1)
-        Dim r3 As New Mono.Cecil.Binary.ResourceDirectoryEntry(0)
-        Dim data As New Mono.Cecil.Binary.ResourceDataEntry()
+        'Dim rdt As New Mono.Cecil.PE.ResourceDirectoryTable()
+        'Dim r1 As New Mono.Cecil.PE.ResourceDirectoryEntry(16)
+        'Dim r2 As New Mono.Cecil.PE.ResourceDirectoryEntry(1)
+        'Dim r3 As New Mono.Cecil.PE.ResourceDirectoryEntry(0)
+        'Dim data As New Mono.Cecil.PE.ResourceDataEntry()
 
-        Dim has_rsrc As Boolean
-        For i As Integer = 0 To Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Count - 1
-            If Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections(i).Name = Mono.Cecil.Binary.Section.Resources Then
-                has_rsrc = True
-                Exit For
-            End If
-        Next
-        If Not has_rsrc Then
-            Dim s As New Mono.Cecil.Binary.Section()
-            s.Name = Mono.Cecil.Binary.Section.Resources
-            s.Characteristics = Mono.Cecil.Binary.SectionCharacteristics.MemoryRead Or Mono.Cecil.Binary.SectionCharacteristics.ContainsInitializedData
-            Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Add(s)
-        End If
-        Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        'Dim rsrc As Mono.Cecil.PE.Section = Nothing
+        'If Compiler.AssemblyBuilderCecil.MainModule.Image Is Nothing Then
+        '    Compiler.AssemblyBuilderCecil.MainModule.Image = New Mono.Cecil.PE.Image()
+        '    Compiler.AssemblyBuilderCecil.MainModule.Image.Sections = New Mono.Cecil.PE.Section() {}
+        'End If
+        'rsrc = Compiler.AssemblyBuilderCecil.MainModule.Image.GetSection(".rsrc")
+        'If rsrc Is Nothing Then
+        '    rsrc = New Mono.Cecil.PE.Section()
+        '    rsrc.Name = ".rsrc"
+        '    Dim sections(Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Length) As Mono.Cecil.PE.Section
+        '    For i As Integer = 0 To sections.Length - 2
+        '        sections(i) = Compiler.AssemblyBuilderCecil.MainModule.Image.Sections(i)
+        '    Next
+        '    sections(sections.Length - 1) = rsrc
+        '    Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections = sections
+        'End If
+        'Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot = New Mono.Cecil.PE.ResourceDirectoryTable()
 
-        Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot.Entries.Add(r1)
-        rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
-        rdt.Entries.Add(r2)
-        r1.Child = rdt
+        'Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot.Entries.Add(r1)
+        'rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        'rdt.Entries.Add(r2)
+        'r1.Child = rdt
 
-        rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
-        rdt.Entries.Add(r3)
-        r2.Child = rdt
+        'rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        'rdt.Entries.Add(r3)
+        'r2.Child = rdt
 
-        r3.Child = data
-        data.Size = 0
-        data.ResourceData = New Byte() {}
+        'r3.Child = data
+        'data.Size = 0
+        'data.ResourceData = New Byte() {}
 
+        Dim win32versionresources As Byte()
         Using ms As New IO.MemoryStream()
             Using w As New IO.BinaryWriter(ms, System.Text.Encoding.Unicode)
                 Dim file_flags_mask As Integer = 63
@@ -648,8 +652,76 @@ Public Class AssemblyDeclaration
                 patch_length(w, string_file_info_pos)
 
                 patch_length(w, 0)
-                data.Size = CUInt(ms.Length)
-                data.ResourceData = ms.ToArray()
+                win32versionresources = ms.ToArray()
+            End Using
+        End Using
+
+
+        Using ms As New IO.MemoryStream()
+            Using w As New IO.BinaryWriter(ms, System.Text.Encoding.Unicode)
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                '16 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(16UI) 'name
+                w.Write(&H20UI + &H80000000UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 32 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                ' 16 bytes, total 48 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(1UI) 'name
+                w.Write(&H40UI + &H80000000UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 64 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                ' 16 bytes, total 80 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(0UI) 'name
+                w.Write(&H60UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 96 bytes
+
+                ' IMAGE_RESOURCE_DATA_ENTRY
+                w.Write(&H70UI) 'offsettodata
+                w.Write(CUInt(win32versionresources.Length)) 'size
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                w.Write(win32versionresources)
+
+                Compiler.ModuleBuilderCecil.Win32resources = ms.ToArray()
             End Using
         End Using
     End Sub
@@ -876,8 +948,8 @@ Public Class AssemblyDeclaration
             Else
                 Throw New NotImplementedException
             End If
-        ElseIf TypeOf Type Is Mono.Cecil.ReferenceType Then
-            Dim tR As Mono.Cecil.ReferenceType = DirectCast(Type, Mono.Cecil.ReferenceType)
+        ElseIf TypeOf Type Is ByReferenceType Then
+            Dim tR As ByReferenceType = DirectCast(Type, ByReferenceType)
             Return IsDefinedHere(tR.ElementType)
         End If
         Return Type.Module.Assembly Is Compiler.AssemblyBuilderCecil

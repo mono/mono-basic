@@ -129,6 +129,7 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <ItemGroup>
+    <Import Include="Mono.Cecil" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Reflection" />
@@ -565,13 +566,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\cecil\Mono.Cecil.Mdb\Mono.Cecil.VB.Mdb.csproj">
-      <Project>{C5D12431-9C20-4789-8FEC-46094B0F81B5}</Project>
-      <Name>Mono.Cecil.VB.Mdb</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cecil\Mono.Cecil\Mono.Cecil.VB.csproj">
-      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+    <ProjectReference Include="..\..\cecil\Mono.Cecil.VB.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil.VB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cecil\symbols\mdb\Mono.Cecil.Mdb.VB.csproj">
+      <Project>{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}</Project>
+      <Name>Mono.Cecil.Mdb.VB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\cecil\symbols\pdb\Mono.Cecil.Pdb.VB.csproj">
+      <Project>{63E6915C-7EA4-4D76-AB28-0D7191EEA626}</Project>
+      <Name>Mono.Cecil.Pdb.VB</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -49,7 +49,7 @@ Public MustInherit Class TypeCacheBase
         cecil.AppendLine("End Class")
 
         all.AppendLine(cecil.ToString)
-        
+
         IO.File.WriteAllText(path & "TypeCache.Generated.vb", all.ToString)
 
         IO.File.Copy(IO.Path.Combine(path, "TypeCache.vb"), IO.Path.Combine(path, "TypeCache.vb.old"), True)
@@ -216,7 +216,7 @@ Public MustInherit Class TypeCacheBase
         Dim split As String() = FullName.Split("+"c)
         For i As Integer = 0 To split.Length - 1
             If result Is Nothing Then
-                result = Assembly.MainModule.Types.Item(split(i))
+                result = Assembly.MainModule.GetType(split(i))
             Else
                 result = Me.GetType(result, split(i))
             End If
@@ -239,7 +239,7 @@ Public MustInherit Class TypeCacheBase
     End Function
 
     Protected Function GetByRefType(ByVal Type As Mono.Cecil.TypeDefinition) As Mono.Cecil.TypeReference
-        Return New Mono.Cecil.ReferenceType(Type)
+        Return New ByReferenceType(Type)
     End Function
 
     Protected Function GetArrayType(ByVal Type As Mono.Cecil.TypeDefinition) As Mono.Cecil.TypeReference
@@ -248,11 +248,11 @@ Public MustInherit Class TypeCacheBase
 
     Protected Function GetProperty(ByVal Type As Mono.Cecil.TypeDefinition, ByVal Name As String, ByVal ParamArray Types() As Mono.Cecil.TypeReference) As Mono.Cecil.PropertyDefinition
         If Type Is Nothing Then Return Nothing
-        Dim properties As Mono.Cecil.PropertyDefinition()
-        properties = Type.Properties.GetProperties(Name)
-        For i As Integer = 0 To properties.GetUpperBound(0)
+        Dim properties As Mono.Collections.Generic.Collection(Of PropertyDefinition)
+        properties = CecilHelper.FindProperties(Type.Properties, Name)
+        For i As Integer = 0 To properties.Count - 1
             Dim prop As Mono.Cecil.PropertyDefinition = properties(i)
-            Dim params As Mono.Cecil.ParameterDefinitionCollection = prop.Parameters
+            Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition) = prop.Parameters
 
             If IsMatch(Types, params) Then Return prop
         Next
@@ -260,7 +260,7 @@ Public MustInherit Class TypeCacheBase
         Return Nothing
     End Function
 
-    Private Function IsMatch(ByVal Types As Mono.Cecil.TypeReference(), ByVal Parameters As Mono.Cecil.ParameterDefinitionCollection) As Boolean
+    Private Function IsMatch(ByVal Types As Mono.Cecil.TypeReference(), ByVal Parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         If Parameters.Count = 0 AndAlso (Types Is Nothing OrElse Types.Length = 0) Then Return True
         If Parameters.Count <> Types.Length Then Return False
         For j As Integer = 0 To Parameters.Count - 1
@@ -274,7 +274,7 @@ Public MustInherit Class TypeCacheBase
     End Function
 
     Protected Function GetMethod(ByVal Type As Mono.Cecil.TypeDefinition, ByVal Name As String, ByVal ParamArray Types() As Mono.Cecil.TypeReference) As Mono.Cecil.MethodDefinition
-        Dim result As Mono.Cecil.MethodDefinition
+        Dim result As Mono.Cecil.MethodDefinition = Nothing
         If Type Is Nothing Then
 #If DEBUG Then
             Compiler.Report.WriteLine("Could not load the method '" & Name & "', the specified type was Nothing.")
@@ -282,23 +282,25 @@ Public MustInherit Class TypeCacheBase
             Return Nothing
         End If
 
-        If Name.StartsWith(".") Then
-            result = Type.Constructors.GetConstructor(Helper.CompareNameOrdinal(Name, ".cctor"), Types)
-        Else
-            result = Type.Methods.GetMethod(Name, Types)
-        End If
+        For i As Integer = 0 To Type.Methods.Count - 1
+            Dim md As MethodDefinition = Type.Methods(i)
+            If Helper.CompareNameOrdinal(md.Name, Name) = False Then Continue For
+            If Helper.CompareTypes(Helper.GetTypes(md.Parameters), Types) = False Then Continue For
+            result = md
+            Exit For
+        Next
 #If DEBUG Then
-            If result Is Nothing Then
-                Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Could not find the method '" & Name & "' on the type '" & Type.FullName)
-            End If
+        If result Is Nothing Then
+            Compiler.Report.WriteLine(Report.ReportLevels.Debug, "Could not find the method '" & Name & "' on the type '" & Type.FullName)
+        End If
 #End If
 
-            Return result
+        Return result
     End Function
 
     Protected Function GetField(ByVal Type As Mono.Cecil.TypeDefinition, ByVal Name As String) As Mono.Cecil.FieldDefinition
         If Type Is Nothing Then Return Nothing
-        Return Type.Fields.GetField(Name)
+        Return CecilHelper.FindField(Type.Fields, Name)
     End Function
 
     Sub Init()
@@ -423,7 +425,7 @@ End Class
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-Public Partial Class CecilTypeCache
+Partial Public Class CecilTypeCache
     Public System_Boolean As Mono.Cecil.TypeDefinition
     Public System_Boolean_Array As Mono.Cecil.TypeReference
     Public System_Byte As Mono.Cecil.TypeDefinition
@@ -692,7 +694,7 @@ Public Partial Class CecilTypeCache
     Public MS_VB_CS_Operators__CompareObjectLess_Object_Object_Boolean As Mono.Cecil.MethodDefinition
     Public MS_VB_CS_Operators__CompareObjectLessEqual_Object_Object_Boolean As Mono.Cecil.MethodDefinition
 
-    Protected Overrides Sub InitInternal ()
+    Protected Overrides Sub InitInternal()
         System_Boolean = [GetType](mscorlib, "System.Boolean")
         System_Boolean_Array = GetArrayType(System_Boolean)
         System_Byte = [GetType](mscorlib, "System.Byte")

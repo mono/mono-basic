@@ -24,16 +24,16 @@
 Public Class TypeArgumentList
     Inherits BaseList(Of TypeName)
 
-    Private m_ArgumentCollection As Mono.Cecil.GenericArgumentCollection
+    Private m_ArgumentCollection As Mono.Collections.Generic.Collection(Of TypeReference)
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    ReadOnly Property ArgumentCollection() As Mono.Cecil.GenericArgumentCollection
+    ReadOnly Property ArgumentCollection() As Mono.Collections.Generic.Collection(Of TypeReference)
         Get
             If m_ArgumentCollection Is Nothing Then
-                m_ArgumentCollection = New Mono.Cecil.GenericArgumentCollection(Nothing)
+                m_ArgumentCollection = New Mono.Collections.Generic.Collection(Of TypeReference)()
                 For i As Integer = 0 To Count - 1
                     m_ArgumentCollection.Add(Item(i).ResolvedType)
                 Next
@@ -41,15 +41,6 @@ Public Class TypeArgumentList
             Return m_ArgumentCollection
         End Get
     End Property
-
-    <Obsolete()> _
-    Function AsTypeArray() As Mono.Cecil.TypeReference()
-        Dim result As New Generic.List(Of Mono.Cecil.TypeReference)
-        For Each arg As TypeName In Me
-            result.Add(arg.ResolvedType)
-        Next
-        Return result.ToArray
-    End Function
 
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeArgumentList
         If NewParent Is Nothing Then NewParent = Me.Parent

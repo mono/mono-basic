@@ -288,7 +288,7 @@ Public Class MemberAccessExpression
 
             'TODO: The spec is missing info about modules in namespaces. Doing check anyway.
             Dim modules As TypeDictionary = Compiler.TypeManager.GetModulesByNamespace(ns.ToString)
-            Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Helper.GetMembersOfTypes(Compiler, modules, Name)
+            Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference) = Helper.GetMembersOfTypes(Compiler, modules, Name)
             If members IsNot Nothing AndAlso members.Count > 0 Then
                 Dim first As Object = members(0)
                 If Helper.IsMethodDeclaration(first) Then
@@ -337,7 +337,7 @@ Public Class MemberAccessExpression
             '    '** If I is the keyword New, then a compile-time error occurs.
             '    Helper.AddError(Me)
             'End If
-            Dim members As Generic.List(Of Mono.Cecil.MemberReference) = Nothing
+            Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference) = Nothing
             Dim entry As MemberCacheEntry
             'members = Helper.FilterByName(Helper.GetMembers(Compiler, m_First.Classification.AsTypeClassification.Type), Name)
             'members = Helper.FilterByName(Compiler.TypeManager.GetCache(m_First.Classification.AsTypeClassification.Type).FlattenedCache.GetAllMembers.ToArray, Name)
@@ -519,7 +519,7 @@ Public Class MemberAccessExpression
                 End If
             End If
 
-            Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+            Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
             Dim member As MemberCacheEntry
 
             member = Compiler.TypeManager.GetCache(T).LookupFlattened(Name, Me.FindFirstParent_IType.CecilType)

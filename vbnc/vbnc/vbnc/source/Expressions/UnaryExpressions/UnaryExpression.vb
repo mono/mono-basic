@@ -113,7 +113,7 @@ Public MustInherit Class UnaryExpression
                 methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_Expression}, methods.ToArray)
                 result = methodClassification.ResolveGroup(New ArgumentList(Me, New Expression() {Me.m_Expression}), Nothing) AndAlso result
                 result = methodClassification.SuccessfullyResolved AndAlso result
-                m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType.ReturnType
+                m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
                 Classification = methodClassification
             End If
         End If

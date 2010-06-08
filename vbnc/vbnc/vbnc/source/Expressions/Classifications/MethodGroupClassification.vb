@@ -184,7 +184,7 @@ Public Class MethodGroupClassification
                 If m.ReturnType Is Nothing Then
                     Return Compiler.TypeCache.System_Void
                 Else
-                    Return m.ReturnType.ReturnType
+                    Return m.ReturnType
                 End If
             End If
         End Get
@@ -255,7 +255,7 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
-    Private Sub SetMethods(ByVal lst As Mono.Cecil.MemberReferenceCollection)
+    Private Sub SetMethods(ByVal lst As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference))
         m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         For i As Integer = 0 To lst.Count - 1
             Dim member As Mono.Cecil.MemberReference = lst(i)
@@ -278,17 +278,6 @@ Public Class MethodGroupClassification
     End Sub
 
     Private Sub SetMethods(ByVal lst As Generic.IList(Of Mono.Cecil.MethodReference))
-        m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
-        For i As Integer = 0 To lst.Count - 1
-            Dim member As Mono.Cecil.MemberReference = lst(i)
-            m_Group.Add(member)
-        Next
-#If DEBUG Then
-        m_OriginalGroup = New Generic.List(Of Mono.Cecil.MemberReference)(m_Group)
-#End If
-    End Sub
-
-    Private Sub SetMethods(ByVal lst As Mono.Cecil.ConstructorCollection)
         m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         For i As Integer = 0 To lst.Count - 1
             Dim member As Mono.Cecil.MemberReference = lst(i)
@@ -331,7 +320,7 @@ Public Class MethodGroupClassification
         End Set
     End Property
 
-    Shared Function ResolveInterfaceGroup(ByVal grp As Generic.List(Of Mono.Cecil.MemberReference), ByVal codedMember As IMember) As Mono.Cecil.MemberReference
+    Shared Function ResolveInterfaceGroup(ByVal grp As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference), ByVal codedMember As IMember) As Mono.Cecil.MemberReference
         Helper.Assert(codedMember IsNot Nothing)
 
         Dim methodtypes() As Mono.Cecil.TypeReference
@@ -466,28 +455,14 @@ Public Class MethodGroupClassification
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of Mono.Cecil.MemberReference))
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MethodReference))
         Me.new(Parent, InstanceExpression, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Generic.List(Of Mono.Cecil.MethodReference))
-        Me.new(Parent, InstanceExpression, Parameters)
-        SetMethods(Methods)
-        Helper.Assert(Methods.Count > 0)
-        Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
-    End Sub
-
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Cecil.MemberReferenceCollection)
-        Me.new(Parent, InstanceExpression, Parameters)
-        SetMethods(Methods)
-        Helper.Assert(Methods.Count > 0)
-        Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
-    End Sub
-
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Cecil.ConstructorCollection)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference))
         Me.new(Parent, InstanceExpression, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)
