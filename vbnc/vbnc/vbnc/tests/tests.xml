@@ -7224,4 +7224,7 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<arguments>-r:System.Data.dll</arguments>
 		<file>CompileTime\DefaultMember1.vb</file>
 	</test>
+	<test id="1718" name="TryCatch5" category="" priority="0" target="library">
+		<file>CompileTime\TryCatch5.vb</file>
+	</test>
 </rt>

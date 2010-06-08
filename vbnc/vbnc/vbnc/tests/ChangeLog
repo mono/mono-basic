@@ -1,5 +1,10 @@
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml:
+	* CompileTime/TryCatch5.vb: Added new test.
+
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* (default)all.rsp: Delete, no longer used.
 
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
