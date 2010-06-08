@@ -77,7 +77,7 @@
     <Test()> Public Sub CreateSingle()
         Dim i As Single()
         i = New Single() {1.1, 1}
-        Assert.AreEqual(i(0), 1.1, "Single array creation failed, expected 1.1")
+        Assert.AreEqual(i(0), 1.1!, "Single array creation failed, expected 1.1")
     End Sub
     <Test()> Public Sub CreateDouble()
         Dim i As Double()
@@ -98,7 +98,7 @@
     <Test()> Public Sub CreateString()
         Dim i As String()
         i = New String() {"Test"}
-        Assert.AreEqual(i(0), "Test", "SByte array creation failed, expected ""Test""")
+        Assert.AreEqual(i(0), "Test", "String array creation failed, expected ""Test""")
     End Sub
     <Test()> Public Sub CreateBoolean()
         Dim b As Boolean()

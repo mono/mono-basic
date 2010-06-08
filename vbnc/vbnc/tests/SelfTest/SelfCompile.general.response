@@ -4,7 +4,9 @@
 /r:Microsoft.VisualBasic.dll
 /r:System.Xml.dll
 /r:System.Windows.Forms.dll
-/define:DEBUG=0
+/r:Mono.Cecil.VB.dll
+/r:Mono.Cecil.VB.Mdb.dll
+/define:DEBUG=0,ENABLECECIL=True
 #/define:DEBUG=1
 /imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit
 /rootnamespace:vbnc
@@ -13,3 +15,4 @@
 /out:vbnc.exe
 /t:exe
 /define:_MYTYPE=\"Empty\"
+/imports:Mono.Cecil

@@ -1,6 +1,0 @@
-#DONTEXECUTE#
--r:System.dll,System.Xml.dll,System.Windows.Forms.dll,System.Drawing.dll
--imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing
--rootnamespace:rt
--target:exe
--out:rt.exe

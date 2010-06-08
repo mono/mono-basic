@@ -1,24 +1,21 @@
 #General arguments for all targets and profiles
--noconfig
 -r:mscorlib.dll 
 -r:System.dll
 -r:System.Windows.Forms.dll
 -r:System.Drawing.dll
 -r:System.Xml.dll
-#-r:System.Deployment.dll
 -r:System.Web.dll
 -r:System.Data.dll
 -novbruntimeref
 -define:_MYTYPE=\"Empty\" 
 -errorreport:prompt
--t:library
 -nowarn:42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,40005 
 -optionstrict+ 
+-optionexplicit+
+-optioncompare:binary
 -imports:System,System.Diagnostics,System.Collections,System.Collections.Generic,System.Data
--out:Microsoft.VisualBasic.dll
 
 #Non-general arguments
 -debug:full
 -define:DEBUG=False,TRACE=false,NET_2_0=True,_MYTYPE=\"Empty\",NET_VER=2.0 
-#-verbose
 -define:mono_disabled=true

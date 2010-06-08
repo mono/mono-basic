@@ -1,1 +1,3 @@
-mono --debug ../../bin/vbnc.exe @SelfCompileLinux.response
+cp ../../bin/*.dll* .
+cp ../../bin/vbnc.exe vbnc-boot.exe
+mono --debug vbnc-boot.exe @SelfCompileLinux.response

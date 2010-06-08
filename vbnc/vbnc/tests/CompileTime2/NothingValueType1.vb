@@ -10,6 +10,9 @@ Namespace NothingValueType1
         Function Test() As S
             Return Nothing
         End Function
+        Sub Test(ByVal var As S)
+            Test(Nothing)
+        End Sub
 
         Shared Function Main() As Integer
             Return 0
