@@ -1,5 +1,10 @@
 2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Expressions/Expression.vb: When something goes wrong while resolving an
+	expression, be a bit more specific as to where in the source code.
+
+2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/Compiler.vb: Emit debug info when requested.
 
 2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>

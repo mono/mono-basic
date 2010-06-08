@@ -212,8 +212,12 @@ Public MustInherit Class Expression
 
         StartResolve()
 
-        result = ResolveExpressionInternal(ResolveInfo) AndAlso result
-
+        Try
+            result = ResolveExpressionInternal(ResolveInfo) AndAlso result
+        Catch ex As Exception
+            Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Internal compiler error close to this location")
+            Throw
+        End Try
 #If EXTENDEDDEBUG Then
         Helper.Assert(result = False OrElse m_Classification IsNot Nothing, "Classification is nothing! (type of expression = " & Me.GetType.ToString & ")")
         Helper.Assert(ResolveInfo.CanFail OrElse result = (Compiler.Report.Errors = 0))
