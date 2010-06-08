@@ -12,7 +12,7 @@ include ../../../../build/library.make
 
 DISTFILES = \
 	$(wildcard *.csproj)		\
-	Mono.Cecil.Pdb.VB.dll.sources
+	Mono.Cecil.VB.Pdb.dll.sources
 
 Mono.Cecil.VB.Pdb.dll.sources: Mono.Cecil.Pdb.VB.csproj
 	grep "Compile Include" Mono.Cecil.Pdb.VB.csproj | sed 's_.*["]\(.*\)["].*_\1_' | sed 's_\\_/_' > $@
