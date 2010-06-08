@@ -1,5 +1,9 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* rules.make: Fix typo.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* rules.make:
 	* library.make:
 	* executable.make: Create the deps dir if it doesn't exist.

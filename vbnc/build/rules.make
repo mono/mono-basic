@@ -173,4 +173,4 @@ dll-sources:
 	cd Test; ls */*.cs > ../$(LIBRARY:.dll=_test.dll).sources; cd ..
 
 $(depsdir):
-	mkdir -p $(depsdir)s
+	mkdir -p $(depsdir)
