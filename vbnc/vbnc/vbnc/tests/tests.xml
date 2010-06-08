@@ -7114,7 +7114,7 @@
 		<file>..\..\rt\source\TestView.vb</file>
 		<file>..\..\rt\source\VerificationBase.vb</file>
 	</test>
-	<test id="1808" name="SelfCompileWindows" category="SelfTest" priority="20" outputvbcassembly="vbnc_vbc.exe" outputassembly="vbnc.exe" target="exe" workingdirectory="SelfTest">
+	<test id="1808" name="SelfCompileWindows" category="SelfTest" priority="20" outputvbcassembly="SelfTest\vbnc_vbc.exe" outputassembly="SelfTest\vbnc.exe" target="exe" workingdirectory="SelfTest">
 		<arguments>@SelfCompileWindows.response</arguments>
 		<vbcarguments>/out:vbnc_vbc.exe</vbcarguments>
 		<testarguments>/help</testarguments>
