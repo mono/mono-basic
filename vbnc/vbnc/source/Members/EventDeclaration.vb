@@ -21,8 +21,6 @@ Public Class EventDeclaration
     Inherits MemberDeclaration
     Implements IDefinableMember, INonTypeMember, IHasImplicitMembers
 
-    Private m_Descriptor As New EventDescriptor(Me)
-
     'Set during parse phase
     Private m_Identifier As Identifier
     Private m_ImplementsClause As MemberImplementsClause
@@ -36,61 +34,73 @@ Public Class EventDeclaration
     ''' <summary>The raise method. Is only something if it is a custom event.</summary>
     Private m_RaiseMethod As EventHandlerDeclaration
 
-    'Set during resolve member phase (delegate explicitly defined)
-    'or during parse phase (delegate implicitly defined)
-    ''' <summary>The type of the event. Is the implicitly defined delegate, or the explicitly defined delegate.</summary>
-    Private m_EventType As Type
+    Private m_CecilBuilder As Mono.Cecil.EventDefinition
 
-    'Set during define phase
-    Private m_Builder As EventBuilder
+    ReadOnly Property CecilBuilder() As Mono.Cecil.EventDefinition
+        Get
+            Return m_CecilBuilder
+        End Get
+    End Property
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Identifier.Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Modifiers, Identifier.Name)
 
         m_Identifier = Identifier
         m_ImplementsClause = ImplementsClause
 
         Helper.Assert(m_Identifier IsNot Nothing)
+        UpdateDefinition()
     End Sub
 
-    Public ReadOnly Property EventBuilder() As System.Reflection.Emit.EventBuilder
+    Public ReadOnly Property EventDescriptor() As Mono.Cecil.EventDefinition
         Get
-            Return m_Builder
+            Return m_CecilBuilder
         End Get
     End Property
 
-    Public ReadOnly Property EventDescriptor() As EventDescriptor
+    Public Property EventType() As Mono.Cecil.TypeReference
         Get
-            Return m_Descriptor
+            Return m_CecilBuilder.EventType
         End Get
-    End Property
-
-    Public Property EventType() As System.Type
-        Get
-            Return m_EventType
-        End Get
-        Set(ByVal value As System.Type)
-            Helper.Assert(m_EventType Is Nothing)
-            m_EventType = value
+        Set(ByVal value As Mono.Cecil.TypeReference)
+            CecilBuilder.EventType = Helper.GetTypeOrTypeReference(Compiler, value)
         End Set
     End Property
 
-    Public Function GetAddMethod(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo
-        Return DirectCast(m_AddMethod.MethodDescriptor, MethodInfo)
-    End Function
+    ReadOnly Property AddDefinition() As Mono.Cecil.MethodDefinition
+        Get
+            If m_AddMethod Is Nothing Then
+                Return Nothing
+            Else
+                Return m_AddMethod.CecilBuilder
+            End If
+        End Get
+    End Property
 
-    Public Function GetRaiseMethod(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo
-        If m_RaiseMethod Is Nothing Then Return Nothing
-        Return DirectCast(m_RaiseMethod.MethodDescriptor, MethodInfo)
-    End Function
+    ReadOnly Property RemoveDefinition() As Mono.Cecil.MethodDefinition
+        Get
+            If m_RemoveMethod Is Nothing Then
+                Return Nothing
+            Else
+                Return m_RemoveMethod.CecilBuilder
+            End If
+        End Get
+    End Property
 
-    Public Function GetRemoveMethod(ByVal nonPublic As Boolean) As System.Reflection.MethodInfo
-        Return DirectCast(m_RemoveMethod.MethodDescriptor, MethodInfo)
-    End Function
+    ReadOnly Property RaiseDefinition() As Mono.Cecil.MethodDefinition
+        Get
+            If m_RaiseMethod Is Nothing Then
+                Return Nothing
+            Else
+                Return m_RaiseMethod.CecilBuilder
+            End If
+        End Get
+    End Property
 
     Property AddMethod() As EventHandlerDeclaration
         Get
@@ -99,6 +109,7 @@ Public Class EventDeclaration
         Set(ByVal value As EventHandlerDeclaration)
             Helper.Assert(m_AddMethod Is Nothing)
             m_AddMethod = value
+            UpdateDefinition()
         End Set
     End Property
 
@@ -109,6 +120,7 @@ Public Class EventDeclaration
         Set(ByVal value As EventHandlerDeclaration)
             Helper.Assert(m_RemoveMethod Is Nothing)
             m_RemoveMethod = value
+            UpdateDefinition()
         End Set
     End Property
 
@@ -119,12 +131,13 @@ Public Class EventDeclaration
         Set(ByVal value As EventHandlerDeclaration)
             Helper.Assert(m_RaiseMethod Is Nothing)
             m_RaiseMethod = value
+            UpdateDefinition()
         End Set
     End Property
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
         Get
-            Return m_Descriptor
+            Return m_CecilBuilder
         End Get
     End Property
 
@@ -146,8 +159,11 @@ Public Class EventDeclaration
         If m_ImplementsClause IsNot Nothing Then result = m_ImplementsClause.ResolveTypeReferences AndAlso result
 
         result = MyBase.ResolveTypeReferences AndAlso result
+        If m_AddMethod IsNot Nothing Then result = m_AddMethod.ResolveTypeReferences AndAlso result
+        If m_RemoveMethod IsNot Nothing Then result = m_RemoveMethod.ResolveTypeReferences AndAlso result
+        If m_RaiseMethod IsNot Nothing Then result = m_RaiseMethod.ResolveTypeReferences AndAlso result
 
-        Helper.Assert(m_EventType IsNot Nothing)
+        Helper.Assert(EventType IsNot Nothing)
 
         Return result
     End Function
@@ -155,12 +171,7 @@ Public Class EventDeclaration
     Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
         Dim result As Boolean = True
 
-        Helper.Assert(m_AddMethod IsNot Nothing)
-        Helper.Assert(m_RemoveMethod IsNot Nothing)
-
-        DeclaringType.Members.Add(m_AddMethod) : result = m_AddMethod.ResolveTypeReferences AndAlso result
-        DeclaringType.Members.Add(m_RemoveMethod) : result = m_RemoveMethod.ResolveTypeReferences AndAlso result
-        If m_RaiseMethod IsNot Nothing Then DeclaringType.Members.Add(m_RaiseMethod) : result = m_RaiseMethod.ResolveTypeReferences AndAlso result
+        result = ResolveTypeReferences() AndAlso result
 
         Return result
     End Function
@@ -170,7 +181,7 @@ Public Class EventDeclaration
 
         If m_ImplementsClause IsNot Nothing Then result = m_ImplementsClause.ResolveCode(Info) AndAlso result
 
-        Helper.Assert(m_EventType IsNot Nothing)
+        Helper.Assert(EventType IsNot Nothing)
 
         Return result
     End Function
@@ -186,11 +197,7 @@ Public Class EventDeclaration
     Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
 
-        Dim parent As TypeDeclaration = Me.FindFirstParent(Of TypeDeclaration)()
-        m_EventType = Helper.GetTypeOrTypeBuilder(m_EventType)
-        m_Builder = parent.TypeBuilder.DefineEvent(Name, EventAttributes.None, m_EventType)
-        'Helper.NotImplementedYet("Cannot register event builder, it is not a memberinfo...")
-        'Compiler.TypeManager.RegisterReflectionMember(m_Builder, Me.MemberDescriptor)
+        UpdateDefinition()
 
         Return result
     End Function
@@ -209,16 +216,55 @@ Public Class EventDeclaration
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(m_AddMethod.MethodBuilder IsNot Nothing)
-        Helper.Assert(m_RemoveMethod.MethodBuilder IsNot Nothing)
+        Helper.Assert(m_AddMethod.CecilBuilder IsNot Nothing)
+        Helper.Assert(m_RemoveMethod.CecilBuilder IsNot Nothing)
 
-        m_Builder.SetAddOnMethod(m_AddMethod.MethodBuilder)
-        m_Builder.SetRemoveOnMethod(m_RemoveMethod.MethodBuilder)
-        If m_RaiseMethod IsNot Nothing Then m_Builder.SetRaiseMethod(m_RaiseMethod.MethodBuilder)
+        'm_Builder.SetAddOnMethod(m_AddMethod.MethodBuilder)
+        'm_Builder.SetRemoveOnMethod(m_RemoveMethod.MethodBuilder)
+        'If m_RaiseMethod IsNot Nothing Then m_Builder.SetRaiseMethod(m_RaiseMethod.MethodBuilder)
 
         result = DefineOverrides() AndAlso result
         result = MyBase.GenerateCode(Info) AndAlso result
 
+        m_CecilBuilder.AddMethod = m_AddMethod.CecilBuilder
+        m_CecilBuilder.RemoveMethod = m_RemoveMethod.CecilBuilder
+        If m_RaiseMethod IsNot Nothing Then m_CecilBuilder.InvokeMethod = m_RaiseMethod.CecilBuilder
+
         Return result
     End Function
+
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If m_CecilBuilder Is Nothing Then
+            m_CecilBuilder = New Mono.Cecil.EventDefinition(Name, 0, Nothing)
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
+            FindFirstParent(Of TypeDeclaration).CecilType.Events.Add(m_CecilBuilder)
+        End If
+        m_CecilBuilder.Name = Name
+
+        Dim members As MemberDeclarations = DeclaringType.Members
+        Dim methods As Mono.Collections.Generic.Collection(Of MethodDefinition) = DeclaringType.CecilType.Methods
+
+        If m_AddMethod IsNot Nothing Then
+            m_AddMethod.UpdateDefinition()
+            If members IsNot Nothing AndAlso members.Contains(m_AddMethod) = False Then members.Add(m_AddMethod)
+            If methods.Contains(m_AddMethod.CecilBuilder) = False Then methods.Add(m_AddMethod.CecilBuilder)
+            m_CecilBuilder.AddMethod = m_AddMethod.CecilBuilder
+        End If
+
+        If m_RemoveMethod IsNot Nothing Then
+            m_RemoveMethod.UpdateDefinition()
+            If members IsNot Nothing AndAlso members.Contains(m_RemoveMethod) = False Then members.Add(m_RemoveMethod)
+            If methods.Contains(m_RemoveMethod.CecilBuilder) = False Then methods.Add(m_RemoveMethod.CecilBuilder)
+            m_CecilBuilder.RemoveMethod = m_RemoveMethod.CecilBuilder
+        End If
+        If m_RaiseMethod IsNot Nothing Then
+            m_RaiseMethod.UpdateDefinition()
+            If members IsNot Nothing AndAlso members.Contains(m_RaiseMethod) = False Then members.Add(m_RaiseMethod)
+            If methods.Contains(m_RaiseMethod.CecilBuilder) = False Then methods.Add(m_RaiseMethod.CecilBuilder)
+            m_CecilBuilder.InvokeMethod = m_RaiseMethod.CecilBuilder
+        End If
+
+    End Sub
 End Class

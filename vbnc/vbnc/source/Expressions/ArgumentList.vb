@@ -34,14 +34,38 @@
 Public Class ArgumentList
     Inherits ParsedObject
 
-    Private m_Arguments As New Generic.List(Of Argument)
+    Private m_Arguments As New BaseObjects(Of Argument)(Me)
 
-    Sub ReplaceArguments(ByVal NewArguments As Generic.List(Of Argument))
-        m_Arguments.Clear()
-        If NewArguments IsNot Nothing Then m_Arguments.AddRange(NewArguments)
+    Sub New(ByVal Parent As ParsedObject)
+        MyBase.New(Parent)
     End Sub
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As Generic.List(Of Argument), ByVal Method As MethodBase) As Boolean
+    Sub New(ByVal Parent As ParsedObject, ByVal ParamArray Expressions() As Expression)
+        MyBase.New(Parent)
+        If Expressions IsNot Nothing Then
+            For Each item As Expression In Expressions
+                m_Arguments.Add(New PositionalArgument(Me, m_Arguments.Count, item))
+            Next
+        End If
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal Arguments As Generic.List(Of Argument))
+        MyBase.New(Parent)
+        If Arguments IsNot Nothing Then
+            m_Arguments.AddRange(Arguments)
+        End If
+    End Sub
+
+    Sub Init(ByVal Arguments As BaseObjects(Of Argument))
+        m_Arguments = Arguments
+    End Sub
+
+    Sub ReplaceArguments(ByVal NewArguments As ArgumentList)
+        m_Arguments.Clear()
+        If NewArguments IsNot Nothing Then m_Arguments.AddRange(NewArguments.Arguments)
+    End Sub
+
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
@@ -50,7 +74,7 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As Generic.List(Of Argument), ByVal Method As PropertyInfo) As Boolean
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.PropertyReference) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
@@ -59,16 +83,12 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Function VerifyArguments(ByVal Method As PropertyInfo) As Boolean
-        Dim parameters As ParameterInfo()
-        parameters = Helper.GetParameters(Compiler, Method)
-        Return VerifyArguments(parameters)
+    Function VerifyArguments(ByVal Method As Mono.Cecil.PropertyReference) As Boolean
+        Return VerifyArguments(Method.Parameters)
     End Function
 
-    Function VerifyArguments(ByVal Method As MethodBase) As Boolean
-        Dim parameters As ParameterInfo()
-        parameters = Helper.GetParameters(Compiler, Method)
-        Return VerifyArguments(parameters)
+    Function VerifyArguments(ByVal Method As Mono.Cecil.MethodReference) As Boolean
+        Return VerifyArguments(Method.Parameters)
     End Function
 
     ''' <summary>
@@ -77,7 +97,7 @@ Public Class ArgumentList
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function VerifyArguments(ByVal parameters() As ParameterInfo) As Boolean
+    Function VerifyArguments(ByVal parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         Dim result As Boolean = True
 
 #If EXTENDEDDEBUG Then
@@ -86,11 +106,11 @@ Public Class ArgumentList
         For i As Integer = 0 To m_Arguments.Count - 1
             Dim exp As Expression
             Dim arg As Argument = m_Arguments(i)
-            Dim par As ParameterInfo = parameters(i)
+            Dim par As Mono.Cecil.ParameterDefinition = parameters(i)
 
             If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.DelegateUnresolvedType) Then
                 Dim aoe As AddressOfExpression = TryCast(arg.Expression, AddressOfExpression)
-                Dim delegateType As Type = par.ParameterType
+                Dim delegateType As Mono.Cecil.TypeReference = par.ParameterType
 
                 Helper.Assert(aoe IsNot Nothing)
                 Helper.Assert(delegateType IsNot Nothing)
@@ -104,23 +124,23 @@ Public Class ArgumentList
                 m_Arguments(i).Expression = del
             End If
 
-            If par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef = False AndAlso par.ParameterType.GetElementType.IsValueType = False Then
+            If CecilHelper.IsByRef(par.ParameterType) AndAlso CecilHelper.IsByRef(arg.Expression.ExpressionType) = False AndAlso CecilHelper.IsValueType(CecilHelper.GetElementType(par.ParameterType)) = False Then
                 If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
                     exp = New GetRefExpression(Me, arg.Expression)
                 Else
                     exp = arg.Expression
                 End If
-            ElseIf par.ParameterType.IsByRef AndAlso arg.Expression.ExpressionType.IsByRef AndAlso Helper.CompareType(par.ParameterType.GetElementType, arg.Expression.ExpressionType.GetElementType) Then
+            ElseIf CecilHelper.IsByRef(par.ParameterType) AndAlso CecilHelper.IsByRef(arg.Expression.ExpressionType) AndAlso Helper.CompareType(CecilHelper.GetElementType(par.ParameterType), CecilHelper.GetElementType(arg.Expression.ExpressionType)) Then
                 exp = arg.Expression
-            ElseIf par.ParameterType.IsByRef AndAlso Helper.CompareType(arg.Expression.ExpressionType, par.ParameterType.GetElementType) = False AndAlso (arg.Expression.Classification.IsVariableClassification OrElse arg.Expression.Classification.IsPropertyAccessClassification) Then
-                Dim varTmp As VariableDeclaration
+            ElseIf CecilHelper.IsByRef(par.ParameterType) AndAlso Helper.CompareType(arg.Expression.ExpressionType, CecilHelper.GetElementType(par.ParameterType)) = False AndAlso (arg.Expression.Classification.IsVariableClassification OrElse arg.Expression.Classification.IsPropertyAccessClassification) Then
+                Dim varTmp As LocalVariableDeclaration
                 Dim assignA, assignB As AssignmentStatement
                 Dim block As CodeBlock = Me.FindFirstParent(Of CodeBlock)()
                 Dim thisStatement As Statement = Me.FindFirstParent(Of Statement)()
 
-                varTmp = New VariableDeclaration(Me.Parent)
-                varTmp.Init(Nothing, Nothing, "VB$tmp", par.ParameterType.GetElementType)
-                result = varTmp.ResolveMember(ResolveInfo.Default(Compiler)) AndAlso result
+                varTmp = New LocalVariableDeclaration(Me.Parent)
+                varTmp.Init(Nothing, "VB$tmp", CecilHelper.GetElementType(par.ParameterType))
+                'result = varTmp.ResolveMember(ResolveInfo.Default(Compiler)) AndAlso result
 
                 assignA = New AssignmentStatement(Me.Parent)
                 assignA.Init(New VariableExpression(assignA, varTmp), arg.Expression)
@@ -149,22 +169,22 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Function FillWithOptionalParameters(ByVal Method As MethodBase) As Boolean
+    Function FillWithOptionalParameters(ByVal Method As Mono.Cecil.MethodReference) As Boolean
         Dim result As Boolean = True
-        Dim parameters() As ParameterInfo
+        Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
 
         If Method Is Nothing Then Return False
 
         parameters = Helper.GetParameters(Compiler, Method)
 
-        For i As Integer = 0 To parameters.Length - 1
+        For i As Integer = 0 To parameters.Count - 1
             If i >= Me.Count OrElse m_Arguments(i).Expression Is Nothing Then
                 Helper.Assert(parameters(i).IsOptional)
 
                 Dim newExp As ConstantExpression
                 Dim newArg As PositionalArgument
 
-                newExp = New ConstantExpression(Me, parameters(i).DefaultValue, parameters(i).ParameterType)
+                newExp = New ConstantExpression(Me, parameters(i).Constant, parameters(i).ParameterType)
                 newArg = New PositionalArgument(Me, i, newExp)
 
                 If i >= Me.Count Then
@@ -204,25 +224,8 @@ Public Class ArgumentList
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
-    End Sub
-
-    Sub New(ByVal Parent As ParsedObject, ByVal ParamArray Expressions() As Expression)
-        MyBase.New(Parent)
-        If Expressions IsNot Nothing Then
-            For Each item As Expression In Expressions
-                m_Arguments.Add(New PositionalArgument(Me, m_Arguments.Count, item))
-            Next
-        End If
-    End Sub
-
-    Sub Init(ByVal Arguments As Generic.List(Of Argument))
-        m_Arguments = Arguments
-    End Sub
-
-    Function ToTypes() As Type()
-        Dim result(m_Arguments.Count - 1) As Type
+    Function ToTypes() As Mono.Cecil.TypeReference()
+        Dim result(m_Arguments.Count - 1) As Mono.Cecil.TypeReference
         For i As Integer = 0 To m_Arguments.Count - 1
             If m_Arguments(i).Expression Is Nothing Then
                 result(i) = New MissingType(Compiler)
@@ -238,8 +241,8 @@ Public Class ArgumentList
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetTypes() As Generic.List(Of Type)
-        Dim result As New Generic.List(Of Type)
+    Function GetTypes() As Generic.List(Of Mono.Cecil.TypeReference)
+        Dim result As New Generic.List(Of Mono.Cecil.TypeReference)
 
         Helper.Assert(Me.HasNamedArguments = False)
 
@@ -286,7 +289,7 @@ Public Class ArgumentList
         Return Helper.GenerateCodeCollection(m_Arguments, Info)
     End Function
 
-    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal Types() As Type) As Boolean
+    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal Types() As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
         Helper.Assert(Types.Length = Me.Count)
 
@@ -296,18 +299,18 @@ Public Class ArgumentList
         Return result
     End Function
 
-    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal params() As ParameterInfo) As Boolean
+    Friend Overloads Function GenerateCode(ByVal Info As EmitInfo, ByVal params As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(params.Length >= Me.Count)
+        Helper.Assert(params.Count >= Me.Count)
 
         For i As Integer = 0 To Count - 1
             result = Item(i).GenerateCode(Info.Clone(Me, True, False, params(i).ParameterType), params(i)) AndAlso result
         Next
 
-        For i As Integer = Count To params.Length - 1
+        For i As Integer = Count To params.Count - 1
             Helper.Assert(params(i).IsOptional)
-            Emitter.EmitLoadValue(Info.Clone(Me, params(i).ParameterType), params(i).DefaultValue)
+            Emitter.EmitLoadValue(Info.Clone(Me, params(i).ParameterType), params(i).Constant)
         Next
 
         Return result
@@ -316,9 +319,7 @@ Public Class ArgumentList
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = Helper.ResolveCodeCollection(m_Arguments, Info) AndAlso result
-
-        'Helper.Assert(result = (Compiler.Report.Errors = 0))
+        result = m_Arguments.ResolveCode(Info) AndAlso result
 
         Return result
     End Function

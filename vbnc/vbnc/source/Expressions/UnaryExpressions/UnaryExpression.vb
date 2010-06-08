@@ -26,7 +26,7 @@ Public MustInherit Class UnaryExpression
     Inherits OperatorExpression
 
     Private m_Expression As Expression
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression.ResolveTypeReferences
@@ -91,7 +91,7 @@ Public MustInherit Class UnaryExpression
         Else
             'If X is an intrinsic types, look up the result type in our operator tables and use that.
             'If X is not an intrinsic type, do overload resolution on the set of operators to be considered.
-            Dim destinationType As Type
+            Dim destinationType As Mono.Cecil.TypeReference
             Dim isRightIntrinsic As Boolean = Helper.GetTypeCode(Compiler, m_Expression.ExpressionType) <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.m_Expression.ExpressionType)
 
             If isRightIntrinsic Then
@@ -105,7 +105,7 @@ Public MustInherit Class UnaryExpression
                 End If
                 Classification = New ValueClassification(Me)
             Else
-                Dim methods As New Generic.List(Of MethodInfo)
+                Dim methods As New Generic.List(Of Mono.Cecil.MethodReference)
                 Dim methodClassification As MethodGroupClassification
 
                 methods = Helper.GetUnaryOperators(Compiler, CType(Me.Keyword, UnaryOperators), Me.m_Expression.ExpressionType)
@@ -127,7 +127,7 @@ Public MustInherit Class UnaryExpression
         End Get
     End Property
 
-    ReadOnly Property OperandType() As Type
+    ReadOnly Property OperandType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeResolution.TypeCodeToType(OperandTypeCode)
         End Get
@@ -139,7 +139,7 @@ Public MustInherit Class UnaryExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

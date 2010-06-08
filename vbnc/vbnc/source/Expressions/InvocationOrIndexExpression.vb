@@ -46,7 +46,7 @@ Public Class InvocationOrIndexExpression
     Private m_ArgumentList As ArgumentList
 
     Private m_ConstantValue As Object
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     ' AscW is replaced with the first parameter casted to Integer when:
     ' /novbruntimeref is used
@@ -59,7 +59,7 @@ Public Class InvocationOrIndexExpression
     ''' If this method is not nothing then the arguments are emitted and then the method is called.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_InvocationMethod As MethodInfo
+    Private m_InvocationMethod As Mono.Cecil.MethodReference
 
     Private m_IsLateBoundArray As Boolean
 
@@ -102,7 +102,7 @@ Public Class InvocationOrIndexExpression
                 Dim mgc As MethodGroupClassification = m_Expression.Classification.AsMethodGroupClassification
                 If mgc.IsLateBound Then Return False
 
-                Dim mi As MethodInfo = mgc.ResolvedMethodInfo
+                Dim mi As Mono.Cecil.MethodReference = mgc.ResolvedMethodInfo
 
                 If mi Is Nothing Then Return False
                 If Not (m_ArgumentList(0).Expression IsNot Nothing AndAlso m_ArgumentList(0).Expression.IsConstant) Then Return False
@@ -133,7 +133,7 @@ Public Class InvocationOrIndexExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Helper.Assert(m_ExpressionType IsNot Nothing)
             Return m_ExpressionType
@@ -145,8 +145,7 @@ Public Class InvocationOrIndexExpression
 
         If m_AscWExpression IsNot Nothing Then
             result = m_AscWExpression.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Char)) AndAlso result
-            Info.Stack.SwitchHead(Compiler.TypeCache.System_Char, Compiler.TypeCache.System_Int32)
-
+         
             Return result
         End If
 
@@ -283,13 +282,13 @@ Public Class InvocationOrIndexExpression
                 result = ResolveMethodInvocation() AndAlso result
 
             Case ExpressionClassification.Classifications.Value
-                If m_Expression.ExpressionType.IsArray Then
+                If CecilHelper.IsArray(m_Expression.ExpressionType) Then
                     result = ResolveArrayInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 Else
                     result = ResolveIndexInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 End If
             Case ExpressionClassification.Classifications.PropertyAccess
-                If m_Expression.ExpressionType.IsArray Then
+                If CecilHelper.IsArray(m_Expression.ExpressionType) Then
                     result = ResolveArrayInvocation(Me, m_Expression.ExpressionType) AndAlso result
                 Else
                     result = ResolveIndexInvocation(Me, m_Expression.ExpressionType) AndAlso result
@@ -309,8 +308,8 @@ Public Class InvocationOrIndexExpression
                 '	Otherwise, the run-time type of the expression must have a default property and the index is performed on the property group that represents all of the default properties on the type. If the type has no default property, then a System.MissingMemberException exception is thrown.
 
                 Dim varexp As VariableClassification = m_Expression.Classification.AsVariableClassification
-                Dim expType As Type = varexp.Type
-                If expType.IsByRef Then
+                Dim expType As Mono.Cecil.TypeReference = varexp.Type
+                If CecilHelper.IsByRef(expType) Then
                     m_Expression = m_Expression.DereferenceByRef
                     expType = m_Expression.ExpressionType
                 End If
@@ -331,13 +330,13 @@ Public Class InvocationOrIndexExpression
         Return result
     End Function
 
-    Private Function ResolveIndexInvocation(ByVal Context As ParsedObject, ByVal VariableType As Type) As Boolean
+    Private Function ResolveIndexInvocation(ByVal Context As ParsedObject, ByVal VariableType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
         Dim Compiler As Compiler = Context.Compiler
 
-        Dim defaultProperties As Generic.List(Of PropertyInfo) = Nothing
+        Dim defaultProperties As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference) = Nothing
 
-        If VariableType.IsArray Then
+        If CecilHelper.IsArray(VariableType) Then
             result = ResolveArrayInvocation(Context, VariableType) AndAlso result
         ElseIf Helper.CompareType(VariableType, Compiler.TypeCache.System_Array) Then
             result = ResolveLateboundArrayInvocation(Context) AndAlso result
@@ -346,10 +345,9 @@ Public Class InvocationOrIndexExpression
             result = ResolveDelegateInvocation(Context, VariableType)
         ElseIf Helper.HasDefaultProperty(Me, VariableType, defaultProperties) Then
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
-            Dim finalArguments As Generic.List(Of Argument) = Nothing
-            result = propGroup.ResolveGroup(m_ArgumentList, finalArguments)
+            result = propGroup.ResolveGroup(m_ArgumentList)
             If result Then
-                m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, propGroup.ResolvedProperty)
+                m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty)
             End If
             Classification = New PropertyAccessClassification(propGroup)
             'Classification = propGroup
@@ -374,17 +372,17 @@ Public Class InvocationOrIndexExpression
         Return result
     End Function
 
-    Private Function ResolveArrayInvocation(ByVal Context As ParsedObject, ByVal ArrayType As Type) As Boolean
+    Private Function ResolveArrayInvocation(ByVal Context As ParsedObject, ByVal ArrayType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(ArrayType.IsArray)
+        Helper.Assert(CecilHelper.IsArray(ArrayType))
 
         If m_ArgumentList.HasNamedArguments Then
             Compiler.Report.ShowMessage(Messages.VBNC30075, tm.CurrentLocation)
             Return False
         End If
 
-        If ArrayType.GetArrayRank <> m_ArgumentList.Count Then
+        If CecilHelper.GetArrayRank(ArrayType) <> m_ArgumentList.Count Then
             Helper.AddError(Me, "Array dimensions are not correct.")
             Return False
         End If
@@ -393,7 +391,7 @@ Public Class InvocationOrIndexExpression
 
         For i As Integer = 0 To m_ArgumentList.Count - 1
             Dim arg As Argument = m_ArgumentList(i)
-            Dim argtype As Type = arg.Expression.ExpressionType
+            Dim argtype As Mono.Cecil.TypeReference = arg.Expression.ExpressionType
 
             If Compiler.TypeResolution.IsImplicitlyConvertible(Context, argtype, Compiler.TypeCache.System_Int32) = False Then
                 If isStrictOn Then
@@ -407,19 +405,20 @@ Public Class InvocationOrIndexExpression
             End If
         Next
 
-        m_ExpressionType = ArrayType.GetElementType
+        Dim aT As Mono.Cecil.ArrayType = DirectCast(ArrayType, Mono.Cecil.ArrayType)
+        m_ExpressionType = aT.ElementType
 
         Classification = New VariableClassification(Me, Me.m_Expression, m_ArgumentList)
 
         Return result
     End Function
 
-    Private Function ResolveDelegateInvocation(ByVal Context As ParsedObject, ByVal DelegateType As Type) As Boolean
+    Private Function ResolveDelegateInvocation(ByVal Context As ParsedObject, ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
-        Dim invokeMethod As MethodInfo
-        Dim params() As ParameterInfo
-        Dim argTypes As Generic.List(Of Type)
-        Dim paramTypes() As Type
+        Dim invokeMethod As Mono.Cecil.MethodReference
+        Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition)
+        Dim argTypes As Generic.List(Of Mono.Cecil.TypeReference)
+        Dim paramTypes() As Mono.Cecil.TypeReference
         Dim Compiler As Compiler = Context.Compiler
 
         invokeMethod = Helper.GetInvokeMethod(Compiler, DelegateType)
@@ -449,10 +448,10 @@ Public Class InvocationOrIndexExpression
 
     Private Function ResolvePropertyGroupInvocation() As Boolean
         Dim result As Boolean = True
-
-        Dim finalArguments As Generic.List(Of Argument) = Nothing
+        Dim propGroup As PropertyGroupClassification = m_Expression.Classification.AsPropertyGroup
         Dim tmpResult As Boolean
-        tmpResult = m_Expression.Classification.AsPropertyGroup.ResolveGroup(m_ArgumentList, finalArguments)
+
+        tmpResult = propGroup.ResolveGroup(m_ArgumentList)
 
         If tmpResult = False Then
             tmpResult = ResolveReclassifyToValueThenIndex()
@@ -461,10 +460,10 @@ Public Class InvocationOrIndexExpression
 
             Return tmpResult
         Else
-            result = m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, m_Expression.Classification.AsPropertyGroup.ResolvedProperty) AndAlso result
+            result = m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty) AndAlso result
         End If
 
-        Classification = New PropertyAccessClassification(m_Expression.Classification.AsPropertyGroup)
+        Classification = New PropertyAccessClassification(propGroup)
 
         Return result
     End Function
@@ -501,26 +500,25 @@ Public Class InvocationOrIndexExpression
 
         Dim reclassifyToIndex As Boolean
         If mgc.Group.Count = 1 AndAlso m_ArgumentList.Count > 0 Then
-            Dim method As MethodInfo = TryCast(mgc.Group(0), MethodInfo)
+            Dim method As Mono.Cecil.MethodReference = TryCast(mgc.Group(0), Mono.Cecil.MethodReference)
 
             reclassifyToIndex = method IsNot Nothing
             reclassifyToIndex = reclassifyToIndex AndAlso method.ReturnType IsNot Nothing
             reclassifyToIndex = reclassifyToIndex AndAlso Helper.CompareType(method.ReturnType, Compiler.TypeCache.System_Void) = False
-            reclassifyToIndex = reclassifyToIndex AndAlso Helper.GetParameters(Compiler, method).Length = 0
+            reclassifyToIndex = reclassifyToIndex AndAlso Helper.GetParameters(Compiler, method).Count = 0
 
         End If
 
         If reclassifyToIndex Then
             Return ResolveReclassifyToValueThenIndex()
         Else
-            Dim finalArguments As Generic.List(Of Argument) = Nothing
-            result = mgc.ResolveGroup(m_ArgumentList, finalArguments)
+            result = mgc.ResolveGroup(m_ArgumentList)
             If result Then
                 If mgc.IsLateBound = False Then
-                    m_ArgumentList.ReplaceAndVerifyArguments(finalArguments, mgc.ResolvedMethod)
+                    m_ArgumentList.ReplaceAndVerifyArguments(mgc.FinalArguments, mgc.ResolvedMethod)
                 End If
             Else
-                mgc.ResolveGroup(m_ArgumentList, finalArguments, , True)
+                mgc.ResolveGroup(m_ArgumentList, , True)
                 Return False
             End If
         End If
@@ -533,12 +531,12 @@ Public Class InvocationOrIndexExpression
             lba.Arguments = m_ArgumentList
             Classification = lba
         ElseIf mgc.ResolvedMethodInfo IsNot Nothing Then
-            Dim methodInfo As MethodInfo = mgc.ResolvedMethodInfo
+            Dim methodInfo As Mono.Cecil.MethodReference = mgc.ResolvedMethodInfo
 
-            If Compiler.CommandLine.NoVBRuntimeRef AndAlso methodInfo.DeclaringType.Module Is Compiler.ModuleBuilder AndAlso methodInfo.IsStatic AndAlso Helper.CompareNameOrdinal(methodInfo.Name, "AscW") Then
-                Dim methodParameters() As ParameterInfo = Helper.GetParameters(Compiler, methodInfo)
+            If String.IsNullOrEmpty(Compiler.CommandLine.VBRuntime) AndAlso Compiler.Assembly.IsDefinedHere(methodInfo) AndAlso CecilHelper.FindDefinition(methodInfo).IsStatic AndAlso Helper.CompareName(methodInfo.Name, "AscW") Then
+                Dim methodParameters As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetParameters(Compiler, methodInfo)
 
-                If methodParameters.Length <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.System_Char) Then
+                If methodParameters.Count <> 0 AndAlso Helper.CompareType(methodParameters(0).ParameterType, Compiler.TypeCache.System_Char) Then
                     m_AscWExpression = ArgumentList(0).Expression
                     m_ExpressionType = Compiler.TypeCache.System_Int32
                     Classification = New ValueClassification(Me, m_ExpressionType)
@@ -547,7 +545,7 @@ Public Class InvocationOrIndexExpression
                 End If
             End If
 
-            If mgc.InstanceExpression Is Nothing AndAlso methodInfo.IsStatic = False Then
+            If mgc.InstanceExpression Is Nothing AndAlso CecilHelper.IsStatic(methodInfo) = False Then
                 Dim mae As MemberAccessExpression = TryCast(m_Expression, MemberAccessExpression)
                 If mae IsNot Nothing AndAlso mae.FirstExpression.Classification.IsTypeClassification AndAlso mae.FirstExpression.Classification.AsTypeClassification.CanBeExpression Then
                     Dim exp As Expression = Nothing
@@ -556,7 +554,7 @@ Public Class InvocationOrIndexExpression
                 End If
             End If
 
-            If methodInfo.ReturnType Is Nothing Then
+            If methodInfo.ReturnType Is Nothing OrElse Helper.CompareType(methodInfo.ReturnType, Compiler.TypeCache.System_Void) Then
                 Classification = New VoidClassification(Me)
             Else
                 Classification = New ValueClassification(Me, methodInfo.ReturnType)

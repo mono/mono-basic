@@ -83,8 +83,8 @@ Public Class IfStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim startFalse As Label = Info.ILGen.DefineLabel
-        EndLabel = Info.ILGen.DefineLabel
+        Dim startFalse As Label = Emitter.DefineLabel(Info)
+        EndLabel = Emitter.DefineLabel(Info)
 
         'result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
         'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
@@ -96,7 +96,7 @@ Public Class IfStatement
         Emitter.EmitBranch(Info, EndLabel)
 
         'False code
-        Info.ILGen.MarkLabel(startFalse)
+        Emitter.MarkLabel(Info, startFalse)
         If m_ElseIfs IsNot Nothing Then
             For Each eif As ElseIfStatement In m_ElseIfs
                 result = eif.GenerateCode(Info) AndAlso result
@@ -106,7 +106,7 @@ Public Class IfStatement
         If m_FalseCode IsNot Nothing Then
             result = m_FalseCode.GenerateCode(Info) AndAlso result
         End If
-        Info.ILGen.MarkLabel(EndLabel)
+        Emitter.MarkLabel(Info, EndLabel)
 
 
         Return result

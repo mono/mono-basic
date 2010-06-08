@@ -44,7 +44,7 @@ Public Class ConditionalConstant
         m_Compiler = Compiler
     End Sub
 
-    ReadOnly Property ConstantType() As Type
+    ReadOnly Property ConstantType() As Mono.Cecil.TypeReference
         Get
             If Value Is Nothing Then
                 Return Compiler.TypeCache.System_Object

@@ -44,8 +44,8 @@ Public Class RedimClause
 
     Private m_Rank As Integer
     Private m_IsObjectArray As Boolean
-    Private m_ArrayType As Type
-    Private m_ElementType As Type
+    Private m_ArrayType As Mono.Cecil.TypeReference
+    Private m_ElementType As Mono.Cecil.TypeReference
 
     Private m_AssignStatement As AssignmentStatement
 
@@ -70,7 +70,7 @@ Public Class RedimClause
 
     Private Function GenerateCodeForNewArray(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim rankTypes() As Type = Helper.CreateArray(Of Type)(Compiler.TypeCache.System_Int32, m_Rank)
+        Dim rankTypes() As Mono.Cecil.TypeReference = Helper.CreateArray(Of Mono.Cecil.TypeReference)(Compiler.TypeCache.System_Int32, m_Rank)
 
         Helper.Assert(m_Rank >= 1)
 
@@ -85,11 +85,11 @@ Public Class RedimClause
             'Helper.Assert(ctor IsNot Nothing)
             'Emitter.EmitNew(Info, ctor)
 
-            Dim ElementType As Type
-            Dim ArrayType As Type
+            Dim ElementType As Mono.Cecil.TypeReference
+            Dim ArrayType As Mono.Cecil.TypeReference
 
-            ElementType = Helper.GetTypeOrTypeBuilder(m_ArrayType.GetElementType)
-            ArrayType = Helper.GetTypeOrTypeBuilder(m_ArrayType)
+            ElementType = Helper.GetTypeOrTypeBuilder(Compiler, CecilHelper.GetElementType(m_ArrayType))
+            ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, m_ArrayType)
 
             Emitter.EmitLoadToken(Info, ElementType)
             Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
@@ -139,7 +139,7 @@ Public Class RedimClause
         result = m_Expression.ResolveExpression(Info) AndAlso result
         result = m_ArgumentList.ResolveCode(Info) AndAlso result
 
-        If m_Expression.ExpressionType.IsByRef Then
+        If CecilHelper.IsByRef(m_Expression.ExpressionType) Then
             m_Expression = m_Expression.DereferenceByRef
         End If
 
@@ -150,15 +150,15 @@ Public Class RedimClause
             m_Rank = m_ArgumentList.Count
             m_ElementType = Compiler.TypeCache.System_Object
             If m_Rank = 1 Then
-                m_ArrayType = m_ElementType.MakeArrayType()
+                m_ArrayType = CecilHelper.MakeArrayType(m_ElementType)
             Else
-                m_ArrayType = m_ElementType.MakeArrayType(m_Rank)
+                m_ArrayType = CecilHelper.MakeArrayType(m_ElementType, m_Rank)
             End If
-        ElseIf m_ArrayType.IsArray = False Then
+        ElseIf CecilHelper.IsArray(m_ArrayType) = False Then
             Return Helper.AddError(Me)
         Else
-            m_Rank = m_ArrayType.GetArrayRank
-            m_ElementType = m_ArrayType.GetElementType()
+            m_Rank = CecilHelper.GetArrayRank(m_ArrayType)
+            m_ElementType = CecilHelper.GetElementType(m_ArrayType)
             If m_ArgumentList.Count <> m_Rank Then
                 Return Helper.AddError(Me)
             End If

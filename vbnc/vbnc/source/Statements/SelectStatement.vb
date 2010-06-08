@@ -73,14 +73,14 @@ Public Class SelectStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        EndLabel = Info.ILGen.DefineLabel
+        EndLabel = Emitter.DefineLabel(Info)
 
         For i As Integer = 0 To m_Cases.Count - 1
             Dim stmt As CaseStatement = m_Cases(i)
             result = stmt.GenerateCode(Info) AndAlso result
         Next
 
-        Info.ILGen.MarkLabel(EndLabel)
+        Emitter.MarkLabel(Info, EndLabel)
 
         Return result
     End Function
@@ -89,7 +89,10 @@ Public Class SelectStatement
         Dim result As Boolean = True
 
         result = m_Test.ResolveExpression(Info) AndAlso result
+        If result = False Then Return False
+
         result = Helper.VerifyValueClassification(m_Test, Info) AndAlso result
+        If result = False Then Return False
 
         m_CachedTest = New CachedExpression(m_Test, m_Test)
 

@@ -30,21 +30,15 @@ Public Class InterfaceDeclaration
 
     Private m_InterfaceBases As InterfaceBases
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal InterfaceBases As InterfaceBases)
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters)
-        m_InterfaceBases = InterfaceBases
-    End Sub
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or _
-            Reflection.TypeAttributes.Interface Or Reflection.TypeAttributes.Abstract
-        End Get
-    End Property
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Interface Or Mono.Cecil.TypeAttributes.Abstract
+    End Sub
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get
@@ -52,19 +46,26 @@ Public Class InterfaceDeclaration
         End Get
     End Property
 
-    ReadOnly Property InterfaceBases() As InterfaceBases
+    Property InterfaceBases() As InterfaceBases
         Get
             Return m_InterfaceBases
         End Get
+        Set(ByVal value As InterfaceBases)
+            m_InterfaceBases = value
+        End Set
     End Property
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         If m_InterfaceBases IsNot Nothing Then
             result = m_InterfaceBases.ResolveTypeReferences AndAlso result
-            MyBase.ImplementedTypes = m_InterfaceBases.AsTypes
+            For i As Integer = 0 To m_InterfaceBases.Bases.Length - 1
+                AddInterface(m_InterfaceBases.Bases(i).ResolvedType)
+            Next
         End If
+
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function

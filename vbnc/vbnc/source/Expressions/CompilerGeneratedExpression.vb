@@ -23,13 +23,13 @@ Public Class CompilerGeneratedExpression
     Delegate Function GenerateCodeDelegate(ByVal Info As EmitInfo) As Boolean
 
     Protected m_Delegate As GenerateCodeDelegate
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Return m_Delegate(Info)
     End Function
 
-    Sub New(ByVal Parent As ParsedObject, ByVal CodeGenerator As GenerateCodeDelegate, ByVal ExpressionType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal CodeGenerator As GenerateCodeDelegate, ByVal ExpressionType As Mono.Cecil.TypeReference)
         MyBase.new(Parent)
         m_Delegate = CodeGenerator
         m_ExpressionType = ExpressionType
@@ -40,7 +40,7 @@ Public Class CompilerGeneratedExpression
         Return True
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get
@@ -50,10 +50,10 @@ End Class
 Public Class LoadLocalExpression
     Inherits CompilerGeneratedExpression
 
-    Private m_Local As LocalBuilder
+    Private m_Local As Mono.Cecil.Cil.VariableDefinition
     
-    Sub New(ByVal Parent As ParsedObject, ByVal Local As LocalBuilder)
-        MyBase.New(Parent, Nothing, Local.LocalType)
+    Sub New(ByVal Parent As ParsedObject, ByVal Local As Mono.Cecil.Cil.VariableDefinition)
+        MyBase.New(Parent, Nothing, Local.VariableType)
         MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
         m_Local = Local
     End Sub
@@ -64,14 +64,14 @@ Public Class LoadLocalExpression
         Helper.Assert(m_Local IsNot Nothing)
 
         If Info.IsRHS Then
-            If Info.DesiredType.IsByRef Then
+            If CecilHelper.IsByRef(Info.DesiredType) Then
                 Emitter.EmitLoadVariableLocation(Info, m_Local)
             Else
                 Emitter.EmitLoadVariable(Info, m_Local)
             End If
         Else
             If Info.RHSExpression IsNot Nothing Then
-                result = Info.RHSExpression.GenerateCode(Info.Clone(Me, True, , m_Local.LocalType)) AndAlso result
+                result = Info.RHSExpression.GenerateCode(Info.Clone(Me, True, , m_Local.VariableType)) AndAlso result
             End If
             Emitter.EmitStoreVariable(Info, m_Local)
         End If
@@ -83,11 +83,11 @@ End Class
 Public Class LoadElementExpression
     Inherits CompilerGeneratedExpression
 
-    Private m_Local As LocalBuilder
+    Private m_Local As Mono.Cecil.Cil.VariableDefinition
     Private m_Index As Integer
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Local As LocalBuilder, ByVal Index As Integer)
-        MyBase.New(Parent, Nothing, Local.LocalType)
+    Sub New(ByVal Parent As ParsedObject, ByVal Local As Mono.Cecil.Cil.VariableDefinition, ByVal Index As Integer)
+        MyBase.New(Parent, Nothing, Local.VariableType)
         MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
         m_Local = Local
         m_Index = Index
@@ -100,7 +100,7 @@ Public Class LoadElementExpression
 
         Emitter.EmitLoadVariable(Info, m_Local)
         Emitter.EmitLoadI4Value(Info, m_Index)
-        Emitter.EmitLoadElement(Info, m_Local.LocalType)
+        Emitter.EmitLoadElement(Info, m_Local.VariableType)
 
         Return result
     End Function
@@ -109,7 +109,7 @@ End Class
 Public Class ValueOnStackExpression
     Inherits CompilerGeneratedExpression
 
-    Sub New(ByVal Parent As ParsedObject, ByVal ExpressionType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal ExpressionType As Mono.Cecil.TypeReference)
         MyBase.New(Parent, Nothing, ExpressionType)
         MyBase.m_Delegate = New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeInternal)
     End Sub

@@ -20,7 +20,7 @@ Public Class CTypeExpression
     Inherits ConversionExpression
 
     Private m_DestinationType As TypeName
-    Private m_ResolvedDestinationType As Type
+    Private m_ResolvedDestinationType As Mono.Cecil.TypeReference
     Private m_IsStringToCharArray As Boolean
 
     Public Overrides Function ResolveTypeReferences() As Boolean
@@ -29,7 +29,7 @@ Public Class CTypeExpression
         If m_DestinationType IsNot Nothing Then
             result = m_DestinationType.ResolveTypeReferences AndAlso result
             m_ResolvedDestinationType = m_DestinationType.ResolvedType
-            Helper.Assert(m_ResolvedDestinationType.IsByRef = False)
+            Helper.Assert(CecilHelper.IsByRef(m_ResolvedDestinationType) = False)
         End If
 
         result = MyBase.ResolveTypeReferences() AndAlso result
@@ -41,10 +41,10 @@ Public Class CTypeExpression
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference)
         MyBase.New(Parent, Expression)
         m_ResolvedDestinationType = DestinationType
-        Helper.Assert(m_ResolvedDestinationType.IsByRef = False, "Can't create TypeConversion to byref type (trying to convert from " & Expression.ExpressionType.FullName & " to " & DestinationType.FullName)
+        Helper.Assert(CecilHelper.IsByRef(m_ResolvedDestinationType) = False, "Can't create TypeConversion to byref type (trying to convert from " & Expression.ExpressionType.FullName & " to " & DestinationType.FullName)
     End Sub
 
     Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As TypeName)
@@ -52,7 +52,7 @@ Public Class CTypeExpression
         m_DestinationType = DestinationType
     End Sub
 
-    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Type)
+    Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference)
         MyBase.Init(Expression)
         m_ResolvedDestinationType = DestinationType
     End Sub
@@ -61,7 +61,7 @@ Public Class CTypeExpression
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = Me.ExpressionType
+        Dim expType As Mono.Cecil.TypeReference = Me.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
 
         Select Case expTypeCode
@@ -108,10 +108,10 @@ Public Class CTypeExpression
         Return result
     End Function
 
-    Public Shared Function GenerateUserDefinedConversionCode(ByVal Info As EmitInfo, ByVal Expression As Expression, ByVal DestinationType As Type) As Boolean
+    Public Shared Function GenerateUserDefinedConversionCode(ByVal Info As EmitInfo, ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
-        Dim exptype As Type = Expression.ExpressionType
-        Dim ops As Generic.List(Of MethodInfo)
+        Dim exptype As Mono.Cecil.TypeReference = Expression.ExpressionType
+        Dim ops As Generic.List(Of Mono.Cecil.MethodReference)
         ops = Helper.GetWideningConversionOperators(Info.Compiler, exptype, DestinationType)
         If ops.Count = 0 Then
             ops = Helper.GetNarrowingConversionOperators(Info.Compiler, exptype, DestinationType)
@@ -139,7 +139,7 @@ Public Class CTypeExpression
         Return result
     End Function
 
-    Private Function GenerateCTypeCode(ByVal Info As EmitInfo, ByVal DestinationType As Type, ByVal SourceType As Type) As Boolean
+    Private Function GenerateCTypeCode(ByVal Info As EmitInfo, ByVal DestinationType As Mono.Cecil.TypeReference, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
         If m_IsStringToCharArray Then
@@ -150,13 +150,13 @@ Public Class CTypeExpression
 
         If Helper.CompareType(Compiler.TypeCache.Nothing, SourceType) Then
             'There is nothing to do here
-        ElseIf SourceType.IsGenericParameter Then
-            If DestinationType.IsGenericParameter Then
+        ElseIf CecilHelper.IsGenericParameter(SourceType) Then
+            If CecilHelper.IsGenericParameter(DestinationType) Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-            ElseIf DestinationType.IsArray Then
+            ElseIf CecilHelper.IsArray(DestinationType) Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-            ElseIf DestinationType.IsClass Then
-                DestinationType = Helper.GetTypeOrTypeBuilder(DestinationType)
+            ElseIf CecilHelper.IsClass(DestinationType) Then
+                DestinationType = Helper.GetTypeOrTypeBuilder(Compiler, DestinationType)
                 If Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceType), DestinationType) Then
                     'Emitter.EmitUnbox_Any(Info, DestinationType)
                     Emitter.EmitBox(Info, SourceType)
@@ -164,21 +164,21 @@ Public Class CTypeExpression
                 Else
                     Helper.AddError(Me)
                 End If
-            ElseIf DestinationType.IsValueType Then
+            ElseIf CecilHelper.IsValueType(DestinationType) Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-            ElseIf DestinationType.IsInterface Then
+            ElseIf Helper.IsInterface(Compiler, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             Else
                 Throw New InternalException(Me)
             End If
-        ElseIf SourceType.IsArray Then
-            If DestinationType.IsInterface Then
+        ElseIf CecilHelper.IsArray(SourceType) Then
+            If CecilHelper.IsInterface(DestinationType) Then
                 If Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.CompareType(SourceType, Compiler.TypeCache.System_Object_Array) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf DestinationType.IsArray AndAlso Helper.DoesTypeImplementInterface(Me, SourceType.GetElementType, DestinationType.GetElementType) Then
+                ElseIf CecilHelper.IsArray(DestinationType) AndAlso Helper.DoesTypeImplementInterface(Me, CecilHelper.GetElementType(SourceType), CecilHelper.GetElementType(DestinationType)) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
@@ -186,15 +186,15 @@ Public Class CTypeExpression
                 End If
             ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_Array) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
-            ElseIf DestinationType.IsArray = False Then
+            ElseIf CecilHelper.IsArray(DestinationType) = False Then
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
                 result = False
-            ElseIf SourceType.GetArrayRank <> DestinationType.GetArrayRank Then
+            ElseIf CecilHelper.GetArrayRank(SourceType) <> CecilHelper.GetArrayRank(DestinationType) Then
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
                 result = False
             Else
-                Dim SourceElementType As Type = SourceType.GetElementType
-                Dim DestinationElementType As Type = DestinationType.GetElementType
+                Dim SourceElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(SourceType)
+                Dim DestinationElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(DestinationType)
                 'For any two reference types A and B, if A is a derived type of B or implements B, 
                 'a conversion exists from an array of type A to a compatible array of type B.
                 'A compatible array is an array of the same rank and type. 
@@ -204,45 +204,48 @@ Public Class CTypeExpression
                 'provided that both A and B are reference types and that B is a base type of A or is implemented by A. 
                 If Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse DestinationElementType.IsSubclassOf(SourceElementType) OrElse SourceElementType.IsSubclassOf(DestinationElementType) Then
+                ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse Helper.IsSubclassOf(DestinationElementType, SourceElementType) OrElse Helper.IsSubclassOf(SourceElementType, DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.DoesTypeImplementInterface(Me, SourceElementType, DestinationElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf DestinationElementType.IsInterface AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
+                ElseIf Helper.IsInterface(Info.Compiler, DestinationElementType) AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf SourceElementType.IsEnum AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
+                ElseIf helper.IsEnum(compiler, sourceelementtype)AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
                     'Conversions also exist between an array of an enumerated type and an array of the enumerated type's underlying type of the same rank.
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf TypeOf SourceElementType Is TypeParameterDescriptor AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
+                ElseIf CecilHelper.IsGenericParameter(SourceElementType) AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
+                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                ElseIf CecilHelper.IsGenericParameter(DestinationElementType) AndAlso Helper.IsTypeConvertibleToAny(SourceElementType, Helper.GetGenericParameterConstraints(Me, DestinationElementType)) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
-                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
+                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, SourceType.Name, DestinationType.Name)
                     result = False
                 End If
 
             End If
-        ElseIf SourceType.IsClass Then
-            If DestinationType.IsGenericParameter Then
-                Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
+        ElseIf CecilHelper.IsClass(SourceType) Then
+            If CecilHelper.IsGenericParameter(DestinationType) Then
+                Dim methodD As New Mono.Cecil.GenericInstanceMethod(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object))
+                methodD.GenericParameters.Add(DirectCast(CecilHelper.GetGenericArguments(Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object)(0), Mono.Cecil.GenericParameter))
+                methodD.GenericArguments.Add(DestinationType)
 
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                Emitter.EmitCall(Info, method)
-            ElseIf DestinationType.IsClass Then
+                Emitter.EmitCall(Info, methodD)
+            ElseIf CecilHelper.IsClass(DestinationType) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
-            ElseIf DestinationType.IsInterface Then
+            ElseIf CecilHelper.IsInterface(DestinationType) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
-            ElseIf DestinationType.IsValueType Then
+            ElseIf CecilHelper.IsValueType(DestinationType) Then
                 Emitter.EmitUnbox(Info, DestinationType)
                 Emitter.EmitLdobj(Info, DestinationType)
-            ElseIf DestinationType.IsEnum Then
+            ElseIf Helper.IsEnum(Compiler, DestinationType) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered.
-            ElseIf DestinationType.IsArray Then
+            ElseIf CecilHelper.IsArray(DestinationType) Then
                 Throw New InternalException(Me) 'This is an IsClass case.
             Else
                 Throw New InternalException(Me)
             End If
-        ElseIf SourceType.IsValueType Then
+        ElseIf CecilHelper.IsValueType(SourceType) Then
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
             If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
@@ -251,10 +254,10 @@ Public Class CTypeExpression
                 Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, DestinationType)
             ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_ValueType) Then
                 Emitter.EmitBox(Info, SourceType)
-            ElseIf Helper.CompareType(SourceType.BaseType, DestinationType) Then
+            ElseIf Helper.CompareType(CecilHelper.FindDefinition(SourceType).BaseType, DestinationType) Then
                 Emitter.EmitBox(Info, DestinationType)
             Else
-                Dim operators As Generic.List(Of MethodInfo)
+                Dim operators As Generic.List(Of Mono.Cecil.MethodReference)
                 operators = Helper.GetWideningConversionOperators(Info.Compiler, SourceType, DestinationType)
                 If operators Is Nothing OrElse operators.Count = 0 Then
                     Helper.AddWarning("using narrowing operators")
@@ -264,28 +267,24 @@ Public Class CTypeExpression
                     If operators.Count = 1 Then
                         Emitter.EmitCall(Info, operators(0))
                     Else
-                        Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
                     End If
                 Else
-                    Throw New InternalException("Operator CType is not defined for types '" & SourceType.FullName & "' and '" & DestinationType.FullName & "'")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
                 End If
             End If
-        ElseIf SourceType.IsInterface Then
-            If DestinationType.IsGenericParameter Then
-                Dim method As MethodInfo
-                method = Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object.MakeGenericMethod(DestinationType.UnderlyingSystemType)
-
-                Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
-                Emitter.EmitCall(Info, method)
+        ElseIf Helper.IsInterface(Compiler, SourceType) Then
+            If CecilHelper.IsGenericParameter(DestinationType) Then
+                Emitter.EmitUnbox_Any(Info, DestinationType)
             ElseIf Helper.DoesTypeImplementInterface(Me, DestinationType, SourceType) Then
-                If DestinationType.IsValueType Then
+                If CecilHelper.IsValueType(DestinationType) Then
                     Emitter.EmitUnbox(Info, DestinationType)
                     Emitter.EmitLdobj(Info, DestinationType)
                 Else
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 End If
 
-            ElseIf DestinationType.IsClass OrElse DestinationType.IsInterface Then
+            ElseIf CecilHelper.IsClass(DestinationType) OrElse CecilHelper.IsInterface(DestinationType) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             Else
                 'However, classes that represent COM classes may have interface implementations that are not known until run time. Consequently, a class type may also be converted to an interface type that it does not implement, an interface type may be converted to a class type that does not implement it, and an interface type may be converted to another interface type with which it has no inheritance relationship
@@ -348,20 +347,15 @@ Public Class CTypeExpression
                     Else
                         m_IsStringToCharArray = True
                     End If
-                Else
-                    'Helper.NotImplementedYet("") Anything to do here?
                 End If
             Case Else
                 Throw New InternalException(Me)
         End Select
 
         Return result
-
-
-        Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedDestinationType
         End Get

@@ -45,7 +45,7 @@ Public Class ForStatement
     Private m_NextExpressionList As ExpressionList
 
     Private m_NextIteration As Label
-    Private m_LoopType As Type
+    Private m_LoopType As Mono.Cecil.TypeReference
 
     Private m_IsLateBound As Boolean
     Private m_IsDecimal As Boolean
@@ -55,15 +55,15 @@ Public Class ForStatement
         Public Variable As Object
         Public InstanceExpression As Expression
 
-        ReadOnly Property FieldInfo() As FieldInfo
+        ReadOnly Property FieldInfo() As Mono.Cecil.FieldReference
             Get
-                Return DirectCast(Variable, FieldInfo)
+                Return DirectCast(Variable, Mono.Cecil.FieldReference)
             End Get
         End Property
 
-        ReadOnly Property LocalBuilder() As LocalBuilder
+        ReadOnly Property LocalBuilder() As Mono.Cecil.Cil.VariableDefinition
             Get
-                Return DirectCast(Variable, LocalBuilder)
+                Return DirectCast(Variable, Mono.Cecil.Cil.VariableDefinition)
             End Get
         End Property
 
@@ -246,16 +246,16 @@ Public Class ForStatement
         Dim conditionLabel As Label
         Dim startlabel As Label
         Dim loopCounter As LoopCounterData
-        Dim loopMax As LocalBuilder
-        Dim loopStart As LocalBuilder
-        Dim loopStep As LocalBuilder
-        Dim loopLateBoundObject As LocalBuilder = Nothing
+        Dim loopMax As Mono.Cecil.Cil.VariableDefinition
+        Dim loopStart As Mono.Cecil.Cil.VariableDefinition
+        Dim loopStep As Mono.Cecil.Cil.VariableDefinition
+        Dim loopLateBoundObject As Mono.Cecil.Cil.VariableDefinition = Nothing
         Dim loadInfo As EmitInfo
 
-        conditionLabel = Info.ILGen.DefineLabel
-        startlabel = Info.ILGen.DefineLabel
-        EndLabel = Info.ILGen.DefineLabel
-        m_NextIteration = Info.ILGen.DefineLabel
+        conditionLabel = Emitter.DefineLabel(Info)
+        startlabel = Emitter.DefineLabel(Info)
+        EndLabel = Emitter.DefineLabel(Info)
+        m_NextIteration = Emitter.DefineLabel(Info)
 
         loadInfo = Info.Clone(Me, True, False, m_LoopType)
 
@@ -316,11 +316,11 @@ Public Class ForStatement
         End If
 
         'Emit the contained code.
-        Info.ILGen.MarkLabel(startlabel)
+        Emitter.MarkLabel(Info, startlabel)
         result = CodeBlock.GenerateCode(Info) AndAlso result
 
         'This is the start of the next iteration
-        Info.ILGen.MarkLabel(m_NextIteration)
+        Emitter.MarkLabel(Info, m_NextIteration)
 
         If m_IsLateBound Then
             EmitLoadCounter(Info, loopCounter)
@@ -338,7 +338,7 @@ Public Class ForStatement
             EmitStoreCounter(Info, loopCounter)
 
             'Do the comparison
-            Info.ILGen.MarkLabel(conditionLabel)
+            Emitter.MarkLabel(Info, conditionLabel)
 
             'Load the current value
             EmitLoadCounter(Info, loopCounter)
@@ -361,7 +361,7 @@ Public Class ForStatement
             EmitStoreCounter(Info, loopCounter) 'Emitter.EmitStoreVariable(Info, loopCounter)
 
             'Do the comparison
-            Info.ILGen.MarkLabel(conditionLabel)
+            Emitter.MarkLabel(Info, conditionLabel)
 
             'Load the current value
             EmitLoadCounter(Info, loopCounter) 'Emitter.EmitLoadVariable(Info, loopCounter)
@@ -395,8 +395,7 @@ Public Class ForStatement
                     Throw New InternalException
                 End If
                 Emitter.EmitGE(Info, m_LoopType) 'stepvar >= 0?
-                Info.ILGen.Emit(OpCodes.Brfalse_S, negativeLabel)
-                Info.Stack.Pop(Compiler.TypeCache.System_Boolean)
+                Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Brfalse_S, negativeLabel)
                 Emitter.EmitLE(Info, m_LoopType) 'Positive check
                 Emitter.EmitBranch(Info, endCheck)
                 Emitter.MarkLabel(Info, negativeLabel)
@@ -406,7 +405,7 @@ Public Class ForStatement
             End If
         End If
 
-        Info.ILGen.MarkLabel(EndLabel)
+        Emitter.MarkLabel(Info, EndLabel)
 
         Return result
     End Function
@@ -447,6 +446,7 @@ Public Class ForStatement
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         Else
             m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
+            result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         End If
 
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result
@@ -462,7 +462,7 @@ Public Class ForStatement
 
         If result = False Then Return result
 
-        Select Case Type.GetTypeCode(m_LoopType)
+        Select Case Helper.GetTypeCode(Compiler, m_LoopType)
             Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
                 result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
             Case TypeCode.Decimal

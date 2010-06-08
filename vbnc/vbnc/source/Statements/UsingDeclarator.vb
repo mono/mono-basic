@@ -38,12 +38,12 @@ Public Class UsingDeclarator
     ''' </summary>
     ''' <remarks></remarks>
     Private m_IsVariableDeclaration As Boolean
-    Private m_VariableDeclaration As VariableDeclaration
+    Private m_VariableDeclaration As LocalVariableDeclaration
 
-    Public UsingVariable As LocalBuilder
-    Public UsingVariableType As Type
+    Public UsingVariable As Mono.Cecil.Cil.VariableDefinition
+    Public UsingVariableType As Mono.Cecil.TypeReference
 
-    Private m_Constructor As ConstructorInfo
+    Private m_Constructor As Mono.Cecil.MethodReference
 
     ReadOnly Property VariableInitializer() As VariableInitializer
         Get
@@ -79,7 +79,7 @@ Public Class UsingDeclarator
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Identifier As Identifier, ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList, ByVal VariableInitializer As VariableInitializer, ByVal IsVariableDeclaration As Boolean, ByVal VariableDeclaration As VariableDeclaration)
+    Sub Init(ByVal Identifier As Identifier, ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal ArgumentList As ArgumentList, ByVal VariableInitializer As VariableInitializer, ByVal IsVariableDeclaration As Boolean, ByVal VariableDeclaration As LocalVariableDeclaration)
         m_Identifier = Identifier
         m_IsNew = IsNew
         m_TypeName = TypeName
@@ -95,7 +95,7 @@ Public Class UsingDeclarator
         End Get
     End Property
 
-    ReadOnly Property VariableDeclaration() As VariableDeclaration
+    ReadOnly Property VariableDeclaration() As LocalVariableDeclaration
         Get
             Return m_VariableDeclaration
         End Get
@@ -134,7 +134,7 @@ Public Class UsingDeclarator
             UsingVariableType = m_TypeName.ResolvedType
             m_IsVariableDeclaration = True
             If m_IsNew Then
-                Dim grp As New MethodGroupClassification(Me, Nothing, Nothing, m_TypeName.ResolvedType.GetConstructors(BindingFlags.Public Or BindingFlags.NonPublic Or BindingFlags.Instance))
+                Dim grp As New MethodGroupClassification(Me, Nothing, Nothing, CecilHelper.GetConstructors(CecilHelper.FindDefinition(m_TypeName.ResolvedType)))
                 result = grp.ResolveGroup(m_ArgumentList, Nothing) AndAlso result
                 m_Constructor = grp.ResolvedConstructor
                 If m_Constructor Is Nothing Then

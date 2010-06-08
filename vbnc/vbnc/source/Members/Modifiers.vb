@@ -55,18 +55,20 @@ Public Structure Modifiers
     ''' </summary>
     ''' <param name="Modifier"></param>
     ''' <remarks></remarks>
-    Public Sub AddModifier(ByVal Modifier As KS)
+    Public Function AddModifier(ByVal Modifier As KS) As Modifiers
         m_ModifierMask = m_ModifierMask Or KSToMask(Modifier)
-    End Sub
+        Return Me
+    End Function
 
     ''' <summary>
     ''' Adds a modifier to the list if the modifier isn't there already.
     ''' </summary>
     ''' <param name="Modifier"></param>
     ''' <remarks></remarks>
-    Public Sub AddModifiers(ByVal Modifier As ModifierMasks)
+    Public Function AddModifiers(ByVal Modifier As ModifierMasks) As Modifiers
         m_ModifierMask = m_ModifierMask Or Modifier
-    End Sub
+        Return Me
+    End Function
 
     ''' <summary>
     ''' Returns true if the modifier Publis is set, or any other modifiers (Private, Friend, Protected) 
@@ -100,47 +102,47 @@ Public Structure Modifiers
         End Get
     End Property
 
-    Function GetMethodAttributeScope() As MethodAttributes
+    Function GetMethodAttributeScope() As Mono.Cecil.MethodAttributes
         If Me.Is(ModifierMasks.Public) Then
-            Return MethodAttributes.Public
+            Return Mono.Cecil.MethodAttributes.Public
         ElseIf Me.Is(ModifierMasks.Friend) Then
             If Me.Is(ModifierMasks.Protected) Then
-                Return MethodAttributes.FamORAssem
+                Return Mono.Cecil.MethodAttributes.FamORAssem
             Else
-                Return MethodAttributes.Assembly
+                Return Mono.Cecil.MethodAttributes.Assem
             End If
         ElseIf Me.Is(ModifierMasks.Protected) Then
-            Return MethodAttributes.Family
+            Return Mono.Cecil.MethodAttributes.Family
         ElseIf Me.Is(ModifierMasks.Private) Then
-            Return MethodAttributes.Private
+            Return Mono.Cecil.MethodAttributes.Private
         Else
-            Return MethodAttributes.Public
+            Return Mono.Cecil.MethodAttributes.Public
         End If
     End Function
 
-    Function GetFieldAttributeScope(ByVal TypeDeclaration As TypeDeclaration) As Reflection.FieldAttributes
+    Function GetFieldAttributeScope(ByVal TypeDeclaration As TypeDeclaration) As Mono.Cecil.FieldAttributes
         If Me.Is(ModifierMasks.Public) Then
-            Return Reflection.FieldAttributes.Public
+            Return Mono.Cecil.FieldAttributes.Public
         ElseIf Me.Is(ModifierMasks.Friend) Then
             If Me.Is(ModifierMasks.Protected) Then
-                Return Reflection.FieldAttributes.FamORAssem
+                Return Mono.Cecil.FieldAttributes.FamORAssem
             Else
-                Return Reflection.FieldAttributes.Assembly
+                Return Mono.Cecil.FieldAttributes.Assembly
             End If
         ElseIf Me.Is(ModifierMasks.Protected) Then
-            Return Reflection.FieldAttributes.Family
+            Return Mono.Cecil.FieldAttributes.Family
         ElseIf Me.Is(ModifierMasks.Private) Then
-            Return Reflection.FieldAttributes.Private
+            Return Mono.Cecil.FieldAttributes.Private
         ElseIf Me.Is(ModifierMasks.Dim) OrElse Me.Is(ModifierMasks.Const) Then
             If TypeOf TypeDeclaration Is StructureDeclaration Then
-                Return FieldAttributes.Public
+                Return Mono.Cecil.FieldAttributes.Public
             Else
-                Return FieldAttributes.Private
+                Return Mono.Cecil.FieldAttributes.Private
             End If
         ElseIf TypeOf TypeDeclaration Is EnumDeclaration Then
-            Return FieldAttributes.Public
+            Return Mono.Cecil.FieldAttributes.Public
         Else
-            Return FieldAttributes.Private
+            Return Mono.Cecil.FieldAttributes.Private
         End If
     End Function
 

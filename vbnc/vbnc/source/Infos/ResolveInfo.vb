@@ -30,10 +30,10 @@ Public Class ResolveInfo
     Private Shared DefaultInfo As ResolveInfo
 
     Shared Function [Default](ByVal Compiler As Compiler) As ResolveInfo
-        If DefaultInfo Is Nothing Then
+        If DefaultInfo Is Nothing OrElse Compiler Is DefaultInfo.Compiler = False Then
             DefaultInfo = New ResolveInfo(Compiler)
         End If
-        Helper.Assert(Compiler Is DefaultInfo.Compiler)
+
         Return DefaultInfo
     End Function
 

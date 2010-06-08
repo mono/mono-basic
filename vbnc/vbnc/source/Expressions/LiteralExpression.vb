@@ -48,7 +48,7 @@ Public Class LiteralExpression
     End Sub
 
     Shadows Sub Init(ByVal Value As Token)
-        MyBase.Init(Value.LiteralValue, Value.LiteralValue.GetType)
+        MyBase.Init(Value.LiteralValue, CecilHelper.GetType(Compiler, Value.LiteralValue))
         m_Value = Value
     End Sub
 

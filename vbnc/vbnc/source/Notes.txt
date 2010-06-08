@@ -7,6 +7,13 @@ Scan()
 
 Parse()
 - Tokens are parsed and te parse tree is created.
+
+Initialize
+- Every class' parent is set, and builders are created.
+
+
+
+
 ResolveMembers()
 - All the types and members are resolved, but not any run-time code (initializers, method bodies).
 ResolveCode()

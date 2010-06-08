@@ -72,14 +72,14 @@ Public Class ModExpression
             If lvalue Is Nothing Then lvalue = 0
             If rvalue Is Nothing Then rvalue = 0
 
-            Dim tlvalue, trvalue As Type
+            Dim tlvalue, trvalue As Mono.Cecil.TypeReference
             Dim clvalue, crvalue As TypeCode
-            tlvalue = lvalue.GetType
+            tlvalue = CecilHelper.GetType(Compiler, lvalue)
             clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-            trvalue = rvalue.GetType
+            trvalue = CecilHelper.GetType(Compiler, rvalue)
             crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
-            Dim smallest As Type
+            Dim smallest As Mono.Cecil.TypeReference
             Dim csmallest As TypeCode
             smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
             Helper.Assert(smallest IsNot Nothing)

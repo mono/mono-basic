@@ -21,8 +21,6 @@
 #Const EXTENDEDDEBUG = 0
 #End If
 
-Imports System.Reflection.Emit
-
 ''' <summary>
 ''' This is the root for the parse tree
 ''' Start  ::=
@@ -51,19 +49,13 @@ Public Class AssemblyDeclaration
     ''' All the non-nested types in this assembly.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Members As MemberDeclarations
+    Private m_Members As New MemberDeclarations(Me)
 
     ''' <summary>
     ''' All the types as an array of type declarations.
     ''' </summary>
     ''' <remarks></remarks>
     Private m_TypeDeclarations() As TypeDeclaration
-
-    ''' <summary>
-    ''' All the types as an array of type descriptors
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Types() As TypeDescriptor
 
     Private m_GroupedClasses As Generic.List(Of MyGroupData)
 
@@ -76,6 +68,12 @@ Public Class AssemblyDeclaration
         End Set
     End Property
 
+    ReadOnly Property Members() As MemberDeclarations
+        Get
+            Return m_Members
+        End Get
+    End Property
+
     ReadOnly Property TypeDeclarations() As TypeDeclaration()
         Get
             Return m_TypeDeclarations
@@ -86,19 +84,13 @@ Public Class AssemblyDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Types As MemberDeclarations, ByVal Attributes As Attributes)
+    Sub Init(ByVal Attributes As Attributes)
         If m_Attributes Is Nothing Then
             m_Attributes = Attributes
         Else
             m_Attributes.AddRange(Attributes)
         End If
-        m_Members = Types
         m_TypeDeclarations = m_Members.GetSpecificMembers(Of TypeDeclaration).ToArray
-
-        ReDim m_Types(m_TypeDeclarations.Length - 1)
-        For i As Integer = 0 To m_Types.Length - 1
-            m_Types(i) = m_TypeDeclarations(i).TypeDescriptor
-        Next
 
         Helper.Assert(m_Members.Count = m_TypeDeclarations.Length)
     End Sub
@@ -130,7 +122,7 @@ Public Class AssemblyDeclaration
     Private Function DefineMembers(ByVal Type As TypeDeclaration) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(Type.TypeBuilder IsNot Nothing OrElse Type.EnumBuilder IsNot Nothing)
+        Helper.Assert(Type.CecilType IsNot Nothing)
 
         For Each i As IMember In Type.Members.GetSpecificMembers(Of IMember)()
             If TypeOf i Is TypeDeclaration Then
@@ -151,18 +143,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Private Function DefineTypeParameters(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        result = Type.DefineTypeParameters AndAlso result
-
-        For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = DefineTypeParameters(NestedType) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     Friend Function Emit(ByVal Type As TypeDeclaration) As Boolean
         Dim result As Boolean = True
 
@@ -175,22 +155,12 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Private Function CreateType(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        result = Type.CreateType AndAlso result
-
-        For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = CreateType(NestedType) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        For Each type As TypeDeclaration In m_TypeDeclarations
+        For i As Integer = 0 To m_TypeDeclarations.Length - 1
+            Dim type As TypeDeclaration = m_TypeDeclarations(i)
+
 #If EXTENDEDDEBUG Then
             Dim iCount As Integer
             iCount += 1
@@ -207,39 +177,10 @@ Public Class AssemblyDeclaration
             End Try
 #End If
             result = type.ResolveCode(Info) AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
+            Compiler.VerifyConsistency(result, type.Location)
         Next
 
         result = m_Attributes.ResolveCode(Info) AndAlso result
-
-        'vbnc.Helper.Assert(result = (Report.Errors = 0))
-
-        Return result
-    End Function
-
-    Function ResolveTypes() As Boolean
-        Dim result As Boolean = True
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-#End If
-            result = ResolveType(type) AndAlso result
-        Next
-
-        Return result
-    End Function
-
-    Private Shared Function ResolveType(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        result = Type.ResolveType AndAlso result
-
-        For Each n As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = ResolveType(n) AndAlso result
-        Next
 
         Return result
     End Function
@@ -276,6 +217,14 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        For i As Integer = 0 To m_TypeDeclarations.Length - 1
+            m_TypeDeclarations(i).Initialize(Me)
+        Next
+    End Sub
+
     Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -286,11 +235,9 @@ Public Class AssemblyDeclaration
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "ResolveTypeReferences " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
 #End If
             result = ResolveTypeReferences(type) AndAlso result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         result = m_Attributes.ResolveTypeReferences AndAlso result
-        vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         Return result
     End Function
@@ -299,7 +246,6 @@ Public Class AssemblyDeclaration
         Dim result As Boolean = True
 
         result = Type.ResolveTypeReferences AndAlso result
-        'vbnc.Helper.Assert(result = (Report.Errors = 0))
 
         If result = False Then Return result
 
@@ -311,7 +257,6 @@ Public Class AssemblyDeclaration
                 result = Member.ResolveTypeReferences() AndAlso result
             End If
             If result = False Then Return result
-            'vbnc.Helper.Assert(result = (Report.Errors = 0))
         Next
 
         Return result
@@ -430,21 +375,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Function DefineTypeParameters() As Boolean
-        Dim result As Boolean = True
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "DefineTypeParameters " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-#End If
-            result = DefineTypeParameters(type) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     ''' <summary>
     ''' - All the type's members are defined (methods, constructors, properties, fields, events, operators).
     ''' </summary>
@@ -523,66 +453,314 @@ Public Class AssemblyDeclaration
     End Function
 
     Sub SetAdditionalAttributes()
-        Dim cab As CustomAttributeBuilder
+        Dim cab As Mono.Cecil.CustomAttribute
 
         If Compiler.CommandLine.Define.IsDefined("DEBUG") Then
-            cab = New CustomAttributeBuilder(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes, New Object() {System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default})
-            Me.Compiler.AssemblyBuilder.SetCustomAttribute(cab)
+            cab = New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Diagnostics_DebuggableAttribute__ctor_DebuggingModes))
+            cab.ConstructorArguments.Add(New CustomAttributeArgument(Compiler.TypeCache.System_Diagnostics_DebuggableAttribute, System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations Or Diagnostics.DebuggableAttribute.DebuggingModes.Default))
+            Me.Compiler.AssemblyBuilderCecil.CustomAttributes.Add(cab)
         End If
     End Sub
 
     Sub SetFileVersion()
-        Dim product, productversion, company, copyright, trademark As String
-        Dim att() As Object
-        Dim product_att As Reflection.AssemblyProductAttribute = Nothing
-        Dim productversion_att As Reflection.AssemblyVersionAttribute = Nothing
-        Dim company_att As Reflection.AssemblyCompanyAttribute = Nothing
-        Dim copyright_att As Reflection.AssemblyCopyrightAttribute = Nothing
-        Dim trademark_att As Reflection.AssemblyTrademarkAttribute = Nothing
+        Dim product As String = String.Empty
+        Dim productversion As String = String.Empty
+        Dim company As String = String.Empty
+        Dim copyright As String = String.Empty
+        Dim trademark As String = String.Empty
 
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyProductAttribute, True)
-        If att.Length > 0 Then product_att = DirectCast(att(0), AssemblyProductAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute, True)
-        If att.Length > 0 Then productversion_att = DirectCast(att(0), AssemblyVersionAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute, True)
-        If att.Length > 0 Then company_att = DirectCast(att(0), AssemblyCompanyAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute, True)
-        If att.Length > 0 Then copyright_att = DirectCast(att(0), AssemblyCopyrightAttribute)
-        att = Me.Compiler.AssemblyBuilder.GetCustomAttributes(Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute, True)
-        If att.Length > 0 Then trademark_att = DirectCast(att(0), AssemblyTrademarkAttribute)
+        Dim att As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        Dim custom_attributes As Mono.Collections.Generic.Collection(Of CustomAttribute) = Me.Compiler.AssemblyBuilderCecil.CustomAttributes
 
-        If product_att IsNot Nothing Then product = product_att.Product Else product = ""
-        If productversion_att IsNot Nothing Then productversion = productversion_att.Version Else productversion = ""
-        If company_att IsNot Nothing Then company = company_att.Company Else company = ""
-        If copyright_att IsNot Nothing Then copyright = copyright_att.Copyright Else copyright = ""
-        If trademark_att IsNot Nothing Then trademark = trademark_att.Trademark Else trademark = ""
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyProductAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then product = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then productversion = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyCompanyAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then company = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyCopyrightAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then copyright = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then trademark = CecilHelper.GetAttributeCtorString(att(0), 0)
 
-        Me.Compiler.AssemblyBuilder.DefineVersionInfoResource(product, productversion, company, copyright, trademark)
+        'Dim rdt As New Mono.Cecil.PE.ResourceDirectoryTable()
+        'Dim r1 As New Mono.Cecil.PE.ResourceDirectoryEntry(16)
+        'Dim r2 As New Mono.Cecil.PE.ResourceDirectoryEntry(1)
+        'Dim r3 As New Mono.Cecil.PE.ResourceDirectoryEntry(0)
+        'Dim data As New Mono.Cecil.PE.ResourceDataEntry()
+
+        'Dim rsrc As Mono.Cecil.PE.Section = Nothing
+        'If Compiler.AssemblyBuilderCecil.MainModule.Image Is Nothing Then
+        '    Compiler.AssemblyBuilderCecil.MainModule.Image = New Mono.Cecil.PE.Image()
+        '    Compiler.AssemblyBuilderCecil.MainModule.Image.Sections = New Mono.Cecil.PE.Section() {}
+        'End If
+        'rsrc = Compiler.AssemblyBuilderCecil.MainModule.Image.GetSection(".rsrc")
+        'If rsrc Is Nothing Then
+        '    rsrc = New Mono.Cecil.PE.Section()
+        '    rsrc.Name = ".rsrc"
+        '    Dim sections(Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections.Length) As Mono.Cecil.PE.Section
+        '    For i As Integer = 0 To sections.Length - 2
+        '        sections(i) = Compiler.AssemblyBuilderCecil.MainModule.Image.Sections(i)
+        '    Next
+        '    sections(sections.Length - 1) = rsrc
+        '    Me.Compiler.AssemblyBuilderCecil.MainModule.Image.Sections = sections
+        'End If
+        'Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot = New Mono.Cecil.PE.ResourceDirectoryTable()
+
+        'Me.Compiler.AssemblyBuilderCecil.MainModule.Image.ResourceDirectoryRoot.Entries.Add(r1)
+        'rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        'rdt.Entries.Add(r2)
+        'r1.Child = rdt
+
+        'rdt = New Mono.Cecil.Binary.ResourceDirectoryTable()
+        'rdt.Entries.Add(r3)
+        'r2.Child = rdt
+
+        'r3.Child = data
+        'data.Size = 0
+        'data.ResourceData = New Byte() {}
+
+        Dim win32versionresources As Byte()
+        Using ms As New IO.MemoryStream()
+            Using w As New IO.BinaryWriter(ms, System.Text.Encoding.Unicode)
+                Dim file_flags_mask As Integer = 63
+                Dim file_flags As Integer = 0
+                Dim file_os As Integer = 4 '/* VOS_WIN32 */
+                Dim file_type As Integer = 2
+                Dim file_subtype As Integer = 0
+                Dim file_date As Long = 0
+                Dim file_lang As Integer = 0
+                Dim file_codepage As Integer = 1200
+                Dim properties As New Generic.Dictionary(Of String, String)
+
+                Dim file_version As Long
+                Dim product_version As Long
+
+                Dim WellKnownProperties As String() = New String() {"Assembly Version", "FileDescription", "FileVersion", "InternalName", "OriginalFilename", "ProductVersion"}
+
+                For i As Integer = 0 To WellKnownProperties.Length - 1
+                    properties.Add(WellKnownProperties(i), WellKnownProperties(i) & " ")
+                Next
+
+                If product <> String.Empty Then properties("ProductName") = product
+                If productversion <> String.Empty Then
+                    properties("ProductVersion") = productversion
+                    properties("FileVersion") = productversion
+                End If
+                If company <> String.Empty Then properties("Company") = company
+                If copyright <> String.Empty Then properties("LegalCopyright") = copyright
+                If trademark <> String.Empty Then properties("LegalTrademark") = trademark
+
+                'VS_VERSIONINFO
+                w.Write(CShort(0))
+                w.Write(CShort(&H34))
+                w.Write(CShort(0))
+                w.Write("VS_VERSION_INFO".ToCharArray())
+                w.Write(CShort(0))
+                emit_padding(w)
+
+                '// VS_FIXEDFILEINFO
+                w.Write(&HFEEF04BDUI)
+                w.Write(CInt(1 << 16))
+                w.Write(CInt(file_version >> 32)) 'TODO: FileVersion?
+                w.Write(CInt(((file_version And &HFFFFFFFF)))) 'TODO: ?
+
+                w.Write(CInt(product_version >> 32))
+                w.Write(CInt(product_version And &HFFFFFFFF))
+                w.Write(CInt(file_flags_mask))
+                w.Write(CInt(file_flags))
+                w.Write(CInt(file_os))
+                w.Write(CInt(file_type))
+                w.Write(CInt(file_subtype))
+                w.Write(CInt((file_date >> 32)))
+                w.Write(CInt((file_date And &HFFFFFFFF)))
+
+                emit_padding(w)
+
+                '// VarFileInfo
+                Dim var_file_info_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write("VarFileInfo".ToCharArray())
+                w.Write(CShort(0))
+
+                If ((ms.Position Mod 4) <> 0) Then
+                    w.Write(CShort(0))
+                End If
+
+                '// Var
+                Dim var_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(4))
+                w.Write(CShort(0))
+                w.Write("Translation".ToCharArray())
+                w.Write(CShort(0))
+
+                If ((ms.Position Mod 4) <> 0) Then
+                    w.Write(CShort(0))
+                End If
+
+                w.Write(CShort(file_lang))
+                w.Write(CShort(file_codepage))
+
+                patch_length(w, var_pos)
+
+                patch_length(w, var_file_info_pos)
+
+                '// StringFileInfo
+                Dim string_file_info_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write("StringFileInfo".ToCharArray())
+
+                emit_padding(w)
+
+                '// StringTable
+                Dim string_table_pos As Long = ms.Position
+                w.Write(CShort(0))
+                w.Write(CShort(0))
+                w.Write(CShort(1))
+                w.Write(String.Format("{0:x4}{1:x4}", file_lang, file_codepage).ToCharArray())
+
+                emit_padding(w)
+
+                '// Strings
+                For Each key As String In properties.Keys
+                    Dim value As String = properties(key)
+
+                    Dim string_pos As Long = ms.Position
+                    w.Write(CShort(0))
+                    w.Write(CShort((value.ToCharArray().Length + 1)))
+                    w.Write(CShort(1))
+                    w.Write(key.ToCharArray())
+                    w.Write(CShort(0))
+
+                    emit_padding(w)
+
+                    w.Write(value.ToCharArray())
+                    w.Write(CShort(0))
+
+                    emit_padding(w)
+
+                    patch_length(w, string_pos)
+                Next
+
+                patch_length(w, string_table_pos)
+
+                patch_length(w, string_file_info_pos)
+
+                patch_length(w, 0)
+                win32versionresources = ms.ToArray()
+            End Using
+        End Using
+
+
+        Using ms As New IO.MemoryStream()
+            Using w As New IO.BinaryWriter(ms, System.Text.Encoding.Unicode)
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                '16 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(16UI) 'name
+                w.Write(&H20UI + &H80000000UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 32 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                ' 16 bytes, total 48 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(1UI) 'name
+                w.Write(&H40UI + &H80000000UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 64 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY
+                w.Write(0UI) 'characteristics
+                w.Write(0UI) 'timedatestamp
+                w.Write(0US) 'majorversion
+                w.Write(0US) 'minorversion
+                w.Write(0US) 'NumberOfNamedEntries
+                w.Write(1US) 'NumberOfIdEntries
+
+                ' 16 bytes, total 80 bytes
+
+                ' IMAGE_RESOURCE_DIRECTORY_ENTRY
+                w.Write(0UI) 'name
+                w.Write(&H60UI) 'dataoffset
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                ' 16 bytes, total 96 bytes
+
+                ' IMAGE_RESOURCE_DATA_ENTRY
+                w.Write(&H70UI) 'offsettodata
+                w.Write(CUInt(win32versionresources.Length)) 'size
+                w.Write(0UI) 'codepage
+                w.Write(0UI) 'reserved
+
+                w.Write(win32versionresources)
+
+                Compiler.ModuleBuilderCecil.Win32resources = ms.ToArray()
+            End Using
+        End Using
     End Sub
 
-    Public Function GetName() As AssemblyName
-        Dim result As New AssemblyName()
+    Private Sub patch_length(ByVal w As IO.BinaryWriter, ByVal len_pos As Long)
+        Dim ms As IO.Stream = w.BaseStream
+
+        Dim pos As Long = ms.Position
+        ms.Position = len_pos
+        w.Write(CShort(pos - len_pos))
+        ms.Position = pos
+    End Sub
+
+    Private Sub emit_padding(ByVal w As IO.BinaryWriter)
+        Dim ms As IO.Stream = w.BaseStream
+
+        If ((ms.Position Mod 4) <> 0) Then
+            w.Write(CShort(0))
+        End If
+    End Sub
+
+    Public Function SetCecilName(ByVal Name As Mono.Cecil.AssemblyNameDefinition) As Boolean
+        Dim result As Boolean = True
         Dim keyfile As String = Nothing
         Dim keyname As String = Nothing
         Dim delaysign As Boolean = False
 
-        result.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
-
-#If DEBUGREFLECTION Then
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & " = New System.Reflection.AssemblyName")
-        Helper.DebugReflection_AppendLine(Helper.GetObjectName(result) & ".Name = """ & result.Name & """")
-#End If
+        Name.Name = IO.Path.GetFileNameWithoutExtension(Compiler.OutFileName)
 
         If Compiler.CommandLine.KeyFile <> String.Empty Then
             keyfile = Compiler.CommandLine.KeyFile
         End If
 
         For Each attri As Attribute In Me.Attributes
-            Dim attribType As Type
+            Dim attribType As Mono.Cecil.TypeReference
             attribType = attri.ResolvedType
 
             If Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyVersionAttribute) Then
-                SetVersion(result, attri, attri.Location)
+                result = SetVersion(Name, attri, attri.Location) AndAlso result
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyFileAttribute) Then
                 If keyfile = String.Empty Then keyfile = TryCast(attri.Arguments()(0), String)
             ElseIf Helper.CompareType(attribType, Compiler.TypeCache.System_Reflection_AssemblyKeyNameAttribute) Then
@@ -593,7 +771,7 @@ Public Class AssemblyDeclaration
         Next
 
         If keyfile <> String.Empty Then
-            If SignWithKeyFile(result, keyfile, delaysign) = False Then
+            If SignWithKeyFile(Name, keyfile, delaysign) = False Then
                 Return result
             End If
         End If
@@ -601,7 +779,7 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Private Function SignWithKeyFile(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
+    Private Function SignWithKeyFile(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean) As Boolean
         Dim filename As String
 
         filename = IO.Path.GetFullPath(KeyFile)
@@ -624,24 +802,28 @@ Public Class AssemblyDeclaration
                 SignWithKeyFileMono(result, filename, DelaySign, snkeypair)
             Else
                 If DelaySign Then
-                    result.SetPublicKey(snkeypair)
+                    result.PublicKey = snkeypair
                 Else
-                    result.KeyPair = New StrongNameKeyPair(snkeypair)
+                    'FIXME: Check if this is correct, I suppose it's not
+                    'result.KeyPair = New StrongNameKeyPair(snkeypair)
+                    result.PublicKey = snkeypair
                 End If
             End If
 
         End Using
 
+        Compiler.ModuleBuilderCecil.Attributes = Compiler.ModuleBuilderCecil.Attributes Or ModuleAttributes.StrongNameSigned
+
         Return True
     End Function
 
-    Private Function SignWithKeyFileMono(ByVal result As AssemblyName, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
+    Private Function SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
         Dim CryptoConvert As Type
-        Dim FromCapiKeyBlob As MethodInfo
-        Dim ToCapiPublicKeyBlob As MethodInfo
-        Dim FromCapiPrivateKeyBlob As MethodInfo
+        Dim FromCapiKeyBlob As System.Reflection.MethodInfo
+        Dim ToCapiPublicKeyBlob As System.Reflection.MethodInfo
+        Dim FromCapiPrivateKeyBlob As System.Reflection.MethodInfo
         Dim RSA As Type
-        Dim mscorlib As Assembly = GetType(Integer).Assembly
+        Dim mscorlib As System.Reflection.Assembly = GetType(Integer).Assembly
 
 #If DEBUG Then
         Compiler.Report.WriteLine("Signing on Mono")
@@ -650,13 +832,13 @@ Public Class AssemblyDeclaration
         Try
             RSA = mscorlib.GetType("System.Security.Cryptography.RSA")
             CryptoConvert = mscorlib.GetType("Mono.Security.Cryptography.CryptoConvert")
-            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", BindingFlags.Public Or BindingFlags.Static Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
-            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
-            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", BindingFlags.Static Or BindingFlags.Public Or BindingFlags.ExactBinding, Nothing, New Type() {Compiler.TypeCache.System_Byte_Array}, Nothing)
+            FromCapiKeyBlob = CryptoConvert.GetMethod("FromCapiKeyBlob", System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
+            ToCapiPublicKeyBlob = CryptoConvert.GetMethod("ToCapiPublicKeyBlob", System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {RSA}, Nothing)
+            FromCapiPrivateKeyBlob = CryptoConvert.GetMethod("FromCapiPrivateKeyBlob", System.Reflection.BindingFlags.Static Or System.Reflection.BindingFlags.Public Or System.Reflection.BindingFlags.ExactBinding, Nothing, New Type() {GetType(Byte())}, Nothing)
 
             If DelaySign Then
                 If blob.Length = 16 Then
-                    result.SetPublicKey(blob)
+                    result.PublicKey = blob
 #If DEBUG Then
                     Compiler.Report.WriteLine("Delay signed 1")
 #End If
@@ -672,14 +854,16 @@ Public Class AssemblyDeclaration
                     ReDim encodedPublicKey(11 + publickey.Length)
                     Buffer.BlockCopy(publicKeyHeader, 0, encodedPublicKey, 0, 12)
                     Buffer.BlockCopy(publickey, 0, encodedPublicKey, 12, publickey.Length)
-                    result.SetPublicKey(encodedPublicKey)
+                    result.PublicKey = encodedPublicKey
 #If DEBUG Then
                     Compiler.Report.WriteLine("Delay signed 2")
 #End If
                 End If
             Else
                 FromCapiPrivateKeyBlob.Invoke(Nothing, New Object() {blob})
-                result.KeyPair = New StrongNameKeyPair(blob)
+                'FIXME: Check if this is correct, I suppose it's not
+                'result.KeyPair = New StrongNameKeyPair(blob)
+                result.PublicKey = blob
             End If
         Catch ex As Exception
             Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
@@ -687,7 +871,7 @@ Public Class AssemblyDeclaration
 
     End Function
 
-    Private Function SetVersion(ByVal Name As AssemblyName, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
+    Private Function SetVersion(ByVal Name As Mono.Cecil.AssemblyNameDefinition, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
         Dim result As Version
         Dim version As String = ""
 
@@ -748,95 +932,62 @@ Public Class AssemblyDeclaration
     End Function
 
     ''' <summary>
-    ''' - CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
-    ''' - Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function CreateTypes() As Boolean
-        Dim result As Boolean = True
-        Dim exs As New Generic.List(Of Exception)
-        Dim tps As New Generic.List(Of TypeDeclaration)
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Try
-                System.Console.ForegroundColor = ConsoleColor.Blue
-            Catch ex As Exception
-
-            End Try
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "CreateType " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-            Try
-                System.Console.ResetColor()
-            Catch ex As Exception
-
-            End Try
-#End If
-#If EXTENDEDDEBUG Then
-            Try
-                result = CreateType(type) AndAlso result
-            Catch ex As Exception
-                Try
-                    System.Console.ForegroundColor = ConsoleColor.Red
-                Catch ex2 As Exception
-                End Try
-                Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, ex.Message)
-                Threading.Thread.Sleep(500)
-                Try
-                    System.Console.ResetColor()
-                Catch ex2 As Exception
-                End Try
-                exs.Add(ex)
-                tps.Add(type)
-            End Try
-#Else
-            result = CreateType(type) AndAlso result
-#End If
-        Next
-
-#If EXTENDEDDEBUG Then
-        If exs.Count > 0 Then
-            Dim msg As String = ""
-
-            msg = exs.Count.ToString & " types failed to be created." & VB.vbNewLine
-            For i As Integer = 0 To exs.Count - 1
-                msg &= VB.vbTab & tps(i).FullName & ": " & exs(i).Message & VB.vbNewLine
-            Next
-            Try
-                System.Console.ForegroundColor = ConsoleColor.Red
-            Catch ex2 As Exception
-            End Try
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, msg)
-            Try
-                System.Console.ResetColor()
-            Catch ex2 As Exception
-            End Try
-
-            Throw New InternalException(msg)
-        End If
-#End If
-
-        Return result
-    End Function
-
-    ''' <summary>
     ''' Checks whether the specified Type is defined in the current compiling assembly
     ''' </summary>
     ''' <param name="Type"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function IsDefinedHere(ByVal Type As Type) As Boolean
+    Function IsDefinedHere(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Helper.Assert(Type IsNot Nothing)
-        If TypeOf Type Is TypeBuilder Then Return True
-        If TypeOf Type Is TypeDescriptor Then Return True
-        Return Type.Assembly.Equals(Compiler.AssemblyBuilder)
+        If TypeOf Type Is Mono.Cecil.ArrayType Then
+            Return IsDefinedHere(DirectCast(Type, Mono.Cecil.ArrayType).ElementType)
+        ElseIf TypeOf Type Is Mono.Cecil.GenericParameter Then
+            Dim gp As Mono.Cecil.GenericParameter = DirectCast(Type, Mono.Cecil.GenericParameter)
+            If TypeOf gp.Owner Is Mono.Cecil.TypeDefinition Then
+                Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.TypeDefinition))
+            ElseIf TypeOf gp.Owner Is Mono.Cecil.MethodDefinition Then
+                Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.MethodDefinition))
+            Else
+                Throw New NotImplementedException
+            End If
+        ElseIf TypeOf Type Is ByReferenceType Then
+            Dim tR As ByReferenceType = DirectCast(Type, ByReferenceType)
+            Return IsDefinedHere(tR.ElementType)
+        End If
+        Return Type.Module.Assembly Is Compiler.AssemblyBuilderCecil
+    End Function
+
+    ''' <summary>
+    ''' Checks whether the specified Type is defined in the current compiling assembly
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsDefinedHere(ByVal Member As Mono.Cecil.MemberReference) As Boolean
+        Helper.Assert(Member IsNot Nothing)
+        Return Member.DeclaringType.Module.Assembly Is Compiler.AssemblyBuilderCecil
     End Function
 
     Function FindType(ByVal FullName As String) As TypeDeclaration
         For Each type As TypeDeclaration In Me.Types
             If Helper.CompareName(type.FullName, FullName) Then Return type
+        Next
+        Return Nothing
+    End Function
+
+    Function FindTypeWithName(ByVal Name As String) As TypeDeclaration
+        For i As Integer = 0 To m_Members.Count - 1
+            Dim tD As TypeDeclaration = TryCast(m_Members(i), TypeDeclaration)
+            If tD Is Nothing Then Continue For
+            If Helper.CompareName(tD.Name, Name) Then Return tD
+        Next
+        Return Nothing
+    End Function
+
+    Function FindTypeWithFullname(ByVal Fullname As String) As TypeDeclaration
+        For i As Integer = 0 To m_Members.Count - 1
+            Dim tD As TypeDeclaration = TryCast(m_Members(i), TypeDeclaration)
+            If tD Is Nothing Then Continue For
+            If Helper.CompareName(tD.FullName, Fullname) Then Return tD
         Next
         Return Nothing
     End Function

@@ -29,4 +29,10 @@ Public Class PropertyHandlerDeclaration
             Return DirectCast(MyBase.Parent, PropertyDeclaration)
         End Get
     End Property
+
+    ReadOnly Property PropertySignature() As FunctionSignature
+        Get
+            Return Parent.Signature
+        End Get
+    End Property
 End Class

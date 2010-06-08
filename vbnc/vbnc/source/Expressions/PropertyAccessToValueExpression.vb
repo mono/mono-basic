@@ -21,7 +21,7 @@ Public Class PropertyAccessToValueExpression
     Inherits Expression
 
     Private m_PropertyAccess As PropertyAccessClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Public Overrides ReadOnly Property AsString() As String
         Get
@@ -66,16 +66,17 @@ Public Class PropertyAccessToValueExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim method As MethodInfo
+        Dim propD As Mono.Cecil.PropertyDefinition = CecilHelper.FindDefinition(m_PropertyAccess.ResolvedProperty)
+        Dim methodD As Mono.Cecil.MethodReference = propD.GetMethod
+        Dim methodR As Mono.Cecil.MethodReference = CecilHelper.GetCorrectMember(methodD, m_PropertyAccess.ResolvedProperty.DeclaringType, True)
+        Dim methodE As Mono.Cecil.MethodReference = Helper.GetMethodOrMethodReference(Compiler, methodR)
 
-        method = m_PropertyAccess.ResolvedProperty.GetGetMethod(True)
-
-        result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_PropertyAccess.InstanceExpression, m_PropertyAccess.Parameters, method) AndAlso result
+        result = Helper.EmitArgumentsAndCallOrCallVirt(Info, m_PropertyAccess.InstanceExpression, m_PropertyAccess.Parameters, methodE) AndAlso result
 
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

@@ -17,6 +17,9 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+Imports System.Security
+Imports System.Security.Permissions
+
 Public MustInherit Class MethodBaseDeclaration
     Inherits MemberDeclaration
     Implements IMethod
@@ -24,91 +27,210 @@ Public MustInherit Class MethodBaseDeclaration
     Private m_Signature As SubSignature
     Private m_Code As CodeBlock
 
-    Private m_MethodAttributes As Nullable(Of MethodAttributes)
-    Private m_MethodImplAttributes As Nullable(Of MethodImplAttributes)
+    Private m_DefaultReturnVariable As Mono.Cecil.Cil.VariableDefinition
 
-    Private m_ReturnType As Type
-    Private m_ParameterTypes() As Type
-    Private m_DefaultReturnVariable As LocalBuilder
+    Private m_MethodOverrides As Mono.Cecil.MethodReference
+    Private m_CecilBuilder As Mono.Cecil.MethodDefinition
 
-    Private m_MethodOverrides As MethodInfo
+    Private m_HasSecurityCustomAttribute As Nullable(Of Boolean)
+    Private m_DefinedSecurityDeclarations As Boolean
 
     Protected Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
     Protected Sub New(ByVal Parent As PropertyDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
     Protected Sub New(ByVal Parent As EventDeclaration)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(Attributes, Modifiers, Signature.Name)
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
+        If m_Code IsNot Nothing Then m_Code.Initialize(Me)
+    End Sub
+
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature.Name)
         m_Signature = Signature
         Helper.Assert(m_Signature IsNot Nothing)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
-        Me.Init(Attributes, Modifiers, Signature)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
+        Me.Init(Modifiers, Signature)
         m_Code = Code
         Helper.Assert(m_Signature IsNot Nothing)
     End Sub
 
-    Property ParameterTypes() As Type()
-        Get
-            Return m_ParameterTypes
-        End Get
-        Set(ByVal value As Type())
-            m_ParameterTypes = value
-        End Set
-    End Property
+    Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
 
-    Property ReturnType() As Type
-        Get
-            Return m_ReturnType
-        End Get
-        Set(ByVal value As Type)
-            m_ReturnType = value
-        End Set
-    End Property
+        If m_CecilBuilder Is Nothing Then
+            m_CecilBuilder = New Mono.Cecil.MethodDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void))
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
+        End If
+        m_CecilBuilder.Name = Name
+        m_CecilBuilder.HasThis = Not Me.IsShared
 
-    ReadOnly Property MethodAttributes() As Nullable(Of MethodAttributes)
-        Get
-            Return m_MethodAttributes
-        End Get
-    End Property
+        If Signature IsNot Nothing AndAlso Signature.Parameters IsNot Nothing Then
+            ReturnType = m_Signature.ReturnType
+            If Signature.Parameters IsNot Nothing Then
+                For i As Integer = 0 To Signature.Parameters.Count - 1
+                    Signature.Parameters(i).UpdateDefinition()
+                Next
+            End If
+        End If
 
-    Property Attributes() As MethodAttributes
-        Get
-            Helper.Assert(m_MethodAttributes.HasValue)
-            Return m_MethodAttributes.Value
-        End Get
-        Set(ByVal value As MethodAttributes)
-            m_MethodAttributes = value
-        End Set
-    End Property
-
-    ReadOnly Property MethodImplAttributes() As Nullable(Of MethodImplAttributes)
-        Get
-            Return m_MethodImplAttributes
-        End Get
-    End Property
-
-    Function GetMethodImplementationFlags() As MethodImplAttributes
-        Helper.Assert(m_MethodImplAttributes.HasValue)
-        Return m_MethodImplAttributes.Value
-    End Function
-
-    Public Sub SetImplementationFlags(ByVal flags As System.Reflection.MethodImplAttributes) Implements IMethod.SetImplementationFlags
-        m_MethodImplAttributes = flags
+        MethodAttributes = Helper.GetAttributes(Me)
+        If IsExternalDeclaration Then
+            MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.PreserveSig
+        Else
+            MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
+        End If
     End Sub
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public ReadOnly Property IsExternalDeclaration() As Boolean
         Get
-            Return Me.MethodDescriptor
+            If TypeOf Me Is ExternalSubDeclaration Then Return True
+            If CustomAttributes Is Nothing Then Return False
+            For i As Integer = 0 To CustomAttributes.Count - 1
+                If CustomAttributes(i).ResolvedType Is Nothing Then Continue For
+                If Helper.CompareType(CustomAttributes(i).ResolvedType, Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then Return True
+            Next
+            Return False
+        End Get
+    End Property
+
+    Private Function DefineSecurityDeclarations() As Boolean
+        Dim result As Boolean = True
+        Dim checkedAll As Boolean = True
+
+        If m_DefinedSecurityDeclarations Then Return True
+
+        If CustomAttributes Is Nothing Then Return True
+
+
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            If CustomAttributes(i).ResolvedType Is Nothing Then
+                checkedAll = False
+                Exit For
+            End If
+        Next
+
+        If Not checkedAll Then Return True
+
+        For i As Integer = 0 To CustomAttributes.Count - 1
+            Dim attrib As Attribute = CustomAttributes(i)
+
+            If Not Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, attrib.ResolvedType) Then Continue For
+
+            Try
+                Dim sec As Mono.Cecil.SecurityDeclaration
+                Dim secAtt As Mono.Cecil.SecurityAttribute
+                Dim attribInstantiation As Object = Nothing
+                Dim attribInstance As SecurityAttribute
+                Dim attribAction As Mono.Cecil.SecurityAction
+                Dim attribPermission As IPermission
+                Dim attribPermissionSetAttribute As PermissionSetAttribute
+
+                If attrib.Instantiate(Messages.VBNC30128, attribInstantiation) = False Then
+                    'Attribute.Instantiate prints an error message
+                    result = False
+                    Continue For
+                End If
+
+                attribInstance = TryCast(attribInstantiation, SecurityAttribute)
+                If attribInstance Is Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, "Security attribute does not inherit from System.Security.Permissions.SecurityAttribute")
+                    result = False
+                    Continue For
+                End If
+
+                attribAction = CType(attribInstance.Action, Mono.Cecil.SecurityAction)
+                attribPermissionSetAttribute = TryCast(attribInstance, PermissionSetAttribute)
+
+                sec = New Mono.Cecil.SecurityDeclaration(attribAction)
+                secAtt = attrib.GetSecurityAttribute()
+                sec.SecurityAttributes.Add(secAtt)
+                CecilBuilder.SecurityDeclarations.Add(sec)
+                CustomAttributes.Remove(attrib)
+                CecilBuilder.CustomAttributes.Remove(attrib.CecilBuilder)
+            Catch ex As Exception
+                Compiler.Report.ShowMessage(Messages.VBNC30128, attrib.Location, ex.Message)
+                result = False
+            End Try
+
+        Next
+
+        m_DefinedSecurityDeclarations = True
+
+        Return result
+    End Function
+
+    ReadOnly Property HasSecurityCustomAttribute() As Boolean
+        Get
+            Dim checkedAll As Boolean = True
+
+            If CustomAttributes Is Nothing Then Return False
+
+            If m_HasSecurityCustomAttribute.HasValue Then Return m_HasSecurityCustomAttribute.Value
+
+            For i As Integer = 0 To CustomAttributes.Count - 1
+                If CustomAttributes(i).ResolvedType Is Nothing Then
+                    checkedAll = False
+                ElseIf Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, CustomAttributes(i).ResolvedType) Then
+                    m_HasSecurityCustomAttribute = True
+                    Return True
+                End If
+            Next
+
+            If checkedAll Then m_HasSecurityCustomAttribute = False
+
+            Return False
+        End Get
+    End Property
+
+    Property ReturnType() As Mono.Cecil.TypeReference
+        Get
+            Return m_CecilBuilder.ReturnType
+        End Get
+        Set(ByVal value As Mono.Cecil.TypeReference)
+            m_CecilBuilder.ReturnType = Helper.GetTypeOrTypeReference(Compiler, value)
+        End Set
+    End Property
+
+    Property MethodAttributes() As Mono.Cecil.MethodAttributes
+        Get
+            Return m_CecilBuilder.Attributes
+        End Get
+        Set(ByVal value As Mono.Cecil.MethodAttributes)
+            If (value And Mono.Cecil.MethodAttributes.MemberAccessMask) = 0 Then
+                m_CecilBuilder.Attributes = value Or m_CecilBuilder.Attributes
+            Else
+                m_CecilBuilder.Attributes = value Or (m_CecilBuilder.Attributes And Not Mono.Cecil.MethodAttributes.MemberAccessMask)
+            End If
+        End Set
+    End Property
+
+    Property MethodImplAttributes() As Mono.Cecil.MethodImplAttributes Implements IMethod.MethodImplementationFlags
+        Get
+            Return m_CecilBuilder.ImplAttributes
+        End Get
+        Set(ByVal value As Mono.Cecil.MethodImplAttributes)
+            m_CecilBuilder.ImplAttributes = value Or m_CecilBuilder.ImplAttributes
+        End Set
+    End Property
+
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
+        Get
+            Return Me.CecilBuilder
         End Get
     End Property
 
@@ -121,13 +243,13 @@ Public MustInherit Class MethodBaseDeclaration
         End Set
     End Property
 
-    Public ReadOnly Property DefaultReturnVariable() As System.Reflection.Emit.LocalBuilder Implements IMethod.DefaultReturnVariable
+    Public ReadOnly Property DefaultReturnVariable() As Mono.Cecil.Cil.VariableDefinition Implements IMethod.DefaultReturnVariable
         Get
             Return m_DefaultReturnVariable
         End Get
     End Property
 
-    Public ReadOnly Property GetParameters() As System.Reflection.ParameterInfo() Implements IMethod.GetParameters
+    Public ReadOnly Property GetParameters() As Mono.Cecil.ParameterDefinition() Implements IMethod.GetParameters
         Get
             Helper.Assert(m_Signature IsNot Nothing)
             Helper.Assert(m_Signature.Parameters IsNot Nothing)
@@ -147,8 +269,11 @@ Public MustInherit Class MethodBaseDeclaration
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property ILGenerator() As System.Reflection.Emit.ILGenerator Implements IMethod.ILGenerator
-    Public MustOverride ReadOnly Property MethodBuilder() As System.Reflection.Emit.MethodBuilder Implements IMethod.MethodBuilder
+    Public ReadOnly Property CecilBuilder() As Mono.Cecil.MethodDefinition Implements IMethod.CecilBuilder
+        Get
+            Return m_CecilBuilder
+        End Get
+    End Property
 
     ReadOnly Property HasMethodBody() As Boolean
         Get
@@ -156,7 +281,7 @@ Public MustInherit Class MethodBaseDeclaration
 
             If TypeOf Me Is ExternalSubDeclaration Then Return False
 
-            result = CBool(m_MethodAttributes.Value And Reflection.MethodAttributes.Abstract) = False AndAlso CBool(m_MethodImplAttributes.Value And Reflection.MethodImplAttributes.Runtime) = False
+            result = CBool(MethodAttributes And Mono.Cecil.MethodAttributes.Abstract) = False AndAlso CBool(MethodImplAttributes And Mono.Cecil.MethodImplAttributes.Runtime) = False
 
             If result Then
                 If Me.CustomAttributes IsNot Nothing AndAlso Me.CustomAttributes.IsDefined(Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute) Then
@@ -167,8 +292,6 @@ Public MustInherit Class MethodBaseDeclaration
             Return result
         End Get
     End Property
-
-    Public MustOverride ReadOnly Property MethodDescriptor() As System.Reflection.MethodBase Implements IMethod.MethodDescriptor
 
     Public ReadOnly Property Signature() As SubSignature Implements IMethod.Signature
         Get
@@ -183,8 +306,8 @@ Public MustInherit Class MethodBaseDeclaration
 
         result = m_Signature.ResolveTypeReferences AndAlso result
         If result = False Then Return result
-        m_ParameterTypes = m_Signature.Parameters.ToTypeArray
-        m_ReturnType = m_Signature.ReturnType
+
+        ReturnType = m_Signature.ReturnType
 
         If m_Code IsNot Nothing Then result = m_Code.ResolveTypeReferences AndAlso result
 
@@ -195,22 +318,6 @@ Public MustInherit Class MethodBaseDeclaration
         Dim result As Boolean = True
 
         result = m_Signature.Parameters.ResolveParameters(Info, True) AndAlso result
-
-        If m_Signature.Parameters Is Nothing Then
-            m_ParameterTypes = New Type() {}
-        Else
-            m_ParameterTypes = m_Signature.Parameters.ToTypeArray
-        End If
-        m_ReturnType = m_Signature.ReturnType
-
-        If m_MethodAttributes.HasValue = False Then
-            m_MethodAttributes = Me.MethodDescriptor.Attributes()
-        End If
-        If m_MethodImplAttributes.HasValue = False Then
-            m_MethodImplAttributes = Reflection.MethodImplAttributes.IL
-        End If
-
-        'Helper.Assert(m_Code IsNot Nothing = Me.HasMethodBody)
 
         Return result
     End Function
@@ -232,6 +339,8 @@ Public MustInherit Class MethodBaseDeclaration
     Public Overridable Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
 
+        result = DefineSecurityDeclarations() AndAlso result
+
         Return result
     End Function
 
@@ -248,8 +357,7 @@ Public MustInherit Class MethodBaseDeclaration
 
             'Create the default return variable
             If Me.HasReturnValue Then
-                Helper.Assert(m_ReturnType IsNot Nothing)
-                m_DefaultReturnVariable = Me.ILGenerator.DeclareLocal(m_ReturnType)
+                m_DefaultReturnVariable = Emitter.DeclareLocal(Info, ReturnType)
             End If
 
             result = m_Code.GenerateCode(Me) AndAlso result
@@ -258,7 +366,7 @@ Public MustInherit Class MethodBaseDeclaration
         Return result
     End Function
 
-    ReadOnly Property MethodOverride() As MethodInfo
+    ReadOnly Property MethodOverride() As Mono.Cecil.MethodReference
         Get
             Return m_MethodOverrides
         End Get
@@ -267,76 +375,14 @@ Public MustInherit Class MethodBaseDeclaration
     Overridable Function ResolveOverrides() As Boolean
         Dim result As Boolean = True
 
-        If Me.Modifiers.Is(ModifierMasks.Overrides) = False Then Return result
-
         Return result
-
-        'Dim cache As MemberCacheEntry
-        'Dim members As Generic.List(Of MemberInfo)
-        'Dim member As MemberInfo
-        'Dim Name As String
-        'Dim params As ParameterInfo()
-
-        'Dim phd As PropertyHandlerDeclaration = TryCast(Me, PropertyHandlerDeclaration)
-        'If phd IsNot Nothing Then
-        '    Name = phd.Parent.Name
-        '    params = phd.Parent.Signature.Parameters.AsParameterInfo
-        'Else
-        '    params = Me.GetParameters
-        '    Name = Me.Name
-        'End If
-
-        'cache = Compiler.TypeManager.GetCache(Compiler.TypeManager.GetRegisteredType(DeclaringType.BaseType)).LookupFlattened(Name)
-        'If cache Is Nothing Then
-        '    result = Compiler.Report.ShowMessage(Messages.VBNC30284, Me.Location, Me.Name) AndAlso result
-        '    If result = False Then Return result
-        'End If
-
-        'members = cache.Members
-        'member = Helper.ResolveGroupExact(Compiler, members, Helper.GetTypes(params))
-
-        'If member Is Nothing Then
-        '    result = Compiler.Report.ShowMessage(Messages.VBNC30284, Me.Location, Me.Name) AndAlso result
-        '    If result = False Then Return result
-        'End If
-
-        'If member Is Nothing Then Return result
-
-        'Dim methodI As MethodInfo
-        'methodI = TryCast(member, MethodInfo)
-        'If methodI IsNot Nothing Then
-        '    If CBool(methodI.Attributes And Reflection.MethodAttributes.Abstract) Then
-        '        m_MethodOverrides = methodI
-        '    End If
-        '    Return result
-        'End If
-
-        'Dim propI As PropertyInfo
-        'propI = TryCast(member, PropertyInfo)
-        'If propI IsNot Nothing Then
-        '    If CBool(Helper.GetPropertyAttributes(propI) And Reflection.MethodAttributes.Abstract) Then
-        '        If TypeOf Me Is PropertyGetDeclaration Then
-        '            m_MethodOverrides = propI.GetGetMethod(True)
-        '        ElseIf TypeOf Me Is PropertySetDeclaration Then
-        '            m_MethodOverrides = propI.GetSetMethod(True)
-        '        Else
-        '            Throw New InternalException("?")
-        '        End If
-        '    End If
-        '    Return result
-        'End If
-
-        'Helper.NotImplemented()
-
-        'Return result
     End Function
 
     Overridable Function DefineOverrides() As Boolean
         Dim result As Boolean = True
 
         If m_MethodOverrides IsNot Nothing Then
-            m_MethodOverrides = Helper.GetMethodOrMethodBuilder(m_MethodOverrides)
-            DeclaringType.TypeBuilder.DefineMethodOverride(MethodBuilder, m_MethodOverrides)
+            Throw New NotImplementedException
         End If
 
         Return result
@@ -364,10 +410,10 @@ Public MustInherit Class MethodBaseDeclaration
         Helper.Assert(isGet Xor isSet)
 
         Dim info As New EmitInfo(Me)
-        Dim meType As Type = Helper.GetTypeOrTypeBuilder(Me.FindFirstParent(Of TypeDeclaration).TypeDescriptor)
+        Dim meType As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeBuilder(Compiler, Me.FindFirstParent(Of TypeDeclaration).CecilType)
         If isGet Then
             If Me.IsShared = False Then
-                Emitter.EmitLoadMe(info, metype)
+                Emitter.EmitLoadMe(info, meType)
             End If
             Emitter.EmitLoadVariable(info, propD.HandlesField.FieldBuilder)
             Emitter.EmitRet(info)
@@ -388,7 +434,6 @@ Public MustInherit Class MethodBaseDeclaration
                 result = item.GenerateCode(info, False) AndAlso result
             Next
             Emitter.MarkLabel(info, endRemoveLabel)
-
 
             'Store the variable
             If Me.IsShared = False Then

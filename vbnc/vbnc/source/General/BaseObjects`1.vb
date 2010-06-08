@@ -62,7 +62,14 @@ Public Class BaseObjects(Of T)
     End Sub
 
     Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return Helper.ResolveCodeCollection(Me, Info)
+        Dim result As Boolean = True
+        For i As Integer = 0 To Count - 1
+            Dim pO As BaseObject = TryCast(CObj(Item(i)), BaseObject)
+            If pO IsNot Nothing Then
+                result = pO.ResolveCode(Info) AndAlso result
+            End If
+        Next
+        Return result
     End Function
 
     ''' <summary>
@@ -77,5 +84,9 @@ Public Class BaseObjects(Of T)
     Function ResolveTypeReferences() As Boolean
         Return Helper.ResolveTypeReferencesCollection(Me)
     End Function
+
+    Sub Initialize(ByVal Parent As BaseObject)
+        Helper.InitializeCollection(Me, Parent)
+    End Sub
 
 End Class

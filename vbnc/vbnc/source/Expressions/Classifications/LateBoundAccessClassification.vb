@@ -33,7 +33,7 @@ Public Class LateBoundAccessClassification
     Private m_TypeArguments As TypeArgumentList
     Private m_Name As String
     Private m_Arguments As ArgumentList
-    Private m_LateBoundType As Type
+    Private m_LateBoundType As Mono.Cecil.TypeReference
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
@@ -68,16 +68,16 @@ Public Class LateBoundAccessClassification
         End Get
     End Property
 
-    Property LateBoundType() As Type
+    Property LateBoundType() As Mono.Cecil.TypeReference
         Get
             Return m_LateBoundType
         End Get
-        Set(ByVal value As Type)
+        Set(ByVal value As Mono.Cecil.TypeReference)
             m_LateBoundType = value
         End Set
     End Property
 
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Object
         End Get

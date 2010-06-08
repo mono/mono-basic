@@ -45,13 +45,11 @@ Public Class SubSignature
     ''' <remarks></remarks>
     Private m_ParameterList As ParameterList
 
-    Protected m_ReturnParameter As ParameterInfo
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterInfo())
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.ParameterReference())
         MyBase.New(Parent)
         m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
         m_ParameterList = New ParameterList(Me)
@@ -65,25 +63,41 @@ Public Class SubSignature
     Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As ParameterList)
         MyBase.New(Parent)
         m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
-        m_ParameterList = Parameters
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If Parameters Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = Parameters
+        End If
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Type())
+    Sub New(ByVal Parent As ParsedObject, ByVal Name As String, ByVal Parameters As Mono.Cecil.TypeReference())
         MyBase.New(Parent)
         m_Identifier = New Identifier(Me, Name, Nothing, TypeCharacters.Characters.None)
-        m_ParameterList = New ParameterList(Me, Parameters)
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If Parameters Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = New ParameterList(Me, Parameters)
+        End If
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        Helper.Assert(TypeOf Parent Is ClassDeclaration = False)
+
+        If m_Identifier IsNot Nothing Then m_Identifier.Initialize(Me)
+        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
+        If m_ParameterList IsNot Nothing Then m_ParameterList.Initialize(Me)
     End Sub
 
     Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
-        m_ParameterList = ParameterList
-        'Helper.Assert(m_Identifier IsNot Nothing)
-        Helper.Assert(m_ParameterList IsNot Nothing)
+        If ParameterList Is Nothing Then
+            m_ParameterList = New ParameterList(Me)
+        Else
+            m_ParameterList = ParameterList
+        End If
     End Sub
 
     Sub Init(ByVal Identifier As String, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
@@ -99,8 +113,14 @@ Public Class SubSignature
 
     Sub CloneTo(ByVal ClonedSignature As SubSignature)
         ClonedSignature.m_Identifier = m_Identifier
-        If m_TypeParameters IsNot Nothing Then ClonedSignature.m_TypeParameters = m_TypeParameters.Clone(ClonedSignature)
-        If m_ParameterList IsNot Nothing Then ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
+        If m_TypeParameters IsNot Nothing Then
+            ClonedSignature.m_TypeParameters = m_TypeParameters.Clone()
+            ClonedSignature.m_TypeParameters.Initialize(ClonedSignature)
+        End If
+        If m_ParameterList IsNot Nothing Then
+            ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
+            ClonedSignature.m_ParameterList.Initialize(ClonedSignature)
+        End If
     End Sub
 
     ReadOnly Property Identifier() As Identifier
@@ -109,16 +129,9 @@ Public Class SubSignature
         End Get
     End Property
 
-    Overridable ReadOnly Property ReturnParameter() As ParameterInfo
+    Overridable ReadOnly Property ReturnType() As Mono.Cecil.TypeReference
         Get
-            If m_ReturnParameter Is Nothing Then m_ReturnParameter = New ParameterDescriptor(Compiler.TypeCache.System_Void, 1, Me)
-            Return m_ReturnParameter
-        End Get
-    End Property
-
-    Overridable ReadOnly Property ReturnType() As Type
-        Get
-            Return Nothing
+            Return Compiler.TypeCache.System_Void
         End Get
     End Property
 
@@ -129,16 +142,17 @@ Public Class SubSignature
         End Get
     End Property
 
-    ReadOnly Property TypeParameters() As TypeParameters
+    Property TypeParameters() As TypeParameters
         Get
             Return m_TypeParameters
         End Get
+        Set(ByVal value As TypeParameters)
+            m_TypeParameters = value
+        End Set
     End Property
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
-
-        Me.CheckCodeNotResolved()
 
         Helper.Assert(m_ParameterList IsNot Nothing)
 
@@ -163,10 +177,13 @@ Public Class SubSignature
         Return result
     End Function
 
-    Public ReadOnly Property Name() As String Implements INameable.Name
+    Public Property Name() As String Implements INameable.Name
         Get
             Return m_Identifier.Name
         End Get
+        Set(ByVal value As String)
+            m_Identifier.Name = value
+        End Set
     End Property
 
 End Class

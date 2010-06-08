@@ -17,30 +17,57 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Imports System.Reflection
-Imports System.Reflection.Emit
-
-#If DEBUG Then
 #Const DEBUGEMIT = 0
 
-Public Class EmitLog
-    Private m_ILGen As ILGenerator
-    Private m_Compiler As Compiler
-    ReadOnly Property TheRealILGenerator() As ILGenerator
+Public Structure Label
+    Public CecilLabel As Mono.Cecil.Cil.Instruction
+End Structure
+
+Public Class LocalBuilder
+    Public CecilLocal As Mono.Cecil.Cil.VariableDefinition
+    ReadOnly Property LocalType() As Mono.Cecil.TypeReference
         Get
-            Return m_ILGen
+            Return CecilLocal.VariableType
+        End Get
+    End Property
+End Class
+
+Public Class EmitLog
+    Private m_Compiler As Compiler
+
+    Private m_CilBody As Mono.Cecil.Cil.MethodBody
+
+    ReadOnly Property CilWorker() As Mono.Cecil.Cil.ILProcessor
+        Get
+            Return m_CilBody.GetILProcessor
         End Get
     End Property
 
-    Sub New(ByVal ILGen As ILGenerator, ByVal Compiler As Compiler)
-        m_ILGen = ILGen
+    Property CilBody() As Mono.Cecil.Cil.MethodBody
+        Get
+            Return m_CilBody
+        End Get
+        Set(ByVal value As Mono.Cecil.Cil.MethodBody)
+            m_CilBody = value
+        End Set
+    End Property
+
+    ReadOnly Property Compiler() As Compiler
+        Get
+            Return m_Compiler
+        End Get
+    End Property
+
+    Sub New(ByVal Compiler As Compiler)
         m_Compiler = Compiler
     End Sub
+
     Shared ReadOnly Property IsLogging() As Boolean
         Get
             Return True
         End Get
     End Property
+
     Private Overloads Shared Function ToString(ByVal obj As Object) As String
         If obj Is Nothing Then
             Return "Nothing"
@@ -48,183 +75,320 @@ Public Class EmitLog
             Return "Type: " & obj.GetType.ToString & ";Value: " & obj.ToString
         End If
     End Function
-    <Diagnostics.Conditional("DEBUGEMIT")> Private Sub Log(ByVal str As String)
+
+    <Diagnostics.Conditional("DEBUGEMIT")> _
+    Private Sub Log(ByVal str As String)
 #If DEBUGEMIT Then
         m_Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Emitted: " & str)
 #End If
     End Sub
-    <Diagnostics.Conditional("DEBUGEMIT")> Private Sub Log(ByVal str As String, ByVal ParamArray args() As String)
+
+    <Diagnostics.Conditional("DEBUGEMIT")> _
+    Private Sub Log(ByVal str As String, ByVal ParamArray args() As String)
 #If DEBUGEMIT Then
         Log(String.Format(str, args))
 #End If
     End Sub
-    Public Sub BeginCatchBlock(ByVal exceptionType As System.Type)
-        Log("BeginCatchBlock")
-        Helper.Assert(Helper.IsEmittableMember(exceptionType))
-        m_ILGen.BeginCatchBlock(exceptionType)
-    End Sub
+
     Public Sub BeginExceptFilterBlock()
         Log("BeginExceptFilterBlock")
-        m_ILGen.BeginExceptFilterBlock()
+        BeginExceptFilterBlockCecil()
     End Sub
-    Public Function BeginExceptionBlock() As System.Reflection.Emit.Label
+    Public Function BeginExceptionBlock() As Label
         Log("BeginExceptionBlock")
-        Return m_ILGen.BeginExceptionBlock()
+        Dim result As New Label
+        result.CecilLabel = BeginExceptionBlockCecil()
+        Return result
     End Function
-    Public Sub BeginFaultBlock()
-        Log("BeginFaultBlock")
-        m_ILGen.BeginFaultBlock()
-    End Sub
+
     Public Sub BeginFinallyBlock()
         Log("BeginFinallyBlock")
-        m_ILGen.BeginFinallyBlock()
-    End Sub
-    Public Sub BeginScope()
-        Log("BeginScope")
-        m_ILGen.BeginScope()
-    End Sub
-    Public Function DeclareLocal(ByVal localType As System.Type) As System.Reflection.Emit.LocalBuilder
-        Helper.Assert(Helper.IsEmittableMember(localType))
-        Log("DeclareLocal({0})", localType.ToString)
-        Return m_ILGen.DeclareLocal(localType)
-    End Function
-    Public Function DeclareLocal(ByVal localType As System.Type, ByVal pinned As Boolean) As System.Reflection.Emit.LocalBuilder
-        Helper.Assert(Helper.IsEmittableMember(localType))
-        Log("DeclareLocal({0}, {1})", localType.ToString, pinned.ToString)
-        Return m_ILGen.DeclareLocal(localType, pinned)
-    End Function
-    Public Function DefineLabel() As System.Reflection.Emit.Label
-        Log("DefineLabel")
-        Return m_ILGen.DefineLabel()
-    End Function
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode)
-        Log("Emit({0})", opcode.ToString)
-        m_ILGen.Emit(opcode)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Byte)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Double)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Integer)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Long)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As SByte)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Short)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal arg As Single)
-        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
-        m_ILGen.Emit(opcode, arg)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal str As String)
-        Log("Emit({0},{1})", opcode.ToString, ToString(str))
-        m_ILGen.Emit(opcode, str)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal con As System.Reflection.ConstructorInfo)
-        Helper.Assert(Helper.IsEmittableMember(con))
-        Log("Emit({0},{1})", opcode.ToString, ToString(con))
-        m_ILGen.Emit(opcode, con)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal label As System.Reflection.Emit.Label)
-        Log("Emit({0},{1})", opcode.ToString, ToString(label))
-        m_ILGen.Emit(opcode, label)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal labels() As System.Reflection.Emit.Label)
-        Log("Emit({0},{1})", opcode.ToString, ToString(labels))
-        m_ILGen.Emit(opcode, labels)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal local As System.Reflection.Emit.LocalBuilder)
-        Log("Emit({0},{1})", opcode.ToString, ToString(local))
-        m_ILGen.Emit(opcode, local)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal signature As System.Reflection.Emit.SignatureHelper)
-        Log("Emit({0},{1})", opcode.ToString, ToString(signature))
-        m_ILGen.Emit(opcode, signature)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal field As System.Reflection.FieldInfo)
-        Helper.Assert(Helper.IsEmittableMember(field))
-        Log("Emit({0},{1})", opcode.ToString, ToString(field))
-        m_ILGen.Emit(opcode, field)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal meth As System.Reflection.MethodInfo)
-        Helper.Assert(Helper.IsEmittableMember(meth))
-        Log("Emit({0},{1})", opcode.ToString, ToString(meth))
-        m_ILGen.Emit(opcode, meth)
-    End Sub
-    Public Sub Emit(ByVal opcode As System.Reflection.Emit.OpCode, ByVal cls As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(cls))
-        Log("Emit({0},{1})", opcode.ToString, ToString(cls))
-        m_ILGen.Emit(opcode, cls)
-    End Sub
-    Public Sub EmitCall(ByVal opcode As System.Reflection.Emit.OpCode, ByVal methodInfo As System.Reflection.MethodInfo, ByVal optionalParameterTypes() As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(methodInfo))
-        Log("EmitCall({0},{1},{2})", opcode.ToString, ToString(methodInfo), ToString(optionalParameterTypes))
-        m_ILGen.EmitCall(opcode, methodInfo, optionalParameterTypes)
-    End Sub
-    Public Sub EmitCalli(ByVal opcode As System.Reflection.Emit.OpCode, ByVal callingConvention As System.Reflection.CallingConventions, ByVal returnType As System.Type, ByVal parameterTypes() As System.Type, ByVal optionalParameterTypes() As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(returnType))
-        Helper.Assert(Helper.IsEmittableMember(parameterTypes))
-        Helper.Assert(Helper.IsEmittableMember(optionalParameterTypes))
-        Log("EmitCalli({0},{1},{2},{3},{4})", opcode.ToString, ToString(callingConvention), ToString(returnType), ToString(parameterTypes), ToString(optionalParameterTypes))
-        m_ILGen.EmitCalli(opcode, callingConvention, returnType, parameterTypes, optionalParameterTypes)
-    End Sub
-    Public Sub EmitCalli(ByVal opcode As System.Reflection.Emit.OpCode, ByVal unmanagedCallConv As System.Runtime.InteropServices.CallingConvention, ByVal returnType As System.Type, ByVal parameterTypes() As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(returnType))
-        Helper.Assert(Helper.IsEmittableMember(parameterTypes))
-        Log("EmitCalli({0},{1},{2},{3})", opcode.ToString, ToString(unmanagedCallConv), ToString(returnType), ToString(parameterTypes))
-        m_ILGen.EmitCalli(opcode, unmanagedCallConv, returnType, parameterTypes)
-    End Sub
-    Public Sub EmitWriteLine(ByVal value As String)
-        Log("EmitWriteLine({0})", ToString(value))
-        m_ILGen.EmitWriteLine(value)
-    End Sub
-    Public Sub EmitWriteLine(ByVal localBuilder As System.Reflection.Emit.LocalBuilder)
-        Log("EmitWriteLine({0})", ToString(localBuilder))
-        m_ILGen.EmitWriteLine(localBuilder)
-    End Sub
-    Public Sub EmitWriteLine(ByVal fld As System.Reflection.FieldInfo)
-        Helper.Assert(Helper.IsEmittableMember(fld))
-        Log("EmitWriteLine({0})", ToString(fld))
-        m_ILGen.EmitWriteLine(fld)
-    End Sub
-    Public Sub EndExceptionBlock()
-        Log("EndExceptionBlock")
-        m_ILGen.EndExceptionBlock()
-    End Sub
-    Public Sub EndScope()
-        Log("EndScope")
-        m_ILGen.EndScope()
-    End Sub
-    Public Sub MarkLabel(ByVal loc As System.Reflection.Emit.Label)
-        Log("MarkLabel({0}", ToString(loc))
-        m_ILGen.MarkLabel(loc)
-    End Sub
-    Public Sub MarkSequencePoint(ByVal document As System.Diagnostics.SymbolStore.ISymbolDocumentWriter, ByVal startLine As Integer, ByVal startColumn As Integer, ByVal endLine As Integer, ByVal endColumn As Integer)
-        Log("MarkSequencePoint({0},{1},{2},{3},{4}", CObj(document).ToString, startLine.ToString, startColumn.ToString, endLine.ToString, endColumn.ToString)
-        m_ILGen.MarkSequencePoint(document, startLine, startColumn, endLine, endColumn)
-    End Sub
-    Public Sub ThrowException(ByVal excType As System.Type)
-        Helper.Assert(Helper.IsEmittableMember(excType))
-        Log("ThrowException({0})", ToString(excType))
-        m_ILGen.ThrowException(excType)
-    End Sub
-    Public Sub UsingNamespace(ByVal usingNamespace As String)
-        Log("UsingNamespace({0})", usingNamespace)
-        m_ILGen.UsingNamespace(usingNamespace)
+        BeginFinallyBlockCecil()
     End Sub
 
+    Public Function DefineLabel() As Label
+        Log("DefineLabel")
+        Dim result As New Label
+        result.CecilLabel = DefineLabelCecil()
+        Return result
+    End Function
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal label As Label)
+        Emit(opcode, label.CecilLabel)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal labels() As Label)
+        Dim tmpCecil As Mono.Cecil.Cil.Instruction()
+        ReDim tmpCecil(labels.Length - 1)
+        For i As Integer = 0 To labels.Length - 1
+            tmpCecil(i) = labels(i).CecilLabel
+        Next
+        Emit(opcode, tmpCecil)
+    End Sub
+
+    Public Sub EndExceptionBlock()
+        Log("EndExceptionBlock")
+        EndExceptionBlockCecil()
+    End Sub
+
+    Public Sub MarkLabel(ByVal loc As Label)
+        MarkLabel(loc.CecilLabel)
+    End Sub
+
+    Public Sub MarkSequencePoint(ByVal document As System.Diagnostics.SymbolStore.ISymbolDocumentWriter, ByVal startLine As Integer, ByVal startColumn As Integer, ByVal endLine As Integer, ByVal endColumn As Integer)
+        Log("MarkSequencePoint({0},{1},{2},{3},{4}", CObj(document).ToString, startLine.ToString, startColumn.ToString, endLine.ToString, endColumn.ToString)
+        'Throw New NotImplementedException
+    End Sub
+
+    Private Class TryBlock
+        Public Start As Integer
+        Public EndBlock As Mono.Cecil.Cil.Instruction
+        Public EndTry As Mono.Cecil.Cil.Instruction
+        Public Handlers As New Generic.List(Of Mono.Cecil.Cil.ExceptionHandler)
+
+        ReadOnly Property CurrentHandler() As Mono.Cecil.Cil.ExceptionHandler
+            Get
+                If Handlers.Count = 0 Then
+                    Return Nothing
+                Else
+                    Return Handlers(Handlers.Count - 1)
+                End If
+            End Get
+        End Property
+    End Class
+
+    Private m_ExceptionBlocks As Generic.Stack(Of TryBlock)
+
+    Public Sub BeginCatchBlock(ByVal exceptionType As Mono.Cecil.TypeReference)
+        Log("BeginCatchBlock")
+        Helper.Assert(Helper.IsEmittableMember(m_Compiler, exceptionType))
+
+        If exceptionType Is Nothing Then
+            Dim block As TryBlock = m_ExceptionBlocks.Peek
+            Dim ex As Mono.Cecil.Cil.ExceptionHandler = block.Handlers(block.Handlers.Count - 1)
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfilter)
+            ex.FilterEnd = CreateAndEmitNop()
+            ex.HandlerStart = ex.FilterEnd
+        Else
+            Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Catch)
+            Dim block As TryBlock = m_ExceptionBlocks.Peek
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+            Dim handlerStart As Integer = CilBody.Instructions.Count
+            If block.Handlers.Count = 0 Then
+                ex.TryEnd = CreateAndEmitNop()
+            Else
+                ex.TryEnd = block.Handlers(0).TryEnd
+                CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            End If
+            If block.EndTry Is Nothing Then
+                block.EndTry = ex.TryEnd
+            End If
+            If block.Handlers.Count > 0 Then
+                block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilBody.Instructions(CilBody.Instructions.Count - 1) 'CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            End If
+            ex.HandlerStart = CilBody.Instructions(handlerStart)
+            ex.CatchType = exceptionType
+            block.Handlers.Add(ex)
+            End If
+    End Sub
+
+    Private Sub BeginExceptFilterBlockCecil()
+        Log("BeginExceptFilterBlock")
+        Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Filter)
+        Dim block As TryBlock = m_ExceptionBlocks.Peek
+
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+        If block.EndTry Is Nothing Then
+            block.EndTry = CreateAndEmitNop()
+        End If
+        If block.Handlers.Count > 0 Then
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CreateAndEmitNop()
+        End If
+
+        ex.FilterStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
+        ex.HandlerStart = ex.FilterStart
+        block.Handlers.Add(ex)
+    End Sub
+
+    Private Function BeginExceptionBlockCecil() As Mono.Cecil.Cil.Instruction
+        Log("BeginExceptionBlock")
+        Dim block As New TryBlock
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        block.Start = CilBody.Instructions.Count
+        block.EndBlock = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
+        If m_ExceptionBlocks Is Nothing Then m_ExceptionBlocks = New Generic.Stack(Of TryBlock)
+        m_ExceptionBlocks.Push(block)
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        Return block.EndBlock
+    End Function
+
+    Private Sub BeginFinallyBlockCecil()
+        Log("BeginFinallyBlock")
+        Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Finally)
+        Dim block As TryBlock = m_ExceptionBlocks.Peek
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+        If block.EndTry Is Nothing Then
+            block.EndTry = CreateAndEmitNop()
+        End If
+        If block.Handlers.Count > 0 Then
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CreateAndEmitNop()
+        End If
+
+        ex.HandlerStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
+        ex.TryEnd = ex.HandlerStart
+        block.Handlers.Add(ex)
+    End Sub
+
+    Public Sub EndExceptionBlockCecil()
+        Log("EndExceptionBlock")
+        Dim block As TryBlock = m_ExceptionBlocks.Pop
+        If block.EndTry Is Nothing Then block.EndTry = CreateAndEmitNop()
+
+        Dim TryStart As Mono.Cecil.Cil.Instruction
+        TryStart = CilBody.Instructions(block.Start)
+        If block.Handlers(block.Handlers.Count - 1).HandlerType = Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+            CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfinally)
+        End If
+        For i As Integer = 0 To block.Handlers.Count - 1
+            Dim handler As Mono.Cecil.Cil.ExceptionHandler
+            handler = block.Handlers(i)
+            handler.TryStart = TryStart
+            If handler.TryEnd Is Nothing Then
+                handler.TryEnd = block.EndTry
+            End If
+            If handler.HandlerEnd Is Nothing Then
+                If handler.HandlerType <> Mono.Cecil.Cil.ExceptionHandlerType.Finally Then
+                    CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
+                End If
+                handler.HandlerEnd = block.EndBlock
+            End If
+            CilBody.ExceptionHandlers.Add(handler)
+        Next
+        CilWorker.Append(block.EndBlock)
+    End Sub
+
+    Public Function DeclareLocal(ByVal localType As Mono.Cecil.TypeReference) As Mono.Cecil.Cil.VariableDefinition
+        Helper.Assert(Helper.IsEmittableMember(Compiler, localType))
+        Log("DeclareLocal({0})", localType.ToString)
+        Dim local As Mono.Cecil.Cil.VariableDefinition
+        local = New Mono.Cecil.Cil.VariableDefinition(localType)
+        m_CilBody.Variables.Add(local)
+        m_CilBody.InitLocals = True
+        Return local
+    End Function
+
+    Private Function DefineLabelCecil() As Mono.Cecil.Cil.Instruction
+        Log("DefineLabel")
+        Dim result As Mono.Cecil.Cil.Instruction
+        result = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
+        Return result
+    End Function
+
+    Public Function CreateAndEmitNop() As Mono.Cecil.Cil.Instruction
+        Dim result As Mono.Cecil.Cil.Instruction
+        result = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
+        CilWorker.Append(result)
+        Return result
+    End Function
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode)
+        Log("Emit({0})", opcode.ToString)
+        CilWorker.Emit(opcode)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Byte)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Double)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Integer)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Long)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As SByte)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Short)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal arg As Single)
+        Log("Emit({0},{1})", opcode.ToString, ToString(arg))
+        CilWorker.Emit(opcode, arg)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal str As String)
+        Log("Emit({0},{1})", opcode.ToString, ToString(str))
+        CilWorker.Emit(opcode, str)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal con As Mono.Cecil.MethodReference)
+        Helper.Assert(Helper.IsEmittableMember(Compiler, con))
+        Log("Emit({0},{1})", opcode.ToString, ToString(con))
+        CilWorker.Emit(opcode, con)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal label As Mono.Cecil.Cil.Instruction)
+        Log("Emit({0},{1})", opcode.ToString, ToString(label))
+        CilWorker.Emit(opcode, label)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal labels() As Mono.Cecil.Cil.Instruction)
+        Log("Emit({0},{1})", opcode.ToString, ToString(labels))
+        CilWorker.Emit(opcode, labels)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal local As Mono.Cecil.Cil.VariableDefinition)
+        Helper.Assert(local IsNot Nothing)
+        Log("Emit({0},{1})", opcode.ToString, ToString(local))
+        CilWorker.Emit(opcode, local)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal field As Mono.Cecil.FieldReference)
+        Helper.Assert(Helper.IsEmittableMember(Compiler, field))
+        Log("Emit({0},{1})", opcode.ToString, ToString(field))
+        CilWorker.Emit(opcode, field)
+    End Sub
+
+    Public Sub Emit(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal cls As Mono.Cecil.TypeReference)
+        Helper.Assert(Helper.IsEmittableMember(Compiler, cls))
+        Log("Emit({0},{1})", opcode.ToString, ToString(cls))
+        CilWorker.Emit(opcode, cls)
+    End Sub
+
+    Public Sub EmitCall(ByVal opcode As Mono.Cecil.Cil.OpCode, ByVal methodInfo As Mono.Cecil.MethodReference, ByVal optionalParameterTypes() As Mono.Cecil.TypeReference)
+        'Helper.Assert(Helper.IsEmittableMember(Compiler, methodInfo))
+        Log("EmitCall({0},{1},{2})", opcode.ToString, ToString(methodInfo), ToString(optionalParameterTypes))
+        'Helper.Assert(Helper.IsEmittableMember(Compiler, methodInfo.ReturnType.ReturnType))
+        If optionalParameterTypes Is Nothing Then
+            CilWorker.Emit(opcode, methodInfo)
+        Else
+            Throw New NotImplementedException("CilWorker.Append(CilWorker.Create(opcode, methodInfo, optionalParameterTypes))")
+        End If
+    End Sub
+
+    Public Sub MarkLabel(ByVal loc As Mono.Cecil.Cil.Instruction)
+        Log("MarkLabel({0}", ToString(loc))
+        CilWorker.Append(loc)
+    End Sub
+
+    Public Sub ThrowException(ByVal excType As Mono.Cecil.TypeReference)
+        Helper.Assert(Helper.IsEmittableMember(Compiler, excType))
+        Log("ThrowException({0})", ToString(excType))
+        CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Throw, excType)
+    End Sub
 End Class
-#End If

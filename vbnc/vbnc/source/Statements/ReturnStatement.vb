@@ -32,15 +32,17 @@ Public Class ReturnStatement
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim isSub As Boolean
 
-        If Info.Method.Signature.ReturnType Is Nothing Then
+        isSub = Info.Method.Signature.ReturnType Is Nothing OrElse Helper.CompareType(Info.Method.Signature.ReturnType, Compiler.TypeCache.System_Void)
+        If isSub Then
             Helper.Assert(m_Expression Is Nothing)
         Else
             Helper.Assert(m_Expression IsNot Nothing)
             result = m_Expression.GenerateCode(Info.Clone(Me, True, , Info.Method.Signature.ReturnType)) AndAlso result
         End If
 
-        Emitter.EmitRetOrLeave(Info, Me, m_Expression IsNot Nothing)
+        Emitter.EmitRetOrLeave(Info, Me, Not isSub)
 
         Return result
     End Function

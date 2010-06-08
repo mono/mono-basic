@@ -35,33 +35,30 @@ Public Class ClassDeclaration
     Inherits PartialTypeDeclaration
     Implements IHasImplicitMembers
 
-    Private m_Inherits As NonArrayTypeName
+    'Due to partial classes there may be more than one inherits clause per class
+    Private m_InheritsClauses As Generic.List(Of NonArrayTypeName)
+    Private m_InheritsType As Mono.Cecil.TypeReference
     Private m_CreatedImplicitMembers As Boolean
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal DeclaringType As TypeDeclaration, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters, ByVal [Inherits] As NonArrayTypeName, ByVal TypeImplementsClauses As TypeImplementsClauses)
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeParameters, TypeImplementsClauses)
-        m_Inherits = [Inherits]
+    Sub AddInheritsClause(ByVal Clause As NonArrayTypeName)
+        If m_InheritsClauses Is Nothing Then
+            m_InheritsClauses = New Generic.List(Of NonArrayTypeName)
+        End If
+        m_InheritsClauses.Add(Clause)
     End Sub
-
-    ReadOnly Property [Inherits]() As NonArrayTypeName
-        Get
-            Return m_Inherits
-        End Get
-    End Property
-
 
     Function CreateBaseImplicitMembers() As Boolean
-        Dim tD As TypeDescriptor
+        Dim tD As Mono.Cecil.TypeDefinition
         Dim cD As ClassDeclaration
 
-        tD = TryCast(Me.BaseType, TypeDescriptor)
+        tD = CecilHelper.FindDefinition(Me.BaseType)
         If tD Is Nothing Then Return True
 
-        cd = TryCast(tD.Declaration, ClassDeclaration)
+        cD = TryCast(tD.Annotations(Compiler), ClassDeclaration)
         If cD Is Nothing Then Return True
 
         Return cD.CreateImplicitMembers
@@ -72,46 +69,69 @@ Public Class ClassDeclaration
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetBaseDefaultConstructor() As ConstructorInfo
-        If Me.BaseType.IsGenericType Then
-            Helper.Assert(Me.m_Inherits.IsConstructedTypeName)
-            Return Compiler.Helper.GetDefaultGenericConstructor(Me.m_Inherits.AsConstructedTypeName)
+    Function GetBaseDefaultConstructor() As Mono.Cecil.MethodReference
+        If CecilHelper.IsGenericType(Me.BaseType) Then
+            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
             Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
         End If
     End Function
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Dim result As TypeAttributes = MyBase.TypeAttributes
-
-            If Me.Modifiers.Is(ModifierMasks.MustInherit) Then
-                result = result Or Reflection.TypeAttributes.Abstract
-            ElseIf Me.Modifiers.Is(ModifierMasks.NotInheritable) Then
-                result = result Or Reflection.TypeAttributes.Sealed
-            End If
-
-            Return result
-        End Get
-    End Property
-
-    Overrides Function ResolveType() As Boolean
-        Dim result As Boolean = True
-
-        If m_Inherits IsNot Nothing Then
-            result = m_Inherits.ResolveTypeReferences AndAlso result
-            If result = False Then Return result
-            BaseType = m_Inherits.ResolvedType
+    ''' <summary>
+    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).          ''' If no constructor found, returns nothing.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function GetBaseDefaultConstructorCecil() As Mono.Cecil.MethodReference
+        If CecilHelper.IsGenericType(Me.BaseType) Then
+            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
-            BaseType = Compiler.TypeCache.System_Object
-#If DEBUGREFLECTION Then
-            Helper.DebugReflection_AppendLine(String.Format("{0} = GetType(Object)", Helper.GetObjectName(BaseType)))
-#End If
+            Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
+        End If
+    End Function
+
+    Private Function GetTypeAttributes() As Mono.Cecil.TypeAttributes
+        Dim result As Mono.Cecil.TypeAttributes = MyBase.TypeAttributes
+
+        If Me.Modifiers.Is(ModifierMasks.MustInherit) Then
+            result = result Or Mono.Cecil.TypeAttributes.Abstract
+        ElseIf Me.Modifiers.Is(ModifierMasks.NotInheritable) Then
+            result = result Or Mono.Cecil.TypeAttributes.Sealed
         End If
 
-        result = MyBase.ResolveType AndAlso result
+        Return result
+    End Function
 
-        Helper.Assert(BaseType IsNot Nothing)
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = GetTypeAttributes()
+    End Sub
+
+    Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        Helper.Assert(m_InheritsClauses Is Nothing OrElse m_InheritsClauses.Count > 0) 'Perf check
+
+        If m_InheritsClauses IsNot Nothing AndAlso m_InheritsClauses.Count > 0 Then
+            For i As Integer = 0 To m_InheritsClauses.Count - 1
+                result = m_InheritsClauses(i).ResolveTypeReferences AndAlso result
+            Next
+            If result = False Then Return False
+
+            For i As Integer = 1 To m_InheritsClauses.Count - 1
+                If Helper.CompareType(m_InheritsClauses(0).ResolvedType, m_InheritsClauses(i).ResolvedType) = False Then
+                    Helper.AddError(Compiler, Me.Location, "Class specifies different base classes")
+                    result = False
+                End If
+            Next
+            If result = False Then Return False
+            BaseType = m_InheritsClauses(0).ResolvedType
+        Else
+            BaseType = Compiler.TypeCache.System_Object
+        End If
+
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         'Find the default constructors for this class
         Me.FindDefaultConstructors()
@@ -144,6 +164,8 @@ Public Class ClassDeclaration
 
         If methods Is Nothing OrElse methods.Count = 0 Then Return result
 
+        methods = New Generic.List(Of INameable)(methods)
+
         For i As Integer = methods.Count - 1 To 0 Step -1
             Dim subD As SubDeclaration
             subD = TryCast(methods(i), SubDeclaration)
@@ -152,7 +174,7 @@ Public Class ClassDeclaration
                 Continue For
             End If
 
-            If subD.Signature.ReturnType IsNot Nothing Then
+            If subD.Signature.ReturnType IsNot Nothing AndAlso Helper.CompareType(subD.Signature.ReturnType, Compiler.TypeCache.System_Void) = False Then
                 methods.RemoveAt(i)
                 Continue For
             End If
@@ -200,11 +222,11 @@ Public Class ClassDeclaration
         'a compile-time error occurs. 
         'The declared access type for the default constructor is always Public. 
         If HasInstanceConstructors = False Then
-            Dim baseDefaultCtor As ConstructorInfo
+            Dim baseDefaultCtor As Mono.Cecil.MethodReference
             baseDefaultCtor = Me.GetBaseDefaultConstructor()
 
             If baseDefaultCtor IsNot Nothing Then
-                If baseDefaultCtor.IsPrivate Then
+                If Helper.IsPrivate(baseDefaultCtor) Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
                 Else
                     DefaultInstanceConstructor = ConstructorDeclaration.CreateDefaultConstructor(Me)
@@ -281,8 +303,8 @@ Public Class ClassDeclaration
         If createInstanceMethodName = String.Empty Then Return result
         If disposeInstanceMethodName = String.Empty Then Return result
 
-        Dim collectType As Type
-        Dim foundTypes As Generic.List(Of Type)
+        Dim collectType As Mono.Cecil.TypeReference
+        Dim foundTypes As Generic.List(Of Mono.Cecil.TypeReference)
         foundTypes = Compiler.TypeManager.GetType(typeToCollect, False)
         If foundTypes.Count <> 1 Then
             Return result
@@ -310,25 +332,25 @@ Public Class ClassDeclaration
                 If tn Is Nothing Then Continue For
                 If Not Helper.CompareType(tn.ResolvedType, groupData.TypeToCollect) Then Continue For
 
-                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.TypeDescriptor) = False Then Continue For
-                If Helper.CompareType(mi.Signature.ReturnType, T.TypeDescriptor) = False Then Continue For
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.CecilBuilder) = False Then Continue For
+                If Helper.CompareType(mi.Signature.ReturnType, T.CecilBuilder) = False Then Continue For
 
 
                 If groupData.CreateInstanceMethod IsNot Nothing Then Continue For
-                groupData.CreateInstanceMethod = mi.MethodDescriptor
+                groupData.CreateInstanceMethod = mi.CecilBuilder
             ElseIf mi.IsShared = False AndAlso Helper.CompareName(disposeInstanceMethodName, mi.Name) Then
                 If mi.Signature.Parameters.Count <> 1 Then Continue For
                 If mi.Signature.TypeParameters Is Nothing OrElse mi.Signature.TypeParameters.Parameters.Count <> 1 Then Continue For
-                If mi.Signature.ReturnType IsNot Nothing Then Continue For
+                If mi.Signature.ReturnType IsNot Nothing AndAlso Helper.CompareType(mi.Signature.ReturnType, Compiler.TypeCache.System_Void) = False Then Continue For
 
                 Dim T As TypeParameter = mi.Signature.TypeParameters.Parameters(0)
                 If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
                 If Not Helper.CompareType(T.TypeParameterConstraints.Constraints(0).TypeName.ResolvedType, groupData.TypeToCollect) Then Continue For
 
-                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, T.TypeDescriptor.MakeByRefType) = False Then Continue For
+                If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, Compiler.TypeManager.MakeByRefType(Me, T.CecilBuilder)) = False Then Continue For
 
                 If groupData.DisposeInstanceMethod IsNot Nothing Then Continue For
-                groupData.DisposeInstanceMethod = mi.MethodDescriptor
+                groupData.DisposeInstanceMethod = mi.CecilBuilder
             End If
             If groupData.DisposeInstanceMethod IsNot Nothing AndAlso groupData.CreateInstanceMethod IsNot Nothing Then Exit For
         Next
@@ -367,7 +389,7 @@ Public Class ClassDeclaration
             If classType Is Nothing Then Continue For
             If classType.TypeParameters IsNot Nothing AndAlso classType.TypeParameters.Parameters.Count > 0 Then Continue For
 
-            If Helper.IsSubclassOf(collectType, type.TypeDescriptor) Then
+            If Helper.IsSubclassOf(collectType, type.CecilType) Then
                 typesCollected.Add(type)
                 If namesUsed.ContainsKey(type.Name) Then
                     namesClashed.Add(type.Name, Nothing)
@@ -388,12 +410,12 @@ Public Class ClassDeclaration
             End If
             fieldName = "m_" & propertyName
 
-            Dim field As New VariableDeclaration(Me)
+            Dim field As New TypeVariableDeclaration(Me)
             Dim prop As New PropertyDeclaration(Me)
             Dim modifiers As New Modifiers(ModifierMasks.Public)
 
-            field.Init(Nothing, modifiers, fieldName, type.TypeDescriptor)
-            prop.Init(Nothing, modifiers, propertyName, type.TypeDescriptor)
+            field.Init(modifiers, fieldName, type.CecilType)
+            prop.Init(modifiers, propertyName, type.CecilType)
 
             type.MyGroupField = field
 
@@ -419,7 +441,7 @@ Public Class ClassDeclaration
 
             get_1_left.Init(get_1_right_field_token, Nothing)
 
-            get_1_right_instance_exp_typeargs_1.Init(type.TypeDescriptor)
+            get_1_right_instance_exp_typeargs_1.Init(type.CecilType)
             get_1_right_instance_exp_typeargs.Add(get_1_right_instance_exp_typeargs_1)
             get_1_right_instance_exp.Init(get_1_right_method_token, get_1_right_instance_exp_typeargs)
             get_1_right_arg1.Init(get_1_right_field_token, Nothing)
@@ -464,7 +486,7 @@ Public Class ClassDeclaration
 
             set_if2_code.AddStatement(set_throw)
 
-            set_dispose_invocation_instance_exp_typeargs_1.Init(type.TypeDescriptor)
+            set_dispose_invocation_instance_exp_typeargs_1.Init(type.CecilType)
             set_dispose_invocation_instance_exp_typeargs.Add(set_dispose_invocation_instance_exp_typeargs_1)
             set_dispose_invocation_instance_exp.Init(set_dispose_invocation_method_token, set_dispose_invocation_instance_exp_typeargs)
             set_dispose_invocation_arg1.Init(set_dispose_invocation_field_token, Nothing)
@@ -488,10 +510,13 @@ Public Class ClassDeclaration
             Members.Add(field)
             Members.Add(prop)
 
-            Me.TypeDescriptor.ClearCache()
+            field.UpdateDefinition()
+            prop.UpdateDefinition()
 
-            If Compiler.TypeManager.ContainsCache(Me.TypeDescriptor) Then
-                Dim cache As MemberCache = Compiler.TypeManager.GetCache(Me.TypeDescriptor)
+            'Me.TypeDescriptor.ClearCache()
+
+            If Compiler.TypeManager.ContainsCache(Me.CecilType) Then
+                Dim cache As MemberCache = Compiler.TypeManager.GetCache(Me.CecilType)
                 'cache.Cache.Add(New MemberCacheEntry(field.FieldDescriptor))
                 'cache.Cache.Add(New MemberCacheEntry(prop.MemberDescriptor))
                 'cache.FlattenedCache.Add(New MemberCacheEntry(field.FieldDescriptor))
@@ -519,5 +544,4 @@ Public Class ClassDeclaration
         End While
         Return tm.PeekToken(i).Equals(KS.Class)
     End Function
-
 End Class

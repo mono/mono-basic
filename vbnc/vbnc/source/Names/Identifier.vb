@@ -25,7 +25,6 @@
 Public Class Identifier
     Inherits ParsedObject
 
-    'Private m_Identifier As Token
     Private m_Name As String
     Private m_TypeCharacter As TypeCharacters.Characters = TypeCharacters.Characters.None
 
@@ -39,22 +38,32 @@ Public Class Identifier
         m_TypeCharacter = TypeCharacter
     End Sub
 
+    Sub New(ByVal Identifier As String)
+        m_Name = Identifier
+    End Sub
+
     Sub Init(ByVal Identifier As String, ByVal Location As Span, ByVal TypeCharacter As TypeCharacters.Characters)
         Me.Location = Location
         m_Name = Identifier
         m_TypeCharacter = TypeCharacter
     End Sub
 
-    ReadOnly Property Identifier() As String
+    Property Identifier() As String
         Get
             Return m_Name
         End Get
+        Set
+            m_Name = Value
+        End Set
     End Property
 
-    ReadOnly Property TypeCharacter() As TypeCharacters.Characters
+    Property TypeCharacter() As TypeCharacters.Characters
         Get
             Return m_TypeCharacter
         End Get
+        Set
+            m_TypeCharacter = Value
+        End Set
     End Property
 
     ReadOnly Property HasTypeCharacter() As Boolean
@@ -71,16 +80,13 @@ Public Class Identifier
         Return result
     End Function
 
-    'ReadOnly Property Token() As Token
-    '    Get
-    '        Return m_Identifier
-    '    End Get
-    'End Property
-
-    ReadOnly Property Name() As String
+    Property Name() As String
         Get
             Return m_Name
         End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
 End Class

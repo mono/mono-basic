@@ -26,13 +26,13 @@
 Public Class ValueClassification
     Inherits ExpressionClassification
 
-    Private m_Type As Type
+    Private m_Type As Mono.Cecil.TypeReference
     Private m_IsLiteralNothing As Boolean
     Private m_ConstantValue As Object
     Private m_Value As Expression
     Private m_Constant As ConstantDeclaration
     Private m_EnumVariable As EnumMemberDeclaration
-    Private m_Field As FieldInfo
+    Private m_Field As Mono.Cecil.FieldReference
     Private m_Classification As ExpressionClassification
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
@@ -43,9 +43,6 @@ Public Class ValueClassification
             recursive = True
             If ReclassifiedClassification IsNot Nothing Then
                 result = ReclassifiedClassification.IsConstant
-                If result Then
-                    ConstantValue = ReclassifiedClassification.ConstantValue
-                End If
             ElseIf m_Value IsNot Nothing AndAlso m_Value.IsConstant Then
                 result = True
             Else
@@ -53,6 +50,18 @@ Public Class ValueClassification
             End If
             recursive = False
             Return result
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property ConstantValue() As Object
+        Get
+            If ReclassifiedClassification IsNot Nothing Then
+                Return ReclassifiedClassification.ConstantValue
+            ElseIf m_Value IsNot Nothing Then
+                Return m_Value.ConstantValue
+            Else
+                Return MyBase.ConstantValue
+            End If
         End Get
     End Property
 
@@ -121,18 +130,18 @@ Public Class ValueClassification
         End Get
     End Property
 
-    ReadOnly Property Value_Field() As FieldInfo
+    ReadOnly Property Value_Field() As Mono.Cecil.FieldReference
         Get
             Return m_Field
         End Get
     End Property
 
-    Property Type() As Type
+    Property Type() As Mono.Cecil.TypeReference
         Get
             Helper.Assert(m_Type IsNot Nothing)
             Return m_Type
         End Get
-        Set(ByVal value As Type)
+        Set(ByVal value As Mono.Cecil.TypeReference)
             m_Type = value
         End Set
     End Property
@@ -156,7 +165,7 @@ Public Class ValueClassification
         m_Type = DirectCast(m_Classification, VariableClassification).Type
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Variable As FieldInfo, ByVal InstanceExpression As Expression)
+    Sub New(ByVal Parent As ParsedObject, ByVal Variable As Mono.Cecil.FieldReference, ByVal InstanceExpression As Expression)
         MyBase.New(Classifications.Value, Parent)
         Helper.Assert(Variable IsNot Nothing)
         m_Classification = New VariableClassification(Me.Parent, Variable, InstanceExpression)
@@ -185,14 +194,14 @@ Public Class ValueClassification
         m_Value = Value
         'Helper.Assert(m_Type IsNot Nothing)
     End Sub
-    Sub New(ByVal ParentAndValue As Expression, ByVal ExpressionType As Type)
+    Sub New(ByVal ParentAndValue As Expression, ByVal ExpressionType As Mono.Cecil.TypeReference)
         Me.New(DirectCast(ParentAndValue, ParsedObject))
         m_Type = ExpressionType
         m_Value = ParentAndValue
         Helper.Assert(m_Type IsNot Nothing)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Type As Type, ByVal Value As Object)
+    Sub New(ByVal Parent As ParsedObject, ByVal Type As Mono.Cecil.TypeReference, ByVal Value As Object)
         Me.New(Parent)
         m_Type = Type
         m_ConstantValue = Value

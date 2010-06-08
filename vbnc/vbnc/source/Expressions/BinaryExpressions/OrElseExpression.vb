@@ -32,9 +32,9 @@ Public Class OrElseExpression
                     Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 End If
 
-                Dim loadtrue, endexp As Reflection.Emit.Label
-                loadtrue = Info.ILGen.DefineLabel
-                endexp = Info.ILGen.DefineLabel
+                Dim loadtrue, endexp As Label
+                loadtrue = Emitter.DefineLabel(Info)
+                endexp = Emitter.DefineLabel(Info)
 
                 result = m_LeftExpression.GenerateCode(Info) AndAlso result
                 If opType = TypeCode.Object Then
@@ -51,12 +51,11 @@ Public Class OrElseExpression
                 Emitter.EmitLoadValue(Info, False) 'Load false value
                 Emitter.EmitBranch(Info, endexp)
 
-                Info.ILGen.MarkLabel(loadtrue)
+                Emitter.MarkLabel(Info, loadtrue)
                 Emitter.EmitLoadValue(Info, True) 'Load true value
 
-                Info.ILGen.MarkLabel(endexp) 'The end of the expression
-                Info.Stack.Pop(Compiler.TypeCache.System_Boolean) 'Both a true and a false value was added to the stack, remove one.
-
+                Emitter.MarkLabel(Info, endexp) 'The end of the expression
+          
                 If opType = TypeCode.Object Then
                     Emitter.EmitBox(Info, Compiler.TypeCache.System_Boolean)
                     Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)

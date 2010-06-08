@@ -26,7 +26,7 @@
 Public MustInherit Class InstanceExpression
     Inherits Expression
 
-    Protected m_ExpressionType As Type
+    Protected m_ExpressionType As Mono.Cecil.TypeReference
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return True
@@ -36,7 +36,7 @@ Public MustInherit Class InstanceExpression
         Return tm.CurrentToken.Equals(KS.Me, KS.MyBase, KS.MyClass)
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Helper.Assert(m_ExpressionType IsNot Nothing)
             Return m_ExpressionType
@@ -46,7 +46,7 @@ Public MustInherit Class InstanceExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim tp As TypeDeclaration
         tp = Me.FindFirstParent(Of TypeDeclaration)()
-        m_ExpressionType = tp.TypeDescriptor
+        m_ExpressionType = tp.CecilType
 
         '        Classification = New ValueClassification(Me, m_ExpressionType)
         'SPECBUG: instance expressions should be variable classifications?

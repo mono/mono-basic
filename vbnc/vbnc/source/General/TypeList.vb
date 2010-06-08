@@ -18,11 +18,5 @@
 ' 
 
 Public Class TypeList
-    Inherits Generic.List(Of Type)
+    Inherits Generic.List(Of Mono.Cecil.TypeReference)
 End Class
-
-#If ENABLECECIL Then
-Public Class CecilTypeList
-    Inherits Generic.List(Of Mono.Cecil.TypeDefinition)
-End Class
-#End If

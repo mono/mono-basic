@@ -21,7 +21,7 @@ Public Class DeRefExpression
     Inherits Expression
 
     Private m_Expression As Expression
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     ''' <summary>
     ''' Automatically resolved.
@@ -31,12 +31,17 @@ Public Class DeRefExpression
     ''' <remarks></remarks>
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression)
         MyBase.new(Parent)
+
+        Dim refType As ByReferenceType = TryCast(Expression.ExpressionType, ByReferenceType)
+
+        If refType Is Nothing Then Throw New InternalException
+
         m_Expression = Expression
-        m_ExpressionType = Expression.ExpressionType.GetElementType
+        m_ExpressionType = refType.ElementType
 
         Classification = New VariableClassification(Me, Expression, m_ExpressionType)
 
-        If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then Helper.ErrorRecoveryNotImplemented()
+        If MyBase.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
     End Sub
 
     ReadOnly Property Expression() As Expression
@@ -61,15 +66,7 @@ Public Class DeRefExpression
         Return result
     End Function
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        Me.CheckTypeReferencesNotResolved()
-
-        Return result
-    End Function
-
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

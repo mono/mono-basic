@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -24,17 +24,23 @@
 Public Class TypeArgumentList
     Inherits BaseList(Of TypeName)
 
+    Private m_ArgumentCollection As Mono.Collections.Generic.Collection(Of TypeReference)
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Function AsTypeArray() As Type()
-        Dim result As New Generic.List(Of Type)
-        For Each arg As TypeName In Me
-            result.Add(arg.ResolvedType)
-        Next
-        Return result.ToArray
-    End Function
+    ReadOnly Property ArgumentCollection() As Mono.Collections.Generic.Collection(Of TypeReference)
+        Get
+            If m_ArgumentCollection Is Nothing Then
+                m_ArgumentCollection = New Mono.Collections.Generic.Collection(Of TypeReference)()
+                For i As Integer = 0 To Count - 1
+                    m_ArgumentCollection.Add(Item(i).ResolvedType)
+                Next
+            End If
+            Return m_ArgumentCollection
+        End Get
+    End Property
 
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeArgumentList
         If NewParent Is Nothing Then NewParent = Me.Parent

@@ -58,7 +58,7 @@ Partial Public Class Parser
 
         If tm.CurrentToken.IsEndOfStatement = False Then
             m_Exception = ParseExpression(result)
-            If m_Exception Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Exception Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_Exception = Nothing
         End If
@@ -104,7 +104,7 @@ Partial Public Class Parser
         End If
 
         m_Clauses = ParseRedimClauses(result)
-        If m_Clauses Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Clauses Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_IsPreserve, m_Clauses)
 
@@ -127,12 +127,12 @@ Partial Public Class Parser
         Dim m_IsGotoZero As Boolean
 
         tm.AcceptIfNotInternalError(KS.On)
-        If tm.Accept(KS.Error) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.Error) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.Accept(KS.Resume) Then
-            If tm.Accept(KS.Next) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.Accept(KS.Next) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             m_IsResumeNext = True
         Else
-            If tm.Accept(KS.GoTo) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.Accept(KS.GoTo) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             If tm.CurrentToken.IsIntegerLiteral Then
                 If tm.CurrentToken.IntegralLiteral = 0 Then
                     m_IsGotoZero = True
@@ -145,14 +145,14 @@ Partial Public Class Parser
                     m_IsGotoMinusOne = True
                     tm.NextToken(2)
                 Else
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                     Compiler.Report.ShowMessage(Messages.VBNC90011, "-1")
                 End If
             ElseIf tm.CurrentToken.IsIdentifier Then
                 m_Label = tm.CurrentToken
                 tm.NextToken()
             Else
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 Compiler.Report.ShowMessage(Messages.VBNC30203)
                 Return Nothing
             End If
@@ -249,7 +249,7 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Erase)
 
         m_Targets = ParseExpressionList(Parent)
-        If m_Targets Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Targets Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Targets)
 
@@ -264,7 +264,7 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Return)
         If Not tm.CurrentToken.IsEndOfStatement Then
             m_Expression = ParseExpression(result)
-            If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_Expression = Nothing
         End If
@@ -277,7 +277,7 @@ Partial Public Class Parser
     Private Function ParseRedimClauses(ByVal Parent As ReDimStatement) As RedimClauses
         Dim result As New RedimClauses(Parent)
         If ParseList(Of RedimClause)(result, New ParseDelegate_Parent(Of RedimClause)(AddressOf ParseRedimClause), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
         Return result
     End Function
@@ -294,7 +294,7 @@ Partial Public Class Parser
 
         Dim tmpExpression As Expression = Nothing
         tmpExpression = ParseExpression(result)
-        If tmpExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If tmpExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         Dim invExpression As InvocationOrIndexExpression = TryCast(tmpExpression, InvocationOrIndexExpression)
         If invExpression IsNot Nothing Then
@@ -322,7 +322,7 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Error)
 
         m_ErrNumber = ParseExpression(result)
-        If m_ErrNumber Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_ErrNumber Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_ErrNumber)
 
@@ -344,28 +344,28 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError("Mid")
 
-        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Target = ParseExpression(result)
-        If m_Target Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Target Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Start = ParseExpression(result)
-        If m_Start Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Start Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.Comma) Then
             m_Length = ParseExpression(result)
-            If m_Length Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Length Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_Length = Nothing
         End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
-        If tm.Accept(KS.Equals) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.Accept(KS.Equals) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Source = ParseExpression(result)
-        If m_Source Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Source Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Target, m_Start, m_Length, m_Source)
 
@@ -386,14 +386,14 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError(KS.While)
         m_Condition = ParseExpression(result)
-        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.End, KS.While) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.End, KS.While) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Condition, m_Code)
 
@@ -416,14 +416,14 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.With)
 
         m_WithExpression = ParseExpression(result)
-        If m_WithExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_WithExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         m_Code = ParseCodeBlock(result, IsOneLiner)
 
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.Accept(KS.End, KS.With) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.With) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Code, m_WithExpression)
 
@@ -447,10 +447,10 @@ Partial Public Class Parser
         Dim m_TypeName As NonArrayTypeName
         Dim m_VariableInitializer As VariableInitializer = Nothing
         Dim m_ArgumentList As ArgumentList = Nothing
-        Dim m_VariableDeclaration As VariableDeclaration
+        Dim m_VariableDeclaration As LocalVariableDeclaration
 
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.As) Then
             m_IsVariableDeclaration = True
@@ -466,13 +466,13 @@ Partial Public Class Parser
                 If tm.Accept(KS.LParenthesis) Then
                     If tm.Accept(KS.RParenthesis) = False Then
                         m_ArgumentList = ParseArgumentList(result)
-                        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+                        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                     End If
                 End If
                 If m_ArgumentList Is Nothing Then m_ArgumentList = New ArgumentList(result)
             End If
 
-            m_VariableDeclaration = New VariableDeclaration(result, Nothing, m_Identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
+            m_VariableDeclaration = New LocalVariableDeclaration(result, m_Identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
         Else
             m_VariableDeclaration = Nothing
             m_VariableInitializer = Nothing
@@ -512,21 +512,21 @@ Partial Public Class Parser
             'This is a variable declaration
             newDecls = New UsingDeclarators(result)
             If ParseList(Of UsingDeclarator)(newDecls, New ParseDelegate_Parent(Of UsingDeclarator)(AddressOf ParseUsingDeclarator), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             m_UsingResources = newDecls
         Else
             'This is an expression
             Dim exp As Expression = Nothing
             exp = ParseExpression(result)
-            If exp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If exp Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             m_UsingResources = exp
         End If
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If newDecls IsNot Nothing Then
             For Each decl As UsingDeclarator In newDecls
@@ -537,7 +537,7 @@ Partial Public Class Parser
             Next
         End If
 
-        If tm.Accept(KS.End, KS.Using) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Using) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_UsingResources, m_Code)
 
@@ -560,14 +560,14 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.SyncLock)
 
         m_Lock = ParseExpression(result)
-        If m_Lock Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Lock Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.Accept(KS.End, KS.SyncLock) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.SyncLock) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Lock, m_Code)
 
@@ -586,7 +586,7 @@ Partial Public Class Parser
         Else
             Throw New InternalException(result)
         End If
-        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         Return result
     End Function
@@ -622,12 +622,12 @@ Partial Public Class Parser
             m_PreCondition = Nothing
         End If
 
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.Loop) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.Loop) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.CurrentToken.Equals(KS.While, KS.Until) Then
             m_PostCondition = ParseDoStatementCondition(result, m_IsWhile)
             If m_PostCondition Is Nothing Then
@@ -665,10 +665,10 @@ Partial Public Class Parser
         Dim m_Catches As BaseObjects(Of CatchStatement)
 
         tm.AcceptIfNotInternalError(KS.Try)
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_TryCode = ParseCodeBlock(result, IsOneLiner)
-        If m_TryCode Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_TryCode Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Catches = New BaseObjects(Of CatchStatement)(result)
         While tm.CurrentToken = KS.Catch
@@ -678,14 +678,14 @@ Partial Public Class Parser
         End While
 
         If tm.Accept(KS.Finally) Then
-            If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             m_FinallyBlock = ParseCodeBlock(result, IsOneLiner)
-            If m_FinallyBlock Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_FinallyBlock Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_FinallyBlock = Nothing
         End If
 
-        If tm.Accept(KS.End, KS.Try) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Try) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Catches, m_TryCode, m_FinallyBlock)
 
@@ -711,15 +711,15 @@ Partial Public Class Parser
         If tm.AcceptEndOfStatement(IsOneLiner) = False Then
             m_Variable = ParseIdentifier(result)
             If m_Variable IsNot Nothing Then
-                If tm.AcceptIfNotError(KS.As) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptIfNotError(KS.As) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 m_TypeName = ParseNonArrayTypeName(result)
-                If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             If tm.Accept(KS.When) Then
                 m_When = ParseExpression(result)
-                If m_When Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_When Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
-            If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
@@ -760,7 +760,7 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError(KS.If)
         m_Condition = ParseExpression(result)
-        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.Then) = False Then
             m_OneLiner = False 'Cannot be a oneliner if Then is not found.
@@ -779,7 +779,7 @@ Partial Public Class Parser
         End If
 
         m_TrueCode = ParseCodeBlock(result, m_OneLiner)
-        If m_TrueCode Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_TrueCode Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_ElseIfs = New BaseObjects(Of ElseIfStatement)(result)
         While tm.CurrentToken = KS.ElseIf OrElse (m_OneLiner = False AndAlso tm.CurrentToken = KS.Else AndAlso tm.PeekToken = KS.If)
@@ -790,10 +790,10 @@ Partial Public Class Parser
 
         If tm.Accept(KS.Else) Then
             If m_OneLiner = False Then
-                If tm.AcceptEndOfStatement(False, True) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptEndOfStatement(False, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             m_FalseCode = ParseCodeBlock(result, m_OneLiner)
-            If m_FalseCode Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_FalseCode Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_FalseCode = Nothing
         End If
@@ -825,10 +825,10 @@ Partial Public Class Parser
             tm.AcceptIfNotInternalError(KS.ElseIf)
         End If
         m_Condition = ParseExpression(result)
-        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Condition Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         'ElseIf cannot be a oneliner...
         tm.Accept(KS.Then) '"Then" is not required.
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If IsOneLiner Then
             Helper.AddError(Compiler, tm.CurrentLocation)
@@ -836,7 +836,7 @@ Partial Public Class Parser
         End If
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Code, m_Condition)
 
@@ -862,9 +862,9 @@ Partial Public Class Parser
         tm.Accept(KS.Case) '"Case" is not required
 
         m_Test = ParseExpression(result)
-        If m_Test Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Test Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Cases = New BaseObjects(Of CaseStatement)(result)
         While tm.CurrentToken = KS.Case
@@ -873,7 +873,7 @@ Partial Public Class Parser
             m_Cases.Add(newCase)
         End While
 
-        If tm.Accept(KS.End, KS.Select) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.End, KS.Select) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Test, m_Cases)
 
@@ -903,7 +903,7 @@ Partial Public Class Parser
         Else
             m_Clauses = New CaseClauses(result)
             If ParseList(Of CaseClause)(m_Clauses, New ParseDelegate_Parent(Of CaseClause)(AddressOf ParseCaseClause), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         End If
         If tm.AcceptEndOfStatement(IsOneLiner, True) = False Then
@@ -951,22 +951,22 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Each)
 
         m_LoopControlVariable = ParseLoopControlVariable(result)
-        If m_LoopControlVariable Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_LoopControlVariable Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.In) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.In) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_InExpression = ParseExpression(result)
-        If m_InExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_InExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.Next) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.Next) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.CurrentToken.IsEndOfStatement = False Then
             m_NextExpression = ParseExpression(result)
-            If m_NextExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_NextExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_NextExpression = Nothing
         End If
@@ -1001,29 +1001,29 @@ Partial Public Class Parser
 
         tm.AcceptIfNotInternalError(KS.For)
         m_LoopControlVariable = ParseLoopControlVariable(result)
-        If m_LoopControlVariable Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_LoopControlVariable Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.Equals) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.Equals) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_LoopStartExpression = ParseExpression(result)
-        If m_LoopStartExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_LoopStartExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptIfNotError(KS.To) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.To) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_LoopEndExpression = ParseExpression(result)
-        If m_LoopEndExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_LoopEndExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.Step) Then
             m_LoopStepExpression = ParseExpression(result)
-            If m_LoopStepExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_LoopStepExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_LoopStepExpression = Nothing
         End If
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Code = ParseCodeBlock(result, IsOneLiner)
-        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Code Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.Next) = False Then
             Compiler.Report.ShowMessage(Messages.VBNC30084, tm.CurrentLocation)
@@ -1033,7 +1033,7 @@ Partial Public Class Parser
         If tm.CurrentToken.IsEndOfStatement = False Then
             m_NextExpressionList = New ExpressionList(result)
             If ParseList(Of Expression)(m_NextExpressionList, New ParseDelegate_Parent(Of Expression)(AddressOf ParseExpression), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         Else
             m_NextExpressionList = Nothing
@@ -1060,18 +1060,18 @@ Partial Public Class Parser
                 tm.NextToken()
             End If
             m_Expression1 = ParseExpression(result)
-            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken.Equals(CaseClause.RelationalOperators) Then
             m_Comparison = tm.CurrentToken.Symbol
             tm.NextToken()
             m_Expression1 = ParseExpression(result)
-            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_Expression1 = ParseExpression(result)
-            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Expression1 Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             If tm.Accept(KS.To) Then
                 m_Expression2 = ParseExpression(result)
-                If m_Expression2 Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_Expression2 Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         End If
 
@@ -1101,12 +1101,12 @@ Partial Public Class Parser
         End If
 
         m_Event = ParseExpression(result)
-        If m_Event Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Event Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.Accept(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_EventHandler = ParseExpression(result)
-        If m_EventHandler Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_EventHandler Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Event, m_EventHandler, m_IsAddHandler)
 
@@ -1135,9 +1135,9 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.Imports)
 
         m_Clauses = ParseImportsClauses(result)
-        If m_Clauses Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Clauses Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Clauses)
 

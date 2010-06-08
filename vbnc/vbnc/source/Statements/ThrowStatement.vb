@@ -38,13 +38,11 @@ Public Class ThrowStatement
         m_Exception = Exception
     End Sub
 
-
-
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
         If m_Exception Is Nothing Then
-            Info.ILGen.Emit(OpCodes.Rethrow)
+            Info.ILGen.Emit(Mono.Cecil.Cil.OpCodes.Rethrow)
         Else
             result = m_Exception.GenerateCode(Info.Clone(Me, True, False, m_Exception.ExpressionType)) AndAlso result
             Emitter.EmitThrow(Info)

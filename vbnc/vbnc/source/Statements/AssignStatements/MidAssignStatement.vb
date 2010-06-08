@@ -61,10 +61,10 @@ Public Class MidAssignStatement
         Helper.Assert(m_Length Is Nothing OrElse m_Length.Classification.CanBeValueClassification)
         Helper.Assert(m_Source.Classification.CanBeValueClassification)
 
-        Dim tmpLocal As LocalBuilder = Nothing
+        Dim tmpLocal As Mono.Cecil.Cil.VariableDefinition = Nothing
         If m_Target.Classification.IsPropertyAccessClassification Then
             tmpLocal = Emitter.DeclareLocal(Info, Compiler.TypeCache.System_String, "MidTmp" & ObjectID.ToString)
-            result = m_Target.GenerateCode(Info.Clone(Me, True, False, tmpLocal.LocalType)) AndAlso result
+            result = m_Target.GenerateCode(Info.Clone(Me, True, False, tmpLocal.VariableType)) AndAlso result
             Emitter.EmitStoreVariable(Info, tmpLocal)
             Emitter.EmitLoadVariableLocation(Info, tmpLocal)
         Else

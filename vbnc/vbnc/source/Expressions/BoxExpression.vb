@@ -20,7 +20,7 @@
 Public Class BoxExpression
     Inherits Expression
 
-    Private m_DestinationType As Type
+    Private m_DestinationType As Mono.Cecil.TypeReference
     Private m_Expression As Expression
 
     ''' <summary>
@@ -30,7 +30,7 @@ Public Class BoxExpression
     ''' <param name="Expression"></param>
     ''' <param name="DestinationType"></param>
     ''' <remarks></remarks>
-    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As Type)
+    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference)
         MyBase.new(Parent)
         m_DestinationType = DestinationType
         m_Expression = Expression
@@ -38,11 +38,12 @@ Public Class BoxExpression
         Helper.Assert(m_DestinationType IsNot Nothing)
         Helper.Assert(m_Expression IsNot Nothing)
         Helper.Assert(m_Expression.IsResolved)
+        Helper.Assert(TypeOf Expression Is BoxExpression = False)
 
         Classification = New ValueClassification(Me, m_DestinationType)
 
         If MyBase.ResolveExpression(ResolveInfo.Default(Compiler)) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(Me.Location)
         End If
 
     End Sub
@@ -66,7 +67,7 @@ Public Class BoxExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_DestinationType
         End Get

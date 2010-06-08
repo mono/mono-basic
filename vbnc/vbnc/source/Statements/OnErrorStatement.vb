@@ -78,10 +78,10 @@ Public Class OnErrorStatement
         Else
             Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__ClearProjectError)
             Dim index As Integer
-            If parent.UnstructuredExceptionHandlers.Contains(m_ResolvedLabel.LabelBuilder) = False Then
-                parent.UnstructuredExceptionHandlers.Add(m_ResolvedLabel.LabelBuilder)
+            If parent.UnstructuredExceptionHandlers.Contains(m_ResolvedLabel.GetLabel(Info)) = False Then
+                parent.UnstructuredExceptionHandlers.Add(m_ResolvedLabel.GetLabel(Info))
             End If
-            index = parent.UnstructuredExceptionHandlers.IndexOf(m_ResolvedLabel.LabelBuilder)
+            index = parent.UnstructuredExceptionHandlers.IndexOf(m_ResolvedLabel.GetLabel(Info))
             Emitter.EmitLoadI4Value(Info, index)
             Emitter.EmitStoreVariable(Info, parent.VB_ActiveHandler)
         End If
@@ -107,21 +107,4 @@ Public Class OnErrorStatement
 
         Return result
     End Function
-
-    '#If DEBUG Then
-    '    Public Sub Dump(ByVal Dumper As IndentedTextWriter)
-    '        dumper.Write("On Error ")
-    '        If m_IsGotoMinusOne Then
-    '            Dumper.Write("Goto -1")
-    '        ElseIf m_IsGotoZero Then
-    '            Dumper.Write("Goto 0")
-    '        ElseIf m_IsResumeNext Then
-    '            Dumper.Write("Resume Next")
-    '        Else
-    '            Dumper.Write("Goto ")
-    '            m_Label.Dump(dumper)
-    '        End If
-    '        Dumper.WriteLine("")
-    '    End Sub
-    '#End If
 End Class

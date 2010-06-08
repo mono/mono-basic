@@ -42,12 +42,12 @@ Public Class CSngExpression
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = SourceType
+        Dim expType As Mono.Cecil.TypeReference = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Single
+        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Single
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
@@ -61,7 +61,7 @@ Public Class CSngExpression
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = Expression.ExpressionType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
@@ -105,7 +105,7 @@ Public Class CSngExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
             Select Case tpCode
                 Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Decimal
                     Return CSng(originalValue) 'No range checking needed.
@@ -124,9 +124,9 @@ Public Class CSngExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-            Return Compiler.TypeCache.System_Single '_Descriptor
+            Return Compiler.TypeCache.System_Single
         End Get
     End Property
 End Class

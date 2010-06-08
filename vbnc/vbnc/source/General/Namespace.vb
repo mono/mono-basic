@@ -24,10 +24,13 @@ Public Class [Namespace]
     Private m_Name As String
     Protected m_Global As Boolean
 
-    ReadOnly Property Name() As String Implements INameable.Name
+    Property Name() As String Implements INameable.Name
         Get
             Return m_Name
         End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
     ReadOnly Property [Global]() As Boolean
@@ -67,10 +70,6 @@ Public Class [Namespace]
             Return m_Name
         End If
     End Function
-
-    'Shared Widening Operator CType(ByVal ns As [Namespace]) As String
-    '    Return ns.ToString
-    'End Operator
 
     Shared Operator &(ByVal ns As [Namespace], ByVal str As String) As [Namespace]
         If ns Is Nothing Then Throw New InternalException("")

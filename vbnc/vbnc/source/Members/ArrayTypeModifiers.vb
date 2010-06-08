@@ -49,11 +49,18 @@ Public Class ArrayTypeModifiers
         Return result
     End Function
 
-    Function CreateArrayType(ByVal OriginalType As Type) As Type
-        Dim result As Type = OriginalType
+    Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
+        Dim result As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeReference(Compiler, OriginalType)
         Dim mods() As ArrayTypeModifier = m_ArrayTypeModifiers
         For i As Integer = mods.GetUpperBound(0) To 0 Step -1
-            result = Helper.MakeArrayType(result, mods(i).Ranks)
+            Dim arr As ArrayType
+            arr = CecilHelper.MakeArrayType(result, mods(i).Ranks)
+            result = arr
+            If arr.Rank > 1 Then
+                For d As Integer = 0 To arr.Rank - 1
+                    arr.Dimensions(d) = New ArrayDimension(New Nullable(Of Integer)(0), Nothing)
+                Next
+            End If
         Next
         Return result
     End Function

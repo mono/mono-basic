@@ -32,11 +32,18 @@ Public Class PropertyGroupClassification
     Private m_InstanceExpression As Expression
     Private m_Parameters As ArgumentList
 
-    Private m_Members As Generic.List(Of PropertyInfo)
+    Private m_Members As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
 
-    Private m_ResolvedProperty As PropertyInfo
+    Private m_ResolvedProperty As Mono.Cecil.PropertyReference
     Private m_Resolved As Boolean
     Private m_Resolver As MethodResolver
+    Private m_FinalSourceArguments As ArgumentList
+
+    ReadOnly Property FinalArguments() As ArgumentList
+        Get
+            Return m_FinalSourceArguments
+        End Get
+    End Property
 
     ReadOnly Property Parameters() As ArgumentList
         Get
@@ -50,24 +57,26 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, ByRef FinalSourceArguments As Generic.List(Of Argument)) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList) As Boolean
         Dim result As Boolean = True
-        Dim destinationParameterTypes()() As Type
-        Dim destinationParameters()() As ParameterInfo
-        Dim sourceParameterTypes() As Type
+        Dim destinationParameterTypes()() As Mono.Cecil.TypeReference
+        Dim destinationParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
+        Dim sourceParameterTypes() As Mono.Cecil.TypeReference
 
         ReDim destinationParameterTypes(m_Members.Count - 1)
         ReDim destinationParameters(m_Members.Count - 1)
         For i As Integer = 0 To m_Members.Count - 1
-            destinationParameters(i) = m_Members(i).GetIndexParameters
+            destinationParameters(i) = m_Members(i).Parameters
             destinationParameterTypes(i) = Helper.GetTypes(destinationParameters(i))
         Next
 
         sourceParameterTypes = SourceParameters.ToTypes
 
-        Dim resolvedGroup As New Generic.List(Of MemberInfo)
-        Dim inputGroup As New Generic.List(Of MemberInfo)(m_Members.ToArray)
-
+        Dim resolvedGroup As New Generic.List(Of Mono.Cecil.MemberReference)
+        Dim inputGroup As New Generic.List(Of Mono.Cecil.MemberReference)(m_Members.Count)
+        For i As Integer = 0 To m_Members.Count - 1
+            inputGroup.Add(DirectCast(m_Members(i), PropertyReference))
+        Next
 
         If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
         m_Resolver.ShowErrors = False
@@ -76,7 +85,7 @@ Public Class PropertyGroupClassification
 
         If result Then
             If m_Resolver.IsLateBound = False Then
-                FinalSourceArguments = m_Resolver.ResolvedCandidate.ExactArguments
+                m_FinalSourceArguments = New ArgumentList(Me.Parent, m_Resolver.ResolvedCandidate.ExactArguments)
                 resolvedGroup.Add(m_Resolver.ResolvedMember)
             End If
         End If
@@ -84,7 +93,7 @@ Public Class PropertyGroupClassification
         'result = Helper.ResolveGroup(Me.Parent, inputGroup, resolvedGroup, SourceParameters, Nothing, Nothing, False)
 
         If result Then
-            m_ResolvedProperty = TryCast(resolvedGroup(0), PropertyInfo)
+            m_ResolvedProperty = TryCast(resolvedGroup(0), Mono.Cecil.PropertyReference)
             result = m_ResolvedProperty IsNot Nothing AndAlso result
         End If
 
@@ -107,7 +116,7 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             If m_ResolvedProperty IsNot Nothing Then
                 Return m_ResolvedProperty.PropertyType
@@ -126,7 +135,7 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    ReadOnly Property ResolvedProperty() As PropertyInfo
+    ReadOnly Property ResolvedProperty() As Mono.Cecil.PropertyReference
         Get
             Return m_ResolvedProperty
         End Get
@@ -139,7 +148,7 @@ Public Class PropertyGroupClassification
         If constant IsNot Nothing Then
             Emitter.EmitLoadValue(Info, constant)
         Else
-            Helper.EmitArgumentsAndCallOrCallVirt(Info, m_InstanceExpression, m_Parameters, m_ResolvedProperty.GetGetMethod(True))
+            Helper.EmitArgumentsAndCallOrCallVirt(Info, m_InstanceExpression, m_Parameters, CecilHelper.GetGetMethod(m_ResolvedProperty))
         End If
 
         Return result
@@ -155,11 +164,11 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Property [Group]() As Reflection.PropertyInfo()
+    Property [Group]() As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
         Get
-            Return m_Members.ToArray
+            Return m_Members
         End Get
-        Set(ByVal value As Reflection.PropertyInfo())
+        Set(ByVal value As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference))
             m_Members.Clear()
             m_Members.AddRange(value)
         End Set
@@ -169,13 +178,13 @@ Public Class PropertyGroupClassification
         MyBase.New(Classifications.PropertyGroup, Parent)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Generic.List(Of MemberInfo))
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference))
         MyBase.New(Classifications.PropertyGroup, Parent)
         m_InstanceExpression = InstanceExpression
 
-        m_Members = New Generic.List(Of PropertyInfo)(Members.Count)
+        m_Members = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)(Members.Count)
         For i As Integer = 0 To Members.Count - 1
-            Dim tmp As PropertyInfo = TryCast(Members(i), PropertyInfo)
+            Dim tmp As Mono.Cecil.PropertyReference = TryCast(Members(i), Mono.Cecil.PropertyReference)
             If tmp IsNot Nothing Then
                 m_Members.Add(tmp)
             Else
@@ -192,12 +201,12 @@ Public Class PropertyGroupClassification
 #End If
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Generic.List(Of PropertyInfo))
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference))
         MyBase.New(Classifications.PropertyGroup, Parent)
         m_InstanceExpression = InstanceExpression
 
-        m_Members = New Generic.List(Of PropertyInfo)(Members)
-
+        m_Members = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)()
+        m_Members.AddRange(Members)
 #If DEBUG Then
         For i As Integer = 0 To Members.Count - 1
             For j As Integer = i + 1 To Members.Count - 1

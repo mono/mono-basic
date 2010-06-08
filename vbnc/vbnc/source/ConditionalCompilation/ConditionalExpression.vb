@@ -62,12 +62,13 @@ Public Class ConditionalExpression
                 Case TypeCode.DateTime
                     Result = CurrentToken.DateLiteral
                 Case Else
-                    Helper.Assert(Compiler.TypeResolution.IsNumericType(CurrentToken.LiteralValue.GetType))
+                    Helper.Assert(Compiler.TypeResolution.IsNumericType(CecilHelper.GetType(Compiler, CurrentToken.LiteralValue)))
                     Result = CDbl(CurrentToken.LiteralValue) 'AsFloatingPointLiteral.Literal
             End Select
+            'Result = CurrentToken.Value.Literal
             NextToken()
         ElseIf CurrentToken.IsKeyword Then
-            Dim tpType As Type = Compiler.TypeResolution.KeywordToType(CurrentToken.Keyword)
+            Dim tpType As Mono.Cecil.TypeReference = Compiler.TypeResolution.KeywordToType(CurrentToken.Keyword)
             If tpType Is Nothing Then
                 If CurrentToken.Equals(KS.True) Then
                     Result = True
@@ -555,7 +556,7 @@ Public Class ConditionalExpression
 
     'Helper conversion functions
     Private Function ToDouble(ByVal value As Object, ByRef Result As Double) As Boolean
-        Dim vTp As Type = value.GetType
+        Dim vTp As Mono.Cecil.TypeReference = CecilHelper.GetType(Compiler, value)
         If Helper.CompareType(vTp, Compiler.TypeCache.System_Byte) OrElse _
             Helper.CompareType(vTp, Compiler.TypeCache.System_Decimal) OrElse _
             Helper.CompareType(vTp, Compiler.TypeCache.System_Double) OrElse _

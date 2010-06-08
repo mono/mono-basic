@@ -58,7 +58,7 @@ Public Class TryStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        EndLabel = Info.ILGen.BeginExceptionBlock()
+        EndLabel = Emitter.EmitBeginExceptionBlock(Info)
 
         result = CodeBlock.GenerateCode(Info) AndAlso result
 

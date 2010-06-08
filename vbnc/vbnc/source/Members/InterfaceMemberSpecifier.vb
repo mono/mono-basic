@@ -31,12 +31,12 @@ Public Class InterfaceMemberSpecifier
     ''' Resolved in ResolveTypeReferences.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
     ''' <summary>
     ''' Resolved in ResolveCode.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_ResolvedMember As MemberInfo
+    Private m_ResolvedMember As Mono.Cecil.MemberReference
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
@@ -47,31 +47,31 @@ Public Class InterfaceMemberSpecifier
         m_2 = Second
     End Sub
 
-    ReadOnly Property ResolvedMethod() As MemberInfo
+    ReadOnly Property ResolvedMethod() As Mono.Cecil.MemberReference
         Get
             Return m_ResolvedMember
         End Get
     End Property
 
-    ReadOnly Property ResolvedEventInfo() As EventInfo
+    ReadOnly Property ResolvedEventInfo() As Mono.Cecil.EventReference
         Get
-            Return TryCast(m_ResolvedMember, EventInfo)
+            Return TryCast(m_ResolvedMember, Mono.Cecil.EventReference)
         End Get
     End Property
 
-    ReadOnly Property ResolvedMethodInfo() As MethodInfo
+    ReadOnly Property ResolvedMethodInfo() As Mono.Cecil.MethodReference
         Get
-            Return TryCast(m_ResolvedMember, MethodInfo)
+            Return TryCast(m_ResolvedMember, Mono.Cecil.MethodReference)
         End Get
     End Property
 
-    ReadOnly Property ResolvedPropertyInfo() As PropertyInfo
+    ReadOnly Property ResolvedPropertyInfo() As Mono.Cecil.PropertyReference
         Get
-            Return TryCast(m_ResolvedMember, PropertyInfo)
+            Return TryCast(m_ResolvedMember, Mono.Cecil.PropertyReference)
         End Get
     End Property
 
-    ReadOnly Property ResolvedType() As Type
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType
         End Get
@@ -92,7 +92,7 @@ Public Class InterfaceMemberSpecifier
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim lst As Generic.List(Of MemberInfo)
+        Dim lst As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
 
         lst = Compiler.TypeManager.GetCache(m_ResolvedType).LookupFlattenedMembers(m_2.Name)
         'If lst.Count = 0 AndAlso m_ResolvedType.IsInterface Then

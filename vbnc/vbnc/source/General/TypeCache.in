@@ -77,6 +77,7 @@ type mscorlib "System.Void"
 type mscorlib "System.Exception"
 type mscorlib "System.Array"
 type mscorlib "System.DBNull"
+type mscorlib "System.SerializableAttribute"
 method2 System_Array "SetValue" System_Object System_Int32_Array
 method2 System_Array "GetValue" System_Int32_Array
 method2 System_Array "CreateInstance" System_Type System_Int32_Array
@@ -120,6 +121,8 @@ field System_Decimal "MinusOne"
 type mscorlib "System.Runtime.CompilerServices.DecimalConstantAttribute"
 ctor System_Runtime_CompilerServices_DecimalConstantAttribute System_Byte System_Byte System_UInt32 System_UInt32 System_UInt32 
 ctor System_Runtime_CompilerServices_DecimalConstantAttribute System_Byte System_Byte System_Int32 System_Int32 System_Int32 
+type mscorlib "System.Runtime.CompilerServices.AccessedThroughPropertyAttribute"
+ctor System_Runtime_CompilerServices_AccessedThroughPropertyAttribute System_String
 method System_Decimal "Compare" System_Decimal System_Decimal
 method System_DateTime "Compare" System_DateTime System_DateTime
 method System_Decimal "Add" System_Decimal System_Decimal
@@ -155,6 +158,11 @@ type mscorlib "System.Math"
 method System_Math "Round" System_Double
 method System_Math "Pow" System_Double System_Double
 type mscorlib "System.Runtime.InteropServices.DllImportAttribute"
+type mscorlib "System.Runtime.InteropServices.MarshalAsAttribute"
+type mscorlib "System.Runtime.InteropServices.StructLayoutAttribute"
+type mscorlib "System.Runtime.InteropServices.FieldOffsetAttribute"
+
+type mscorlib "System.Security.Permissions.SecurityAttribute"
 
 type winforms "System.Windows.Forms.Form"
 type winforms "System.Windows.Forms.Application"

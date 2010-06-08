@@ -25,20 +25,11 @@
 Public Class TypeParameters
     Inherits ParsedObject
 
-    Private m_TypeParameters As TypeParameterList
+    Private m_TypeParameters As New TypeParameterList(Me)
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
-    End Sub
-
-    Sub Init(ByVal TypeParameters As TypeParameterList)
-        m_TypeParameters = TypeParameters
-    End Sub
-
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeParameters
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeParameters(NewParent)
-        result.Init(m_TypeParameters.clone(result))
+    Function Clone() As TypeParameters
+        Dim result As New TypeParameters()
+        result.Parameters.AddRange(m_TypeParameters.Clone())
         Return result
     End Function
 
@@ -52,15 +43,17 @@ Public Class TypeParameters
         Return m_TypeParameters.ResolveCode(info)
     End Function
 
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Return m_TypeParameters.ResolveTypeReferences
+    End Function
+
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of
     End Function
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
 
-        result = m_TypeParameters.ResolveTypeReferences AndAlso result
-
-        Return result
-    End Function
+        m_TypeParameters.Initialize(Me)
+    End Sub
 End Class

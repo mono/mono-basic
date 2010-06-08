@@ -41,12 +41,8 @@ Public Class CStrExpression
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
-
-        'Dim expType As Type = SourceType
-        'Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
-        'Dim ExpressionType As Type = Info.Compiler.TypeCache.String
 
         Return result
     End Function
@@ -54,7 +50,7 @@ Public Class CStrExpression
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = Expression.ExpressionType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
@@ -69,7 +65,6 @@ Public Class CStrExpression
             Case TypeCode.DateTime
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_DateTime)
             Case TypeCode.SByte, TypeCode.Int16
-                Info.Stack.SwitchHead(expType, Info.Compiler.TypeCache.System_Int32)
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
             Case TypeCode.Int32
                 Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Int32)
@@ -92,7 +87,6 @@ Public Class CStrExpression
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToString_Object)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'No conversion necessary
-                    Info.Stack.SwitchHead(Info.Compiler.TypeCache.Nothing, Info.Compiler.TypeCache.System_String)
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
                     Emitter.EmitNew(Info, Info.Compiler.TypeCache.System_String__ctor_Array)
                 Else
@@ -118,7 +112,7 @@ Public Class CStrExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
             Select Case tpCode
                 Case TypeCode.Char, TypeCode.String
                     Return CStr(originalValue)
@@ -129,9 +123,9 @@ Public Class CStrExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-            Return Compiler.TypeCache.System_String '_Descriptor
+            Return Compiler.TypeCache.System_String
         End Get
     End Property
 End Class

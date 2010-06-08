@@ -49,9 +49,6 @@ Public Class Main
             Compiler.Report.Listeners.Add(New System.Diagnostics.TextWriterTraceListener(debugwriter))
 #End If
 
-#If DEBUG Then
-            'Z.GenSelfTest()
-#End If
             result = Compiler.Compile(CmdArgs)
 
 #If DEBUG Then
@@ -63,7 +60,6 @@ Public Class Main
             "*************************************************************************************************** ")
 #End If
 
-            '#If DEBUG Then
             Console.WriteLine("Compilation took " & (Date.Now.Subtract(start)).ToString())
             System.Diagnostics.Debug.WriteLine("Compilation took " & (Date.Now.Subtract(start)).ToString())
 #If DEBUG Then
@@ -83,7 +79,7 @@ Public Class Main
             'Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
             'Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
             'Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
-            Return -2 'The exception has already been shown to the user.
+            Return 1 'The exception has already been shown to the user.
         Catch ex As Exception
             Console.WriteLine(ex.Message & VB.vbNewLine & ex.StackTrace)
             Console.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
@@ -91,9 +87,9 @@ Public Class Main
             'Console.WriteLine("With " & GC.CollectionCount(0) & " 0 gen collections")
             'Console.WriteLine("With " & GC.CollectionCount(1) & " 1 gen collections")
             'Console.WriteLine("With " & GC.CollectionCount(2) & " 2 gen collections")
-            Return -3
+            Return 1
         End Try
         Helper.Assert(False, "End of program reached!")
-        Return -4
+        Return 1
     End Function
 End Class

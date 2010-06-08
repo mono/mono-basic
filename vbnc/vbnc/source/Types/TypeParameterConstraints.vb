@@ -39,11 +39,11 @@ Public Class TypeParameterConstraints
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function ClassConstraint() As Type
-        Dim result As Type = Nothing
+    Function ClassConstraint() As Mono.Cecil.TypeReference
+        Dim result As Mono.Cecil.TypeReference = Nothing
         For Each constraint As Constraint In m_ConstraintList
             If constraint.Special = KS.None Then
-                If constraint.TypeName.ResolvedType.IsClass Then
+                If CecilHelper.IsClass(constraint.TypeName.ResolvedType) Then
                     Helper.Assert(result Is Nothing)
                     result = constraint.TypeName.ResolvedType
                 End If

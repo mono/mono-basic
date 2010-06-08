@@ -52,7 +52,7 @@ Public Class VariableInitializer
         End Get
     End Property
 
-    ReadOnly Property ExpressionType() As Type
+    ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Dim exp As Expression = InitializerExpression
             If exp IsNot Nothing Then

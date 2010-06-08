@@ -71,11 +71,11 @@ Public Class MultExpression
             If lvalue Is Nothing OrElse rvalue Is Nothing Then
                 Return Nothing
             Else
-                Dim tlvalue, trvalue As Type
+                Dim tlvalue, trvalue As Mono.Cecil.TypeReference
                 Dim clvalue, crvalue As TypeCode
-                tlvalue = lvalue.GetType
+                tlvalue = CecilHelper.GetType(Compiler, lvalue)
                 clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-                trvalue = rvalue.GetType
+                trvalue = CecilHelper.GetType(Compiler, rvalue)
                 crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 Dim csmallest As TypeCode

@@ -623,7 +623,7 @@ Public Class TypeConverter
         End Select
     End Function
 
-    Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Type, ByVal op2 As Type) As TypeCode
+    Shared Function GetBinaryOperandType(ByVal Compiler As Compiler, ByVal op As KS, ByVal op1 As Mono.Cecil.TypeReference, ByVal op2 As Mono.Cecil.TypeReference) As TypeCode
         Dim result As TypeCode
 
         result = GetBinaryOperandType(op, Helper.GetTypeCode(Compiler, op1), Helper.GetTypeCode(Compiler, op2))
@@ -813,12 +813,21 @@ Public Class TypeConverter
     ''' <param name="Destination"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Type, ByRef result As Object) As Boolean
+    Public Shared Function ConvertTo(ByVal Context As ParsedObject, ByVal Source As Object, ByVal Destination As Mono.Cecil.TypeReference, ByRef result As Object) As Boolean
+        If Destination Is Nothing OrElse Source Is Nothing Then
+            result = Source
+            Return True
+        End If
+
         Helper.Assert(Source IsNot Nothing)
         Helper.Assert(Destination IsNot Nothing)
 
-        Dim dtc As TypeCode = Helper.GetTypeCode(Nothing, Destination)
-        Dim stc As TypeCode = Helper.GetTypeCode(Nothing, Source.GetType)
+        If TypeOf Destination Is ByReferenceType Then
+            Destination = DirectCast(Destination, ByReferenceType).ElementType
+        End If
+
+        Dim dtc As TypeCode = Helper.GetTypeCode(Context.Compiler, Destination)
+        Dim stc As TypeCode = Helper.GetTypeCode(Context.Compiler, CecilHelper.GetType(Context.Compiler, Source))
 
         'Console.WriteLine("ConvertTo: from " & stc.ToString() & " to " & dtc.ToString)
 

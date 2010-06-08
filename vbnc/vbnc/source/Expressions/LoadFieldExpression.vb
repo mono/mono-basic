@@ -20,16 +20,16 @@
 Public Class LoadFieldExpression
     Inherits Expression
 
-    Private m_Field As FieldInfo
+    Private m_Field As Mono.Cecil.FieldReference
     Private m_InstanceExpression As Expression
 
-    ReadOnly Property Field() As fieldinfo
+    ReadOnly Property Field() As Mono.Cecil.FieldReference
         Get
             Return m_Field
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Field As FieldInfo, Optional ByVal InstanceExpression As Expression = Nothing)
+    Sub New(ByVal Parent As ParsedObject, ByVal Field As Mono.Cecil.FieldReference, Optional ByVal InstanceExpression As Expression = Nothing)
         MyBase.New(Parent)
 
         m_Field = Field
@@ -37,7 +37,7 @@ Public Class LoadFieldExpression
         Me.Classification = New ValueClassification(Me, m_Field.FieldType)
     End Sub
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_Field.FieldType
         End Get

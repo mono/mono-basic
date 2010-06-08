@@ -81,19 +81,19 @@ Partial Public Class Parser
                     result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Explicit") AndAlso result
                 End If
                 m_OptionExplicit = ParseOptionExplicitStatement(CodeFile)
-                If m_OptionExplicit Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_OptionExplicit Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf OptionStrictStatement.IsMe(tm) Then
                 If m_OptionStrict IsNot Nothing Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Strict") AndAlso result
                 End If
                 m_OptionStrict = ParseOptionStrictStatement(CodeFile)
-                If m_OptionStrict Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_OptionStrict Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf OptionCompareStatement.IsMe(tm) Then
                 If m_OptionCompare IsNot Nothing Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Compare") AndAlso result
                 End If
                 m_OptionCompare = ParseOptionCompareStatement(CodeFile)
-                If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
                 result = Compiler.Report.ShowMessage(Messages.VBNC30206, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
@@ -133,7 +133,7 @@ Partial Public Class Parser
             tm.GotoNewline(False)
         End If
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_IsBinary)
 
@@ -198,7 +198,7 @@ Partial Public Class Parser
         Dim result As New ImportsClauses(Parent)
 
         If ParseList(Of ImportsClause)(result, New ParseDelegate_Parent(Of ImportsClause)(AddressOf ParseImportsClause), result) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         Return result
@@ -218,7 +218,7 @@ Partial Public Class Parser
             If clause <> "" Then
                 Dim newClause As ImportsClause
                 newClause = ParseImportsClause(Parent, str)
-                If newClause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newClause Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
                 If Parent.Exists(newClause) Then
                     If newClause.IsNamespaceClause Then '
                         'ignore the duplication
@@ -246,12 +246,12 @@ Partial Public Class Parser
         If ImportsAliasClause.IsMe(str) Then
             Dim m_Clause As ImportsAliasClause
             m_Clause = ParseImportsAliasClause(Parent, str)
-            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
             result.Init(m_Clause)
         Else
             Dim m_Clause As ImportsNamespaceClause
             m_Clause = ParseImportsNamespaceClause(Parent, str)
-            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
             result.Init(m_Clause)
         End If
 
@@ -268,12 +268,12 @@ Partial Public Class Parser
         If ImportsAliasClause.IsMe(tm) Then
             Dim m_Clause As ImportsAliasClause
             m_Clause = ParseImportsAliasClause(result)
-            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             result.Init(m_Clause)
         Else
             Dim m_Clause As ImportsNamespaceClause
             m_Clause = ParseImportsNamespaceClause(result)
-            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Clause Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             result.Init(m_Clause)
         End If
 
@@ -305,7 +305,7 @@ Partial Public Class Parser
         m_Identifier = New Identifier(result, values(0), Span.CommandLineSpan, TypeCharacters.Characters.None)
 
         m_Second = ParseImportsNamespaceClause(result, values(1))
-        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
 
         result.Init(m_Identifier, m_Second)
 
@@ -328,12 +328,12 @@ Partial Public Class Parser
         Dim m_Second As ImportsNamespaceClause = Nothing
 
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         tm.AcceptIfNotInternalError(KS.Equals)
 
         m_Second = ParseImportsNamespaceClause(result)
-        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Identifier, m_Second)
 
@@ -355,7 +355,7 @@ Partial Public Class Parser
 
         Dim qi As QualifiedIdentifier = Nothing
         qi = ParseQualifiedIdentifier(result, str)
-        If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
 
         result.Init(qi)
 
@@ -378,13 +378,13 @@ Partial Public Class Parser
         Dim qi As QualifiedIdentifier
 
         qi = ParseQualifiedIdentifier(result)
-        If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If result IsNot Nothing AndAlso tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of Then
             Dim ctn As ConstructedTypeName = Nothing
             tm.RestoreToPoint(iCurrent)
             ctn = ParseConstructedTypeName(result)
-            If ctn Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If ctn Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             result.Init(ctn)
         Else
             tm.IgnoreRestoredPoint()
@@ -400,7 +400,6 @@ Partial Public Class Parser
         Dim iLastLocation As Span
 
         Dim AssemblyAttributes As New Attributes(assembly)
-        Dim AssemblyTypes As New MemberDeclarations(assembly)
 
         tm.NextToken() 'Goto the first token
 
@@ -420,7 +419,7 @@ Partial Public Class Parser
             '[  ImportsStatement+  ]
 
             If Me.ParseFileHeader(tm.CurrentLocation.File(Compiler), assembly) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             ''	[  AttributesStatement+  ]
             'If vbnc.Attributes.IsMe(tm) Then
@@ -430,7 +429,7 @@ Partial Public Class Parser
             'End If
 
             '	[  NamespaceMemberDeclaration+  ]
-            result = ParseAssemblyMembers(assembly, RootNamespace, AssemblyTypes) AndAlso result
+            result = ParseAssemblyMembers(assembly, RootNamespace) AndAlso result
 
             While tm.AcceptNewLine
 
@@ -442,7 +441,7 @@ Partial Public Class Parser
             End If
         Loop
 
-        assembly.Init(AssemblyTypes, AssemblyAttributes)
+        assembly.Init(AssemblyAttributes)
 
         Return result
     End Function
@@ -458,7 +457,7 @@ Partial Public Class Parser
 
         While AttributeBlock.IsMe(tm)
             If ParseAttributeBlock(Parent, Attributes) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         End While
 
@@ -474,7 +473,7 @@ Partial Public Class Parser
         If Attributes.IsMe(tm) Then
             While AttributeBlock.IsMe(tm)
                 If ParseAttributeBlock(Parent, result) = False Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
             End While
         End If
@@ -493,7 +492,7 @@ Partial Public Class Parser
         tm.AcceptIfNotInternalError(KS.LT)
 
         If ParseAttributeList(Parent, Attributes) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result = tm.AcceptIfNotError(KS.GT) AndAlso result
@@ -513,7 +512,7 @@ Partial Public Class Parser
         Do
             Dim Attribute As Attribute
             Attribute = ParseAttribute(Parent)
-            If Attribute Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If Attribute Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Attributes.Add(Attribute)
         Loop While tm.Accept(KS.Comma)
 
@@ -535,21 +534,21 @@ Partial Public Class Parser
 
         If tm.Accept("Assembly") Then
             m_IsAssembly = True
-            If tm.AcceptIfNotError(KS.Colon) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.Colon) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.Accept(KS.Module) Then
             m_IsModule = True
-            If tm.AcceptIfNotError(KS.Colon) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.Colon) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         m_SimpleTypeName = ParseSimpleTypeName(result)
-        If m_SimpleTypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_SimpleTypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.LParenthesis) Then
             If tm.CurrentToken <> KS.RParenthesis Then
                 m_AttributeArguments = ParseAttributeArguments(result)
-                If m_AttributeArguments Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_AttributeArguments Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
-            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_IsAssembly, m_IsModule, m_SimpleTypeName, m_AttributeArguments)
@@ -576,7 +575,7 @@ Partial Public Class Parser
                 Dim newObject As AttributeArgumentExpression
                 newObject = ParseAttributeArgumentExpression(Parent)
                 If newObject Is Nothing Then
-                    Helper.ErrorRecoveryNotImplemented()
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
                 m_AttributePositionalArgumentList.Add(newObject)
 
@@ -595,7 +594,7 @@ Partial Public Class Parser
 
         If m_AttributePositionalArgumentList.Count = 0 OrElse tm.Accept(KS.Comma) Then
             If ParseList(Of VariablePropertyInitializer)(m_VariablePropertyInitializerList, New ParseDelegate_Parent(Of VariablePropertyInitializer)(AddressOf ParseVariablePropertyInitializer), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
         End If
 
@@ -608,7 +607,7 @@ Partial Public Class Parser
     ''' Parses lists of type List ::= Item | List "," Item
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseList(Of T)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
+    Private Function ParseList(Of T As BaseObject)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
         Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentLocation.ToString(Compiler))
         Do
             Dim newObject As T
@@ -634,13 +633,13 @@ Partial Public Class Parser
         Dim m_AttributeArgumentExpression As AttributeArgumentExpression
 
         m_IdentifierOrKeyword = ParseIdentifierOrKeyword(result)
-        If m_IdentifierOrKeyword Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_IdentifierOrKeyword Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         tm.AcceptIfNotInternalError(KS.Colon)
         tm.AcceptIfNotInternalError(KS.Equals)
 
         m_AttributeArgumentExpression = ParseAttributeArgumentExpression(result)
-        If m_AttributeArgumentExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_AttributeArgumentExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_IdentifierOrKeyword, m_AttributeArgumentExpression)
 
@@ -712,7 +711,7 @@ Partial Public Class Parser
             Dim qn As QualifiedIdentifier
 
             qn = ParseQualifiedIdentifier(result)
-            If qn Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If qn Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
             tm.AcceptIfNotInternalError(KS.LParenthesis)
             tm.AcceptIfNotError(KS.Of)
@@ -763,7 +762,7 @@ Partial Public Class Parser
         m_ArrayNameModifier = ParseArrayNameModifier(result)
         If m_ArrayNameModifier Is Nothing Then
             If m_ShowErrors = False Then Return Nothing
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         If tm.CurrentToken <> KS.LBrace Then
@@ -772,7 +771,7 @@ Partial Public Class Parser
         End If
 
         m_ArrayElementInitializer = ParseArrayElementInitializer(result)
-        If m_ArrayElementInitializer Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_ArrayElementInitializer Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_NonArrayTypeName, m_ArrayNameModifier, m_ArrayElementInitializer)
 
@@ -794,10 +793,10 @@ Partial Public Class Parser
         If tm.Accept(KS.RBrace) = False Then
 
             If ParseList(Of VariableInitializer)(m_VariableInitializerList, New ParseDelegate_Parent(Of VariableInitializer)(AddressOf ParseVariableInitializer), result) = False Then
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
 
-            If tm.AcceptIfNotError(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_VariableInitializerList)
@@ -836,14 +835,14 @@ Partial Public Class Parser
         If ArrayTypeModifiers.CanBeMe(tm) Then
             Dim newATM As ArrayTypeModifiers
             newATM = ParseArrayTypeModifiers(result)
-            If newATM Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If newATM Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             result.Init(newATM)
         ElseIf ArraySizeInitializationModifier.CanBeMe(tm) Then
             Dim newASIM As ArraySizeInitializationModifier
             newASIM = ParseArraySizeInitializationModifer(result)
             If newASIM Is Nothing Then
                 If m_ShowErrors = False Then Return Nothing
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             result.Init(newASIM)
         Else
@@ -870,14 +869,14 @@ Partial Public Class Parser
         m_BoundList = ParseBoundList(result)
         If m_BoundList Is Nothing Then
             If m_ShowErrors = False Then Return Nothing
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If vbnc.ArrayTypeModifiers.CanBeMe(tm) Then
             m_ArrayTypeModifiers = ParseArrayTypeModifiers(result)
-            If m_ArrayTypeModifiers Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_ArrayTypeModifiers Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         result.Init(m_BoundList, m_ArrayTypeModifiers)
@@ -900,10 +899,10 @@ Partial Public Class Parser
                 newBase = ParseNonArrayTypeName(result)
                 tmp.Add(newBase)
             Loop While tm.Accept(KS.Comma)
-            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Loop
 
-        If tmp.Count <= 0 Then Helper.ErrorRecoveryNotImplemented()
+        If tmp.Count <= 0 Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(tmp.ToArray)
 
@@ -924,10 +923,10 @@ Partial Public Class Parser
             Do
                 Dim newI As NonArrayTypeName
                 newI = ParseNonArrayTypeName(result)
-                If newI Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newI Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 m_Clauses.Add(newI)
             Loop While tm.Accept(KS.Comma)
-            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Loop
 
         result.Init(m_Clauses)
@@ -951,7 +950,7 @@ Partial Public Class Parser
             newExp = ParseExpression(result)
             If newExp Is Nothing Then
                 If m_ShowErrors = False Then Return Nothing
-                Helper.ErrorRecoveryNotImplemented()
+                Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             tmp.Add(newExp)
         Loop While tm.Accept(KS.Comma)
@@ -984,45 +983,90 @@ Partial Public Class Parser
 
         If m_SimpleTypeName.IsQualifiedIdentifier AndAlso tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of Then
             Dim m_TypeArgumentList As TypeArgumentList
+            Dim m_Q As QualifiedIdentifier
+            Dim m_NestedTypeName As ConstructedTypeName
 
             m_TypeArgumentList = ParseTypeArgumentList(result)
             If m_TypeArgumentList Is Nothing Then Return Nothing
-            m_ConstructedTypeName = New ConstructedTypeName(result, m_SimpleTypeName.AsQualifiedIdentifier, m_TypeArgumentList)
+            m_ConstructedTypeName = New ConstructedTypeName(result)
+            m_ConstructedTypeName.Init(m_SimpleTypeName.AsQualifiedIdentifier, m_TypeArgumentList)
+
+            Do While tm.Accept(KS.Dot)
+                m_Q = ParseQualifiedIdentifier(result)
+                m_TypeArgumentList = Nothing
+
+                m_NestedTypeName = New ConstructedTypeName(m_ConstructedTypeName)
+
+                If tm.Accept(KS.LParenthesis) Then
+                    tm.AcceptIfNotError(KS.Of)
+
+                    m_TypeArgumentList = New TypeArgumentList(m_NestedTypeName)
+                    If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
+                        Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                    End If
+
+                    tm.AcceptIfNotError(KS.RParenthesis)
+                End If
+
+                m_NestedTypeName.Init(m_ConstructedTypeName, m_Q, m_TypeArgumentList)
+
+                m_ConstructedTypeName = m_NestedTypeName
+            Loop
+
             result.Init(m_ConstructedTypeName)
         Else
             result.Init(m_SimpleTypeName)
         End If
 
-
         Return result
     End Function
 
     ''' <summary>
-    ''' ConstructedTypeName ::=	QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+    ''' ConstructedTypeName ::=	
+    '''     QualifiedIdentifier  "("  "Of"  TypeArgumentList  ")"
+    '''     ConstructedTypeName "." QualifiedIdentifier [LAMESPEC]
+    '''     ConstructedTypeName "." QualifiedIdentifier "(" "Of" TypeArgumentList ")" [LAMESPEC]
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseConstructedTypeName(ByVal Parent As ParsedObject) As ConstructedTypeName
-        Dim result As New ConstructedTypeName(Parent)
+        Dim result As ConstructedTypeName
+        Dim current As ConstructedTypeName
 
-        Dim m_QualifiedIdentifier As QualifiedIdentifier = Nothing
-        Dim m_TypeArgumentList As TypeArgumentList = Nothing
+        Dim m_QualifiedIdentifier As QualifiedIdentifier
+        Dim m_TypeArgumentList As TypeArgumentList
 
-        m_QualifiedIdentifier = ParseQualifiedIdentifier(result)
-        If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        current = Nothing
 
-        tm.AcceptIfNotInternalError(KS.LParenthesis)
-        tm.AcceptIfNotInternalError(KS.Of)
+        Do
 
-        If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented()
-        End If
+            If current Is Nothing Then
+                result = New ConstructedTypeName(Parent)
+            Else
+                result = New ConstructedTypeName(current)
+            End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+            m_QualifiedIdentifier = ParseQualifiedIdentifier(result)
+            If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            m_TypeArgumentList = Nothing
 
-        result.Init(m_QualifiedIdentifier, m_TypeArgumentList)
+            If tm.Accept(KS.LParenthesis) Then
+                tm.AcceptIfNotError(KS.Of)
+
+                If ParseList(Of TypeName)(m_TypeArgumentList, New ParseDelegate_Parent(Of TypeName)(AddressOf ParseTypeName), Parent) = False Then
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                End If
+
+                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            End If
+
+            result.Init(current, m_QualifiedIdentifier, m_TypeArgumentList)
+
+            current = result
+        Loop While tm.Accept(KS.Dot)
 
         Return result
     End Function
+
 
     ''' <summary>
     ''' TypeArgumentList ::=	"("  "Of"  TypeArgumentList  ")"
@@ -1038,7 +1082,7 @@ Partial Public Class Parser
             Return Nothing
         End If
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         Return result
     End Function
@@ -1068,7 +1112,7 @@ Partial Public Class Parser
             m_ArrayTypeName = New ArrayTypeName(Parent)
 
             m_ArrayTypeModifiers = ParseArrayTypeModifiers(m_ArrayTypeName)
-            If m_ArrayTypeModifiers Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_ArrayTypeModifiers Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
             m_NonArrayTypeName.Parent = m_ArrayTypeName
 
@@ -1094,7 +1138,7 @@ Partial Public Class Parser
         Do
             Dim newATM As ArrayTypeModifier
             newATM = ParseArrayTypeModifier(result)
-            If newATM Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If newATM Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             tmp.Add(newATM)
         Loop While ArrayTypeModifier.CanBeMe(tm)
 
@@ -1118,7 +1162,7 @@ Partial Public Class Parser
             m_Ranks += 1
         Loop While tm.Accept(KS.Comma)
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Ranks)
 
@@ -1135,7 +1179,7 @@ Partial Public Class Parser
         If BuiltInTypeName.IsBuiltInTypeName(tm) Then
             Dim m_BuiltInTypeName As BuiltInTypeName
             m_BuiltInTypeName = ParseBuiltinTypeName(result)
-            If m_BuiltInTypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_BuiltInTypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
             result.Init(m_BuiltInTypeName)
         Else
@@ -1150,7 +1194,7 @@ Partial Public Class Parser
             End If
 
             m_QualifiedIdentifier = ParseQualifiedIdentifier(result)
-            If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_QualifiedIdentifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
             result.Init(m_QualifiedIdentifier)
         End If
@@ -1177,7 +1221,7 @@ Partial Public Class Parser
 
         If first.Contains("."c) Then
             m_First = ParseQualifiedIdentifier(result, first)
-            If m_First Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_First Is Nothing Then Helper.ErrorRecoveryNotImplemented(Parent.Location)
         ElseIf first.Length > 7 AndAlso Helper.CompareName(first.Substring(1, 7), "Global.") Then
             m_First = New GlobalExpression(result)
         Else
@@ -1232,6 +1276,10 @@ Partial Public Class Parser
         Return result
     End Function
 
+    Private Function ParseIdentifier() As Identifier
+        Return ParseIdentifier(CType(Nothing, ParsedObject))
+    End Function
+
     Private Function ParseIdentifier(ByVal Parent As ParsedObject) As Identifier
         Dim result As Identifier
 
@@ -1256,7 +1304,7 @@ Partial Public Class Parser
         Return New BuiltInTypeName(Parent, m_Typename)
     End Function
 
-    Private Function ParseModifiers(ByVal Parent As ParsedObject, ByVal ValidModifiers As ModifierMasks) As Modifiers
+    Private Function ParseModifiers(ByVal ValidModifiers As ModifierMasks) As Modifiers
         Dim result As New Modifiers()
 
         While tm.CurrentToken.Equals(ValidModifiers)
@@ -1274,21 +1322,19 @@ Partial Public Class Parser
     ''' <param name="Parent"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function ParseInterfaceMembers(ByVal Parent As InterfaceDeclaration) As MemberDeclarations
-        Dim result As New MemberDeclarations(Parent)
-
+    Private Function ParseInterfaceMembers(ByVal Parent As InterfaceDeclaration) As Boolean
         Dim newMembers As New Generic.List(Of IMember)
         While True
             Dim attributes As Attributes
             attributes = New Attributes(Parent)
             If vbnc.Attributes.IsMe(tm) Then
-                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented()
+                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
 
             Dim newType As TypeDeclaration
             newType = ParseTypeDeclaration(Parent, attributes, Parent.Namespace)
-            If newType IsNot Nothing Then
-                result.Add(newType)
+            If newType IsNot Nothing AndAlso Not Parent.Members.Contains(newType) Then
+                Parent.Members.Add(newType)
                 Continue While
             End If
 
@@ -1309,20 +1355,12 @@ Partial Public Class Parser
                 Exit While
             End If
 
-            If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-            result.Add(newMember)
+            Parent.Members.Add(newMember)
         End While
 
-        Return result
-    End Function
-
-    Private Function ParseTypeMembers(ByVal Parent As TypeDeclaration) As MemberDeclarations
-        Dim result As New MemberDeclarations(Parent)
-        If ParseTypeMembers(Parent, result) = False Then
-            Helper.ErrorRecoveryNotImplemented()
-        End If
-        Return result
+        Return True
     End Function
 
     ''' <summary>
@@ -1331,7 +1369,7 @@ Partial Public Class Parser
     ''' </summary>
     ''' <param name="Parent"></param>
     ''' <remarks></remarks>
-    Private Function ParseTypeMembers(ByVal Parent As TypeDeclaration, ByVal Members As MemberDeclarations) As Boolean
+    Private Function ParseTypeMembers(ByVal Parent As TypeDeclaration) As Boolean
         Dim result As Boolean = True
         Dim isModuleDeclaration As Boolean = TypeOf Parent Is ModuleDeclaration
 
@@ -1342,13 +1380,13 @@ Partial Public Class Parser
             Dim attributes As Attributes
             attributes = New Attributes(Parent)
             If vbnc.Attributes.IsMe(tm) Then
-                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented()
+                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
 
             Dim newType As TypeDeclaration
             newType = ParseTypeDeclaration(Parent, attributes, Parent.Namespace)
             If newType IsNot Nothing Then
-                Members.Add(newType)
+                Parent.Members.Add(newType)
                 Continue While
             End If
 
@@ -1357,54 +1395,54 @@ Partial Public Class Parser
             'Class and Structure declarations
             If isModuleDeclaration = False AndAlso OperatorDeclaration.IsMe(tm) Then
                 newMember = ParseOperatorDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf isModuleDeclaration = False AndAlso ConversionOperatorDeclaration.IsMe(tm) Then
                 newMember = ParseConversionOperatorDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 'Class, Structure and Module declarations
             ElseIf RegularEventDeclaration.IsMe(tm) Then
                 newMember = ParseRegularEventDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf CustomEventDeclaration.IsMe(tm) Then
                 newMember = ParseCustomEventMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf VariableDeclaration.IsMe(tm) Then
-                Dim tmp As Generic.List(Of VariableDeclaration)
-                tmp = ParseVariableMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-                For Each item As VariableDeclaration In tmp
+                Dim tmp As Generic.List(Of TypeVariableDeclaration)
+                tmp = ParseTypeVariableMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
+                If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                For Each item As TypeVariableDeclaration In tmp
                     newMembers.Add(item)
                 Next
                 newMember = Nothing
             ElseIf ConstantDeclaration.IsMe(tm) Then
                 Dim tmp As Generic.List(Of ConstantDeclaration)
                 tmp = ParseConstantMemberDeclarations(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If tmp Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 For Each item As ConstantDeclaration In tmp
                     newMembers.Add(item)
                 Next
                 newMember = Nothing
             ElseIf ExternalSubDeclaration.IsMe(tm) Then
                 newMember = ParseExternalSubDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf ExternalFunctionDeclaration.IsMe(tm) Then
                 newMember = ParseExternalFunctionDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf SubDeclaration.IsMe(tm) Then
                 newMember = ParseSubDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf FunctionDeclaration.IsMe(tm) Then
                 newMember = ParseFunctionDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf RegularPropertyDeclaration.IsMe(tm) Then
                 newMember = ParseRegularPropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf MustOverridePropertyDeclaration.IsMe(tm) Then
                 newMember = ParseMustOverridePropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf ConstructorDeclaration.IsMe(tm) Then
                 newMember = ParseConstructorMember(Parent, New ParseAttributableInfo(Compiler, attributes))
-                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
                 If attributes.Count > 0 Then
                     Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
@@ -1413,8 +1451,8 @@ Partial Public Class Parser
             End If
 
             If newMember IsNot Nothing Then newMembers.Add(newMember)
-            If newMembers.Count = 0 Then Helper.ErrorRecoveryNotImplemented()
-            Members.AddRange(newMembers)
+            If newMembers.Count = 0 Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            Parent.Members.AddRange(newMembers)
             newMembers.Clear()
         End While
 
@@ -1450,18 +1488,16 @@ Partial Public Class Parser
         Return result
     End Function
 
-    Private Function ParseAssemblyMembers(ByVal Parent As AssemblyDeclaration, ByVal RootNamespace As String, ByVal declarations As MemberDeclarations) As Boolean
+    Private Function ParseAssemblyMembers(ByVal Parent As AssemblyDeclaration, ByVal RootNamespace As String) As Boolean
         Dim result As Boolean = True
         Dim currentNameSpace As String = RootNamespace
         Dim currentNamespaces As New Generic.List(Of QualifiedIdentifier)
-
-        Helper.Assert(declarations IsNot Nothing)
 
         While True
             Dim attributes As Attributes
             attributes = New Attributes(Parent)
             If vbnc.Attributes.IsMe(tm) Then
-                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented()
+                If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
                 If tm.AcceptEndOfStatement Then
                     For Each attrib As Attribute In attributes
@@ -1481,11 +1517,14 @@ Partial Public Class Parser
             Dim newType As TypeDeclaration
             newType = ParseTypeDeclaration(Parent, attributes, currentNameSpace)
             If newType IsNot Nothing Then
-                declarations.Add(newType)
+                If Not Parent.Members.Contains(newType) Then
+                    'This may be false for partial types
+                    Parent.Members.Add(newType)
+                End If
             ElseIf tm.Accept(KS.Namespace) Then
                 Dim qi As QualifiedIdentifier
                 qi = ParseQualifiedIdentifier(Parent)
-                If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If qi Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 currentNamespaces.Add(qi)
                 currentNameSpace = RootNamespace
                 If currentNamespaces.Count > 0 Then
@@ -1495,9 +1534,9 @@ Partial Public Class Parser
                     Next
                     currentNameSpace &= currentNamespaces(currentNamespaces.Count - 1).Name
                 End If
-                If tm.AcceptNewLine(True, True, True) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptNewLine(True, True, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf tm.Accept(KS.End, KS.Namespace) Then
-                If tm.AcceptNewLine(True, False, True) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptNewLine(True, False, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 If currentNamespaces.Count >= 1 Then
                     currentNamespaces.RemoveAt(currentNamespaces.Count - 1)
                     currentNameSpace = RootNamespace

@@ -34,7 +34,7 @@ Public Class ForEachStatement
 
     Private m_NextIteration As Label
 
-    Private m_Enumerator As LocalBuilder
+    Private m_Enumerator As Mono.Cecil.Cil.VariableDefinition
 
     ReadOnly Property NextExpression() As Expression
         Get
@@ -66,7 +66,7 @@ Public Class ForEachStatement
         m_NextExpression = NextExpression
     End Sub
 
-    ReadOnly Property Enumerator() As LocalBuilder
+    ReadOnly Property Enumerator() As Mono.Cecil.Cil.VariableDefinition
         Get
             Return m_Enumerator
         End Get
@@ -79,19 +79,19 @@ Public Class ForEachStatement
     End Property
 
     Function GenerateCode_LoadCurrentLoopVariable(ByVal Info As EmitInfo) As Boolean
-        Dim varType As Type = m_LoopControlVariable.VariableType
-        Dim isGenericParameter As Boolean = varType.IsGenericParameter
-        Dim isValueType As Boolean = isGenericParameter = False AndAlso varType.IsValueType
-        Dim isClass As Boolean = isgenericparameter = False AndAlso varType.IsClass
+        Dim varType As Mono.Cecil.TypeReference = m_LoopControlVariable.VariableType
+        Dim isGenericParameter As Boolean = CecilHelper.IsGenericParameter(varType)
+        Dim isValueType As Boolean = isGenericParameter = False AndAlso CecilHelper.IsValueType(varType)
+        Dim isClass As Boolean = isGenericParameter = False AndAlso CecilHelper.IsClass(varType)
 
         Emitter.EmitLoadVariable(Info, m_Enumerator)
         Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__get_Current)
 
-        Dim valueTPLoad As Label
-        Dim valueTPLoaded As Label
+        Dim valueTPLoad As Label = Nothing
+        Dim valueTPLoaded As Label = Nothing
 
         If isValueType Then
-            Dim tmpStructureVariable As LocalBuilder
+            Dim tmpStructureVariable As Mono.Cecil.Cil.VariableDefinition
 
             valueTPLoad = Emitter.DefineLabel(Info)
             valueTPLoaded = Emitter.DefineLabel(Info)
@@ -129,27 +129,27 @@ Public Class ForEachStatement
 
         result = m_LoopControlVariable.GenerateCode(Info) AndAlso result 'Creates the localbuilder if necessary
 
-        m_Enumerator = Info.ILGen.DeclareLocal(Compiler.TypeCache.System_Collections_IEnumerator)
-        EndLabel = Info.ILGen.DefineLabel
-        m_NextIteration = Info.ILGen.DefineLabel
-        startIteration = Info.ILGen.DefineLabel
+        m_Enumerator = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator))
+        EndLabel = Emitter.DefineLabel(Info)
+        m_NextIteration = Emitter.DefineLabel(Info)
+        startIteration = Emitter.DefineLabel(Info)
 
-        beginEx = Info.ILGen.BeginExceptionBlock()
+        beginEx = Emitter.EmitBeginExceptionBlock(Info)
 
         Compiler.Helper.AddCheck("Check correct type of foreach loop container.")
         Helper.Assert(Helper.CompareType(Compiler.TypeCache.System_Object, m_InExpression.ExpressionType) OrElse Helper.IsAssignable(Me, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable))
 
         'Load the container variable and get the enumerator
         result = m_InExpression.GenerateCode(Info.Clone(Me, True, False, m_InExpression.ExpressionType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Compiler.TypeCache.System_Collections_IEnumerable)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator)
+        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable))
+        Emitter.EmitCallVirt(Info, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator))
         Emitter.EmitStoreVariable(Info, m_Enumerator)
 
         'Jump to the next iteration
         Emitter.EmitBranch(Info, m_NextIteration)
 
         'Mark the beginning of the code
-        Info.ILGen.MarkLabel(startIteration)
+        Emitter.MarkLabel(Info, startIteration)
 
         Emitter.EmitNop(Info)
         Dim cge As New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCode_LoadCurrentLoopVariable), m_LoopControlVariable.VariableType)
@@ -161,7 +161,7 @@ Public Class ForEachStatement
         Emitter.MarkLabel(Info, m_NextIteration)
         Emitter.EmitNop(Info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_Collections_IEnumerator__MoveNext)
+        Emitter.EmitCallVirt(Info, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator__MoveNext))
         'Jump to the code for the next element
         Emitter.EmitBranchIfTrue(Info, startIteration)
         'End of try code.
@@ -171,10 +171,10 @@ Public Class ForEachStatement
         Emitter.EmitBeginFinallyBlock(Info)
         Dim EndFinally As Label = Emitter.DefineLabel(info)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
+        Emitter.EmitIsInst(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator), Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_IDisposable))
         Emitter.EmitBranchIfFalse(Info, EndFinally)
         Emitter.EmitLoadVariable(Info, m_Enumerator)
-        Emitter.EmitIsInst(Info, Compiler.TypeCache.System_Collections_IEnumerator, Compiler.TypeCache.System_IDisposable)
+        Emitter.EmitIsInst(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerator), Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_IDisposable))
         Emitter.EmitCallVirt(Info, Compiler.TypeCache.System_IDisposable__Dispose)
         Emitter.MarkLabel(info, EndFinally)
         Emitter.EmitEndExceptionBlock(Info)

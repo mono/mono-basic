@@ -21,7 +21,7 @@ Public Class VariableToValueExpression
     Inherits Expression
 
     Private m_Variable As VariableClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject, ByVal VariableClassification As VariableClassification)
         MyBase.new(Parent)
@@ -45,8 +45,8 @@ Public Class VariableToValueExpression
 
         m_ExpressionType = m_Variable.Type
 
-        If m_ExpressionType IsNot Nothing AndAlso m_ExpressionType.IsByRef Then
-            m_ExpressionType = m_ExpressionType.GetElementType
+        If m_ExpressionType IsNot Nothing AndAlso CecilHelper.IsByRef(m_ExpressionType) Then
+            m_ExpressionType = CecilHelper.GetElementType(m_ExpressionType)
         End If
 
         result = m_ExpressionType IsNot Nothing AndAlso result
@@ -58,12 +58,12 @@ Public Class VariableToValueExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim isByRef As Boolean = Info.DesiredType.IsByRef
+        Dim isByRef As Boolean = CecilHelper.IsByRef(Info.DesiredType)
 
         If m_Variable.InstanceExpression IsNot Nothing Then
-            Dim exp As Type = m_Variable.InstanceExpression.ExpressionType
-            If exp.IsValueType AndAlso exp.IsByRef = False Then
-                exp = exp.MakeByRefType
+            Dim exp As Mono.Cecil.TypeReference = m_Variable.InstanceExpression.ExpressionType
+            If CecilHelper.IsValueType(exp) AndAlso CecilHelper.IsByRef(exp) = False Then
+                exp = CecilHelper.MakeByRefType(exp)
             End If
             result = m_Variable.InstanceExpression.GenerateCode(Info.Clone(Me, exp)) AndAlso result
         End If
@@ -84,12 +84,12 @@ Public Class VariableToValueExpression
             Helper.Assert(m_Variable.InstanceExpression Is Nothing)
             If Info.IsRHS Then
                 Emitter.EmitLoadParameter(Info, m_Variable.ParameterInfo)
-                If m_Variable.ParameterInfo.ParameterType.IsByRef Then
+                If CecilHelper.IsByRef(m_Variable.ParameterInfo.ParameterType) Then
                     Emitter.EmitLoadIndirect(Info, m_Variable.ParameterInfo.ParameterType)
                 End If
             Else
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-        End If
+            End If
         ElseIf m_Variable.ArrayVariable IsNot Nothing Then
             result = Helper.EmitLoadArrayElement(Info, m_Variable.ArrayVariable, m_Variable.Arguments) AndAlso result
         ElseIf m_Variable.Expression IsNot Nothing Then
@@ -100,10 +100,10 @@ Public Class VariableToValueExpression
             Throw New InternalException(Me)
         End If
 
-        If Info.DesiredType.IsByRef Then
-            Dim elementType As Type = Helper.GetTypeOrTypeBuilder(Info.DesiredType.GetElementType)
-            Dim local As LocalBuilder
-            local = Info.ILGen.DeclareLocal(elementType)
+        If CecilHelper.IsByRef(Info.DesiredType) Then
+            Dim elementType As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeBuilder(Compiler, CecilHelper.GetElementType(Info.DesiredType))
+            Dim local As Mono.Cecil.Cil.VariableDefinition
+            local = Emitter.DeclareLocal(Info, elementType)
 
             Emitter.EmitStoreVariable(Info, local)
             Emitter.EmitLoadVariableLocation(Info, local)
@@ -112,7 +112,7 @@ Public Class VariableToValueExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

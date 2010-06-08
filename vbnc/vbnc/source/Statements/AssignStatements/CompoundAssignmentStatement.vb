@@ -33,7 +33,7 @@ Public MustInherit Class CompoundAssignmentStatement
 
         If InvocationExpression Is Nothing Then Return result
 
-        If InvocationExpression.Classification.IsVariableClassification AndAlso InvocationExpression.Expression.ExpressionType.IsArray Then
+        If InvocationExpression.Classification.IsVariableClassification AndAlso CecilHelper.IsArray(InvocationExpression.Expression.ExpressionType) Then
             result = ResolveIndexedStatement(Info, InvocationExpression) AndAlso result
         End If
 
@@ -48,11 +48,11 @@ Public MustInherit Class CompoundAssignmentStatement
             Dim arg As Argument = InvocationExpression.ArgumentList(i)
             Dim exp As Expression = arg.Expression
             Dim newExp As VariableExpression
-            Dim varDecl As VariableDeclaration
+            Dim varDecl As LocalVariableDeclaration
             Dim stmt As AssignmentStatement
 
-            varDecl = New VariableDeclaration(arg)
-            varDecl.Init(Nothing, Nothing, "VB$tmp", exp.ExpressionType)
+            varDecl = New LocalVariableDeclaration(arg)
+            varDecl.Init(Nothing, "VB$tmp", exp.ExpressionType)
             block.AddVariable(varDecl)
 
             newExp = New VariableExpression(arg, varDecl)

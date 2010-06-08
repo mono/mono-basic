@@ -35,7 +35,7 @@ Public Class CDateExpression
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = Expression.ExpressionType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
@@ -79,12 +79,12 @@ Public Class CDateExpression
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = SourceType
+        Dim expType As Mono.Cecil.TypeReference = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_DateTime
+        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_DateTime
         Select Case expTypeCode
             Case TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.System_Double.Name, expType.Name)
@@ -117,10 +117,10 @@ Public Class CDateExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
-            Return Compiler.TypeCache.System_DateTime '_Descriptor
+            Return Compiler.TypeCache.System_DateTime
         End Get
     End Property
 End Class

@@ -49,7 +49,7 @@ Public Class LabelDeclarationStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Info.ILGen.MarkLabel(LabelBuilder)
+        Emitter.MarkLabel(Info, GetLabel(Info))
 
         Return result
     End Function
@@ -62,14 +62,12 @@ Public Class LabelDeclarationStatement
         Return result
     End Function
 
-    ReadOnly Property LabelBuilder() As Label
-        Get
-            If m_LabelBuilder.HasValue = False Then
-                m_LabelBuilder = Me.FindFirstParent(Of IMethod).ILGenerator.DefineLabel
-            End If
-            Return m_LabelBuilder.Value
-        End Get
-    End Property
+    Function GetLabel(ByVal Info As EmitInfo) As Label
+        If m_LabelBuilder.HasValue = False Then
+            m_LabelBuilder = Emitter.DefineLabel(Info)
+        End If
+        Return m_LabelBuilder.Value
+    End Function
 
     ReadOnly Property Label() As Token
         Get

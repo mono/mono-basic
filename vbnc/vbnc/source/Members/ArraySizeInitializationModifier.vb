@@ -50,7 +50,7 @@ Public Class ArraySizeInitializationModifier
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ArraySizeInitializationModifier
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New ArraySizeInitializationModifier(NewParent)
-        result.m_BoundList = m_BoundList.clone(result)
+        result.m_BoundList = m_BoundList.Clone(result)
         If m_ArrayTypeModifiers IsNot Nothing Then result.m_ArrayTypeModifiers = m_ArrayTypeModifiers.Clone(result)
         Return result
     End Function
@@ -67,17 +67,24 @@ Public Class ArraySizeInitializationModifier
         End Get
     End Property
 
-    Function CreateArrayType(ByVal OriginalType As Type) As Type
-        Dim result As Type = OriginalType
+    Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
+        Dim result As Mono.Cecil.TypeReference = OriginalType
 
         If m_ArrayTypeModifiers IsNot Nothing Then
             result = m_ArrayTypeModifiers.CreateArrayType(result)
         End If
 
         If m_BoundList.Expressions.GetUpperBound(0) = 0 Then
-            result = result.MakeArrayType
+            result = CecilHelper.MakeArrayType(result)
         Else
-            result = result.MakeArrayType(m_BoundList.Expressions.GetUpperBound(0) + 1)
+            Dim arr As ArrayType
+            arr = CecilHelper.MakeArrayType(result, m_BoundList.Expressions.GetUpperBound(0) + 1)
+            result = arr
+            If arr.Rank > 1 Then
+                For d As Integer = 0 To arr.Rank - 1
+                    arr.Dimensions(d) = New ArrayDimension(New Nullable(Of Integer)(0), Nothing)
+                Next
+            End If
         End If
 
         Return result
@@ -86,7 +93,7 @@ Public Class ArraySizeInitializationModifier
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        If m_BoundList IsNot Nothing Then result = m_BoundList.ResolveCode(info) AndAlso result
+        If m_BoundList IsNot Nothing Then result = m_BoundList.ResolveCode(Info) AndAlso result
         If m_ArrayTypeModifiers IsNot Nothing Then result = m_ArrayTypeModifiers.ResolveCode(Info) AndAlso result
 
         Return result

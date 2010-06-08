@@ -27,24 +27,21 @@ Public Class QualifiedIdentifier
     Private m_First As ParsedObject
     Private m_Second As Token
 
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
 
     Private m_Name As String
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        ' Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Location As Span)
         MyBase.New(Parent, location)
-        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal First As ParsedObject, ByVal Second As Token)
         MyBase.new(Parent)
         Me.Init(First, Second)
-        'Helper.Assert(Me.HasLocation = False OrElse Me.Location.File IsNot Nothing)
     End Sub
 
     Sub Init(ByVal First As ParsedObject, ByVal Second As Token)
@@ -69,7 +66,7 @@ Public Class QualifiedIdentifier
         Return result
     End Function
 
-    ReadOnly Property ResolvedType() As Type
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType
         End Get
@@ -78,7 +75,7 @@ Public Class QualifiedIdentifier
     Function ResolveAsTypeName(ByVal AsAttributeTypeName As Boolean, Optional ByVal TypeArity As Integer = 0) As Boolean
         Dim result As Boolean = True
         Dim nri As New TypeNameResolutionInfo(Me, Me)
-        Dim resolvedType As Type
+        Dim resolvedType As Mono.Cecil.TypeReference
 
         nri.IsAttributeTypeName = AsAttributeTypeName
         nri.TypeArgumentCount = TypeArity
@@ -126,7 +123,6 @@ Public Class QualifiedIdentifier
             Return m_Second
         End Get
         Set(ByVal value As Token)
-            'Helper.Assert(value Is Nothing)
             m_Second = value
         End Set
     End Property

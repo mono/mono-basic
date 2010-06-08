@@ -31,7 +31,7 @@ Public Class LoopControlVariable
     Private m_TypeName As TypeName
     Private m_Expression As Expression
 
-    Private m_Declaration As VariableDeclaration
+    Private m_Declaration As LocalVariableDeclaration
 
     ReadOnly Property Identifier() As Identifier
         Get
@@ -80,7 +80,7 @@ Public Class LoopControlVariable
         m_Expression = Expression
     End Sub
 
-    Function GetVariableDeclaration() As VariableDeclaration
+    Function GetVariableDeclaration() As LocalVariableDeclaration
         Return m_Declaration
     End Function
 
@@ -101,7 +101,7 @@ Public Class LoopControlVariable
         Helper.Assert(Info.RHSExpression IsNot Nothing)
         If m_Declaration IsNot Nothing Then
             Helper.Assert(m_Declaration.LocalBuilder IsNot Nothing)
-            result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(Me, True, False, m_Declaration.LocalBuilder.LocalType)) AndAlso result
+            result = Info.RHSExpression.Classification.GenerateCode(Info.Clone(Me, True, False, m_Declaration.LocalBuilder.VariableType)) AndAlso result
             Emitter.EmitStoreVariable(Info, m_Declaration.LocalBuilder)
         Else
             result = m_Expression.GenerateCode(Info) AndAlso result
@@ -145,7 +145,7 @@ Public Class LoopControlVariable
         Return result
     End Function
 
-    ReadOnly Property VariableType() As Type
+    ReadOnly Property VariableType() As Mono.Cecil.TypeReference
         Get
             If m_Expression IsNot Nothing Then
                 Return m_Expression.ExpressionType
@@ -169,9 +169,9 @@ Public Class LoopControlVariable
             'result = m_Identifier.Resolve AndAlso result
             'result = m_ArrayNameModifier.Resolve AndAlso result
             result = m_TypeName.ResolveTypeReferences AndAlso result
-            m_Declaration = New VariableDeclaration(Me, Nothing, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
+            m_Declaration = New LocalVariableDeclaration(Me, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
             result = m_Declaration.ResolveTypeReferences() AndAlso result
-            result = m_Declaration.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            'result = m_Declaration.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
             result = m_Declaration.ResolveCode(info) AndAlso result
         End If
 

@@ -137,11 +137,6 @@ Public Class CommandLine
         End Get
     End Property
 
-#If DEBUG Then
-    Private m_bDumping As Boolean
-    Private m_StopAfter As String
-#End If
-
 #Region "Properties"
 
     ' - OUTPUT FILE -
@@ -296,12 +291,6 @@ Public Class CommandLine
     ''' </summary>
     Private m_bNoConfig As Boolean
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_NoVBRuntimeRef As Boolean
-
     ' - ADVANCED -
 
     ''' <summary>
@@ -358,6 +347,8 @@ Public Class CommandLine
     ''' /utf8output[+|-]        Emit compiler output in UTF8 character encoding.
     ''' </summary>
     Private m_bUTF8Output As Boolean
+
+    Private m_VBRuntime As String = "Microsoft.VisualBasic.dll"
 
     ''' <summary>
     ''' /vbversion:[7|7.1|8]    Which version of the VB language to target. 7 and 7.1 will emit v1.0 assemblies (not supported yet), and 8 will emit v2.0 assemblies. Default is latest (8).
@@ -615,9 +606,9 @@ Public Class CommandLine
         End Get
     End Property
 
-    ReadOnly Property NoVBRuntimeRef() As Boolean
+    ReadOnly Property VBRuntime() As String
         Get
-            Return m_NoVBRuntimeRef
+            Return m_VBRuntime
         End Get
     End Property
 
@@ -732,19 +723,6 @@ Public Class CommandLine
         End Get
     End Property
 
-#If DEBUG Then
-    ReadOnly Property Dumping() As Boolean
-        Get
-            Return m_bDumping
-        End Get
-    End Property
-    ReadOnly Property StopAfter() As String
-        Get
-            If m_StopAfter Is Nothing Then m_StopAfter = ""
-            Return m_StopAfter
-        End Get
-    End Property
-#End If
 #End Region
 
     ReadOnly Property AllArgumentsAsArray() As String()
@@ -792,9 +770,14 @@ Public Class CommandLine
             result = ParseInternal(CommandLine) AndAlso result
 
             If m_bNoConfig = False Then
-                Dim defaultrspfile As String
-                defaultrspfile = IO.Path.Combine(IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly.Location), "vbnc.rsp")
-                If IO.File.Exists(defaultrspfile) = False Then
+                Dim defaultrspfile As String = Nothing
+                Dim compiler_path As String = System.Reflection.Assembly.GetExecutingAssembly.Location
+                If compiler_path = String.Empty Then
+                    compiler_path = System.Reflection.Assembly.GetEntryAssembly.Location
+                End If
+                defaultrspfile = IO.Path.Combine(IO.Path.GetDirectoryName(compiler_path), "vbnc.rsp")
+
+                If defaultrspfile Is Nothing OrElse IO.File.Exists(defaultrspfile) = False Then
                     Try
                         Using resources As System.IO.Stream = Reflection.Assembly.GetExecutingAssembly.GetManifestResourceStream("vbnc.vbnc.rsp")
                             If resources IsNot Nothing Then
@@ -1079,13 +1062,14 @@ Public Class CommandLine
                 m_bUTF8Output = True
             Case "utf8output-"
                 m_bUTF8Output = False
-#If DEBUG Then
-            Case "dump"
-                m_bDumping = True
-                m_StopAfter = strValue
-#End If
             Case "novbruntimeref"
-                m_NoVBRuntimeRef = True
+                m_VBRuntime = Nothing
+            Case "vbruntime-"
+                m_VBRuntime = Nothing
+            Case "vbruntime+"
+                m_VBRuntime = "Microsoft.VisualBasic.dll"
+            Case "vbruntime"
+                m_VBRuntime = strValue
             Case "errorreport"
                 result = Compiler.Report.SaveMessage(Messages.VBNC99998, "/errorreport isn't implemented yet.") AndAlso result
             Case "vbversion"
@@ -1140,26 +1124,7 @@ Public Class CommandLine
         m_lstAllArgs.AddRange(Args)
         For Each s As String In Args
             If s.StartsWith("@") Then
-                Dim strResponseFile As String = s.Substring(1)
-                '#If DEBUG Then
-                'Hack for the testing to work in VS since the current directory is set to where the compiler
-                'is, not where the test is.
-                If strResponseFile.EndsWith("debug.rsp") AndAlso System.Diagnostics.Debugger.IsAttached Then
-                    strResponseFile = IO.Path.GetFullPath(strResponseFile)
-                    For Each str As String In IO.File.ReadAllLines(strResponseFile)
-                        For Each arg As String In Helper.ParseLine(str)
-                            If arg.StartsWith("@") Then
-                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg.Substring(1))
-                                Exit For
-                            ElseIf arg.IndexOfAny(IO.Path.GetInvalidFileNameChars) = -1 AndAlso IO.File.Exists(arg) Then
-                                Environment.CurrentDirectory = IO.Path.GetDirectoryName(arg)
-                                Exit For
-                            End If
-                        Next
-                    Next
-                End If
-                '#End If
-                result = ParseResponseFile(strResponseFile) AndAlso result
+                result = ParseResponseFile(s.Substring(1)) AndAlso result
                 Continue For
             End If
 

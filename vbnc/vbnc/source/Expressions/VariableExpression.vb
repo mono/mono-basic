@@ -20,9 +20,9 @@
 Public Class VariableExpression
     Inherits CompilerGeneratedExpression
 
-    Private m_Variable As VariableDeclaration
+    Private m_Variable As LocalVariableDeclaration
 
-    Sub New(ByVal Parent As ParsedObject, ByVal Variable As VariableDeclaration)
+    Sub New(ByVal Parent As ParsedObject, ByVal Variable As LocalVariableDeclaration)
         MyBase.New(Parent, Nothing, Variable.VariableType)
 
         m_Variable = Variable
@@ -30,39 +30,25 @@ Public Class VariableExpression
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Return Emit(Info, m_Variable)
+        Return Emit(Info, m_Variable.LocalBuilder)
     End Function
 
-    Shared Function Emit(ByVal Info As EmitInfo, ByVal Variable As VariableDeclaration) As Boolean
+    Shared Function Emit(ByVal Info As EmitInfo, ByVal LocalBuilder As Mono.Cecil.Cil.VariableDefinition) As Boolean
         Dim result As Boolean = True
-        Dim Compiler As Compiler = Info.Compiler
-
-        If Variable.LocalBuilder IsNot Nothing Then
-            result = Emit(Info, Variable.LocalBuilder) AndAlso result
-        Else
-            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Variable.Location)
-        End If
-
-        Return True
-    End Function
-
-    Shared Function Emit(ByVal Info As EmitInfo, ByVal LocalBuilder As LocalBuilder) As Boolean
-        Dim result As Boolean = True
-        Dim tc As TypeCache = Info.Compiler.TypeCache
 
         If Info.IsRHS Then
             Emitter.EmitLoadVariable(Info, LocalBuilder)
         Else
-            Dim rInfo As EmitInfo = Info.Clone(Info.Context, True, False, LocalBuilder.LocalType)
+            Dim rInfo As EmitInfo = Info.Clone(Info.Context, True, False, LocalBuilder.VariableType)
 
             Helper.Assert(Info.RHSExpression IsNot Nothing, "RHSExpression Is Nothing!")
             Helper.Assert(Info.RHSExpression.Classification.IsValueClassification OrElse Info.RHSExpression.Classification.CanBeValueClassification)
             result = Info.RHSExpression.Classification.GenerateCode(rInfo) AndAlso result
 
-            Emitter.EmitConversion(Info.RHSExpression.ExpressionType, LocalBuilder.LocalType, Info)
+            Emitter.EmitConversion(Info.RHSExpression.ExpressionType, LocalBuilder.VariableType, Info)
 
-            If Helper.CompareType(LocalBuilder.LocalType, tc.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, tc.System_Object) Then
-                Emitter.EmitCall(Info, tc.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
+            If Helper.CompareType(LocalBuilder.VariableType, Info.Compiler.TypeCache.System_Object) AndAlso Helper.CompareType(Info.RHSExpression.ExpressionType, Info.Compiler.TypeCache.System_Object) Then
+                Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
             End If
 
             Emitter.EmitStoreVariable(Info, LocalBuilder)

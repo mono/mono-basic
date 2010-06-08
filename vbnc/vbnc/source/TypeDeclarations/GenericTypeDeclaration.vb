@@ -23,17 +23,15 @@ Public MustInherit Class GenericTypeDeclaration
 
     Private m_TypeParameters As TypeParameters
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.new(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.new(Parent, [Namespace], Name)
+        m_TypeParameters = TypeParameters
     End Sub
 
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
-        Dim TypeArgumentCount As Integer
-        If TypeParameters IsNot Nothing Then
-            TypeArgumentCount = TypeParameters.Parameters.Count
-        End If
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, TypeArgumentCount)
-        m_TypeParameters = TypeParameters
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
     End Sub
 
     ReadOnly Property TypeParameters() As TypeParameters Implements IConstructable.TypeParameters
@@ -42,28 +40,13 @@ Public MustInherit Class GenericTypeDeclaration
         End Get
     End Property
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         If m_TypeParameters IsNot Nothing Then
             result = m_TypeParameters.ResolveTypeReferences AndAlso result
         End If
-
-        result = MyBase.ResolveType AndAlso result
-
-        Return result
-    End Function
-
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Return MyBase.ResolveTypeReferences()
-    End Function
-
-    Public Overrides Function DefineTypeParameters() As Boolean
-        Dim result As Boolean = True
-
-        If m_TypeParameters IsNot Nothing Then
-            result = m_TypeParameters.Parameters.DefineGenericParameters(TypeBuilder) AndAlso result
-        End If
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function

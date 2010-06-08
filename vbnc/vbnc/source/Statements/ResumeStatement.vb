@@ -33,7 +33,7 @@ Public Class ResumeStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim ResumeOK As Label = Info.ILGen.DefineLabel
+        Dim ResumeOK As Label = Emitter.DefineLabel(Info)
 
         Dim block As CodeBlock = Me.FindFirstParent(Of CodeBlock)()
         Dim lastblock As CodeBlock = block
@@ -47,7 +47,6 @@ Public Class ResumeStatement
 
         'Test if the code is in an exception handler
         Emitter.EmitLoadVariable(Info, block.VB_ResumeTarget)
-        Info.Stack.SwitchHead(Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_Boolean)
         Emitter.EmitBranchIfTrue(Info, ResumeOK)
 
         'If code is not in an exception handler raise an error
@@ -55,7 +54,7 @@ Public Class ResumeStatement
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__CreateProjectError_Int32)
         Emitter.EmitThrow(Info)
 
-        Info.ILGen.MarkLabel(ResumeOK)
+        Emitter.MarkLabel(Info, ResumeOK)
         'Load the instruction switch index
         Emitter.EmitLoadVariable(Info, block.VB_CurrentInstruction)
         'Increment the instruction pointer if it is a Resume Next statement

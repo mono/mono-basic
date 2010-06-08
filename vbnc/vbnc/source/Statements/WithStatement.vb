@@ -29,7 +29,7 @@ Public Class WithStatement
 
     Private m_WithExpression As Expression
 
-    Private m_WithVariable As LocalBuilder
+    Private m_WithVariable As Mono.Cecil.Cil.VariableDefinition
 
     Private m_WithVariableExpression As Expression
 
@@ -51,7 +51,7 @@ Public Class WithStatement
         m_WithExpression = WithExpression
     End Sub
 
-    ReadOnly Property WithVariable() As LocalBuilder
+    ReadOnly Property WithVariable() As Mono.Cecil.Cil.VariableDefinition
         Get
             Return m_WithVariable
         End Get
@@ -61,8 +61,8 @@ Public Class WithStatement
         Dim result As Boolean = True
 
         If m_WithExpression Is m_WithVariableExpression = False Then
-            m_WithVariable = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(m_WithExpression.ExpressionType), "WithVariable" & Me.ObjectID.ToString)
-            result = m_WithExpression.GenerateCode(Info.Clone(Me, True, False, m_WithVariable.LocalType)) AndAlso result
+            m_WithVariable = Emitter.DeclareLocal(Info, Helper.GetTypeOrTypeBuilder(Compiler, m_WithExpression.ExpressionType), "WithVariable" & Me.ObjectID.ToString)
+            result = m_WithExpression.GenerateCode(Info.Clone(Me, True, False, m_WithVariable.VariableType)) AndAlso result
             Emitter.EmitStoreVariable(Info, m_WithVariable)
         End If
 
@@ -85,7 +85,7 @@ Public Class WithStatement
         result = m_WithExpression.ResolveExpression(Info) AndAlso result
 
         If result Then
-            If m_WithExpression.ExpressionType.IsValueType AndAlso m_WithExpression.Classification.IsVariableClassification Then
+            If CecilHelper.IsValueType(m_WithExpression.ExpressionType) AndAlso m_WithExpression.Classification.IsVariableClassification Then
                 m_WithVariableExpression = m_WithExpression
             Else
                 m_WithVariableExpression = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateVariableCode), m_WithExpression.ExpressionType)

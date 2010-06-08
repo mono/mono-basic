@@ -26,14 +26,11 @@ Public Class ConstantDeclaration
     Inherits MemberDeclaration
     Implements IFieldMember
 
-    Private m_Descriptor As New FieldDescriptor(Me)
-
     Private m_Identifier As Identifier
     Private m_TypeName As TypeName
     Private m_ConstantExpression As Expression
 
-    Private m_FieldBuilder As FieldBuilder
-    Private m_FieldType As Type
+    Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
     Private m_Resolved As Boolean
     Private m_ConstantValue As Object
@@ -53,13 +50,15 @@ Public Class ConstantDeclaration
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
+        UpdateDefinition()
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
-        MyBase.Init(Attributes, Modifiers, Identifier.Name)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
+        MyBase.Init(Modifiers, Identifier.Name)
         m_Identifier = Identifier
         m_TypeName = TypeName
         m_ConstantExpression = ConstantExpression
+        UpdateDefinition()
     End Sub
 
     ''' <summary>
@@ -102,6 +101,8 @@ Public Class ConstantDeclaration
 
         If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
 
+        UpdateDefinition()
+
         If result AndAlso m_TypeName IsNot Nothing Then
             Helper.Assert(m_TypeName IsNot Nothing)
             If Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_Decimal) Then
@@ -112,6 +113,68 @@ Public Class ConstantDeclaration
         End If
 
         Return result
+    End Function
+
+    Shared Function GetDecimalConstant(ByVal Compiler As Compiler, ByVal Field As Mono.Cecil.FieldDefinition, ByRef value As Decimal) As Boolean
+        Dim decAttrs As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        decAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute)
+        If decAttrs IsNot Nothing AndAlso decAttrs.Count = 1 Then
+            Dim attr As Mono.Cecil.CustomAttribute = decAttrs(0)
+            Dim scale As Byte, sign As Byte
+            Dim hi1 As Integer, mid1 As Integer, low1 As Integer
+            Dim isUnsigned As Boolean
+
+            If attr.ConstructorArguments.Count <> 5 Then Return False
+            If TypeOf attr.ConstructorArguments(0).Value Is Byte = False Then Return False
+            If TypeOf attr.ConstructorArguments(1).Value Is Byte = False Then Return False
+
+            scale = DirectCast(attr.ConstructorArguments(0).Value, Byte)
+            sign = DirectCast(attr.ConstructorArguments(1).Value, Byte)
+
+            If TypeOf attr.ConstructorArguments(2).Value Is Integer Then
+                hi1 = DirectCast(attr.ConstructorArguments(2).Value, Integer)
+                isUnsigned = False
+            ElseIf TypeOf attr.ConstructorArguments(2).Value Is UInteger Then
+                hi1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(2).Value, UInteger)), 0)
+                isUnsigned = True
+            Else
+                Return False
+            End If
+
+            If TypeOf attr.ConstructorArguments(3).Value Is Integer Then
+                If isUnsigned Then Return False
+                mid1 = DirectCast(attr.ConstructorArguments(3).Value, Integer)
+            ElseIf TypeOf attr.ConstructorArguments(3).Value Is UInteger Then
+                If isUnsigned = False Then Return False
+                mid1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(3).Value, UInteger)), 0)
+            Else
+                Return False
+            End If
+
+            If TypeOf attr.ConstructorArguments(4).Value Is Integer Then
+                If isUnsigned Then Return False
+                low1 = DirectCast(attr.ConstructorArguments(4).Value, Integer)
+            ElseIf TypeOf attr.ConstructorArguments(4).Value Is UInteger Then
+                If isUnsigned = False Then Return False
+                low1 = BitConverter.ToInt32(BitConverter.GetBytes(DirectCast(attr.ConstructorArguments(4).Value, UInteger)), 0)
+            Else
+                Return False
+            End If
+
+            value = New Decimal(low1, mid1, hi1, sign <> 0, scale)
+            Return True
+        End If
+        Return False
+    End Function
+
+    Shared Function GetDateConstant(ByVal Compiler As Compiler, ByVal Field As Mono.Cecil.FieldDefinition, ByRef value As Date) As Boolean
+        Dim dtAttrs As Mono.Collections.Generic.Collection(Of CustomAttribute)
+        dtAttrs = CecilHelper.GetCustomAttributes(Field.CustomAttributes, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute)
+        If dtAttrs IsNot Nothing AndAlso dtAttrs.Count = 1 Then
+            value = DirectCast(dtAttrs(0).Properties(0).Argument.Value, Date)
+            Return True
+        End If
+        Return False
     End Function
 
     Function ResolveConstantValue(ByVal Info As ResolveInfo) As Boolean
@@ -129,6 +192,7 @@ Public Class ConstantDeclaration
                 Else
                     result = TypeConverter.ConvertTo(m_ConstantExpression, m_ConstantValue, m_TypeName.ResolvedType, m_ConstantValue) AndAlso result
                 End If
+                UpdateDefinition()
                 'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
             Else
                 result = Compiler.Report.ShowMessage(Messages.VBNC30059, m_ConstantExpression.Location)
@@ -143,6 +207,10 @@ Public Class ConstantDeclaration
 
     Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
+
+        If m_TypeName Is Nothing AndAlso Location.File(Compiler).IsOptionStrictOn Then
+            result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
+        End If
 
         If m_ConstantExpression Is Nothing Then
             Helper.AddError(Me, "No constant expression.")
@@ -161,32 +229,55 @@ Public Class ConstantDeclaration
     Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
 
-        m_FieldType = Helper.GetTypeOrTypeBuilder(FieldType)
-        m_FieldBuilder = Me.DeclaringType.TypeBuilder.DefineField(Name, m_FieldType, m_Descriptor.Attributes)
-        Compiler.TypeManager.RegisterReflectionMember(m_FieldBuilder, Me.MemberDescriptor)
-
-        If m_ConstantValue Is Nothing OrElse TypeOf m_ConstantValue Is DBNull Then
-            m_FieldBuilder.SetConstant(Nothing)
-        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_Decimal) Then
-            'result = Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location) AndAlso result
-            'Helper.NotImplementedYet("Emit value of a decimal constant")
-            Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
-            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32, New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()))
-        ElseIf Helper.CompareType(m_ConstantValue.GetType, Compiler.TypeCache.System_DateTime) Then
-            m_FieldBuilder.SetCustomAttribute(New CustomAttributeBuilder(Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64, New Object() {DirectCast(m_ConstantValue, Date).Ticks}))
-        Else
-            If Helper.IsEnum(Compiler, m_FieldType) AndAlso Helper.CompareType(m_FieldType, m_ConstantValue.GetType) = False Then
-                m_ConstantValue = System.Enum.ToObject(m_FieldType, m_ConstantValue)
+        If m_ConstantValue IsNot Nothing AndAlso m_ConstantValue IsNot DBNull.Value Then
+            If Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
+                Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
+                Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32
+                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
+                Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
+                For i As Integer = 0 To params.Length - 1
+                    attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
+                Next
+                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
+            ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
+                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
+                attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(m_ConstantValue, Date).Ticks))
+                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
             End If
-
-            If Helper.IsOnMS Then
-                Helper.Assert(Helper.CompareType(m_ConstantValue.GetType, m_FieldBuilder.FieldType), "Constant type and Field Type is not equal (Constant type = " & m_ConstantValue.GetType.Name & ", field type = " & m_FieldBuilder.FieldType.Name & ")")
-            End If
-            m_FieldBuilder.SetConstant(m_ConstantValue)
         End If
+
+        UpdateDefinition()
 
         Return result
     End Function
+
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If m_FieldBuilderCecil Is Nothing Then
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, 0, Nothing)
+            m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
+            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
+        End If
+
+        If m_RequiresSharedInitialization Then
+            m_FieldBuilderCecil.Constant = Nothing
+        ElseIf m_ConstantValue Is DBNull.Value Then
+            m_FieldBuilderCecil.Constant = Nothing
+        Else
+            m_FieldBuilderCecil.Constant = m_ConstantValue
+        End If
+        m_FieldBuilderCecil.HasDefault = True
+        m_FieldBuilderCecil.HasConstant = Not m_RequiresSharedInitialization
+        m_FieldBuilderCecil.Name = Name
+        If m_TypeName IsNot Nothing Then
+            m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)
+        Else
+            'Helper.StopIfDebugging()
+        End If
+        m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
+
+    End Sub
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -197,21 +288,22 @@ Public Class ConstantDeclaration
     End Function
 
 
-    Public ReadOnly Property FieldBuilder() As System.Reflection.Emit.FieldBuilder Implements IFieldMember.FieldBuilder
+    Public ReadOnly Property FieldBuilder() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldBuilder
         Get
-            Return m_FieldBuilder
+            Return m_FieldBuilderCecil
         End Get
     End Property
 
-    Public ReadOnly Property FieldType() As System.Type Implements IFieldMember.FieldType
+    Public ReadOnly Property FieldType() As Mono.Cecil.TypeReference Implements IFieldMember.FieldType
         Get
-            Return m_TypeName.ResolvedType
+            If m_FieldBuilderCecil Is Nothing Then Return Nothing
+            Return m_FieldBuilderCecil.FieldType
         End Get
     End Property
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
         Get
-            Return m_Descriptor
+            Return m_FieldBuilderCecil
         End Get
     End Property
 
@@ -233,9 +325,8 @@ Public Class ConstantDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property FieldDescriptor() As FieldDescriptor Implements IFieldMember.FieldDescriptor
-        Get
-            Return m_Descriptor
-        End Get
-    End Property
+    Public Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean Implements IFieldMember.ResolveAndGetConstantValue
+        value = ConstantValue
+        Return True
+    End Function
 End Class

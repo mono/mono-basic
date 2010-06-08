@@ -31,25 +31,17 @@ Public Class RegularEventDeclaration
     ''' <summary>The implicitly defined delegate (if not explicitly specified).</summary>
     Private m_ImplicitEventDelegate As DelegateDeclaration
     ''' <summary>The implicitly defined field holding the delegate variable (of not a custom event).</summary>
-    Private m_Variable As VariableDeclaration
+    Private m_Variable As TypeVariableDeclaration
     Private m_ElementsCreated As Boolean
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ParametersOrType As ParametersOrType, ByVal ImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Identifier, ImplementsClause)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal ParametersOrType As ParametersOrType, ByVal ImplementsClause As MemberImplementsClause)
+        MyBase.Init(Modifiers, Identifier, ImplementsClause)
         m_ParametersOrType = ParametersOrType
     End Sub
-
-    Shared Function DefineEventType(ByVal Obj As EventDeclaration, ByRef Builder As DelegateDeclaration, ByVal Parameters As ParameterList) As Boolean
-        Dim result As Boolean = True
-
-        Builder = New DelegateDeclaration(Obj.FindFirstParent(Of TypeDeclaration), Obj.Name & "EventHandler", Obj.Modifiers, Parameters)
-
-        Return result
-    End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
@@ -71,7 +63,7 @@ Public Class RegularEventDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property EventField() As System.Reflection.Emit.FieldBuilder
+    Public ReadOnly Property EventField() As Mono.Cecil.FieldDefinition
         Get
             Helper.Assert(m_Variable IsNot Nothing)
             Helper.Assert(m_Variable.IsFieldVariable)
@@ -124,28 +116,29 @@ Public Class RegularEventDeclaration
 
             Helper.Assert(ism.ResolvedEventInfo IsNot Nothing)
 
-            Dim eD As EventDescriptor = TryCast(ism.ResolvedEventInfo, EventDescriptor)
+            Dim eD As Mono.Cecil.EventDefinition = CecilHelper.FindDefinition(ism.ResolvedEventInfo)
 
             If eD IsNot Nothing Then
-                If eD.EventDeclaration.EventType Is Nothing Then
-                    Dim red As RegularEventDeclaration = TryCast(eD.EventDeclaration, RegularEventDeclaration)
+                If eD.EventType Is Nothing Then
+                    Dim red As RegularEventDeclaration = TryCast(eD.Annotations(Compiler), RegularEventDeclaration)
                     If red IsNot Nothing Then
                         result = red.CreateImplicitElements AndAlso result
                         result = red.ResolveTypeReferences AndAlso result
                     End If
                 End If
-                Helper.Assert(eD.EventDeclaration.EventType IsNot Nothing)
-                EventType = eD.EventDeclaration.EventType
+                Helper.Assert(eD.EventType IsNot Nothing)
+                EventType = eD.EventType
             Else
-                EventType = ism.ResolvedEventInfo.EventHandlerType
+                EventType = ism.ResolvedEventInfo.EventType
             End If
             m_Type = New TypeName(Me, EventType)
         ElseIf m_Parameters IsNot Nothing Then
-            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace)
-            m_ImplicitEventDelegate.Init(Nothing, New Modifiers(Me.Modifiers), New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
-            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented()
+            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace, New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
+            m_ImplicitEventDelegate.Modifiers = Me.Modifiers
+            m_ImplicitEventDelegate.UpdateDefinition()
+            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
 
-            EventType = m_ImplicitEventDelegate.TypeDescriptor
+            EventType = m_ImplicitEventDelegate.CecilType
         ElseIf m_Type IsNot Nothing Then
             m_ImplicitEventDelegate = Nothing
             'Helper.NotImplemented()
@@ -157,14 +150,14 @@ Public Class RegularEventDeclaration
         'Create the variable.
         If DeclaringType.IsInterface = False Then
             Dim eventVariableModifiers As Modifiers
-            m_Variable = New VariableDeclaration(DeclaringType)
+            m_Variable = New TypeVariableDeclaration(DeclaringType)
             eventVariableModifiers = New Modifiers(ModifierMasks.Private)
             If Me.IsShared Then eventVariableModifiers.AddModifiers(ModifierMasks.Shared)
             If m_ImplicitEventDelegate IsNot Nothing Then
-                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.TypeDescriptor)
+                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.CecilType)
             Else
                 Helper.Assert(m_Type IsNot Nothing)
-                m_Variable.Init(Nothing, eventVariableModifiers, Me.Name & "Event", m_Type)
+                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_Type)
             End If
         Else
             m_Variable = Nothing
@@ -206,6 +199,9 @@ Public Class RegularEventDeclaration
             Throw New InternalException(Me)
         End If
 
+        If m_ImplicitEventDelegate IsNot Nothing Then
+            result = m_ImplicitEventDelegate.ResolveTypeReferences AndAlso result
+        End If
 
         result = MyBase.ResolveTypeReferences AndAlso result
 

@@ -33,15 +33,12 @@ Public Class EnumDeclaration
 
     Private m_QualifiedName As KS = KS.Integer
     Private m_Constants As Generic.List(Of EnumMemberDeclaration)
+    Private m_ValueField As Mono.Cecil.FieldDefinition
 
     Public Const EnumTypeMemberName As String = "value__"
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
-    End Sub
-
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Members As MemberDeclarations, ByVal Name As Identifier, ByVal EnumType As KS)
-        MyBase.Init(CustomAttributes, Modifiers, Members, Name, 0)
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal EnumType As KS)
+        MyBase.New(Parent, [Namespace], Name)
         m_QualifiedName = EnumType
     End Sub
 
@@ -55,15 +52,11 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-#If ENABLECECIL Then
-        CecilBaseType = Compiler.CecilTypeCache.System_Enum
-#End If
-        BaseType = Compiler.TypeCache.System_Enum
-
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences() AndAlso result
+        UpdateDefinition()
 
         Return result
     End Function
@@ -74,7 +67,7 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    ReadOnly Property EnumConstantType() As Type 'Descriptor
+    ReadOnly Property EnumConstantType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeResolution.TypeCodeToType(TypeResolution.KeywordToTypeCode(m_QualifiedName))
         End Get
@@ -83,24 +76,7 @@ Public Class EnumDeclaration
     Overrides Function DefineType() As Boolean
         Dim result As Boolean = True
 
-        Dim enumBuilder As EnumBuilder = Nothing
-
-        Helper.Assert(BaseType IsNot Nothing OrElse Me.TypeDescriptor.IsInterface)
-        Helper.Assert(Name IsNot Nothing)
-
-        'Create the type builder.
-        Dim Attr As TypeAttributes
-        Attr = Me.TypeAttributes
-        If Helper.IsOnMono OrElse IsNestedType Then
-            result = MyBase.DefineType() AndAlso result
-        Else
-            'This is necessary on MS, since they won't allow the use of the enum fields in attribute constructors otherwise.
-            enumBuilder = Compiler.ModuleBuilder.DefineEnum(FullName, Attr And Reflection.TypeAttributes.VisibilityMask, EnumConstantType)
-            Compiler.TypeManager.RegisterReflectionType(enumBuilder, Me.TypeDescriptor)
-            MyBase.EnumBuilder = enumBuilder
-        End If
-
-        Helper.Assert(TypeBuilder IsNot Nothing OrElse enumBuilder IsNot Nothing)
+        UpdateDefinition()
 
         Return result
     End Function
@@ -110,10 +86,7 @@ Public Class EnumDeclaration
 
         result = MyBase.DefineTypeHierarchy AndAlso result
 
-        If TypeBuilder IsNot Nothing Then
-            Dim valueField As FieldInfo
-            valueField = TypeBuilder.DefineField(EnumTypeMemberName, EnumConstantType, Reflection.FieldAttributes.Public Or Reflection.FieldAttributes.SpecialName Or FieldAttributes.RTSpecialName)
-        End If
+        UpdateDefinition()
 
         Return result
     End Function
@@ -132,16 +105,25 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Reflection.TypeAttributes.Sealed
-        End Get
-    End Property
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+        BaseType = Compiler.TypeCache.System_Enum
+
+        If m_ValueField Is Nothing AndAlso m_QualifiedName <> KS.None Then
+            m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType))
+            CecilType.Fields.Add(m_ValueField)
+        End If
+
+        If m_ValueField IsNot Nothing Then
+            m_ValueField.FieldType = Helper.GetTypeOrTypeReference(Compiler, EnumConstantType)
+        End If
+    End Sub
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get
             Return True
         End Get
     End Property
-
 End Class

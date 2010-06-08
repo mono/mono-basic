@@ -34,7 +34,7 @@ Public Class AttributePositionalArgumentList
 
     Overloads Sub Add(ByVal Constant As Object)
         Dim exp As New AttributeArgumentExpression(Me)
-        exp.Init(New ConstantExpression(exp, Constant, Constant.GetType))
+        exp.Init(New ConstantExpression(exp, Constant, CecilHelper.GetType(Compiler, Constant)))
         Add(exp)
     End Sub
 

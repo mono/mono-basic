@@ -22,51 +22,6 @@ Public MustInherit Class ParsedObject
 
     Private m_HasErrors As Boolean
 
-#If DEBUG Then
-    Private m_TypeReferencesResolved As Diagnostics.StackTrace
-    Private m_CodeResolved As Diagnostics.StackTrace
-#End If
-
-    <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Sub CheckTypeReferencesNotResolved()
-#If DEBUG Then
-        If m_TypeReferencesResolved IsNot Nothing Then
-            Compiler.Report.WriteLine("ResolveTypeReferences called multiple times:")
-            Compiler.Report.WriteLine(m_TypeReferencesResolved.ToString)
-            Helper.Stop()
-        End If
-        'm_TypeReferencesResolved = New Diagnostics.StackTrace(True)
-#End If
-    End Sub
-
-    <Diagnostics.Conditional("DEBUG"), Diagnostics.DebuggerHidden()> Sub CheckCodeNotResolved()
-#If DEBUG Then
-        If m_CodeResolved IsNot Nothing Then
-            Compiler.Report.WriteLine("ResolveCode called multiple times:")
-            Compiler.Report.WriteLine(m_CodeResolved.ToString)
-            Helper.Stop()
-        End If
-        m_CodeResolved = New Diagnostics.StackTrace(True)
-#End If
-    End Sub
-
-    ReadOnly Property CodeResolved() As Boolean
-        <Diagnostics.DebuggerHidden()> Get
-#If DEBUG Then
-
-            Return m_CodeResolved IsNot Nothing
-#End If
-        End Get
-    End Property
-
-    ReadOnly Property TypeReferencesResolved() As Boolean
-        <Diagnostics.DebuggerHidden()> Get
-#If DEBUG Then
-
-            Return m_TypeReferencesResolved IsNot Nothing
-#End If
-        End Get
-    End Property
-
     Protected Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
     End Sub
@@ -77,6 +32,10 @@ Public MustInherit Class ParsedObject
 
     Protected Sub New(ByVal Parent As Compiler)
         MyBase.new(Parent)
+    End Sub
+
+    Protected Sub New()
+        MyBase.New()
     End Sub
 
     Property HasErrors() As Boolean
@@ -97,9 +56,7 @@ Public MustInherit Class ParsedObject
         End Set
     End Property
 
-    '<Obsolete("Not implemented?")> _
     Overridable Function ResolveTypeReferences() As Boolean
-        Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "Does '" & Me.GetType.ToString & "' have no type references?")
         Return True
     End Function
 End Class

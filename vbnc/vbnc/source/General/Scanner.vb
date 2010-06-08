@@ -17,7 +17,6 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-#Const SUPPORT_CSTYLE_COMMENTS = 1
 #If DEBUG Then
 #Const DOEOFCHECK = 0
 #Const EXTENDEDDEBUG = 0
@@ -109,27 +108,31 @@ Public Class Scanner
     ''' <remarks></remarks>
     Private m_ConditionStack As New Generic.List(Of Integer)
 
-    Private m_Methods As New Generic.Dictionary(Of MethodInfo, Object())
+    Private m_Methods As New Generic.Dictionary(Of Mono.Cecil.MethodReference, Mono.Collections.Generic.Collection(Of Mono.Cecil.CustomAttribute))
 
-    Function IsConditionallyExcluded(ByVal CalledMethod As MethodInfo, ByVal AtLocation As Span) As Boolean
-        Dim attribs() As Object
+    Function IsConditionallyExcluded(ByVal CalledMethod As Mono.Cecil.MethodReference, ByVal AtLocation As Span) As Boolean
+        Dim attribs As Mono.Collections.Generic.Collection(Of Mono.Cecil.CustomAttribute)
 
         If m_Methods.ContainsKey(CalledMethod) Then
             attribs = m_Methods(CalledMethod)
         Else
-            attribs = CalledMethod.GetCustomAttributes(Compiler.TypeCache.System_Diagnostics_ConditionalAttribute, False)
+            attribs = CecilHelper.FindDefinition(CalledMethod).CustomAttributes
             m_Methods.Add(CalledMethod, attribs)
         End If
 
-        If attribs Is Nothing Then Return False
+        If attribs Is Nothing OrElse attribs.Count = 0 Then Return False
 
-        For Each attrib As Object In attribs
-            Dim conditionalAttrib As System.Diagnostics.ConditionalAttribute
+        For i As Integer = 0 To attribs.Count - 1
+            Dim attrib As Mono.Cecil.CustomAttribute = attribs(i)
+            Dim identifier As String
 
-            conditionalAttrib = TryCast(attrib, System.Diagnostics.ConditionalAttribute)
-            If conditionalAttrib Is Nothing Then Continue For
+            If attrib.ConstructorArguments.Count <> 1 Then
+                Continue For
+            End If
+            identifier = TryCast(attrib.ConstructorArguments(0).Value, String)
+            If identifier = String.Empty Then Continue For
 
-            If Not IsDefinedAtLocation(conditionalAttrib.ConditionString, AtLocation) Then Return True
+            If Not IsDefinedAtLocation(identifier, AtLocation) Then Return True
         Next
 
         Return False
@@ -711,53 +714,6 @@ Public Class Scanner
             Case COMMENTCHAR1, COMMENTCHAR2, COMMENTCHAR3 'Traditional VB comment
                 EatLine(False) 'do not eat newline, it needs to be added as a token
                 Return
-#If SUPPORT_CSTYLE_COMMENTS Then
-            Case "/"c 'C-style comment
-                NextChar()
-                Select Case CurrentChar()
-                    Case "/"c 'Single line comment
-                        EatLine(False) 'do not eat newline, it needs to be added as a token
-                        Return
-                    Case "*"c 'Nestable, multiline comment.
-                        Dim iNesting As Integer = 1
-                        NextChar()
-                        Do
-                            Select Case CurrentChar()
-                                Case "*"c
-                                    If PeekChar() = "/"c Then
-                                        'End of comment found (if iNesting is 0)
-                                        NextChar()
-                                        NextChar()
-                                        iNesting -= 1
-                                    Else
-                                        NextChar()
-                                    End If
-                                Case "/"c
-                                    If PeekChar() = "*"c Then
-                                        'a nested comment was found
-                                        NextChar()
-                                        iNesting += 1
-                                    ElseIf PeekChar() = "/"c Then
-                                        EatLine(True)
-                                    Else
-                                        NextChar()
-                                    End If
-                                Case nl0
-                                    Compiler.Report.ShowMessage(Messages.VBNC90022)
-                                    Return
-                                Case Else
-                                    If IsNewLine() Then
-                                        EatNewLine() 'To update the line variable
-                                    Else
-                                        NextChar()
-                                    End If
-                            End Select
-                        Loop While (iNesting <> 0)
-                    Case Else
-                        'Function should never be called if not a comment
-                        Throw New InternalException("EatComment called with no comment.")
-                End Select
-#End If
             Case Else
                 REM is taken care of some other place.
                 'Function should never be called if not a comment
@@ -920,6 +876,7 @@ Public Class Scanner
                     Else
                         m_Builder.Append(CurrentChar())
                     End If
+
             End Select
         Loop While bEndOfString = False
         If CurrentChar() = "C"c OrElse CurrentChar() = "c"c Then
@@ -953,6 +910,8 @@ Public Class Scanner
                     Case "b"c, "B"c 'Binary
                         Base = IntegerBase.Binary
 #End If
+                    Case "d"c, "D"c 'Decimal
+                        Base = IntegerBase.Decimal
                     Case "h"c, "H"c 'Hex
                         Base = IntegerBase.Hex
                     Case "o"c, "O"c 'Octal
@@ -1431,7 +1390,7 @@ Public Class Scanner
 #If EXTENDED Then
                         Case "b"c, "B"c, "h"c, "H"c, "o"c, "O"c, "d"c, "D"c
 #Else
-                        Case "h"c, "H"c, "o"c, "O"c
+                        Case "h"c, "H"c, "o"c, "O"c, "d"c, "D"c
 #End If
                             Result = GetNumber()
                         Case Else 'Not a number, but operator
@@ -1499,22 +1458,14 @@ Public Class Scanner
                         Result = GetDate()
                     End If
                 Case "/"c
-#If SUPPORT_CSTYLE_COMMENTS Then
-                    If (PeekChar() = "/"c OrElse PeekChar() = "*"c) Then 'Comment
-                        EatComment()
-                    Else 'Division
-#End If
+                    NextChar()
+                    EatWhiteSpace()
+                    If (CurrentChar() = "="c) Then
                         NextChar()
-                        EatWhiteSpace()
-                        If (CurrentChar() = "="c) Then
-                            NextChar()
-                            Result = NewToken(KS.RealDivAssign)
-                        Else
-                            Result = NewToken(KS.RealDivision)
-                        End If
-#If SUPPORT_CSTYLE_COMMENTS Then
+                        Result = NewToken(KS.RealDivAssign)
+                    Else
+                        Result = NewToken(KS.RealDivision)
                     End If
-#End If
                 Case " "c 'Space
                     NextChar()
                     If (CurrentChar() = "_"c) Then '

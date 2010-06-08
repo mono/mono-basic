@@ -31,7 +31,7 @@ Public Class DictionaryAccessExpression
     Private m_FirstPart As Expression
     Private m_SecondPart As IdentifierOrKeyword
 
-    Private m_DefaultProperty As PropertyInfo
+    Private m_DefaultProperty As Mono.Cecil.PropertyReference
     Private m_WithStatement As WithStatement
     Private m_IsLateBound As Boolean
 
@@ -53,7 +53,7 @@ Public Class DictionaryAccessExpression
         m_SecondPart = SecondPart
     End Sub
     
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             If m_IsLateBound Then Return Compiler.TypeCache.System_Object
             Return m_DefaultProperty.PropertyType
@@ -82,7 +82,7 @@ Public Class DictionaryAccessExpression
             End If
             Emitter.EmitLoadValue(Info, m_SecondPart.Identifier)
             If Info.IsRHS Then
-                Emitter.EmitCallOrCallVirt(Info, m_DefaultProperty.GetGetMethod)
+                Emitter.EmitCallOrCallVirt(Info, CecilHelper.FindDefinition(m_DefaultProperty).GetMethod)
             ElseIf Info.IsLHS Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             Else
@@ -96,7 +96,7 @@ Public Class DictionaryAccessExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim firsttp As Type
+        Dim firsttp As Mono.Cecil.TypeReference
         If m_FirstPart IsNot Nothing Then
             result = m_FirstPart.ResolveExpression(Info) AndAlso result
             firsttp = m_FirstPart.ExpressionType
@@ -114,19 +114,18 @@ Public Class DictionaryAccessExpression
             Classification = New ValueClassification(Me, Compiler.TypeCache.System_Object)
             Return True
         End If
-
-        Dim attr As Object() = firsttp.GetCustomAttributes(Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, True)
-        If attr.Length = 1 Then
-            Dim att As DefaultMemberAttribute = TryCast(attr(0), DefaultMemberAttribute)
-            Helper.Assert(att IsNot Nothing)
-            m_DefaultProperty = firsttp.GetProperty(att.MemberName)
+        Dim attr As Mono.Cecil.CustomAttribute = Helper.GetDefaultMemberAttribute(Compiler, firsttp)
+        If attr IsNot Nothing Then
+            Dim name As String = DirectCast(attr.ConstructorArguments(0).Value, String)
+            Dim props As Mono.Collections.Generic.Collection(Of PropertyDefinition) = CecilHelper.FindProperties(CecilHelper.FindDefinition(firsttp).Properties, name)
+            If props IsNot Nothing AndAlso props.Count = 1 Then
+                m_DefaultProperty = props(0)
+            End If
             If m_DefaultProperty IsNot Nothing Then
                 Classification = New ValueClassification(Me, m_DefaultProperty.PropertyType)
             Else
                 result = Helper.AddError(Me) AndAlso result
             End If
-        ElseIf attr.Length > 1 Then
-            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         Else
             Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End If

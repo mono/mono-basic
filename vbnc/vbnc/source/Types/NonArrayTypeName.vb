@@ -33,7 +33,7 @@ Public Class NonArrayTypeName
 
     Private m_TypeName As ParsedObject
 
-    Private m_ResolvedType As Type
+    Private m_ResolvedType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
@@ -60,13 +60,25 @@ Public Class NonArrayTypeName
         Return result
     End Function
 
+    ReadOnly Property AsString() As String
+        Get
+            Return ToString()
+        End Get
+    End Property
+
     ReadOnly Property IsResolved() As Boolean
         Get
             Return m_ResolvedType IsNot Nothing
         End Get
     End Property
 
-    ReadOnly Property ResolvedType() As Type 'Descriptor
+    ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference 'Descriptor
+        Get
+            Return m_ResolvedType
+        End Get
+    End Property
+
+    ReadOnly Property ResolvedCecilType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType
         End Get

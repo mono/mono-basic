@@ -28,10 +28,10 @@
 Public Class EventAccessClassification
     Inherits ExpressionClassification
 
-    Private m_EventInfo As EventInfo
+    Private m_EventInfo As Mono.Cecil.EventReference
     Private m_InstanceExpression As Expression
 
-    ReadOnly Property EventInfo() As EventInfo
+    ReadOnly Property EventInfo() As Mono.Cecil.EventReference
         Get
             Return m_EventInfo
         End Get
@@ -43,9 +43,9 @@ Public Class EventAccessClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property EventType() As Type
+    ReadOnly Property EventType() As Mono.Cecil.TypeReference
         Get
-            Return m_EventInfo.DeclaringType
+            Return m_EventInfo.EventType
         End Get
     End Property
 
@@ -71,9 +71,9 @@ Public Class EventAccessClassification
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property Type() As Type
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
-            Return m_EventInfo.EventHandlerType
+            Return m_EventInfo.EventType
         End Get
     End Property
 
@@ -83,7 +83,7 @@ Public Class EventAccessClassification
         End Get
     End Property
 
-    Sub New(ByVal Parent As ParsedObject, ByVal EventInfo As EventInfo, Optional ByVal InstanceExpression As Expression = Nothing)
+    Sub New(ByVal Parent As ParsedObject, ByVal EventInfo As Mono.Cecil.EventReference, Optional ByVal InstanceExpression As Expression = Nothing)
         MyBase.new(Classifications.EventAccess, Parent)
         m_EventInfo = EventInfo
         m_InstanceExpression = InstanceExpression

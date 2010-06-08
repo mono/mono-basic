@@ -67,7 +67,7 @@ Public Class UnaryMinusExpression
             Helper.Assert(IsConstant)
             Dim value As Object = Expression.ConstantValue
             Helper.Assert(value IsNot Nothing)
-            Select Case Helper.GetTypeCode(Compiler, value.GetType)
+            Select Case Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))
                 Case TypeCode.SByte
                     Return -CSByte(value)
                 Case TypeCode.Int16

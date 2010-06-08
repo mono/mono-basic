@@ -19,29 +19,62 @@
 
 Public Class PropertyDeclaration
     Inherits MemberDeclaration
-    Implements IPropertyMember
-    'Implements IDefinableMember, INonTypeMember
-
-    Private m_Descriptor As New PropertyDescriptor(Me)
+    Implements IDefinableMember, INonTypeMember
 
     Private m_Signature As FunctionSignature
     Private m_Get As MethodDeclaration
     Private m_Set As MethodDeclaration
     Private m_MemberImplementsClause As MemberImplementsClause
 
-    Private m_Builder As PropertyBuilder
     Private m_Handlers As Generic.List(Of AddOrRemoveHandlerStatement)
-    Private m_HandlesField As VariableDeclaration
+    Private m_HandlesField As TypeVariableDeclaration
+
+    Private m_CecilBuilder As Mono.Cecil.PropertyDefinition
 
     Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
     End Sub
 
-    Property HandlesField() As VariableDeclaration
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
+        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+    End Sub
+
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Mono.Cecil.TypeReference)
+        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+    End Sub
+
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, Optional ByVal GetMethod As PropertyGetDeclaration = Nothing, Optional ByVal SetMethod As PropertySetDeclaration = Nothing, Optional ByVal MemberImplementsClause As MemberImplementsClause = Nothing)
+        MyBase.Init(Modifiers, Signature.Name)
+
+        m_Signature = Signature
+
+        If Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso SetMethod Is Nothing Then
+            SetMethod = New PropertySetDeclaration(Me)
+            SetMethod.Init(Modifiers, Nothing, Nothing, Nothing)
+        End If
+        If Modifiers.Is(ModifierMasks.WriteOnly) = False AndAlso GetMethod Is Nothing Then
+            GetMethod = New PropertyGetDeclaration(Me)
+            GetMethod.Init(Modifiers, Nothing, Nothing)
+        End If
+
+        m_Get = GetMethod
+        m_Set = SetMethod
+        m_MemberImplementsClause = MemberImplementsClause
+
+        Helper.Assert(m_Signature IsNot Nothing)
+    End Sub
+
+    ReadOnly Property CecilBuilder() As Mono.Cecil.PropertyDefinition
+        Get
+            Return m_CecilBuilder
+        End Get
+    End Property
+
+    Property HandlesField() As TypeVariableDeclaration
         Get
             Return m_HandlesField
         End Get
-        Set(ByVal value As VariableDeclaration)
+        Set(ByVal value As TypeVariableDeclaration)
             m_HandlesField = value
         End Set
     End Property
@@ -54,74 +87,6 @@ Public Class PropertyDeclaration
             Return m_Handlers
         End Get
     End Property
-
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
-        MyBase.Init(Attributes, Modifiers, Name)
-
-        m_Signature = New FunctionSignature(Me)
-        m_Signature.Init(Name, Nothing, New ParameterList(m_Signature), Nothing, ReturnType, Nothing)
-
-        Dim getMethod As PropertyGetDeclaration
-        Dim setMethod As PropertySetDeclaration
-
-
-        getMethod = New PropertyGetDeclaration(Me)
-        getMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
-
-        setMethod = New PropertySetDeclaration(Me)
-        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing, Nothing)
-
-        m_Get = getMethod
-        m_Set = setMethod
-    End Sub
-
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Type)
-        MyBase.Init(Attributes, Modifiers, Name)
-
-        m_Signature = New FunctionSignature(Me)
-        m_Signature.Init(Name, Nothing, New ParameterList(m_Signature), Nothing, ReturnType, Nothing)
-
-        Dim getMethod As PropertyGetDeclaration
-        Dim setMethod As PropertySetDeclaration
-
-
-        getMethod = New PropertyGetDeclaration(Me)
-        getMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing)
-
-        setMethod = New PropertySetDeclaration(Me)
-        setMethod.Init(Attributes, Modifiers, m_Signature, Nothing, Nothing, Nothing)
-
-        m_Get = getMethod
-        m_Set = setMethod
-    End Sub
-
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, ByVal GetMethod As MethodDeclaration, ByVal SetMethod As MethodDeclaration, ByVal MemberImplementsClause As MemberImplementsClause)
-        MyBase.Init(Attributes, Modifiers, Signature.Name)
-        m_Signature = Signature
-        m_Get = GetMethod
-        m_Set = SetMethod
-        m_MemberImplementsClause = MemberImplementsClause
-
-        Helper.Assert(m_Signature IsNot Nothing)
-    End Sub
-
-    Overloads Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal PropertySignature As FunctionSignature, ByVal MemberImplementsClause As MemberImplementsClause)
-        Dim GetMethod As PropertyGetDeclaration
-        Dim SetMethod As PropertySetDeclaration
-        If Modifiers.Is(ModifierMasks.ReadOnly) = False Then
-            SetMethod = New PropertySetDeclaration(Me)
-            SetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing, Nothing)
-        Else
-            SetMethod = Nothing
-        End If
-        If Modifiers.Is(ModifierMasks.WriteOnly) = False Then
-            GetMethod = New PropertyGetDeclaration(Me)
-            GetMethod.Init(Attributes, Modifiers, PropertySignature, Nothing, Nothing)
-        Else
-            GetMethod = Nothing
-        End If
-        Init(Attributes, Modifiers, PropertySignature, GetMethod, SetMethod, MemberImplementsClause)
-    End Sub
 
     ReadOnly Property ImplementsClause() As MemberImplementsClause
         Get
@@ -141,9 +106,9 @@ Public Class PropertyDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
         Get
-            Return m_Descriptor
+            Return m_CecilBuilder
         End Get
     End Property
 
@@ -159,36 +124,39 @@ Public Class PropertyDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property GetMethod() As System.Reflection.MethodInfo 'Implements IPropertyMember.GetMethod
+    Public ReadOnly Property GetMethod() As Mono.Cecil.MethodDefinition
         Get
             If m_Get IsNot Nothing Then
-                Return m_Get.Descriptor
+                Return m_Get.CecilBuilder
             Else
                 Return Nothing
             End If
         End Get
     End Property
 
-    Public ReadOnly Property PropertyBuilder() As System.Reflection.Emit.PropertyBuilder 'Implements IPropertyMember.PropertyBuilder
+    Public ReadOnly Property PropertyBuilder() As Mono.Cecil.PropertyDefinition
         Get
-            Return m_Builder
+            Return m_CecilBuilder
         End Get
     End Property
 
-    Public ReadOnly Property SetMethod() As System.Reflection.MethodInfo 'Implements IPropertyMember.SetMethod
+    Public ReadOnly Property SetMethod() As Mono.Cecil.MethodDefinition
         Get
             If m_Set IsNot Nothing Then
-                Return m_Set.Descriptor
+                Return m_Set.CecilBuilder
             Else
                 Return Nothing
             End If
         End Get
     End Property
 
-    Public ReadOnly Property Signature() As SubSignature 'Implements IPropertyMember.Signature
+    Public Property Signature() As FunctionSignature
         Get
             Return m_Signature
         End Get
+        Set(ByVal value As FunctionSignature)
+            m_Signature = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean
@@ -204,6 +172,31 @@ Public Class PropertyDeclaration
         Return result
     End Function
 
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        UpdateDefinition()
+    End Sub
+
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If m_CecilBuilder Is Nothing Then
+            m_CecilBuilder = New Mono.Cecil.PropertyDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType))
+            m_CecilBuilder.Annotations.Add(Compiler, Me)
+            DeclaringType.CecilType.Properties.Add(m_CecilBuilder)
+        End If
+        m_CecilBuilder.Name = Me.Name
+        m_CecilBuilder.PropertyType = Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType)
+
+        If m_Get IsNot Nothing Then
+            m_CecilBuilder.GetMethod = m_Get.CecilBuilder
+        End If
+        If m_Set IsNot Nothing Then
+            m_CecilBuilder.SetMethod = m_Set.CecilBuilder
+        End If
+    End Sub
+
     Public Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
 
@@ -217,15 +210,17 @@ Public Class PropertyDeclaration
             result = tp.SetDefaultAttribute(Me.Name) AndAlso result
         End If
 
+        UpdateDefinition()
+
         Return result
     End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = MyBase.ResolveCode(INFO) AndAlso result
+        result = MyBase.ResolveCode(Info) AndAlso result
         If m_Get IsNot Nothing Then result = m_Get.ResolveCode(Info) AndAlso result
-        If m_Set IsNot Nothing Then result = m_Set.ResolveCode(INFO) AndAlso result
+        If m_Set IsNot Nothing Then result = m_Set.ResolveCode(Info) AndAlso result
 
         Return result
     End Function
@@ -242,23 +237,19 @@ Public Class PropertyDeclaration
         End If
 
         Dim name As String
-        Dim attributes As PropertyAttributes
-        Dim returnType As Type
-        Dim parameterTypes() As Type
+        Dim attributes As Mono.Cecil.PropertyAttributes
+        Dim returnType As Mono.Cecil.TypeReference
+        Dim parameterTypes() As Mono.Cecil.TypeReference
 
         name = Me.Name
-        attributes = PropertyAttributes.None
+        attributes = 0 'Mono.Cecil.PropertyAttributes.None
         returnType = Me.Signature.ReturnType
         parameterTypes = Me.Signature.Parameters.ToTypeArray
 
-        Helper.SetTypeOrTypeBuilder(parameterTypes)
-        returnType = Helper.GetTypeOrTypeBuilder(returnType)
+        Helper.SetTypeOrTypeBuilder(Compiler, parameterTypes)
+        returnType = Helper.GetTypeOrTypeBuilder(Compiler, returnType)
 
-        m_Builder = DeclaringType.TypeBuilder.DefineProperty(name, attributes, returnType, parameterTypes)
-        Compiler.TypeManager.RegisterReflectionMember(m_Builder, Me.MemberDescriptor)
-
-        If m_Set IsNot Nothing Then m_Builder.SetSetMethod(m_Set.MethodBuilder)
-        If m_Get IsNot Nothing Then m_Builder.SetGetMethod(m_Get.MethodBuilder)
+        UpdateDefinition()
 
         Return result
     End Function

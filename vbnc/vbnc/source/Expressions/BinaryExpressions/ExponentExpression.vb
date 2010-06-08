@@ -68,11 +68,11 @@ Public Class ExponentExpression
             If lvalue Is Nothing Then lvalue = 0
             If rvalue Is Nothing Then rvalue = 0
 
-            Dim tlvalue, trvalue As Type
+            Dim tlvalue, trvalue As Mono.Cecil.TypeReference
             Dim clvalue, crvalue As TypeCode
-            tlvalue = lvalue.GetType
+            tlvalue = CecilHelper.GetType(Compiler, lvalue)
             clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-            trvalue = rvalue.GetType
+            trvalue = CecilHelper.GetType(Compiler, rvalue)
             crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
             Helper.Assert(Compiler.TypeResolution.IsNumericType(tlvalue) AndAlso Compiler.TypeResolution.IsNumericType(trvalue))

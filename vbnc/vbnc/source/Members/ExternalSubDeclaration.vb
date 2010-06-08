@@ -35,18 +35,18 @@ Public Class ExternalSubDeclaration
         MyBase.New(Parent)
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Identifier, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
-        MyBase.Init(Attributes, Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
-        MyBase.AddModifier(KS.Shared)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal Identifier As Identifier, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal ParameterList As ParameterList)
+        MyBase.Init(Modifiers, New SubSignature(Me, Identifier.Name, ParameterList), Nothing)
+        Modifiers = Modifiers.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause
         m_AliasClause = AliasClause
     End Sub
 
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal Signature As SubSignature)
-        MyBase.Init(Attributes, Modifiers, Signature, Nothing)
-        MyBase.AddModifier(KS.Shared)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal CharsetModifier As KS, ByVal LibraryClause As LibraryClause, ByVal AliasClause As AliasClause, ByVal Signature As SubSignature)
+        MyBase.Init(Modifiers, Signature, Nothing)
+        Modifiers = Modifiers.AddModifier(KS.Shared)
         m_CharsetModifier = CharsetModifier
         m_Identifier = Identifier
         m_LibraryClause = LibraryClause
@@ -101,8 +101,13 @@ Public Class ExternalSubDeclaration
         Dim attrib As New Attribute(Me)
         attrib.ResolvedType = Compiler.TypeCache.System_Runtime_InteropServices_DllImportAttribute
         attrib.AttributeArguments.PositionalArgumentList.Add(m_LibraryClause.StringLiteral.StringLiteral)
-        attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", Name)
+        If m_AliasClause IsNot Nothing Then
+            attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", m_AliasClause.StringLiteral.LiteralValue)
+        Else
+            attrib.AttributeArguments.VariablePropertyInitializerList.Add("EntryPoint", Name)
+        End If
         attrib.AttributeArguments.VariablePropertyInitializerList.Add("SetLastError", True)
+        attrib.AttributeArguments.VariablePropertyInitializerList.Add("PreserveSig", True)
         Select Case m_CharsetModifier
             Case KS.Auto
                 attrib.AttributeArguments.VariablePropertyInitializerList.Add("CharSet", System.Runtime.InteropServices.CharSet.Auto)
@@ -115,8 +120,15 @@ Public Class ExternalSubDeclaration
         End Select
         Me.CustomAttributes.Add(attrib)
 
+        For i As Integer = 0 To Signature.Parameters.Count - 1
+            If Helper.CompareType(Signature.Parameters(i).ParameterType, Compiler.TypeCache.System_String) AndAlso Signature.Parameters(i).CustomAttributes.Count = 0 Then
+                Signature.Parameters(i).ParameterType = New ByReferenceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_String))
+                Signature.Parameters(i).CecilBuilder.MarshalInfo = New Mono.Cecil.MarshalInfo(Mono.Cecil.NativeType.ByValStr)
+                Signature.Parameters(i).CecilBuilder.Attributes = Signature.Parameters(i).CecilBuilder.Attributes Or Mono.Cecil.ParameterAttributes.HasFieldMarshal
+            End If
+        Next
+
+
         Return result
     End Function
-
-
 End Class

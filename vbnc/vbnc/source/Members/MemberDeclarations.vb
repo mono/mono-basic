@@ -60,68 +60,21 @@
 Public Class MemberDeclarations
     Inherits Nameables(Of IMember)
 
-    Shadows Sub Add(ByVal Item As IMember)
-        Dim ptd As PartialTypeDeclaration = TryCast(Item, PartialTypeDeclaration)
-        If ptd IsNot Nothing AndAlso Me.ContainsName(Item.Name) Then
-            Dim mainDeclaration As PartialTypeDeclaration
-            Dim items As Generic.List(Of INameable)
-
-            items = Me.Index.Item(Item.Name)
-            If items Is Nothing OrElse items.Count <> 1 Then
-                Helper.AddError(Parent)
-                Return
-            End If
-
-            mainDeclaration = TryCast(items(0), PartialTypeDeclaration)
-            If mainDeclaration Is Nothing Then
-                Helper.AddError(Parent)
-                Return
-            End If
-
-            If Helper.CompareName(mainDeclaration.Namespace, ptd.Namespace) Then
-                mainDeclaration.AddPartialDeclaration(ptd)
-                Return
-            End If
-        End If
-
-        MyBase.Add(Item)
-    End Sub
-
     ReadOnly Property Declarations() As Nameables(Of IMember)
         Get
             Return Me
         End Get
     End Property
 
-    ReadOnly Property MemberDeclarations() As Generic.List(Of MemberInfo)
+    ReadOnly Property MemberDeclarations() As Generic.List(Of Mono.Cecil.MemberReference)
         Get
-            Dim result As New Generic.List(Of MemberInfo)
+            Dim result As New Generic.List(Of Mono.Cecil.MemberReference)
             For Each member As IMember In Me
                 result.Add(member.MemberDescriptor)
             Next
             Return result
         End Get
     End Property
-
-    Function GetMethod(ByVal Name As String, ByVal bindingAttr As BindingFlags, ByVal types As Type()) As MethodInfo
-        Dim result As MethodInfo = Nothing
-        Dim methods As Generic.List(Of MethodDeclaration)
-
-        methods = GetSpecificMembers(Of MethodDeclaration)()
-        For Each method As MethodDeclaration In methods
-            If Helper.CompareName(method.Name, Name) Then
-                If Helper.CompareTypes(method.Signature.Parameters.ToTypeArray, types) Then
-                    result = New MethodDescriptor(method)
-                    Exit For
-                End If
-            End If
-        Next
-
-        If result Is Nothing AndAlso CBool(bindingAttr And BindingFlags.FlattenHierarchy) Then
-            result = parent.FindFirstParent(Of IType).BaseType.GetMethod(Name, bindingAttr, Nothing, types, Nothing)
-        End If
-        Return result
-    End Function
 
     Function GetSpecificMembers(Of T)() As Generic.List(Of T)
         Dim result As New Generic.List(Of T)
@@ -137,6 +90,6 @@ Public Class MemberDeclarations
     End Function
 
     Sub New(ByVal Parent As ParsedObject)
-        MyBase.new(Parent, New Index(Parent))
+        MyBase.new(Parent)
     End Sub
 End Class

@@ -76,8 +76,8 @@ Public Class CaseStatement
 
         Dim selectparent As SelectStatement = Me.FindFirstParent(Of SelectStatement)()
 
-        EndLabel = Info.ILGen.DefineLabel
-        m_StartCode = Info.ILGen.DefineLabel
+        EndLabel = Emitter.DefineLabel(Info)
+        m_StartCode = Emitter.DefineLabel(Info)
 
         If m_IsElse = False Then
             For i As Integer = 0 To m_Clauses.Count - 1
@@ -86,10 +86,10 @@ Public Class CaseStatement
             Next
             Emitter.EmitBranch(Info, EndLabel)
         End If
-        Info.ILGen.MarkLabel(m_StartCode)
+        Emitter.MarkLabel(Info, m_StartCode)
         result = CodeBlock.GenerateCode(Info) AndAlso result
         Emitter.EmitBranch(Info, selectparent.EndLabel)
-        Info.ILGen.MarkLabel(EndLabel)
+        Emitter.MarkLabel(Info, EndLabel)
 
         Return result
     End Function

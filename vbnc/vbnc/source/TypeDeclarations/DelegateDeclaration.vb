@@ -38,37 +38,36 @@ Public Class DelegateDeclaration
     Public Const STR_BeginInvoke As String = "BeginInvoke"
 
     Private m_Signature As SubSignature
+    Private m_ImplicitElementsCreated As Boolean
 
     Private m_Constructor As ConstructorDeclaration
     Private m_Invoke As SubDeclaration
     Private m_BeginInvoke As FunctionDeclaration
     Private m_EndInvoke As SubDeclaration
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
-    End Sub
-
-    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Name As String, ByVal Modifiers As Modifiers, ByVal Parameters As ParameterList, Optional ByVal ReturnType As Type = Nothing)
-        Me.New(Parent, Parent.Namespace)
-
-        If ReturnType Is Nothing Then
-            m_Signature = New SubSignature(Me, Name, Parameters)
-        Else
-            m_Signature = New FunctionSignature(Me, Name, Parameters, ReturnType, Parent.Location)
-        End If
-
-        Me.Init(New Attributes(Me), Modifiers, m_Signature)
-    End Sub
-
-    Shadows Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
-        MyBase.Init(CustomAttributes, Modifiers, New MemberDeclarations(Me), Signature.Identifier, Signature.TypeParameters)
+    Public Sub New(ByVal Parent As TypeDeclaration, ByVal Signature As SubSignature)
+        MyBase.New(Parent, Parent.Namespace, Signature.Identifier, Signature.TypeParameters)
         m_Signature = Signature
+    End Sub
+
+    Public Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Signature As SubSignature)
+        MyBase.New(Parent, [Namespace], Helper.CreateGenericTypename(Signature.Identifier, Signature.TypeParameters), Signature.TypeParameters)
+        m_Signature = Signature
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
     End Sub
 
     Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes
         Dim result As Boolean = True
         Dim ReturnType As TypeName
         Dim Parameters As ParameterList = m_Signature.Parameters
+
+        If m_ImplicitElementsCreated Then Return True
+        m_ImplicitElementsCreated = True
 
         Helper.Assert(Me.Members.Count = 0)
 
@@ -84,8 +83,8 @@ Public Class DelegateDeclaration
         m_Constructor.Init(Nothing)
         m_Constructor.Signature.Parameters.Add("TargetObject", Compiler.TypeCache.System_Object)
         m_Constructor.Signature.Parameters.Add("TargetMethod", Compiler.TypeCache.System_IntPtr)
-        m_Constructor.Attributes = Reflection.MethodAttributes.Public Or Reflection.MethodAttributes.SpecialName Or Reflection.MethodAttributes.RTSpecialName
-        m_Constructor.SetImplementationFlags(MethodImplAttributes.Runtime)
+        m_Constructor.MethodAttributes = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.SpecialName Or Mono.Cecil.MethodAttributes.RTSpecialName
+        m_Constructor.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
 
         Members.Add(m_Constructor)
 
@@ -139,45 +138,45 @@ Public Class DelegateDeclaration
         End If
         beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.System_IAsyncResult, Me.Location)
 
-        m_Invoke.Init(Nothing, New Modifiers(), invokeSignature, Nothing, Nothing)
-        m_BeginInvoke.Init(Nothing, New Modifiers(), beginInvokeSignature, Nothing, Nothing)
-        m_EndInvoke.Init(Nothing, New Modifiers(), endInvokeSignature, Nothing, Nothing)
+        m_Invoke.Init(New Modifiers(), invokeSignature, Nothing, Nothing)
+        m_BeginInvoke.Init(New Modifiers(), beginInvokeSignature, Nothing, Nothing)
+        m_EndInvoke.Init(New Modifiers(), endInvokeSignature, Nothing, Nothing)
 
-        Dim attr As MethodAttributes
-        Dim implattr As MethodImplAttributes = MethodImplAttributes.Runtime
-        attr = MethodAttributes.Public Or MethodAttributes.NewSlot Or MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride
+        Dim attr As Mono.Cecil.MethodAttributes
+        Dim implattr As Mono.Cecil.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
+        attr = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.NewSlot Or Mono.Cecil.MethodAttributes.Virtual Or Mono.Cecil.MethodAttributes.CheckAccessOnOverride
 
         'If Me.DeclaringType IsNot Nothing AndAlso Me.DeclaringType.TypeDescriptor.IsInterface Then
         '    attr = attr Or MethodAttributes.CheckAccessOnOverride
         'End If
 
-        m_Invoke.Attributes = attr
-        m_BeginInvoke.attributes = attr
-        m_EndInvoke.Attributes = attr
+        m_Invoke.MethodAttributes = attr
+        m_BeginInvoke.MethodAttributes = attr
+        m_EndInvoke.MethodAttributes = attr
 
-        m_Invoke.SetImplementationFlags(implattr)
-        m_BeginInvoke.SetImplementationFlags(implattr)
-        m_EndInvoke.SetImplementationFlags(implattr)
+        m_Invoke.MethodImplAttributes = implattr
+        m_BeginInvoke.MethodImplAttributes = implattr
+        m_EndInvoke.MethodImplAttributes = implattr
 
         Members.Add(m_BeginInvoke)
         Members.Add(m_EndInvoke)
         Members.Add(m_Invoke)
 
+        m_BeginInvoke.Initialize(Me)
+        m_EndInvoke.Initialize(Me)
+        m_Invoke.Initialize(Me)
+
         Return result
     End Function
 
-    Overrides Function ResolveType() As Boolean
+    Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
-
-#If ENABLECECIL Then
-        CecilBaseType = Compiler.CecilTypeCache.System_MulticastDelegate
-#End If
 
         BaseType = Compiler.TypeCache.System_MulticastDelegate
 
-        result = m_Signature.ResolveTypeReferences(False) AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
-        result = MyBase.ResolveType AndAlso result
+        result = m_Signature.ResolveTypeReferences(False) AndAlso result
 
         Return result
     End Function
@@ -196,9 +195,9 @@ Public Class DelegateDeclaration
         End Get
     End Property
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Return Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Reflection.TypeAttributes.Sealed
-        End Get
-    End Property
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+    End Sub
 End Class

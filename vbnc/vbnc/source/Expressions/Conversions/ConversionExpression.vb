@@ -28,7 +28,7 @@ Public MustInherit Class ConversionExpression
         End Get
     End Property
 
-    Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Type) As Expression
+    Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Mono.Cecil.TypeReference) As Expression
 
         If Helper.CompareType(fromExpr.ExpressionType, DestinationType) Then
             Return fromExpr
@@ -66,8 +66,8 @@ Public MustInherit Class ConversionExpression
             Case TypeCode.UInt64
                 Return New CULngExpression(Parent, fromExpr)
             Case Else
-                If DestinationType.IsByRef AndAlso fromExpr.ExpressionType.IsByRef = False Then
-                    Dim elementType As Type = DestinationType.GetElementType
+                If CecilHelper.IsByRef(DestinationType) AndAlso CecilHelper.IsByRef(fromExpr.ExpressionType) = False Then
+                    Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(DestinationType)
                     Dim result As Boolean = True
                     Dim tmp As Expression
                     tmp = GetTypeConversion(Parent, fromExpr, elementType)
@@ -118,7 +118,6 @@ Public MustInherit Class ConversionExpression
                 Else
                     Return False
                 End If
-                'Return TypeResolution.IsImplicitlyConvertible(ExpressionType, m_Expression.ExpressionType)
             End If
         End Get
     End Property

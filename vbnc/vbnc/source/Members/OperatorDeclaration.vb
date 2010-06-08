@@ -43,25 +43,12 @@ Public Class OperatorDeclaration
         MyBase.New(Parent)
     End Sub
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <param name="Attributes"></param>
-    ''' <param name="Modifiers"></param>
-    ''' <param name="Identifier">non-null if set</param>
-    ''' <param name="Symbol">None if not set</param>
-    ''' <param name="Operand1"></param>
-    ''' <param name="Operand2"></param>
-    ''' <param name="ReturnTypeAttributes"></param>
-    ''' <param name="TypeName"></param>
-    ''' <param name="Block"></param>
-    ''' <remarks></remarks>
-    Shadows Sub Init(ByVal Attributes As Attributes, ByVal Modifiers As Modifiers, ByVal Identifier As String, ByVal Symbol As KS, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
+    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As String, ByVal Symbol As KS, ByVal Operand1 As Operand, ByVal Operand2 As Operand, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Block As CodeBlock)
 
         Helper.Assert(Identifier Is Nothing Xor Symbol = KS.None)
 
         Dim mySignature As New FunctionSignature(Me)
-        Dim parameters As New ParameterList(mySignature)
+        Dim parameters As New ParameterList(Me)
         Dim name As String
 
         parameters.Add(New Parameter(parameters, Operand1.Name, Operand1.TypeName))
@@ -143,7 +130,7 @@ Public Class OperatorDeclaration
         m_Operand1 = Operand1
         m_Operand2 = Operand2
 
-        MyBase.Init(Attributes, Modifiers, mySignature, Block)
+        MyBase.Init(Modifiers, mySignature, Block)
     End Sub
 
 

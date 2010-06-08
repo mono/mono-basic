@@ -50,21 +50,27 @@ Public Class EmitInfo
     Private m_Method As IMethod
 
     ''' <summary>
-    ''' The type of the values at the stack.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Stack As EmitStack
-
-    ''' <summary>
     ''' The desired type to emit.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_DesiredType As Type
+    Private m_DesiredType As Mono.Cecil.TypeReference
 
 
     Private m_InExceptionFilter As Boolean
 
+    Private m_CilBody As Mono.Cecil.Cil.MethodBody
     Private m_Context As ParsedObject
+
+    ReadOnly Property CilBody() As Mono.Cecil.Cil.MethodBody
+        Get
+            If m_CilBody Is Nothing Then
+                Helper.Assert(m_Method IsNot Nothing)
+                Helper.Assert(m_Method.CecilBuilder IsNot Nothing)
+                m_CilBody = m_Method.CecilBuilder.Body
+            End If
+            Return m_CilBody
+        End Get
+    End Property
 
     ReadOnly Property Context() As ParsedObject
         Get
@@ -117,7 +123,7 @@ Public Class EmitInfo
         End Get
     End Property
 
-    ReadOnly Property DesiredType() As Type
+    ReadOnly Property DesiredType() As Mono.Cecil.TypeReference
         Get
             Return m_DesiredType
         End Get
@@ -147,7 +153,7 @@ Public Class EmitInfo
         End Get
     End Property
 
-#If DEBUGEMISSION Then
+    Private m_FakeGenerator As EmitLog
     ''' <summary>
     ''' The ILGenerator used to emit the code.
     ''' </summary>
@@ -156,28 +162,11 @@ Public Class EmitInfo
     ''' <remarks></remarks>
     ReadOnly Property ILGen() As EmitLog
         Get
-            Static tmp As EmitLog
-            If tmp Is Nothing Then tmp = New EmitLog(m_Method.ILGenerator, Compiler)
-            Return tmp
-        End Get
-    End Property
-#Else
-    ''' <summary>
-    ''' The ILGenerator used to emit the code.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property ILGen() As ILGenerator
-        Get
-            Return m_Method.ILGenerator
-        End Get
-    End Property
-#End If
-
-    ReadOnly Property Stack() As EmitStack
-        Get
-            Return m_Stack
+            If m_FakeGenerator Is Nothing Then
+                m_FakeGenerator = New EmitLog(Compiler)
+                m_FakeGenerator.CilBody = CilBody
+            End If
+            Return m_FakeGenerator
         End Get
     End Property
 
@@ -205,7 +194,6 @@ Public Class EmitInfo
     ''' <remarks></remarks>
     Sub New(ByVal Method As IMethod)
         m_Method = Method
-        m_Stack = New EmitStack(Compiler)
     End Sub
 
     ''' <summary>
@@ -234,7 +222,7 @@ Public Class EmitInfo
     ''' <param name="DesiredType"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function Clone(ByVal Context As ParsedObject, ByVal IsRHS As Boolean, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Type = Nothing) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal IsRHS As Boolean, Optional ByVal IsExplicitConversion As Boolean = False, Optional ByVal DesiredType As Mono.Cecil.TypeReference = Nothing) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_IsRHS = IsRHS
         result.m_IsExplicitConversion = IsExplicitConversion
@@ -244,7 +232,7 @@ Public Class EmitInfo
         Return result
     End Function
 
-    Function Clone(ByVal Context As ParsedObject, ByVal DesiredType As Type) As EmitInfo
+    Function Clone(ByVal Context As ParsedObject, ByVal DesiredType As Mono.Cecil.TypeReference) As EmitInfo
         Dim result As New EmitInfo(Me)
         result.m_DesiredType = DesiredType
         result.m_RHSExpression = Nothing
@@ -262,7 +250,6 @@ Public Class EmitInfo
         Me.m_IsExplicitConversion = Info.m_IsExplicitConversion
         Me.m_IsRHS = Info.m_IsRHS
         Me.m_Method = Info.m_Method
-        Me.m_Stack = Info.m_Stack
         Me.m_RHSExpression = Info.m_RHSExpression
     End Sub
 End Class

@@ -29,19 +29,15 @@
 Public Class StructureDeclaration
     Inherits PartialTypeDeclaration
 
-    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String)
-        MyBase.New(Parent, [Namespace])
+    Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
+        MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
-    Public Overrides Function ResolveType() As Boolean
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         MyBase.BaseType = Compiler.TypeCache.System_ValueType
-
-#If ENABLECECIL Then
-        MyBase.CecilBaseType = Compiler.CecilTypeCache.System_ValueType
-#End If
-        result = MyBase.ResolveType AndAlso result
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
@@ -54,13 +50,9 @@ Public Class StructureDeclaration
         Return tm.PeekToken(i).Equals(KS.Structure)
     End Function
 
-    Public Overrides ReadOnly Property TypeAttributes() As System.Reflection.TypeAttributes
-        Get
-            Dim result As TypeAttributes = MyBase.TypeAttributes
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
 
-            result = result Or Reflection.TypeAttributes.SequentialLayout Or Reflection.TypeAttributes.Sealed
-
-            Return result
-        End Get
-    End Property
+        TypeAttributes = MyBase.TypeAttributes Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
+    End Sub
 End Class

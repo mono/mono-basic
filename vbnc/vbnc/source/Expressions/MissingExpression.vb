@@ -28,7 +28,7 @@ Public Class MissingExpression
         Helper.Stop() 'A missing expression doesn't know how to emit itself.
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return New MissingType(Me.Compiler)
         End Get

@@ -18,5 +18,5 @@
 ' 
 
 Public Interface IModifiable
-    ReadOnly Property Modifiers() As Modifiers
+    Property Modifiers() As Modifiers
 End Interface

@@ -21,7 +21,7 @@ Public Class MethodGroupToValueExpression
     Inherits Expression
 
     Private m_MethodGroup As MethodGroupClassification
-    Private m_ExpressionType As Type
+    Private m_ExpressionType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject, ByVal MethodGroupClassification As MethodGroupClassification)
         MyBase.new(Parent)
@@ -42,13 +42,16 @@ Public Class MethodGroupToValueExpression
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+        Dim arguments As ArgumentList = New ArgumentList(Me.Parent)
 
         If m_MethodGroup.Resolved = False Then
-            result = m_MethodGroup.ResolveGroup(New ArgumentList(Me.Parent), Nothing) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments, Nothing) AndAlso result
+        Else
+            'm_FinalArguments = m_MethodGroup.
         End If
 
         If result = False Then
-            result = m_MethodGroup.ResolveGroup(New ArgumentList(Me.Parent), Nothing, , True) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments, , True) AndAlso result
             Return False
         End If
 
@@ -74,12 +77,12 @@ Public Class MethodGroupToValueExpression
 
         Helper.Assert(m_MethodGroup.Resolved)
 
-        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, New ArgumentList(Me.Parent, m_MethodGroup.Parameters), m_MethodGroup.ResolvedMethod)
+        Helper.EmitArgumentsAndCallOrCallVirt(Info, m_MethodGroup.InstanceExpression, m_MethodGroup.FinalArguments, Helper.GetMethodOrMethodReference(Compiler, m_MethodGroup.ResolvedMethod))
 
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_ExpressionType
         End Get

@@ -28,6 +28,17 @@ Public MustInherit Class MemberDeclaration
     Private m_Name As String
     Private m_GeneratedCode As Boolean
 
+    Overridable Sub UpdateDefinition()
+
+    End Sub
+
+    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
+        MyBase.Initialize(Parent)
+
+        If m_CustomAttributes IsNot Nothing Then m_CustomAttributes.Initialize(Me)
+        Helper.Assert(m_Name IsNot Nothing)
+    End Sub
+
     ReadOnly Property GeneratedCode() As Boolean
         Get
             Return m_GeneratedCode
@@ -61,31 +72,27 @@ Public MustInherit Class MemberDeclaration
         Helper.Assert(m_DeclaringType IsNot Nothing)
     End Sub
 
-    Protected Sub AddModifier(ByVal Modifier As KS)
-        m_Modifiers.AddModifier(Modifier)
-    End Sub
-
-    Sub Init(ByVal CustomAttributes As Attributes, ByVal Modifiers As Modifiers, ByVal Name As String)
-        m_CustomAttributes = CustomAttributes
-        If m_CustomAttributes IsNot Nothing Then m_CustomAttributes.SetParent(Me)
+    Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String)
         m_Modifiers = Modifiers
         m_Name = Name
 
-        If m_CustomAttributes Is Nothing Then m_CustomAttributes = New Attributes(Me)
-
         If m_Name Is Nothing Then Throw New InternalException(Me.Location.ToString(Compiler))
-        Helper.Assert(m_CustomAttributes IsNot Nothing)
-        'Helper.Assert(vbnc.Modifiers.IsNothing(m_Modifiers) = False)
     End Sub
 
     Protected Sub Rename(ByVal Name As String)
         m_Name = Name
+        If MemberDescriptor IsNot Nothing Then
+            MemberDescriptor.Name = m_Name
+        End If
     End Sub
 
-    Public ReadOnly Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
+    Public Property CustomAttributes() As Attributes Implements IAttributableDeclaration.CustomAttributes
         Get
             Return m_CustomAttributes
         End Get
+        Set(ByVal value As Attributes)
+            m_CustomAttributes = value
+        End Set
     End Property
 
     Public Property DeclaringType() As TypeDeclaration Implements IMember.DeclaringType
@@ -103,27 +110,30 @@ Public MustInherit Class MemberDeclaration
         End Get
     End Property
 
-    Public MustOverride ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo Implements IMember.MemberDescriptor
+    Public MustOverride ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference Implements IMember.MemberDescriptor
 
-    Public ReadOnly Property Modifiers() As Modifiers Implements IModifiable.Modifiers
+    Public Property Modifiers() As Modifiers Implements IModifiable.Modifiers
         Get
             Return m_Modifiers
         End Get
+        Set(ByVal value As Modifiers)
+            m_Modifiers = value
+        End Set
     End Property
 
-    Public ReadOnly Property Name() As String Implements INameable.Name
+    Public Property Name() As String Implements INameable.Name
         Get
-            If m_Name Is Nothing Then Throw New InternalException(Me.GetType().FullName)
             Return m_Name
         End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        Me.CheckTypeReferencesNotResolved()
-
-        result = m_CustomAttributes.ResolveTypeReferences AndAlso result
+        If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
@@ -131,7 +141,7 @@ Public MustInherit Class MemberDeclaration
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_CustomAttributes.ResolveCode(Info) AndAlso result
+        If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveCode(Info) AndAlso result
 
         Return result
     End Function
@@ -140,7 +150,7 @@ Public MustInherit Class MemberDeclaration
         Dim result As Boolean = True
 
         If m_GeneratedCode = False Then
-            result = m_CustomAttributes.GenerateCode(Info) AndAlso result
+            If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.GenerateCode(Info) AndAlso result
 
             m_GeneratedCode = True
         End If

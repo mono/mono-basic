@@ -55,20 +55,4 @@ Public Class InterfaceBases
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken = KS.Inherits
     End Function
-
-    ''' <summary>
-    ''' Returns the interface bases as an array of types.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property AsTypes() As Type()
-        Get
-            Dim result(m_Bases.GetUpperBound(0)) As Type
-            For i As Integer = 0 To m_Bases.GetUpperBound(0)
-                result(i) = m_Bases(i).ResolvedType
-            Next
-            Return result
-        End Get
-    End Property
-
 End Class

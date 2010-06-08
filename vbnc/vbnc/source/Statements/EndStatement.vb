@@ -35,8 +35,7 @@ Public Class EndStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim ilgen As ILGenerator = Me.FindFirstParent(Of IMethod).ILGenerator
-        ilgen.EmitCall(OpCodes.Call, Compiler.TypeCache.MS_VB_CS_ProjectData__EndApp, Nothing)
+        Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__EndApp)
 
         Return result
     End Function

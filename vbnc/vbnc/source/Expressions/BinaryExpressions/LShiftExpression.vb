@@ -99,9 +99,9 @@ Public Class LShiftExpression
                     shifts = CInt(tmpShifts)
                 End If
 
-                Dim tlvalue As Type
+                Dim tlvalue As Mono.Cecil.TypeReference
                 Dim clvalue As TypeCode
-                tlvalue = lvalue.GetType
+                tlvalue = CecilHelper.GetType(Compiler, lvalue)
                 clvalue = Helper.GetTypeCode(Compiler, tlvalue)
 
                 Select Case clvalue

@@ -67,7 +67,7 @@ Partial Class Parser
         'dot, so it is an internal error.
 
         m_Second = ParseIdentifierOrKeywordWithTypeArguments(result)
-        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Second Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_First, m_Second)
 
@@ -84,13 +84,13 @@ Partial Class Parser
             m_Token = tm.CurrentToken
             tm.NextToken()
         Else
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Return Nothing
         End If
 
         If tm.CurrentToken.Equals(KS.LParenthesis) AndAlso tm.PeekToken.Equals(KS.Of) Then
             m_TypeArguments = ParseTypeArgumentList(result)
-            If m_TypeArguments Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeArguments Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_TypeArguments = Nothing
         End If
@@ -115,7 +115,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Exclamation)
         If tm.CurrentToken.IsIdentifierOrKeyword Then
             m_SecondPart = ParseIdentifierOrKeyword(result)
-            If m_SecondPart Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_SecondPart Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             Compiler.Report.ShowMessage(Messages.VBNC30203)
             Return Nothing
@@ -134,7 +134,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CByte)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Init(m_Expression)
 
         Return result
@@ -148,7 +148,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CBool)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -163,7 +163,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CChar)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -178,7 +178,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CDate)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -193,7 +193,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CDbl)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -208,7 +208,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CDec)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -223,7 +223,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CInt)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -238,7 +238,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CLng)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -253,7 +253,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CObj)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -268,7 +268,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CSByte)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -283,7 +283,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CShort)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -298,7 +298,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CSng)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -313,7 +313,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CStr)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -328,7 +328,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CUInt)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -343,7 +343,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CULng)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -358,7 +358,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.CUShort)
 
         m_Expression = ParseParenthesizedExpression(Parent)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -381,11 +381,11 @@ Partial Class Parser
         End If
 
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If vbnc.ArrayNameModifier.CanBeMe(tm) Then
             m_ArrayNameModifier = ParseArrayNameModifier(result)
-            If m_ArrayNameModifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_ArrayNameModifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             m_ArrayNameModifier = Nothing
         End If
@@ -409,7 +409,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.RaiseEvent)
 
         m_Identifier = ParseIdentifierOrKeyword(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         m_Event = New SimpleNameExpression(result)
         m_Event.Identifier = New Identifier(m_Event, m_Identifier.Identifier, m_Identifier.Location, TypeCharacters.Characters.None)
@@ -417,8 +417,8 @@ Partial Class Parser
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
                 m_Arguments = ParseArgumentList(result)
-                If m_Arguments Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+                If m_Arguments Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
                 m_Arguments = New ArgumentList(result)
             End If
@@ -450,7 +450,7 @@ Partial Class Parser
         If tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then
                 m_ArgumentList = ParseArgumentList(result)
-                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+                If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
                 m_ArgumentList = New ArgumentList(result)
             End If
@@ -475,7 +475,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.LParenthesis)
 
         m_Expression = ParseExpression(result)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.AcceptIfNotError(KS.RParenthesis) = False Then
             Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
@@ -494,7 +494,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Minus)
 
         m_Expression = ParseExponent(Info)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -519,12 +519,12 @@ Partial Class Parser
         End Select
 
         tm.AcceptIfNotInternalError(GetKeyword)
-        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         m_Expression = ParseExpression(result)
-        If tm.AcceptIfNotError(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.Comma) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         m_DestinationType = ParseTypeName(result)
-        If m_DestinationType Is Nothing Then Helper.ErrorRecoveryNotImplemented()
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If m_DestinationType Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
 
         result.Init(m_Expression, m_DestinationType)
@@ -552,7 +552,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Add)
 
         m_Expression = ParseExponent(Info)
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression)
 
@@ -570,13 +570,13 @@ Partial Class Parser
             Do
                 Dim newExp As Expression
                 newExp = ParseExpression(result)
-                If newExp Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newExp Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
                 m_Initializers.Add(newExp)
             Loop While tm.Accept(KS.Comma)
         End If
 
-        If tm.Accept(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.Accept(KS.RBrace) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Initializers)
 
@@ -602,16 +602,16 @@ Partial Class Parser
         Dim iCurrent As RestorablePoint = tm.GetRestorablePoint
         Dim doExpression As Boolean = True
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If m_Identifier IsNot Nothing Then
             If ArrayNameModifier.CanBeMe(tm) Then
                 tmpANM = ParseArrayNameModifier(result)
-                If tmpANM Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If tmpANM Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
             If tmpANM Is Nothing AndAlso tm.Accept(KS.As) Then
                 m_ArrayNameModifier = tmpANM
                 m_TypeName = ParseTypeName(result)
-                If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 doExpression = False
             End If
         End If
@@ -619,7 +619,7 @@ Partial Class Parser
         If doExpression Then
             tm.RestoreToPoint(iCurrent)
             m_Expression = ParseExpression(New ExpressionParseInfo(result, True))
-            If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             tm.IgnoreRestoredPoint()
         End If
@@ -652,7 +652,7 @@ Partial Class Parser
             tm.RestoreToPoint(iCurrent)
             Dim doce As DelegateOrObjectCreationExpression
             doce = ParseDelegateOrObjectCreationExpression(result)
-            If doce Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If doce Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             result.Init(doce)
         End If
 
@@ -676,10 +676,10 @@ Partial Class Parser
         If tm.Accept(KS.LParenthesis) Then
             If tm.CurrentToken <> KS.RParenthesis Then
                 m_ArgumentList = ParseArgumentList(result)
-                If m_ArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If m_ArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
 
-            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
         If m_ArgumentList Is Nothing Then m_ArgumentList = New ArgumentList(result)
 
@@ -702,7 +702,7 @@ Partial Class Parser
     Private Function ParseArgumentList(ByVal Parent As ParsedObject) As ArgumentList
         Dim result As New ArgumentList(Parent)
 
-        Dim m_Arguments As New Generic.List(Of Argument)
+        Dim m_Arguments As New BaseObjects(Of Argument)(result)
 
         'First parse positional arguments
         Do
@@ -752,7 +752,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.Equals)
 
         Expression = ParseExpression(result)
-        If Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
 
         result.Init(Name, Expression)
@@ -799,11 +799,11 @@ Partial Class Parser
         Dim m_TypeArgumentList As TypeArgumentList
 
         m_Identifier = ParseIdentifier(result)
-        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If result Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.CurrentToken = KS.LParenthesis AndAlso tm.PeekToken = KS.Of Then
             m_TypeArgumentList = ParseTypeArgumentList(result)
-            If m_TypeArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If m_TypeArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             'If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
         Else
             m_TypeArgumentList = Nothing
@@ -822,13 +822,13 @@ Partial Class Parser
             If IsOneLiner = False AndAlso LabelDeclarationStatement.CanBeMe(tm) Then
                 Dim newLabel As LabelDeclarationStatement
                 newLabel = ParseLabelDeclarationStatement(result)
-                If newLabel Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newLabel Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 result.AddStatement(newLabel)
                 result.AddLabel(newLabel)
             ElseIf MidAssignStatement.IsMe(tm) Then
                 Dim newMidAssign As MidAssignStatement
                 newMidAssign = ParseMidAssignmentStatement(result, IsOneLiner)
-                If newMidAssign Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If newMidAssign Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 result.AddStatement(newMidAssign)
             ElseIf tm.CurrentToken.IsIdentifier OrElse _
               tm.CurrentToken.Equals(KS.Dot, KS.Me, KS.MyClass, KS.MyBase) OrElse _
@@ -842,77 +842,77 @@ Partial Class Parser
                 Dim lside, rside As Expression
 
                 lside = ParseExpression(New ExpressionParseInfo(result, True, False))
-                If lside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                If lside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 If tm.CurrentToken.IsSymbol Then
                     Select Case tm.CurrentToken.Symbol
                         Case KS.Equals
                             tm.NextToken()
                             Dim newStmt As New AssignmentStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.AddAssign
                             tm.NextToken()
                             Dim newStmt As New AddAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.ConcatAssign
                             tm.NextToken()
                             Dim newStmt As New ConcatAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.RealDivAssign
                             tm.NextToken()
                             Dim newStmt As New DivisionAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.IntDivAssign
                             tm.NextToken()
                             Dim newStmt As New IntDivisionAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.MultAssign
                             tm.NextToken()
                             Dim newStmt As New MultiplicationAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.PowerAssign
                             tm.NextToken()
                             Dim newStmt As New PowerAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.ShiftRightAssign
                             tm.NextToken()
                             Dim newStmt As New RShiftAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.ShiftLeftAssign
                             tm.NextToken()
                             Dim newStmt As New LShiftAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case KS.MinusAssign
                             tm.NextToken()
                             Dim newStmt As New SubtractionAssignStatement(result)
                             rside = ParseExpression(New ExpressionParseInfo(newStmt, False, False))
-                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If rside Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             newStmt.Init(lside, rside)
                             result.AddStatement(newStmt)
                         Case Else
@@ -928,55 +928,55 @@ Partial Class Parser
             ElseIf tm.CurrentToken.IsKeyword Then
                 Select Case tm.CurrentToken.Keyword
                     Case KS.Dim, KS.Static, KS.Const
-                        Dim newVariables As Generic.List(Of VariableDeclaration)
+                        Dim newVariables As Generic.List(Of LocalVariableDeclaration)
                         newVariables = ParseLocalDeclarationStatement(result)
-                        If newVariables Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newVariables Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddVariables(newVariables)
                     Case KS.SyncLock
                         Dim newLock As SyncLockStatement
                         newLock = ParseSyncLockStatement(result, IsOneLiner)
-                        If newLock Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newLock Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newLock)
                     Case KS.Try
                         Dim newTry As TryStatement
                         newTry = ParseTryStatement(result, IsOneLiner)
-                        If newTry Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newTry Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newTry)
                     Case KS.Throw
                         Dim newThrow As ThrowStatement
                         newThrow = ParseThrowStatement(result)
-                        If newThrow Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newThrow Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newThrow)
                     Case KS.With
                         Dim newWith As WithStatement
                         newWith = ParseWithStatement(result, IsOneLiner)
-                        If newWith Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newWith Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newWith)
                     Case KS.Select
                         Dim newSelect As SelectStatement
                         newSelect = ParseSelectStatement(result, IsOneLiner)
-                        If newSelect Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newSelect Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newSelect)
                     Case KS.If
                         Dim newIf As IfStatement
                         newIf = ParseIfStatement(result, IsOneLiner)
-                        If newIf Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newIf Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newIf)
                     Case KS.Do
                         Dim newDo As DoStatement
                         newDo = ParseDoStatement(result, IsOneLiner)
-                        If newDo Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newDo Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newDo)
                     Case KS.Stop
                         Dim newStop As StopStatement
                         newStop = ParseStopStatement(result)
-                        If newStop Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newStop Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newStop)
                     Case KS.End
                         Dim newEnd As EndStatement
                         If tm.PeekToken.IsEndOfStatement() Then
                             newEnd = ParseEndStatement(result)
-                            If newEnd Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If newEnd Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             result.AddStatement(newEnd)
                         Else
                             breakloop = True
@@ -984,84 +984,84 @@ Partial Class Parser
                     Case KS.While
                         Dim newWhile As WhileStatement
                         newWhile = ParseWhileStatement(result, IsOneLiner)
-                        If newWhile Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newWhile Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newWhile)
                     Case KS.Exit
                         Dim newExit As ExitStatement
                         newExit = ParseExitStatement(result)
-                        If newExit Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newExit Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newExit)
                     Case KS.Return
                         Dim newReturn As ReturnStatement
                         newReturn = ParseReturnStatement(result)
-                        If newReturn Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newReturn Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newReturn)
                     Case KS.For
                         If tm.PeekToken.Equals(KS.Each) Then
                             Dim newFor As ForEachStatement
                             newFor = ParseForEachStatement(result, IsOneLiner)
-                            If newFor Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If newFor Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             result.AddStatement(newFor)
                         Else
                             Dim newFor As ForStatement
                             newFor = ParseForStatement(result, IsOneLiner)
-                            If newFor Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                            If newFor Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                             result.AddStatement(newFor)
                         End If
                     Case KS.Continue
                         Dim newContinue As ContinueStatement
                         newContinue = ParseContinueStatement(result, IsOneLiner)
-                        If newContinue Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newContinue Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newContinue)
                     Case KS.GoTo
                         Dim newGoto As GotoStatement
                         newGoto = ParseGotoStatement(result)
-                        If newGoto Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newGoto Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newGoto)
                     Case KS.On
                         Dim newOnError As OnErrorStatement
                         newOnError = ParseOnErrorStatement(result)
-                        If newOnError Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newOnError Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newOnError)
                     Case KS.Error
                         Dim newError As ErrorStatement
                         newError = ParseErrorStatement(result)
-                        If newError Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newError Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newError)
                     Case KS.AddHandler, KS.RemoveHandler
                         Dim newAddHandler As AddOrRemoveHandlerStatement
                         newAddHandler = ParseAddOrRemoveHandlerStatement(result)
-                        If newAddHandler Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newAddHandler Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newAddHandler)
                     Case KS.RaiseEvent
                         Dim newRaiseEvent As RaiseEventStatement
                         newRaiseEvent = ParseRaiseEventStatement(result)
-                        If newRaiseEvent Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newRaiseEvent Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newRaiseEvent)
                     Case KS.Call
                         Dim newCall As CallStatement
                         newCall = ParseCallStatement(result)
-                        If newCall Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newCall Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newCall)
                     Case KS.Erase
                         Dim newErase As EraseStatement
                         newErase = ParseEraseStatement(result)
-                        If newErase Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newErase Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newErase)
                     Case KS.ReDim
                         Dim newReDim As ReDimStatement
                         newReDim = ParseReDimStatement(result)
-                        If newReDim Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newReDim Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newReDim)
                     Case KS.Resume
                         Dim newResume As ResumeStatement
                         newResume = ParseResumeStatement(result)
-                        If newResume Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newResume Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newResume)
                     Case KS.Using
                         Dim newUsing As UsingStatement
                         newUsing = ParseUsingStatement(result, IsOneLiner)
-                        If newUsing Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+                        If newUsing Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                         result.AddStatement(newUsing)
                     Case Else
                         breakloop = True
@@ -1103,7 +1103,7 @@ Partial Class Parser
         Dim result As New ExpressionList(Parent)
 
         If ParseList(Of Expression)(result, New ParseDelegate_Parent(Of Expression)(AddressOf ParseExpression), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented()
+            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
         Return result
@@ -1142,12 +1142,12 @@ Partial Class Parser
         Dim result As New GetTypeExpression(Parent)
 
         tm.AcceptIfNotInternalError(KS.GetType)
-        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         Dim m_TypeName As GetTypeTypeName
         m_TypeName = ParseGetTypeTypeName(result)
 
-        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented()
+        If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.init(m_TypeName)
 
@@ -1168,28 +1168,28 @@ Partial Class Parser
 
         If tm.CurrentToken.IsLiteral Then
             value = ParseLiteralExpression(Info.Parent)
-            If value Is Nothing Then helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken = KS.Dot Then
             value = ParseMemberAccessExpression(Info.Parent, Nothing)
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken = KS.Exclamation Then
             value = ParseDictionaryAccessExpression(Info.Parent, Nothing)
-            If value Is Nothing Then helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken.Equals(Enums.BuiltInTypeTypeNames) Then
             value = ParseBuiltInTypeExpression(Info.Parent)
-            If value Is Nothing Then helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken.IsIdentifier Then
             value = ParseSimpleNameExpression(Info.Parent)
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken = KS.LBrace Then
             value = ParseArrayInitializerExpression(Info.Parent)
-            If value Is Nothing Then helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken = KS.LParenthesis Then
             value = ParseParenthesizedExpression(Info.Parent)
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken.Equals(KS.Add, KS.Minus) Then
             value = ParseUnaryPlusMinus(Info)
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         ElseIf tm.CurrentToken.IsKeyword Then
             Select Case tm.CurrentToken.Keyword
                 Case KS.Not
@@ -1254,7 +1254,7 @@ Partial Class Parser
                 Case Else
                     Helper.Stop()
             End Select
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
             value = Nothing
         End If
@@ -1275,7 +1275,7 @@ Partial Class Parser
             Else
                 Exit Do
             End If
-            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+            If value Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Loop
 
         Return value
@@ -1548,7 +1548,7 @@ Partial Class Parser
         tm.AcceptIfNotInternalError(KS.TypeOf)
 
         m_Expression = ParseExpression(New ExpressionParseInfo(result, False, True))
-        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         If tm.Accept(KS.Is) Then
             m_Is = True
@@ -1560,7 +1560,7 @@ Partial Class Parser
         End If
 
         m_Type = ParseTypeName(result)
-        If m_Type Is Nothing Then Helper.ErrorRecoveryNotImplemented()
+        If m_Type Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
         result.Init(m_Expression, m_Is, m_Type)
 

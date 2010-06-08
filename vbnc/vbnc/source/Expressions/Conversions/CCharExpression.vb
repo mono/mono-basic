@@ -35,7 +35,7 @@ Public Class CCharExpression
     Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = Expression.ExpressionType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
 
         result = Expression.GenerateCode(Info.Clone(Expression, Info.Compiler.TypeCache.System_Char)) AndAlso result
@@ -76,12 +76,12 @@ Public Class CCharExpression
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Type) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Type = SourceType
+        Dim expType As Mono.Cecil.TypeReference = SourceType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Type = Info.Compiler.TypeCache.System_Char
+        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Char
         Select Case expTypeCode
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32007, expType.Name)
@@ -105,7 +105,7 @@ Public Class CCharExpression
             Dim tpCode As TypeCode
             Dim originalValue As Object
             originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(Compiler, originalValue.GetType)
+            tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
             Select Case tpCode
                 Case TypeCode.String
                     If CStr(originalValue).Length = 1 Then
@@ -123,10 +123,10 @@ Public Class CCharExpression
         End Get
     End Property
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
-            Return Compiler.TypeCache.System_Char '_Descriptor
+            Return Compiler.TypeCache.System_Char
         End Get
     End Property
 End Class

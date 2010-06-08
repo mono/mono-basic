@@ -25,7 +25,7 @@ Public Class EnumMemberDeclaration
     Inherits MemberDeclaration
     Implements IFieldMember
 
-    Private m_Descriptor As New FieldDescriptor(Me)
+    'Private m_Descriptor As New FieldDescriptor(Me)
 
     ''' <summary>
     ''' The index of the constant in the enum.
@@ -35,34 +35,48 @@ Public Class EnumMemberDeclaration
     Private m_Identifier As Identifier
     Private m_ConstantExpression As Expression
 
-    Private m_FieldBuilder As FieldBuilder
+    Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
-    Private m_ConstantValue As Object
     Private m_ResolvedMember As Boolean
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
+        UpdateDefinition()
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal EnumIndex As Integer)
-        MyBase.New(Parent)
-        m_EnumIndex = EnumIndex
-    End Sub
-
-    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Attributes As Attributes, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
-        MyBase.Init(Attributes, New Modifiers(), Identifier.Identifier)
+    Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
+        MyBase.Init(Nothing, Identifier.Identifier)
         m_EnumIndex = EnumIndex
         m_Identifier = Identifier
         m_ConstantExpression = ConstantExpression
+        UpdateDefinition()
     End Sub
 
-    ReadOnly Property ConstantValue() As Object
+    Public Property ConstantValue() As Object
         Get
-            If m_ResolvedMember = False Then ResolveMember(ResolveInfo.Default(Compiler))
-            Return m_ConstantValue
+            If m_ResolvedMember = False Then
+                'Helper.StopIfDebugging()
+                ResolveMember(ResolveInfo.Default(Compiler))
+            End If
+            Return m_FieldBuilderCecil.Constant
         End Get
+        Set(ByVal value As Object)
+            m_FieldBuilderCecil.Constant = value
+        End Set
     End Property
 
+    Public Overrides Sub UpdateDefinition()
+        MyBase.UpdateDefinition()
+
+        If m_FieldBuilderCecil Is Nothing Then
+            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.Static Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault, Parent.CecilType)
+            m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
+            Parent.CecilType.Fields.Add(m_FieldBuilderCecil)
+        End If
+
+        m_FieldBuilderCecil.Name = Name
+        m_FieldBuilderCecil.IsLiteral = True
+    End Sub
 
     ReadOnly Property EnumIndex() As Integer
         Get
@@ -70,21 +84,21 @@ Public Class EnumMemberDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property FieldBuilder() As System.Reflection.Emit.FieldBuilder Implements IFieldMember.FieldBuilder
+    Public ReadOnly Property FieldBuilder() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldBuilder
         Get
-            Return m_FieldBuilder
+            Return m_FieldBuilderCecil
         End Get
     End Property
 
-    Public ReadOnly Property FieldType() As System.Type Implements IFieldMember.FieldType
+    Public ReadOnly Property FieldType() As Mono.Cecil.TypeReference Implements IFieldMember.FieldType
         Get
             Return Me.FindFirstParent(Of EnumDeclaration).EnumConstantType
         End Get
     End Property
 
-    Public Overrides ReadOnly Property MemberDescriptor() As System.Reflection.MemberInfo
+    Public Overrides ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
         Get
-            Return m_Descriptor
+            Return m_FieldBuilderCecil
         End Get
     End Property
 
@@ -116,9 +130,10 @@ Public Class EnumMemberDeclaration
     End Function
 
     Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
-        If m_ResolvedMember Then Return True
         Dim result As Boolean = True
-        Dim parent As EnumDeclaration = Me.FindFirstParent(Of EnumDeclaration)()
+
+        If m_ResolvedMember Then Return True
+        m_ResolvedMember = True
 
         Dim obj As Object
         If m_ConstantExpression IsNot Nothing Then
@@ -128,11 +143,11 @@ Public Class EnumMemberDeclaration
             If m_EnumIndex = 0 Then
                 obj = 0
             Else
-                obj = CDec(parent.Constants(m_EnumIndex - 1).ConstantValue) + 1
+                obj = CDec(Parent.Constants(m_EnumIndex - 1).ConstantValue) + 1
             End If
         End If
 
-        Select Case parent.EnumConstantTypeKeyword
+        Select Case Parent.EnumConstantTypeKeyword
             Case KS.Byte
                 obj = CByte(obj)
             Case KS.SByte
@@ -152,9 +167,9 @@ Public Class EnumMemberDeclaration
             Case Else
                 Throw New InternalException(Me)
         End Select
-        m_ConstantValue = obj
-        result = m_ConstantValue IsNot Nothing AndAlso result
-        m_ResolvedMember = True
+
+        ConstantValue = obj
+        result = ConstantValue IsNot Nothing AndAlso result
 
         Return result
     End Function
@@ -168,6 +183,12 @@ Public Class EnumMemberDeclaration
         Return result
     End Function
 
+    Shadows ReadOnly Property Parent() As EnumDeclaration
+        Get
+            Return Me.FindFirstParent(Of EnumDeclaration)()
+        End Get
+    End Property
+
     ''' <summary>
     ''' Define the enum constant.
     ''' </summary>
@@ -176,44 +197,14 @@ Public Class EnumMemberDeclaration
     Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
         Dim result As Boolean = True
 
-        Helper.Assert(m_ConstantValue IsNot Nothing)
-
-        Dim parent As EnumDeclaration = Me.FindFirstParent(Of EnumDeclaration)()
-
-        If Helper.IsOnMono Then
-            Dim newValue As Object = m_ConstantValue
-            If parent.TypeBuilder IsNot Nothing Then
-                'This is a work around for a Mono bug (otherwise the enum constant will be defined of its base integral type in metadata).
-                'MS doesn't allow this (parameter to Enum.ToObject can't be a TypeBuilder), so only execute on Mono.
-                newValue = [Enum].ToObject(parent.TypeBuilder, m_ConstantValue)
-            ElseIf parent.EnumBuilder IsNot Nothing Then
-                'This will crash the compiler on Mono, so only do this when we have a typebuilder.
-                'the EnumBuilder is anyways only used on MS to work around an MS bug, otherwise we only use TypeBuilder.
-                'newValue = [Enum].ToObject(parent.EnumBuilder, m_ConstantValue)
-            End If
-#If EXTENDEDDEBUG Then
-            Console.WriteLine("Changed Enum field type from '" & m_ConstantValue.GetType.Name & "' to '" & newValue.GetType.Name & "'")
-#End If
-            m_ConstantValue = newValue
-        End If
-
-        If parent.TypeBuilder IsNot Nothing Then
-            m_FieldBuilder = parent.TypeBuilder.DefineField(Name, parent.TypeBuilder, Reflection.FieldAttributes.Public Or Reflection.FieldAttributes.Static Or Reflection.FieldAttributes.Literal)
-            m_FieldBuilder.SetConstant(m_ConstantValue)
-        ElseIf parent.EnumBuilder IsNot Nothing Then
-            m_FieldBuilder = parent.EnumBuilder.DefineLiteral(Name, m_ConstantValue)
-        Else
-            Throw New InternalException(Me)
-        End If
-
-        Compiler.TypeManager.RegisterReflectionMember(m_FieldBuilder, Me.MemberDescriptor)
-
         Return result
     End Function
 
-    Public ReadOnly Property FieldDescriptor() As FieldDescriptor Implements IFieldMember.FieldDescriptor
-        Get
-            Return m_Descriptor
-        End Get
-    End Property
+    Public Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean Implements IFieldMember.ResolveAndGetConstantValue
+        If m_ResolvedMember = False Then
+            If ResolveMember(ResolveInfo.Default(Compiler)) = False Then Return False
+        End If
+        value = ConstantValue
+        Return True
+    End Function
 End Class

@@ -17,7 +17,7 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public MustInherit Class NamedBaseList(Of T)
+Public MustInherit Class NamedBaseList(Of T As BaseObject)
     Inherits BaseList(Of T)
 
     Shadows Function Add(ByVal Item As T) As T

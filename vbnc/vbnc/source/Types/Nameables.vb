@@ -17,7 +17,7 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public Class Nameables(Of T)
+Public Class Nameables(Of T As INameable)
     Inherits BaseObjects(Of T)
 
     ''' <summary>
@@ -26,31 +26,11 @@ Public Class Nameables(Of T)
     ''' <remarks></remarks>
     Private m_Index As Index
 
-
-    ''' <summary>
-    ''' Create a new collection with the specified index.
-    ''' </summary>
-    ''' <param name="Index"></param>
-    ''' <remarks></remarks>
-    Sub New(ByVal Parent As ParsedObject, Optional ByVal Index As Index = Nothing)
+    Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        If Index Is Nothing Then
-            m_Index = New Index(Parent)
-        Else
-            m_Index = Index
-        End If
+        m_Index = New Index(Parent)
     End Sub
 
-    ''' <summary>
-    ''' Returns the index for this collection.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    ReadOnly Property Index() As Index
-        Get
-            Return m_Index
-        End Get
-    End Property
 
     ''' <summary>
     ''' Looks up the type of the specified index. 
@@ -59,7 +39,7 @@ Public Class Nameables(Of T)
     ''' <value></value>
     ''' <remarks></remarks>
     ''' <exception cref="IndexOutOfRangeException">If the Index is invalid.</exception>
-    Shadows ReadOnly Property Item(ByVal Index As Integer) As T
+    Default Shadows ReadOnly Property Item(ByVal Index As Integer) As T
         Get
             Return DirectCast(MyBase.Item(Index), T)
         End Get
@@ -71,6 +51,7 @@ Public Class Nameables(Of T)
     ''' <param name="Name"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    <Obsolete()> _
     Shadows Function ContainsName(ByVal Name As String) As Boolean
         Return m_Index.ContainsName(Name)
     End Function
@@ -80,31 +61,26 @@ Public Class Nameables(Of T)
     ''' </summary>
     ''' <param name="Base"></param>
     ''' <remarks></remarks>
-    Shadows Sub Add(ByVal Base As INameable)
+    Shadows Sub Add(ByVal Base As T)
+        'This is a workaround for #463303
+        Dim B As INameable = DirectCast(Base, INameable)
+
 #If DEBUG Then
-        If Base.Name = "" Then Throw New InternalException(Base)
+        If B.Name = "" Then Throw New InternalException(Base)
 #End If
-        MyBase.Add(CType(Base, T))
+        MyBase.Add(Base)
         m_Index.Add(Base)
     End Sub
 
-    ''' <summary>
-    ''' Overriden.
-    ''' </summary>
-    ''' <param name="c"></param>
-    ''' <remarks></remarks>
-    Public Shadows Sub AddRange(ByVal c As System.Collections.Generic.ICollection(Of T))
-        'Public Shadows Sub AddRange(ByVal c As ICollection) 'System.Collections.Generic.ICollection(Of T))
-        For Each base As Object In c
-            Proxy_Nameables.N_Add(Of T)(Me, DirectCast(base, INameable))
-            'm_Index = Nothing 'AddRange(Nothing)
+    Shadows Sub AddRange(ByVal Base As Generic.IEnumerable(Of T))
+        For Each obj As T In Base
+            Add(obj)
         Next
     End Sub
 
-End Class
-
-Class Proxy_Nameables
-    Shared Sub N_Add(Of T)(ByVal this As Nameables(Of T), ByVal arg As INameable)
-        this.Add(arg)
-    End Sub
+    ReadOnly Property Index() As Index
+        Get
+            Return m_Index
+        End Get
+    End Property
 End Class

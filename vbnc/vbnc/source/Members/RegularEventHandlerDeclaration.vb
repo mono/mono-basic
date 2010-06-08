@@ -17,6 +17,8 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
+Imports OpCodes = Mono.Cecil.Cil.OpCodes
+
 Public Class RegularEventHandlerDeclaration
     Inherits EventHandlerDeclaration
 
@@ -40,14 +42,14 @@ Public Class RegularEventHandlerDeclaration
             End Select
         End If
 
-        MyBase.Init(Nothing, Modifiers, HandlerType, EventName, New ParameterList(Me), Code)
+        MyBase.Init(Modifiers, HandlerType, EventName, New ParameterList(Me), Code)
 
         If DeclaringType.IsValueType Then
-            Me.SetImplementationFlags(Reflection.MethodImplAttributes.IL Or Reflection.MethodImplAttributes.Managed)
+            Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
         ElseIf DeclaringType.IsInterface Then
-            Me.SetImplementationFlags(Reflection.MethodImplAttributes.IL Or Reflection.MethodImplAttributes.Managed)
+            Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
         Else
-            Me.SetImplementationFlags(Reflection.MethodImplAttributes.IL Or reflection.MethodImplAttributes.Managed Or reflection.MethodImplAttributes.Synchronized)
+            Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed Or Mono.Cecil.MethodImplAttributes.Synchronized
         End If
 
     End Sub
@@ -56,7 +58,9 @@ Public Class RegularEventHandlerDeclaration
         Dim result As Boolean = True
 
         Helper.Assert(EventParent.EventType IsNot Nothing)
-        Signature.Parameters.Add(New Parameter(Signature.Parameters, "obj", EventParent.EventType))
+        If Signature.Parameters.Count = 0 Then
+            Signature.Parameters.Add(New Parameter(Signature.Parameters, "obj", EventParent.EventType))
+        End If
 
         result = MyBase.ResolveTypeReferences AndAlso result
 
@@ -68,20 +72,20 @@ Public Class RegularEventHandlerDeclaration
             With Info.ILGen
                 .Emit(OpCodes.Ldarg_0)
                 .Emit(OpCodes.Ldarg_0)
-                .Emit(OpCodes.Ldfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .Emit(OpCodes.Ldfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ldarg_1)
-                .EmitCall(OpCodes.Call, Compiler.TypeCache.System_Delegate__Remove, Nothing)
-                .Emit(OpCodes.Castclass, helper.GetTypeOrTypeBuilder([EventParent].EventType))
-                .Emit(OpCodes.Stfld, helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .EmitCall(OpCodes.Call, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Delegate__Remove), Nothing)
+                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder(Compiler, [EventParent].EventType))
+                .Emit(OpCodes.Stfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ret)
             End With
         Else
             With Info.ILGen
-                .Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ldarg_0)
-                .EmitCall(OpCodes.Call, Compiler.TypeCache.System_Delegate__Remove, Nothing)
-                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder([EventParent].EventType))
-                .Emit(OpCodes.Stsfld, helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .EmitCall(OpCodes.Call, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Delegate__Remove), Nothing)
+                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder(Compiler, [EventParent].EventType))
+                .Emit(OpCodes.Stsfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ret)
             End With
         End If
@@ -94,20 +98,20 @@ Public Class RegularEventHandlerDeclaration
             With Info.ILGen
                 .Emit(OpCodes.Ldarg_0)
                 .Emit(OpCodes.Ldarg_0)
-                .Emit(OpCodes.Ldfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .Emit(OpCodes.Ldfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ldarg_1)
-                .EmitCall(OpCodes.Call, Compiler.TypeCache.System_Delegate__Combine, Nothing)
-                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder([EventParent].EventType))
-                .Emit(OpCodes.Stfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .EmitCall(OpCodes.Call, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Delegate__Combine), Nothing)
+                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder(Compiler, [EventParent].EventType))
+                .Emit(OpCodes.Stfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ret)
             End With
         Else
             With Info.ILGen
-                .Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .Emit(OpCodes.Ldsfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ldarg_0)
-                .EmitCall(OpCodes.Call, Compiler.TypeCache.System_Delegate__Combine, Nothing)
-                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder([EventParent].EventType))
-                .Emit(OpCodes.Stsfld, Helper.GetFieldOrFieldBuilder([EventParent].EventField))
+                .EmitCall(OpCodes.Call, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Delegate__Combine), Nothing)
+                .Emit(OpCodes.Castclass, Helper.GetTypeOrTypeBuilder(Compiler, [EventParent].EventType))
+                .Emit(OpCodes.Stsfld, Helper.GetFieldOrFieldBuilder(Compiler, [EventParent].EventField))
                 .Emit(OpCodes.Ret)
             End With
         End If

@@ -54,16 +54,18 @@ Public Class TypeNameResolutionInfo
         End Get
     End Property
 
-    Function FoundAsType() As Type 'Descriptor
+    Function FoundAsType() As Mono.Cecil.TypeReference 'Descriptor
         Dim found As Object = FoundObject
         If TypeOf found Is IType Then
-            Return DirectCast(found, IType).TypeDescriptor
-        ElseIf TypeOf found Is Type Then
-            Return DirectCast(found, Type)
-        ElseIf TypeOf found Is TypeDescriptor Then
-            Return DirectCast(found, TypeDescriptor)
+            Return DirectCast(found, IType).CecilType
+            'ElseIf TypeOf found Is Type Then
+            '    Return DirectCast(found, Type)
+            'ElseIf TypeOf found Is TypeDescriptor Then
+            '    Return DirectCast(found, TypeDescriptor)
         ElseIf TypeOf found Is TypeParameter Then
-            Return DirectCast(found, TypeParameter).TypeDescriptor
+            Return DirectCast(found, TypeParameter).CecilBuilder
+        ElseIf TypeOf found Is Mono.Cecil.TypeReference Then
+            Return DirectCast(found, Mono.Cecil.TypeReference)
         Else
             Throw New InternalException("")
         End If
@@ -71,7 +73,7 @@ Public Class TypeNameResolutionInfo
 
     Function FoundIsType() As Boolean
         Dim found As Object = FoundObject
-        Return TypeOf found Is IType OrElse TypeOf found Is Type OrElse TypeOf found Is TypeDescriptor
+        Return TypeOf found Is IType OrElse TypeOf found Is Type OrElse TypeOf found Is Mono.Cecil.TypeReference
     End Function
 
     Function FoundIs(Of Type)() As Boolean
@@ -301,20 +303,20 @@ Public Class TypeNameResolutionInfo
                     Dim genericName As String
                     genericName = vbnc.Helper.CreateGenericTypename(R, TypeArgumentCount)
 
-                    Dim typesByName As Generic.List(Of Type) = Nothing
-                    Dim tmp As Boolean
-                    tmp = FromWhere.Compiler.TypeManager.TypesByName.TryGetValue(genericName, typesByName)
+                    'Dim typesByName As Generic.List(Of Mono.Cecil.TypeReference) = Nothing
+                    'Dim tmp As Boolean
+                    'tmp = FromWhere.Compiler.TypeManager.TypesByName.TryGetValue(genericName, typesByName)
 
-                    For Each tp As Type In types.Values
-                        If TypeOf tp Is TypeDescriptor Then
-                            If Helper.CompareName(tp.Name, genericName) Then
-                                m_FoundObjects.Add(tp)
-                            End If
-                        Else
-                            If typesByName IsNot Nothing AndAlso typesByName.Contains(tp) Then
-                                m_FoundObjects.Add(tp)
-                            End If
+                    For Each tp As Mono.Cecil.TypeReference In types.Values
+                        'If TypeOf tp Is TypeDescriptor Then
+                        If Helper.CompareName(tp.Name, genericName) Then
+                            m_FoundObjects.Add(tp)
                         End If
+                        'Else
+                        'If typesByName IsNot Nothing AndAlso typesByName.Contains(tp) Then
+                        '    m_FoundObjects.Add(tp)
+                        'End If
+                        'End If
                     Next
                     'Return True
                 End If
@@ -323,7 +325,12 @@ Public Class TypeNameResolutionInfo
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    modules = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS).ToTypeList
+                    Dim dic As TypeDictionary = FromWhere.Compiler.TypeManager.GetModulesByNamespace(strNS)
+                    If dic IsNot Nothing Then
+                        modules = dic.ToTypeList
+                    Else
+                        modules = Nothing
+                    End If
                     'Return True
                 End If
 
@@ -345,13 +352,13 @@ Public Class TypeNameResolutionInfo
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    modules = TypeDescriptor.CreateList(tp.Members.GetSpecificMembers(Of ModuleDeclaration)())
+                    modules = Helper.CreateList(tp.Members.GetSpecificMembers(Of ModuleDeclaration)())
                 End If
-            ElseIf Qualifier.FoundIs(Of Type)() Then
+            ElseIf Qualifier.FoundIs(Of Mono.Cecil.TypeReference)() Then
                 '** If R matches the name of a namespace or type in N, 
                 '** then the qualified name refers to that namespace or type.
-                Dim tp As Type = Qualifier.FoundAs(Of Type)()
-                Dim nestedtp As Type = tp.GetNestedType(R, BindingFlags.Instance Or BindingFlags.NonPublic Or BindingFlags.Public)
+                Dim tp As Mono.Cecil.TypeReference = Qualifier.FoundAs(Of Mono.Cecil.TypeReference)()
+                Dim nestedtp As Mono.Cecil.TypeReference = CecilHelper.GetNestedType(tp, Helper.CreateGenericTypename(R, TypeArgumentCount))
 
                 If nestedtp IsNot Nothing Then m_FoundObjects.Add(nestedtp)
 
@@ -360,7 +367,7 @@ Public Class TypeNameResolutionInfo
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
                     Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
-                    modules = TypeDescriptor.CreateList(tp.GetNestedTypes())
+                    modules = Helper.CreateList(CecilHelper.GetNestedTypes(tp))
                 End If
             Else
                 '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
@@ -495,7 +502,7 @@ Public Class TypeNameResolutionInfo
         '** unqualified name refers to that type or nested namespace.
         Dim types As TypeDictionary = Nothing
         Dim modules As TypeList
-        Dim foundType As Type
+        Dim foundType As Mono.Cecil.TypeReference
 
         Dim RName As String = Helper.CreateGenericTypename(R, TypeArgumentCount)
         foundType = FromWhere.Compiler.TypeManager.TypesByNamespace("").Item(RName)
@@ -524,15 +531,15 @@ Public Class TypeNameResolutionInfo
         '**	(...), and R matches the name of an 
         '** accessible nested type in exactly one standard module, (...)
 #If DEBUG Then
-        For Each t As Type In moduletypes
+        For Each t As Mono.Cecil.TypeReference In moduletypes
             Helper.Assert(Helper.IsModule(FromWhere.Compiler, t))
         Next
 #End If
-        Dim allModuleTypes As New Generic.List(Of Type) 'Descriptor)
+        Dim allModuleTypes As New Generic.List(Of Mono.Cecil.TypeReference) 'Descriptor)
 
-        For Each t As Type In moduletypes
-            Dim tFound As Type
-            tFound = t.GetNestedType(R)
+        For Each t As Mono.Cecil.TypeReference In moduletypes
+            Dim tFound As Mono.Cecil.TypeReference
+            tFound = CecilHelper.GetNestedType(t, R)
             If tFound IsNot Nothing Then
                 allModuleTypes.Add(tFound)
             End If
@@ -572,7 +579,7 @@ Public Class TypeNameResolutionInfo
         '** unqualified name refers to that type or nested namespace.
         Dim RName As String = vbnc.Helper.CreateGenericTypename(R, TypeArgumentCount)
 
-        Dim foundType As Type
+        Dim foundType As Mono.Cecil.TypeReference
 
         foundType = Types.Item(RName)
         If foundType IsNot Nothing Then
@@ -582,13 +589,13 @@ Public Class TypeNameResolutionInfo
 
         '**	If the namespace contains one or more accessible standard modules, and R matches the name of an 
         '** accessible nested type in exactly one standard module, then the unqualified name refers to that nested type
-        Dim foundModules As Generic.List(Of Type)
+        Dim foundModules As Generic.List(Of Mono.Cecil.TypeReference)
         foundModules = Helper.FilterToModules(FromWhere.Compiler, Types)
         If foundModules.Count > 0 Then
-            Dim typesInAllModules As New Generic.List(Of Type)
-            For Each [module] As Type In foundModules
-                Dim typeInCurrentModule As Type
-                typeInCurrentModule = [module].GetNestedType(RName)
+            Dim typesInAllModules As New Generic.List(Of Mono.Cecil.TypeReference)
+            For Each [module] As Mono.Cecil.TypeReference In foundModules
+                Dim typeInCurrentModule As Mono.Cecil.TypeReference
+                typeInCurrentModule = CecilHelper.GetNestedType([module], RName)
                 If typeInCurrentModule IsNot Nothing Then typesInAllModules.Add(typeInCurrentModule)
             Next
             If typesInAllModules.Count = 1 Then
@@ -625,10 +632,6 @@ Public Class TypeNameResolutionInfo
         'Dim nsDotR As String = ns & dotR
         Do
             If CheckNamespace(R, FromWhere.Compiler.TypeManager.GetTypesByNamespace(ns), TypeArgumentCount) Then Return True
-            If Helper.CompareName(ns, R) Then
-                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
-                Return True
-            End If
 
             If ns.Length > R.Length + 1 AndAlso ns.EndsWith(R, Helper.StringComparison) AndAlso ns(ns.Length - R.Length - 1) = "."c Then
                 m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
@@ -642,6 +645,11 @@ Public Class TypeNameResolutionInfo
                     m_FoundObjects.Add(nSpace)
                     Return True
                 End If
+            End If
+
+            If Helper.CompareName(ns, R) Then
+                m_FoundObjects.Add(FromWhere.Compiler.TypeManager.Namespaces(ns))
+                Return True
             End If
             ns = vbnc.Helper.GetNamespaceParent(ns)
             'nsDotR = ns & dotR
@@ -713,13 +721,13 @@ Public Class TypeNameResolutionInfo
 
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsTypeImport Then
-                Dim tp As Type
-                tp = nsimp.TypeImported.GetNestedType(genericR)
+                Dim tp As Mono.Cecil.TypeReference
+                tp = CecilHelper.GetNestedType(nsimp.TypeImported, genericR)
                 If tp IsNot Nothing Then tpFound.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName
                 If FromWhere.Compiler.TypeManager.TypesByNamespace.ContainsKey(nsName) Then
-                    Dim foundType As Type
+                    Dim foundType As Mono.Cecil.TypeReference
                     foundType = FromWhere.Compiler.TypeManager.TypesByNamespace(nsName).Item(genericR)
                     If foundType IsNot Nothing Then tpFound.Add(foundType)
                 End If
@@ -765,12 +773,13 @@ Public Class TypeNameResolutionInfo
         Dim modules As New TypeList
         For Each nsimp As ImportsNamespaceClause In nsclauses
             If nsimp.IsTypeImport Then
-                Dim tp As Type
-                tp = nsimp.TypeImported.GetNestedType(genericR)
+                Dim tp As Mono.Cecil.TypeReference
+                tp = CecilHelper.GetNestedType(nsimp.TypeImported, genericR)
                 If tp IsNot Nothing AndAlso Helper.IsModule(FromWhere.Compiler, tp) Then modules.Add(tp)
             ElseIf nsimp.IsNamespaceImport Then
                 Dim nsName As String = nsimp.NamespaceImported.FullName
-                modules.AddRange(FromWhere.Compiler.TypeManager.GetModulesByNamespace(nsName).ToTypeList)
+                Dim importedModules As TypeDictionary = FromWhere.Compiler.TypeManager.GetModulesByNamespace(nsName)
+                If importedModules IsNot Nothing Then modules.AddRange(importedModules.ToTypeList)
             Else
                 Continue For
             End If

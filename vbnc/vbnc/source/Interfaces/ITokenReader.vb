@@ -25,5 +25,4 @@ Public Interface ITokenReader
     ReadOnly Property CurrentLocation() As Span
     ReadOnly Property TokenType() As TokenType
     ReadOnly Property TokenData() As Object
-    'ReadOnly Property TokenAsDateLiteral() As Date
 End Interface

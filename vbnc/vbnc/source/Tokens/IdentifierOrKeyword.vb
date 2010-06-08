@@ -20,7 +20,8 @@
 Public Class IdentifierOrKeyword
     Inherits ParsedObject
 
-    Private m_Token As Token
+    Private m_Identifier As String
+    Private m_Keyword As KS
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return True
@@ -35,49 +36,55 @@ Public Class IdentifierOrKeyword
         Me.Init(Token)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As String, ByVal Keyword As KS)
+        MyBase.New(Parent)
+        m_Identifier = Identifier
+        m_Keyword = Keyword
+    End Sub
+
+    Sub Init(ByVal Identifier As String, ByVal Keyword As KS)
+        m_Identifier = Identifier
+        m_Keyword = Keyword
+    End Sub
+
     Sub Init(ByVal Token As Token)
-        m_Token = Token
-        Helper.Assert(m_Token.IsIdentifierOrKeyword)
+        Helper.Assert(Token.IsIdentifierOrKeyword)
+        m_Identifier = Token.Identifier
+        If Token.IsKeyword Then m_Keyword = Token.Keyword
     End Sub
 
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As IdentifierOrKeyword
         If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Return New IdentifierOrKeyword(NewParent, m_Token)
+        Return New IdentifierOrKeyword(NewParent, m_Identifier, m_Keyword)
     End Function
 
     ReadOnly Property Name() As String
         Get
-            If IsIdentifier Then
-                Return Token.Identifier
-            ElseIf IsKeyword Then
-                Return Token.Identifier
-            Else
-                Throw New InternalException(Me)
-            End If
+            Return m_Identifier
         End Get
     End Property
 
     ReadOnly Property Identifier() As String
         Get
-            Return m_Token.IdentiferOrKeywordIdentifier
+            Return m_Identifier
+        End Get
+    End Property
+
+    ReadOnly Property Keyword() As KS
+        Get
+            Return m_Keyword
         End Get
     End Property
 
     ReadOnly Property IsIdentifier() As Boolean
         Get
-            Return m_Token.IsIdentifier
+            Return Not IsKeyword
         End Get
     End Property
 
     ReadOnly Property IsKeyword() As Boolean
         Get
-            Return m_Token.IsKeyword
-        End Get
-    End Property
-
-    ReadOnly Property Token() As Token
-        Get
-            Return m_Token
+            Return m_Keyword <> KS.None
         End Get
     End Property
 

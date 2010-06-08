@@ -23,5 +23,5 @@
 ''' <remarks></remarks>
 Public Interface INameable
     Inherits IBaseObject
-    ReadOnly Property Name() As String
+    Property Name() As String
 End Interface

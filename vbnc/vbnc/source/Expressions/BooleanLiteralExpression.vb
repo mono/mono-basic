@@ -37,10 +37,10 @@ Public Class BooleanLiteralExpression
         Return result
     End Function
 
-    Overrides ReadOnly Property ExpressionType() As Type
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
 
-            Return Compiler.TypeCache.System_Boolean '_Descriptor
+            Return Compiler.TypeCache.System_Boolean
         End Get
     End Property
 

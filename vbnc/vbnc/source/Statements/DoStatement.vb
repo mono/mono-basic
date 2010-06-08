@@ -81,13 +81,13 @@ Public Class DoStatement
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
-        Dim startLabel As Label = Info.ILGen.DefineLabel
-        EndLabel = Info.ILGen.DefineLabel
-        m_NextIteration = Info.ILGen.DefineLabel
+        Dim startLabel As Label = Emitter.DefineLabel(Info)
+        EndLabel = Emitter.DefineLabel(Info)
+        m_NextIteration = Emitter.DefineLabel(Info)
 
-        Info.ILGen.MarkLabel(startLabel)
+        Emitter.MarkLabel(Info, startLabel)
         If m_PreCondition IsNot Nothing Then
-            Info.ILGen.MarkLabel(m_NextIteration)
+            Emitter.MarkLabel(Info, m_NextIteration)
             result = m_PreCondition.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             Emitter.EmitConversion(m_PreCondition.ExpressionType, Compiler.TypeCache.System_Boolean, Info)
             If m_IsWhile Then
@@ -100,7 +100,7 @@ Public Class DoStatement
         result = CodeBlock.GenerateCode(Info) AndAlso result
 
         If m_PostCondition IsNot Nothing Then
-            Info.ILGen.MarkLabel(m_NextIteration)
+            Emitter.MarkLabel(Info, m_NextIteration)
             result = m_PostCondition.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             Emitter.EmitConversion(m_PostCondition.ExpressionType, Compiler.TypeCache.System_Boolean, Info)
             If m_IsWhile Then
@@ -111,7 +111,7 @@ Public Class DoStatement
         End If
         Emitter.EmitBranch(Info, startLabel)
 
-        Info.ILGen.MarkLabel(EndLabel)
+        Emitter.MarkLabel(Info, EndLabel)
 
         Return result
     End Function

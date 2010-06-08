@@ -48,12 +48,4 @@ Public Class TypeImplementsClauses
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken = KS.Implements
     End Function
-
-    Function GetTypes() As Type()
-        Dim result(m_Clauses.Count - 1) As Type
-        For i As Integer = 0 To result.GetUpperBound(0)
-            result(i) = m_Clauses(i).ResolvedType
-        Next
-        Return result
-    End Function
 End Class

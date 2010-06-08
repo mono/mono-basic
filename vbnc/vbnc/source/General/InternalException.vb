@@ -71,16 +71,6 @@ Public Class InternalException
     End Sub
 
     <Diagnostics.DebuggerHidden()> _
-    Sub New(ByVal Obj As MemberInfo)
-        MyBase.new()
-        If False Then 'Obj IsNot Nothing AndAlso Obj.Location IsNot Nothing Then
-            'm_Message = "There has been an internal error in the compiler caused by the line: " & Obj.Location.AsString
-        Else
-            m_Message = "There has been an internal error in the compiler."
-        End If
-        StopOnInternalException()
-    End Sub
-    <Diagnostics.DebuggerHidden()> _
     Sub New(ByVal InnerException As Exception)
         MyBase.New("", InnerException)
         m_Message = "There has been an internal error in the compiler: " & InnerException.Message
