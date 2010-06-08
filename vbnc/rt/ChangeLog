@@ -1,3 +1,7 @@
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Build without the My namespace, and clean up the mdb file too.
+
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* rt.exe.sources: Deleted, no need to keep it checked in.

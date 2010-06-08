@@ -36,12 +36,13 @@ rt.exe.sources: source/rt.vbproj
 	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/rt.vbproj -b:source/ -d:rt.exe.sources -m:l -x:r
 
 $(TARGET): rt.exe.sources
-	$(BOOT_COMPILE) -rootnamespace:rt -out:$(TARGET) $(REFERENCES) $(IMPORTS) @rt.exe.sources -debug:full
+	$(BOOT_COMPILE) -rootnamespace:rt -out:$(TARGET) $(REFERENCES) $(IMPORTS) @rt.exe.sources -debug:full -define:_MYTYPE=\"Empty\"
 
 rt.exe: $(TARGET)
 
 clean-local:
 	rm -f $(TARGET)
+	rm -f $(TARGET).mdb
 	rm -f rt.exe.sources
 
 test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
