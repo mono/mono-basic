@@ -1,5 +1,9 @@
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* (default)all.rsp: Delete, no longer used.
+
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Make the rt test work.
 
 	* SelfTest/rt.*: Move information into tests.xml.
