@@ -8,20 +8,21 @@ PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 include ../../build/executable.make
+
 DISTFILES = \
+	ChangeLog 		\
 	Makefile  		\
 	Readme.txt  		\
 	vbnc.Errors.resources	\
 	vbnc.exe.rsp  		\
 	vbnc.exe.sources  	\
-	vbnc.sln  		\
 	vbnc.vbnc.rsp		\
 	source/vbnc.vbproj	\
-	source/vbnc9.vbproj	\
-	bin/vbnc.rsp            \
 	source/Resources/Errors.resx \
 	source/vbnc.rsp		\
 	setversion.sh
+
+CLEAN_FILES = version.tmp $(topdir)/vbnc/vbnc/source/General/Version.vb
 
 version.tmp: $(topdir)/configure setversion.sh
 	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
@@ -40,7 +41,7 @@ vbnc.exe.sources: vbnc.vbnc.rsp source/vbnc.vbproj vbnc.Errors.resources
 install-local: install-extras version.tmp
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	$(INSTALL_DATA) bin/vbnc.rsp $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_DATA) source/vbnc.rsp $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 uninstall-local: uninstall-extras
 uninstall-extras:
@@ -49,6 +50,7 @@ uninstall-extras:
 install-binary: default
 	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
 	cp ../../class/lib/vbnc/Mono.Cecil.* ../../class/lib/bootstrap
+	cp source/vbnc.rsp ../../class/lib/bootstrap/vbnc.rsp
 
 boot-from-ms:
 	cd tests/SelfTest/ && boot.sh && rerun.sh

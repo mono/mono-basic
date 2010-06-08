@@ -7,7 +7,17 @@ lib/bootstrap lib/vbnc:
 
 DISTFILES = \
 	mono.snk	\
-	lib/bootstrap/Microsoft.VisualBasic.dll lib/bootstrap/vbnc.exe lib/bootstrap/vbnc.rsp	
+	lib/bootstrap/Microsoft.VisualBasic.dll \
+	lib/bootstrap/Microsoft.VisualBasic.dll.mdb \
+	lib/bootstrap/vbnc.exe \
+	lib/bootstrap/vbnc.exe.mdb \
+	lib/bootstrap/vbnc.rsp \
+	lib/bootstrap/Mono.Cecil.VB.dll \
+	lib/bootstrap/Mono.Cecil.VB.dll.mdb \
+	lib/bootstrap/Mono.Cecil.Mdb.VB.dll \
+	lib/bootstrap/Mono.Cecil.Mdb.VB.dll.mdb \
+	lib/bootstrap/Mono.Cecil.Pdb.VB.dll \
+	lib/bootstrap/Mono.Cecil.Pdb.VB.dll.mdb
 
 dist-default: lib/bootstrap/Microsoft.VisualBasic.dll lib/bootstrap/vbnc.exe lib/bootstrap/vbnc.rsp
 

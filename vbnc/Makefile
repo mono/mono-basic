@@ -83,7 +83,7 @@ distcheck: dist-tarball
 	tar tjf $(package)/$(package).tar.bz2 |sed -e 's,/$$,,' |sort >distdist.list ; \
 	rm $(package)/$(package).tar.bz2 ; \
 	tar tjf $(package).tar.bz2 |sed -e 's,/$$,,' |sort >before.list ; \
-	find $(package) |egrep -v '(makefrag|response|config.make)' |sed -e 's,/$$,,' |sort >after.list ; \
+	find $(package) |egrep -v '(makefrag|config.make)' |sed -e 's,/$$,,' |sort >after.list ; \
 	cmp before.list after.list || exit 1 ; \
 	cmp before.list distdist.list || exit 1 ; \
 	rm -f before.list after.list distdist.list ; \

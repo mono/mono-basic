@@ -1,3 +1,9 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* setversion.sh: Updated after LicenseFileHeader.txt filename change.
+
+	* Makefile: Fix path to vbnc.rsp, and clean up properly.
+
 2010-05-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Fix install-binary target and remove debug spew.

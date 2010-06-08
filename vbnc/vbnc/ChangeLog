@@ -1,3 +1,12 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rt-execute:
+	* rt-console: Removed, no longer needed.
+
+	* License[ ]FileHeader.txt: Moved to filename without space.
+
+	* Makefile: Move dist logic to the corresponding subdirectory.
+
 2010-04-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* cecil/Makefile:

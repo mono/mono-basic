@@ -1,3 +1,11 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tests.xml: Make the rt test work.
+
+	* SelfTest/rt.*: Move information into tests.xml.
+
+	* Makefile: Updated to use new harness.
+
 2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* SelfTest/SelfCompile.general.response: we import Mono.Cecil now.

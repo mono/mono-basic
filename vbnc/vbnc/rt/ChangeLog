@@ -1,3 +1,9 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rt.exe.sources: Deleted, no need to keep it checked in.
+	* Makefile: Move logic from vbnc/Makefile in here that belongs here, and
+	distcheck now works.
+
 2008-06-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* .gitignore: Merge with head.
