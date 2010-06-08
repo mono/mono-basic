@@ -1,3 +1,7 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LinuxDriver.vb: Fix stime signature.
+
 2007-07-16  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* LinuxDriver.vb, OSDriver.vb, Win32Driver.vb: Minor fixes for 1.0

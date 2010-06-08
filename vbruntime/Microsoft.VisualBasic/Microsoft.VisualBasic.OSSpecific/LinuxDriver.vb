@@ -68,7 +68,7 @@ Namespace Microsoft.VisualBasic.OSSpecific
            SetLastError:=True, CharSet:=CharSet.Unicode, _
            ExactSpelling:=True, _
            CallingConvention:=CallingConvention.StdCall)> _
-        Friend Shared Function stime(ByVal t As Integer) As Integer
+        Friend Shared Function stime(ByRef t As Integer) As Integer
             ' Leave function empty - DllImport attribute forwards calls to stime to
             ' stime in libc.dll
         End Function
