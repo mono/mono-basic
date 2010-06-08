@@ -99,11 +99,25 @@ Public Class Compiler
     Private m_TypeCache As CecilTypeCache
 
     Private m_TypeResolver As TypeResolution
+    Private m_AssemblyResolver As DefaultAssemblyResolver
 
     Sub New()
         MyBase.New(Nothing)
         CurrentCompiler = Me
     End Sub
+
+    Public ReadOnly Property AssemblyResolver() As DefaultAssemblyResolver
+        Get
+            If m_AssemblyResolver Is Nothing Then
+                m_AssemblyResolver = New DefaultAssemblyResolver()
+                'We don't want any automatic assembly resolving
+                For Each dir As String In m_AssemblyResolver.GetSearchDirectories()
+                    m_AssemblyResolver.RemoveSearchDirectory(dir)
+                Next
+            End If
+            Return m_AssemblyResolver
+        End Get
+    End Property
 
     Public Sub VerifyConsistency(ByVal result As Boolean, ByVal where As String)
         'Console.WriteLine("Verifying consistency: {0}", where)
@@ -301,6 +315,7 @@ Public Class Compiler
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
         ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
         ModuleBuilderCecil.Runtime = TargetRuntime.Net_2_0
+        ModuleBuilderCecil.AssemblyResolver = AssemblyResolver
 
         Return Compiler.Report.Errors = 0
     End Function

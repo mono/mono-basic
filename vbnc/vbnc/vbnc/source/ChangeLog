@@ -1,5 +1,15 @@
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/Compiler.vb: Add a per-compilation assembly resolver.
+
+	* General/CecilHelper.vb: FindDefinition (AssemblyNameReference): look up the
+	assembly name refernece in our compilation's assembly resolver.
+
+	* General/TypeManager.vb: Add the referenced assemblies to our assembly
+	resolver.
+
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Emit/EmitLog.vb: 
 	* Members/Attribute.vb: Fix according to latest cecil changes.
 

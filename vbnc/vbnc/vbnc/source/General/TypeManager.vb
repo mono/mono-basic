@@ -219,6 +219,7 @@ Public Class TypeManager
                 Compiler.Report.WriteLine("Loaded '" & refAssembly.Name.FullName & "'")
             End If
             m_CecilAssemblies.Add(refAssembly)
+            Compiler.AssemblyResolver.RegisterAssembly(refAssembly)
         Next
 
         Compiler.TypeCache.Init()

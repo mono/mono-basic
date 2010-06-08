@@ -25,8 +25,6 @@ Imports Mono.Cecil
 Imports System.Diagnostics
 
 Public Class CecilHelper
-    Private Shared _assemblies As New Hashtable
-
 #If DEBUG Then
     Public Shared Sub Test(ByVal file As String)
         Dim ass As AssemblyDefinition = AssemblyDefinition.ReadAssembly(file, New ReaderParameters(ReadingMode.Immediate))
@@ -1087,29 +1085,8 @@ Public Class CecilHelper
         Return FindDefinition(Type).IsInterface
     End Function
 
-    Public Shared ReadOnly Property AssemblyCache() As IDictionary
-        Get
-            Return _assemblies
-        End Get
-    End Property
-
     Public Shared Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
-        Dim asm As AssemblyDefinition = TryCast(_assemblies(name.Name), AssemblyDefinition)
-        If asm Is Nothing Then
-            For i As Integer = 0 To BaseObject.m_Compiler.TypeManager.CecilAssemblies.Count - 1
-                asm = BaseObject.m_Compiler.TypeManager.CecilAssemblies(i)
-                If Helper.CompareNameOrdinal(asm.Name.FullName, name.FullName) Then
-                    _assemblies(name.Name) = asm
-                    Return asm
-                End If
-            Next
-            Dim base As New DefaultAssemblyResolver()
-
-            asm = base.Resolve(name)
-            _assemblies(name.Name) = asm
-        End If
-
-        Return asm
+        Return Compiler.CurrentCompiler.AssemblyResolver.Resolve(name)
     End Function
 
     Public Shared Function GetBaseType(ByVal Type As TypeReference) As TypeReference
