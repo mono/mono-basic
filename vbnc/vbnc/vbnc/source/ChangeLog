@@ -1,3 +1,8 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Emit/Emitter.vb:
+	* General/CodeFile.vb: Implement emission of debug information.
+
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* General/Compiler.vb: Add a per-compilation assembly resolver.

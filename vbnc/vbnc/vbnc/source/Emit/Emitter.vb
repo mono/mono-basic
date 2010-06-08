@@ -31,12 +31,18 @@ Partial Public Class Emitter
     End Function
 
     Shared Sub MarkSequencePoint(ByVal Info As EmitInfo, ByVal Location As Span)
-        'If Location Is Nothing Then Return
         If Location.File(Info.Compiler) Is Nothing Then Return
-        'If Location.File(Info.Compiler).SymbolDocument Is Nothing Then Return
         If Location.Line <= 0 Then Return
 
-        'Info.ILGen.MarkSequencePoint(Location.File(Info.Compiler).SymbolDocument, CInt(Location.Line), Location.Column, CInt(Location.Line), Location.EndColumn)
+        Dim s As Mono.Cecil.Cil.SequencePoint
+        Dim instr As Mono.Cecil.Cil.Instruction
+        s = New Mono.Cecil.Cil.SequencePoint(Location.File(Info.Compiler).SymbolDocument)
+        instr = Info.ILGen.CreateAndEmitNop()
+        instr.SequencePoint = s
+        s.StartLine = CInt(Location.Line)
+        s.StartColumn = Location.Column
+        s.EndLine = CInt(Location.Line)
+        s.EndColumn = Location.EndColumn
     End Sub
 
     Shared Function DeclareLocal(ByVal Info As EmitInfo, ByVal Type As Mono.Cecil.TypeReference, Optional ByVal Name As String = "") As Mono.Cecil.Cil.VariableDefinition
@@ -48,7 +54,7 @@ Partial Public Class Emitter
         result = Info.ILGen.DeclareLocal(Type)
 
         If Name <> String.Empty AndAlso Info.Compiler.EmittingDebugInfo Then
-            'result.SRELocal.SetLocalSymInfo(Name)
+            result.Name = Name
         End If
 
         Return result

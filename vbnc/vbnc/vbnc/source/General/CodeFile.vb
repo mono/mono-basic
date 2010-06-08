@@ -69,12 +69,24 @@ Public Class CodeFile
     ''' </summary>
     Private m_OptionCompare As OptionCompareStatement
 
-    Private m_SymbolDocument As System.Diagnostics.SymbolStore.ISymbolDocumentWriter
+    Private m_SymbolDocument As Mono.Cecil.Cil.Document
 
     Private m_ConditionalConstants As New Generic.List(Of ConditionalConstants)
     Private m_ConditionalConstantsLines As New Generic.List(Of UInteger)
 
     Private m_Code As String
+
+    Public ReadOnly Property SymbolDocument() As Mono.Cecil.Cil.Document
+        Get
+            If m_SymbolDocument Is Nothing Then
+                m_SymbolDocument = New Mono.Cecil.Cil.Document(System.IO.Path.Combine(m_RelativePath.Replace("<"c, "["c).Replace(">"c, "]"c), m_FileName.Replace("<"c, "["c).Replace(">"c, "]"c)))
+                m_SymbolDocument.Language = Cil.DocumentLanguage.Basic
+                m_SymbolDocument.LanguageVendor = Cil.DocumentLanguageVendor.Microsoft
+                m_SymbolDocument.Type = Cil.DocumentType.Text
+            End If
+            Return m_SymbolDocument
+        End Get
+    End Property
 
     Sub AddConditionalConstants(ByVal Line As UInteger, ByVal Constants As ConditionalConstants)
         m_ConditionalConstants.Add(Constants.Clone)
