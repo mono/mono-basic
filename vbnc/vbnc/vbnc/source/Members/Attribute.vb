@@ -488,8 +488,8 @@ Public Class Attribute
         Return DirectCast(GetAttribute(False), CustomAttribute)
     End Function
 
-    Private Function GetAttribute(ByVal security As Boolean) As Mono.Cecil.IAttribute
-        Dim result As IAttribute
+    Private Function GetAttribute(ByVal security As Boolean) As Mono.Cecil.ICustomAttribute
+        Dim result As ICustomAttribute
         Dim customAttribute As CustomAttribute = Nothing
         Dim securityAttribute As SecurityAttribute = Nothing
         Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetParameters(Compiler, m_ResolvedTypeConstructor)

@@ -1,3 +1,8 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Emit/EmitLog.vb: 
+	* Members/Attribute.vb: Fix according to latest cecil changes.
+
 2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Expressions/Expression.vb: When something goes wrong while resolving an

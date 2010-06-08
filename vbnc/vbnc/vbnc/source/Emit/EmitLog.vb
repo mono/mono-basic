@@ -167,7 +167,7 @@ Public Class EmitLog
             Dim block As TryBlock = m_ExceptionBlocks.Peek
             Dim ex As Mono.Cecil.Cil.ExceptionHandler = block.Handlers(block.Handlers.Count - 1)
             CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfilter)
-            ex.FilterEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            ex.FilterEnd = CreateAndEmitNop()
             ex.HandlerStart = ex.FilterEnd
         Else
             Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Catch)
@@ -175,19 +175,21 @@ Public Class EmitLog
             CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
             Dim handlerStart As Integer = CilBody.Instructions.Count
             If block.Handlers.Count = 0 Then
-                ex.TryEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+                ex.TryEnd = CreateAndEmitNop()
             Else
                 ex.TryEnd = block.Handlers(0).TryEnd
                 CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
             End If
-            block.EndTry = ex.TryEnd
+            If block.EndTry Is Nothing Then
+                block.EndTry = ex.TryEnd
+            End If
             If block.Handlers.Count > 0 Then
                 block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilBody.Instructions(CilBody.Instructions.Count - 1) 'CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
             End If
             ex.HandlerStart = CilBody.Instructions(handlerStart)
             ex.CatchType = exceptionType
             block.Handlers.Add(ex)
-        End If
+            End If
     End Sub
 
     Private Sub BeginExceptFilterBlockCecil()
@@ -196,9 +198,11 @@ Public Class EmitLog
         Dim block As TryBlock = m_ExceptionBlocks.Peek
 
         CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
-        If block.EndTry Is Nothing Then block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        If block.EndTry Is Nothing Then
+            block.EndTry = CreateAndEmitNop()
+        End If
         If block.Handlers.Count > 0 Then
-            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CreateAndEmitNop()
         End If
 
         ex.FilterStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
@@ -224,10 +228,10 @@ Public Class EmitLog
         Dim block As TryBlock = m_ExceptionBlocks.Peek
         CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Leave, block.EndBlock)
         If block.EndTry Is Nothing Then
-            block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+            block.EndTry = CreateAndEmitNop()
         End If
         If block.Handlers.Count > 0 Then
-            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop) ' CilBody.Instructions(CilBody.Instructions.Count - 1)
+            block.Handlers(block.Handlers.Count - 1).HandlerEnd = CreateAndEmitNop()
         End If
 
         ex.HandlerStart = CilBody.Instructions(CilBody.Instructions.Count - 1)
@@ -238,7 +242,7 @@ Public Class EmitLog
     Public Sub EndExceptionBlockCecil()
         Log("EndExceptionBlock")
         Dim block As TryBlock = m_ExceptionBlocks.Pop
-        If block.EndTry Is Nothing Then block.EndTry = CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Nop)
+        If block.EndTry Is Nothing Then block.EndTry = CreateAndEmitNop()
 
         Dim TryStart As Mono.Cecil.Cil.Instruction
         TryStart = CilBody.Instructions(block.Start)
@@ -277,6 +281,13 @@ Public Class EmitLog
         Log("DefineLabel")
         Dim result As Mono.Cecil.Cil.Instruction
         result = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
+        Return result
+    End Function
+
+    Public Function CreateAndEmitNop() As Mono.Cecil.Cil.Instruction
+        Dim result As Mono.Cecil.Cil.Instruction
+        result = CilWorker.Create(Mono.Cecil.Cil.OpCodes.Nop)
+        CilWorker.Append(result)
         Return result
     End Function
 
