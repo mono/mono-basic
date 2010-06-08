@@ -1,3 +1,8 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* extract-source/extract-source.vb: We might be running in windows mode on
+	linux - properly replace path separators in this case too.
+
 2009-04-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* moonlight: Added
