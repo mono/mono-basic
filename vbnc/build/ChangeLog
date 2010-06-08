@@ -1,3 +1,9 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rules.make:
+	* library.make:
+	* executable.make: Create the deps dir if it doesn't exist.
+
 2009-07-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* library.make: When building a library, create the destination

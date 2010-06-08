@@ -272,7 +272,7 @@ else
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 
-$(makefrag): $(sourcefile)
+$(makefrag): $(sourcefile) $(depsdir)
 	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
 
