@@ -1,5 +1,9 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* ac: Deleted, no longer used.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* rt-console:
 	* rt-execute: Deleted, no longer used.
 
