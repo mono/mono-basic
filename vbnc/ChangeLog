@@ -1,3 +1,8 @@
+2010-05-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* class/lib/bootstrap/vbnc.*:
+	* class/lib/bootstrap/Mono.Cecil.*: Updated.
+
 2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* class/lib/bootstrap/vbnc.rsp: More bootstrapping files.
