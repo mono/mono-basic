@@ -7080,31 +7080,24 @@
 		<file>SelfTest\rt.linux.vb</file>
 	</test>
 	<test id="1807" name="rt.windows" category="SelfTest" priority="20" target="library">
-		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing,System.Xml -r:System.dll,System.Xml.dll,System.Windows.Forms.dll,System.Drawing.dll,../../../class/lib/vbnc/Mono.Cecil.VB.dll /rootnamespace:rt -res:..\..\rt\source\FileTabPage.resx -res:..\..\rt\source\frmAssemblyDiff.resx -res:..\..\rt\source\frmMain.resx -res:..\..\rt\source\frmTestEditor.resx</arguments>
+		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing,System.Xml -r:System.dll,System.Xml.dll,System.Windows.Forms.dll,System.Drawing.dll,../../../class/lib/vbnc/Mono.Cecil.VB.dll /rootnamespace:rt -res:..\..\rt\source\FileTabPage.resx  -res:..\..\rt\source\frmMain.resx</arguments>
 		<testarguments>/console</testarguments>
 		<file>..\..\rt\source\AssemblyInfo.vb</file>
 		<file>..\..\rt\source\CecilCompare.vb</file>
 		<file>..\..\rt\source\CecilComparer.vb</file>
 		<file>..\..\rt\source\CommandLine.vb</file>
 		<file>..\..\rt\source\ConsoleRunner.vb</file>
-		<file>..\..\rt\source\CompilerHelper.vb</file>
 		<file>..\..\rt\source\EnhancedProgressBar.Designer.vb</file>
 		<file>..\..\rt\source\EnhancedProgressBar.vb</file>
 		<file>..\..\rt\source\ExternalProcessExecutor.vb</file>
 		<file>..\..\rt\source\ExternalProcessVerification.vb</file>
-		<file>..\..\rt\source\FileComparer.vb</file>
 		<file>..\..\rt\source\FileTabPage.Designer.vb</file>
 		<file>..\..\rt\source\FileTabPage.vb</file>
-		<file>..\..\rt\source\frmAssemblyDiff.Designer.vb</file>
-		<file>..\..\rt\source\frmAssemblyDiff.vb</file>
 		<file>..\..\rt\source\frmMain.Designer.vb</file>
 		<file>..\..\rt\source\frmMain.vb</file>
-		<file>..\..\rt\source\frmTestEditor.Designer.vb</file>
-		<file>..\..\rt\source\frmTestEditor.vb</file>
 		<file>..\..\rt\source\Helper.vb</file>
 		<file>..\..\rt\source\ListViewItemComparer.vb</file>
 		<file>..\..\rt\source\Main.vb</file>
-		<file>..\..\rt\source\OldResult.vb</file>
 		<file>..\..\rt\source\Settings.vb</file>
 		<file>..\..\rt\source\Test.Results.vb</file>
 		<file>..\..\rt\source\Test.Targets.vb</file>

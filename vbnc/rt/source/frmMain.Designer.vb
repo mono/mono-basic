@@ -57,7 +57,6 @@ Partial Class frmMain
         Me.cmnuViewCodeAndDebugTest = New System.Windows.Forms.ToolStripMenuItem
         Me.cmnuViewCode2 = New System.Windows.Forms.ToolStripMenuItem
         Me.cmnuDebugTest = New System.Windows.Forms.ToolStripMenuItem
-        Me.EditThisTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator
         Me.mnuIldasm = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuIldasmBoth = New System.Windows.Forms.ToolStripMenuItem
@@ -212,7 +211,7 @@ Partial Class frmMain
         '
         'cmnuTest
         '
-        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem})
+        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem})
         Me.cmnuTest.Name = "cmnuTest"
         Me.cmnuTest.Size = New System.Drawing.Size(379, 264)
         '
@@ -244,12 +243,6 @@ Partial Class frmMain
         Me.cmnuDebugTest.Name = "cmnuDebugTest"
         Me.cmnuDebugTest.Size = New System.Drawing.Size(378, 22)
         Me.cmnuDebugTest.Text = "&Set this test to be debugged"
-        '
-        'EditThisTestToolStripMenuItem
-        '
-        Me.EditThisTestToolStripMenuItem.Name = "EditThisTestToolStripMenuItem"
-        Me.EditThisTestToolStripMenuItem.Size = New System.Drawing.Size(378, 22)
-        Me.EditThisTestToolStripMenuItem.Text = "Edit this test (internal editor)"
         '
         'ToolStripSeparator3
         '
@@ -720,7 +713,6 @@ Partial Class frmMain
     Friend WithEvents cmdVBCCompiler As System.Windows.Forms.Button
     Friend WithEvents cmdReload As System.Windows.Forms.Button
     Friend WithEvents CreateNewTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents EditThisTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ReflectToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VBNCAssemblyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents VBCAssemblyToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem

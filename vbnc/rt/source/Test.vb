@@ -405,40 +405,6 @@ Public Class Test
         End Set
     End Property
 
-    Function GetOldResults() As Generic.List(Of OldResult)
-        Dim result As New Generic.List(Of OldResult)
-        Dim allfiles() As String
-
-        If IO.Directory.Exists(Me.OutputPath) = False Then
-            IO.Directory.CreateDirectory(Me.OutputPath)
-        End If
-
-        If m_FileCache.ContainsKey(Me.OutputPath) = False OrElse (Date.Now - m_FileCacheTime).TotalMinutes > 1 Then
-            allfiles = IO.Directory.GetFiles(Me.OutputPath, "*.testresult")
-            m_FileCache(Me.OutputPath) = allfiles
-            m_FileCacheTime = Date.Now
-        Else
-            allfiles = m_FileCache(Me.OutputPath)
-        End If
-
-        Dim files As New Generic.List(Of String)
-        Try
-            Dim start As String = IO.Path.DirectorySeparatorChar & Me.Name & ".("
-            For i As Integer = 0 To allfiles.Length - 1
-                If allfiles(i).Contains(start) Then
-                    files.Add(allfiles(i))
-                End If
-            Next
-        Catch io As IO.IOException
-
-        End Try
-
-        For Each file As String In files
-            result.Add(New OldResult(file))
-        Next
-        Return result
-    End Function
-
     Property Tag() As Object
         Get
             Return m_Tag

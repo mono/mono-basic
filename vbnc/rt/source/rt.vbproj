@@ -80,7 +80,6 @@
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="CecilCompare.vb" />
     <Compile Include="CecilComparer.vb" />
-    <Compile Include="CompilerHelper.vb" />
     <Compile Include="ConsoleRunner.vb" />
     <Compile Include="EnhancedProgressBar.Designer.vb">
       <DependentUpon>EnhancedProgressBar.vb</DependentUpon>
@@ -90,18 +89,11 @@
     </Compile>
     <Compile Include="ExternalProcessExecutor.vb" />
     <Compile Include="ExternalProcessVerification.vb" />
-    <Compile Include="FileComparer.vb" />
     <Compile Include="FileTabPage.Designer.vb">
       <DependentUpon>FileTabPage.vb</DependentUpon>
     </Compile>
     <Compile Include="FileTabPage.vb">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="frmAssemblyDiff.Designer.vb">
-      <DependentUpon>frmAssemblyDiff.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frmAssemblyDiff.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.vb">
       <DependentUpon>frmMain.vb</DependentUpon>
@@ -109,17 +101,10 @@
     <Compile Include="frmMain.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmTestEditor.Designer.vb">
-      <DependentUpon>frmTestEditor.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frmTestEditor.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Helper.vb">
     </Compile>
     <Compile Include="ListViewItemComparer.vb" />
     <Compile Include="Main.vb" />
-    <Compile Include="OldResult.vb" />
     <Compile Include="Settings.vb" />
     <Compile Include="Test.Results.vb" />
     <Compile Include="Test.Targets.vb" />
@@ -134,17 +119,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>FileTabPage.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmAssemblyDiff.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>frmAssemblyDiff.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.vb</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmTestEditor.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>frmTestEditor.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
