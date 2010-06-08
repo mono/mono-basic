@@ -1,3 +1,0 @@
-mono vbnc.exe @../tests/VBRunTime/Microsoft.VisualBasic.linux.response
-mono vbnc.exe @../tests/SelfTest/SelfCompileLinux.response
-mono SelfCompile.exe @../tests/SelfTest/SelfCompileLinux.response
