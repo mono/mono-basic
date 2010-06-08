@@ -7227,4 +7227,8 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 	<test id="1718" name="TryCatch5" category="" priority="0" target="library">
 		<file>CompileTime\TryCatch5.vb</file>
 	</test>
+	<test id="1719" name="DebugInfo1" category="" priority="0" target="library">
+		<arguments>/debug:full</arguments>
+		<file>CompileTime\DebugInfo1.vb</file>
+	</test>
 </rt>
