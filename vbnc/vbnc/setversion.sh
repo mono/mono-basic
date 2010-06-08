@@ -6,7 +6,7 @@ VERSION_TMP=version.tmp
 SVN_REVISION=`svn info . | grep Revision | sed 's/Revision: //'`
 GIT_REVISION=`git log --no-color --first-parent --pretty=format:%b|grep -m1 git-svn-id|sed -e 's,git-svn-id: \(.*\)@\(.*\) .*,URL: \1 Revision: \2,'|awk -F" " '{print $4}'`
 
-cat ../License\ FileHeader.txt > $VERSION_TMP
+cat ../LicenseFileHeader.txt > $VERSION_TMP
 echo "" >> $VERSION_TMP
 echo -n "<Assembly: AssemblyInformationalVersion (\"" >> $VERSION_TMP
 echo -n `more ../../configure | grep VERSION | grep -v echo | grep -v sed | sed 's/VERSION=//'` >> $VERSION_TMP
