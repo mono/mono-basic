@@ -1,3 +1,8 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* vbnc[9].sln:
+	* vbnc[9].vbproj: Upgrade the project/solution files to VS2008.
+
 2010-04-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* General/AssemblyInfo.vb: Bump version slightly.
