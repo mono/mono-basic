@@ -27,8 +27,7 @@ version.tmp: $(topdir)/configure setversion.sh
 	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
 
 all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp
-	echo abc
-
+	
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources
 
@@ -49,7 +48,7 @@ uninstall-extras:
 
 install-binary: default
 	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
-	cp ../../class/lib/vbnc/Mono.Cecil.VB.* ../../class/lib/bootstrap
+	cp ../../class/lib/vbnc/Mono.Cecil.* ../../class/lib/bootstrap
 
 boot-from-ms:
 	cd tests/SelfTest/ && boot.sh && rerun.sh

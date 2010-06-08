@@ -1,3 +1,7 @@
+2010-05-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Fix install-binary target and remove debug spew.
+
 2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc.Errors.resources: Updated.
