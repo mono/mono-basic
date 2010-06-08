@@ -2259,21 +2259,6 @@ Public Class Helper
         End If
     End Function
 
-    'TODO: This function is horribly inefficient. Change to use shift operators.
-    Shared Function BinToInt(ByVal str As String) As ULong
-        Dim len As Integer = str.Length
-        For i As Integer = len To 1 Step -1
-            Select Case str.Chars(i - 1)
-                Case "1"c
-                    BinToInt += CULng(2 ^ (len - i))
-                Case "0"c
-                    'ok
-                Case Else
-                    Throw New ArgumentOutOfRangeException("str", str, "Invalid binary number: cannot contain character " & str.Chars(i - 1))
-            End Select
-        Next
-    End Function
-
     Shared Function DecToDbl(ByVal str As String) As Double
         Return Double.Parse(str, USCulture)
     End Function
@@ -2292,6 +2277,7 @@ Public Class Helper
     Shared Function HexToInt(ByVal str As String) As ULong
         Dim i, n As Integer
         Dim l As Integer = str.Length
+        HexToInt = 0
         For i = l To 1 Step -1
             Select Case str.Chars(i - 1)
                 Case "0"c
@@ -2359,6 +2345,7 @@ Public Class Helper
     Shared Function OctToInt(ByVal str As String) As ULong
         Dim i, n As Integer
         Dim l As Integer = str.Length
+        OctToInt = 0
         For i = l To 1 Step -1
             Select Case str.Chars(i - 1)
                 Case "0"c
