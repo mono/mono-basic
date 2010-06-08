@@ -22,25 +22,16 @@ Public Class EnhancedProgressBar
         Implements IDisposable
 
         Public PercentDone As Double
-        Private m_Color As Color
+        Public Text As String
+        Public Number As Integer
+
         Private m_ColorBrush As Brush
-        Property Color() As Color
-            Get
-                Return m_Color
-            End Get
-            Set(ByVal value As Color)
-                If m_Color <> value Then
-                    m_Color = value
-                    ColorBrush = Nothing
-                End If
-            End Set
-        End Property
+
         Property ColorBrush() As Brush
             Get
-                If m_ColorBrush Is Nothing Then m_ColorBrush = New SolidBrush(m_Color)
                 Return m_ColorBrush
             End Get
-            Private Set(ByVal value As Brush)
+            Set(ByVal value As Brush)
                 If m_ColorBrush IsNot Nothing Then m_ColorBrush.Dispose()
                 m_ColorBrush = value
             End Set
@@ -80,6 +71,7 @@ Public Class EnhancedProgressBar
     Private Const RECTRADIUS As Integer = 2
 
     Private m_Values() As Progress
+    Private m_TextFormat As StringFormat
 
     Property ValueCount() As Integer
         Get
@@ -228,17 +220,28 @@ Public Class EnhancedProgressBar
 
         ' Add any initialization after the InitializeComponent() call.
         Me.SetStyle(ControlStyles.AllPaintingInWmPaint Or ControlStyles.OptimizedDoubleBuffer, True)
+
+        m_TextFormat = New StringFormat(StringFormat.GenericTypographic)
+        m_TextFormat.Alignment = StringAlignment.Center
+        m_TextFormat.LineAlignment = StringAlignment.Center
     End Sub
 
 
     Protected Overrides Sub OnPaint(ByVal e As System.Windows.Forms.PaintEventArgs)
         Try
+            Dim str As String = String.Empty
+            Dim total As Integer
+
+            If DesignMode Then Return
+
             If m_DrawingRegion Is Nothing Then Exit Sub
             e.Graphics.DrawPath(Pens.LightGray, m_DrawingRegion)
 
             If m_Values IsNot Nothing AndAlso UBound(m_Values) > 0 Then
                 Dim accumulated(UBound(m_Values)) As Double
+
                 For i As Integer = 0 To UBound(m_Values)
+                    total += m_Values(i).Number
                     If i = 0 Then
                         accumulated(0) = m_Values(0).PercentDone
                     Else
@@ -261,7 +264,16 @@ Public Class EnhancedProgressBar
                             e.Graphics.FillPath(m_Values(i).ColorBrush, lReg)
                         End Using
                     End If
+
+                    If m_Values(i).Number <> 0 Then
+                        If str.Length > 0 Then str &= "   "
+                        str = str & String.Format(m_Values(i).Text, m_Values(i).Number, m_Values(i).PercentDone)
+                    End If
                 Next
+                If str.Length > 0 Then
+                    str &= "   Total: " & total
+                    e.Graphics.DrawString(str, Me.Font, Brushes.White, New RectangleF(0, 0, Me.Size.Width, Me.Size.Height), m_TextFormat)
+                End If
             End If
         Catch ex As System.Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace, MsgBoxStyle.Exclamation)

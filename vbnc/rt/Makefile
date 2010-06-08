@@ -4,14 +4,47 @@ include ../../build/rules.make
 
 NO_INSTALL = yes
 
-PROGRAM = rt.exe
-PROGRAM_COMPILE = $(BOOT_COMPILE) -r:System.Xml.dll,System.dll,System.Windows.Forms.dll,System.Drawing.dll -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing -rootnamespace:rt
+REFERENCES = \
+	-r:System.Xml.dll \
+	-r:System.dll \
+	-r:System.Windows.Forms.dll \
+	-r:System.Drawing.dll \
+	-r:../../class/lib/vbnc/Mono.Cecil.VB.dll
 
-include ../../build/executable.make
+IMPORTS = \
+	-imports:System,Microsoft.VisualBasic \
+	-imports:System.Collections \
+	-imports:System.Collections.Generic \
+	-imports:System.Diagnostics \
+	-imports:System.Windows.Forms \
+	-imports:System.Drawing \
+	-imports:System.Xml
+
+TARGET = ../../class/lib/vbnc/rt.exe
 
 DISTFILES = \
-	Makefile                \
-	source/rt.vbproj
+	Makefile	\
+	ChangeLog	\
+	Readme.txt	\
+	source/rt.vbproj	\
+	source/rt.sln	\
+	$(wildcard source/*.vb)	\
+	$(wildcard source/*.resx)	\
+	source/ChangeLog	\
 
 rt.exe.sources: source/rt.vbproj
 	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -s:source/rt.vbproj -b:source/ -d:rt.exe.sources -m:l -x:r
+
+$(TARGET): rt.exe.sources
+	$(BOOT_COMPILE) -rootnamespace:rt -out:$(TARGET) $(REFERENCES) $(IMPORTS) @rt.exe.sources -debug:full
+
+rt.exe: $(TARGET)
+
+clean-local:
+	rm -f $(TARGET)
+	rm -f rt.exe.sources
+
+test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
+	@:
+
+dist-local: dist-default

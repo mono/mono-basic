@@ -22,9 +22,10 @@ Public Class Test
     Private ReadOnly PEVerifyPath As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe")
     Private ReadOnly PEVerifyPath2 As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft SDKs\\Windows\v6.0A\bin\PEVerify.exe")
     ''' <summary>
-    ''' The files that contains this test.
+    ''' The id of the test
     ''' </summary>
-    Private m_Files As New Generic.List(Of String)
+    ''' <remarks></remarks>
+    Private m_ID As String
 
     ''' <summary>
     ''' The name of the test
@@ -32,38 +33,52 @@ Public Class Test
     ''' <remarks></remarks>
     Private m_Name As String
 
+    Private m_Category As String
+    Private m_Priority As Integer
+    Private m_Arguments As String
     ''' <summary>
-    ''' The base path of where the code file(s) are
+    ''' Arguments specific to vbc (such as compile into a different location). Will be appended after the rest of the arguments.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_BasePath As String
+    Private m_VBCArguments As String
+    Private m_KnownFailure As String
 
     ''' <summary>
-    ''' The path of where the output files are
+    ''' The target (winexe, exe, library, module)
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_OutputPath As String
+    Private m_Target As Targets
 
     ''' <summary>
-    ''' The response file, if any.
+    ''' The files that contains this test.
+    ''' </summary>
+    Private m_Files As New Specialized.StringCollection
+
+    ''' <summary>
+    ''' The exit code the compiler should return
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_ResponseFile As String
-    Private m_RspFile As String
-    Private m_DefaultRspFile As String
+    Private m_ExpectedExitCode As Integer
+    Private m_ExpectedVBCExitCode As Nullable(Of Integer)
+
+    ''' <summary>
+    ''' The error (or warning) the compiler should return (0 for none).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_ExpectedErrorCode As Integer
+    Private m_ExpectedVBCErrorCode As Nullable(Of Integer)
 
     ''' <summary>
     ''' The result of the test
     ''' </summary>
     ''' <remarks></remarks>
     Private m_Result As Results
-    Private m_OldResult As Results
 
     ''' <summary>
     ''' The test container
     ''' </summary>
     ''' <remarks></remarks>
-    <NonSerialized()> Private m_Parent As Tests
+    Private m_Parent As Tests
 
     ''' <summary>
     ''' How long did the test take?
@@ -73,61 +88,312 @@ Public Class Test
 
     Private m_Verifications As New Generic.List(Of VerificationBase)
 
+    Private m_WorkingDirectory As String
+    Private m_OutputAssembly As String
+    Private m_OutputVBCAssembly As String
+
     ''' <summary>
     ''' The compilation using our compiler.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Compilation As ExternalProcessVerification
-
-    Public Const OutputExtension As String = ".output.xml"
-    Public Const VerifiedExtension As String = ".verified.xml"
-    Public Const OutputPattern As String = ".*" & OutputExtension
-    Public Const VerifiedPattern As String = ".*" & VerifiedExtension
-    Public DefaultOutputPath As String = "testoutput" & System.IO.Path.DirectorySeparatorChar
-
-    Private m_Target As String
-    Private m_TargetLocation As String
-    Private m_TargetExtension As String
-    Private m_NoConfig As Boolean
-    private m_References as New Generic.List(of String)
+    Private m_Compilation As VerificationBase
 
     Private m_LastRun As Date
 
     Private m_Tag As Object
     Private m_DontExecute As Boolean
-    Private m_KnownFailure As Boolean
-    Private m_IsNegativeTest As Boolean
-    Private m_IsWarning As Boolean
-    Private m_NegativeError As Integer
-    Private m_LoadedOldResults As Boolean
+    ''' <summary>
+    ''' The arguments to pass to the compiled executable (if it is an executable) to test it.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_TestArguments As String
 
     Public Event Executed(ByVal Sender As Test)
     Public Event Executing(ByVal Sender As Test)
     Public Event Changed(ByVal Sender As Test)
 
     Private m_Compiler As String
-    Private m_AC As String
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
     Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
     Private Shared m_FileCacheTime As Date = Date.MinValue
-    Public Shared DirectoriesToSkip As String()
 
-    Property KnownFailure() As Boolean
+    Public Property TestArguments() As String
+        Get
+            Return m_TestArguments
+        End Get
+        Set(ByVal value As String)
+            m_TestArguments = value
+        End Set
+    End Property
+
+    Public Property ID() As String
+        Get
+            Return m_ID
+        End Get
+        Set(ByVal value As String)
+            If Not String.IsNullOrEmpty(m_ID) Then
+                Throw New ArgumentException("This test already has an ID")
+            End If
+
+            If String.IsNullOrEmpty(value) Then
+                Throw New ArgumentException("Invalid ID")
+            End If
+
+            m_ID = value
+        End Set
+    End Property
+
+    Private Function GetAttributeValue(ByVal attrib As XmlAttribute) As String
+        If attrib Is Nothing Then Return Nothing
+        Return attrib.Value
+    End Function
+
+    Private Function GetNodeValue(ByVal node As XmlNode) As String
+        If node Is Nothing Then Return Nothing
+        Return node.InnerText
+    End Function
+
+    Public Sub SetResult(ByVal result As String)
+        If result Is Nothing Then result = String.Empty
+        Select Case result.ToLower()
+            Case Nothing, "", "notrun"
+                m_Result = Results.NotRun
+            Case Else
+                m_Result = CType([Enum].Parse(GetType(Results), result, True), Results)
+        End Select
+    End Sub
+
+    Public Sub LoadResult(ByVal xml As XmlNode)
+        Dim result As String = GetAttributeValue(xml.Attributes("result"))
+        For Each vb As XmlNode In xml.SelectNodes("Verification")
+            Dim type As String = GetAttributeValue(vb.Attributes("Type"))
+            Dim name As String = GetAttributeValue(vb.Attributes("Name"))
+            Dim executable As String
+            Dim expandablecommandline As String
+            Dim verification As VerificationBase
+            Select Case type
+                Case "rt.ExternalProcessVerification"
+                    Dim extvb As ExternalProcessVerification
+                    Dim process As XmlNode = vb.SelectSingleNode("Process")
+                    executable = GetAttributeValue(process.Attributes("Executable"))
+                    expandablecommandline = GetAttributeValue(process.Attributes("UnexpandedCommandLine"))
+                    extvb = New ExternalProcessVerification(Me, executable, expandablecommandline)
+                    extvb.Process.StdOut = process.SelectSingleNode("StdOut").Value
+                    verification = extvb
+                Case "rt.CecilCompare"
+                    Dim cecilvb As CecilCompare
+                    cecilvb = New CecilCompare(Me)
+                    verification = cecilvb
+                Case Else
+                    Throw New NotImplementedException(type)
+            End Select
+            verification.DescriptiveMessage = GetAttributeValue(vb.Attributes("DescriptiveMessage"))
+            verification.Name = name
+            verification.Result = CBool(GetAttributeValue(vb.Attributes("Result")))
+            verification.Run = CBool(GetAttributeValue(vb.Attributes("Run")))
+            Me.m_Verifications.Add(verification)
+        Next
+        SetResult(result)
+    End Sub
+
+    Public Sub Load(ByVal xml As XmlNode)
+        Dim target As String
+        Dim tmp As String
+
+        m_ID = xml.Attributes("id").Value
+        m_Name = xml.Attributes("name").Value
+        m_Category = GetAttributeValue(xml.Attributes("category"))
+        m_Priority = Integer.Parse(xml.Attributes("priority").Value)
+        m_Arguments = GetNodeValue(xml.SelectSingleNode("arguments"))
+        m_VBCArguments = GetNodeValue(xml.SelectSingleNode("vbcarguments"))
+        m_TestArguments = GetNodeValue(xml.SelectSingleNode("testarguments"))
+        m_KnownFailure = GetAttributeValue(xml.Attributes("knownfailure"))
+        m_OutputVBCAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputvbcassembly")))
+        m_OutputAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputassembly")))
+
+        m_ExpectedErrorCode = CInt(GetAttributeValue(xml.Attributes("expectederrorcode")))
+        m_ExpectedExitCode = CInt(GetAttributeValue(xml.Attributes("expectedexitcode")))
+        tmp = GetAttributeValue(xml.Attributes("expectedvbcerrorcode"))
+        If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCErrorCode = CInt(tmp)
+        tmp = GetAttributeValue(xml.Attributes("expectedvbcexitcode"))
+        If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCExitCode = CInt(tmp)
+        m_WorkingDirectory = GetAttributeValue(xml.Attributes("workingdirectory"))
+
+        SetResult(GetAttributeValue(xml.Attributes("result")))
+
+
+        '    'Test to see if it is a negative test.
+        '    'Negative tests are:
+        '    '0001.vb
+        '    '0001-2.vb
+        '    '0001-3 sometest.vb
+        If m_NegativeRegExpTest.IsMatch(m_Name) Then
+            Dim firstNonNumber As Integer = m_Name.Length
+            For i As Integer = 0 To m_Name.Length - 1
+                If Char.IsNumber(m_Name(i)) = False Then
+                    firstNonNumber = i
+                    Exit For
+                End If
+            Next
+            If Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_ExpectedErrorCode) Then
+                If m_ExpectedErrorCode >= 40000 AndAlso m_ExpectedErrorCode < 50000 Then
+                    m_ExpectedExitCode = 0
+                Else
+                    m_ExpectedExitCode = 1
+                End If
+            End If
+        End If
+
+        target = GetAttributeValue(xml.Attributes("target"))
+        If target IsNot Nothing Then target = target.ToLower()
+        Select Case GetAttributeValue(xml.Attributes("target"))
+            Case "exe"
+                m_Target = Targets.Exe
+            Case "winexe"
+                m_Target = Targets.Winexe
+            Case "library"
+                m_Target = Targets.Library
+            Case "module"
+                m_Target = Targets.Module
+            Case "", Nothing, "none"
+                'Console.WriteLine("Warning: {0} does not have a target specified.", m_ID)
+                m_Target = Targets.None
+            Case Else
+                Throw New InvalidOperationException("Invalid target: " & target)
+        End Select
+        For Each file As XmlNode In xml.SelectNodes("file")
+            m_Files.Add(file.InnerText)
+        Next
+    End Sub
+
+    Private Function GetFullPath(ByVal path As String) As String
+        If String.IsNullOrEmpty(path) Then Return path
+        If IO.Path.IsPathRooted(path) Then Return path
+        Return IO.Path.Combine(IO.Path.GetDirectoryName(Parent.Filename), path)
+    End Function
+
+    Private Function GetRelativePath(ByVal path As String) As String
+        Dim dir As String = IO.Path.GetDirectoryName(Parent.Filename)
+        Dim result As String
+
+        If Not path.StartsWith(dir) Then Return path
+
+        result = path.Substring(dir.Length)
+        If result.StartsWith(IO.Path.DirectorySeparatorChar) Then
+            result = result.Substring(1)
+        End If
+
+        Return result
+    End Function
+
+    Public Sub Save(ByVal xml As Xml.XmlWriter, ByVal results As Boolean)
+        xml.WriteStartElement("test")
+        xml.WriteAttributeString("id", m_ID)
+        If results = False Then
+            xml.WriteAttributeString("name", m_Name)
+            xml.WriteAttributeString("category", m_Category)
+            xml.WriteAttributeString("priority", m_Priority.ToString())
+            If Not String.IsNullOrEmpty(m_KnownFailure) Then
+                xml.WriteAttributeString("knownfailure", m_KnownFailure)
+            End If
+            If Not String.IsNullOrEmpty(m_OutputVBCAssembly) Then
+                xml.WriteAttributeString("outputvbcassembly", GetRelativePath(m_OutputVBCAssembly))
+            End If
+            If Not String.IsNullOrEmpty(m_OutputAssembly) Then
+                xml.WriteAttributeString("outputassembly", GetRelativePath(m_OutputAssembly))
+            End If
+
+            If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())
+            If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
+            If m_ExpectedVBCExitCode.HasValue Then xml.WriteAttributeString("expectedvbcexitcode", m_ExpectedVBCExitCode.Value.ToString())
+            If m_ExpectedVBCErrorCode.HasValue Then xml.WriteAttributeString("expectedvbcerrorcode", m_ExpectedVBCErrorCode.Value.ToString())
+
+            xml.WriteAttributeString("target", m_Target.ToString().ToLower())
+            If Not String.IsNullOrEmpty(m_WorkingDirectory) Then xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
+            If Not String.IsNullOrEmpty(m_Arguments) Then xml.WriteElementString("arguments", m_Arguments)
+            If Not String.IsNullOrEmpty(m_VBCArguments) Then xml.WriteElementString("vbcarguments", m_VBCArguments)
+            If Not String.IsNullOrEmpty(m_TestArguments) Then xml.WriteElementString("testarguments", m_TestArguments)
+            For Each file As String In m_Files
+                xml.WriteElementString("file", file)
+            Next
+        Else
+            xml.WriteAttributeString("result", m_Result.ToString().ToLower())
+            For Each vb As VerificationBase In Me.Verifications
+                xml.WriteStartElement("Verification")
+                xml.WriteAttributeString("Type", vb.GetType().FullName)
+                xml.WriteAttributeString("Name", vb.Name)
+                xml.WriteAttributeString("DescriptiveMessage", vb.DescriptiveMessage)
+                xml.WriteAttributeString("ExpectedErrorCode", vb.ExpectedErrorCode.ToString())
+                xml.WriteAttributeString("ExpectedExitCode", vb.ExpectedExitCode.ToString())
+                xml.WriteAttributeString("Result", vb.Result.ToString())
+                xml.WriteAttributeString("Run", vb.Run.ToString())
+
+                Dim extvb As ExternalProcessVerification = TryCast(vb, ExternalProcessVerification)
+                If extvb IsNot Nothing Then
+                    If extvb.Process IsNot Nothing Then
+                        xml.WriteStartElement("Process")
+                        xml.WriteAttributeString("Executable", extvb.Process.Executable)
+                        xml.WriteAttributeString("UnexpandedCommandLine", extvb.Process.UnexpandedCommandLine)
+                        xml.WriteElementString("StdOut", extvb.Process.StdOut)
+                        xml.WriteEndElement()
+                    End If
+                End If
+
+                xml.WriteEndElement()
+            Next
+        End If
+        xml.WriteEndElement()
+    End Sub
+
+    Property ExpectedExitCode() As Integer
+        Get
+            Return m_ExpectedExitCode
+        End Get
+        Set(ByVal value As Integer)
+            m_ExpectedExitCode = value
+        End Set
+    End Property
+
+    Property ExpectedErrorCode() As Integer
+        Get
+            Return m_ExpectedErrorCode
+        End Get
+        Set(ByVal value As Integer)
+            m_ExpectedErrorCode = value
+        End Set
+    End Property
+
+    Property ExpectedVBCErrorCode() As Nullable(Of Integer)
+        Get
+            Return m_ExpectedVBCErrorCode
+        End Get
+        Set(ByVal value As Nullable(Of Integer))
+            m_ExpectedVBCErrorCode = value
+        End Set
+    End Property
+
+    Property ExpectedVBCExitCode() As Nullable(Of Integer)
+        Get
+            Return m_ExpectedVBCExitCode
+        End Get
+        Set(ByVal value As Nullable(Of Integer))
+            m_ExpectedVBCExitCode = value
+        End Set
+    End Property
+
+    Public Property KnownFailure() As String
         Get
             Return m_KnownFailure
         End Get
-        Set(ByVal value As Boolean)
+        Set(ByVal value As String)
             m_KnownFailure = value
         End Set
     End Property
 
-    Property AC() As String
+    ReadOnly Property IsKnownFailure() As Boolean
         Get
-            Return m_AC
+            Return String.IsNullOrEmpty(m_KnownFailure) = False
         End Get
-        Set(ByVal value As String)
-            m_AC = value
-        End Set
     End Property
 
     Property Compiler() As String
@@ -173,18 +439,6 @@ Public Class Test
         Return result
     End Function
 
-    Public ReadOnly Property IsNegativeTest() As Boolean
-        Get
-            Return m_IsNegativeTest
-        End Get
-    End Property
-
-    ReadOnly Property NegativeError() As Integer
-        Get
-            Return m_NegativeError
-        End Get
-    End Property
-
     Property Tag() As Object
         Get
             Return m_Tag
@@ -194,67 +448,24 @@ Public Class Test
         End Set
     End Property
 
+    Public Property Category() As String
+        Get
+            Return m_Category
+        End Get
+        Set(ByVal value As String)
+            m_Category = value
+        End Set
+    End Property
+
     ReadOnly Property LastRun() As Date
         Get
             Return m_LastRun
         End Get
     End Property
 
-#If DEBUG Then
-    Private id As Integer = Helper.nextID()
-#End If
-
-    Sub WriteToXML(ByVal xml As Xml.XmlWriter)
-        xml.WriteStartElement(Me.GetType.ToString)
-        xml.WriteElementString("Name", m_Name)
-        For Each file As String In m_Files
-            xml.WriteElementString("File", file)
-        Next
-        xml.WriteElementString("BasePath", m_BasePath)
-        xml.WriteElementString("OutputPath", m_OutputPath)
-        xml.WriteElementString("ResponseFile", m_ResponseFile)
-        xml.WriteElementString("ExitCode", ExitCode.ToString)
-        xml.WriteElementString("Result", m_Result.ToString)
-        xml.WriteElementString("StdOut", m_Compilation.Process.StdOut)
-        If Statistics IsNot Nothing Then Statistics.WriteToXML(xml)
-        xml.WriteEndElement()
-    End Sub
-
-    Sub LoadOldResults()
-        If m_LoadedOldResults Then Return
-        Dim oldresults As Generic.List(Of OldResult)
-        oldresults = Me.GetOldResults
-        If oldresults.Count > 0 Then
-            m_OldResult = oldresults.Item(oldresults.Count - 1).Result
-            If m_OldResult = Results.Failed Then
-                For i As Integer = oldresults.Count - 1 To 0 Step -1
-                    If oldresults(i).Result = Results.Success Then m_OldResult = Results.Regressed
-                Next
-            End If
-        Else
-            m_OldResult = Results.NotRun
-        End If
-        m_LoadedOldResults = True
-        RaiseEvent Changed(Me)
-    End Sub
-
     ReadOnly Property TestDuration() As TimeSpan
         Get
             Return m_TestDuration
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' The statistics for the test. Might be nothing (if test hasn't been run.)
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    ReadOnly Property Statistics() As TestStatistics
-        Get
-            If m_Compilation Is Nothing OrElse m_Compilation.Process Is Nothing Then
-                Return Nothing
-            End If
-            Return m_Compilation.Process.Statistics
         End Get
     End Property
 
@@ -287,30 +498,21 @@ Public Class Test
     End Property
 
     ''' <summary>
-    ''' The base path of where the code file(s) are
-    ''' </summary>
-    ''' <remarks></remarks>
-    ReadOnly Property BasePath() As String
-        Get
-            Return m_BasePath
-        End Get
-    End Property
-
-    ''' <summary>
     ''' The path of where the output files are
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
     ReadOnly Property OutputPath() As String
         Get
-            Return m_OutputPath
+            Return IO.Path.Combine(FullWorkingDirectory, "testoutput")
         End Get
     End Property
 
     ''' <summary>
     ''' The files that contains this test.
     ''' </summary>
-    ReadOnly Property Files() As Generic.List(Of String)
+    <System.ComponentModel.Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", GetType(System.Drawing.Design.UITypeEditor))> _
+    ReadOnly Property Files() As Specialized.StringCollection
         Get
             Return m_Files
         End Get
@@ -322,11 +524,12 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property StdOut() As String
         Get
-            If m_Compilation IsNot Nothing Then
-                Return m_Compilation.Process.StdOut
-            Else
-                Return ""
+            Dim external As ExternalProcessVerification = TryCast(m_Compilation, ExternalProcessVerification)
+            If external IsNot Nothing Then
+                If external.Process IsNot Nothing Then Return external.Process.StdOut
             End If
+
+            Return String.Empty
         End Get
     End Property
 
@@ -336,39 +539,14 @@ Public Class Test
     ''' <remarks></remarks>
     ReadOnly Property ExitCode() As Integer
         Get
-            If m_Compilation Is Nothing OrElse m_Compilation.Process Is Nothing Then
+            Dim external As ExternalProcessVerification = TryCast(m_Compilation, ExternalProcessVerification)
+
+            If external IsNot Nothing Then
+                If external.Process Is Nothing Then Return 0
+                Return external.Process.ExitCode
+            Else
                 Return 0
             End If
-            Return m_Compilation.Process.ExitCode
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Get the files as a string with the filenames quoted.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Function GetFileList() As String
-        Dim result As String = ""
-        For Each file As String In m_Files
-            result = result & " """ & file & """"
-        Next
-        Return result
-    End Function
-
-    ''' <summary>
-    ''' The response file, if any.
-    ''' </summary>
-    ''' <remarks></remarks>
-    ReadOnly Property ResponseFile() As String
-        Get
-            Return m_ResponseFile
-        End Get
-    End Property
-
-    ReadOnly Property RspFile() As String
-        Get
-            Return m_RspFile
         End Get
     End Property
 
@@ -377,10 +555,13 @@ Public Class Test
     ''' </summary>
     ''' <value></value>
     ''' <remarks></remarks>
-    ReadOnly Property Name() As String
+    Public Property Name() As String
         Get
             Return m_Name
         End Get
+        Set(ByVal value As String)
+            m_Name = value
+        End Set
     End Property
 
     ''' <summary>
@@ -412,12 +593,6 @@ Public Class Test
         End Get
     End Property
 
-    ReadOnly Property OldResult() As Results
-        Get
-            Return m_OldResult
-        End Get
-    End Property
-
     ''' <summary>
     ''' Has this test multiple files?
     ''' </summary>
@@ -429,15 +604,70 @@ Public Class Test
         End Get
     End Property
 
-    Function GetOutputAssembly() As String
-        If m_TargetLocation IsNot Nothing Then Return m_TargetLocation
-        Return IO.Path.Combine(Me.OutputPath, Name & "." & m_TargetExtension)
-    End Function
+    Property Target() As Targets
+        Get
+            Return m_Target
+        End Get
+        Set(ByVal value As Targets)
+            m_Target = value
+        End Set
+    End Property
 
-    Function GetOutputVBCAssembly() As String
-        If m_TargetLocation IsNot Nothing Then Return Nothing
-        Return IO.Path.Combine(Me.OutputPath, Name & "_vbc." & m_TargetExtension)
-    End Function
+    ReadOnly Property TargetExtension() As String
+        Get
+            Select Case m_Target
+                Case Targets.Exe, Targets.Winexe
+                    Return "exe"
+                Case Targets.Module
+                    Return "netmodule"
+                Case Targets.Library
+                    Return "dll"
+                Case Else
+                    Throw New InvalidOperationException("Invalid target: " & m_Target.ToString())
+            End Select
+        End Get
+    End Property
+
+    ReadOnly Property OutputVBCAssemblyFull() As String
+        Get
+            Dim result As String = OutputVBCAssembly
+            If IO.Path.IsPathRooted(result) Then Return result
+            Return IO.Path.Combine(FullWorkingDirectory, result)
+        End Get
+    End Property
+
+    ReadOnly Property OutputAssemblyFull() As String
+        Get
+            Dim result As String = OutputAssembly
+            If IO.Path.IsPathRooted(result) Then Return result
+            Return IO.Path.Combine(FullWorkingDirectory, result)
+        End Get
+    End Property
+
+    Property OutputVBCAssembly() As String
+        Get
+            If String.IsNullOrEmpty(m_OutputVBCAssembly) Then
+                Return IO.Path.Combine(Me.OutputPath, Name & "_vbc." & TargetExtension)
+            End If
+            Return m_OutputVBCAssembly
+        End Get
+        Set(ByVal value As String)
+            m_OutputVBCAssembly = value
+        End Set
+    End Property
+
+
+    Property OutputAssembly() As String
+        Get
+            If String.IsNullOrEmpty(m_OutputAssembly) Then
+                Return IO.Path.Combine(Me.OutputPath, Name & "." & TargetExtension)
+            End If
+            Return m_OutputAssembly
+        End Get
+        Set(ByVal value As String)
+            m_OutputAssembly = value
+        End Set
+    End Property
 
     ''' <summary>
     ''' Get the xml output files.
@@ -457,7 +687,7 @@ Public Class Test
     Function GetVerifiedFiles() As String()
         Dim result As String()
         If IO.Directory.Exists(OutputPath) Then
-            result = new String(){}'IO.Directory.GetFiles(OutputPath, Name & VerifiedPattern)
+            result = New String() {} 'IO.Directory.GetFiles(OutputPath, Name & VerifiedPattern)
         Else
             result = New String() {}
         End If
@@ -470,19 +700,19 @@ Public Class Test
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetTestCommandLineArguments(Optional ByVal ForVBC As Boolean = False) As String()
+    Function GetTestCommandLineArguments(Optional ByVal ForVBC As Boolean = False, Optional ByVal IncludeFiles As Boolean = True) As String()
         Dim result As New Generic.List(Of String)
 
-        Initialize()
+        'Initialize()
 
         'First option is always the /out: argument.
         Const OutArgument As String = "-out:{0}"
         Dim outputFilename, outputPath As String
         If ForVBC Then
-            outputFilename = GetOutputVBCAssembly()
+            outputFilename = OutputVBCAssembly()
             If outputFilename Is Nothing Then Return New String() {}
         Else
-            outputFilename = GetOutputAssembly()
+            outputFilename = OutputAssembly()
         End If
         outputPath = IO.Path.GetDirectoryName(outputFilename)
         If outputPath <> "" AndAlso IO.Directory.Exists(outputPath) = False Then
@@ -490,23 +720,29 @@ Public Class Test
         End If
         result.Add(String.Format(OutArgument, outputFilename))
 
-        'If there is one unique .rsp file, use it
-        If m_RspFile <> "" Then
-            result.Add("@" & m_RspFile)
-        Else
-            'otherwise add the file, the default response file and the extra .response file if any.
-            result.AddRange(CType(m_Files, Generic.IEnumerable(Of String)))
-            result.Add("-libpath:" & m_BasePath)
-
-            If m_DefaultRspFile <> "" Then
-                result.Add("@" & m_DefaultRspFile)
-            End If
-
-            If m_ResponseFile <> "" Then result.Add("@" & m_ResponseFile)
+        If m_Arguments IsNot Nothing Then
+            result.AddRange(m_Arguments.Split(New Char() {" "c, Chr(10), Chr(13)}, StringSplitOptions.RemoveEmptyEntries))
         End If
 
-        If m_NoConfig Then
-            result.Add("-noconfig")
+        If IncludeFiles Then
+            For Each file As String In Files
+                result.Add(file.Replace("\"c, IO.Path.DirectorySeparatorChar))
+            Next
+        End If
+
+        Select Case m_Target
+            Case Targets.Library
+                result.Add("/target:library")
+            Case Targets.Exe
+                result.Add("/target:exe")
+            Case Targets.Winexe
+                result.Add("/target:winexe")
+            Case Targets.Module
+                result.Add("/target:module")
+        End Select
+
+        If ForVBC AndAlso Not String.IsNullOrEmpty(m_VBCArguments) Then
+            result.Add(m_VBCArguments)
         End If
 
         Return result.ToArray()
@@ -530,173 +766,42 @@ Public Class Test
         End Get
     End Property
 
-    Sub Initialize()
-        Dim rsp As String
-
-        rsp = IO.Path.Combine(m_BasePath, Name) & ".response"
-        If IO.File.Exists(rsp) Then m_ResponseFile = rsp Else m_ResponseFile = ""
-        rsp = IO.Path.Combine(m_BasePath, Name) & ".rsp"
-        If IO.File.Exists(rsp) Then m_RspFile = rsp Else m_RspFile = ""
-        rsp = IO.Path.Combine(m_BasePath, "all.rsp")
-        If IO.File.Exists(rsp) Then m_DefaultRspFile = rsp Else m_DefaultRspFile = ""
-
-        'Find the target of the test (exe, winexe, library, module)
-        m_Target = "exe" 'default target.
-        If m_RspFile <> "" Then
-            ParseResponseFile(m_RspFile)
-        Else
-            If m_DefaultRspFile <> "" Then
-                ParseResponseFile(m_DefaultRspFile)
-            End If
-            If m_ResponseFile <> "" Then
-                ParseResponseFile(m_ResponseFile)
-            End If
-        End If
-        m_TargetExtension = GetTargetExtension(m_Target)
-    End Sub
-
-    Sub ParseResponseFile(ByVal Filename As String)
-        Dim contents As String()
-
-        If IO.File.Exists(Filename) = False Then Return
-
-        contents = IO.File.ReadAllLines(Filename)
-
-        For Each line As String In contents
-            If line.Contains("#DONTEXECUTE#") Then m_DontExecute = True
-
-            For Each arg As String In Helper.ParseLine(line)
-                If arg.StartsWith("@") Then
-                    ParseResponseFile(line.Substring(1))
-                    Continue For
-                ElseIf Not (line.StartsWith("-"c) OrElse line.StartsWith("/"c)) Then
-                    Continue For
-                End If
-
-                Dim name, value As String
-                Dim iStart As Integer
-
-                iStart = arg.IndexOfAny(New Char() {":"c, "="c})
-
-                If iStart >= 0 Then
-                    name = arg.Substring(1, iStart - 1)
-                    value = arg.Substring(iStart + 1)
-                Else
-                    name = arg.Substring(1)
-                    value = arg.Substring(1)
-                End If
-
-                Select Case name.ToUpperInvariant()
-                    Case "OUT"
-                        m_TargetLocation = value
-                        m_TargetLocation = IO.Path.GetFullPath(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), m_TargetLocation))
-                    Case "R", "REFERENCE"
-                        If value.IndexOfAny(New Char() {":"c, "/"c, "\"c, ":"c}) >= 0 Then
-                            Dim ref As String
-                            ref = IO.Path.GetFullPath(value)
-                            If m_References.Contains(ref) = False Then
-                                m_References.Add(ref)
-                            End If
-                        End If
-                    Case "TARGET", "T"
-                        m_Target = GetTarget(arg, m_Target)
-                    Case "NOCONFIG"
-                        m_NoConfig = True
-                End Select
-            Next
-        Next
-    End Sub
-
-    ReadOnly Property IsDirty() As Boolean
+    Property Arguments() As String
         Get
-            If IO.File.Exists(Me.GetOutputAssembly) = False Then Return True
-            If AreExecutablesDirty Then Return True
-            If IsSourceDirty Then Return True
-            Return False
+            Return m_Arguments
         End Get
+        Set(ByVal value As String)
+            m_Arguments = value
+        End Set
     End Property
 
-    ''' <summary>
-    ''' Returns true if any of the verification executables has changed.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property AreExecutablesDirty() As Boolean
+    Property VBCArguments() As String
         Get
-            Dim fileDate As Date
-            Dim filesToCheck As New Generic.List(Of String)
-
-            If Parent.VBNCPath <> "" Then filesToCheck.Add(Parent.VBNCPath)
-            If Parent.VBCPath <> "" Then filesToCheck.Add(Parent.VBCPath)
-            If PEVerifyPath <> "" AndAlso System.IO.File.Exists(PEVerifyPath) Then filesToCheck.Add(PEVerifyPath)
-            If PEVerifyPath2 <> "" AndAlso System.IO.File.Exists(PEVerifyPath2) Then filesToCheck.Add(PEVerifyPath2)
-            If GetACPath <> "" Then filesToCheck.Add(GetACPath)
-
-            For Each item As String In filesToCheck
-                fileDate = IO.File.GetLastWriteTime(item)
-                If fileDate > m_LastRun Then Return True
-            Next
-            Return False
+            Return m_VBCArguments
         End Get
+        Set(ByVal value As String)
+            m_VBCArguments = value
+        End Set
     End Property
 
-    ''' <summary>
-    ''' Returns true if the vbc assembly is dirty as well (the source has changed).
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property IsSourceDirty() As Boolean
+    Property WorkingDirectory() As String
         Get
-            If Me.GetOutputVBCAssembly Is Nothing Then Return False
-            If IO.File.Exists(Me.GetOutputVBCAssembly) = False Then
-                Return True
-            ElseIf IO.File.GetLastWriteTime(Me.GetOutputVBCAssembly) < LastSourceWrite Then
-                Return True
+            Return m_WorkingDirectory
+        End Get
+        Set(ByVal value As String)
+            m_WorkingDirectory = value
+        End Set
+    End Property
+
+    ReadOnly Property FullWorkingDirectory() As String
+        Get
+            If String.IsNullOrEmpty(m_WorkingDirectory) Then
+                Return IO.Path.GetDirectoryName(m_Parent.Filename)
             Else
-                Return False
+                Return IO.Path.Combine(IO.Path.GetDirectoryName(m_Parent.Filename), m_WorkingDirectory)
             End If
         End Get
     End Property
-
-    ''' <summary>
-    ''' Returns the last date of any source file or response file.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property LastSourceWrite() As Date
-        Get
-            Dim lastDate As Date
-            Dim fileDate As Date
-            Dim filesToCheck As New Generic.List(Of String)
-
-            filesToCheck.AddRange(m_Files)
-            If m_ResponseFile <> "" Then filesToCheck.Add(m_ResponseFile)
-            If m_RspFile <> "" Then filesToCheck.Add(m_RspFile)
-            If m_DefaultRspFile <> "" Then filesToCheck.Add(m_DefaultRspFile)
-
-            For Each item As String In filesToCheck
-                fileDate = IO.File.GetLastWriteTime(item)
-                If fileDate > lastDate Then
-                    lastDate = fileDate
-                End If
-            Next
-            Return lastDate
-        End Get
-    End Property
-
-    Private ReadOnly Property GetACPath() As String
-        Get
-            If m_AC <> String.Empty Then Return m_AC
-            Return IO.Path.GetFullPath("..\..\..\ac\bin\ac.exe".Replace("\", IO.Path.DirectorySeparatorChar))
-        End Get
-    End Property
-
-    Function GetExecutor() As String
-        Return IO.Path.GetFullPath("..\..\rt-execute\rt-execute.exe".Replace("\", IO.Path.DirectorySeparatorChar))
-    End Function
 
     ''' <summary>
     ''' Returns true if new verifications have been created (only if source files has changed
@@ -705,10 +810,6 @@ Public Class Test
     ''' <returns></returns>
     ''' <remarks></remarks>
     Function CreateVerifications() As Boolean
-        Initialize()
-
-        If Me.Parent IsNot Nothing AndAlso (Me.Parent.SkipCleanTests AndAlso Me.IsDirty = False) Then Return False
-
         Dim vbnccmdline As String() = Helper.QuoteStrings(Me.GetTestCommandLineArguments(False))
         Dim vbccmdline As String() = Helper.QuoteStrings(Me.GetTestCommandLineArguments(True))
 
@@ -719,12 +820,25 @@ Public Class Test
         If Me.Parent IsNot Nothing Then
             vbccompiler = Me.Parent.VBCPath
         End If
+
         If vbccompiler <> String.Empty AndAlso vbccmdline.Length > 0 Then
             vbc = New ExternalProcessVerification(Me, vbccompiler, Join(vbccmdline, " "))
-            vbc.Process.WorkingDirectory = m_BasePath
+            vbc.Process.WorkingDirectory = FullWorkingDirectory
+            vbc = vbc
+        End If
+
+        If vbc IsNot Nothing Then
             vbc.Name = "VBC Compile (verifies that the test itself is correct)"
-            If m_IsNegativeTest Then vbc.NegativeError = m_NegativeError
-            If m_IsWarning Then vbc.Warning = m_NegativeError
+            If m_ExpectedVBCExitCode.HasValue Then
+                vbc.ExpectedExitCode = m_ExpectedVBCExitCode.Value
+            Else
+                vbc.ExpectedExitCode = m_ExpectedExitCode
+            End If
+            If m_ExpectedVBCErrorCode.HasValue Then
+                vbc.ExpectedErrorCode = m_ExpectedVBCErrorCode.Value
+            Else
+                vbc.ExpectedErrorCode = m_ExpectedErrorCode
+            End If
         End If
 
         compiler = Me.Compiler
@@ -735,72 +849,73 @@ Public Class Test
             Throw New Exception("No compiler specified.")
         End If
 
-        m_Compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
-        m_Compilation.Process.WorkingDirectory = m_BasePath
+        Dim external_compilation As ExternalProcessVerification = Nothing
+
+        external_compilation = New ExternalProcessVerification(Me, compiler, Join(vbnccmdline, " "))
+        external_compilation.Process.WorkingDirectory = FullWorkingDirectory
+        m_Compilation = external_compilation
+
         m_Compilation.Name = "VBNC Compile"
-        'm_Compilation.Process.UseTemporaryExecutable = True
-        If m_IsNegativeTest Then m_Compilation.NegativeError = m_NegativeError
-        If m_IsWarning Then m_Compilation.Warning = m_NegativeError
+        external_compilation.Process.UseTemporaryExecutable = True
+        m_Compilation.ExpectedErrorCode = m_ExpectedErrorCode
+        m_Compilation.ExpectedExitCode = m_ExpectedExitCode
 
         m_Verifications.Clear()
 
-        If vbc IsNot Nothing AndAlso IsSourceDirty Then m_Verifications.Add(vbc)
+        If vbc IsNot Nothing Then m_Verifications.Add(vbc)
         m_Verifications.Add(m_Compilation)
 
-        If m_IsNegativeTest = False Then
-            If vbccompiler <> String.Empty AndAlso Me.m_Target = "exe" AndAlso m_DontExecute = False AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
-                m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputVBCAssembly))
-                m_Verifications(m_Verifications.Count - 1).Name = "Test executable verification"
-            End If
+        Dim isVbcSuccess As Boolean
+        If m_ExpectedVBCExitCode.HasValue Then
+            isVbcSuccess = m_ExpectedVBCExitCode.Value = 0
+        Else
+            isVbcSuccess = m_ExpectedExitCode = 0
+        End If
 
-            Dim peverify As String = Nothing
-            If PEVerifyPath <> String.Empty AndAlso System.IO.File.Exists(PEVerifyPath) Then
-                peverify = PEVerifyPath
-            ElseIf PEVerifyPath2 <> String.Empty AndAlso System.IO.File.Exists(PEVerifyPath2) Then
-                peverify = PEVerifyPath2
+        If isVbcSuccess Then
+            If vbccompiler <> String.Empty AndAlso Me.m_Target = Targets.Exe AndAlso m_DontExecute = False AndAlso Me.OutputVBCAssembly IsNot Nothing Then
+                Dim testOutputVerification As ExternalProcessVerification
+                testOutputVerification = New ExternalProcessVerification(Me, Me.OutputVBCAssemblyFull, Me.TestArguments)
+                testOutputVerification.Name = "Test executable verification"
+                testOutputVerification.Process.WorkingDirectory = Me.FullWorkingDirectory
+                m_Verifications.Add(testOutputVerification)
             End If
-            If peverify IsNot Nothing Then
-                Dim peV As New ExternalProcessVerification(Me, peverify, "%OUTPUTASSEMBLY% /nologo /verbose")
+        End If
+
+        If m_ExpectedExitCode = 0 Then
+            Dim peverify As String
+            If Helper.IsOnMono Then
+                peverify = "peverify"
+            Else
+                peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
+                If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
+            End If
+            If peverify <> String.Empty AndAlso (Helper.IsOnMono OrElse IO.File.Exists(peverify)) Then
+                Dim peV As ExternalProcessVerification
+                If Helper.IsOnMono Then
+                    peV = New ExternalProcessVerification(Me, peverify, "--verify all """ & OutputAssemblyFull & """")
+                Else
+                    peV = New ExternalProcessVerification(Me, peverify, """" & OutputAssemblyFull & """ /nologo /verbose")
+                End If
                 peV.Name = "Type Safety and Security Verification"
-                peV.Process.DependentFiles.AddRange(m_References)
-                peV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
+                peV.Process.WorkingDirectory = Me.OutputPath
                 m_Verifications.Add(peV)
             End If
+        End If
 
-            Dim ac As String
-            ac = GetACPath
-            If ac <> String.Empty AndAlso vbccompiler <> String.Empty AndAlso IO.File.Exists(ac) AndAlso IO.File.Exists(vbccompiler) AndAlso Me.GetOutputVBCAssembly IsNot Nothing Then
-                Dim cmdLine As String = "%OUTPUTASSEMBLY% %OUTPUTVBCASSEMBLY%"
-                Dim acV As New ExternalProcessVerification(Me, GetACPath, cmdLine)
-                acV.Name = "Assembly Comparison Verification"
-                acV.Process.DependentFiles.AddRange(m_References)
-                acV.Process.WorkingDirectory = IO.Path.Combine(BasePath, "testoutput")
-                m_Verifications.Add(acV)
+        If isVbcSuccess Then
+            Dim cc As CecilCompare
+            If vbccompiler <> String.Empty AndAlso IO.File.Exists(vbccompiler) AndAlso OutputVBCAssembly() IsNot Nothing Then
+                cc = New CecilCompare(Me)
+                cc.Name = "Cecil Assembly Compare"
+                m_Verifications.Add(cc)
             End If
+        End If
 
-            If Me.m_Target = "exe" AndAlso m_DontExecute = False Then
-                Dim executor As String
-                executor = GetExecutor()
-                If executor <> String.Empty AndAlso IO.File.Exists(executor) Then
-                    m_Verifications.Add(New ExternalProcessVerification(Me, executor))
-                Else
-                    m_Verifications.Add(New ExternalProcessVerification(Me, Me.GetOutputAssembly))
-                End If
+        If m_ExpectedExitCode = 0 Then
+            If Me.m_Target = Targets.Exe AndAlso m_DontExecute = False Then
+                m_Verifications.Add(New ExternalProcessVerification(Me, Me.OutputAssemblyFull, Me.TestArguments))
                 m_Verifications(m_Verifications.Count - 1).Name = "Output executable verification"
-            End If
-
-            If vbccompiler <> String.Empty Then
-                Dim bootStrappedExe As String
-                bootStrappedExe = IO.Path.Combine(IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(vbccompiler)), Helper.NormalizePath("tests\SelfTest\testoutput\SelfCompile.exe"))
-
-                If IO.File.Exists(bootStrappedExe) AndAlso False Then
-                    Dim epv As New ExternalProcessVerification(Me, bootStrappedExe, Join(vbnccmdline, " "))
-                    m_Verifications.Add(epv)
-                    m_Verifications(m_Verifications.Count - 1).Name = "Bootstrapped verification"
-                    epv.Process.WorkingDirectory = m_BasePath
-                    epv.Process.UseTemporaryExecutable = True
-                    If m_IsNegativeTest Then epv.NegativeError = m_NegativeError
-                End If
             End If
         End If
 
@@ -809,65 +924,7 @@ Public Class Test
         Return True
     End Function
 
-    Sub SaveTest()
-        Const DATETIMEFORMAT As String = "yyyy-MM-dd HHmm"
-        Dim compiler As String
-        Dim filename As String
-
-        Try
-            compiler = "(" & VBNCVerification.Process.FileVersion.FileVersion & " " & VBNCVerification.Process.LastWriteDate.ToString(DATETIMEFORMAT) & ")"
-            compiler &= "." & m_Result.ToString
-	
-            Dim i As Integer
-            i = compiler.IndexOfAny (IO.Path.GetInvalidPathChars)
-            If i >= 0 Then
-                For Each c As Char In IO.Path.GetInvalidPathChars
-                    compiler = compiler.Replace (c.ToString (), "")
-                Next
-            End If
-
-            filename = IO.Path.Combine(Me.OutputPath, Me.Name & "." & compiler & ".testresult")
-            Using contents As New Xml.XmlTextWriter(filename, Nothing)
-                contents.Formatting = Xml.Formatting.Indented
-                If False Then
-                    Dim ser As New Xml.Serialization.XmlSerializer(GetType(Test))
-                    ser.Serialize(contents, Me)
-                Else
-                    contents.WriteStartDocument(True)
-                    contents.WriteStartElement("Test")
-                    contents.WriteElementString("Name", Me.Name)
-                    contents.WriteStartElement("Date")
-                    contents.WriteValue(Me.LastRun)
-                    contents.WriteEndElement()
-                    contents.WriteElementString("Compiler", compiler)
-                    contents.WriteElementString("Result", Me.Result.ToString)
-                    contents.WriteElementString("IsNegativeTest", Me.IsNegativeTest.ToString)
-                    contents.WriteElementString("NegativeError", Me.NegativeError.ToString)
-                    contents.WriteElementString("TestDuration", Me.TestDuration.ToString)
-
-                    contents.WriteStartElement("Verifications")
-                    For Each ver As VerificationBase In Me.Verifications
-                        contents.WriteStartElement(ver.GetType.Name)
-                        contents.WriteElementString("Name", ver.Name)
-                        contents.WriteElementString("Result", ver.Result.ToString)
-                        contents.WriteElementString("Run", ver.Run.ToString)
-                        contents.WriteElementString("NegativeError", ver.NegativeError.ToString)
-                        contents.WriteElementString("DescriptiveMessage", ver.DescriptiveMessage)
-                        contents.WriteEndElement()
-                    Next
-                    contents.WriteEndElement()
-
-                    contents.WriteEndElement()
-                    contents.WriteEndDocument()
-                End If
-            End Using
-        Catch ex As Exception
-            Console.WriteLine(ex.Message & vbNewLine & ex.StackTrace)
-        End Try
-    End Sub
-
     Function SkipTest() As Boolean
-        If SkipTest(directoriestoskip) Then Return True
         If Helper.IsOnWindows Then
             Return Name.EndsWith(".Linux", StringComparison.OrdinalIgnoreCase)
         Else
@@ -875,22 +932,10 @@ Public Class Test
         End If
     End Function
 
-    Private Function SkipTest(ByVal DirectoriesToSkip As String()) As Boolean
-        If DirectoriesToSkip Is Nothing Then Return False
-
-        For i As Integer = 0 To DirectoriesToSkip.Length - 1
-            If m_BasePath.Contains(DirectoriesToSkip(i)) Then
-                Return True
-            End If
-        Next
-
-        Return False
-    End Function
-
     Sub DoTest()
-        If BasePath <> "" Then
-            Environment.CurrentDirectory = BasePath
-        End If
+        'If BasePath <> "" Then
+        '    Environment.CurrentDirectory = BasePath
+        'End If
         If CreateVerifications() = False Then
             Return
         End If
@@ -918,7 +963,7 @@ Public Class Test
         If m_Result = Results.Running Then
             m_Result = Results.Success
         End If
-        If m_KnownFailure Then
+        If IsKnownFailure Then
             If m_Result = Results.Success Then
                 m_Result = Results.KnownFailureSucceeded
             ElseIf m_Result = Results.Failed Then
@@ -928,18 +973,14 @@ Public Class Test
             End If
         End If
 
-        SaveTest()
-        m_LoadedOldResults = False
-        LoadOldResults()
-
         RaiseEvent Executed(Me)
     End Sub
 
-    ReadOnly Property VBNCVerification() As ExternalProcessVerification
+    ReadOnly Property VBNCVerification() As VerificationBase
         Get
             For Each ver As VerificationBase In m_Verifications
                 If ver.Name.Contains("VBNC Compile") Then
-                    Return DirectCast(ver, ExternalProcessVerification)
+                    Return ver
                 End If
             Next
             Return Nothing
@@ -967,42 +1008,48 @@ Public Class Test
         Return result
     End Function
 
-    Sub New()
-
-    End Sub
-
-    Sub New(ByVal Path As String, ByVal Parent As Tests)
+    Sub New(ByVal Parent As Tests)
         m_Parent = Parent
-        If Path.EndsWith(IO.Path.DirectorySeparatorChar) Then
-            Path = Path.Remove(Path.Length - 1, 1)
-        End If
-
-        m_BasePath = IO.Path.GetDirectoryName(Path)
-        m_Files.Add(Path)
-
-        m_Name = GetTestName(Path)
-
-        'Test to see if it is a negative test.
-        'Negative tests are:
-        '0001.vb
-        '0001-2.vb
-        '0001-3 sometest.vb
-        If m_NegativeRegExpTest.IsMatch(m_Name) Then
-            Dim firstNonNumber As Integer = m_Name.Length
-            For i As Integer = 0 To m_Name.Length - 1
-                If Char.IsNumber(m_Name(i)) = False Then
-                    firstNonNumber = i
-                    Exit For
-                End If
-            Next
-            m_IsNegativeTest = Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_NegativeError)
-            If m_IsNegativeTest AndAlso m_NegativeError >= 40000 AndAlso m_NegativeError < 50000 Then
-                m_IsNegativeTest = False
-                m_IsWarning = True
-            End If
-        End If
-        m_OutputPath = IO.Path.Combine(m_BasePath, DefaultOutputPath)
     End Sub
+
+    Sub New(ByVal Parent As Tests, ByVal xml As XmlNode)
+        m_Parent = Parent
+        Load(xml)
+    End Sub
+
+    'Sub New(ByVal Path As String, ByVal Parent As Tests)
+    '    m_Parent = Parent
+    '    If Path.EndsWith(IO.Path.DirectorySeparatorChar) Then
+    '        Path = Path.Remove(Path.Length - 1, 1)
+    '    End If
+
+    '    m_BasePath = IO.Path.GetDirectoryName(Path)
+    '    m_Files.Add(Path)
+
+    '    m_Name = GetTestName(Path)
+
+    '    'Test to see if it is a negative test.
+    '    'Negative tests are:
+    '    '0001.vb
+    '    '0001-2.vb
+    '    '0001-3 sometest.vb
+    '    If m_NegativeRegExpTest.IsMatch(m_Name) Then
+    '        Dim firstNonNumber As Integer = m_Name.Length
+    '        For i As Integer = 0 To m_Name.Length - 1
+    '            If Char.IsNumber(m_Name(i)) = False Then
+    '                firstNonNumber = i
+    '                Exit For
+    '            End If
+    '        Next
+    '        m_IsNegativeTest = Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_NegativeError)
+    '        If m_IsNegativeTest AndAlso m_NegativeError >= 40000 AndAlso m_NegativeError < 50000 Then
+    '            m_IsNegativeTest = False
+    '            m_IsWarning = True
+    '        End If
+    '    End If
+    '    m_OutputPath = IO.Path.Combine(m_BasePath, DefaultOutputPath)
+    '    Initialize()
+    'End Sub
 
     Private Function IsNoConfig(ByVal text As String) As Boolean
         Return text.IndexOf("/noconfig", StringComparison.OrdinalIgnoreCase) >= 0
@@ -1031,8 +1078,4 @@ Public Class Test
                 Return "exe"
         End Select
     End Function
-
-    Protected Overrides Sub Finalize()
-        MyBase.Finalize()
-    End Sub
 End Class

@@ -22,27 +22,27 @@ Public MustInherit Class VerificationBase
     Private m_Result As Boolean
     Private m_Run As Boolean
     Private m_Test As Test
-    Private m_NegativeError As Integer
-    Private m_Warning As Integer
     Private m_DescriptiveMessage As String
+    Private m_ExpectedExitCode As Integer
+    Private m_ExpectedErrorCode As Integer
 
     Private m_Name As String = "Verification"
 
-    Property Warning() As Integer
+    Property ExpectedExitCode() As Integer
         Get
-            Return m_Warning
+            Return m_ExpectedExitCode
         End Get
         Set(ByVal value As Integer)
-            m_Warning = value
+            m_ExpectedExitCode = value
         End Set
     End Property
 
-    Property NegativeError() As Integer
+    Property ExpectedErrorCode() As Integer
         Get
-            Return m_NegativeError
+            Return m_ExpectedErrorCode
         End Get
         Set(ByVal value As Integer)
-            m_NegativeError = value
+            m_ExpectedErrorCode = value
         End Set
     End Property
 
@@ -54,6 +54,7 @@ Public MustInherit Class VerificationBase
             m_Name = value
         End Set
     End Property
+
     ''' <summary>
     ''' A descriptive message of the verification, normally just StdOut.
     ''' </summary>
@@ -64,7 +65,7 @@ Public MustInherit Class VerificationBase
         Get
             Return m_DescriptiveMessage
         End Get
-        Protected Set(ByVal value As String)
+        Set(ByVal value As String)
             m_DescriptiveMessage = value
         End Set
     End Property
@@ -76,10 +77,13 @@ Public MustInherit Class VerificationBase
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property Run() As Boolean
+    Property Run() As Boolean
         Get
             Return m_Run
         End Get
+        Set(ByVal value As Boolean)
+            m_Run = value
+        End Set
     End Property
 
     ''' <summary>
@@ -88,10 +92,13 @@ Public MustInherit Class VerificationBase
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    ReadOnly Property Result() As Boolean
+    Property Result() As Boolean
         Get
             Return m_Result
         End Get
+        Set(ByVal value As Boolean)
+            m_Result = value
+        End Set
     End Property
 
     ''' <summary>

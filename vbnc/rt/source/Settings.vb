@@ -25,38 +25,6 @@ Namespace My
     ' The SettingsLoaded event is raised after the setting values are loaded.
     ' The SettingsSaving event is raised before the setting values are saved.
     Partial Friend NotInheritable Class Settings
-        Shared Property IsFirstRun() As Boolean
-            Get
-                Return CBool(GetSetting("IsFirstRun", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("IsFirstRun", value)
-            End Set
-        End Property
-        Shared Property ContinuousTest() As Boolean
-            Get
-                Return CBool(GetSetting("ContinuousTest", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("ContinuousTest", value)
-            End Set
-        End Property
-        Shared Property HostedTest() As Boolean
-            Get
-                Return CBool(GetSetting("HostedTest", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("HostedTest", value)
-            End Set
-        End Property
-        Shared Property DontTestIfNothingHasChanged() As Boolean
-            Get
-                Return CBool(GetSetting("DontTestIfNothingHasChanged", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("DontTestIfNothingHasChanged", value)
-            End Set
-        End Property
         Shared Property ModifyRegistry() As String
             Get
                 Return GetSetting("ModifyRegistry", "N")
@@ -67,26 +35,26 @@ Namespace My
         End Property
         Shared Property txtVBCCompiler_Text() As String
             Get
-                Return GetSetting("txtVBCCompiler_Text", "")
+                Return GetSetting("txtVBCCompiler_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtVBCCompiler_Text", value)
+                SaveSetting("txtVBCCompiler_Text2", value)
             End Set
         End Property
         Shared Property txtVBNCCompiler_Text() As String
             Get
-                Return GetSetting("txtVBNCCompiler_Text", "")
+                Return GetSetting("txtVBNCCompiler_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtVBNCCompiler_Text", value)
+                SaveSetting("txtVBNCCompiler_Text2", value)
             End Set
         End Property
         Shared Property txtBasePath_Text() As String
             Get
-                Return GetSetting("txtBasePath_Text", "")
+                Return GetSetting("txtBasePath_Text2", "")
             End Get
             Set(ByVal value As String)
-                SaveSetting("txtBasePath_Text", value)
+                SaveSetting("txtBasePath_Text2", value)
             End Set
         End Property
         Shared Property TestsListView_colPath_Width() As Integer
@@ -137,12 +105,15 @@ Namespace My
                 SaveSetting("TestsListView_colDate_Width", value)
             End Set
         End Property
-        Shared Sub Upgrade()
+        Shared Property TestsListView_colKnownFailureReason_Width() As Integer
+            Get
+                Return CInt(GetSetting("TestsListView_colKnownFailureReason_Width", 80))
+            End Get
+            Set(ByVal value As Integer)
+                SaveSetting("TestsListView_colKnownFailureReason_Width", value)
+            End Set
+        End Property
 
-        End Sub
-        Shared Sub Save()
-
-        End Sub
         Shared Function GetSetting(ByVal Name As String, ByVal DefaultValue As Object) As String
             Return Microsoft.VisualBasic.GetSetting(System.Windows.Forms.Application.ProductName, "Settings", Name, CStr(DefaultValue))
         End Function

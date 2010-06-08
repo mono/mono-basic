@@ -20,6 +20,7 @@
 Public Class FileTabPage
     Inherits TabPage
 
+    Private m_Test As Test
     Private m_FileName As String
 
     ReadOnly Property FileName() As String
@@ -28,12 +29,12 @@ Public Class FileTabPage
         End Get
     End Property
 
-    Sub New(ByVal Filename As String)
+    Sub New(ByVal Test As Test, ByVal Filename As String)
         MyBase.New(IO.Path.GetFileName(Filename))
-        
+
         Me.InitializeComponent()
 
-        m_FileName = Filename
+        m_FileName = IO.Path.Combine(Test.FullWorkingDirectory, Filename)
         Try
             If IO.File.Exists(m_FileName) Then
                 txtFile.Text = Join(IO.File.ReadAllText(m_FileName).Split(New String() {vbCrLf, vbCr, vbLf}, StringSplitOptions.None), vbCrLf)

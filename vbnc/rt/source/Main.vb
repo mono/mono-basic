@@ -17,9 +17,6 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Option Explicit On
-Option Strict On
-
 Imports System
 Imports System.Diagnostics
 Imports System.io
@@ -27,9 +24,6 @@ Imports Microsoft.VisualBasic
 Imports System.Collections
 
 Module MainModule
-
-    Public CommandLine As New CommandLine
-
     Public frmMain As frmMain
 
 	''' <summary>
@@ -44,128 +38,22 @@ Module MainModule
 
             Process.GetCurrentProcess.PriorityClass = ProcessPriorityClass.BelowNormal
 
-            CommandLine.Parse(cmdArgs)
-            If CommandLine.Spawn Then Return 0
-
-            'Try to upgrade the settings
-            If My.Settings.IsFirstRun Then
-                My.Settings.Upgrade()
-                My.Settings.IsFirstRun = False
-                Debug.WriteLine("Settings have been upgraded.")
-            End If
-
             DisableErrorReporting()
 
-            frmMain = New frmMain
-            Using frmMain
-                If CommandLine.ExitOnSuccess Then
-                    frmMain.WindowState = FormWindowState.Maximized
-                    frmMain.WindowState = FormWindowState.Minimized
-                    frmMain.Visible = True
-                    frmMain.RunTests()
-                    While frmMain.TestExecutor.QueueCount > 0
-                        Application.DoEvents()
-                        Threading.Thread.Sleep(50)
-                    End While
-
-                    If frmMain.Tests.TestsFailed = 0 Then
-                        Return 0
-                    Else
-                        frmMain.Hide()
-                        frmMain.WindowState = FormWindowState.Maximized
-                        frmMain.Text = "FAILED " & frmMain.Text
-                    End If
+            For Each str As String In cmdArgs
+                If str = "/console" OrElse str = "-console" OrElse str = "--console" Then
+                    Return ConsoleRunner.Run(cmdArgs)
                 End If
-                If Not (frmMain.Disposing OrElse frmMain.IsDisposed) Then frmMain.ShowDialog()
-            End Using
+            Next
 
+            frmMain = New frmMain
+            Application.Run(frmMain)
         Catch ex As System.Exception
             MsgBox(ex.Message & vbNewLine & ex.GetType.ToString & vbNewLine & ex.StackTrace)
         Finally
             EnableErrorReporting()
         End Try
     End Function
-
-
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <param name="Filename"></param>
-    ''' <param name="newExt">Don't include a dot.</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function ChangeExtension(ByVal Filename As String, ByVal newExt As String) As String
-        Return IO.Path.Combine(IO.Path.GetDirectoryName(Filename), IO.Path.GetFileNameWithoutExtension(Filename)) & "." & newExt
-    End Function
-
-	Function ChangeOutputToVerified(ByVal Test As Test, ByVal Overwrite As Boolean, Optional ByVal Copy As Boolean = False) As Integer
-		Dim result As Integer
-		Try
-			Dim xmlfiles As String()
-			xmlfiles = Test.GetOutputFiles
-
-			For Each xmlfile As String In xmlfiles
-				Dim verified As String
-				verified = xmlfile.Replace(Test.OutputExtension, Test.VerifiedExtension)
-				If verified.Contains(".exceptions.") = False Then
-					If IO.File.Exists(verified) Then
-						If Overwrite Then
-							IO.File.Delete(verified)
-							If Copy Then
-								IO.File.Copy(xmlfile, verified)
-							Else
-								IO.File.Move(xmlfile, verified)
-							End If
-							result += 1
-						End If
-					Else
-						If Copy Then
-							IO.File.Copy(xmlfile, verified)
-						Else
-							IO.File.Move(xmlfile, verified)
-						End If
-						result += 1
-					End If
-				End If
-			Next
-		Catch ex As Exception
-			MsgBox("Error while changing output xml files to verified xml files: " & ex.Message)
-        End Try
-
-
-		Return result
-	End Function
-
-	Sub ChangeOutputToVerified(ByVal Directory As String, ByVal Overwrite As Boolean, ByVal Recursive As Boolean)
-		Try
-			Dim xmlfiles As String()
-			xmlfiles = IO.Directory.GetFiles(Directory, "*.*.output.xml")
-			For Each xmlfile As String In xmlfiles
-				Dim verified As String
-				verified = xmlfile.Replace(".output.xml", ".verified.xml")
-				If verified.Contains(".exceptions.") = False Then
-					If IO.File.Exists(verified) Then
-						If Overwrite Then
-							IO.File.Delete(verified)
-							IO.File.Move(xmlfile, verified)
-						End If
-					Else
-						IO.File.Move(xmlfile, verified)
-					End If
-				End If
-			Next
-			If Recursive Then
-				Dim dirs() As String
-				dirs = IO.Directory.GetDirectories(Directory)
-				For Each dir As String In dirs
-					ChangeOutputToVerified(dir, Overwrite, False)
-				Next
-			End If
-		Catch ex As Exception
-			MsgBox("Error while changing output xml files to verified xml files: " & ex.Message)
-		End Try
-	End Sub
-
 
     Sub ViewFiles(ByVal ParamArray Filenames As String())
         For Each file As String In Filenames
