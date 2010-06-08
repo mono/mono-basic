@@ -1,3 +1,7 @@
+2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* SelfTest/SelfCompile.general.response: we import Mono.Cecil now.
+
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* VBRunTime/Microsoft.VisualBasic.response: Clean up a bit.
