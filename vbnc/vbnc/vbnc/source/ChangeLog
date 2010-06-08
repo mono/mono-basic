@@ -1,3 +1,7 @@
+2010-05-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* General/Compiler.vb: Emit debug info when requested.
+
 2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* vbnc.vbproj:

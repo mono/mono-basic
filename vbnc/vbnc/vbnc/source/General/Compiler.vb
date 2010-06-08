@@ -490,13 +490,9 @@ Public Class Compiler
                 GoTo ShowErrors
             End If
 
-            If EmittingDebugInfo Then
-                Dim writerParameters As New WriterParameters()
-                Console.WriteLine("TODO: 'writerParameters.WriteSymbols = True")
-                AssemblyBuilderCecil.Write(m_OutFilename, writerParameters)
-            Else
-                AssemblyBuilderCecil.Write(m_OutFilename)
-            End If
+            Dim writerParameters As New WriterParameters()
+            writerParameters.WriteSymbols = EmittingDebugInfo
+            AssemblyBuilderCecil.Write(m_OutFilename, writerParameters)
 
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename))
 
