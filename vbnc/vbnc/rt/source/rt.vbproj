@@ -81,6 +81,7 @@
     <Compile Include="CecilCompare.vb" />
     <Compile Include="CecilComparer.vb" />
     <Compile Include="CompilerHelper.vb" />
+    <Compile Include="ConsoleRunner.vb" />
     <Compile Include="EnhancedProgressBar.Designer.vb">
       <DependentUpon>EnhancedProgressBar.vb</DependentUpon>
     </Compile>
@@ -152,9 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Project\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Sample.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

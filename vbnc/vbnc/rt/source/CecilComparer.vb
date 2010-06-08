@@ -168,7 +168,7 @@ Public Class CecilComparer
                     fld2 = Attribute2.Fields(i)
                 End If
             Next
-            If fld2 Is Nothing Then Return False
+            If Not fld2.HasValue Then Return False
 
             Dim type1 As TypeReference = fld.Argument.Type
             Dim value1 As Object = fld.Argument.Value
@@ -187,7 +187,7 @@ Public Class CecilComparer
                     fld1 = Attribute1.Fields(i)
                 End If
             Next
-            If fld1 Is Nothing Then Return False
+            If Not fld1.HasValue Then Return False
 
             Dim type1 As TypeReference = fld.Argument.Type
             Dim value1 As Object = fld.Argument.Value

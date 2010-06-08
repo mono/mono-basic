@@ -25,14 +25,6 @@ Namespace My
     ' The SettingsLoaded event is raised after the setting values are loaded.
     ' The SettingsSaving event is raised before the setting values are saved.
     Partial Friend NotInheritable Class Settings
-        Shared Property IsFirstRun() As Boolean
-            Get
-                Return CBool(GetSetting("IsFirstRun", False))
-            End Get
-            Set(ByVal value As Boolean)
-                SaveSetting("IsFirstRun", value)
-            End Set
-        End Property
         Shared Property ModifyRegistry() As String
             Get
                 Return GetSetting("ModifyRegistry", "N")
@@ -121,12 +113,7 @@ Namespace My
                 SaveSetting("TestsListView_colKnownFailureReason_Width", value)
             End Set
         End Property
-        Shared Sub Upgrade()
 
-        End Sub
-        Shared Sub Save()
-
-        End Sub
         Shared Function GetSetting(ByVal Name As String, ByVal DefaultValue As Object) As String
             Return Microsoft.VisualBasic.GetSetting(System.Windows.Forms.Application.ProductName, "Settings", Name, CStr(DefaultValue))
         End Function

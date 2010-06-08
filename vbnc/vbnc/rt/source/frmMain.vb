@@ -489,7 +489,6 @@ Class frmMain
             My.Settings.txtVBCCompiler_Text = cmbCompiler.Text
             My.Settings.txtVBNCCompiler_Text = cmbVBCCompiler.Text
             My.Settings.txtBasePath_Text = cmbBasepath.Text
-            My.Settings.Save()
 
             m_Tests.Save()
         Catch ex As Exception

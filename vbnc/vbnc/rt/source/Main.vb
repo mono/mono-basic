@@ -38,14 +38,13 @@ Module MainModule
 
             Process.GetCurrentProcess.PriorityClass = ProcessPriorityClass.BelowNormal
 
-            'Try to upgrade the settings
-            If My.Settings.IsFirstRun Then
-                My.Settings.Upgrade()
-                My.Settings.IsFirstRun = False
-                Debug.WriteLine("Settings have been upgraded.")
-            End If
-
             DisableErrorReporting()
+
+            For Each str As String In cmdArgs
+                If str = "/console" OrElse str = "-console" OrElse str = "--console" Then
+                    Return ConsoleRunner.Run(cmdArgs)
+                End If
+            Next
 
             frmMain = New frmMain
             Application.Run(frmMain)

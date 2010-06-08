@@ -767,10 +767,6 @@ Public Class Test
         End Get
     End Property
 
-    Function GetExecutor() As String
-        Return IO.Path.GetFullPath("..\..\rt-execute\rt-execute.exe".Replace("\", IO.Path.DirectorySeparatorChar))
-    End Function
-
     Property Arguments() As String
         Get
             Return m_Arguments
