@@ -209,8 +209,8 @@ Public Class Test
         m_VBCArguments = GetNodeValue(xml.SelectSingleNode("vbcarguments"))
         m_TestArguments = GetNodeValue(xml.SelectSingleNode("testarguments"))
         m_KnownFailure = GetAttributeValue(xml.Attributes("knownfailure"))
-        m_OutputVBCAssembly = GetAttributeValue(xml.Attributes("outputvbcassembly"))
-        m_OutputAssembly = GetAttributeValue(xml.Attributes("outputassembly"))
+        m_OutputVBCAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputvbcassembly")))
+        m_OutputAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputassembly")))
 
         m_ExpectedErrorCode = CInt(GetAttributeValue(xml.Attributes("expectederrorcode")))
         m_ExpectedExitCode = CInt(GetAttributeValue(xml.Attributes("expectedexitcode")))
@@ -267,6 +267,26 @@ Public Class Test
         Next
     End Sub
 
+    Private Function GetFullPath(ByVal path As String) As String
+        If String.IsNullOrEmpty(path) Then Return path
+        If IO.Path.IsPathRooted(path) Then Return path
+        Return IO.Path.Combine(IO.Path.GetDirectoryName(Parent.Filename), path)
+    End Function
+
+    Private Function GetRelativePath(ByVal path As String) As String
+        Dim dir As String = IO.Path.GetDirectoryName(Parent.Filename)
+        Dim result As String
+
+        If Not path.StartsWith(dir) Then Return path
+
+        result = path.Substring(dir.Length)
+        If result.StartsWith(IO.Path.DirectorySeparatorChar) Then
+            result = result.Substring(1)
+        End If
+
+        Return result
+    End Function
+
     Public Sub Save(ByVal xml As Xml.XmlWriter, ByVal results As Boolean)
         xml.WriteStartElement("test")
         xml.WriteAttributeString("id", m_ID)
@@ -278,10 +298,10 @@ Public Class Test
                 xml.WriteAttributeString("knownfailure", m_KnownFailure)
             End If
             If Not String.IsNullOrEmpty(m_OutputVBCAssembly) Then
-                xml.WriteAttributeString("outputvbcassembly", m_OutputVBCAssembly)
+                xml.WriteAttributeString("outputvbcassembly", GetRelativePath(m_OutputVBCAssembly))
             End If
             If Not String.IsNullOrEmpty(m_OutputAssembly) Then
-                xml.WriteAttributeString("outputassembly", m_OutputAssembly)
+                xml.WriteAttributeString("outputassembly", GetRelativePath(m_OutputAssembly))
             End If
 
             If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())

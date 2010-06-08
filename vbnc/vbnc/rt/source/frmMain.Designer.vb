@@ -112,6 +112,7 @@ Partial Class frmMain
         Me.tblGreenTests = New System.Windows.Forms.ToolStripStatusLabel
         Me.tblRedTests = New System.Windows.Forms.ToolStripStatusLabel
         Me.tblTestsInQueue = New System.Windows.Forms.ToolStripStatusLabel
+        Me.mnuIldasmDump = New System.Windows.Forms.ToolStripMenuItem
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.cmnuTree.SuspendLayout()
@@ -213,7 +214,7 @@ Partial Class frmMain
         '
         Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.EditThisTestToolStripMenuItem, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem})
         Me.cmnuTest.Name = "cmnuTest"
-        Me.cmnuTest.Size = New System.Drawing.Size(379, 242)
+        Me.cmnuTest.Size = New System.Drawing.Size(379, 264)
         '
         'cmnuRunTest
         '
@@ -257,7 +258,7 @@ Partial Class frmMain
         '
         'mnuIldasm
         '
-        Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth})
+        Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth, Me.mnuIldasmDump})
         Me.mnuIldasm.Name = "mnuIldasm"
         Me.mnuIldasm.Size = New System.Drawing.Size(378, 22)
         Me.mnuIldasm.Text = "Ildasm"
@@ -659,6 +660,12 @@ Partial Class frmMain
         Me.tblTestsInQueue.Size = New System.Drawing.Size(111, 17)
         Me.tblTestsInQueue.Text = "ToolStripStatusLabel1"
         '
+        'mnuIldasmDump
+        '
+        Me.mnuIldasmDump.Name = "mnuIldasmDump"
+        Me.mnuIldasmDump.Size = New System.Drawing.Size(161, 22)
+        Me.mnuIldasmDump.Text = "Dump"
+        '
         'frmMain
         '
         Me.ClientSize = New System.Drawing.Size(1066, 667)
@@ -759,4 +766,5 @@ Partial Class frmMain
     Friend WithEvents tblTestsInQueue As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents gridTestProperties As System.Windows.Forms.PropertyGrid
     Friend WithEvents txtFilter As System.Windows.Forms.TextBox
+    Friend WithEvents mnuIldasmDump As System.Windows.Forms.ToolStripMenuItem
 End Class

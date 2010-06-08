@@ -1014,6 +1014,57 @@ Class frmMain
         End Try
     End Sub
 
+    Private Sub mnuIldasmDump_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuIldasmDump.Click
+        Try
+            Dim test As Test = GetSelectedTest()
+            If test Is Nothing Then
+                MsgBox("Select a test")
+                Return
+            End If
+
+            Dim vbc As String = Path.GetTempFileName()
+            Dim vbnc As String = Path.GetTempFileName()
+
+            File.Delete(vbc)
+            File.Delete(vbnc)
+
+            vbc = Path.Combine(Path.GetDirectoryName(vbc), "vbc_" & Path.GetFileName(vbc))
+            vbnc = Path.Combine(Path.GetDirectoryName(vbnc), "vbnc_" & Path.GetFileName(vbnc))
+
+            IO.File.Copy(test.OutputVBCAssembly, vbc, True)
+            IO.File.Copy(test.OutputAssembly, vbnc, True)
+
+            Process.Start(GetIldasmPath, String.Format("""{0}"" ""/out={1}"" /tokens /metadata=raw /metadata=heaps /metadata=validate /metadata=mdheader /metadata=schema", test.OutputAssembly, vbnc)).WaitForExit()
+            Process.Start(GetIldasmPath, String.Format("""{0}"" ""/out={1}"" /tokens /metadata=raw /metadata=heaps /metadata=validate /metadata=mdheader /metadata=schema", test.OutputVBCAssembly, vbc)).WaitForExit()
+
+            Process.Start("notepad", String.Format("""{0}""", vbnc))
+            Process.Start("notepad", String.Format("""{0}""", vbc))
+
+            Threading.ThreadPool.QueueUserWorkItem(AddressOf delete_file, vbc)
+            Threading.ThreadPool.QueueUserWorkItem(AddressOf delete_file, vbnc)
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub delete_file(ByVal arg As Object)
+        Try
+            Dim name As String = DirectCast(arg, String)
+            'wait for notepad to start
+            Threading.Thread.Sleep(2000)
+            While File.Exists(name)
+                Threading.Thread.Sleep(1000)
+                Try
+                    File.Delete(name)
+                Catch ex As Exception
+                    'Ignore
+                End Try
+            End While
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
     Private Sub cmdSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdSave.Click
         Try
             m_Tests.Save()
@@ -1081,4 +1132,5 @@ Class frmMain
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
     End Sub
+
 End Class

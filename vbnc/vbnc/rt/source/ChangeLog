@@ -1,3 +1,12 @@
+2010-04-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Test.vb: For output[vbc]assembly only save the relative path.
+
+	* frmMain.vb:
+	* frmMain.Designer.vb: Add support for dumping il to a text file using ildasm.
+
+	* CecilComparer.vb: Port to cecil/light.
+
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ExternalProcessExecutor.vb: If the working directory does not exist, create it.
@@ -206,4 +215,3 @@
 	- Tests can now optionally be loaded recursively or not.
 	* ExternalProcessExecutor.vb:
 	- Use "mono" as executable when running on Mono.
-

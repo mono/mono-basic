@@ -19,6 +19,7 @@
 
 Imports System.Collections.Generic
 Imports Mono.Cecil
+Imports Mono.Collections.Generic
 
 Public Class CecilComparer
     Private m_File1 As String
@@ -82,9 +83,9 @@ Public Class CecilComparer
     End Property
 
     Function Compare() As Boolean
-        m_Assembly1 = AssemblyFactory.GetAssembly(m_File1)
+        m_Assembly1 = AssemblyDefinition.ReadAssembly(m_File1)
         If m_Assembly1 Is Nothing Then Throw New Exception(String.Format("Could not load assembly '{0}'", m_File1))
-        m_Assembly2 = AssemblyFactory.GetAssembly(m_File2)
+        m_Assembly2 = AssemblyDefinition.ReadAssembly(m_File2)
         If m_Assembly2 Is Nothing Then Throw New Exception(String.Format("Coult not load assembly '{0}'", m_File2))
 
         CompareAssemblies()
@@ -127,13 +128,13 @@ Public Class CecilComparer
             Return False
         End If
 
-        If Attribute1.ConstructorParameters.Count <> Attribute2.ConstructorParameters.Count Then
+        If Attribute1.ConstructorArguments.Count <> Attribute2.ConstructorArguments.Count Then
             Return False
         End If
 
-        For i As Integer = 0 To Attribute1.ConstructorParameters.Count - 1
-            Dim v1 As Object = Attribute1.ConstructorParameters(i)
-            Dim v2 As Object = Attribute2.ConstructorParameters(i)
+        For i As Integer = 0 To Attribute1.ConstructorArguments.Count - 1
+            Dim v1 As Object = Attribute1.ConstructorArguments(i).Value
+            Dim v2 As Object = Attribute2.ConstructorArguments(i).Value
             If v1 Is Nothing Xor v2 Is Nothing Then
                 Return False
             ElseIf v1 Is Nothing AndAlso v2 Is Nothing Then
@@ -141,8 +142,14 @@ Public Class CecilComparer
             ElseIf Not v1.GetType() Is v2.GetType Then
                 Return False
             End If
-            If Microsoft.VisualBasic.CompilerServices.Operators.CompareObject(v1, v2, False) <> 0 Then
-                Return False
+            If TypeOf v1 Is TypeReference Then
+                If DirectCast(v1, TypeReference).FullName <> DirectCast(v2, TypeReference).FullName Then
+                    Return False
+                End If
+            Else
+                If Microsoft.VisualBasic.CompilerServices.Operators.CompareObject(v1, v2, False) <> 0 Then
+                    Return False
+                End If
             End If
         Next
 
@@ -154,30 +161,38 @@ Public Class CecilComparer
             Return False
         End If
 
-        For Each key As String In Attribute1.Fields.Keys
-            If Not Attribute2.Fields.Contains(key) Then
-                Return False
-            End If
+        For Each fld As CustomAttributeNamedArgument In Attribute1.Fields
+            Dim fld2 As Nullable(Of CustomAttributeNamedArgument) = Nothing
+            For i As Integer = 0 To Attribute2.Fields.Count - 1
+                If String.Equals(Attribute2.Fields(i).Name, fld.Name, StringComparison.OrdinalIgnoreCase) Then
+                    fld2 = Attribute2.Fields(i)
+                End If
+            Next
+            If fld2 Is Nothing Then Return False
 
-            Dim type1 As TypeReference = Attribute1.GetFieldType(key)
-            Dim value1 As Object = Attribute1.Fields(key)
-            Dim type2 As TypeReference = Attribute2.GetFieldType(key)
-            Dim value2 As Object = Attribute2.Fields(key)
+            Dim type1 As TypeReference = fld.Argument.Type
+            Dim value1 As Object = fld.Argument.Value
+            Dim type2 As TypeReference = fld2.Value.Argument.Type
+            Dim value2 As Object = fld2.Value.Argument.Value
 
             If AreSameTypes(type1, type2) = False Then Return False
             If Microsoft.VisualBasic.CompilerServices.Operators.CompareObject(value1, value2, False) <> 0 Then Return False
         Next
 
 
-        For Each key As String In Attribute1.Properties.Keys
-            If Not Attribute2.Properties.Contains(key) Then
-                Return False
-            End If
+        For Each fld As CustomAttributeNamedArgument In Attribute2.Fields
+            Dim fld1 As Nullable(Of CustomAttributeNamedArgument) = Nothing
+            For i As Integer = 0 To Attribute1.Fields.Count - 1
+                If String.Equals(Attribute1.Fields(i).Name, fld.Name, StringComparison.OrdinalIgnoreCase) Then
+                    fld1 = Attribute1.Fields(i)
+                End If
+            Next
+            If fld1 Is Nothing Then Return False
 
-            Dim type1 As TypeReference = Attribute1.GetPropertyType(key)
-            Dim value1 As Object = Attribute1.Properties(key)
-            Dim type2 As TypeReference = Attribute2.GetPropertyType(key)
-            Dim value2 As Object = Attribute2.Properties(key)
+            Dim type1 As TypeReference = fld.Argument.Type
+            Dim value1 As Object = fld.Argument.Value
+            Dim type2 As TypeReference = fld1.Value.Argument.Type
+            Dim value2 As Object = fld1.Value.Argument.Value
 
             If AreSameTypes(type1, type2) = False Then Return False
             If Microsoft.VisualBasic.CompilerServices.Operators.CompareObject(value1, value2, False) <> 0 Then Return False
@@ -186,7 +201,7 @@ Public Class CecilComparer
         Return result
     End Function
 
-    Private Sub CompareAttributes(ByVal M1 As MemberReference, ByVal M2 As MemberReference, ByVal A1 As CustomAttributeCollection, ByVal A2 As CustomAttributeCollection)
+    Private Sub CompareAttributes(ByVal M1 As MemberReference, ByVal M2 As MemberReference, ByVal A1 As Collection(Of CustomAttribute), ByVal A2 As Collection(Of CustomAttribute))
         Dim lst1 As Generic.List(Of CustomAttribute) = CloneCollection(Of CustomAttribute)(A1)
         Dim lst2 As Generic.List(Of CustomAttribute) = CloneCollection(Of CustomAttribute)(A2)
 
@@ -250,7 +265,7 @@ Public Class CecilComparer
         CompareAttributes(Member1, Member2, GetAttributes(Member1), GetAttributes(Member2))
     End Sub
 
-    Private Function GetAttributes(ByVal Member As MemberReference) As CustomAttributeCollection
+    Private Function GetAttributes(ByVal Member As MemberReference) As Collection(Of CustomAttribute)
         If TypeOf Member Is TypeDefinition Then
             Return DirectCast(Member, TypeDefinition).CustomAttributes
         ElseIf TypeOf Member Is MethodDefinition Then
@@ -268,10 +283,6 @@ Public Class CecilComparer
         End If
     End Function
 
-    Private Sub CompareTypes(ByVal Types1 As NestedTypeCollection, ByVal Types2 As NestedTypeCollection)
-        CompareTypes(CloneCollection(Of TypeDefinition)(Types1), CloneCollection(Of TypeDefinition)(Types2))
-    End Sub
-
     Private Function CloneCollection(Of T)(ByVal e As IEnumerable) As Generic.List(Of T)
         Dim result As New Generic.List(Of T)
         For Each obj As T In e
@@ -280,7 +291,7 @@ Public Class CecilComparer
         Return result
     End Function
 
-    Private Sub CompareTypes(ByVal Types1 As TypeDefinitionCollection, ByVal Types2 As TypeDefinitionCollection)
+    Private Sub CompareTypes(ByVal Types1 As Collection(Of TypeDefinition), ByVal Types2 As Collection(Of TypeDefinition))
         CompareTypes(CloneCollection(Of TypeDefinition)(Types1), CloneCollection(Of TypeDefinition)(Types2))
     End Sub
 
@@ -338,7 +349,7 @@ Public Class CecilComparer
             End If
 
             If Info.GenericParameters.Count > 0 Then
-                Dim args As GenericParameterCollection = Info.GenericParameters
+                Dim args As Collection(Of GenericParameter) = Info.GenericParameters
                 If args.Count > 0 Then
                     result &= GenericParametersAsString(Info.GenericParameters)
                 Else
@@ -392,8 +403,6 @@ Public Class CecilComparer
 
         CompareFields(Type1.Fields, Type2.Fields)
 
-        CompareConstructors(Type1.Constructors, Type2.Constructors)
-
         CompareEvents(Type1.Events, Type2.Events)
 
         CompareProperties(Type1.Properties, Type2.Properties)
@@ -403,7 +412,7 @@ Public Class CecilComparer
         CompareGenericParameters(Type1.GenericParameters, Type2.GenericParameters)
     End Sub
 
-    Private Sub CompareGenericParameters(ByVal ListA As GenericParameterCollection, ByVal ListB As GenericParameterCollection)
+    Private Sub CompareGenericParameters(ByVal ListA As Collection(Of GenericParameter), ByVal ListB As Collection(Of GenericParameter))
         CompareList(Of GenericParameter)(CloneCollection(Of GenericParameter)(ListA), CloneCollection(Of GenericParameter)(ListB), New ComparerMethod(Of GenericParameter)(AddressOf CompareGenericParameters), New EqualChecker(Of GenericParameter)(AddressOf AreGenericParametersSame), "GenericParameter", New AsString(Of GenericParameter)(AddressOf GenericParameterAsString))
     End Sub
 
@@ -484,10 +493,10 @@ Public Class CecilComparer
         Return result
     End Function
 
-    Private Function GenericParametersAsString(ByVal Params As GenericParameterCollection) As String
+    Private Function GenericParametersAsString(ByVal Params As Collection(Of GenericParameter)) As String
         Dim result As String = ""
-        Dim args As GenericParameterCollection
-        Dim constraints As ConstraintCollection
+        Dim args As Collection(Of GenericParameter)
+        Dim constraints As Collection(Of TypeReference)
         Dim tmp As New Generic.List(Of String)
         Dim strTmp As String
 
@@ -554,7 +563,7 @@ Public Class CecilComparer
             SaveMessage("'(%a1%).{0}' has declaring type '{1}', while '(%a2%).{2}' has declaring type '{3}'", Method1, Method1.DeclaringType, Method2, Method2.DeclaringType)
         End If
 
-        If AreSameTypes(Method1.ReturnType.ReturnType, Method2.ReturnType.ReturnType) = False Then
+        If AreSameTypes(Method1.ReturnType, Method2.ReturnType) = False Then
             SaveMessage("'(%a1%).{0}' has return type '{1}', while '(%a2%).{2}' has return type '{3}'", Method1, Method1.ReturnType, Method2, Method2.ReturnType)
         End If
 
@@ -562,7 +571,7 @@ Public Class CecilComparer
 
     End Sub
 
-    Private Sub CompareMethods(ByVal Methods1 As MethodDefinitionCollection, ByVal Methods2 As MethodDefinitionCollection)
+    Private Sub CompareMethods(ByVal Methods1 As Collection(Of MethodDefinition), ByVal Methods2 As Collection(Of MethodDefinition))
         CompareList(Of MethodDefinition)(CloneCollection(Of MethodDefinition)(Methods1), CloneCollection(Of MethodDefinition)(Methods2), New ComparerMethod(Of MethodDefinition)(AddressOf CompareMethod), New EqualChecker(Of MethodDefinition)(AddressOf AreSameMethod), "Method", New AsString(Of MethodDefinition)(AddressOf MethodAsString))
     End Sub
 
@@ -608,7 +617,7 @@ Public Class CecilComparer
 
     End Sub
 
-    Private Sub CompareFields(ByVal Fields1 As FieldDefinitionCollection, ByVal Fields2 As FieldDefinitionCollection)
+    Private Sub CompareFields(ByVal Fields1 As Collection(Of FieldDefinition), ByVal Fields2 As Collection(Of FieldDefinition))
         CompareList(Of FieldDefinition)(CloneCollection(Of FieldDefinition)(Fields1), CloneCollection(Of FieldDefinition)(Fields2), New ComparerMethod(Of FieldDefinition)(AddressOf CompareField), New EqualChecker(Of FieldDefinition)(AddressOf AreSameField), "Field", New AsString(Of FieldDefinition)(AddressOf FieldAsString))
     End Sub
 
@@ -623,7 +632,7 @@ Public Class CecilComparer
         Return String.CompareOrdinal(CtorAsString(Type1), CtorAsString(Type2)) = 0
     End Function
 
-    Private Sub CompareConstructors(ByVal Ctors1 As ConstructorCollection, ByVal Ctors2 As ConstructorCollection)
+    Private Sub CompareConstructors(ByVal Ctors1 As Collection(Of MethodDefinition), ByVal Ctors2 As Collection(Of MethodDefinition))
         CompareList(Of MethodDefinition)(CloneCollection(Of MethodDefinition)(Ctors1), CloneCollection(Of MethodDefinition)(Ctors2), New ComparerMethod(Of MethodDefinition)(AddressOf CompareMethod), New EqualChecker(Of MethodDefinition)(AddressOf AreSameCtor), "Constructor", New AsString(Of MethodDefinition)(AddressOf CtorAsString))
     End Sub
 
@@ -637,38 +646,49 @@ Public Class CecilComparer
     Public Shared Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
         Dim asm As AssemblyDefinition = TryCast(_assemblies(name.Name), AssemblyDefinition)
         If asm Is Nothing Then
-            Dim base As New resolver
+            Dim base As New DefaultAssemblyResolver
             asm = base.Resolve(name)
-            asm.Resolver = base
             _assemblies(name.Name) = asm
         End If
 
         Return asm
     End Function
+
     Public Shared Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
         If type Is Nothing Then Return Nothing
         Dim tD As TypeDefinition = TryCast(type, TypeDefinition)
         If tD IsNot Nothing Then Return tD
-        type = type.GetOriginalType
+        type = type.GetElementType
         If TypeOf type Is TypeDefinition Then
             Return DirectCast(type, TypeDefinition)
         End If
         Dim reference As AssemblyNameReference = TryCast(type.Scope, AssemblyNameReference)
         If reference IsNot Nothing Then
             Dim assembly As AssemblyDefinition = FindDefinition(reference)
-            Return assembly.MainModule.Types(type.FullName)
+            Return assembly.MainModule.GetType(type.FullName)
         End If
         Dim moduledef As ModuleDefinition = TryCast(type.Scope, ModuleDefinition)
         If moduledef IsNot Nothing Then
-            Return moduledef.Types(type.FullName)
+            Return moduledef.GetType(type.FullName)
         End If
         Throw New NotImplementedException
     End Function
 
     Private Function EventAsString(ByVal Info As EventDefinition) As String
         Dim tD As TypeDefinition
-        tD = FindDefinition(Info.EventType).Module.Types(Info.EventType.FullName)
-        Return Info.Name & ParametersToString(tD.Methods.GetMethod("Invoke")(0).Parameters)
+        tD = FindDefinition(Info.EventType).Module.GetType(Info.EventType.FullName)
+        Return Info.Name & ParametersToString(FindMethod(tD.Methods, "Invoke").Parameters)
+    End Function
+
+    Private Function FindMethod(ByVal methods As Collection(Of MethodDefinition), ByVal name As String) As MethodDefinition
+        Dim result As MethodDefinition = Nothing
+        For i As Integer = 0 To methods.Count - 1
+            If String.Equals(methods(i).Name, name, StringComparison.OrdinalIgnoreCase) Then
+                If result IsNot Nothing Then Throw New Exception(String.Format("CecilComparer: Found more than one methods with the name '{0}'", name))
+                result = methods(i)
+            End If
+        Next
+        Return result
     End Function
 
     Private Function AreSameEvent(ByVal Type1 As EventDefinition, ByVal Type2 As EventDefinition) As Boolean
@@ -720,7 +740,7 @@ Public Class CecilComparer
         End If
     End Sub
 
-    Private Sub CompareEvents(ByVal Events1 As EventDefinitionCollection, ByVal Events2 As EventDefinitionCollection)
+    Private Sub CompareEvents(ByVal Events1 As Collection(Of EventDefinition), ByVal Events2 As Collection(Of EventDefinition))
         CompareList(Of EventDefinition)(CloneCollection(Of EventDefinition)(Events1), CloneCollection(Of EventDefinition)(Events2), New ComparerMethod(Of EventDefinition)(AddressOf CompareEvent), New EqualChecker(Of EventDefinition)(AddressOf AreSameEvent), "Event", New AsString(Of EventDefinition)(AddressOf EventAsString))
     End Sub
 
@@ -754,7 +774,7 @@ Public Class CecilComparer
         CompareMethod(Prop1.SetMethod, Prop2.SetMethod)
     End Sub
 
-    Private Sub CompareProperties(ByVal Props1 As PropertyDefinitionCollection, ByVal Props2 As PropertyDefinitionCollection)
+    Private Sub CompareProperties(ByVal Props1 As Collection(Of PropertyDefinition), ByVal Props2 As Collection(Of PropertyDefinition))
         CompareList(Of PropertyDefinition)(CloneCollection(Of PropertyDefinition)(Props1), CloneCollection(Of PropertyDefinition)(Props2), New ComparerMethod(Of PropertyDefinition)(AddressOf CompareProperty), New EqualChecker(Of PropertyDefinition)(AddressOf AreSameProperty), "Property", New AsString(Of PropertyDefinition)(AddressOf PropertyAsString))
     End Sub
 
@@ -797,7 +817,7 @@ Public Class CecilComparer
     Delegate Function EqualChecker(Of T)(ByVal V1 As T, ByVal v2 As T) As Boolean
     Delegate Function AsString(Of T)(ByVal V As T) As String
 
-    Private Function ParametersToString(ByVal Parameters As ParameterDefinitionCollection) As String
+    Private Function ParametersToString(ByVal Parameters As Collection(Of ParameterDefinition)) As String
         Dim result As New System.Text.StringBuilder
 
         result.Append("(")
