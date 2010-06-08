@@ -1,3 +1,8 @@
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* rt-console:
+	* rt-execute: Deleted, no longer used.
+
 2007-02-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Added: msg-generator, used to generate the compiler messages and the enumeration for the compiler from an xml file.
