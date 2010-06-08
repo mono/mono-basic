@@ -1,5 +1,9 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Removed some known failures and other misc fixups.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml:
 	* CompileTime/DebugInfo1.vb: New test.
 

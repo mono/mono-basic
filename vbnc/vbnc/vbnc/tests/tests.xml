@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <rt>
 	<test id="1" name="ArrayType1" category="1Declarations" priority="10" target="library">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
@@ -545,7 +545,6 @@
 		<file>1Declarations\WithEvents2.vb</file>
 	</test>
 	<test id="137" name="30099-bug-80999" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30099" target="exe">
-		<arguments />
 		<file>Bugs\30099-bug-80999.vb</file>
 	</test>
 	<test id="138" name="30145-bug-328101" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30145" target="library">
@@ -553,7 +552,6 @@
 		<file>Bugs\30145-bug-328101.vb</file>
 	</test>
 	<test id="139" name="30180-bug-325340" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30180" target="exe">
-		<arguments />
 		<file>Bugs\30180-bug-325340.vb</file>
 	</test>
 	<test id="140" name="30420-bug-74955" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30420" target="exe">
@@ -565,11 +563,9 @@
 		<file>Bugs\30420-bug-74955-2.vb</file>
 	</test>
 	<test id="142" name="30451-bug-332869" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30451" target="exe">
-		<arguments />
 		<file>Bugs\30451-bug-332869.vb</file>
 	</test>
 	<test id="143" name="30456-bug-456326" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="30456" target="exe">
-		<arguments />
 		<file>Bugs\30456-bug-456326.vb</file>
 	</test>
 	<test id="144" name="31027-bug-328101" category="Bugs" priority="20" expectedexitcode="1" expectederrorcode="31027" target="library">
@@ -577,11 +573,9 @@
 		<file>Bugs\31027-bug-328101.vb</file>
 	</test>
 	<test id="145" name="aspnet1" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\aspnet1.vb</file>
 	</test>
 	<test id="146" name="aspnet2" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\aspnet2.vb</file>
 	</test>
 	<test id="147" name="aspnet3" category="Bugs" priority="20" target="library">
@@ -589,11 +583,9 @@
 		<file>Bugs\aspnet3.vb</file>
 	</test>
 	<test id="148" name="bug-320964" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-320964.vb</file>
 	</test>
 	<test id="149" name="bug-325331" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-325331.vb</file>
 	</test>
 	<test id="150" name="bug-325332" category="Bugs" priority="20" target="library">
@@ -601,11 +593,9 @@
 		<file>Bugs\bug-325332.vb</file>
 	</test>
 	<test id="151" name="bug-325339" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-325339.vb</file>
 	</test>
 	<test id="152" name="bug-325346" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-325346.vb</file>
 	</test>
 	<test id="153" name="bug-325976" category="Bugs" priority="20" target="library">
@@ -617,11 +607,9 @@
 		<file>Bugs\bug-325976-2.vb</file>
 	</test>
 	<test id="155" name="bug-327596" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-327596.vb</file>
 	</test>
 	<test id="156" name="bug-332868" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-332868.vb</file>
 	</test>
 	<test id="157" name="bug-333403" category="Bugs" priority="20" target="winexe">
@@ -629,19 +617,15 @@
 		<file>Bugs\bug-333403.vb</file>
 	</test>
 	<test id="158" name="bug-333962" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-333962.vb</file>
 	</test>
 	<test id="159" name="bug-359234-ProtectedDefaultBaseCtor" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-359234-ProtectedDefaultBaseCtor.vb</file>
 	</test>
 	<test id="160" name="bug-392456" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-392456.vb</file>
 	</test>
 	<test id="161" name="bug-428340" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-428340.vb</file>
 	</test>
 	<test id="162" name="bug-428340-2" category="Bugs" priority="20" target="exe">
@@ -649,23 +633,18 @@
 		<file>Bugs\bug-428340-2.vb</file>
 	</test>
 	<test id="163" name="bug-438683" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-438683.vb</file>
 	</test>
 	<test id="164" name="bug-444120" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-444120.vb</file>
 	</test>
 	<test id="165" name="bug-444811" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-444811.vb</file>
 	</test>
 	<test id="166" name="bug-444993" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-444993.vb</file>
 	</test>
 	<test id="167" name="bug-445479" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-445479.vb</file>
 	</test>
 	<test id="168" name="bug-74955" category="Bugs" priority="20" target="winexe">
@@ -673,14 +652,13 @@
 		<file>Bugs\bug-74955.vb</file>
 	</test>
 	<test id="169" name="bug-80750" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-80750.vb</file>
 	</test>
 	<test id="170" name="bug-80752" category="Bugs" priority="20" target="library">
 		<arguments>-r:System.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Drawing.Design.dll,System.Xml.dll,System.Design.dll,System.Data.dll -imports:System,System.Drawing,Microsoft.VisualBasic,System.Data</arguments>
 		<file>Bugs\bug-80752.vb</file>
 	</test>
-	<test id="171" name="bug-80833" category="Bugs" priority="20" knownfailure="todo" target="library">
+	<test id="171" name="bug-80833" category="Bugs" priority="20" target="library">
 		<arguments>-r:System.Windows.Forms.dll,System.dll,System.Drawing.dll -imports:System.Windows.Forms,System.Drawing,Microsoft.VisualBasic</arguments>
 		<file>Bugs\bug-80833.vb</file>
 	</test>
@@ -688,23 +666,18 @@
 		<arguments>@bug-80967\bug-80967.rsp</arguments>
 	</test>
 	<test id="173" name="bug-80968" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-80968.vb</file>
 	</test>
 	<test id="174" name="bug-80989" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-80989.vb</file>
 	</test>
 	<test id="175" name="bug-80990" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-80990.vb</file>
 	</test>
 	<test id="176" name="bug-80995" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-80995.vb</file>
 	</test>
 	<test id="177" name="bug-81009" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-81009.vb</file>
 	</test>
 	<test id="178" name="bug-81016" category="Bugs" priority="20" target="winexe">
@@ -716,11 +689,9 @@
 		<file>Bugs\bug-81055.vb</file>
 	</test>
 	<test id="180" name="bug-81059" category="Bugs" priority="20" target="library">
-		<arguments />
 		<file>Bugs\bug-81059.vb</file>
 	</test>
 	<test id="181" name="bug-81119" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-81119.vb</file>
 	</test>
 	<test id="182" name="bug-81162" category="Bugs" priority="20" target="library">
@@ -728,7 +699,6 @@
 		<file>Bugs\bug-81162.vb</file>
 	</test>
 	<test id="183" name="bug-81243" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\bug-81243.vb</file>
 	</test>
 	<test id="184" name="bug-82382" category="Bugs" priority="20" target="library">
@@ -736,7 +706,6 @@
 		<file>Bugs\bug-82382.vb</file>
 	</test>
 	<test id="185" name="ia64-1" category="Bugs" priority="20" target="exe">
-		<arguments />
 		<file>Bugs\ia64-1.vb</file>
 	</test>
 	<test id="186" name="LazyBug1" category="Cecil" priority="20" target="library">
@@ -1267,8 +1236,8 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime\GenericInterface4.vb</file>
 	</test>
-	<test id="318" name="GenericNestedType1" category="CompileTime" priority="20" knownfailure="todo" target="library">
-		<arguments>-imports:System.Collections.Generic,System.Collections,System,System.Windows.Forms,System.Diagnostics,System.Drawing -rootnamespace:rt</arguments>
+	<test id="318" name="GenericNestedType1" category="CompileTime" priority="20" target="library">
+		<arguments>-imports:System.Collections.Generic,System.Collections,System,System.Windows.Forms,System.Diagnostics,System.Drawing -rootnamespace:rt -r:System.Drawing.dll</arguments>
 		<file>CompileTime\GenericNestedType1.vb</file>
 	</test>
 	<test id="319" name="GenericTypeParameter1" category="CompileTime" priority="20" target="library">
@@ -1745,7 +1714,7 @@
 		<file>CompileTime\ObjectCreationExpression2.vb</file>
 	</test>
 	<test id="437" name="ObjectCreationExpression3" category="CompileTime" priority="20" target="library">
-d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime\ObjectCreationExpression3.vb</file>
 	</test>
 	<test id="438" name="ObjectCreationExpression4" category="CompileTime" priority="20" target="library">
@@ -2744,9 +2713,10 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime2\MyBase1.vb</file>
 	</test>
-	<test id="687" name="NoOutDir1" category="CompileTime2" priority="20" knownfailure="todo" target="exe">
-		<arguments>/out:test.exe</arguments>
-		<file>CompileTime2\NoOutDir1.vb</file>
+	<test id="687" name="NoOutDir1" category="CompileTime2" priority="20" outputvbcassembly="testoutput\NoOutDir1_vbc.exe" outputassembly="testoutput\NoOutDir1.exe" target="exe" workingdirectory="testoutput">
+		<arguments>/out:NoOutDir1.exe</arguments>
+		<vbcarguments>/out:NoOutDir1_vbc.exe</vbcarguments>
+		<file>..\CompileTime2\NoOutDir1.vb</file>
 	</test>
 	<test id="688" name="NothingComparison1" category="CompileTime2" priority="20" target="exe">
 		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
@@ -2761,7 +2731,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>CompileTime2\Nullable1.vb</file>
 	</test>
 	<test id="691" name="NullChar" category="CompileTime2" priority="20" expectedvbcexitcode="1" expectedvbcerrorcode="31007" target="library">
-		<arguments />
 		<file>CompileTime2\NullChar.vb</file>
 	</test>
 	<test id="692" name="Operator1" category="CompileTime2" priority="20" target="exe">
@@ -2857,7 +2826,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>CompileTime2\PEFileKind-Console.vb</file>
 	</test>
 	<test id="715" name="PEFileKind-Winexe" category="CompileTime2" priority="20" target="winexe">
-		<arguments />
 		<file>CompileTime2\PEFileKind-Winexe.vb</file>
 	</test>
 	<test id="716" name="PropertyAccess1" category="CompileTime2" priority="20" target="exe">
@@ -3201,11 +3169,9 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\30070.vb</file>
 	</test>
 	<test id="802" name="30070-1" category="Errors" priority="20" knownfailure="We should show an error" expectedexitcode="1" expectederrorcode="30070" target="library">
-		<arguments />
 		<file>Errors\30070-1.vb</file>
 	</test>
 	<test id="803" name="30074" category="Errors" priority="20" knownfailure="Parser error" expectedexitcode="1" expectederrorcode="30074" target="library">
-		<arguments />
 		<file>Errors\30074.vb</file>
 	</test>
 	<test id="804" name="30074-1" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30074" target="exe">
@@ -3267,8 +3233,7 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<arguments>-target:library</arguments>
 		<file>Errors\30225-2.vb</file>
 	</test>
-	<test id="819" name="30311" category="Errors" priority="20" knownfailure="todo" expectedexitcode="1" expectederrorcode="30311" target="library">
-		<arguments />
+	<test id="819" name="30311" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30311" target="library">
 		<file>Errors\30311.vb</file>
 	</test>
 	<test id="820" name="30311-1" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30311" target="exe">
@@ -3412,7 +3377,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\30311-9.vb</file>
 	</test>
 	<test id="855" name="30337" category="Errors" priority="20" knownfailure="todo" expectedexitcode="1" expectederrorcode="30337" target="library">
-		<arguments />
 		<file>Errors\30337.vb</file>
 	</test>
 	<test id="856" name="30337-1" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30337" target="exe">
@@ -3452,7 +3416,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\30451.vb</file>
 	</test>
 	<test id="865" name="30451-1" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30451" target="library">
-		<arguments />
 		<file>Errors\30451-1.vb</file>
 	</test>
 	<test id="866" name="30455" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30455" target="exe">
@@ -3463,16 +3426,14 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<arguments>-target:library</arguments>
 		<file>Errors\30456.vb</file>
 	</test>
-	<test id="868" name="30456-1" category="Errors" priority="20" knownfailure="todo" expectedexitcode="1" expectederrorcode="30456" target="library">
-		<arguments />
+	<test id="868" name="30456-1" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30456" target="library">
 		<file>Errors\30456-1.vb</file>
 	</test>
 	<test id="869" name="30456-2" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30456" target="exe">
 		<arguments>-target:library</arguments>
 		<file>Errors\30456-2.vb</file>
 	</test>
-	<test id="870" name="30456-3" category="Errors" priority="20" knownfailure="todo" expectedexitcode="1" expectederrorcode="30456" target="library">
-		<arguments />
+	<test id="870" name="30456-3" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30456" target="library">
 		<file>Errors\30456-3.vb</file>
 	</test>
 	<test id="871" name="30471" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30471" target="exe">
@@ -3480,19 +3441,15 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\30471.vb</file>
 	</test>
 	<test id="872" name="30506-1" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
-		<arguments />
 		<file>Errors\30506-1.vb</file>
 	</test>
 	<test id="873" name="30506-2" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
-		<arguments />
 		<file>Errors\30506-2.vb</file>
 	</test>
 	<test id="874" name="30506-3" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
-		<arguments />
 		<file>Errors\30506-3.vb</file>
 	</test>
 	<test id="875" name="30506-4" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
-		<arguments />
 		<file>Errors\30506-4.vb</file>
 	</test>
 	<test id="876" name="30506-5" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30506" target="exe">
@@ -3524,7 +3481,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\30581.vb</file>
 	</test>
 	<test id="883" name="30590" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30590" target="library">
-		<arguments />
 		<file>Errors\30590.vb</file>
 	</test>
 	<test id="884" name="30620" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30620" target="exe">
@@ -3624,7 +3580,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\32042.vb</file>
 	</test>
 	<test id="908" name="32046" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="32046" target="library">
-		<arguments />
 		<file>Errors\32046.vb</file>
 	</test>
 	<test id="909" name="32085" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="32085" target="exe">
@@ -3652,11 +3607,9 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\32104.vb</file>
 	</test>
 	<test id="915" name="32105" category="Errors" priority="20" knownfailure="We should show an error" expectedexitcode="1" expectederrorcode="32105" target="library">
-		<arguments />
 		<file>Errors\32105.vb</file>
 	</test>
 	<test id="916" name="32106" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="32106" target="library">
-		<arguments />
 		<file>Errors\32106.vb</file>
 	</test>
 	<test id="917" name="32304-DefaultProperty4" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="32304" target="exe">
@@ -3664,7 +3617,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Errors\32304-DefaultProperty4.vb</file>
 	</test>
 	<test id="918" name="42024" category="Errors" priority="20" knownfailure="Error code # has changed" expectederrorcode="42024" target="library">
-		<arguments />
 		<file>Errors\42024.vb</file>
 	</test>
 	<test id="919" name="PrivateScope1" category="External" priority="20" knownfailure="Needs to build IL code first" target="exe">
@@ -4392,7 +4344,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Mono\DefaultPropH.vb</file>
 	</test>
 	<test id="1104" name="Delegate_dll" category="Mono" priority="20" target="library">
-		<arguments />
 		<file>Mono\Delegate_dll.vb</file>
 	</test>
 	<test id="1105" name="Delegate_exe" category="Mono" priority="20" target="exe">
@@ -4472,7 +4423,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Mono\Error.vb</file>
 	</test>
 	<test id="1124" name="Event_dll" category="Mono" priority="20" target="library">
-		<arguments />
 		<file>Mono\Event_dll.vb</file>
 	</test>
 	<test id="1125" name="Event_exe" category="Mono" priority="20" target="exe">
@@ -6735,7 +6685,7 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<arguments>-r:System.Web.dll</arguments>
 		<file>My\Custom.vb</file>
 	</test>
-	<test id="1690" name="DefaultInstances1" category="My" priority="20" knownfailure="todo" target="library">
+	<test id="1690" name="DefaultInstances1" category="My" priority="20" target="library">
 		<arguments>-r:System.Web.dll -rootnamespace:WindowsApplication1 -define:_MYTYPE=\"WindowsForms\" -r:System.Windows.Forms.dll</arguments>
 		<file>My\DefaultInstances1.vb</file>
 	</test>
@@ -6800,11 +6750,9 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>My\WindowsFormsWithCustomSubMain.vb</file>
 	</test>
 	<test id="1706" name="GenericNestedType2" category="NonCecilRelated" priority="20" target="library">
-		<arguments />
 		<file>NonCecilRelated\GenericNestedType2.vb</file>
 	</test>
 	<test id="1707" name="GenericType3" category="NonCecilRelated" priority="20" target="library">
-		<arguments />
 		<file>NonCecilRelated\GenericType3.vb</file>
 	</test>
 	<test id="1708" name="AddressOfExpression1" category="NotImplementedYet" priority="20" target="library">
@@ -7166,17 +7114,15 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>..\..\rt\source\TestView.vb</file>
 		<file>..\..\rt\source\VerificationBase.vb</file>
 	</test>
-	<test id="1808" name="SelfCompileWindows" category="SelfTest" priority="20" target="library">
-		<arguments>/r:System.dll,System.Xml.dll  /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"
-/optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
-		<file>SelfTest\SelfCompileWindows.vb</file>
+	<test id="1808" name="SelfCompileWindows" category="SelfTest" priority="20" outputvbcassembly="vbnc_vbc.exe" outputassembly="vbnc.exe" target="exe" workingdirectory="SelfTest">
+		<arguments>@SelfCompileWindows.response</arguments>
+		<vbcarguments>/out:vbnc_vbc.exe</vbcarguments>
+		<testarguments>/help</testarguments>
 	</test>
-	<test id="1809" name="GenericNestedType1" category="Unfixable" priority="20" knownfailure="todo" target="exe">
-		<arguments />
+	<test id="1809" name="GenericNestedType1" category="Unfixable" priority="20" target="exe">
 		<file>Unfixable\GenericNestedType1.vb</file>
 	</test>
 	<test id="1810" name="NestedInterfaceInheritance1" category="Unfixable" priority="20" target="library">
-		<arguments />
 		<file>Unfixable\NestedInterfaceInheritance1.vb</file>
 	</test>
 	<test id="1811" name="NoVBRuntimeRef1" category="CompileTime" priority="20" target="library">
@@ -7196,7 +7142,6 @@ d		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /de
 		<file>Microsoft.VisualBasic.windows.vb</file>
 	</test>
 	<test id="1816" name="DefaultCtor" category="CompileTime" priority="0" target="library">
-		<arguments />
 		<file>CompileTime\DefaultCtor.vb</file>
 	</test>
 	<test id="0" name="NUnitTests" category="NUnitTests" priority="0" target="exe" workingdirectory="NUnitTests">
