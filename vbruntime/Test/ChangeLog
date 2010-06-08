@@ -1,3 +1,10 @@
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* bin/nunit.util.dll:
+	* bin/nunit.core.dll:
+	* bin/nunit-console.exe:
+	* bin/nunit.framework.dll: Deleted, they're fetched automatically when needed.
+
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Clean up properly and fix the dl link to anonsvn.
