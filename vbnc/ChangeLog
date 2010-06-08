@@ -1,5 +1,14 @@
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* all.sln:
+	* clean.bat:
+	* progress.txt:
+	* CheckLicense.vbs: Deleted, no longer used.
+
+	* License[ ]FileHeader.txt: Removed space in filename.
+
+2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* ac: Deleted, no longer used.
 
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
