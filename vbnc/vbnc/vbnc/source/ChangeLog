@@ -1,3 +1,8 @@
+2010-06-07  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TypeDeclarations/AssemblyDeclaration.vb: Set the StrongNameSigned attribute
+	on the module if we're (delay) signed.
+
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Emit/Emitter.vb:

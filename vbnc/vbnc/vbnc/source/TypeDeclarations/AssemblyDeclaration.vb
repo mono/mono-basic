@@ -812,6 +812,8 @@ Public Class AssemblyDeclaration
 
         End Using
 
+        Compiler.ModuleBuilderCecil.Attributes = Compiler.ModuleBuilderCecil.Attributes Or ModuleAttributes.StrongNameSigned
+
         Return True
     End Function
 
