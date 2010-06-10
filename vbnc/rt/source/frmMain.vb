@@ -1035,6 +1035,14 @@ Class frmMain
             test.Name = name
             m_Tests.Append(test)
             PopulateTestList()
+            For Each item As ListViewItem In lstTests.Items
+                If item.Tag Is test Then
+                    lstTests.EnsureVisible(item.Index)
+                    lstTests.SelectedItems.Clear()
+                    lstTests.SelectedIndices.Add(item.Index)
+                    Exit For
+                End If
+            Next
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
