@@ -7211,7 +7211,7 @@
 	<test id="1730" name="FunctionReturnVariable1" category="" priority="0" target="exe">
 		<file>CompileTime2\FunctionReturnVariable1.vb</file>
 	</test>
-	<test id="1732" name="DefaultInstance1" category="" priority="0" knownfailure="todo" target="exe">
+	<test id="1732" name="DefaultInstance1" category="" priority="0" target="exe">
 		<arguments>-define:_MYTYPE=\"WindowsFormsWithCustomSubMain\"</arguments>
 		<file>CompileTime2\DefaultInstance1.vb</file>
 	</test>

@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: DefaultInstance1.vb is fixed now.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Make cecil a dependency for the rt test.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
