@@ -344,7 +344,9 @@ Public Class ClassDeclaration
                 If mi.Signature.ReturnType IsNot Nothing AndAlso Helper.CompareType(mi.Signature.ReturnType, Compiler.TypeCache.System_Void) = False Then Continue For
 
                 Dim T As TypeParameter = mi.Signature.TypeParameters.Parameters(0)
-                If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
+                'SPECBUG: the MyWebServices group class doesn't have a constraint here
+                'https://connect.microsoft.com/VisualStudio/feedback/details/566024/vb-10-specification-is-inaccurate-about-dispose-methods-in-group-classes
+                If T.TypeParameterConstraints Is Nothing OrElse T.TypeParameterConstraints.Constraints Is Nothing OrElse T.TypeParameterConstraints.Constraints.Count <> 1 Then Continue For
                 If Not Helper.CompareType(T.TypeParameterConstraints.Constraints(0).TypeName.ResolvedType, groupData.TypeToCollect) Then Continue For
 
                 If Helper.CompareType(mi.Signature.Parameters(0).ParameterType, Compiler.TypeManager.MakeByRefType(Me, T.CecilBuilder)) = False Then Continue For
