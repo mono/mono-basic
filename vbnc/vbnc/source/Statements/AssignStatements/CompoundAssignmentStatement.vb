@@ -95,7 +95,7 @@ Public MustInherit Class CompoundAssignmentStatement
         'result = m_CompoundExpression.GenerateCode(Info.Clone(True, False, LSide.ExpressionType)) AndAlso result
 
         Dim lInfo As EmitInfo = Info.Clone(Me, m_CompoundExpression)
-        result = LSide.GenerateCode(lInfo) AndAlso result
+        result = LSide.Classification.GenerateCode(lInfo) AndAlso result
 
         Return result
     End Function

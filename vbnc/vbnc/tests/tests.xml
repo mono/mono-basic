@@ -7218,4 +7218,7 @@
 	<test id="1733" name="ValueType1" category="" priority="0" target="exe">
 		<file>RunTime\ValueType1.vb</file>
 	</test>
+	<test id="1731" name="DefaultProperty7" category="" priority="0" target="exe">
+		<file>CompileTime2\DefaultProperty7.vb</file>
+	</test>
 </rt>

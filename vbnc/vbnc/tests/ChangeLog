@@ -1,3 +1,8 @@
+2010-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tests.xml:
+	* CompileTime2/DefaultProperty7.vb: New test case.
+
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* tests.xml: The decimal constant tests are passing now.

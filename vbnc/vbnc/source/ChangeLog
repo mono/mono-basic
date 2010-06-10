@@ -1,3 +1,9 @@
+2010-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Statements/AssignStatements/CompoundAssignmentStatement.vb: We need to
+	generate the code using the classification, just like normal assignment
+	statements do.
+
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Emit/Emitter.DecimalFields.vb:
