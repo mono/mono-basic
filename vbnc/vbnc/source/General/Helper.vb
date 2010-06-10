@@ -2717,6 +2717,8 @@ Public Class Helper
             CTypeExp = ConversionExpression.GetTypeConversion(Parent, fromExpr, DestinationType)
             result = CTypeExp.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
             fromExpr = CTypeExp
+        ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_ValueType) AndAlso fromExpr.ExpressionType.IsValueType Then
+            fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
         End If
 
 #If EXTENDEDDEBUG Then
