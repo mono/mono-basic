@@ -1,5 +1,10 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Remove linux-specific tests, and make the windows-specific tests
+	work on linux too.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Add test cases for test files created on trunk.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>

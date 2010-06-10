@@ -7075,10 +7075,6 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>RunTime\UserDefinedOperators1.vb</file>
 	</test>
-	<test id="1806" name="rt.linux" category="SelfTest" priority="20" target="library">
-		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
-		<file>SelfTest\rt.linux.vb</file>
-	</test>
 	<test id="1807" name="rt.windows" category="SelfTest" priority="20" target="library">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing,System.Xml -r:System.dll,System.Xml.dll,System.Windows.Forms.dll,System.Drawing.dll,../../../class/lib/vbnc/Mono.Cecil.VB.dll /rootnamespace:rt -res:..\..\rt\source\FileTabPage.resx  -res:..\..\rt\source\frmMain.resx</arguments>
 		<testarguments>/console</testarguments>
@@ -7107,7 +7103,7 @@
 		<file>..\..\rt\source\TestView.vb</file>
 		<file>..\..\rt\source\VerificationBase.vb</file>
 	</test>
-	<test id="1808" name="SelfCompileWindows" category="SelfTest" priority="20" outputvbcassembly="SelfTest\vbnc_vbc.exe" outputassembly="SelfTest\vbnc.exe" target="exe" workingdirectory="SelfTest">
+	<test id="1808" name="SelfCompile" category="SelfTest" priority="20" outputvbcassembly="SelfTest\vbnc_vbc.exe" outputassembly="SelfTest\vbnc.exe" target="exe" workingdirectory="SelfTest">
 		<arguments>@SelfCompileWindows.response</arguments>
 		<vbcarguments>/out:vbnc_vbc.exe</vbcarguments>
 		<testarguments>/help</testarguments>
@@ -7122,17 +7118,12 @@
 		<arguments>/vbruntime- </arguments>
 		<file>Unfixable\NoVBRuntimeRef1.vb</file>
 	</test>
-	<test id="1812" name="Microsoft.VisualBasic.linux" category="VBRunTime" priority="20" target="library" workingdirectory="VBRunTime">
-		<arguments>@Microsoft.VisualBasic.linux.response /noconfig /nowarn:40010</arguments>
-		<file>VBRunTime\Microsoft.VisualBasic.linux.vb</file>
-	</test>
 	<test id="1813" name="MarshalAs.vb" category="" priority="0" target="library">
 		<arguments>/define:_MYTYPE=\"Empty\"</arguments>
 		<file>CompileTime\MarshalAs.vb</file>
 	</test>
-	<test id="1814" name="Microsoft.VisualBasic.windows" category="VBRunTime" priority="20" target="library" workingdirectory="VBRunTime">
+	<test id="1814" name="Microsoft.VisualBasic" category="VBRunTime" priority="20" target="library" workingdirectory="VBRunTime">
 		<arguments>@Microsoft.VisualBasic.windows.response /noconfig /nowarn:41008,40010</arguments>
-		<file>Microsoft.VisualBasic.windows.vb</file>
 	</test>
 	<test id="1816" name="DefaultCtor" category="CompileTime" priority="0" target="library">
 		<file>CompileTime\DefaultCtor.vb</file>
