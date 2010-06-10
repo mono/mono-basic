@@ -6767,7 +6767,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\CDateConstantExpression1.vb</file>
 	</test>
-	<test id="1711" name="CDecConstantExpression1" category="NotImplementedYet" priority="20" knownfailure="NotImplementedYet" target="library">
+	<test id="1711" name="CDecConstantExpression1" category="" priority="20" target="library">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\CDecConstantExpression1.vb</file>
 	</test>
@@ -6775,7 +6775,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\Constructor1.vb</file>
 	</test>
-	<test id="1713" name="DecimalConstant1" category="NotImplementedYet" priority="20" knownfailure="NotImplementedYet" target="library">
+	<test id="1713" name="DecimalConstant1" category="" priority="20" target="library">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\DecimalConstant1.vb</file>
 	</test>

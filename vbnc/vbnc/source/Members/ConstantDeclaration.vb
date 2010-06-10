@@ -232,9 +232,9 @@ Public Class ConstantDeclaration
         If m_ConstantValue IsNot Nothing AndAlso m_ConstantValue IsNot DBNull.Value Then
             If Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
                 Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
-                Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32
+                Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32
                 Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
-                Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_Int32_Int32_Int32()
+                Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_UInt32_UInt32_UInt32()
                 For i As Integer = 0 To params.Length - 1
                     attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
                 Next

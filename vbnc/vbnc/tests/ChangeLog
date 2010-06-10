@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: The decimal constant tests are passing now.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Narrowing1 is fixed (again) now.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>

@@ -21,9 +21,9 @@ Partial Public Class Emitter
     Structure DecimalFields
         Public Scale As Byte
         Public Sign As Byte
-        Public Hi As Integer
-        Public Lo As Integer
-        Public Mid As Integer
+        Public Hi As UInteger
+        Public Lo As UInteger
+        Public Mid As UInteger
         Public Value As Decimal
 
         Function SignAsBit() As Integer
@@ -39,14 +39,14 @@ Partial Public Class Emitter
             Dim args(4) As Object
             Scale = CByte((bits(3) >> 16) And &HFF)
             Sign = CByte((bits(3) >> 31) And 1) << 7
-            Hi = BitConverter.ToInt32(BitConverter.GetBytes(bits(2)), 0)
-            Mid = BitConverter.ToInt32(BitConverter.GetBytes(bits(1)), 0)
-            Lo = BitConverter.ToInt32(BitConverter.GetBytes(bits(0)), 0)
+            Hi = BitConverter.ToUInt32(BitConverter.GetBytes(bits(2)), 0)
+            Mid = BitConverter.ToUInt32(BitConverter.GetBytes(bits(1)), 0)
+            Lo = BitConverter.ToUInt32(BitConverter.GetBytes(bits(0)), 0)
 
             Me.Value = value
         End Sub
 
-        ReadOnly Property AsByte_Byte_Int32_Int32_Int32() As Object()
+        ReadOnly Property AsByte_Byte_UInt32_UInt32_UInt32() As Object()
             Get
                 Dim result(4) As Object
 
@@ -57,8 +57,8 @@ Partial Public Class Emitter
                 result(4) = Lo
 
 #If DEBUG Then
-				Dim test As New Runtime.CompilerServices.DecimalConstantAttribute(Scale, Sign, Hi, Mid, Lo)
-				Helper.Assert(test.Value = Value)
+                Dim test As New Runtime.CompilerServices.DecimalConstantAttribute(Scale, Sign, Hi, Mid, Lo)
+                Helper.Assert(test.Value = Value)
 #End If
                 Return result
             End Get

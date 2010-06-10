@@ -1,5 +1,11 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Emit/Emitter.DecimalFields.vb:
+	* Members/ConstantDeclaration.vb: Use unsigned ints instead of signed ints for
+	decimal fields/construction.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	[Restore r138426]
 	
 	* Expressions/LateBoundAccessToExpression.vb: Fix emission of late
