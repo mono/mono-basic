@@ -422,7 +422,7 @@ Public Class CecilComparer
         Throw New NotImplementedException
     End Function
 
-    Private Function CompareGenericParameters(ByVal P1 As GenericParameter, ByVal P2 As GenericParameter) As Boolean
+    Private Sub CompareGenericParameters(ByVal P1 As GenericParameter, ByVal P2 As GenericParameter)
         If P1.Name <> P2.Name Then
             SaveMessage("Generic parameter #{0} in {1} has the name '{2}', while generic parameter #{0} in {3} has the name '{4}'", P1.Position, GetFullName(P1.Owner), P1.Name, GetFullName(P2.Owner), P2.Name)
         End If
@@ -460,7 +460,7 @@ Public Class CecilComparer
         If P1.IsNonVariant <> P2.IsNonVariant Then
             SaveMessage("Generic parameter #{0} in {1} IsNonVariant = {2}, while generic parameter #{0} in {3} IsNonVariant = {4}", P1.Position, GetFullName(P1.Owner), P1.IsNonVariant, GetFullName(P2.Owner), P2.IsNonVariant)
         End If
-    End Function
+    End Sub
 
     Private Function AreGenericParametersSame(ByVal P1 As GenericParameter, ByVal P2 As GenericParameter) As Boolean
         Return P1.Position = P2.Position
@@ -789,7 +789,7 @@ Public Class CecilComparer
                     Exit For
                 End If
             Next
-            If type2 Is Nothing AndAlso IgnoreItem(type1) = False Then
+            If type2 Is Nothing AndAlso IgnoreItem(Of T)(type1) = False Then
                 SaveMessage("Only '%a1%' has the {0} '{1}'.", Name, ItemToString(type1))
 
                 Lst1.Remove(type1)
@@ -803,7 +803,7 @@ Public Class CecilComparer
         Loop
 
         For Each type2 As T In Lst2
-            If IgnoreItem(type2) = False Then SaveMessage("Only '%a2%' has the {0} '{1}'.", Name, ItemToString(type2))
+            If IgnoreItem(Of T)(type2) = False Then SaveMessage("Only '%a2%' has the {0} '{1}'.", Name, ItemToString(type2))
         Next
     End Sub
 

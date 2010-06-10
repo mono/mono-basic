@@ -7075,7 +7075,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>RunTime\UserDefinedOperators1.vb</file>
 	</test>
-	<test id="1807" name="rt" category="SelfTest" priority="20" knownfailure="todo" target="library">
+	<test id="1807" name="rt" category="SelfTest" priority="20" target="library">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary -imports:System,Microsoft.VisualBasic,System.Collections,System.Collections.Generic,System.Diagnostics,System.Windows.Forms,System.Drawing,System.Xml -r:System.dll,System.Xml.dll,System.Windows.Forms.dll,System.Drawing.dll,Mono.Cecil.VB.dll /rootnamespace:rt -res:..\..\rt\source\FileTabPage.resx  -res:..\..\rt\source\frmMain.resx</arguments>
 		<testarguments>/console</testarguments>
 		<file>..\..\rt\source\AssemblyInfo.vb</file>
