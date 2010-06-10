@@ -7169,4 +7169,44 @@
 		<arguments>/debug:full</arguments>
 		<file>CompileTime\DebugInfo1.vb</file>
 	</test>
+	<test id="1720" name="bug-547165" category="Bugs" priority="0" target="exe">
+		<file>Bugs\bug-547165.vb</file>
+	</test>
+	<test id="1721" name="bug-504822" category="Bugs" priority="0" target="library">
+		<file>Bugs\bug-504822.vb</file>
+	</test>
+	<test id="1722" name="DoLoopWhile3" category="CompileTime" priority="0" target="library">
+		<file>CompileTime\DoLoopWhile3.vb</file>
+	</test>
+	<test id="1723" name="Narrowing1" category="CompileTime" priority="0" knownfailure="unknown" target="exe">
+		<file>CompileTime\Narrowing1.vb</file>
+	</test>
+	<test id="1724" name="42021" category="" priority="0" knownfailure="Error code # has changed" expectederrorcode="42021" target="library">
+		<file>Errors\42021.vb</file>
+	</test>
+	<test id="1725" name="30512" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="library">
+		<file>Errors\30512.vb</file>
+	</test>
+	<test id="1726" name="30203" category="" priority="0" knownfailure="Has error # changed?" expectedexitcode="1" expectederrorcode="30203" target="library">
+		<file>Errors\30203.vb</file>
+	</test>
+	<test id="1727" name="30035" category="" priority="0" knownfailure="Has error # changed?" expectedexitcode="1" expectederrorcode="30035" target="library">
+		<file>Errors\30035.vb</file>
+	</test>
+	<test id="1728" name="30127" category="" priority="0" expectedexitcode="1" expectederrorcode="30127" target="library">
+		<file>Errors\30127.vb</file>
+	</test>
+	<test id="1729" name="UsingStatement6" category="" priority="0" target="exe">
+		<file>CompileTime2\UsingStatement6.vb</file>
+	</test>
+	<test id="1730" name="FunctionReturnVariable1" category="" priority="0" target="exe">
+		<file>CompileTime2\FunctionReturnVariable1.vb</file>
+	</test>
+	<test id="1732" name="DefaultInstance1" category="" priority="0" knownfailure="todo" target="exe">
+		<arguments>-define:_MYTYPE=\"WindowsFormsWithCustomSubMain\"</arguments>
+		<file>CompileTime2\DefaultInstance1.vb</file>
+	</test>
+	<test id="1733" name="ValueType1" category="" priority="0" knownfailure="todo" target="exe">
+		<file>RunTime\ValueType1.vb</file>
+	</test>
 </rt>

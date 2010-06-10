@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Add test cases for test files created on trunk.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* */all.rsp:
 	* VBRunTime/Microsoft.VisualBasic.vb:
 	* VBRunTime/Microsoft.VisualBasic.linux.vb:
