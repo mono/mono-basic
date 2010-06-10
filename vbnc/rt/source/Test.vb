@@ -55,6 +55,12 @@ Public Class Test
     Private m_Files As New Specialized.StringCollection
 
     ''' <summary>
+    ''' A list of files this test depends on to be in the current directory (and the output directory)
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_Dependencies As New Specialized.StringCollection
+
+    ''' <summary>
     ''' The exit code the compiler should return
     ''' </summary>
     ''' <remarks></remarks>
@@ -264,6 +270,9 @@ Public Class Test
         For Each file As XmlNode In xml.SelectNodes("file")
             m_Files.Add(file.InnerText)
         Next
+        For Each file As XmlNode In xml.SelectNodes("dependency")
+            m_Dependencies.Add(file.InnerText)
+        Next
     End Sub
 
     Private Function GetFullPath(ByVal path As String) As String
@@ -315,6 +324,9 @@ Public Class Test
             If Not String.IsNullOrEmpty(m_TestArguments) Then xml.WriteElementString("testarguments", m_TestArguments)
             For Each file As String In m_Files
                 xml.WriteElementString("file", file)
+            Next
+            For Each file As String In m_Dependencies
+                xml.WriteElementString("dependency", file)
             Next
         Else
             xml.WriteAttributeString("result", m_Result.ToString().ToLower())
@@ -481,6 +493,16 @@ Public Class Test
     ReadOnly Property Files() As Specialized.StringCollection
         Get
             Return m_Files
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The dependencies of this test.
+    ''' </summary>
+    <System.ComponentModel.Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", GetType(System.Drawing.Design.UITypeEditor))> _
+    ReadOnly Property Dependencies() As Specialized.StringCollection
+        Get
+            Return m_Dependencies
         End Get
     End Property
 
@@ -911,6 +933,16 @@ Public Class Test
         If SkipTest() Then
             m_Result = Results.Skipped
         Else
+            'Copy dependencies
+            For Each file As String In m_Dependencies
+                Dim src As String = IO.Path.GetFullPath(file)
+                Dim dst As String = IO.Path.Combine(FullWorkingDirectory, IO.Path.GetFileName(src))
+                IO.File.Copy(src, dst, True)
+                dst = IO.Path.Combine(IO.Path.GetDirectoryName(OutputAssemblyFull), IO.Path.GetFileName(src))
+                IO.File.Copy(src, dst, True)
+            Next
+
+            'Run test
             For i As Integer = 0 To m_Verifications.Count - 1
                 Dim v As VerificationBase = m_Verifications(i)
                 If v.Verify = False Then
