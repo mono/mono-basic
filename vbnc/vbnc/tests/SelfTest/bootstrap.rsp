@@ -1,7 +1,0 @@
-#This file contains all elements necessary to bootstrap the compiler
-#except the /out: commandline argument.
-
-.\SelfCompile.vb
-/libpath:.\
-@.\all.rsp
-@.\SelfCompile.response

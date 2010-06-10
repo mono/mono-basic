@@ -1,5 +1,15 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* */all.rsp:
+	* VBRunTime/Microsoft.VisualBasic.vb:
+	* VBRunTime/Microsoft.VisualBasic.linux.vb:
+	* VBRunTime/Microsoft.VisualBasic.windows.vb: Deleted, no longer needed with
+	the new test harness.
+
+	* CompileTime2/ValueType1.vb: Remove duplicated test (in RunTime).
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: Updated according to rt changes.
 
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>

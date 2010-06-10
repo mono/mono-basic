@@ -1,2 +1,0 @@
-/r:System.dll,System.Xml.dll /target:library /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"
-/optionstrict+ /optionexplicit+ /optioncompare:binary

@@ -1,4 +1,0 @@
-/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary
-..\..\source\General\TypeConverter.vb
-Constants.vb
--define:GENERATOR=True
