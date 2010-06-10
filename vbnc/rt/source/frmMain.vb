@@ -219,33 +219,36 @@ Class frmMain
                 Return
             End If
 
-            Dim r, y, g, total, failed As Integer
-            Dim runcount, notruncount As Integer
-            Dim alltests As Tests = m_Tests
-            If alltests Is Nothing Then alltests = m_Tests
-            total = alltests.Count
-            r = alltests.GetRedCount
-            g = alltests.GetGreenCount
-            y = total - r - g
-            failed = r
-            runcount = r + g
-            notruncount = y
-            If r > 0 Then
+            Dim counts(CInt(Test.Results.KnownFailureFailed)) As Integer
+            Dim total As Integer
+
+            total = m_Tests.Count
+            m_Tests.GetTestsCount(counts)
+
+            If counts(Test.Results.Failed) > 0 Then
                 Me.Icon = GetIcon(Test.Results.Failed)
-            ElseIf g > 0 AndAlso y > 0 Then
+            ElseIf counts(Test.Results.NotRun) > 0 OrElse counts(Test.Results.Running) > 0 Then
                 Me.Icon = GetIcon(Test.Results.Running)
-            ElseIf g = total Then
-                Me.Icon = GetIcon(Test.Results.Success)
+            ElseIf counts(Test.Results.Regressed) > 0 Then
+                Me.Icon = GetIcon(Test.Results.Regressed)
+            ElseIf counts(Test.Results.KnownFailureFailed) > 0 Then
+                Me.Icon = GetIcon(Test.Results.KnownFailureFailed)
+            ElseIf counts(Test.Results.KnownFailureSucceeded) > 0 Then
+                Me.Icon = GetIcon(Test.Results.KnownFailureSucceeded)
             Else
-                Me.Icon = GetIcon(Test.Results.NotRun)
+                Me.Icon = GetIcon(Test.Results.Success)
             End If
 
             For i As Integer = 0 To m_Colors.Length - 1
-                Me.barProgress.Value(i).Number = alltests.GetTestsCount(CType(i, Test.Results), CType(i, Test.Results))
+                Me.barProgress.Value(i).Number = m_Tests.GetTestsCount(CType(i, Test.Results), CType(i, Test.Results))
                 Me.barProgress.Value(i).PercentDone = Me.barProgress.Value(i).Number / total
             Next
             Me.barProgress.Invalidate()
 
+            Dim r As Integer = counts(Test.Results.Failed) + counts(Test.Results.Regressed)
+            Dim g As Integer = counts(Test.Results.Success) + counts(Test.Results.KnownFailureSucceeded)
+            Dim y As Integer = counts(Test.Results.KnownFailureFailed)
+            Dim runcount As Integer = r + g + y
 
             Dim COUNTERFORMAT As String = "{0} ({1:0.#%})"
             tblRedTests.Text = "Red tests: " & String.Format(COUNTERFORMAT, r, r / total)
@@ -257,7 +260,7 @@ Class frmMain
             tblTestsRun.Text = "Tests run: " & (r + g).ToString
 
             Text = String.Format("RT OK: {0} ({5:#0.0}%) / FAILED: {1} ({4:#0.0}%) / NOT RUN: {2}/{3} tests) / IN QUEUE: {6}", g, r, y, total, r * 100 / total, g * 100 / total, m_TestExecutor.QueueCount)
-            Dim exectime As TimeSpan = alltests.ExecutionTime
+            Dim exectime As TimeSpan = m_Tests.ExecutionTime
             tblExecutionTime.Text = "Execution time: " & String.Format("{0}", FormatTimespan(exectime))
             If total > 0 Then
                 tblAverageExecutionTime.Text = "Avg execution time: " & String.Format("{0}", FormatTimespan(New TimeSpan(exectime.Ticks \ CInt(IIf(runcount = 0, 1, runcount)))))

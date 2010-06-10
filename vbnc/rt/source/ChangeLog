@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* frmMain.vb: Make the form's icon the correct color.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Test.vb: Add support for dependencies for a test - files that will be copied
 	into the current directory before the test starts.
 
