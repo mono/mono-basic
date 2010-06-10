@@ -296,11 +296,20 @@ Public MustInherit Class LateBoundAccessToExpression
 
         'We need to emit a call to LateGet
 
-        '1 - the instance expression
-        result = LateBoundAccess.InstanceExpression.GenerateCode(Info) AndAlso result
+        If LateBoundAccess.InstanceExpression Is Nothing Then
+            '1 - the instance expression (none in this case)
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
 
-        '2 - Type ??? - haven't found an example where this isn't nothing yet
-        Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
+            '2 - Type 
+            Emitter.EmitLoadToken(Info, LateBoundAccess.LateBoundType)
+            Emitter.EmitCall(Info, Info.Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
+        Else
+            '1 - the instance expression
+            result = LateBoundAccess.InstanceExpression.GenerateCode(Info) AndAlso result
+
+            '2 - Type  - we have the instance, so no need to pass the type here.
+            Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_Type))
+        End If
 
         '3 - The member name
         Emitter.EmitLoadValue(Info, LateBoundAccess.Name)

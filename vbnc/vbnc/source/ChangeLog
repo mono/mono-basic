@@ -1,5 +1,12 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	[Restore r138426]
+	
+	* Expressions/LateBoundAccessToExpression.vb: Fix emission of late
+	binding calls to shared methods.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/Helper.vb: We need to box when converting from a value type to
 	System.ValueType.
 
