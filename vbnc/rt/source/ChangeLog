@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* frmMain.vb: Add support for using the VB 10 compiler.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* rt.vbproj: Updated.
 
 	* Test.vb:

@@ -110,6 +110,8 @@ Class frmMain
         If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
         tmp = IO.Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "Microsoft.Net\Framework\v3.5\vbc.exe")
         If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
+        tmp = IO.Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "Microsoft.Net\Framework\v4.0.30319\vbc.exe")
+        If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
 
         colDate.Width = My.Settings.TestsListView_colDate_Width
         colFailedVerification.Width = My.Settings.TestsListView_colFailedVerification_Width
