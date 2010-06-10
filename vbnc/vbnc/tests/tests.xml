@@ -7129,7 +7129,24 @@
 		<file>CompileTime\DefaultCtor.vb</file>
 	</test>
 	<test id="0" name="NUnitTests" category="NUnitTests" priority="0" target="exe" workingdirectory="NUnitTests">
-		<arguments>-recurse:*.vb</arguments>
+		<file>AddHandler.vb</file>
+		<file>ArrayCreation1.vb</file>
+		<file>ArrayIndexExpressions.vb</file>
+		<file>ArrayStore.vb</file>
+		<file>Assignment.vb</file>
+		<file>BinaryAdd1.vb</file>
+		<file>BinaryAdd2.vb</file>
+		<file>BinaryAdd.Generated.vb</file>
+		<file>ExplicitConversions.vb</file>
+		<file>FunctionCall.vb</file>
+		<file>Generated.vb</file>
+		<file>ImplicitConversions.vb</file>
+		<file>Main.vb</file>
+		<file>MethodCall1.vb</file>
+		<file>MethodCall2.vb</file>
+		<file>MethodCall3.vb</file>
+		<file>MethodCall4.vb</file>
+		<file>MethodOverload1.vb</file>
 	</test>
 	<test id="920" name="GenericDelegate1" category="" priority="0" target="library">
 		<file>CompileTime\GenericDelegate1.vb</file>
