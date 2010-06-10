@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* vbnc.sln: Remove unused build configuration.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TypeDeclarations/ClassDeclaration.vb: The VB spec is inaccurate about
 	requirements for the dispose method in group classes - add a comment
 	explaining this and fix a possible null reference.
