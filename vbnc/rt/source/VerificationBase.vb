@@ -129,4 +129,8 @@ Public MustInherit Class VerificationBase
         m_Run = True
         Return m_Result
     End Function
+
+    Public Overrides Function ToString() As String
+        Return Name
+    End Function
 End Class

@@ -1,5 +1,10 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* VerificationBase.vb: Override ToString to return the name of the
+	verification so that it shows up nicely in the property grid.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* frmMain.vb: Add support for using the VB 10 compiler.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
