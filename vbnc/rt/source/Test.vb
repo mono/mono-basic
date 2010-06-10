@@ -899,9 +899,6 @@ Public Class Test
     End Function
 
     Sub DoTest()
-        'If BasePath <> "" Then
-        '    Environment.CurrentDirectory = BasePath
-        'End If
         If CreateVerifications() = False Then
             Return
         End If
@@ -941,17 +938,6 @@ Public Class Test
 
         RaiseEvent Executed(Me)
     End Sub
-
-    ReadOnly Property VBNCVerification() As VerificationBase
-        Get
-            For Each ver As VerificationBase In m_Verifications
-                If ver.Name.Contains("VBNC Compile") Then
-                    Return ver
-                End If
-            Next
-            Return Nothing
-        End Get
-    End Property
 
     ReadOnly Property Message() As String
         Get

@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Test.vb: Delete dead code.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* frmMain.vb: When creating a new test, ensure it's visible and select it.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
