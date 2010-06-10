@@ -1,5 +1,14 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Statements/AssignStatements/AssignmentStatement.vb: ResolveStatement: when
+	reclassifying to a value expression, we might get a property group expression,
+	which needs to be further reclassified to a property access expression.
+
+	* General/Helper.vb: EmitArgumentsAndCallOrCallVirt: Don't emit an instance
+	expression if the method is shared.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* vbnc.sln: Remove unused build configuration.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>

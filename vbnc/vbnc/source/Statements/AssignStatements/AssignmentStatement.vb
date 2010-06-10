@@ -98,7 +98,10 @@ Public Class AssignmentStatement
         ElseIf RSide.Classification.CanBeValueClassification Then
             RSide = RSide.ReclassifyToValueExpression()
             result = RSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
-            'RSide.Classification = RSide.Classification.ReclassifyToValue
+            If result AndAlso RSide.Classification.IsPropertyGroupClassification Then
+                RSide = RSide.ReclassifyToPropertyAccessExpression
+                result = RSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            End If
         Else
             Helper.ShowClassificationError(Compiler, RSide.Location, RSide.Classification, "expression")
             result = False

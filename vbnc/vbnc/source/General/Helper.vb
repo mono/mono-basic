@@ -1070,7 +1070,7 @@ Public Class Helper
 
         Helper.Assert(Method IsNot Nothing)
 
-        If InstanceExpression IsNot Nothing Then
+        If InstanceExpression IsNot Nothing AndAlso CecilHelper.FindDefinition(Method).IsStatic = False Then
             Dim ieDesiredType As Mono.Cecil.TypeReference
             Dim ieInfo As EmitInfo
 
