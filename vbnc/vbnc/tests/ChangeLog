@@ -1,5 +1,9 @@
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* tests.xml: Narrowing1 is fixed (again) now.
+
+2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* tests.xml: rt is fixed now.
 
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>

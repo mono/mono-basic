@@ -7187,7 +7187,7 @@
 	<test id="1722" name="DoLoopWhile3" category="CompileTime" priority="0" target="library">
 		<file>CompileTime\DoLoopWhile3.vb</file>
 	</test>
-	<test id="1723" name="Narrowing1" category="CompileTime" priority="0" knownfailure="unknown" target="exe">
+	<test id="1723" name="Narrowing1" category="CompileTime" priority="0" target="exe">
 		<file>CompileTime\Narrowing1.vb</file>
 	</test>
 	<test id="1724" name="42021" category="" priority="0" knownfailure="Error code # has changed" expectederrorcode="42021" target="library">
