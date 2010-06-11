@@ -1,5 +1,9 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/MyGenerator.vb: Generated My code like VS2010 does.
+
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Expressions/IfExpression.vb: Added. Handles binary/ternary ifs.
 
 	* Parser/Parser(Expressions).vb: Implement parsing of binary/ternary ifs.
