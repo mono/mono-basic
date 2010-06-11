@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* frmMain.vb: Fix the automatic creation of error tests.
+
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* CecilComparer.vb: Don't use features not implemented in vbnc yet.

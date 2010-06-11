@@ -836,7 +836,7 @@ Class frmMain
 
             Dim output As String
             Dim errnumber As String
-            Dim source As String = test.Files(0)
+            Dim source As String = IO.Path.Combine(test.FullWorkingDirectory, test.Files(0))
             Dim iStart, iEnd As Integer
             Dim vStart As String = ": error BC"
             Dim vEnd As String = ":"
@@ -850,7 +850,7 @@ Class frmMain
             End If
 
             Dim errdir As String
-            errdir = IO.Path.Combine(IO.Path.GetDirectoryName(IO.Path.GetDirectoryName(source)), "Errors")
+            errdir = IO.Path.Combine(IO.Path.GetDirectoryName(m_Tests.Filename), "Errors")
 
             If IO.Directory.Exists(errdir) = False Then
                 Throw New ApplicationException("Couldn't find an errors directory (tried: " & errdir & ")!")
@@ -879,6 +879,14 @@ Class frmMain
             m_Tests.Append(new_test)
 
             PopulateTestList()
+            For Each item As ListViewItem In lstTests.Items
+                If item.Tag Is new_test Then
+                    lstTests.EnsureVisible(item.Index)
+                    lstTests.SelectedItems.Clear()
+                    lstTests.SelectedIndices.Add(item.Index)
+                    Exit For
+                End If
+            Next
 
             MsgBox("Created test " & name, MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
 
