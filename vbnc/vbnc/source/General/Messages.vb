@@ -6064,6 +6064,34 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC33036 = 33036
 
     ''' <summary>
+    ''' VBNC = "'If' operator requires either two or three operands."
+    ''' VB   = "'If' operator requires either two or three operands."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC33104 = 33104
+
+    ''' <summary>
+    ''' VBNC = "Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other."
+    ''' VB   = "Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC33106 = 33106
+
+    ''' <summary>
+    ''' VBNC = "First operand in a binary 'If' expression must be nullable or a reference type."
+    ''' VB   = "First operand in a binary 'If' expression must be nullable or a reference type."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC33107 = 33107
+
+    ''' <summary>
+    ''' VBNC = "Cannot infer a common type for the first and second operands of the binary 'If' operator. One must have a widening conversion to the other."
+    ''' VB   = "Cannot infer a common type for the first and second operands of the binary 'If' operator. One must have a widening conversion to the other."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC33110 = 33110
+
+    ''' <summary>
     ''' VBNC = "CHANGEME"
     ''' VB   = "'Global' must be followed by '.' and an identifier."
     ''' </summary>

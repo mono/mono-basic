@@ -173,6 +173,7 @@
     <Compile Include="Expressions\Classifications\VariableClassification.vb" />
     <Compile Include="Expressions\Classifications\VoidClassification.vb" />
     <Compile Include="Expressions\CompilerGeneratedExpression.vb" />
+    <Compile Include="Expressions\IfExpression.vb" />
     <Compile Include="Expressions\LateBoundAccessToExpression.vb" />
     <Compile Include="Expressions\LateBoundAccessToPropertyAccessExpression.vb" />
     <Compile Include="Expressions\DelegateOrObjectCreationExpression.vb" />

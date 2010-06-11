@@ -4322,6 +4322,26 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Type '|1' and type '|2' both declare '|3'.</VBValue>
 	</Message>
+  <Message id="33104" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>'If' operator requires either two or three operands.</VBNCValue>
+    <VBValue>'If' operator requires either two or three operands.</VBValue>
+  </Message>
+  <Message id="33106" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other.</VBNCValue>
+    <VBValue>Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other.</VBValue>
+  </Message>
+  <Message id="33107" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>First operand in a binary 'If' expression must be nullable or a reference type.</VBNCValue>
+    <VBValue>First operand in a binary 'If' expression must be nullable or a reference type.</VBValue>
+  </Message>
+  <Message id="33110" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Cannot infer a common type for the first and second operands of the binary 'If' operator. One must have a widening conversion to the other.</VBNCValue>
+    <VBValue>Cannot infer a common type for the first and second operands of the binary 'If' operator. One must have a widening conversion to the other.</VBValue>
+  </Message>
 	<Message id="36000" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

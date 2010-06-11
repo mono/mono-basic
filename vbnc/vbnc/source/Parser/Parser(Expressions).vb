@@ -1251,6 +1251,8 @@ Partial Class Parser
                     Dim newGlobal As GlobalExpression
                     newGlobal = ParseGlobalExpression(Info.Parent)
                     value = ParseMemberAccessExpression(Info.Parent, newGlobal)
+                Case KS.If
+                    value = ParseIfExpression(Info.Parent)
                 Case Else
                     Helper.Stop()
             End Select
@@ -1530,6 +1532,47 @@ Partial Class Parser
         m_Expression = ParseExpression(result)
 
         result.Init(m_Expression)
+
+        Return result
+    End Function
+
+    Private Function ParseIfExpression(ByVal Parent As ParsedObject) As IfExpression
+        Dim result As New IfExpression(Parent)
+        Dim expressions As ExpressionList
+
+        tm.AcceptIfNotInternalError(KS.If)
+
+        If Not tm.Accept(KS.LParenthesis) Then
+            Compiler.Report.ShowMessage(Messages.VBNC30199, tm.CurrentLocation)
+            tm.GotoNewline(False)
+            Return result
+        End If
+
+        If tm.Accept(KS.RParenthesis) Then
+            Compiler.Report.ShowMessage(Messages.VBNC33104, tm.CurrentLocation)
+            tm.GotoNewline(False)
+            Return result
+        End If
+
+        expressions = ParseExpressionList(result)
+
+        If expressions.Count < 2 OrElse expressions.Count > 3 Then
+            Compiler.Report.ShowMessage(Messages.VBNC33104, tm.CurrentLocation)
+            tm.GotoNewline(False)
+            Return result
+        End If
+
+        If Not tm.Accept(KS.RParenthesis) Then
+            Compiler.Report.ShowMessage(Messages.VBNC30198, tm.CurrentLocation)
+            tm.GotoNewline(False)
+            Return result
+        End If
+
+        result.Condition = expressions(0)
+        result.SecondPart = expressions(1)
+        If expressions.Count = 3 Then
+            result.ThirdPart = expressions(2)
+        End If
 
         Return result
     End Function

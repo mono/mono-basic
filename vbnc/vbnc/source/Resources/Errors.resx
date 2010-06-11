@@ -895,6 +895,10 @@
   <data name="33034"><value>CHANGEME</value></data>
   <data name="33035"><value>CHANGEME</value></data>
   <data name="33036"><value>CHANGEME</value></data>
+  <data name="33104"><value>'If' operator requires either two or three operands.</value></data>
+  <data name="33106"><value>Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other.</value></data>
+  <data name="33107"><value>First operand in a binary 'If' expression must be nullable or a reference type.</value></data>
+  <data name="33110"><value>Cannot infer a common type for the first and second operands of the binary 'If' operator. One must have a widening conversion to the other.</value></data>
   <data name="36000"><value>CHANGEME</value></data>
   <data name="36001"><value>CHANGEME</value></data>
   <data name="36002"><value>CHANGEME</value></data>

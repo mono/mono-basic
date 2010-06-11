@@ -1,5 +1,18 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Expressions/IfExpression.vb: Added. Handles binary/ternary ifs.
+
+	* Parser/Parser(Expressions).vb: Implement parsing of binary/ternary ifs.
+
+	* vbnc.vbproj: Updated with new file.
+
+	* Resources/Source.xml: Added new error messages.
+
+	* General/Messages.vb:
+	* Resources/Errors.resx: Regenerated.
+
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/TypeResolution.vb: IsImplicitlyConvertible: two nullable types can
 	convert between eachother if the nulled types are implicitly convertible.
 

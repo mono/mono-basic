@@ -1,6 +1,30 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* tests.xml:
+	* Errors/30198.vb:
+	* Errors/30199.vb:
+	* Errors/33106.vb:
+	* Errors/33104.vb:
+	* Errors/30201.vb:
+	* Errors/33104-1.vb:
+	* Errors/33104-2.vb:
+	* Errors/33107.vb:
+	* Errors/33107-1.vb:
+	* Errors/33110.vb:
+	* Errors/33110-1.vb:
+	* Errors/error.vb:
+
+	* Errors/30512-1.vb:
+	* Errors/30512-2.vb:
+	* Errors/30512-3.vb:
+	* CompileTime2/ConditionalExpression1.vb: Added tests for binary/ternary ifs.
+
+	* SelfTest/SelfCompile.files.linux:
+	* SelfTest/SelfCompile.files.windows: Updated with new file.
+
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tests.xml:
 	* Errors/30512-4.vb:
 	* Errors/30311-37.vb:
 	* Errors/30311-36.vb:
