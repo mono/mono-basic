@@ -1,3 +1,8 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* 2010VB.sln:
+	* 2010VB.vbproj: Added for VS2010 work.
+
 2010-02-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: Set PLATFORM_PATH_SEPARATOR properly.
