@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Don't include the My namespace.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* Message.vb, Messages.vb: Make message ids > 40000 warnings unless
