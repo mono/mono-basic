@@ -137,7 +137,6 @@ Public MustInherit Class MethodBaseDeclaration
                 Dim attribInstantiation As Object = Nothing
                 Dim attribInstance As SecurityAttribute
                 Dim attribAction As Mono.Cecil.SecurityAction
-                Dim attribPermission As IPermission
                 Dim attribPermissionSetAttribute As PermissionSetAttribute
 
                 If attrib.Instantiate(Messages.VBNC30128, attribInstantiation) = False Then
