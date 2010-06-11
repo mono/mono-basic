@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ErrObject.vb: Make it compile in VS2010.
+
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* FileSystem.vb: A character can never be equal to an empty string, remove

@@ -85,7 +85,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
         'ClearProjectError is called by the statement "On Error Resume Next"
 #If NET_VER >= 2.0 Then
-        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Shared Sub ClearProjectError()
 #Else
         Public Shared Sub ClearProjectError()
@@ -113,7 +113,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
 #If NET_VER >= 2.0 Then
-        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
 #Else
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
@@ -123,7 +123,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
 
 #If NET_VER >= 2.0 Then
-        <System.Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
 #Else
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)

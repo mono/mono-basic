@@ -61,7 +61,7 @@ Namespace Microsoft.VisualBasic
         End Sub
 
 #If NET_VER >= 2.0 Then
-        <Runtime.ConstrainedExecution.ReliabilityContract(Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, Runtime.ConstrainedExecution.Cer.Success)> _
+        <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Sub Clear()
 #Else
         Public Sub Clear()

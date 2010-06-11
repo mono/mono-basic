@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ProjectData.vb: Make it compile in VS2010.
+
 2010-04-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* LateBinder.vb: Call Utils.CopyArray manually instead of using
