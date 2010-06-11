@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* class/lib/bootstrap/vbnc.exe[.mdb]: Updated.
+
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile:
