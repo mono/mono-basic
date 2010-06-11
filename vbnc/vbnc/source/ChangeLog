@@ -1,5 +1,23 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* General/TypeResolution.vb: IsImplicitlyConvertible: two nullable types can
+	convert between eachother if the nulled types are implicitly convertible.
+
+	* General/TypeCache.vb:
+	* General/TypeCache.Generated.vb: Regenerated.
+
+	* General/TypeCache.in: Added Nullable.HasValue and Nullable.GetValueOrDefault.
+
+	* General/Helper.vb: Add helper method to pretty-print types.
+
+	* General/CecilHelper.vb: Add helper methods to check if a type is nullable
+	and get the nulled type.
+
+	* Expressions/Conversions/CTypeExpression.vb: Implement implicit conversion
+	between nullable types.
+
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* General/MethodBaseDeclaration.vb: Remove unused variable.
 
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>

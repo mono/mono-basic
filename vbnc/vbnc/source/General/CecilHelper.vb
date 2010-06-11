@@ -940,6 +940,25 @@ Public Class CecilHelper
         Return Type.IsValueType
     End Function
 
+    Public Shared Function IsNullable(ByVal Type As TypeReference) As Boolean
+        Dim git As GenericInstanceType
+
+        If Not Type.IsGenericInstance Then Return False
+
+        If Helper.CompareNameOrdinal(Type.Name, "Nullable`1") = False Then Return False
+
+        git = TryCast(Type, GenericInstanceType)
+        If git Is Nothing Then Return False
+
+        Return Helper.CompareType(Compiler.CurrentCompiler.TypeCache.System_Nullable1, git.ElementType)
+    End Function
+
+    Public Shared Function GetNulledType(ByVal Type As TypeReference) As TypeReference
+        'No checking done, caller must call IsNullable first
+        Dim git As GenericInstanceType = DirectCast(Type, GenericInstanceType)
+        Return git.GenericArguments()(0)
+    End Function
+
     Public Shared Function IsByRef(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return TypeOf Type Is ByReferenceType
     End Function

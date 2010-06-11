@@ -102,6 +102,8 @@ ctor System_Diagnostics_DebuggableAttribute System_Diagnostics_DebuggableAttribu
 type mscorlib "System.ParamArrayAttribute"
 ctor System_ParamArrayAttribute
 type mscorlib "System.Nullable`1"
+method System_Nullable1 "get_HasValue"
+method System_Nullable1 "GetValueOrDefault"
 type mscorlib "System.Runtime.CompilerServices.RuntimeHelpers"
 type mscorlib "System.STAThreadAttribute"
 ctor System_STAThreadAttribute

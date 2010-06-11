@@ -425,7 +425,7 @@ End Class
 ' License along with this library; if not, write to the Free Software
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
-Partial Public Class CecilTypeCache
+Public Partial Class CecilTypeCache
     Public System_Boolean As Mono.Cecil.TypeDefinition
     Public System_Boolean_Array As Mono.Cecil.TypeReference
     Public System_Byte As Mono.Cecil.TypeDefinition
@@ -497,6 +497,8 @@ Partial Public Class CecilTypeCache
     Public System_ParamArrayAttribute As Mono.Cecil.TypeDefinition
     Public System_ParamArrayAttribute__ctor As Mono.Cecil.MethodDefinition
     Public System_Nullable1 As Mono.Cecil.TypeDefinition
+    Public System_Nullable1__get_HasValue As Mono.Cecil.MethodDefinition
+    Public System_Nullable1__GetValueOrDefault As Mono.Cecil.MethodDefinition
     Public System_Runtime_CompilerServices_RuntimeHelpers As Mono.Cecil.TypeDefinition
     Public System_STAThreadAttribute As Mono.Cecil.TypeDefinition
     Public System_STAThreadAttribute__ctor As Mono.Cecil.MethodDefinition
@@ -694,7 +696,7 @@ Partial Public Class CecilTypeCache
     Public MS_VB_CS_Operators__CompareObjectLess_Object_Object_Boolean As Mono.Cecil.MethodDefinition
     Public MS_VB_CS_Operators__CompareObjectLessEqual_Object_Object_Boolean As Mono.Cecil.MethodDefinition
 
-    Protected Overrides Sub InitInternal()
+    Protected Overrides Sub InitInternal ()
         System_Boolean = [GetType](mscorlib, "System.Boolean")
         System_Boolean_Array = GetArrayType(System_Boolean)
         System_Byte = [GetType](mscorlib, "System.Byte")
@@ -766,6 +768,8 @@ Partial Public Class CecilTypeCache
         System_ParamArrayAttribute = [GetType](mscorlib, "System.ParamArrayAttribute")
         System_ParamArrayAttribute__ctor = GetConstructor(System_ParamArrayAttribute)
         System_Nullable1 = [GetType](mscorlib, "System.Nullable`1")
+        System_Nullable1__get_HasValue = GetMethod(System_Nullable1, "get_HasValue")
+        System_Nullable1__GetValueOrDefault = GetMethod(System_Nullable1, "GetValueOrDefault")
         System_Runtime_CompilerServices_RuntimeHelpers = [GetType](mscorlib, "System.Runtime.CompilerServices.RuntimeHelpers")
         System_STAThreadAttribute = [GetType](mscorlib, "System.STAThreadAttribute")
         System_STAThreadAttribute__ctor = GetConstructor(System_STAThreadAttribute)

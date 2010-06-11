@@ -1,6 +1,15 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* tests.xml:
+	* Errors/30512-4.vb:
+	* Errors/30311-37.vb:
+	* Errors/30311-36.vb:
+	* CompileTime2/ImplicitNullableConversions1.vb:
+	* CompileTime2/UserDefinedNullableConversions1.vb: Added new tests.
+
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tests.xml:
 	* CompileTime/ByRefStructureReturn1.vb: Added new test.
 
 2010-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>

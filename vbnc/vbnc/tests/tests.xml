@@ -7224,4 +7224,19 @@
 	<test id="1830" name="ByRefStructureReturn1" category="" priority="0" target="library">
 		<file>CompileTime\ByRefStructureReturn1.vb</file>
 	</test>
+	<test id="1831" name="ImplicitNullableConversions1" category="" priority="0" target="exe">
+		<file>CompileTime2\ImplicitNullableConversions1.vb</file>
+	</test>
+	<test id="1832" name="30311-36" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30311-36.vb</file>
+	</test>
+	<test id="1833" name="30512-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30512-4.vb</file>
+	</test>
+	<test id="1834" name="30311-37" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30311-37.vb</file>
+	</test>
+	<test id="1835" name="UserDefinedNullableConversions1" category="" priority="0" knownfailure="User defined conversions not yet implemented" target="exe">
+		<file>CompileTime2\UserDefinedNullableConversions1.vb</file>
+	</test>
 </rt>

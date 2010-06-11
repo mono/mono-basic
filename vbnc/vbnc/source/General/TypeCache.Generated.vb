@@ -1,6 +1,6 @@
 ' 
 ' Visual Basic.Net Compiler
-' Copyright (C) 2004 - 2007 Rolf Bjarne Kvinge, RKvinge@novell.com
+' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
 ' This library is free software; you can redistribute it and/or
 ' modify it under the terms of the GNU Lesser General Public
@@ -88,6 +88,8 @@ Public Partial Class CecilTypeCache
     Public System_ParamArrayAttribute As Mono.Cecil.TypeDefinition
     Public System_ParamArrayAttribute__ctor As Mono.Cecil.MethodDefinition
     Public System_Nullable1 As Mono.Cecil.TypeDefinition
+    Public System_Nullable1__get_HasValue As Mono.Cecil.MethodDefinition
+    Public System_Nullable1__GetValueOrDefault As Mono.Cecil.MethodDefinition
     Public System_Runtime_CompilerServices_RuntimeHelpers As Mono.Cecil.TypeDefinition
     Public System_STAThreadAttribute As Mono.Cecil.TypeDefinition
     Public System_STAThreadAttribute__ctor As Mono.Cecil.MethodDefinition
@@ -357,6 +359,8 @@ Public Partial Class CecilTypeCache
         System_ParamArrayAttribute = [GetType](mscorlib, "System.ParamArrayAttribute")
         System_ParamArrayAttribute__ctor = GetConstructor(System_ParamArrayAttribute)
         System_Nullable1 = [GetType](mscorlib, "System.Nullable`1")
+        System_Nullable1__get_HasValue = GetMethod(System_Nullable1, "get_HasValue")
+        System_Nullable1__GetValueOrDefault = GetMethod(System_Nullable1, "GetValueOrDefault")
         System_Runtime_CompilerServices_RuntimeHelpers = [GetType](mscorlib, "System.Runtime.CompilerServices.RuntimeHelpers")
         System_STAThreadAttribute = [GetType](mscorlib, "System.STAThreadAttribute")
         System_STAThreadAttribute__ctor = GetConstructor(System_STAThreadAttribute)

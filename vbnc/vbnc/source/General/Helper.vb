@@ -2914,6 +2914,10 @@ Public Class Helper
         Return result
     End Function
 
+    Shared Function PrettyFormatType(ByVal type As TypeReference) As String
+        Return type.ToString()
+    End Function
+
     Overloads Shared Function ToString(ByVal Types As Mono.Cecil.TypeReference()) As String
         Dim result As String = ""
         Dim sep As String = ""

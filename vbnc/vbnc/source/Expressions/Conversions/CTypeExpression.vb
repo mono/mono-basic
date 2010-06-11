@@ -245,6 +245,62 @@ Public Class CTypeExpression
             Else
                 Throw New InternalException(Me)
             End If
+        ElseIf CecilHelper.IsNullable(DestinationType) AndAlso CecilHelper.IsNullable(SourceType) Then
+            Dim nullable_src_type As GenericInstanceType
+            Dim nullable_dst_type As GenericInstanceType
+            Dim get_value As MethodReference
+            Dim has_value As MethodReference
+            Dim ctor As MethodReference
+            Dim localsrc, localdst As Mono.Cecil.Cil.VariableDefinition
+            Dim falseLabel As Label = Emitter.DefineLabel(Info)
+            Dim endLabel As Label = Emitter.DefineLabel(Info)
+            Dim vose As ValueOnStackExpression
+            Dim type_conversion As Expression
+
+            nullable_src_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+            nullable_src_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(SourceType)))
+            has_value = New MethodReference("get_HasValue", nullable_src_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Boolean), True, False, MethodCallingConvention.Default)
+            get_value = New MethodReference("GetValueOrDefault", nullable_src_type, Compiler.TypeCache.System_Nullable1.GenericParameters(0), True, False, MethodCallingConvention.Default)
+
+            nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+            nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(DestinationType)))
+            ctor = New MethodReference(".ctor", nullable_dst_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, MethodCallingConvention.Default)
+            ctor.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
+
+            'store in local
+            localsrc = Emitter.DeclareLocal(Info, SourceType)
+            Emitter.EmitStoreVariable(Info, localsrc)
+
+            'call Nullable`1.HasValue to check the condition
+            Emitter.EmitLoadVariableLocation(Info, localsrc)
+            Emitter.EmitCall(Info, has_value)
+            Emitter.EmitBranchIfFalse(Info, falseLabel)
+
+            localdst = Emitter.DeclareLocal(Info, DestinationType)
+
+            'true branch: we have a value, get it to create a new nullable with the right value
+            Emitter.EmitLoadVariableLocation(Info, localdst)
+            Emitter.EmitLoadVariableLocation(Info, localsrc)
+            Emitter.EmitCall(Info, get_value)
+
+            'convert value
+            vose = New ValueOnStackExpression(Me, CecilHelper.GetNulledType(SourceType))
+            type_conversion = Helper.CreateTypeConversion(Me, vose, CecilHelper.GetNulledType(DestinationType), result)
+            result = type_conversion.GenerateCode(Info) AndAlso result
+
+            Emitter.EmitCall(Info, ctor)
+            Emitter.EmitLoadVariable(Info, localdst)
+            Emitter.EmitBranch(Info, endLabel)
+
+            'false branch: no value
+            Emitter.MarkLabel(Info, falseLabel)
+            Emitter.EmitLoadVariableLocation(Info, localdst)
+            Emitter.EmitInitObj(Info, localdst.VariableType)
+            Emitter.EmitLoadVariable(Info, localdst)
+
+            'end
+            Emitter.MarkLabel(Info, endLabel)
+
         ElseIf CecilHelper.IsValueType(SourceType) Then
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
             If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
@@ -346,6 +402,10 @@ Public Class CTypeExpression
                         result = Compiler.Report.ShowMessage(Messages.VBNC30512, Location, Expression.ExpressionType.FullName, Me.ExpressionType.FullName)
                     Else
                         m_IsStringToCharArray = True
+                    End If
+                ElseIf CecilHelper.IsNullable(Me.ExpressionType) AndAlso CecilHelper.IsNullable(Me.Expression.ExpressionType) Then
+                    If Not Compiler.TypeResolution.IsImplicitlyConvertible(Me, CecilHelper.GetNulledType(Me.Expression.ExpressionType), CecilHelper.GetNulledType(Me.ExpressionType)) Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Me.Location, Helper.PrettyFormatType(Me.Expression.ExpressionType), Helper.PrettyFormatType(Me.ExpressionType)) AndAlso result
                     End If
                 End If
             Case Else
