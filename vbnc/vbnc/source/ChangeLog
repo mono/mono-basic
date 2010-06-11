@@ -1,3 +1,7 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Emit/Emitter.vb: Implement indirect loads for all types.
+
 2010-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Statements/AssignStatements/CompoundAssignmentStatement.vb: We need to

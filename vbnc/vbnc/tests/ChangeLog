@@ -1,3 +1,8 @@
+2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* tests.xml:
+	* CompileTime/ByRefStructureReturn1.vb: Added new test.
+
 2010-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* tests.xml:

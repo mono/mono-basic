@@ -1712,7 +1712,6 @@ Partial Public Class Emitter
             Case TypeCode.Int32
                 Info.ILGen.Emit(OpCodes.Ldind_I4)
             Case TypeCode.UInt64
-                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
                 Info.ILGen.Emit(OpCodes.Ldind_I8)
             Case TypeCode.Int64
                 Info.ILGen.Emit(OpCodes.Ldind_I8)
@@ -1720,15 +1719,24 @@ Partial Public Class Emitter
                 Info.ILGen.Emit(OpCodes.Ldind_R4)
             Case TypeCode.Double
                 Info.ILGen.Emit(OpCodes.Ldind_R8)
-            Case TypeCode.Object, TypeCode.String
+            Case TypeCode.String, TypeCode.DBNull
                 Info.ILGen.Emit(OpCodes.Ldind_Ref)
+            Case TypeCode.Object
+                If elementtype.IsValueType Then
+                    Info.ILGen.Emit(OpCodes.Ldobj, elementtype)
+                Else
+                    Info.ILGen.Emit(OpCodes.Ldind_Ref)
+                End If
             Case TypeCode.Boolean
                 Info.ILGen.Emit(OpCodes.Ldind_I1)
             Case TypeCode.Decimal
                 Info.ILGen.Emit(OpCodes.Ldobj, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Decimal))
             Case Else
-                Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
-                'Helper.NotImplemented("EmitLoadIndirect of type: " & elementtype.FullName)
+                If elementtype.IsValueType Then
+                    Info.ILGen.Emit(OpCodes.Ldobj, elementtype)
+                Else
+                    Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
+                End If
         End Select
     End Sub
 

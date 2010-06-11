@@ -7221,4 +7221,7 @@
 	<test id="1731" name="DefaultProperty7" category="" priority="0" target="exe">
 		<file>CompileTime2\DefaultProperty7.vb</file>
 	</test>
+	<test id="1830" name="ByRefStructureReturn1" category="" priority="0" target="library">
+		<file>CompileTime\ByRefStructureReturn1.vb</file>
+	</test>
 </rt>
