@@ -38,20 +38,15 @@ Imports System.Runtime.Serialization
 Imports System.Reflection
 
 Namespace Microsoft.VisualBasic
-#If NET_VER >= 2.0 Then
     <DebuggerTypeProxy(GetType(Collection.CollectionDebugView))> _
     <Serializable()> _
     <DebuggerDisplay("Count = {Count}")> _
     Public NotInheritable Class Collection
-#Else
-    Public NotInheritable Class Collection
-#End If
         Implements ICollection
         Implements IList
-#If NET_VER >= 2.0 Then
         Implements ISerializable
         Implements IDeserializationCallback
-#End If
+
 #If Moonlight Then
         Implements IEnumerable
 #End If
@@ -61,20 +56,13 @@ Namespace Microsoft.VisualBasic
         Private m_KeysCount As Integer = Integer.MinValue
         Friend Modified As Boolean = False
 
-#If NET_VER < 2.0 Then
-        Private m_Broken As Boolean
-#End If
-
         Private Class ColEnumerator
             Implements IEnumerator
 
             Private currentKey As Object
             Private afterLast As Boolean = False
             Private m_col As Collection
-
-#If NET_VER >= 2.0 Then
             Private m_Current As Object
-#End If
 
             Public Sub New(ByRef coll As Collection)
                 m_col = coll
@@ -98,44 +86,32 @@ Namespace Microsoft.VisualBasic
 
                 If currentKey Is Nothing And m_col.Count > 0 Then
                     currentKey = m_col.m_HashIndexers(0)
-#If NET_VER >= 2.0 Then
                     m_Current = CurrentInternal
-#End If
                     Return True
                 End If
 
-#If NET_VER >= 2.0 Then
                 If afterLast Then
                     m_Current = Nothing
                     Return False
                 End If
-#End If
 
                 Dim index As Integer = m_col.m_HashIndexers.IndexOf(currentKey)
                 If index >= m_col.Count - 1 Then
                     afterLast = True
-#If NET_VER >= 2.0 Then
                     m_Current = Nothing
-#End If
                     Return False
                 End If
 
                 currentKey = m_col.m_HashIndexers(index + 1)
                 afterLast = False
 
-#If NET_VER >= 2.0 Then
                 m_Current = CurrentInternal
-#End If
                 Return True
             End Function
 
             Public ReadOnly Property Current() As Object Implements System.Collections.IEnumerator.Current
                 Get
-#If NET_VER >= 2.0 Then
                     Return m_Current
-#Else
-                    return CurrentInternal
-#End If
                 End Get
             End Property
 
@@ -196,12 +172,8 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-#If NET_VER >= 2.0 Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Default Public Overloads ReadOnly Property Item(ByVal Index As Object) As Object
-#Else
-        Default Public Overloads ReadOnly Property Item(ByVal Index As Object) As Object
-#End If
             Get
                 If Index Is Nothing Then Throw New IndexOutOfRangeException("Argument 'Index' is not a valid index.")
 
@@ -230,19 +202,14 @@ Namespace Microsoft.VisualBasic
             End Get
         End Property
 
-#If NET_VER >= 2.0 Then
         Default Public Overloads ReadOnly Property Item(ByVal Key As String) As Object
             Get
                 Return Item(CObj(Key))
             End Get
         End Property
-#End If
 
         Private Property IList_Item(ByVal index As Integer) As Object Implements System.Collections.IList.Item
             Get
-#If NET_VER < 2.0 Then
-                If m_Broken Then Throw New InvalidCastException ()
-#End If
                 If index < 0 AndAlso Count > 0 Then
                     'Oh man this behaviour is weird...
                     index = 0
@@ -256,9 +223,6 @@ Namespace Microsoft.VisualBasic
 
             End Get
             Set(ByVal Value As Object)
-#If NET_VER < 2.0 Then
-                m_Broken = True
-#End If
                 If index < 0 AndAlso Count > 0 Then
                     'Oh man this behaviour is weird...
                     index = 0
@@ -301,21 +265,15 @@ Namespace Microsoft.VisualBasic
 
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function Contains(ByVal Key As String) As Boolean
             Return m_Hashtable.ContainsKey(Key)
         End Function
-#End If
 
         Private Function IListContains(ByVal value As Object) As Boolean Implements System.Collections.IList.Contains
             Return (CType(Me, IList)).IndexOf(value) <> -1
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Sub Clear()
-#Else
-        Private Sub Clear()
-#End If
             m_Hashtable.Clear()
             m_HashIndexers.Clear()
             m_KeysCount = Integer.MinValue
@@ -370,21 +328,13 @@ Namespace Microsoft.VisualBasic
         End Sub
 
         Private Sub Insert(ByVal index As Integer, ByVal value As Object) Implements System.Collections.IList.Insert
-#If NET_VER >= 2.0 Then
             If index < 0 Then
                 Throw New ArgumentOutOfRangeException
             End If
-#End If
 
-#If NET_VER < 2.0 Then
-            If index + 2 > Count + 1 Then
-                Throw New ArgumentOutOfRangeException
-            End If
-#Else
             If index + 1 > Count + 2 Then
                 Throw New ArgumentOutOfRangeException
             End If
-#End If
 
             If index + 2 >= Count Then
                 Add(value)
@@ -517,7 +467,6 @@ Namespace Microsoft.VisualBasic
             Return IEnumerable_GetEnumerator()
         End Function
 
-#If NET_VER >= 2.0 Then
         Private Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
             Throw New NotImplementedException
         End Sub
@@ -525,12 +474,9 @@ Namespace Microsoft.VisualBasic
         Private Sub OnDeserialization(ByVal sender As Object) Implements System.Runtime.Serialization.IDeserializationCallback.OnDeserialization
             Throw New NotImplementedException
         End Sub
-#End If
 
-#If NET_VER >= 2.0 Then
         Friend Class CollectionDebugView
             'If you want to view Collection classes in VS, implement me
         End Class
-#End If
     End Class
 End Namespace

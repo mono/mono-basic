@@ -1,3 +1,19 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* UIOption.vb:
+	* FieldType.vb:
+	* FileSystem.vb:
+	* SearchOption.vb:
+	* RecycleOption.vb:
+	* UICancelOption.vb:
+	* TextFieldParser.vb:
+	* SpecialDirectories.vb:
+	* FileSystemOperation.vb:
+	* DeleteDirectoryOption.vb:
+	* FileSystemOperationUI.vb:
+	* MalformedLineException.vb:
+	* FileSystemOperationUIQuestion.vb: Remove .NET 1.0/1.1 logic.
+
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* SpecialDirectories.vb: Remove all uses of CType (and relatives): for primitive

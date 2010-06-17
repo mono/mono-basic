@@ -1,5 +1,22 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Strings.vb:
+	* Globals.vb:
+	* FileData.vb:
+	* ErrObject.vb:
+	* Conversion.vb:
+	* Collection.vb:
+	* FileSystem.vb:
+	* VbStrConv.vb:
+	* Information.vb:
+	* MsgBoxStyle.vb:
+	* MsgBoxResult.vb:
+	* AudioPlayMode.vb:
+	* HideModuleNameAttribute.vb:
+	* MyGroupCollectionAttribute.vb: Remove .NET 1.0/1.1 logic.
+
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* ErrObject.vb: Make it compile in VS2010.
 
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>

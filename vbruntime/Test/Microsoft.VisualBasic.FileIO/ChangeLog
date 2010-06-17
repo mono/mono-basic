@@ -1,3 +1,10 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileSystemTest.vb:
+	* TextFieldParserTest.cs:
+	* SpecialDirectoriesTest.cs:
+	* MalformedLineExceptionTest.cs:  Remove .NET 1.0/1.1 logic.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* FileSystemTest.vb: Set default culture to en-US.

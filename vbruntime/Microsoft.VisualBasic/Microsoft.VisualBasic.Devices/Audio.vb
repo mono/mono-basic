@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 #If TARGET_JVM = False Then 'System.Media Not Supported by Grasshopper
 Imports System
 Imports System.IO
@@ -83,5 +82,4 @@ Namespace Microsoft.VisualBasic.Devices
         End Sub
     End Class
 End Namespace
-#End If
 #End If

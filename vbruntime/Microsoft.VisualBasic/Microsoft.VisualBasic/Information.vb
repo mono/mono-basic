@@ -228,14 +228,12 @@ Namespace Microsoft.VisualBasic
                     Return "Single"
                 Case TypeCode.String
                     Return "String"
-#If NET_VER >= 2.0 Then
                 Case TypeCode.UInt16
                     Return "UShort"
                 Case TypeCode.UInt32
                     Return "UInteger"
                 Case TypeCode.UInt64
                     Return "ULong"
-#End If
                 Case Else
                     Return tp.Name
             End Select

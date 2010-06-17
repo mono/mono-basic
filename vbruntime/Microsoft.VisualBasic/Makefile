@@ -7,21 +7,12 @@ ifeq ("$(PROFILE)", "moonlight")
 LOCAL_VBNC_FLAGS = @vbruntime-moonlight.rsp $(EXTRA_VBRUNTIME_FLAGS)
 LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
 else
-ifeq ("$(FXVERSION)", "1")
-LOCAL_VBNC_FLAGS = @vbruntime1.rsp $(EXTRA_VBRUNTIME_FLAGS)
-else
 LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
-endif
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 
-BUILT_FILES = strings1.resources strings2.resources
-
-strings1.resources: strings.txt strings-only1.txt
-	cat strings.txt > strings1.txt
-	cat strings-only1.txt >> strings1.txt
-	resgen strings1.txt strings1.resources
+BUILT_FILES = strings2.resources
 
 strings2.resources: strings.txt strings-only2.txt
 	cat strings.txt > strings2.txt
@@ -36,7 +27,6 @@ DISTFILES =	\
 	winfx3.pub				\
 	mono.snk				\
 	strings.txt				\
-	strings-only1.txt			\
 	strings-only2.txt			\
 	2005VB.vbproj				\
 	strings1.resources			\
@@ -47,7 +37,6 @@ DISTFILES =	\
 	Microsoft.VisualBasic.dll.sources.win	\
 	Microsoft.VisualBasic.dll.moonlight.sources\
 	vbruntime.rsp				\
-	vbruntime1.rsp				\
 	vbruntime2.rsp				\
 	vbruntime-moonlight.rsp			\
 	Helper.vb				\

@@ -42,11 +42,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DateType.FromString("#ERROR")
                 Assert.Fail("Expected InvalidCastException", "#A1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""#ERROR"" to type 'Date' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string ""#ERROR"" to type 'Date' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNull(ex.InnerException, "#A3")
             End Try
 
@@ -54,11 +50,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DateType.FromString(448)
                 Assert.Fail("Expected InvalidCastException", "#B1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""448"" to type 'Date' is not valid.", ex.Message, "#B2")
-#Else
-                Assert.AreEqual("Cast from string ""448"" to type 'Date' is not valid.", ex.Message, "#B2")
-#End If
                 Assert.IsNull(ex.InnerException, "#B3")
             End Try
         End Sub
@@ -69,11 +61,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DateType.FromObject("#ERROR")
                 Assert.Fail("Expected InvalidCastException", "#A1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""#ERROR"" to type 'Date' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string ""#ERROR"" to type 'Date' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNull(ex.InnerException, "#A3")
             End Try
 
@@ -81,11 +69,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DateType.FromObject(448)
                 Assert.Fail("Expected InvalidCastException", "#B1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from type 'Integer' to type 'Date' is not valid.", ex.Message, "#B2")
-#Else
-                Assert.AreEqual("Cast from type 'Integer' to type 'Date' is not valid.", ex.Message, "#B2")
-#End If
                 Assert.IsNull(ex.InnerException, "#B3")
             End Try
 
@@ -93,11 +77,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DateType.FromObject(New DateTypeTest())
                 Assert.Fail("Expected InvalidCastException", "#C1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from type 'DateTypeTest' to type 'Date' is not valid.", ex.Message, "#C2")
-#Else
-                Assert.AreEqual("Cast from type 'DateTypeTest' to type 'Date' is not valid.", ex.Message, "#C2")
-#End If
                 Assert.IsNull(ex.InnerException, "#C3")
             End Try
         End Sub

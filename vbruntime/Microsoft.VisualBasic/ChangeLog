@@ -1,5 +1,15 @@
 2010-06-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Makefile:
+	* vbruntime1.rsp:
+	* strings-only1.txt:
+	* strings1.resources: Remove .NET 1.0/1.1 logic
+
+	* 2010VB.vbproj:
+	* AssemblyInfo.vb: Update for .NET 4.0.
+
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* 2010VB.sln:
 	* 2010VB.vbproj: Added for VS2010 work.
 

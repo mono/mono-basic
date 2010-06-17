@@ -1,3 +1,12 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Log.vb:
+	* AspLog.vb:
+	* LogFileLocation.vb:
+	* FileLogTraceListener.vb:
+	* DiskSpaceExhaustedOption.vb:
+	* LogFileCreationScheduleOption.vb: Remove .NET 1.0/1.1 logic.
+
 2009-07-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* FileLogTraceListener.vb:  Remove all uses of CType (and relatives): for primitive

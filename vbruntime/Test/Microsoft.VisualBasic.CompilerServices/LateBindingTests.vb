@@ -43,13 +43,10 @@ Public Class LateBindingTests
     Dim c As Char = "a"c
     Dim d As Double = 1.0
     Dim si As Single = 1.0
-
-#If NET_VER >= 2.0 Then
     Dim sb As SByte = 1
     Dim us As UShort = 1
     Dim ui As UInteger = 1
     Dim ul As ULong = 1
-#End If
 
     <TestFixture()> _
     Public Class Bug344217
@@ -311,8 +308,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
-
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -328,7 +323,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -363,13 +357,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C200
@@ -386,8 +377,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
-
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -403,7 +392,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -438,13 +426,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
@@ -469,8 +454,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
-
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -486,7 +469,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -521,13 +503,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C220
@@ -544,7 +523,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         'Public Function F(ByVal s As SByte) As String
         '    Return "SByte"
         'End Function
@@ -560,7 +538,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -595,13 +572,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("Short", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C230
@@ -618,7 +592,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -634,7 +607,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -669,13 +641,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("Integer", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C240
@@ -692,7 +661,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -708,7 +676,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -743,13 +710,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("Long", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C250
@@ -766,7 +730,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -782,7 +745,6 @@ Public Class LateBindingTests
         'Public Function F(ByVal s As ULong) As String
         '    Return "ULong"
         'End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -817,13 +779,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("Single", o.F(ul))
-#End If
     End Sub
 
     Private Class C260
@@ -840,7 +799,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -856,7 +814,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         'Public Function F(ByVal s As Integer) As String
         '    Return "Integer"
@@ -891,13 +848,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C270
@@ -914,7 +868,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -930,7 +883,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -965,13 +917,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C280
@@ -988,7 +937,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1004,7 +952,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -1039,13 +986,10 @@ Public Class LateBindingTests
         'Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
@@ -1072,7 +1016,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1088,7 +1031,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -1123,13 +1065,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         'Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
@@ -1154,7 +1093,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1170,7 +1108,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -1205,13 +1142,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Double", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     Private Class C310
@@ -1228,7 +1162,6 @@ Public Class LateBindingTests
         '    Return "Short"
         'End Function
 
-#If NET_VER >= 2.0 Then
         Public Function F(ByVal s As SByte) As String
             Return "SByte"
         End Function
@@ -1244,7 +1177,6 @@ Public Class LateBindingTests
         'Public Function F(ByVal s As ULong) As String
         '    Return "ULong"
         'End Function
-#End If
 
         Public Function F(ByVal s As Integer) As String
             Return "Integer"
@@ -1279,13 +1211,10 @@ Public Class LateBindingTests
         Assert.AreEqual("Char", o.F(c))
         'Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Single", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("SByte", o.F(sb))
         Assert.AreEqual("Integer", o.F(us))
         Assert.AreEqual("UInteger", o.F(ui))
         Assert.AreEqual("Single", o.F(ul))
-#End If
     End Sub
 
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
@@ -1318,7 +1247,6 @@ Public Class LateBindingTests
             Return "Short"
         End Function
 
-#If NET_VER >= 2.0 Then
         'Public Function F(ByVal s As SByte) As String
         '    Return "SByte"
         'End Function
@@ -1334,7 +1262,6 @@ Public Class LateBindingTests
         Public Function F(ByVal s As ULong) As String
             Return "ULong"
         End Function
-#End If
 
         'Public Function F(ByVal s As Integer) As String
         '    Return "Integer"
@@ -1369,13 +1296,10 @@ Public Class LateBindingTests
         'Assert.AreEqual("Char", o.F(c))
         Assert.AreEqual("Double", o.F(d))
         Assert.AreEqual("Double", o.F(si))
-
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("Short", o.F(sb))
         Assert.AreEqual("UShort", o.F(us))
         Assert.AreEqual("Long", o.F(ui))
         Assert.AreEqual("ULong", o.F(ul))
-#End If
     End Sub
 
     <Test(), ExpectedException(GetType(AmbiguousMatchException))> _

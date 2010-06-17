@@ -1,3 +1,16 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Helper.cs:
+	* StringsTest.vb:
+	* StringsTest.cs:
+	* GlobalsTests.vb:
+	* FinancialTests.cs:
+	* ConversionTests.cs:
+	* CollectionTests.cs:
+	* FileSystemTests.vb:
+	* FileSystemTests2.vb:
+	* FileSystemTestGenerator.vb: Remove .NET 1.0/1.1 logic.
+
 2009-05-20  Rolf Bjarne Kvinge <RKvinge@novell.com>
 	* VBFixedStringAttributeTest.vb:
 	* VBFixedArrayAttributeTest.vb: Added.

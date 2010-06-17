@@ -42,11 +42,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.ByteType.FromString("#ERROR")
                 Assert.Fail("Expected InvalidCastException", "#A1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""#ERROR"" to type 'Byte' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string ""#ERROR"" to type 'Byte' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNotNull(ex.InnerException, "#A3")
                 Assert.AreSame(GetType(FormatException), ex.InnerException.GetType, "#A4")
             End Try

@@ -55,20 +55,12 @@ Namespace Microsoft.VisualBasic
         '/ <summary>
         '/ Converts the string to uppercase characters. 
         '/ </summary>
-#If NET_VER >= 2.0 Then
         Uppercase = 1
-#Else
-        UpperCase = 1
-#End If
         '
         '/ <summary>
         '/ Converts the string to lowercase characters. 
         '/ </summary>
-#If NET_VER >= 2.0 Then
         Lowercase = 2
-#Else
-        LowerCase = 2
-#End If
         '
         '/ <summary>
         '/ Converts the first letter of every word in string to uppercase.

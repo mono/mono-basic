@@ -32,33 +32,20 @@ Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.CompilerServices
 
-#If NET_VER >= 2.0 Then
     <System.Serializable()> _
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     Public NotInheritable Class IncompleteInitialization : Inherits Exception
-#Else
-    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
-    Public NotInheritable Class IncompleteInitialization : Inherits Exception
-#End If
         Public Sub New()
             MyBase.New()
         End Sub
 
-#If NET_VER >= 2.0 Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Public Sub New(ByVal message As String)
-#Else
-        Public Sub New(ByVal message As String)
-#End If
             MyBase.New(message)
         End Sub
 
-#If NET_VER >= 2.0 Then
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Public Sub New(ByVal message As String, ByVal innerException As Exception)
-#Else
-        Public Sub New(ByVal message As String, ByVal innerException As Exception)
-#End If
             MyBase.New(message, InnerException)
         End Sub
     End Class

@@ -28,7 +28,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Imports System
 'StackOverflow WARNING: 
 ' When vbc2.0 compiles Interaction.CallByName, Information.IsNumeric, Information.SystemTypeName, 
@@ -203,4 +202,3 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
     End Class
 End Namespace
-#End If

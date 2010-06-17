@@ -228,11 +228,7 @@ Public Class StringsTest
             Assert.AreEqual(expectCh, ch)
         Next
 
-#If NET_VER >= 2.0 Then
         If enc.IsSingleByte Then
-#Else
-        If enc.GetMaxByteCount(1) = 1 Then
-#End If
             For i = 256 To 32767
                 Try
                     ch = AscW(Chr(i))

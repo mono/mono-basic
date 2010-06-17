@@ -436,7 +436,7 @@ namespace MonoTests.Microsoft_VisualBasic
 
 			Assert.AreEqual("2006-06-19T14:22:35",Strings.Format(d, "s"));
 
-#if NET_2_0 && FIXME // FIXME - these scenario is timezone specific
+#if FIXME // FIXME - these scenario is timezone specific
 			if (d.IsDaylightSavingTime ()) {
 				Assert.AreEqual("Monday, June 19, 2006 11:22:35 AM", Strings.Format (d, "U"));	
 			} else {
@@ -1168,22 +1168,12 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(2,Strings.Len(new Int16()),"Int16");
 			Assert.AreEqual(4,Strings.Len(new Int32()),"Int32");
 			Assert.AreEqual(8,Strings.Len(new Int64()),"Int64");
-// Passing unsigned types to VB1.1 returns the sizeof of a signed type.
-#if NET_2_0
 			Assert.AreEqual(1,Strings.Len(new SByte()),"SByte");
-#else
-			Assert.AreEqual(2,Strings.Len(new SByte()),"SByte");
-#endif
 			Assert.AreEqual(4,Strings.Len(new Single()),"Single");
 			Assert.AreEqual(8,Strings.Len(new DateTime()),"DateTime");
 			Assert.AreEqual(8,Strings.Len(new Decimal()),"Decimal");
-#if NET_2_0
 			Assert.AreEqual(2,Strings.Len(new UInt16()),"UInt16");
 			Assert.AreEqual(4,Strings.Len(new UInt32()),"UInt32");
-#else
-			Assert.AreEqual(4,Strings.Len(new UInt16()),"UInt16");
-			Assert.AreEqual(8,Strings.Len(new UInt32()),"UInt32");
-#endif
 			decimal d = new UInt64();
 			Assert.AreEqual(8,Strings.Len(d));
 
@@ -1697,15 +1687,9 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void StrConv_1()
 		{
-#if NET_2_0
             Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.Lowercase,0));
             Assert.AreEqual("ABCD ABCD", Strings.StrConv("ABCD abcd", VbStrConv.Uppercase, 0));
             Assert.AreEqual("ASD1234 SDF234 DXC234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.Uppercase, 0));
-#else
-			Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.LowerCase,0));
-			Assert.AreEqual("ABCD ABCD",Strings.StrConv("ABCD abcd", VbStrConv.UpperCase,0));
-			Assert.AreEqual("ASD1234 SDF234 DXC234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.UpperCase,0));
-#endif
             Assert.AreEqual("Abcd Abcd",Strings.StrConv("ABCD abcd", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Abcd Ascd Ffff",Strings.StrConv("abcd ascd ffff", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Asd1234 Sdf234 Dxc234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.ProperCase,0));
@@ -1715,7 +1699,6 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Category("NotWorking")]
 		public void StrConv_2()
 		{
-#if NET_2_0
             Assert.AreEqual("abcd abcd", Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
             Assert.AreEqual("abcd ascd ffff", Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
             Assert.AreEqual("asd1234 sdf234 dxc234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.Lowercase, 0));
@@ -1723,25 +1706,12 @@ namespace MonoTests.Microsoft_VisualBasic
             Assert.AreEqual("ABCD ABCD", Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
             Assert.AreEqual("ABCD ASCD FFFF", Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
             Assert.AreEqual("ASD1234 SDF234 DXC234", Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.Uppercase, 0));
-#else
-			Assert.AreEqual("abcd abcd",Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
-			Assert.AreEqual("abcd ascd ffff",Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
-			Assert.AreEqual("asd1234 sdf234 dxc234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.LowerCase,0));
-
-			Assert.AreEqual("ABCD ABCD",Strings.StrConv("ABCD abcd", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
-			Assert.AreEqual("ABCD ASCD FFFF",Strings.StrConv("abcd ascd ffff", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
-			Assert.AreEqual("ASD1234 SDF234 DXC234",Strings.StrConv("asd1234 sdf234 dxc234", VbStrConv.LinguisticCasing | VbStrConv.UpperCase,0));
-#endif
         }
 
 		[Test]
 		public void StrConv_ProperCase()
 		{
-#if NET_2_0
 			Assert.AreEqual ("Abcd8abcd", Strings.StrConv ("abcd8abcd", VbStrConv.ProperCase, 0));
-#else
-			Assert.AreEqual("Abcd8Abcd",Strings.StrConv("abcd8abcd", VbStrConv.ProperCase,0));
-#endif
 
 			Assert.AreEqual("Abcd,Efgh;Ffff.Kkk!Qqqq@Eeee#Wwww$Llll",Strings.StrConv("abcd,efgh;ffff.kkk!qqqq@eeee#wwww$llll", VbStrConv.ProperCase,0));
 			Assert.AreEqual("Aa%Bb^Cc&Dd*Ee(Ff)Gg-Hh_Ee",Strings.StrConv("aa%bb^cc&dd*ee(ff)gg-hh_ee", VbStrConv.ProperCase,0));
@@ -1817,11 +1787,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		[Test]
 		public void StrConv_3()
 		{
-#if NET_2_0
 			Assert.AreEqual(String.Empty,Strings.StrConv(String.Empty, VbStrConv.Uppercase,0));
-#else
-            Assert.AreEqual(String.Empty,Strings.StrConv(String.Empty, VbStrConv.UpperCase,0));
-#endif
         }
 
 		[Test]
@@ -1836,11 +1802,7 @@ namespace MonoTests.Microsoft_VisualBasic
 		public void StrConv_5()
 		{
 			//  Value cannot be null.
-#if NET_2_0
 			Strings.StrConv(null, VbStrConv.Uppercase,0);
-#else
-            Strings.StrConv(null, VbStrConv.UpperCase,0);
-#endif
         }
 
 

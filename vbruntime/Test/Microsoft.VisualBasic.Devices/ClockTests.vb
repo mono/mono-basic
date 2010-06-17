@@ -24,8 +24,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#If NET_2_0 Then
-
 Imports Microsoft.VisualBasic.Devices
 
 Namespace Devices
@@ -50,4 +48,3 @@ Namespace Devices
         End Sub
     End Class
 End Namespace
-#End If

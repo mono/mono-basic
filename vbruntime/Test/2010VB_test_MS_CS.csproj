@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D1E99600-0061-4184-9778-85422E238DB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MonoTests.Microsoft_VisualBasic</RootNamespace>
+    <AssemblyName>Microsoft.2005_VisualBasic_test</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>./bin/Debug/</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0,NET_4_0,mono_not_yet</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.2005_VisualBasic_test</AssemblyName>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>./bin/Release/</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>NET_2_0=true</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.2005_VisualBasic_test</AssemblyName>
+    <DebugSymbols>True</DebugSymbols>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Edit|AnyCPU' ">
+    <OutputPath>bin\Edit\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\BooleanTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DecimalTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\DoubleTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\IntegerTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\LongTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\ShortTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\SingleTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\StringTypeTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.CompilerServices\UtilsTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\MalformedLineExceptionTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\SpecialDirectoriesTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.FileIO\TextFieldParserTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\FileLogTraceListener.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\LogTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.Logging\AspLogTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices.Internal\ContextValueTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\ClipboardProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\FileSystemProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\RegistryProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic.MyServices\SpecialDirectoriesProxyTest.cs" />
+    <Compile Include="Microsoft.VisualBasic\CollectionTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\ConversionTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\DateAndTimeTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\ErrObjectTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\FinancialTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\InformationTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\StringsTest.cs" />
+    <Compile Include="Microsoft.VisualBasic\VBMathTests.cs" />
+    <Compile Include="Microsoft.VisualBasic\Helper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <ProjectGuid>{D1E99600-0061-4184-9778-85422E238DB9}</ProjectGuid>
+  </PropertyGroup>
+</Project>

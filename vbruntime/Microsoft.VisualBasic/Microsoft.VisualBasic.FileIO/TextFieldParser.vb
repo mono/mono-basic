@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
@@ -426,4 +425,3 @@ Namespace Microsoft.VisualBasic.FileIO
 
     End Class
 End Namespace
-#End If

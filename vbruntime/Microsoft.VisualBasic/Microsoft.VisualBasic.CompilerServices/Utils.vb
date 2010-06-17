@@ -131,7 +131,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Throw New NotImplementedException
         End Sub
 
-#If NET_VER >= 2.0 Then
         Public Shared Function GetResourceString(ByVal ResourceKey As String, ByVal ParamArray Args As String()) As String
             Dim result As String
 
@@ -143,7 +142,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
             Return result
         End Function
-#End If
 
         Friend Shared Function GetResourceString(ByVal Name As String) As String
             Try

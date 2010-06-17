@@ -26,7 +26,6 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-#If NET_VER >= 2.0 Then
 Imports System
 Imports System.Globalization
 Imports System.Threading
@@ -53,4 +52,3 @@ Namespace Microsoft.VisualBasic.ApplicationServices
     End Class
 End Namespace
 
-#End If

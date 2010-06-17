@@ -26,7 +26,6 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 Imports System.Runtime.Serialization
 
@@ -53,4 +52,3 @@ Namespace Microsoft.VisualBasic.ApplicationServices
         End Sub
     End Class
 End Namespace
-#End If

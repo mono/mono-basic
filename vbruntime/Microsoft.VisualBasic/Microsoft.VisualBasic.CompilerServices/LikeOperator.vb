@@ -27,7 +27,6 @@
 ' LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#If NET_VER >= 2.0 Then
 Imports System
 'MONOTODO: implement this public class. if needed.
 Namespace Microsoft.VisualBasic.CompilerServices
@@ -45,4 +44,3 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
     End Class
 End Namespace
-#End If

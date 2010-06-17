@@ -33,7 +33,8 @@ rem The option /errorreport:prompt is used to alert the vbc compiler to prompt t
 
 SET VB_COMPILE_OPTIONS=
 IF %VB_BUILD_PARAM_NET_VERSION%=="1" ( 
-GOTO SETOPTIONS1
+ECHO ".NET < 2.0 is no longer supported"
+EXIT 1
 )
 IF %VB_BUILD_PARAM_NET_VERSION%=="2" (
 GOTO SETOPTIONS2

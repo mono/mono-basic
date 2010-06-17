@@ -29,14 +29,9 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
-#If NET_VER >= 2.0 Then
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
     <Serializable()> _
     Public NotInheritable Class StaticLocalInitFlag
-#Else
-    <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
-    Public NotInheritable Class StaticLocalInitFlag
-#End If
         Public State As Short
     End Class
 End Namespace

@@ -1,3 +1,9 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* 2010VB*proj: Added VS2010 project files.
+
+	* Makefile: Fix svn paths.
+
 2010-06-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* bin/nunit.util.dll:

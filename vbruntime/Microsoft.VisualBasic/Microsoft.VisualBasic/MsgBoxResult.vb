@@ -31,11 +31,7 @@
 '
 Namespace Microsoft.VisualBasic
     Public Enum MsgBoxResult As Integer
-#If NET_VER >= 2.0 Then
         Ok = 1
-#Else
-        OK = 1
-#End If
         Cancel = 2
         Abort = 3
         Retry = 4

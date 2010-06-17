@@ -174,7 +174,6 @@ Namespace Microsoft.VisualBasic
                         Else
                             Return Hex(SizeDown(Convert.ToInt64(Number)))
                         End If
-#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return Hex(Convert.ToSByte(Number))
                     Case TypeCode.UInt16
@@ -183,7 +182,6 @@ Namespace Microsoft.VisualBasic
                         Return Hex(Convert.ToUInt32(Number))
                     Case TypeCode.UInt64
                         Return Hex(Convert.ToUInt64(Number))
-#End If
                     Case Else
                         Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
 
@@ -213,11 +211,9 @@ Namespace Microsoft.VisualBasic
             If (num <= Int32.MaxValue And num >= Int32.MinValue) Then
                 Return CType(num, Int32)
             End If
-#If NET_VER >= 2.0 Then
             If (num <= UInt32.MaxValue And num >= 0) Then
                 Return CType(num, UInt32)
             End If
-#End If
             Return num
         End Function
 
@@ -316,7 +312,6 @@ Namespace Microsoft.VisualBasic
                         Else
                             Return Oct(SizeDown(Convert.ToInt64(Number)))
                         End If
-#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return Oct(Convert.ToSByte(Number))
                     Case TypeCode.UInt16
@@ -325,7 +320,6 @@ Namespace Microsoft.VisualBasic
                         Return Oct(Convert.ToUInt32(Number))
                     Case TypeCode.UInt64
                         Return Oct(Convert.ToUInt64(Number))
-#End If
                     Case Else
                         Throw New System.ArgumentException("Argument 'Number' cannot be converted to type '" + Number.GetType.FullName + "'.")
 
@@ -599,7 +593,7 @@ Namespace Microsoft.VisualBasic
             'FIXME:ArgumentException - Object type expression not convertible to String.
 
         End Function
-#If NET_VER >= 2.0 Then
+
         <CLSCompliant(False)> _
         Public Shared Function Hex(ByVal Number As SByte) As String
             Return Convert.ToString(Number, 16).ToUpper
@@ -632,6 +626,5 @@ Namespace Microsoft.VisualBasic
         Public Shared Function Oct(ByVal Number As ULong) As String
             Return Convert.ToString(CLng(Number), 8).ToUpper
         End Function
-#End If
     End Class
 End Namespace

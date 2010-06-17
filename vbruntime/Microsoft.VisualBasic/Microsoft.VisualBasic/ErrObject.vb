@@ -60,12 +60,8 @@ Namespace Microsoft.VisualBasic
             Clear()
         End Sub
 
-#If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Sub Clear()
-#Else
-        Public Sub Clear()
-#End If
             ' storage
             m_Number = 0
             m_Exception = Nothing

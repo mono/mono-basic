@@ -25,11 +25,9 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.Devices
     <EditorBrowsable(EditorBrowsableState.Advanced)> _
     Public Delegate Sub NetworkAvailableEventHandler(ByVal sender As Object, ByVal e As NetworkAvailableEventArgs)
 End Namespace
-#End If

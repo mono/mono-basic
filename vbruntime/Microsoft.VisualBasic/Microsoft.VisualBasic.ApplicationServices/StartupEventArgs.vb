@@ -26,7 +26,6 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 Imports System.Collections.ObjectModel
 Imports System.Runtime
@@ -50,4 +49,3 @@ Public Class StartupEventArgs
         End Property
     End Class
 End Namespace
-#End If

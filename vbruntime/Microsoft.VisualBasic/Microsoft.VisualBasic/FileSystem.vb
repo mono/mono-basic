@@ -216,11 +216,7 @@ Namespace Microsoft.VisualBasic
             If PathName Is Nothing OrElse PathName.Length = 0 Then Throw New System.IO.FileNotFoundException("File " + "'" + "'" + " not found.")
 
             Dim InvalidChars() As Char
-#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
-#Else
-            InvalidChars = Path.InvalidPathChars
-#End If
             If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
                 Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
             End If
@@ -370,12 +366,8 @@ Namespace Microsoft.VisualBasic
         Public Shared Sub FilePut(ByVal FileNumber As Integer, ByVal Value As System.ValueType, Optional ByVal RecordNumber As Long = -1)
             FindFileData(FileNumber).FilePut(Value, RecordNumber)
         End Sub
-#If NET_VER >= 2.0 Then
         <Obsolete("This member has been deprectated. Try FilePutObject.")> _
         Public Shared Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
-#Else
-        Public Shared Sub FilePut(ByVal FileNumber As Object, ByVal Value As Object, Optional ByVal RecordNumber As Object = -1)
-#End If
             Throw New ArgumentException("Use 'FilePutObject' instead of 'FilePut' when using argument of type 'Object'.")
         End Sub
         Public Shared Sub FilePutObject(ByVal FileNumber As Integer, ByVal Value As Object, Optional ByVal RecordNumber As Long = -1)
@@ -402,11 +394,7 @@ Namespace Microsoft.VisualBasic
             If PathName Is Nothing OrElse PathName.Length = 0 Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim InvalidChars() As Char
-#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
-#Else
-            InvalidChars = Path.InvalidPathChars
-#End If
             If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
                 Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
             End If
@@ -551,11 +539,7 @@ Namespace Microsoft.VisualBasic
                 '' MSDN says IOException on this scenario(as Directory.Move throw), 
                 '' but FileSystem.Rename actually returns ArgumentException
                 If diNew.Exists Then
-#If NET_VER >= 2.0 Then
                     Throw New System.IO.IOException("File already exists.")
-#Else
-                    Throw New System.IO.FileNotFoundException("File not found.")
-#End If
                 End If
                 Try
                     Directory.Move(OldPath, NewPath)
@@ -591,11 +575,7 @@ Namespace Microsoft.VisualBasic
             If PathName Is Nothing OrElse PathName.Length = 0 Then Throw New System.ArgumentException("The path is not of a legal form.")
 
             Dim InvalidChars() As Char
-#If NET_VER >= 2.0 Then
             InvalidChars = Path.GetInvalidPathChars()
-#Else
-            InvalidChars = Path.InvalidPathChars
-#End If
             If Not (PathName.IndexOfAny(InvalidChars) = -1) Then
                 Throw New System.ArgumentException("Argument 'PathName' is not a valid value.")
             End If

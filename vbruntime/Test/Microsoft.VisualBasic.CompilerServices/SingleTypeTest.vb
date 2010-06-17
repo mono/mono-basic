@@ -42,11 +42,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.SingleType.FromString("#ERROR")
                 Assert.Fail("Expected InvalidCastException", "#01")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""#ERROR"" to type 'Single' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string ""#ERROR"" to type 'Single' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNotNull(ex.InnerException, "#03")
                 Assert.AreSame(GetType(FormatException), ex.InnerException.GetType, "#04")
             End Try

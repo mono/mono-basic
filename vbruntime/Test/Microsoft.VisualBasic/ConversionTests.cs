@@ -1129,17 +1129,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			Assert.AreEqual(" 234.234",Conversion.Str(f));
 
 		}
-#if ! NET_2_0
-		[Test]
-		[ExpectedException(typeof(NullReferenceException))]
-		public void Str2() 
-		{
-			//Str(string) throws System.NullReferenceException: Object reference not set to an instance of an object.
-			string s;
-			s = "11";
-			Assert.AreEqual("11",Conversion.Str(s));
-		}
-#endif
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]

@@ -25,11 +25,9 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Namespace Microsoft.VisualBasic.FileIO
     Public Enum SearchOption
         SearchAllSubDirectories = 3
         SearchTopLevelOnly = 2
     End Enum
 End Namespace
-#End If

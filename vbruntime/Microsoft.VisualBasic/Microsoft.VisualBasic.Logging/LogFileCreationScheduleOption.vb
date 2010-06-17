@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 
 Namespace Microsoft.VisualBasic.Logging
     Public Enum LogFileCreationScheduleOption
@@ -34,4 +33,3 @@ Namespace Microsoft.VisualBasic.Logging
         Weekly = 2
     End Enum
 End Namespace
-#End If

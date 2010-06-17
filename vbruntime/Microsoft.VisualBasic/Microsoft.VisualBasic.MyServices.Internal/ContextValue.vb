@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 Namespace Microsoft.VisualBasic.MyServices.Internal
     <EditorBrowsable(EditorBrowsableState.Never)> _
@@ -48,4 +47,3 @@ Namespace Microsoft.VisualBasic.MyServices.Internal
         End Property
     End Class
 End Namespace
-#End If

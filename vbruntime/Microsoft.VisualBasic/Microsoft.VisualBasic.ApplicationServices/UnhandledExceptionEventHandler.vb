@@ -26,11 +26,9 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-#If NET_VER >= 2.0 Then
 Imports System.ComponentModel
 
 Namespace Microsoft.VisualBasic.ApplicationServices
     <EditorBrowsable(EditorBrowsableState.Advanced)> _
     Public Delegate Sub UnhandledExceptionEventHandler(ByVal sender As Object, ByVal e As UnhandledExceptionEventArgs)
 End Namespace
-#End If

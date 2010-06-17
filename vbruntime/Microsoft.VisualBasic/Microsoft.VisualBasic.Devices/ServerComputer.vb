@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 #If TARGET_JVM = False Then 'Registry Not Supported by Grasshopper
 Imports Microsoft.VisualBasic.MyServices
 
@@ -73,5 +72,4 @@ Namespace Microsoft.VisualBasic.Devices
         End Property
     End Class
 End Namespace
-#End If
 #End If

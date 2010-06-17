@@ -472,10 +472,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return Conversions.ToBoolean(value)
                     Case TypeCode.Byte
                         Return Conversions.ToByte(value)
-#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return Conversions.ToSByte(value)
-#End If
                     Case TypeCode.Char
                         Return Conversions.ToChar(value)
                     Case TypeCode.DateTime
@@ -490,14 +488,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return Conversions.ToShort(value)
                     Case TypeCode.Int64
                         Return Conversions.ToLong(value)
-#If NET_VER >= 2.0 Then
                     Case TypeCode.UInt32
                         Return Conversions.ToUInteger(value)
                     Case TypeCode.UInt16
                         Return Conversions.ToUShort(value)
                     Case TypeCode.UInt64
                         Return Conversions.ToULong(value)
-#End If
                     Case TypeCode.Single
                         Return Conversions.ToSingle(value)
                 End Select
@@ -513,10 +509,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return Conversions.ToBoolean(value)
                         Case TypeCode.Byte
                             Return Conversions.ToByte(value)
-#If NET_VER >= 2.0 Then
                         Case TypeCode.SByte
                             Return Conversions.ToSByte(value)
-#End If
                         Case TypeCode.Char
                             Return Conversions.ToChar(value)
                         Case TypeCode.DateTime
@@ -531,14 +525,12 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             Return Conversions.ToShort(value)
                         Case TypeCode.Int64
                             Return Conversions.ToLong(value)
-#If NET_VER >= 2.0 Then
                         Case TypeCode.UInt32
                             Return Conversions.ToUInteger(value)
                         Case TypeCode.UInt16
                             Return Conversions.ToUShort(value)
                         Case TypeCode.UInt64
                             Return Conversions.ToULong(value)
-#End If
                         Case TypeCode.Single
                             Return Conversions.ToSingle(value)
                     End Select

@@ -25,8 +25,6 @@ namespace MonoTests.Microsoft_VisualBasic
 			}
 		}
 
-#if NET_2_0
-
 		public static T [] getObjects <T> (System.Collections.IEnumerable en)
 		{
 			System.Collections.Generic.List<T> list = new System.Collections.Generic.List<T> ();
@@ -48,6 +46,5 @@ namespace MonoTests.Microsoft_VisualBasic
 			Array.Copy (array, obj, array.Length);
 			return Microsoft.VisualBasic.Strings.Join (obj, delimiter);
 		}
-#endif
 	}
 }

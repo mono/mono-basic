@@ -24,8 +24,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#If NET_2_0 Then
-
 Imports FS = Microsoft.VisualBasic.FileIO.FileSystem
 Imports System.IO
 
@@ -1915,4 +1913,3 @@ Public Sub RenameFileTest1()
 #End Region
     End Class
 End Namespace
-#End If

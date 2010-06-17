@@ -65,7 +65,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return Convert.ToInt32(DirectCast(Value, Single))
                     Case TypeCode.String
                         Return IntegerType.FromString(DirectCast(Value, String))
-#If NET_VER >= 2.0 Then
                     Case TypeCode.SByte
                         Return DirectCast(Value, SByte)
                     Case TypeCode.UInt16
@@ -74,7 +73,6 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         Return Convert.ToInt32(DirectCast(Value, UInteger))
                     Case TypeCode.UInt64
                         Return Convert.ToInt32(DirectCast(Value, ULong))
-#End If
                 End Select
             Catch ex As Exception
             End Try

@@ -1,4 +1,3 @@
-#If NET_VER >= 2.0 Then
 
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
@@ -28,4 +27,3 @@ Public Class ConversionsTests
     End Sub
 End Class
 
-#End If

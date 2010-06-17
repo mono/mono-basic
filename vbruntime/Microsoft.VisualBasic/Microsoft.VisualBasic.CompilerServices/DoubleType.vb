@@ -94,7 +94,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Friend Shared Function TryParse(ByVal value As String, <OutAttribute()> ByRef result As Double) As Boolean
             'Grasshopper still does not support Double.TryParse
-#If NET_VER >= 2.0 And TARGET_JVM = False Then
+#If TARGET_JVM = False Then
             Return Double.TryParse(value, result)
 #Else
             Try

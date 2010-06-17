@@ -50,12 +50,10 @@ Public Class LateBindingTests2
     Dim ccc As CC = New CC
     Dim iic As IConvertible = New IC
 
-#If NET_VER >= 2.0 Then
     Dim sb As SByte = 1
     Dim us As UShort = 1
     Dim ui As UInteger = 1
     Dim ul As ULong = 1
-#End If
 
     Private Class C1
         Public Function F(ByVal o As Object) As String
@@ -80,12 +78,10 @@ Public Class LateBindingTests2
         Assert.AreEqual("Object", o.F(ss2))
         Assert.AreEqual("Object", o.F(iic))
 
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("Object", o.F(sb))
         Assert.AreEqual("Object", o.F(us))
         Assert.AreEqual("Object", o.F(ui))
         Assert.AreEqual("Object", o.F(ul))
-#End If
     End Sub
 
     Private Class C2
@@ -111,12 +107,10 @@ Public Class LateBindingTests2
         Assert.AreEqual("String", o.F(ss2))
         'Assert.AreEqual("Object", o.F(iic))
 
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("String", o.F(sb))
         Assert.AreEqual("String", o.F(us))
         Assert.AreEqual("String", o.F(ui))
         Assert.AreEqual("String", o.F(ul))
-#End If
     End Sub
 
 
@@ -163,12 +157,10 @@ Public Class LateBindingTests2
         Assert.AreEqual("String", o.F(ss2))
         Assert.AreEqual("Object", o.F(iic))
 
-#If NET_VER >= 2.0 Then
         Assert.AreEqual("Object", o.F(sb))
         Assert.AreEqual("Object", o.F(us))
         Assert.AreEqual("Object", o.F(ui))
         Assert.AreEqual("Object", o.F(ul))
-#End If
     End Sub
 
     Private Class C4
@@ -181,43 +173,28 @@ Public Class LateBindingTests2
         End Function
     End Class
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray1()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_Complex_ParamArray1()
-#End If
         Dim o As Object = New C4
 
         o.F(ccA)
     End Sub
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray2()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_Complex_ParamArray2()
-#End If
         Dim o As Object = New C4
 
         o.F(ccA, ccA)
     End Sub
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray6()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_Complex_ParamArray6()
-#End If
         Dim o As Object = New C4
 
         o.F(ccA, ccA, ccA, ccA, ccA, ccA)
@@ -751,15 +728,10 @@ Public Class LateBindingTests2
         Assert.AreEqual(2, o.F(1, 2))
     End Sub
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_Complex_ParamArray603()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_Complex_ParamArray603()
-#End If
         Dim o As Object = New C602
         o.F(1, 2, 3)
     End Sub
@@ -871,28 +843,18 @@ Public Class LateBindingTests2
         End Function
     End Class
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_TypeMembersM_2()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_TypeMembersM_2()
-#End If
         Dim o As Object = New C402
         o.fun(1, 2, 3)
     End Sub
 
-#If NET_VER >= 2.0 Then
     'TargetJvmNotWorking - Ambiguous matching in method resolution
     <Category("TargetJvmNotWorking")> _
     <Test()> _
     Public Sub LateBind_TypeMembersM_3()
-#Else
-    <Test(), ExpectedException(GetType(AmbiguousMatchException))> _
-    Public Sub LateBind_TypeMembersM_3()
-#End If
         Dim o As Object = New C402
         o.fun(1, 2)
     End Sub

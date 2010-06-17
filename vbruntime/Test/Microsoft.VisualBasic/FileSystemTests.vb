@@ -92,21 +92,11 @@ Public Class FilesSystemTest
     Public Sub ChDir_2()
         FileSystem.ChDir("")
     End Sub
-#If NET_VER >= 2.0 Then
     <Test(), ExpectedException(GetType(DirectoryNotFoundException))> _
     Public Sub ChDir_3()
         Dim test_dir As String = "chdir_test3"
         FileSystem.ChDir(test_dir)
     End Sub
-#Else
-    <Test(), ExpectedException(GetType(FileNotFoundException))> _
-    Public Sub ChDir_3()
-        Dim test_dir As String = "chdir_test3"
-        FileSystem.ChDir(test_dir)
-    End Sub
-
-#End If
-
 #End Region
 
 #Region "CurDir"
@@ -573,13 +563,8 @@ Public Class FilesSystemTest
         File.Delete(DATA_DIR + sep_ch + test_file_new)
     End Sub
 
-#If NET_VER >= 2.0 Then
     <Test(), ExpectedException(GetType(IOException), "File already exists.")> _
     Public Sub Rename_3()
-#Else
-    <Test(), ExpectedException(GetType(FileNotFoundException), "File not found.")> _
-    Public Sub Rename_3()
-#End If
         Dim test_dir As String = "Rename_test3"
         Dim tmp_dir As String = "Try_Dir"
         Directory.CreateDirectory(DATA_DIR + sep_ch + test_dir)
@@ -593,22 +578,12 @@ Public Class FilesSystemTest
     Public Sub Rename_4()
         FileSystem.Rename("", "Test")
     End Sub
-#If NET_VER >= 2.0 Then
 
     <Test(), ExpectedException(GetType(FileNotFoundException))> _
      Public Sub Rename_5()
         Dim test_dir As String = "Rename_test5"
         FileSystem.Rename("fff", test_dir)
     End Sub
-
-#Else
-    <Test(), ExpectedException(GetType(ArgumentException))> _
-     Public Sub Rename_5()
-        Dim test_dir As String = "Rename_test5"
-        FileSystem.Rename("fff", test_dir)
-    End Sub
-#End If
-
 
     <Test(), ExpectedException(GetType(ArgumentException))> _
     Public Sub Rename_6()

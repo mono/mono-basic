@@ -65,7 +65,19 @@ Imports System.Security
 <Assembly: AssemblyFileVersion("1.1.20806.0")> 
 <Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
 #Else
-#If NET_VER >= 2.0 Then
+#If NET_VER >= 4.0 Then
+<Assembly: AssemblyVersion("10.0.0.0")> 
+<Assembly: ComVisible(True)> 
+'<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
+<Assembly: CLSCompliant(True)> 
+<Assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default Or DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)> 
+<Assembly: CompilationRelaxations(CompilationRelaxations.NoStringInterning)> 
+<Assembly: RuntimeCompatibility(WrapNonExceptionThrows:=True)> 
+<Assembly: SatelliteContractVersion("10.0.0.0")> 
+<Assembly: AssemblyInformationalVersion("10.0.30319.1")> 
+<Assembly: AssemblyFileVersion("10.0.30319.1")> 
+<Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
+#Else 'If NET_VER >= 2.0 Then
 <Assembly: AssemblyVersion("8.0.0.0")> 
 <Assembly: ComVisible(True)> 
 '<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
@@ -77,13 +89,6 @@ Imports System.Security
 <Assembly: AssemblyInformationalVersion("8.0.50727.42")> 
 <Assembly: AssemblyFileVersion("8.0.50727.42")> 
 <Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
-#Else
-<Assembly: AssemblyVersion("7.0.5000.0")> 
-<Assembly: ComVisible(False)>
-'<Assembly: Guid("d5e192e2-301b-49b5-9b05-da883f937c84")> 
-<Assembly: ComCompatibleVersion (7, 0, 3300, 0)>
-<Assembly: SatelliteContractVersion ("7.0.5000.0")>
-<Assembly: TypeLibVersion (7, 1)>
 #End If
 #End If
 

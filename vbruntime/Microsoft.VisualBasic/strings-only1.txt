@@ -1,2 +1,0 @@
-CastFromTypeToType=Cast from type '{0}' to type '{1}' is not valid.
-CastFromStringToType=Cast from string "{0}" to type '{1}' is not valid.

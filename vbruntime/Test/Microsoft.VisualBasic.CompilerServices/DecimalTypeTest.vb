@@ -42,11 +42,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DecimalType.FromString("#ERROR")
                 Assert.Fail("Expected InvalidCastException", "#01")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string ""#ERROR"" to type 'Decimal' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string ""#ERROR"" to type 'Decimal' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNull(ex.InnerException, "#A3")
             End Try
 
@@ -54,11 +50,7 @@ Namespace CompilerServices
                 Microsoft.VisualBasic.CompilerServices.DecimalType.FromString("")
                 Assert.Fail("Expected InvalidCastException", "#B1")
             Catch ex As InvalidCastException
-#If NET_VER >= 2.0 Then
                 Assert.AreEqual("Conversion from string """" to type 'Decimal' is not valid.", ex.Message, "#A2")
-#Else
-                Assert.AreEqual("Cast from string """" to type 'Decimal' is not valid.", ex.Message, "#A2")
-#End If
                 Assert.IsNull(ex.InnerException, "#B3")
             End Try
         End Sub

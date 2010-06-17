@@ -84,12 +84,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return Inst
         End Function
         'ClearProjectError is called by the statement "On Error Resume Next"
-#If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Shared Sub ClearProjectError()
-#Else
-        Public Shared Sub ClearProjectError()
-#End If
             'FIXME: "On Error Resume Next" cause to stop throwing exceptions. 
             'might be some friend variable of ErrObject which store that flag .
             Dim pd As ProjectData = Instance()
@@ -112,22 +108,14 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         End Function
 
-#If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
-#Else
-        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception)
-#End If
             Dim pd As ProjectData = Instance()
             pd.ProjectError.SetException(ex)
         End Sub
 
-#If NET_VER >= 2.0 Then
         <System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)> _
         Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
-#Else
-        Public Overloads Shared Sub SetProjectError(ByVal ex As Exception, ByVal lErl As Integer)
-#End If
             Throw New NotImplementedException("implement me: Erl")
             'FIXME: projectError.SetException(ex)
             'FIXME: projectError.Erl = lErl

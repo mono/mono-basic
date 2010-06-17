@@ -26,7 +26,6 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 
-#If NET_VER >= 2.0 Then
 #If TARGET_JVM = False Then
 Imports System.ComponentModel
 Imports System.Collections.Specialized
@@ -133,5 +132,4 @@ Namespace Microsoft.VisualBasic.MyServices
         End Sub
     End Class
 End Namespace
-#End If
 #End If

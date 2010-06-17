@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 Namespace Microsoft.VisualBasic.Devices
     Public Class NetworkAvailableEventArgs
         Inherits EventArgs
@@ -44,4 +43,3 @@ Namespace Microsoft.VisualBasic.Devices
 
     End Class
 End Namespace
-#End If

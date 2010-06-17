@@ -1,7 +1,6 @@
 Imports System
 Imports Microsoft.VisualBasic.CompilerServices
 Imports NUnit.Framework
-#If NET_VER >= 2.0 Then
 <TestFixture()> _
 Public Class OperatorsTests
     Sub New()
@@ -3157,4 +3156,3 @@ Class OperatorsImplementer
     End Operator
 
 End Class
-#End If

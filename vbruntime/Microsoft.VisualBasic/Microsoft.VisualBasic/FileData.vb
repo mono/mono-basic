@@ -236,12 +236,7 @@ Namespace Microsoft.VisualBasic
 
         Public Sub VerifyReadAccessWeirdly()
             If Access <> OpenAccess.Read AndAlso Access <> OpenAccess.ReadWrite Then
-#If NET_VER >= 2.0 Then
                 Throw New NullReferenceException((New NullReferenceException()).Message, New IOException("File is not opened for read access."))
-#Else
-                'I/O error occurred.
-                Throw New IOException("Bad file mode.")
-#End If
             End If
         End Sub
 
@@ -1112,7 +1107,6 @@ Namespace Microsoft.VisualBasic
                             Writer.Write(DirectCast(item, Single))
                         Case TypeCode.String
                             Writer.Write(DirectCast(item, String))
-#If NET_VER >= 2.0 Then
                         Case TypeCode.SByte
                             Writer.Write(DirectCast(item, SByte))
                         Case TypeCode.UInt16
@@ -1121,7 +1115,6 @@ Namespace Microsoft.VisualBasic
                             Writer.Write(DirectCast(item, UInteger))
                         Case TypeCode.UInt64
                             Writer.Write(DirectCast(item, ULong))
-#End If
                         Case TypeCode.Object
                             If TypeOf item Is ErrObject Then
                                 Writer.Write("Error ")
@@ -1231,7 +1224,6 @@ Namespace Microsoft.VisualBasic
                             Writer.Write("""")
                             Writer.Write(DirectCast(item, String))
                             Writer.Write("""")
-#If NET_VER >= 2.0 Then
                         Case TypeCode.SByte
                             Writer.Write(DirectCast(item, SByte))
                         Case TypeCode.UInt16
@@ -1240,7 +1232,6 @@ Namespace Microsoft.VisualBasic
                             Writer.Write(DirectCast(item, UInteger))
                         Case TypeCode.UInt64
                             Writer.Write(DirectCast(item, ULong))
-#End If
                         Case TypeCode.Object
                             If TypeOf item Is ErrObject Then
                                 Writer.Write("#ERROR " & DirectCast(item, ErrObject).Number.ToString() & "#")

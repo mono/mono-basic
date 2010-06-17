@@ -1,3 +1,20 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* DateTypeTest.vb:
+	* ByteTypeTest.vb:
+	* LongTypeTest.vb:
+	* ShortTypeTest.vb:
+	* SingleTypeTest.vb:
+	* DoubleTypeTest.vb:
+	* IntegerTypeTest.vb:
+	* DecimalTypeTest.vb:
+	* DecimalTypeTest.vb:
+	* BooleanTypeTest.vb:
+	* ConversionsTests.vb:
+	* LateBindingTests.vb:
+	* LateBindingTests2.vb:
+	* LateBindingTests4.vb: Remove .NET 1.0/1.1 logic.
+
 2008-02-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* DoubleTypeTest.vb, DateTypeTest.vb, BooleanTypeTest.vb, SingleTypeTest.vb,

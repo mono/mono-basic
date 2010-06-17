@@ -25,7 +25,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-#If NET_VER >= 2.0 Then
 
 Namespace Microsoft.VisualBasic.Logging
     Public Enum LogFileLocation
@@ -36,4 +35,3 @@ Namespace Microsoft.VisualBasic.Logging
         TempDirectory = 0
     End Enum
 End Namespace
-#End If

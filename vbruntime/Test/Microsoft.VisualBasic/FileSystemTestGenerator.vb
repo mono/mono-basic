@@ -89,18 +89,6 @@ Public Class FileSystemTestGenerator
         Public Value As Object
         Public ValueAsCode As String
 
-        ReadOnly Property Requires2_0() As Boolean
-            Get
-                If Value Is Nothing Then Return False
-                Select Case Type.GetTypeCode(Value.GetType)
-                    Case TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.SByte
-                        Return True
-                    Case Else
-                        Return False
-                End Select
-            End Get
-        End Property
-
         Sub New(ByVal Type As Type, ByVal Value As Object, Optional ByVal Code As String = Nothing)
             Me.Type = Type
             Me.Value = Value
@@ -585,9 +573,6 @@ Public Class FileSystemTestGenerator
     End Sub
 
     Private Shared Sub GeneratePrologue(ByVal builder As StringBuilder, ByVal testname As String, ByVal unique As String, ByVal data As DataInfo)
-        If data IsNot Nothing AndAlso data.Requires2_0 Then
-            builder.AppendLine("#If NET_VER >= 2.0 Then")
-        End If
         builder.AppendLine("{0}<Test ()> _")
         builder.AppendLine("{0}Sub " & testname & unique & "()")
         'builder.AppendLine("{0}{0}Dim base_filename As String = Path.Combine (DATA_DIR, """ & Helper.Stringify(testname) & """)")
@@ -623,11 +608,7 @@ Public Class FileSystemTestGenerator
             Dim isWeirdExc As Boolean = exception.GetType Is GetType(NullReferenceException) AndAlso name.Contains("InputString") AndAlso input IsNot Nothing AndAlso input.Length <> 0
 
             If isWeirdExc Then
-                builder.AppendLine("#If NET_VER >= 2.0 Then")
                 builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & exception.GetType.FullName & """, ex.GetType.FullName, filename)")
-                builder.AppendLine("#Else")
-                builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & GetType(IOException).FullName & """, ex.GetType.FullName, filename)")
-                builder.AppendLine("#End If")
             Else
                 builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & exception.GetType.FullName & """, ex.GetType.FullName, filename)")
             End If
@@ -638,17 +619,9 @@ Public Class FileSystemTestGenerator
                 builder.AppendLine("{0}{0}{0}Assert.IsTrue (ex.Message Like """ & pattern & """, filename & "" - <"" & ex.Message & ""> didn't match <" & pattern & ">"")")
             Else
                 If exception.GetType Is GetType(InvalidCastException) AndAlso exception.Message.Contains("Conversion") Then
-                    builder.AppendLine("#If NET_VER >= 2.0 Then")
                     builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message, filename)")
-                    builder.AppendLine("#Else")
-                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message).Replace("Conversion ", "Cast ") & """, ex.Message, filename)")
-                    builder.AppendLine("#End If")
                 ElseIf isWeirdExc Then
-                    builder.AppendLine("#If NET_VER >= 2.0 Then")
                     builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message, filename)")
-                    builder.AppendLine("#Else")
-                    builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify("Bad file mode.") & """, ex.Message, filename)")
-                    builder.AppendLine("#End If")
                 Else
                     builder.AppendLine("{0}{0}{0}Assert.AreEqual (""" & Helper.Stringify(exception.Message) & """, ex.Message.Replace (""Acess"", ""Access""), filename)")
                 End If
@@ -660,8 +633,5 @@ Public Class FileSystemTestGenerator
         builder.AppendLine("{0}{0}{0}CleanUp()")
         builder.AppendLine("{0}{0}End Try")
         builder.AppendLine("{0}End Sub")
-        If data IsNot Nothing AndAlso data.Requires2_0 Then
-            builder.AppendLine("#End If")
-        End If
     End Sub
 End Class

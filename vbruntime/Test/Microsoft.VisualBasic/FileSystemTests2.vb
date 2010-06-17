@@ -192,17 +192,12 @@ Public Class FileSystemTests2
         Catch ex As NUnit.Framework.AssertionException
             Throw
         Catch ex As Exception
-#If NET_VER >= 2.0 Then
             Assert.AreEqual("System.NullReferenceException", ex.GetType.FullName, filename)
             Assert.AreEqual("Object reference not set to an instance of an object.", ex.Message, filename)
             'NRE with InnerException??
             Assert.IsNotNull(ex.InnerException, filename)
             Assert.AreSame(GetType(IOException), ex.InnerException.GetType, filename)
             Assert.AreEqual("File is not opened for read access.", ex.InnerException.Message, filename)
-#Else
-            Assert.AreEqual("System.IO.IOException", ex.GetType.FullName, filename)
-            Assert.AreEqual("Bad file mode.", ex.Message, filename)
-#End If
         Finally
             CleanUp()
         End Try

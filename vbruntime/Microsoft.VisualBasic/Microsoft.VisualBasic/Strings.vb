@@ -81,13 +81,9 @@ Namespace Microsoft.VisualBasic
 
 #If Moonlight = False Then
         Public Shared Function Asc(ByVal [String] As Char) As Integer
-#If NET_VER >= 2.0 Then
             ' Convert.ToUInt16 with ldarg.0 and ret is a good candidate for
             ' inlining and unsigned comparison will be performed later.
             Dim charCode As UShort = Convert.ToUInt16([String])
-#Else
-            Dim charCode As Integer = AscW([String])
-#End If
 
             ' Fast path for ASCII that also makes Asc incompatible with
             ' non-ASCII-compatible encodings.
@@ -139,11 +135,7 @@ Namespace Microsoft.VisualBasic
             ' non-ASCII-compatible encodings.
             If CharCode >= 0 AndAlso CharCode <= 127 Then
                 ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
-#If NET_VER >= 2.0 Then
                 Return Convert.ToChar(CUShort(CharCode))
-#Else
-                Return Convert.ToChar(CByte(CharCode))
-#End If
             End If
 
             If CharCode < -32768 OrElse CharCode > 65535 Then
@@ -159,12 +151,8 @@ Namespace Microsoft.VisualBasic
                 bytes = New Byte() {CByte(CharCode)}
                 byteCount = 1
             Else
-#If NET_VER >= 2.0 Then
                 ' GetMaxByteCount includes possible fallback characters from EncoderFallback
                 If enc.IsSingleByte Then
-#Else
-                If enc.GetMaxByteCount(1) = 1 Then
-#End If
                     Throw New ArgumentException("Procedure call or argument is not valid.")
                 End If
 
@@ -197,12 +185,8 @@ Namespace Microsoft.VisualBasic
                 Throw New ArgumentException("Argument 'CharCode' must be within the range of -32768 to 65535.")
             End If
 
-#If NET_VER >= 2.0 Then
             ' Convert.ToChar with ldarg.0 and ret is a good candidate for inlining.
             Return Convert.ToChar(CUShort(CharCode And &HFFFF))
-#Else
-            Return Convert.ToChar(CharCode And &HFFFF)
-#End If
         End Function
 
         Public Shared Function Filter(ByVal Source() As Object, ByVal Match As String, Optional ByVal Include As Boolean = True, _
@@ -1103,19 +1087,11 @@ Namespace Microsoft.VisualBasic
         End Function
 
         Friend Shared Function String_Compare(ByVal strA As String, ByVal strB As String, ByVal ignoreCase As Boolean) As Integer
-#If NET_VER < 2.0 Then
-            Return String.Compare(strA, strB, ignoreCase)
-#Else
             Return String.Compare(strA, strB, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
-#End If
         End Function
 
         Friend Shared Function String_Compare(ByVal strA As String, ByVal indexA As Integer, ByVal strB As String, ByVal indexB As Integer, ByVal length As Integer, ByVal ignoreCase As Boolean) As Integer
-#If NET_VER < 2.0 Then
-            Return String.Compare(strA, indexA, strB, indexB, length, True)
-#Else
             Return String.Compare(strA, indexA, strB, indexB, length, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase)
-#End If
         End Function
 
         Public Shared Function StrComp(ByVal String1 As String, ByVal String2 As String, _
@@ -1166,11 +1142,7 @@ Namespace Microsoft.VisualBasic
                     Dim carr() As Char = str.ToCharArray()
                     Dim inWord As Boolean = False
                     For i As Integer = 0 To carr.Length - 1
-#If NET_VER >= 2.0 Then
                         If (Char.IsLetter(carr(i)) Or carr(i) = "'"c Or Char.IsDigit(carr(i))) Then
-#Else
-                        If (Char.IsLetter(carr(i)) Or carr(i) = "'"c) Then
-#End If
 
                             If Not inWord Then
                                 carr(i) = Char.ToUpper(carr(i))
@@ -1266,7 +1238,7 @@ Namespace Microsoft.VisualBasic
 
             Return Value.ToUpper()
         End Function
-#If NET_VER >= 2.0 Then
+
         <CLSCompliant(False)> _
         Public Shared Function Len(ByVal Expression As SByte) As Integer
             Return GetSize(Expression)
@@ -1286,7 +1258,5 @@ Namespace Microsoft.VisualBasic
         Public Shared Function Len(ByVal Expression As UShort) As Integer
             Return GetSize(Expression)
         End Function
-#End If
-
     End Class
 End Namespace

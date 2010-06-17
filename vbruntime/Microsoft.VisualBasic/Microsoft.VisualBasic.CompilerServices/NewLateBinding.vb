@@ -27,7 +27,6 @@
 ' LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#If NET_VER >= 2.0 Then
 Imports System
 Namespace Microsoft.VisualBasic.CompilerServices
     <System.ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)> _
@@ -73,4 +72,3 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Sub
     End Class
 End Namespace
-#End If

@@ -1,3 +1,9 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LogTest.cs:
+	* AspLogTest.cs:
+	* FileLogTraceListener.cs: Remove .NET 1.0/1.1 logic.
+
 2007-08-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* AspLogTest.cs: This is still not available on mono.

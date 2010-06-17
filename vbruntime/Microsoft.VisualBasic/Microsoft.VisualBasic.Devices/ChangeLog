@@ -1,3 +1,19 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Clock.vb:
+	* Audio.vb:
+	* Ports.vb:
+	* Mouse.vb:
+	* Network.vb:
+	* Computer.vb:
+	* Keyboard.vb:
+	* MyWebClient.vb:
+	* ComputerInfo.vb:
+	* ServerComputer.vb:
+	* MyProgressDialog.vb:
+	* NetworkAvailableEventArgs.vb:
+	* NetworkAvailableEventHandler.vb: Remove .NET 1.0/1.1 logic.
+
 2007-12-05  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* ComputerInfo.vb: Make the changes actually compile.

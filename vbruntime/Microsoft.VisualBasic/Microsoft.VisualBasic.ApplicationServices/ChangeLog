@@ -1,3 +1,26 @@
+2010-06-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* User.vb:
+	* WebUser.vb:
+	* BuiltInRole.vb:
+	* AssemblyInfo.vb:
+	* ShutdownMode.vb:
+	* ApplicationBase.vb:
+	* StartupEventArgs.vb:
+	* AuthenticationMode.vb:
+	* StartupEventHandler.vb:
+	* BuiltInRoleConverter.vb:
+	* ShutdownEventHandler.vb:
+	* NoStartupFormException.vb:
+	* ConsoleApplicationBase.vb:
+	* UnhandledExceptionEventArgs.vb:
+	* WindowsFormsApplicationBase.vb:
+	* StartupNextInstanceEventArgs.vb:
+	* UnhandledExceptionEventHandler.vb:
+	* WindowsFormsApplicationContext.vb:
+	* StartupNextInstanceEventHandler.vb:
+	* CantStartSingleInstanceException.vb: Remove .NET 1.0/1.1 logic
+
 2009-07-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
         * AssemblyInfo.vb: CompanyName: return the CompanyName instead of the
