@@ -265,8 +265,8 @@ $(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES) $(the_lib_dir)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
-	mv $(LIBRARY_NAME) $@
-	test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
+	mv -f $(LIBRARY_NAME) $@
+	test ! -f $(LIBRARY_NAME).mdb || mv -f $(LIBRARY_NAME).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)

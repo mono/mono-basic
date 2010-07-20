@@ -1,3 +1,8 @@
+2010-07-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* library.make:
+	* executable.make: Make mv non-interactive.
+
 2010-06-08  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* rules.make:
