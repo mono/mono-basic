@@ -233,7 +233,7 @@ Public Class Test
         '    '0001.vb
         '    '0001-2.vb
         '    '0001-3 sometest.vb
-        If m_NegativeRegExpTest.IsMatch(m_Name) Then
+        If m_NegativeRegExpTest.IsMatch(m_Name) AndAlso m_ExpectedErrorCode = 0 Then
             Dim firstNonNumber As Integer = m_Name.Length
             For i As Integer = 0 To m_Name.Length - 1
                 If Char.IsNumber(m_Name(i)) = False Then
