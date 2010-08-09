@@ -261,7 +261,8 @@ endif
 
 # The library
 
-$(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES) $(the_lib_dir)
+$(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES)
+	mkdir -p $(the_lib_dir)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
@@ -329,6 +330,3 @@ updated-dll-sources:
 	echo "../../build/common/MonoTODOAttribute.cs" >> $(LIBRARY).sources
 	ls */*.cs >> $(LIBRARY).sources
 	cd Test; ls */*.cs > ../$(LIBRARY:.dll=_test.dll).sources; cd ..
-
-$(the_lib_dir):
-	mkdir -p $(the_lib_dir)
