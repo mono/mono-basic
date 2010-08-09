@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "vbnc", "vbnc.vbproj", "{9D92F531-6418-47AA-BBE5-BE458CD46BE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil.VB", "..\..\cecil\Mono.Cecil.VB.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
