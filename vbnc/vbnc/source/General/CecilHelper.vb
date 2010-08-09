@@ -481,8 +481,8 @@ Public Class CecilHelper
         'If fieldType IsNot Member.FieldType Then
         fieldType = Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, fieldType)
 
-        result = New FieldReference(Member.Name, Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, Member.DeclaringType), fieldType)
-        result.Annotations.Add("MemberInReflection", New FieldReference(Member.Name, genericType, Member.FieldType))
+        result = New FieldReference(Member.Name, fieldType, Helper.GetTypeOrTypeReference(BaseObject.m_Compiler, Member.DeclaringType))
+        result.Annotations.Add("MemberInReflection", New FieldReference(Member.Name, Member.FieldType, genericType))
         Return result
         'Else
         '    Return Member

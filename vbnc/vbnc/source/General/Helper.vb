@@ -611,7 +611,7 @@ Public Class Helper
                 Return ModifierMasks.Private
             Case Mono.Cecil.MethodAttributes.FamANDAssem
                 Throw New NotImplementedException
-            Case Mono.Cecil.MethodAttributes.Assem
+            Case Mono.Cecil.MethodAttributes.Assembly
                 Return ModifierMasks.Friend
             Case Mono.Cecil.MethodAttributes.Family
                 Return ModifierMasks.Protected
@@ -1747,7 +1747,7 @@ Public Class Helper
 
         Dim ac As Mono.Cecil.MethodAttributes = (CalledMethodAccessability And Mono.Cecil.MethodAttributes.MemberAccessMask)
         Dim isPrivate As Boolean = ac = Mono.Cecil.MethodAttributes.Private
-        Dim isFriend As Boolean = ac = Mono.Cecil.MethodAttributes.Assem OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
+        Dim isFriend As Boolean = ac = Mono.Cecil.MethodAttributes.Assembly OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
         Dim isProtected As Boolean = ac = Mono.Cecil.MethodAttributes.Family OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
         Dim isPublic As Boolean = ac = Mono.Cecil.MethodAttributes.Public
 
@@ -1790,7 +1790,7 @@ Public Class Helper
 
         Dim ac As Mono.Cecil.MethodAttributes = (CalledMethodAccessability And Mono.Cecil.MethodAttributes.MemberAccessMask)
         Dim isPrivate As Boolean = ac = Mono.Cecil.MethodAttributes.Private
-        Dim isFriend As Boolean = ac = Mono.Cecil.MethodAttributes.Assem OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
+        Dim isFriend As Boolean = ac = Mono.Cecil.MethodAttributes.Assembly OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
         Dim isProtected As Boolean = ac = Mono.Cecil.MethodAttributes.Family OrElse ac = Mono.Cecil.MethodAttributes.FamORAssem
         Dim isPublic As Boolean = ac = Mono.Cecil.MethodAttributes.Public
 
@@ -2997,7 +2997,7 @@ Public Class Helper
                 Return "Protected Friend"
             Case Mono.Cecil.MethodAttributes.Family
                 Return "Protected"
-            Case Mono.Cecil.MethodAttributes.Assem
+            Case Mono.Cecil.MethodAttributes.Assembly
                 Return "Friend"
             Case Mono.Cecil.MethodAttributes.Public
                 Return "Public"
@@ -3223,7 +3223,7 @@ Public Class Helper
                 Return "Protected Friend"
             Case Mono.Cecil.MethodAttributes.Family
                 Return "Protected"
-            Case Mono.Cecil.MethodAttributes.Assem
+            Case Mono.Cecil.MethodAttributes.Assembly
                 Return "Friend"
             Case Else
                 Return "Public"

@@ -109,7 +109,7 @@ Public Structure Modifiers
             If Me.Is(ModifierMasks.Protected) Then
                 Return Mono.Cecil.MethodAttributes.FamORAssem
             Else
-                Return Mono.Cecil.MethodAttributes.Assem
+                Return Mono.Cecil.MethodAttributes.Assembly
             End If
         ElseIf Me.Is(ModifierMasks.Protected) Then
             Return Mono.Cecil.MethodAttributes.Family

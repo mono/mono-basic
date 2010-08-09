@@ -403,7 +403,7 @@ Public Class TypeManager
     Function MakeGenericField(ByVal Parent As ParsedObject, ByVal OpenField As Mono.Cecil.FieldReference, ByVal TypeParameters As Mono.Cecil.TypeReference(), ByVal TypeArguments() As Mono.Cecil.TypeReference, ByVal ClosedType As Mono.Cecil.TypeReference) As Mono.Cecil.FieldReference
         Dim result As Mono.Cecil.FieldReference
 
-        result = New Mono.Cecil.FieldReference(OpenField.Name, ClosedType, OpenField.FieldType)
+        result = New Mono.Cecil.FieldReference(OpenField.Name, OpenField.FieldType, ClosedType)
 
         Return result
     End Function

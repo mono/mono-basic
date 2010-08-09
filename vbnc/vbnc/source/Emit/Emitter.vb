@@ -1810,7 +1810,7 @@ Partial Public Class Emitter
             For i As Integer = 0 To gFD.DeclaringType.GenericParameters.Count - 1
                 declType.GenericArguments.Add(gFD.DeclaringType.GenericParameters(i))
             Next
-            Return New Mono.Cecil.FieldReference(field.Name, declType, field.FieldType)
+            Return New Mono.Cecil.FieldReference(field.Name, field.FieldType, declType)
         End If
         Return field
     End Function
