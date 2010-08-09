@@ -1564,6 +1564,8 @@ Partial Public Class Emitter
          ElseIf Variable.ParameterInfo IsNot Nothing Then
             Helper.Assert(Variable.InstanceExpression Is Nothing)
             EmitLoadParameterAddress(Info, Variable.ParameterInfo)
+        ElseIf Variable.Method IsNot Nothing Then
+            Info.ILGen.Emit(OpCodes.Ldloca, Variable.Method.DefaultReturnVariable)
         Else
             Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
         End If

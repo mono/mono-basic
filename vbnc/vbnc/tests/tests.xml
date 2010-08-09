@@ -7288,4 +7288,7 @@
 	<test id="1835" name="UserDefinedNullableConversions1" category="" priority="0" knownfailure="User defined conversions not yet implemented" target="exe">
 		<file>CompileTime2\UserDefinedNullableConversions1.vb</file>
 	</test>
+	<test id="1836" name="bug-629103" category="Bugs" priority="0" target="library">
+		<file>Bugs\bug-629103.vb</file>
+	</test>
 </rt>
