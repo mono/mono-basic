@@ -77,7 +77,7 @@ namespace Mono.Cecil {
 	using MethodSpecRow = Row<CodedRID, BlobIndex>;
 	using GenericParamConstraintRow = Row<RID, CodedRID>;
 
-	sealed class ModuleWriter {
+	static class ModuleWriter {
 
 		public static void WriteModuleTo (ModuleDefinition module, Stream stream, WriterParameters parameters)
 		{
@@ -89,19 +89,21 @@ namespace Mono.Cecil {
 
 			module.MetadataSystem.Clear ();
 
+			var name = module.assembly != null ? module.assembly.Name : null;
 			var fq_name = stream.GetFullyQualifiedName ();
 			var symbol_writer_provider = parameters.SymbolWriterProvider;
 			if (symbol_writer_provider == null && parameters.WriteSymbols)
 				symbol_writer_provider = SymbolProvider.GetPlatformWriterProvider ();
 			var symbol_writer = GetSymbolWriter (module, fq_name, symbol_writer_provider);
+
 #if !SILVERLIGHT && !CF
-			if (parameters.StrongNameKeyPair != null && module.assembly != null) {
-				var name = module.assembly.Name;
+			if (parameters.StrongNameKeyPair != null && name != null)
 				name.PublicKey = parameters.StrongNameKeyPair.PublicKey;
-				name.HasPublicKey = true;
-				module.Attributes |= ModuleAttributes.StrongNameSigned;
-			}
 #endif
+
+			if (name != null && name.HasPublicKey)
+				module.Attributes |= ModuleAttributes.StrongNameSigned;
+
 			var metadata = new MetadataBuilder (module, fq_name,
 				symbol_writer_provider, symbol_writer);
 
@@ -160,7 +162,7 @@ namespace Mono.Cecil {
 
 		internal TRow row;
 
-		public override int Length {
+		public sealed override int Length {
 			get { return 1; }
 		}
 
@@ -174,7 +176,7 @@ namespace Mono.Cecil {
 		internal TRow [] rows = new TRow [2];
 		internal int length;
 
-		public override int Length {
+		public sealed override int Length {
 			get { return length; }
 		}
 
@@ -682,44 +684,6 @@ namespace Mono.Cecil {
 				buffer.WriteRID (rows [i].Col1, Table.GenericParam);	// Owner
 				buffer.WriteCodedRID (rows [i].Col2, CodedIndex.TypeDefOrRef);	// Constraint
 			}
-		}
-	}
-
-	sealed class RowEqualityComparer : IEqualityComparer<Row<string, string>>, IEqualityComparer<Row<uint, uint>>, IEqualityComparer<Row<uint, uint, uint>> {
-
-		public bool Equals (Row<string, string> x, Row<string, string> y)
-		{
-			return x.Col1 == y.Col1
-				&& x.Col2 == y.Col2;
-		}
-
-		public int GetHashCode (Row<string, string> obj)
-		{
-			string x = obj.Col1, y = obj.Col2;
-			return (x != null ? x.GetHashCode () : 0) ^ (y != null ? y.GetHashCode () : 0);
-		}
-
-		public bool Equals (Row<uint, uint> x, Row<uint, uint> y)
-		{
-			return x.Col1 == y.Col1
-				&& x.Col2 == y.Col2;
-		}
-
-		public int GetHashCode (Row<uint, uint> obj)
-		{
-			return (int) (obj.Col1 ^ obj.Col2);
-		}
-
-		public bool Equals (Row<uint, uint, uint> x, Row<uint, uint, uint> y)
-		{
-			return x.Col1 == y.Col1
-				&& x.Col2 == y.Col2
-				&& x.Col3 == y.Col3;
-		}
-
-		public int GetHashCode (Row<uint, uint, uint> obj)
-		{
-			return (int) (obj.Col1 ^ obj.Col2 ^ obj.Col3);
 		}
 	}
 
@@ -1419,12 +1383,9 @@ namespace Mono.Cecil {
 
 		void AddFieldRVA (FieldDefinition field)
 		{
-			var rva = data.AddData (field.InitialValue);
-			field.rva = (int) rva;
-
 			var table = GetTable<FieldRVATable> (Table.FieldRVA);
 			table.AddRow (new FieldRVARow (
-				rva,
+				data.AddData (field.InitialValue),
 				field.token.RID));
 		}
 
@@ -1444,11 +1405,8 @@ namespace Mono.Cecil {
 
 		void AddMethod (MethodDefinition method)
 		{
-			var rva = method.HasBody ? code.WriteMethodBody (method) : 0;
-			method.rva = rva;
-
 			method_table.AddRow (new MethodRow (
-				rva,
+				method.HasBody ? code.WriteMethodBody (method) : 0,
 				method.ImplAttributes,
 				method.Attributes,
 				GetStringIndex (method.Name),
@@ -1676,6 +1634,8 @@ namespace Mono.Cecil {
 				return ElementType.Class;
 			case ElementType.Array:
 			case ElementType.SzArray:
+			case ElementType.MVar:
+			case ElementType.Var:
 				if (constant != null)
 					throw new ArgumentException ();
 
@@ -1923,6 +1883,8 @@ namespace Mono.Cecil {
 			case ElementType.SzArray:
 			case ElementType.Class:
 			case ElementType.Object:
+			case ElementType.Var:
+			case ElementType.MVar:
 				signature.WriteInt32 (0);
 				break;
 			case ElementType.String:
@@ -2245,12 +2207,10 @@ namespace Mono.Cecil {
 
 		public void WriteCustomAttributeConstructorArguments (CustomAttribute attribute)
 		{
-			var constructor = attribute.Constructor;
-			var arguments = attribute.ConstructorArguments;
-
-			if (!constructor.HasParameters)
+			if (!attribute.HasConstructorArguments)
 				return;
 
+			var arguments = attribute.ConstructorArguments;
 			var parameters = attribute.Constructor.Parameters;
 
 			if (parameters.Count != arguments.Count)
@@ -2414,6 +2374,18 @@ namespace Mono.Cecil {
 
 		public void WriteCustomAttributeNamedArguments (CustomAttribute attribute)
 		{
+			var count = GetNamedArgumentCount (attribute);
+
+			WriteUInt16 ((ushort) count);
+
+			if (count == 0)
+				return;
+
+			WriteICustomAttributeNamedArguments (attribute);
+		}
+
+		static int GetNamedArgumentCount (ICustomAttribute attribute)
+		{
 			int count = 0;
 
 			if (attribute.HasFields)
@@ -2422,15 +2394,16 @@ namespace Mono.Cecil {
 			if (attribute.HasProperties)
 				count += attribute.Properties.Count;
 
-			WriteUInt16 ((ushort) count);
+			return count;
+		}
 
-			if (count == 0)
-				return;
-
+		void WriteICustomAttributeNamedArguments (ICustomAttribute attribute)
+		{
 			if (attribute.HasFields)
-				WriteCustomAttributeNamedArguments (0x53, attribute.fields);
+				WriteCustomAttributeNamedArguments (0x53, attribute.Fields);
+
 			if (attribute.HasProperties)
-				WriteCustomAttributeNamedArguments (0x54, attribute.properties);
+				WriteCustomAttributeNamedArguments (0x54, attribute.Properties);
 		}
 
 		void WriteCustomAttributeNamedArguments (byte kind, Collection<CustomAttributeNamedArgument> named_arguments)
@@ -2453,13 +2426,7 @@ namespace Mono.Cecil {
 		{
 			WriteTypeReference (attribute.AttributeType);
 
-			int count = 0;
-
-			if (attribute.HasFields)
-				count += attribute.Fields.Count;
-
-			if (attribute.HasProperties)
-				count += attribute.Properties.Count;
+			var count = GetNamedArgumentCount (attribute);
 
 			if (count == 0) {
 				WriteCompressedUInt32 (0); // length
@@ -2469,10 +2436,7 @@ namespace Mono.Cecil {
 
             var buffer = new SignatureWriter (metadata);
 			buffer.WriteCompressedUInt32 ((uint) count);
-			if (attribute.HasFields)
-				buffer.WriteCustomAttributeNamedArguments (0x53, attribute.fields);
-			if (attribute.HasProperties)
-				buffer.WriteCustomAttributeNamedArguments (0x54, attribute.properties);
+			buffer.WriteICustomAttributeNamedArguments (attribute);
 
 			WriteCompressedUInt32 ((uint) buffer.length);
 			WriteBytes (buffer);
@@ -2485,44 +2449,46 @@ namespace Mono.Cecil {
 
 		public void WriteMarshalInfo (MarshalInfo marshal_info)
 		{
-			WriteNativeType (marshal_info.NativeType);
+			WriteNativeType (marshal_info.native);
 
-			switch (marshal_info.NativeType) {
+			switch (marshal_info.native) {
 			case NativeType.Array: {
 				var array = (ArrayMarshalInfo) marshal_info;
-				if (array.ElementType != NativeType.None)
-					WriteNativeType (array.ElementType);
-				if (array.SizeParameterIndex > -1)
-					WriteCompressedUInt32 ((uint) array.SizeParameterIndex);
-				if (array.Size > -1)
-					WriteCompressedUInt32 ((uint) array.Size);
+				if (array.element_type != NativeType.None)
+					WriteNativeType (array.element_type);
+				if (array.size_parameter_index > -1)
+					WriteCompressedUInt32 ((uint) array.size_parameter_index);
+				if (array.size > -1)
+					WriteCompressedUInt32 ((uint) array.size);
+				if (array.size_parameter_multiplier > -1)
+					WriteCompressedUInt32 ((uint) array.size_parameter_multiplier);
 				return;
 			}
 			case NativeType.SafeArray: {
 				var array = (SafeArrayMarshalInfo) marshal_info;
-				if (array.ElementType != VariantType.None)
-					WriteVariantType (array.ElementType);
+				if (array.element_type != VariantType.None)
+					WriteVariantType (array.element_type);
 				return;
 			}
 			case NativeType.FixedArray: {
 				var array = (FixedArrayMarshalInfo) marshal_info;
-				if (array.Size > -1)
-					WriteCompressedUInt32 ((uint) array.Size);
-				if (array.ElementType != NativeType.None)
-					WriteNativeType (array.ElementType);
+				if (array.size > -1)
+					WriteCompressedUInt32 ((uint) array.size);
+				if (array.element_type != NativeType.None)
+					WriteNativeType (array.element_type);
 				return;
 			}
 			case NativeType.FixedSysString:
 				var sys_string = (FixedSysStringMarshalInfo) marshal_info;
-				if (sys_string.Size > -1)
-					WriteCompressedUInt32 ((uint) sys_string.Size);
+				if (sys_string.size > -1)
+					WriteCompressedUInt32 ((uint) sys_string.size);
 				return;
 			case NativeType.CustomMarshaler:
 				var marshaler = (CustomMarshalInfo) marshal_info;
-				WriteUTF8String (marshaler.Guid != Guid.Empty ? marshaler.Guid.ToString () : string.Empty);
-				WriteUTF8String (marshaler.UnmanagedType);
-				WriteTypeReference (marshaler.ManagedType);
-				WriteUTF8String (marshaler.Cookie);
+				WriteUTF8String (marshaler.guid != Guid.Empty ? marshaler.guid.ToString () : string.Empty);
+				WriteUTF8String (marshaler.unmanaged_type);
+				WriteTypeReference (marshaler.managed_type);
+				WriteUTF8String (marshaler.cookie);
 				return;
 			}
 		}
