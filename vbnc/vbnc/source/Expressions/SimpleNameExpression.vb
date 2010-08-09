@@ -339,7 +339,12 @@ Public Class SimpleNameExpression
         '  or an AddressOf expression, then no match occurs and resolution continues.
         If method IsNot Nothing Then
             If method.HasReturnValue AndAlso Info.SkipFunctionReturnVariable = False Then
-                If Helper.CompareName(method.Name, Name) Then
+                Dim pgd As PropertyGetDeclaration = TryCast(method, PropertyGetDeclaration)
+                If pgd IsNot Nothing AndAlso Helper.CompareName(pgd.PropertySignature.Name, Name) Then
+                    'The expression is classified as a variable if it is a local variable, static variable (...)
+                    Classification = New VariableClassification(Me, method)
+                    Return True
+                ElseIf Helper.CompareName(method.Name, Name) Then
                     'The expression is classified as a variable if it is a local variable, static variable (...)
                     Classification = New VariableClassification(Me, method)
                     Return True

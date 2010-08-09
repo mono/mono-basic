@@ -7291,4 +7291,7 @@
 	<test id="1836" name="bug-629103" category="Bugs" priority="0" target="library">
 		<file>Bugs\bug-629103.vb</file>
 	</test>
+	<test id="1837" name="bug-629369" category="Bugs" priority="0" target="library">
+		<file>Bugs\bug-629369.vb</file>
+	</test>
 </rt>
