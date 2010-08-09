@@ -7297,4 +7297,10 @@
 	<test id="1838" name="bug-629370" category="Bugs" priority="0" target="library">
 		<file>Bugs\bug-629370.vb</file>
 	</test>
+	<test id="1839" name="bug-629373" category="Bugs" priority="0" target="library">
+		<file>Bugs\bug-629373.vb</file>
+	</test>
+	<test id="1840" name="30439-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30439" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30439-2.vb</file>
+	</test>
 </rt>

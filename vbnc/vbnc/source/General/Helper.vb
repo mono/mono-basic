@@ -2915,6 +2915,12 @@ Public Class Helper
     End Function
 
     Shared Function PrettyFormatType(ByVal type As TypeReference) As String
+        If type Is Nothing Then Return "Nothing"
+        Return type.ToString()
+    End Function
+
+    Shared Function PrettyFormatType(ByVal type As Type) As String
+        If type Is Nothing Then Return "Nothing"
         Return type.ToString()
     End Function
 

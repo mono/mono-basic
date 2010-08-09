@@ -325,6 +325,21 @@ Public Class Attribute
 
         m_IsResolved = result
 
+        If result Then
+            For i As Integer = 0 To m_FieldValues.Count - 1
+                Dim value As Object = Nothing
+                'TypeConverter.ConvertTo will report any errors
+                result = TypeConverter.ConvertTo(Me, m_FieldValues(i), m_Fields(i).FieldType, value)
+                If result Then m_FieldValues(i) = value
+            Next
+            For i As Integer = 0 To m_PropertyValues.Count - 1
+                Dim value As Object = Nothing
+                'TypeConverter.ConvertTo will report any errors
+                result = TypeConverter.ConvertTo(Me, m_PropertyValues(i), m_Properties(i).PropertyType, value)
+                If result Then m_PropertyValues(i) = value
+            Next
+        End If
+
         m_CecilBuilder = GetAttributeBuilderCecil()
 
         If m_IsAssembly Then
