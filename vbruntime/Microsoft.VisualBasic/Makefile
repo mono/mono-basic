@@ -29,7 +29,6 @@ DISTFILES =	\
 	strings.txt				\
 	strings-only2.txt			\
 	2005VB.vbproj				\
-	strings1.resources			\
 	strings2.resources			\
 	ChangeLog				\
 	Makefile				\
