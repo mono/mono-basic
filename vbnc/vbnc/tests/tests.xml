@@ -7303,4 +7303,13 @@
 	<test id="1840" name="30439-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30439" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30439-2.vb</file>
 	</test>
+	<test id="1841" name="ImportsType2" category="" priority="0" target="library">
+		<file>CompileTime\ImportsType2.vb</file>
+	</test>
+	<test id="1842" name="30002" category="" priority="0" expectedexitcode="1" expectederrorcode="30002" target="library">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30002.vb</file>
+	</test>
+	<test id="1843" name="30182" category="" priority="0" expectedexitcode="1" expectederrorcode="30182" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30182.vb</file>
+	</test>
 </rt>

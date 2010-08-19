@@ -86,6 +86,18 @@ Public Class QualifiedIdentifier
                 resolvedType = nri.FoundAsType
             ElseIf nri.FoundIs(Of TypeParameter)() Then
                 resolvedType = nri.FoundAsType 'New TypeParameterDescriptor(nri.FoundAs(Of TypeParameter)())
+            ElseIf nri.FoundIs(Of ImportsClause)() Then
+                Dim ic As ImportsClause = nri.FoundAs(Of ImportsClause)()
+                If ic.IsNamespaceClause Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30182, Me.Location)
+                ElseIf ic.AsAliasClause.Second.IsNamespaceImport Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30182, Me.Location)
+                Else
+                    resolvedType = ic.AsAliasClause.Second.TypeImported
+                    If resolvedType Is Nothing Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30002, Me.Location, ic.AsAliasClause.Name)
+                    End If
+                End If
             Else
                 resolvedType = Nothing
                 Return Helper.AddError(Me, "Could not resolve: '" & Name & "'")

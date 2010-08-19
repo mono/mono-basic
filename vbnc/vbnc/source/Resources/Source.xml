@@ -729,7 +729,7 @@
 	</Message>
 	<Message id="30182" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Epxected type.</VBNCValue>
 		<VBValue>Type expected.</VBValue>
 	</Message>
 	<Message id="30183" level="Error">

@@ -386,7 +386,7 @@ Public Class TypeNameResolutionInfo
             If m_FoundObjects.Count = 0 Then
                 If ShowError = False Then Return False
 
-                FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30456, FromWhere.Location, R, Qualifier.FoundObject.ToString)
+                If Not IsImportsResolution Then FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30456, FromWhere.Location, R, Qualifier.FoundObject.ToString)
                 Return False
             ElseIf m_FoundObjects.Count > 1 Then
                 If ShowError = False Then Return False

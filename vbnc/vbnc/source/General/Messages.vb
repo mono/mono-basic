@@ -1031,7 +1031,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30181 = 30181
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Epxected type."
     ''' VB   = "Type expected."
     ''' </summary>
     ''' <remarks></remarks>
