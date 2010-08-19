@@ -550,10 +550,14 @@ Public Class CecilComparer
             SaveMessage("'(%a1%).{0}' has the attributes '{1}', while '(%a2%).{2}' has the attributes '{3}'", Method1, Method1.Attributes, Method2, Method2.Attributes)
         End If
 
-        If Method1.ImplAttributes <> Method2.ImplAttributes Then
-            SaveMessage("'(%a1%).{0}' has the implementation flags '{1}', while '(%a2%).{2}' has the implementation flags '{3}'", Method1, Method1.ImplAttributes, Method2, Method2.ImplAttributes)
-        End If
+        Dim mia1 As MethodImplAttributes = Method1.ImplAttributes And (Not (MethodImplAttributes.NoInlining Or MethodImplAttributes.NoOptimization))
+        Dim mia2 As MethodImplAttributes = Method2.ImplAttributes And (Not (MethodImplAttributes.NoInlining Or MethodImplAttributes.NoOptimization))
 
+        If mia1 <> mia2 Then
+            SaveMessage("'(%a1%).{0}' has the implementation flags '{1}', while '(%a2%).{2}' has the implementation flags '{3}'", Method1, mia1, Method2, mia2)
+        ElseIf Method1.ImplAttributes <> Method2.ImplAttributes Then
+            m_Messages.Add(String.Format("Warning: noinlining/nooptimization method impl mismatch: '(%a1%).{0}' has the implementation flags '{1}', while '(%a2%).{2}' has the implementation flags '{3}'", Method1, Method1.ImplAttributes, Method2, Method2.ImplAttributes))
+        End If
 
         If Method1.CallingConvention <> Method2.CallingConvention Then
             SaveMessage("'(%a1%).{0}' has calling convention '{1}', while '(%a2%).{2}' has calling convention '{3}'", Method1, Method1.CallingConvention, Method2, Method2.CallingConvention)
