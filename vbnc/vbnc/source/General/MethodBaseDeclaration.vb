@@ -126,7 +126,7 @@ Public MustInherit Class MethodBaseDeclaration
 
         If Not checkedAll Then Return True
 
-        For i As Integer = 0 To CustomAttributes.Count - 1
+        For i As Integer = CustomAttributes.Count - 1 To 0 Step -1
             Dim attrib As Attribute = CustomAttributes(i)
 
             If Not Helper.IsSubclassOf(Compiler.TypeCache.System_Security_Permissions_SecurityAttribute, attrib.ResolvedType) Then Continue For

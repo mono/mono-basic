@@ -7315,4 +7315,7 @@
 	<test id="1844" name="End2" category="" priority="0" target="exe">
 		<file>RunTime\End2.vb</file>
 	</test>
+	<test id="1845" name="SecurityAttribute2" category="" priority="0" target="library">
+		<file>CompileTime\SecurityAttribute2.vb</file>
+	</test>
 </rt>
