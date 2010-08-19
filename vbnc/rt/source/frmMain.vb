@@ -25,6 +25,7 @@ Class frmMain
     Private WithEvents m_Tests As New Tests
     Private WithEvents m_TestExecutor As New TestExecutor
     Private m_TestView As New TestView(Me)
+    Private WithEvents m_SaveTimer As Timer
 
     Private m_Indices() As Integer
     Private m_Icons() As Icon
@@ -1054,6 +1055,20 @@ Class frmMain
                     Exit For
                 End If
             Next
+
+            If m_SaveTimer Is Nothing Then
+                m_SaveTimer = New Timer()
+                m_SaveTimer.Interval = 5000
+                m_SaveTimer.Start()
+            End If
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub m_SaveTimer_Tick(ByVal sender As Object, ByVal ea As EventArgs) Handles m_SaveTimer.Tick
+        Try
+            cmdSave_Click(sender, ea)
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
