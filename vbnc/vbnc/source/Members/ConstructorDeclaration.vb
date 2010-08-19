@@ -89,8 +89,12 @@ Public Class ConstructorDeclaration
 
     Shared Function CreateDefaultConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
         Dim result As New ConstructorDeclaration(Parent)
+        Dim modifiers As Modifiers
 
-        result.Init(New Modifiers(), New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
+        If Parent.Modifiers.Is(ModifierMasks.MustInherit) Then
+            modifiers.AddModifier(KS.Protected)
+        End If
+        result.Init(modifiers, New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
 
         If result.ResolveTypeReferences() = False Then
             Helper.ErrorRecoveryNotImplemented(Parent.Location)
