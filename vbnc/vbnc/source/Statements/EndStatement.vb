@@ -41,7 +41,17 @@ Public Class EndStatement
     End Function
 
     Public Overrides Function ResolveStatement(ByVal Info As ResolveInfo) As Boolean
+        Dim m As Object
+        Dim method As IMethod
+
         Compiler.Helper.AddCheck("End statements may not be used in programs that are not executable (for example, DLLs). ")
+
+        m = FindMethod()
+        method = TryCast(m, IMethod)
+        If method IsNot Nothing Then
+            method.CecilBuilder.ImplAttributes = Mono.Cecil.MethodImplAttributes.NoInlining Or Mono.Cecil.MethodImplAttributes.NoOptimization
+        End If
+
         Return True
     End Function
 End Class

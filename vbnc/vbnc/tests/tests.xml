@@ -7312,4 +7312,7 @@
 	<test id="1843" name="30182" category="" priority="0" expectedexitcode="1" expectederrorcode="30182" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30182.vb</file>
 	</test>
+	<test id="1844" name="End2" category="" priority="0" target="exe">
+		<file>RunTime\End2.vb</file>
+	</test>
 </rt>
