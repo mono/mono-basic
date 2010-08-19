@@ -939,7 +939,7 @@ Public Class Test
                 Dim dst As String = IO.Path.Combine(FullWorkingDirectory, IO.Path.GetFileName(src))
                 IO.File.Copy(src, dst, True)
                 dst = IO.Path.Combine(IO.Path.GetDirectoryName(OutputAssemblyFull), IO.Path.GetFileName(src))
-                IO.File.Copy(src, dst, True)
+                If dst <> src Then IO.File.Copy(src, dst, True)
             Next
 
             'Run test
