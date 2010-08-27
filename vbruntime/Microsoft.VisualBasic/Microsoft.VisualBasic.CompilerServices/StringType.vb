@@ -235,26 +235,24 @@ Namespace Microsoft.VisualBasic.CompilerServices
         End Function
 
         Private Shared Function ConvertLikeExpression(ByVal expression As String) As String
-            Dim carr() As Char = expression.ToCharArray()
-
             Dim sb As StringBuilder = New StringBuilder
             Dim bDigit As Boolean = False '' need it in order to clode the string pattern
 
-            For pos As Integer = 0 To carr.Length - 1
-                Select Case carr(pos)
+            For pos As Integer = 0 To expression.Length - 1
+                Select Case expression(pos)
                     Case "?"c
                         sb.Append("."c)
                     Case "*"c
                         sb.Append("."c).Append("*"c)
                     Case "#"c  '' only one digit and only once ->  "^\d{1}$"
                         If bDigit Then
-                            sb.Append("\"c).Append("d"c).Append("{"c).Append("1"c).Append("}"c)
+                            sb.Append("\d{1}")
                         Else
-                            sb.Append("^"c).Append("\"c).Append("d"c).Append("{"c).Append("1"c).Append("}"c)
+                            sb.Append("^\d{1}")
                             bDigit = True
                         End If
                     Case "["c
-                        Dim gsb As StringBuilder = ConvertGroupSubexpression(carr, pos)
+                        Dim gsb As StringBuilder = ConvertGroupSubexpression(expression, pos)
                         ' skip groups of form [], i.e. empty strings
                         If gsb.Length > 2 Then
                             sb.Append(gsb)
@@ -268,7 +266,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return sb.ToString()
         End Function
 
-        Private Shared Function ConvertGroupSubexpression(ByVal carr() As Char, ByRef pos As Integer) As StringBuilder
+        Private Shared Function ConvertGroupSubexpression(ByVal carr As String, ByRef pos As Integer) As StringBuilder
             Dim sb As StringBuilder = New StringBuilder
             Dim negate As Boolean = False
 
