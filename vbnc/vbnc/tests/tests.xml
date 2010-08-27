@@ -3213,7 +3213,7 @@
 		<arguments>-target:library</arguments>
 		<file>Errors\30207.vb</file>
 	</test>
-	<test id="814" name="30209" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30209" target="exe">
+	<test id="814" name="30209" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30209" target="library">
 		<arguments>-target:library</arguments>
 		<file>Errors\30209.vb</file>
 	</test>
@@ -7237,7 +7237,7 @@
 	<test id="1818" name="33104-1" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33104-1.vb</file>
 	</test>
-	<test id="1819" name="30201" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" expectedvbcexitcode="1" expectedvbcerrorcode="30201" target="exe">
+	<test id="1819" name="30201" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" expectedvbcexitcode="1" expectedvbcerrorcode="33104" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30201.vb</file>
 	</test>
 	<test id="1820" name="30198" category="" priority="0" expectedexitcode="1" expectederrorcode="30198" target="exe">
@@ -7252,10 +7252,10 @@
 	<test id="1823" name="33107" category="" priority="0" expectedexitcode="1" expectederrorcode="33107" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33107.vb</file>
 	</test>
-	<test id="1824" name="33106" category="" priority="0" expectedexitcode="1" expectederrorcode="33106" target="exe">
+	<test id="1824" name="33106" category="" priority="0" expectedexitcode="1" expectederrorcode="33106" expectedvbcexitcode="1" expectedvbcerrorcode="36913" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33106.vb</file>
 	</test>
-	<test id="1825" name="33110" category="" priority="0" expectedexitcode="1" expectederrorcode="33110" target="exe">
+	<test id="1825" name="33110" category="" priority="0" expectedexitcode="1" expectederrorcode="33110" expectedvbcexitcode="1" expectedvbcerrorcode="36913" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33110.vb</file>
 	</test>
 	<test id="1826" name="33110-1" category="" priority="0" expectedexitcode="1" expectederrorcode="33110" target="exe">
