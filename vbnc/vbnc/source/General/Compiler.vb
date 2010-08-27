@@ -847,12 +847,12 @@ EndOfCompilation:
             If lstMethods.Count > 1 Then
                 Dim name As String
                 If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
-                Report.ShowMessage(Messages.VBNC30738, name)
+                Report.ShowMessageNoLocation(Messages.VBNC30738, name)
                 Return False
             ElseIf lstMethods.Count = 0 Then
                 Dim name As String
                 If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
-                Report.ShowMessage(Messages.VBNC30420, name)
+                Report.ShowMessageNoLocation(Messages.VBNC30420, name)
                 Return False
             Else
                 Dim entryMethod As Mono.Cecil.MethodDefinition = lstMethods(0)

@@ -260,6 +260,15 @@ Public Class Report
     End Function
 
     ''' <summary>
+    ''' Shows the message with the specified location and parameters
+    ''' </summary>
+    <Diagnostics.DebuggerHidden()> _
+    Function ShowMessageNoLocation(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
+        Dim Location As Span = Nothing
+        Return ShowMessage(False, New Message(Compiler, Message, Parameters, Location))
+    End Function
+
+    ''' <summary>
     ''' Shows the message with the specified parameters.
     ''' Tries to look up the current location in the token manager.
     ''' </summary>
@@ -268,8 +277,7 @@ Public Class Report
         If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
             Return ShowMessage(Message, Compiler.tm.CurrentLocation, Parameters)
         Else
-            Dim loc As Span = Nothing
-            Return ShowMessage(Message, loc, Parameters)
+            Return ShowMessageNoLocation(Message, Parameters)
         End If
     End Function
 
