@@ -258,7 +258,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                             sb.Append(gsb)
                         End If
                     Case Else
-                        sb.Append(carr(pos))
+                        sb.Append(Regex.Escape(expression(pos).ToString()))
                 End Select
             Next
             If bDigit Then sb.Append("$"c)
