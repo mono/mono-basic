@@ -455,10 +455,7 @@ Public Class CecilHelper
         If original.IsNested Then
             Dim parentType As TypeReference = InflateType(original.DeclaringType, parameters, arguments)
             If parentType IsNot original Then
-                Dim tD As TypeDefinition = FindDefinition(original)
-                Dim result As New GenericInstanceType(tD)
-                result.DeclaringType = Compiler.CurrentCompiler.ModuleBuilderCecil.Import(parentType)
-                Return result
+                Return Compiler.CurrentCompiler.ModuleBuilderCecil.Import(FindDefinition(original))
             End If
         End If
 

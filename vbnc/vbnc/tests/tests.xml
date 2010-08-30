@@ -7318,4 +7318,7 @@
 	<test id="1845" name="SecurityAttribute2" category="" priority="0" target="library">
 		<file>CompileTime\SecurityAttribute2.vb</file>
 	</test>
+	<test id="1846" name="MethodResolution1" category="" priority="0" target="library">
+		<file>CompileTime\MethodResolution1.vb</file>
+	</test>
 </rt>
