@@ -1058,7 +1058,7 @@ Class frmMain
 
             If m_SaveTimer Is Nothing Then
                 m_SaveTimer = New Timer()
-                m_SaveTimer.Interval = 5000
+                m_SaveTimer.Interval = 30000
                 m_SaveTimer.Start()
             End If
         Catch ex As Exception
@@ -1068,7 +1068,7 @@ Class frmMain
 
     Private Sub m_SaveTimer_Tick(ByVal sender As Object, ByVal ea As EventArgs) Handles m_SaveTimer.Tick
         Try
-            cmdSave_Click(sender, ea)
+            m_Tests.Save(False)
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
