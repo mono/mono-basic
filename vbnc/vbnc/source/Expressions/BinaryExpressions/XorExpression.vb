@@ -76,7 +76,7 @@ Public Class XOrExpression
                 crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
                 If clvalue = TypeCode.Boolean AndAlso crvalue = TypeCode.Boolean Then
-                    Return CBool(lvalue) Or CBool(rvalue)
+                    Return CBool(lvalue) Xor CBool(rvalue)
                 End If
 
                 Dim smallest As Mono.Cecil.TypeReference

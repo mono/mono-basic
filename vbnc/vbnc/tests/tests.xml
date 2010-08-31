@@ -7321,5 +7321,7 @@
 	<test id="1846" name="MethodResolution1" category="" priority="0" target="library">
 		<file>CompileTime\MethodResolution1.vb</file>
 	</test>
-	<test id="1847" name="Boolean2" category="" priority="0" target="exe" />
+	<test id="1847" name="Boolean2" category="" priority="0" target="exe">
+		<file>CompileTime2\Boolean2.vb</file>
+	</test>
 </rt>
