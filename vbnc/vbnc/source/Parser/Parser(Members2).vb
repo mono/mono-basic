@@ -873,7 +873,7 @@ Partial Class Parser
 
         If tm.Accept(KS.Equals) Then
             m_VariableInitializer = ParseVariableInitializer(Parent)
-            If m_VariableInitializer Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            If m_VariableInitializer Is Nothing Then Compiler.Report.ShowMessage(Messages.VBNC30201, tm.CurrentLocation)
             m_ArgumentList = Nothing
         ElseIf tm.Accept(KS.LParenthesis) Then
             If tm.Accept(KS.RParenthesis) = False Then

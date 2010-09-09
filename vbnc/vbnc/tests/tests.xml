@@ -7324,4 +7324,7 @@
 	<test id="1847" name="Boolean2" category="" priority="0" target="exe">
 		<file>CompileTime2\Boolean2.vb</file>
 	</test>
+	<test id="1848" name="30201-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30201" target="library">
+		<file>Errors\30201-1.vb</file>
+	</test>
 </rt>

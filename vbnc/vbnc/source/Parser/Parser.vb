@@ -815,10 +815,12 @@ Partial Public Class Parser
         If ArrayElementInitializer.CanBeMe(tm) Then
             Dim newAEI As ArrayElementInitializer
             newAEI = ParseArrayElementInitializer(Parent)
+            If newAEI Is Nothing Then Return Nothing
             result.Init(newAEI)
         Else
             Dim newExp As Expression
             newExp = ParseExpression(Parent)
+            If newExp Is Nothing Then Return Nothing
             result.Init(newExp)
         End If
 
