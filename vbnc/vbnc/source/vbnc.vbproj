@@ -216,12 +216,6 @@
     <Compile Include="Members\TypeVariableDeclaration.vb" />
     <Compile Include="Names\Identifier.vb" />
     <Compile Include="Parser\ParsedObject.vb" />
-    <Compile Include="Parser\Parser%28Events%29.vb" />
-    <Compile Include="Parser\Parser%28Expressions%29.vb" />
-    <Compile Include="Parser\Parser%28Members%29.vb" />
-    <Compile Include="Parser\Parser%28Members2%29.vb" />
-    <Compile Include="Parser\Parser%28Statements%29.vb" />
-    <Compile Include="Parser\Parser%28Types%29.vb" />
     <Compile Include="Parser\Parser.vb" />
     <Compile Include="Parser\ExpressionParseInfo.vb" />
     <Compile Include="Parser\ParseTypeInfo.vb" />

@@ -76,12 +76,6 @@ source/Members/PropertyHandlerDeclaration.vb
 source/Members/TypeVariableDeclaration.vb
 source/Names/Identifier.vb
 source/Parser/ParsedObject.vb
-source/Parser/Parser(Events).vb
-source/Parser/Parser(Expressions).vb
-source/Parser/Parser(Members).vb
-source/Parser/Parser(Members2).vb
-source/Parser/Parser(Statements).vb
-source/Parser/Parser(Types).vb
 source/Parser/Parser.vb
 source/Parser/ExpressionParseInfo.vb
 source/Parser/ParseTypeInfo.vb
