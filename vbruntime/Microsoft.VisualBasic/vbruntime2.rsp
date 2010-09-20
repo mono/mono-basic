@@ -1,6 +1,3 @@
-/define:_MYTYPE=\"Empty\",NET_VER=2.0
-/imports:System.Collections.Generic
-/codepage:65001
-/noconfig
+/define:NET_VER=2.0
 /res:strings2.resources,strings.resources
 @vbruntime.rsp

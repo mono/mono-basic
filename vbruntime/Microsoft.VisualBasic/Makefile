@@ -7,7 +7,11 @@ ifeq ("$(PROFILE)", "moonlight")
 LOCAL_VBNC_FLAGS = @vbruntime-moonlight.rsp $(EXTRA_VBRUNTIME_FLAGS)
 LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
 else
+ifeq ("$(PROFILE)", "net_4_0")
+LOCAL_VBNC_FLAGS = @vbruntime4.rsp $(EXTRA_VBRUNTIME_FLAGS) /libpath:$(prefix)/lib/mono/4.0/
+else
 LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
+endif
 endif
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
@@ -37,6 +41,7 @@ DISTFILES =	\
 	Microsoft.VisualBasic.dll.moonlight.sources\
 	vbruntime.rsp				\
 	vbruntime2.rsp				\
+	vbruntime4.rsp				\
 	vbruntime-moonlight.rsp			\
 	Helper.vb				\
 	2005VB.sln
