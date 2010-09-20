@@ -279,16 +279,19 @@ Public Class TypeManager
     ''' <remarks></remarks>
     Private Function LoadAssembly(ByVal Filename As String) As Mono.Cecil.AssemblyDefinition
         Dim refAss As Mono.Cecil.AssemblyDefinition
+        Dim readerParameters As New ReaderParameters(ReadingMode.Deferred)
+        readerParameters.AssemblyResolver = Compiler.AssemblyResolver
+
         '  Try
         If IO.File.Exists(Filename) Then
-            refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, New ReaderParameters(ReadingMode.Deferred))
+            refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, readerParameters)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
 
         If Reflection.Assembly.GetExecutingAssembly.Location <> String.Empty AndAlso IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
             Filename = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
-            refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, New ReaderParameters(ReadingMode.Deferred))
+            refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, readerParameters)
             'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
             Return refAss
         End If
@@ -298,7 +301,7 @@ Public Class TypeManager
             Dim strFullPath As String = IO.Path.Combine(strPath, Filename)
             Try
                 If IO.File.Exists(strFullPath) Then
-                    refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(strFullPath, New ReaderParameters(ReadingMode.Deferred))
+                    refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(strFullPath, readerParameters)
                     'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
                     Return refAss
                 End If
