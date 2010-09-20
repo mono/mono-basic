@@ -114,6 +114,10 @@ Public Class Compiler
                 For Each dir As String In m_AssemblyResolver.GetSearchDirectories()
                     m_AssemblyResolver.RemoveSearchDirectory(dir)
                 Next
+                'Add or own search paths
+                For Each dir As String In CommandLine.LibPath
+                    m_AssemblyResolver.AddSearchDirectory(dir)
+                Next
             End If
             Return m_AssemblyResolver
         End Get
