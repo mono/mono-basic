@@ -607,7 +607,7 @@ Public Class Helper
     Shared Function GetVisibility(ByVal Attributes As Mono.Cecil.MethodAttributes) As ModifierMasks
         Dim attrib As Mono.Cecil.MethodAttributes = Attributes And Mono.Cecil.MethodAttributes.MemberAccessMask
         Select Case attrib
-            Case Mono.Cecil.MethodAttributes.Private, Mono.Cecil.MethodAttributes.Compilercontrolled
+            Case Mono.Cecil.MethodAttributes.Private, Mono.Cecil.MethodAttributes.CompilerControlled
                 Return ModifierMasks.Private
             Case Mono.Cecil.MethodAttributes.FamANDAssem
                 Throw New NotImplementedException
