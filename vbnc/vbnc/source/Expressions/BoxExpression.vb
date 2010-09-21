@@ -60,9 +60,15 @@ Public Class BoxExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim tp As TypeReference
 
         result = m_Expression.GenerateCode(Info) AndAlso result
-        Emitter.EmitBox(Info, m_Expression.ExpressionType)
+
+        tp = m_Expression.ExpressionType
+        If CecilHelper.IsByRef(tp) Then
+            tp = CecilHelper.GetElementType(tp)
+        End If
+        Emitter.EmitBox(Info, tp)
 
         Return result
     End Function

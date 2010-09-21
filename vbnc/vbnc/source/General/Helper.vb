@@ -2674,6 +2674,9 @@ Public Class Helper
             'do nothing
         ElseIf CecilHelper.IsByRef(fromExpr.ExpressionType) AndAlso IsAssignable(Parent, CecilHelper.GetElementType(fromType), DestinationType) Then
             'do nothing
+            If CecilHelper.IsValueType(CecilHelper.GetElementType(fromType)) AndAlso CecilHelper.IsValueType(DestinationType) = False Then
+                fromExpr = New BoxExpression(Parent, fromExpr, DestinationType)
+            End If
         ElseIf CecilHelper.IsByRef(DestinationType) AndAlso IsAssignable(Parent, fromExpr.ExpressionType, CecilHelper.GetElementType(DestinationType)) Then
 #If EXTENDEDDEBUG Then
             Parent.Compiler.Report.WriteLine(">3")
