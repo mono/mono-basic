@@ -355,6 +355,8 @@ Public Class Compiler
             Throw
         End Try
 
+        m_tm = Nothing
+
         VerifyConsistency(result, "Parse")
 
         Return result

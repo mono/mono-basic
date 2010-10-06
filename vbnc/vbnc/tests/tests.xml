@@ -7330,4 +7330,7 @@
 	<test id="1849" name="ByRef13" category="" priority="0" target="exe">
 		<file>CompileTime2\ByRef13.vb</file>
 	</test>
+	<test id="1850" name="30311-38" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-38.vb</file>
+	</test>
 </rt>
