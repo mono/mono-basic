@@ -73,6 +73,10 @@ Public Class VariableClassification
                     If Me.FieldDefinition.HasConstant = False OrElse Me.FieldDefinition.Constant Is Nothing Then
                         Dim field As IFieldMember = TryCast(Me.FieldInfo.Annotations(Compiler), IFieldMember)
                         Dim value As Object = Nothing
+                        If field Is Nothing Then
+                            'A field from an external assembly
+                            Return Me.FieldDefinition.Constant
+                        End If
                         If field.ResolveAndGetConstantValue(value) Then
                             Return value
                         Else

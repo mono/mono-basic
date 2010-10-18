@@ -7333,4 +7333,7 @@
 	<test id="1850" name="30311-38" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
 		<file>Errors\30311-38.vb</file>
 	</test>
+	<test id="1852" name="Optional3" category="" priority="0" target="library">
+		<file>1Declarations\Optional3.vb</file>
+	</test>
 </rt>
