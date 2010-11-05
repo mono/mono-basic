@@ -210,14 +210,14 @@ Public Class ExpressionClassification
     ReadOnly Property CanBeValueClassification() As Boolean
         Get
             Select Case m_Classification
-                Case Classifications.Value, Classifications.Variable, Classifications.EventAccess, _
+                Case Classifications.Value, Classifications.Variable, _
                 Classifications.LateBoundAccess, Classifications.MethodGroup, _
                 Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.PropertyGroup
                     Return True
                 Case Classifications.Type
                     Dim tc As TypeClassification = AsTypeClassification
                     Return tc.CanBeExpression AndAlso tc.Expression.Classification.CanBeValueClassification
-                Case Classifications.Void, Classifications.Namespace
+                Case Classifications.Void, Classifications.Namespace, Classifications.EventAccess
                     Return False
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
