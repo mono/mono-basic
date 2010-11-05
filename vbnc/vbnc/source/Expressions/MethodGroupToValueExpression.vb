@@ -67,7 +67,12 @@ Public Class MethodGroupToValueExpression
 
         result = m_ExpressionType IsNot Nothing AndAlso result
 
-        Me.Classification = New ValueClassification(Me)
+        If Helper.CompareType(Compiler.TypeCache.System_Void, m_ExpressionType) Then
+            Me.Classification = New VoidClassification(Me)
+            result = ReportReclassifyToValueErrorMessage()
+        Else
+            Me.Classification = New ValueClassification(Me)
+        End If
 
         Return result
     End Function

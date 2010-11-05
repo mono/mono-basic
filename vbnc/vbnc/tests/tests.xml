@@ -7336,4 +7336,19 @@
 	<test id="1852" name="Optional3" category="" priority="0" target="library">
 		<file>1Declarations\Optional3.vb</file>
 	</test>
+	<test id="1851" name="For7" category="" priority="0" target="exe">
+		<file>CompileTime2\For7.vb</file>
+	</test>
+	<test id="1853" name="30108-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30108" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30108-1.vb</file>
+	</test>
+	<test id="1854" name="30112" category="" priority="0" expectedexitcode="1" expectederrorcode="30112" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30112.vb</file>
+	</test>
+	<test id="1855" name="32022" category="" priority="0" expectedexitcode="1" expectederrorcode="32022" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\32022.vb</file>
+	</test>
+	<test id="1856" name="30491" category="" priority="0" expectedexitcode="1" expectederrorcode="30491" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30491.vb</file>
+	</test>
 </rt>

@@ -716,7 +716,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30107 = 30107
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Expression is a type and cannot be used as an expression."
     ''' VB   = "'|1' is a type and cannot be used as an expression."
     ''' </summary>
     ''' <remarks></remarks>
@@ -744,7 +744,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30111 = 30111
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Expression is a namespace and cannot be used as an expression."
     ''' VB   = "'|1' is a namespace and cannot be used as an expression."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2284,7 +2284,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30490 = 30490
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Expression does not produce a value."
     ''' VB   = "Expression does not produce a value."
     ''' </summary>
     ''' <remarks></remarks>

@@ -456,6 +456,23 @@ Public MustInherit Class Expression
         Return result
     End Function
 
+    Function ReportReclassifyToValueErrorMessage() As Boolean
+
+        Select Case m_Classification.Classification
+            Case ExpressionClassification.Classifications.EventAccess
+                Compiler.Report.ShowMessage(Messages.VBNC32022, Me.Location)
+            Case ExpressionClassification.Classifications.Type
+                Compiler.Report.ShowMessage(Messages.VBNC30108, Me.Location)
+            Case ExpressionClassification.Classifications.Namespace
+                Compiler.Report.ShowMessage(Messages.VBNC30112, Me.Location)
+            Case ExpressionClassification.Classifications.Void
+                Compiler.Report.ShowMessage(Messages.VBNC30491, Me.Location)
+            Case Else
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+        End Select
+
+        Return False
+    End Function
 
 #End Region
 

@@ -444,10 +444,32 @@ Public Class ForStatement
 
         If m_LoopStepExpression IsNot Nothing Then
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
+            If Not m_LoopStepExpression.Classification.CanBeValueClassification Then
+                result = m_LoopStepExpression.ReportReclassifyToValueErrorMessage()
+            Else
+                m_LoopStepExpression = m_LoopStepExpression.ReclassifyToValueExpression()
+                result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
+            End If
         Else
             m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         End If
+
+        If Not m_LoopStartExpression.Classification.CanBeValueClassification Then
+            result = m_LoopStartExpression.ReportReclassifyToValueErrorMessage()
+        Else
+            m_LoopStartExpression = m_LoopStartExpression.ReclassifyToValueExpression()
+            result = m_LoopStartExpression.ResolveExpression(Info) AndAlso result
+        End If
+
+        If Not m_LoopEndExpression.Classification.CanBeValueClassification Then
+            result = m_LoopEndExpression.ReportReclassifyToValueErrorMessage()
+        Else
+            m_LoopEndExpression = m_LoopEndExpression.ReclassifyToValueExpression()
+            result = m_LoopEndExpression.ResolveExpression(Info) AndAlso result
+        End If
+
+        If result = False Then Return result
 
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result
         m_LoopStepExpression = Helper.CreateTypeConversion(Me, m_LoopStepExpression, m_LoopType, result)
