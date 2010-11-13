@@ -152,10 +152,10 @@ Public Class DelegateOrObjectCreationExpression
         If m_IsDelegateCreationExpression Then
             Dim type As Mono.Cecil.TypeReference = m_ResolvedType
             If m_ArgumentList.Count <> 1 Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC32008) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC32008, Me.Location, type.FullName) AndAlso result
             End If
             If result AndAlso m_ArgumentList(0).Expression.Classification.IsMethodPointerClassification = False Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC32008) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC32008, Me.Location, type.FullName) AndAlso result
             End If
             If result Then
                 result = m_ArgumentList(0).Expression.ResolveAddressOfExpression(type) AndAlso result

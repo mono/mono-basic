@@ -79,7 +79,7 @@
   <data name="30036"><value>Overflow.</value></data>
   <data name="30037"><value>Symbol is not valid.</value></data>
   <data name="30038"><value>CHANGEME</value></data>
-  <data name="30039"><value>CHANGEME</value></data>
+  <data name="30039"><value>Loop control variable cannot be a property or a late-bound indexed array.</value></data>
   <data name="30040"><value>CHANGEME</value></data>
   <data name="30041"><value>Too many errors.</value></data>
   <data name="30043"><value>CHANGEME</value></data>
@@ -143,9 +143,9 @@
   <data name="30124"><value>CHANGEME</value></data>
   <data name="30125"><value>CHANGEME</value></data>
   <data name="30126"><value>CHANGEME</value></data>
-  <data name="30127"><value>CHANGEME</value></data>
-  <data name="30128"><value>CHANGEME</value></data>
-  <data name="30129"><value>CHANGEME</value></data>
+  <data name="30127"><value>Attribute '{0}' is not valid: {1}</value></data>
+  <data name="30128"><value>Security attribute '{0}' is not valid: {1}</value></data>
+  <data name="30129"><value>Assembly attribute '{0}' is not valid: {1}</value></data>
   <data name="30130"><value>CHANGEME</value></data>
   <data name="30131"><value>CHANGEME</value></data>
   <data name="30132"><value>CHANGEME</value></data>
@@ -271,7 +271,7 @@
   <data name="30321"><value>CHANGEME</value></data>
   <data name="30332"><value>CHANGEME</value></data>
   <data name="30333"><value>CHANGEME</value></data>
-  <data name="30337"><value>CHANGEME</value></data>
+  <data name="30337"><value>'For' loop control variable cannot be of the type '{0}'</value></data>
   <data name="30338"><value>CHANGEME</value></data>
   <data name="30345"><value>CHANGEME</value></data>
   <data name="30354"><value>CHANGEME</value></data>
@@ -384,8 +384,8 @@
   <data name="30528"><value>CHANGEME</value></data>
   <data name="30529"><value>CHANGEME</value></data>
   <data name="30530"><value>CHANGEME</value></data>
-  <data name="30532"><value>CHANGEME</value></data>
-  <data name="30533"><value>CHANGEME</value></data>
+  <data name="30532"><value>Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method.</value></data>
+  <data name="30533"><value>Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method.</value></data>
   <data name="30542"><value>Division by zero occured.</value></data>
   <data name="30544"><value>CHANGEME</value></data>
   <data name="30545"><value>CHANGEME</value></data>
@@ -768,9 +768,9 @@
   <data name="32002"><value>CHANGEME</value></data>
   <data name="32004"><value>CHANGEME</value></data>
   <data name="32005"><value>CHANGEME</value></data>
-  <data name="32006"><value>CHANGEME</value></data>
-  <data name="32007"><value>CHANGEME</value></data>
-  <data name="32008"><value>CHANGEME</value></data>
+  <data name="32006"><value>'Char' values cannot be converted to '{0}'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit.</value></data>
+  <data name="32007"><value>'{0}' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit.</value></data>
+  <data name="32008"><value>'{0}' is a delegate type. Delegate construction permits only a single AddressOf expression as an argument list. Often an AddressOf expression can be used instead of a delegate construction.</value></data>
   <data name="32009"><value>CHANGEME</value></data>
   <data name="32010"><value>CHANGEME</value></data>
   <data name="32012"><value>CHANGEME</value></data>

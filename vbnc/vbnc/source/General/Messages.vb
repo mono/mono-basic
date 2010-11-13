@@ -352,7 +352,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30038 = 30038
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Loop control variable cannot be a property or a late-bound indexed array."
     ''' VB   = "Loop control variable cannot be a property or a late-bound indexed array."
     ''' </summary>
     ''' <remarks></remarks>
@@ -800,21 +800,21 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30126 = 30126
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Attribute '{0}' is not valid: {1}"
     ''' VB   = "Attribute '|1' is not valid: |0"
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30127 = 30127
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Security attribute '{0}' is not valid: {1}"
     ''' VB   = "Security attribute '|1' is not valid: |0"
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30128 = 30128
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Assembly attribute '{0}' is not valid: {1}"
     ''' VB   = "Assembly attribute '|1' is not valid: |0"
     ''' </summary>
     ''' <remarks></remarks>
@@ -1696,7 +1696,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30333 = 30333
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'For' loop control variable cannot be of the type '{0}'"
     ''' VB   = "'For' loop control variable cannot be of type '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2487,14 +2487,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30530 = 30530
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method."
     ''' VB   = "Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30532 = 30532
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method."
     ''' VB   = "Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5175,21 +5175,21 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32005 = 32005
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Char' values cannot be converted to '{0}'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit."
     ''' VB   = "'Char' values cannot be converted to '|1'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32006 = 32006
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit."
     ''' VB   = "'|1' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32007 = 32007
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' is a delegate type. Delegate construction permits only a single AddressOf expression as an argument list. Often an AddressOf expression can be used instead of a delegate construction."
     ''' VB   = "'|1' is a delegate type. Delegate construction permits only a single AddressOf expression as an argument list. Often an AddressOf expression can be used instead of a delegate construction."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5273,7 +5273,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32021 = 32021
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Expression is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event."
     ''' VB   = "'|1' is an event, and cannot be called directly. Use a 'RaiseEvent' statement to raise an event."
     ''' </summary>
     ''' <remarks></remarks>

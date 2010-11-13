@@ -44,10 +44,11 @@ Public Class ExternalProcessVerification
         m_Process.ExpandCmdLine(New String() {"%OUTPUTASSEMBLY%", "%OUTPUTVBCASSEMBLY%"}, New String() {Test.OutputAssembly(), Test.OutputVBCAssembly()})
     End Sub
 
-    Private Function StdOutContainsNumber(ByVal Number As Integer, ByRef ContainsMyGenerator As Boolean) As Boolean
+    Private Function StdOutContainsNumber(ByVal Number As Integer, ByRef ContainsMyGenerator As Boolean, ByRef ContainsCHANGEME As Boolean) As Boolean
         Dim str As String
         str = m_Process.StdOut & ""
         If str.Contains("<MyGenerator>") Then ContainsMyGenerator = True
+        If str.Contains("CHANGEME") Then ContainsCHANGEME = True
         If str.Contains("BC" & Number.ToString) Then Return True
         If str.Contains("VBNC" & Number.ToString) Then Return True
         Return False
@@ -69,11 +70,15 @@ Public Class ExternalProcessVerification
                 result = False
             ElseIf Me.ExpectedErrorCode <> 0 Then
                 Dim myGenerator As Boolean
-                If StdOutContainsNumber(Me.ExpectedErrorCode, myGenerator) = False Then
+                Dim changeme As Boolean
+                If StdOutContainsNumber(Me.ExpectedErrorCode, myGenerator, changeme) = False Then
                     MyBase.DescriptiveMessage = Name & " failed, expected error code " & Me.ExpectedErrorCode & vbNewLine
                     result = False
                 ElseIf myGenerator Then
                     MyBase.DescriptiveMessage = Name & " failed, <MyGenerator> shown in error message" & vbNewLine
+                    result = False
+                ElseIf changeme Then
+                    MyBase.DescriptiveMessage = Name & " failed, CHANGEME shown in error message" & vbNewLine
                     result = False
                 End If
             End If

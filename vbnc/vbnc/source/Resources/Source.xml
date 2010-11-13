@@ -244,7 +244,7 @@
 	</Message>
 	<Message id="30039" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Loop control variable cannot be a property or a late-bound indexed array.</VBNCValue>
 		<VBValue>Loop control variable cannot be a property or a late-bound indexed array.</VBValue>
 	</Message>
 	<Message id="30040" level="Error">
@@ -564,17 +564,17 @@
 	</Message>
 	<Message id="30127" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Attribute '{0}' is not valid: {1}</VBNCValue>
 		<VBValue>Attribute '|1' is not valid: |0</VBValue>
 	</Message>
 	<Message id="30128" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Security attribute '{0}' is not valid: {1}</VBNCValue>
 		<VBValue>Security attribute '|1' is not valid: |0</VBValue>
 	</Message>
 	<Message id="30129" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Assembly attribute '{0}' is not valid: {1}</VBNCValue>
 		<VBValue>Assembly attribute '|1' is not valid: |0</VBValue>
 	</Message>
 	<Message id="30130" level="Error">
@@ -1204,7 +1204,7 @@
 	</Message>
 	<Message id="30337" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'For' loop control variable cannot be of the type '{0}'</VBNCValue>
 		<VBValue>'For' loop control variable cannot be of type '|1'.</VBValue>
 	</Message>
 	<Message id="30338" level="Error">
@@ -1769,12 +1769,12 @@
 	</Message>
 	<Message id="30532" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method.</VBNCValue>
 		<VBValue>Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method.</VBValue>
 	</Message>
 	<Message id="30533" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method.</VBNCValue>
 		<VBValue>Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method.</VBValue>
 	</Message>
 	<Message id="30542" level="Error">
@@ -3689,17 +3689,17 @@
 	</Message>
 	<Message id="32006" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Char' values cannot be converted to '{0}'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit.</VBNCValue>
 		<VBValue>'Char' values cannot be converted to '|1'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit.</VBValue>
 	</Message>
 	<Message id="32007" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit.</VBNCValue>
 		<VBValue>'|1' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit.</VBValue>
 	</Message>
 	<Message id="32008" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' is a delegate type. Delegate construction permits only a single AddressOf expression as an argument list. Often an AddressOf expression can be used instead of a delegate construction.</VBNCValue>
 		<VBValue>'|1' is a delegate type. Delegate construction permits only a single AddressOf expression as an argument list. Often an AddressOf expression can be used instead of a delegate construction.</VBValue>
 	</Message>
 	<Message id="32009" level="Error">
