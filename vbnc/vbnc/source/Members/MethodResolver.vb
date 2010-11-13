@@ -256,7 +256,19 @@ Public Class MethodResolver
         SelectLessGeneric()
         Log("After selecting the less generic candidates, there are " & CandidatesLeft & " candidates left.")
         If ShowErrors AndAlso CandidatesLeft <> 1 Then
-            Helper.AddError(Me.m_Parent, "No less generic: " & Parent.Location.ToString(Compiler))
+            If CandidatesLeft > 1 Then
+                Helper.AddError(Me.m_Parent, String.Format("After selecting the less generic method for method '{0}', there are still {1} candidates left", Me.m_InitialCandidates(0).Member.Name, CandidatesLeft))
+                Helper.AddError(Me.m_Parent, String.Format("Tried to select using invocation list: '{0}'", Me.ArgumentsTypesAsString))
+                Dim reported As Integer = 0
+                For i As Integer = 0 To m_Candidates.Count - 1
+                    If m_Candidates(i) Is Nothing Then Continue For
+                    reported += 1
+                    Dim mi As Mono.Cecil.MemberReference = m_InitialCandidates(i).Member
+                    Helper.AddError(Me.m_Parent, String.Format("Candidate #{0}: {1} {2}", reported, mi.Name, Helper.ToString(Me.m_Parent, Helper.GetParameters(Me.m_Parent, mi))))
+                Next
+            Else
+                Helper.AddError(Me.m_Parent, String.Format("After selecting the less generic method for method '{0}', nothing was found", Me.m_InitialCandidates(0).Member.Name))
+            End If
         End If
 
 
