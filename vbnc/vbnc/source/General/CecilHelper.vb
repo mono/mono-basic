@@ -1165,17 +1165,21 @@ Public Class CecilHelper
         Dim reference As AssemblyNameReference = TryCast(type.Scope, AssemblyNameReference)
         If reference IsNot Nothing Then
             Dim assembly As AssemblyDefinition = FindDefinition(reference)
-            Return assembly.MainModule.GetType(type.FullName)
+            If type.IsNested Then
+                Return assembly.MainModule.GetType(type.FullName)
+            Else
+                Return assembly.MainModule.GetType(type.Namespace, type.Name)
+            End If
         End If
         Dim moduledef As ModuleDefinition = TryCast(type.Scope, ModuleDefinition)
         If moduledef IsNot Nothing Then
             Dim fn As String
             If type.IsNested Then
                 fn = FindDefinition(type.DeclaringType).FullName + "/" + type.Name
+                Return moduledef.GetType(fn)
             Else
-                fn = type.FullName
+                Return moduledef.GetType(type.Namespace, type.Name)
             End If
-            Return moduledef.GetType(fn)
         End If
         Throw New NotImplementedException
     End Function
