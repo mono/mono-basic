@@ -7351,4 +7351,7 @@
 	<test id="1856" name="30491" category="" priority="0" expectedexitcode="1" expectederrorcode="30491" target="exe">
 		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30491.vb</file>
 	</test>
+	<test id="1857" name="Delegate8" category="" priority="0" expectedexitcode="1" expectederrorcode="30408" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library">
+		<file>1Declarations\Delegate8.vb</file>
+	</test>
 </rt>

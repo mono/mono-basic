@@ -1394,7 +1394,7 @@
 	</Message>
 	<Message id="30408" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Method '{0}' does not have the same signature as delegate '{1}'.</VBNCValue>
 		<VBValue>Method '|1' does not have the same signature as delegate '|2'.</VBValue>
 	</Message>
 	<Message id="30412" level="Error">

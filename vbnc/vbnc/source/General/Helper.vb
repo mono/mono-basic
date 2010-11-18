@@ -3033,9 +3033,51 @@ Public Class Helper
     Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
         Dim result As String
         If TypeOf Member Is Mono.Cecil.MethodReference Then
-            result = "Sub New(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
+            If Helper.CompareNameOrdinal(Member.Name, ".ctor") Then
+                result = "Sub New(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
+            Else
+                Dim builder As New Text.StringBuilder()
+                Dim invoke As Mono.Cecil.MethodReference = DirectCast(Member, MethodReference)
+
+                If Helper.CompareType(invoke.ReturnType, Context.Compiler.TypeCache.System_Void) Then
+                    builder.Append("Sub ")
+                Else
+                    builder.Append("Function ")
+                End If
+                builder.Append(invoke.Name)
+                builder.Append(" (")
+                For i As Integer = 0 To invoke.Parameters.Count - 1
+                    If i > 0 Then builder.Append(", ")
+                    Dim param As ParameterDefinition = invoke.Parameters(i)
+                    If CecilHelper.IsByRef(param.ParameterType) Then builder.Append("ByRef ")
+                    builder.Append(param.Name)
+                    builder.Append(" As ")
+                    builder.Append(Helper.ToString(Context, param.ParameterType))
+                Next
+                builder.Append(")")
+                If Helper.CompareType(invoke.ReturnType, Context.Compiler.TypeCache.System_Void) = False Then
+                    builder.Append(" As ")
+                    builder.Append(Helper.ToString(Context, invoke.ReturnType))
+                End If
+                result = builder.ToString()
+            End If
         ElseIf TypeOf Member Is Mono.Cecil.PropertyReference Then
             result = Member.Name & "(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
+        ElseIf TypeOf Member Is Mono.Cecil.TypeDefinition AndAlso Helper.IsDelegate(Context.Compiler, DirectCast(Member, Mono.Cecil.TypeDefinition)) Then
+            Dim builder As New Text.StringBuilder()
+            Dim delegateType As Mono.Cecil.TypeDefinition = DirectCast(Member, Mono.Cecil.TypeDefinition)
+            Dim invoke As Mono.Cecil.MethodReference = GetInvokeMethod(Context.Compiler, delegateType)
+
+            builder.Append("Delegate ")
+            builder.Append(ToString(Context, invoke))
+            If Helper.CompareType(invoke.ReturnType, Context.Compiler.TypeCache.System_Void) Then
+                builder.Replace("Delegate Sub " + invoke.Name + "(", "Delegate Sub " + delegateType.Name + "(")
+            Else
+                builder.Replace("Delegate Function " + invoke.Name + "(", "Delegate Function " + delegateType.Name + "(")
+            End If
+            result = builder.ToString()
+        ElseIf TypeOf Member Is TypeReference Then
+            Return PrettyFormatType(DirectCast(Member, TypeReference))
         Else
             Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
             result = ""

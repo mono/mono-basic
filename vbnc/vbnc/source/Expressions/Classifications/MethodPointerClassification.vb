@@ -104,7 +104,12 @@ Public Class MethodPointerClassification
         m_ResolvedMethod = CType(Helper.ResolveGroupExact(Me.Parent, m_MethodGroup.Group, paramtypes), Mono.Cecil.MethodReference)
         m_DelegateType = DelegateType
 
-        result = m_ResolvedMethod IsNot Nothing AndAlso result
+        If m_ResolvedMethod Is Nothing Then
+            For i As Integer = 0 To m_MethodGroup.Group.Count - 1
+                Compiler.Report.ShowMessage(Messages.VBNC30408, Me.Parent.Location, Helper.ToString(Me.Parent, m_MethodGroup.Group(i)), Helper.ToString(Me.Parent, DelegateType))
+            Next
+            result = False
+        End If
 
         m_Resolved = True
 

@@ -1962,7 +1962,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30401 = 30401
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Method '{0}' does not have the same signature as delegate '{1}'."
     ''' VB   = "Method '|1' does not have the same signature as delegate '|2'."
     ''' </summary>
     ''' <remarks></remarks>
