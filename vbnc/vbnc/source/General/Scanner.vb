@@ -74,7 +74,9 @@ Public Class Scanner
     Private m_EndOfFile As Boolean
     Private m_PeekedChars As New Generic.Queue(Of Char)
     Private m_Reader As System.IO.StreamReader
-    Private m_Builder As New System.Text.StringBuilder
+
+    Private m_StringBuilder(127) As Char
+    Private m_StringBuilderLength As Integer
 
     ''' <summary>
     ''' If any tokens has been found on this line.
@@ -507,6 +509,37 @@ Public Class Scanner
     End Function
 #End Region
 
+#Region "StringBuilder"
+    Private Property StringBuilderLength As Integer
+        Get
+            Return m_StringBuilderLength
+        End Get
+        Set(ByVal value As Integer)
+            m_StringBuilderLength = value
+        End Set
+    End Property
+
+    Private Sub StringBuilderAppend(ByVal c As Char)
+        m_StringBuilderLength += 1
+        If m_StringBuilder Is Nothing Then
+            ReDim m_StringBuilder(31)
+        End If
+        If m_StringBuilder.Length < m_StringBuilderLength Then
+            Dim tmp(Math.Max(m_StringBuilder.Length * 2 - 1, m_StringBuilderLength)) As Char
+            m_StringBuilder.CopyTo(tmp, 0)
+            m_StringBuilder = tmp
+        End If
+        m_StringBuilder(m_StringBuilderLength - 1) = c
+    End Sub
+
+    Private Function StringBuilderToString() As String
+        Dim result As String
+        result = New String(m_StringBuilder, 0, m_StringBuilderLength)
+        m_StringBuilderLength = 0
+        Return result
+    End Function
+#End Region
+
     Private Structure Data
         Public Type As TokenType
         Public Symbol As KS
@@ -739,7 +772,7 @@ Public Class Scanner
         Dim Count As Integer
         'Date value
         Dim bCont As Boolean = True
-        m_Builder.Length = 0
+        StringBuilderLength = 0
         Do
             Count += 1
             Dim ch As Char = NextChar()
@@ -756,10 +789,10 @@ Public Class Scanner
                         bCont = False
                 End Select
             End If
-            If bCont Then m_Builder.Append(ch)
+            If bCont Then StringBuilderAppend(ch)
         Loop While bCont
 
-        Return Token.CreateDateToken(GetCurrentLocation, CDate(m_Builder.ToString))
+        Return Token.CreateDateToken(GetCurrentLocation, CDate(StringBuilderToString))
     End Function
 
     Private Function CanStartIdentifier() As Boolean
@@ -808,15 +841,15 @@ Public Class Scanner
         '   NumericCharacter |
         '   CombiningCharacter |
         '   FormattingCharacter
-        m_Builder.Length = 0
+        StringBuilderLength = 0
 
         ch = CurrentChar()
-        m_Builder.Append(ch)
+        StringBuilderAppend(ch)
         If IsAlphaCharacter(ch) Then
             bValid = True
         ElseIf IsUnderscoreCharacter(ch) Then
             ch = NextChar()
-            m_Builder.Append(ch)
+            StringBuilderAppend(ch)
             bValid = IsIdentifierCharacter(ch)
         End If
 
@@ -825,11 +858,11 @@ Public Class Scanner
             Return Nothing
         Else
             Do While IsIdentifierCharacter(NextChar)
-                m_Builder.Append(CurrentChar)
+                StringBuilderAppend(CurrentChar)
             Loop
         End If
 
-        Dim strIdent As String = m_Builder.ToString()
+        Dim strIdent As String = StringBuilderToString()
 
         'The type character ! presents a special problem in that it can be used both as a type character and 
         'as a separator in the language. To remove ambiguity, a ! character is a type character as long as 
@@ -854,13 +887,13 @@ Public Class Scanner
 
     Private Function GetString() As Token
         Dim bEndOfString As Boolean = False
-        m_Builder.Length = 0
+        StringBuilderLength = 0
         Do
             Select Case NextChar()
                 Case """"c '
                     'If " followed by a ", output one "
                     If NextChar() = """" Then
-                        m_Builder.Append("""")
+                        StringBuilderAppend(""""c)
                     Else
                         bEndOfString = True
                     End If
@@ -874,7 +907,7 @@ Public Class Scanner
                         'PreviousChar() 'Step back
                         bEndOfString = True
                     Else
-                        m_Builder.Append(CurrentChar())
+                        StringBuilderAppend(CurrentChar())
                     End If
 
             End Select
@@ -882,14 +915,14 @@ Public Class Scanner
         If CurrentChar() = "C"c OrElse CurrentChar() = "c"c Then
             'Is a char type character
             NextChar()
-            If m_Builder.Length <> 1 Then
+            If StringBuilderLength <> 1 Then
                 Compiler.Report.ShowMessage(Messages.VBNC30004)
-                Return Token.CreateStringLiteral(GetCurrentLocation, m_Builder.ToString)
+                Return Token.CreateStringLiteral(GetCurrentLocation, StringBuilderToString)
             Else
-                Return Token.CreateCharToken(GetCurrentLocation, m_Builder.Chars(0))
+                Return Token.CreateCharToken(GetCurrentLocation, m_StringBuilder(0))
             End If
         Else
-            Return Token.CreateStringLiteral(GetCurrentLocation, m_Builder.ToString)
+            Return Token.CreateStringLiteral(GetCurrentLocation, StringBuilderToString)
         End If
     End Function
 
