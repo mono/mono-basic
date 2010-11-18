@@ -202,6 +202,8 @@ Public MustInherit Class VariableDeclaration
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        Compiler.Report.Trace("{0}: VariableDeclaration.ResolveCode: {1}", Me.Location, Me.FullName)
+
         result = MyBase.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
         If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
 

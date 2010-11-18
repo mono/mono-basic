@@ -397,6 +397,8 @@ Public MustInherit Class TypeDeclaration
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        Compiler.Report.Trace("{0}: TypeDeclaration.ResolveCode: {1}", Me.Location, Me.FullName)
+
         result = MyBase.ResolveCode(Info) AndAlso result
         Compiler.VerifyConsistency(result, Location)
         result = m_Members.ResolveCode(Info) AndAlso result

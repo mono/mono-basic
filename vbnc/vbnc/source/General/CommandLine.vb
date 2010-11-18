@@ -74,6 +74,7 @@ Imports Microsoft.VisualBasic
 '/nologo                 Do not display compiler copyright banner.
 '/quiet                  Quiet output mode.
 '/verbose                Display verbose messages.
+'/trace                  Output trace messages (vbnc extension)
 
 '                        - ADVANCED -
 '/baseaddress:<number>   The base address for a library or module (hex).
@@ -290,6 +291,12 @@ Public Class CommandLine
     ''' /noconfig               Disable the automatic inclusion of the vbnc.rsp response file.
     ''' </summary>
     Private m_bNoConfig As Boolean
+
+    ''' <summary>
+    ''' /trace                  Output trace messages (vbnc extension)
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_bTrace As Boolean
 
     ' - ADVANCED -
 
@@ -603,6 +610,18 @@ Public Class CommandLine
     ReadOnly Property NoConfig() As Boolean
         Get
             Return m_bNoConfig
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' /trace                  Output trace messages (vbnc extension)
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    ReadOnly Property Trace As Boolean
+        Get
+            Return m_bTrace
         End Get
     End Property
 
@@ -1017,6 +1036,8 @@ Public Class CommandLine
                 m_bVerbose = False
             Case "noconfig"
                 m_bNoConfig = True
+            Case "trace"
+                m_bTrace = True
                 ' - ADVANCED -
             Case "baseaddress"
                 m_strBaseAddress = strValue

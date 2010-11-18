@@ -349,4 +349,16 @@ Public Class Report
 
         Return isOnlyWarning
     End Function
+
+    Public Sub Trace(ByVal format As String, ByVal ParamArray args() As Object)
+        If Compiler.CommandLine.Trace = False Then Return
+        If args IsNot Nothing Then
+            For i As Integer = 0 To args.Length - 1
+                If TypeOf args(i) Is Span Then
+                    args(i) = DirectCast(args(i), Span).ToString(Compiler)
+                End If
+            Next
+        End If
+        Console.WriteLine(format, args)
+    End Sub
 End Class
