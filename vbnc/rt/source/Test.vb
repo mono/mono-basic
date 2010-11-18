@@ -854,11 +854,13 @@ Public Class Test
         m_Verifications.Add(m_Compilation)
 
         Dim isVbcSuccess As Boolean
+        Dim isVbncSuccess As Boolean
         If m_ExpectedVBCExitCode.HasValue Then
             isVbcSuccess = m_ExpectedVBCExitCode.Value = 0
         Else
             isVbcSuccess = m_ExpectedExitCode = 0
         End If
+        isVbncSuccess = m_ExpectedExitCode = 0
 
         If isVbcSuccess Then
             If vbccompiler <> String.Empty AndAlso Me.m_Target = Targets.Exe AndAlso m_DontExecute = False AndAlso Me.OutputVBCAssembly IsNot Nothing Then
@@ -891,7 +893,7 @@ Public Class Test
             End If
         End If
 
-        If isVbcSuccess Then
+        If isVbcSuccess AndAlso isVbncSuccess Then
             Dim cc As CecilCompare
             If vbccompiler <> String.Empty AndAlso IO.File.Exists(vbccompiler) AndAlso OutputVBCAssembly() IsNot Nothing Then
                 cc = New CecilCompare(Me)
