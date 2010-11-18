@@ -7357,4 +7357,7 @@
 	<test id="1858" name="ByRefCType1" category="" priority="0" knownfailure="Invalid IL is generated" target="exe">
 		<file>Runtime\ByRefCType1.vb</file>
 	</test>
+	<test id="1859" name="ArrayCreationExpression6" category="" priority="0" knownfailure="We crash instead of showing correct error message (or compile like vb10 does)" expectedexitcode="1" expectederrorcode="30201" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library">
+		<file>CompileTime\ArrayCreationExpression6.vb</file>
+	</test>
 </rt>
