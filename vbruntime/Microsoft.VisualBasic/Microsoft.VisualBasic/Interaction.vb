@@ -200,6 +200,7 @@ Namespace Microsoft.VisualBasic
             Dim bcancel As Button
             Dim entry As TextBox
             Dim result As String
+            Dim cprompt As TextBox
 
             Public Sub New(ByVal Prompt As String, Optional ByVal Title As String = "", Optional ByVal DefaultResponse As String = "", Optional ByVal XPos As Integer = -1, Optional ByVal YPos As Integer = -1)
                 SuspendLayout()
@@ -208,7 +209,7 @@ Namespace Microsoft.VisualBasic
                 ClientSize = New Size(400, 120)
 
                 bok = New Button()
-                bok.Text = "Ok"
+                bok.Text = "OK"
 
                 bcancel = New Button()
                 bcancel.Text = "Cancel"
@@ -217,6 +218,9 @@ Namespace Microsoft.VisualBasic
                 entry.Text = DefaultResponse
                 result = DefaultResponse
 
+                cprompt = New TextBox
+                cprompt.Text = Prompt
+
                 AddHandler bok.Click, AddressOf ok_Click
                 AddHandler bcancel.Click, AddressOf cancel_Click
 
@@ -224,10 +228,23 @@ Namespace Microsoft.VisualBasic
                 bcancel.Location = New Point(bok.Location.X, 8 + bok.ClientSize.Height + 8)
                 entry.Location = New Point(8, 80)
                 entry.ClientSize = New Size(ClientSize.Width - 28, entry.ClientSize.Height)
+                cprompt.Location = New Point(8, 8)
+                cprompt.BorderStyle = BorderStyle.None
+                cprompt.ReadOnly = True
+                cprompt.Multiline = True
+                cprompt.Size = New Size(bok.Left - 2 * 8, entry.Top - 2 * 8)
 
+                Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedDialog
+                Me.MinimizeBox = False
+                Me.MaximizeBox = False
+
+                Me.AcceptButton = bok
+                Me.CancelButton = bcancel
+
+                Controls.Add(entry) ' Initial focus
                 Controls.Add(bok)
                 Controls.Add(bcancel)
-                Controls.Add(entry)
+                Controls.Add(cprompt)
                 ResumeLayout(False)
             End Sub
 
