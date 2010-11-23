@@ -24,14 +24,17 @@ Imports System.Reflection
 Class Tuner
 	Shared Function Main (args () As String) As Integer
 		Dim a As AssemblyDefinition
+		Dim rp As ReaderParameters
+		Dim wp As WriterParameters
 		Dim source As String = args (0)
 		Dim destination As String = args (1)
 		
 		source = Path.GetFullPath (source)
 		destination = Path.GetFullPath (destination)
 
-		a = AssemblyFactory.GetAssembly (source)
-		a.MainModule.LoadSymbols ()
+		rp = New ReaderParameters ()
+		rp.ReadSymbols = True
+		a = AssemblyDefinition.ReadAssembly (source, rp)
 
 		Console.WriteLine ("Assembly successfully loaded from {0}", source)
 
@@ -44,8 +47,9 @@ Class Tuner
 			Console.WriteLine (" => {0}", ref.FullName)
 		Next
 
-		a.MainModule.SaveSymbols ()
-		AssemblyFactory.SaveAssembly (a, destination)
+		wp = New WriterParameters ()
+		wp.WriteSymbols = True
+		a.Write (destination, wp)
 
 		Console.WriteLine ("Assembly successfully written to {0}", destination)
 	End Function
