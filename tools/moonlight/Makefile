@@ -8,13 +8,16 @@ DISTFILES = Makefile tuner.vb
 DLL_TO_TUNE = $(topdir)/class/lib/moonlight/Microsoft.VisualBasic.dll
 TUNED_DLL = $(topdir)/class/lib/2.1/Microsoft.VisualBasic.dll
 
-clean-local test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
+clean-local:
+	@rm -f tuner.exe*
+
+test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
 	@:
 
 dist-local: dist-default
 
 tuner.exe: tuner.vb
-	mono --debug $(topdir)/class/lib/bootstrap/vbnc.exe tuner.vb -out:tuner.exe -r:`pkg-config --variable=Libraries cecil` -debug+
+	mono --debug $(topdir)/class/lib/bootstrap/vbnc.exe tuner.vb -out:tuner.exe -r:$(CECIL_LOCATION)/Mono.Cecil.dll -debug+
 
 moonlight:
 	mkdir -p $(topdir)/class/lib/moonlight
@@ -22,7 +25,7 @@ moonlight:
 	
 tune: moonlight tuner.exe
 	mkdir -p $(topdir)/class/lib/2.1/
-	mono --debug tuner.exe $(DLL_TO_TUNE) $(TUNED_DLL)
+	MONO_PATH=$(MONO_PATH):$(CECIL_LOCATION) mono --debug tuner.exe $(DLL_TO_TUNE) $(TUNED_DLL)
 	-cp $(DLL_TO_TUNE).mdb $(TUNED_DLL).mdb
 	
 install-moonlight: tune
