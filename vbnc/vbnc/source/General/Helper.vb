@@ -1183,7 +1183,7 @@ Public Class Helper
 
     Shared Function GetInvokeMethod(ByVal Compiler As Compiler, ByVal DelegateType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
         Helper.Assert(IsDelegate(Compiler, DelegateType), "The type '" & DelegateType.FullName & "' is not a delegate.")
-        Dim results As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference) = Compiler.TypeManager.GetCache(DelegateType).Lookup(DelegateDeclaration.STR_Invoke).Members
+        Dim results As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference) = Compiler.TypeManager.GetCache(DelegateType).Lookup(DelegateDeclaration.STR_Invoke, MemberVisibility.Public).Members
         If results IsNot Nothing AndAlso results.Count = 1 AndAlso TypeOf results(0) Is Mono.Cecil.MethodReference Then
             Return DirectCast(results(0), Mono.Cecil.MethodReference)
         Else
@@ -1208,7 +1208,7 @@ Public Class Helper
         If tp Is Nothing Then Return False
 
         properties = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
-        members = Compiler.TypeManager.GetCache(tp).Cache.GetAllMembers()
+        members = Compiler.TypeManager.GetCache(tp).AllMembers
 
         For i As Integer = 0 To members.Count - 1
             Dim p As Mono.Cecil.PropertyReference = TryCast(members(i), Mono.Cecil.PropertyReference)
@@ -1544,8 +1544,7 @@ Public Class Helper
 
         'Dim members() As MemberInfo
         Dim members As Generic.List(Of Mono.Cecil.MemberReference)
-        'members = Type.GetMembers(BindingFlags.Static Or BindingFlags.Public Or BindingFlags.NonPublic)
-        members = Compiler.TypeManager.GetCache(Type).FlattenedCache.GetAllMembers
+        members = Compiler.TypeManager.GetCache(Type).AllMembers
 
         For Each testName As String In Names
             For Each member As Mono.Cecil.MemberReference In members

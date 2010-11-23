@@ -523,7 +523,7 @@ Public Class ClassDeclaration
                 'cache.Cache.Add(New MemberCacheEntry(prop.MemberDescriptor))
                 'cache.FlattenedCache.Add(New MemberCacheEntry(field.FieldDescriptor))
                 'cache.FlattenedCache.Add(New MemberCacheEntry(prop.MemberDescriptor))
-                cache.Reload()
+                cache.Clear()
             End If
         Next
 
