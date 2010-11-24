@@ -1195,6 +1195,22 @@ Public Class Helper
         Return Helper.IsSubclassOf(Compiler.TypeCache.System_MulticastDelegate, Type)
     End Function
 
+    Public Shared Function CompareParameterTypes(ByVal a As Mono.Collections.Generic.Collection(Of ParameterDefinition), ByVal b As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
+        If a.Count <> b.Count Then Return False
+        For i As Integer = 0 To a.Count - 1
+            If Helper.CompareType(a(i).ParameterType, b(i).ParameterType) = False Then Return False
+        Next
+        Return True
+    End Function
+
+    Private Shared Sub AddPropertyUnlessSignatureMatches(ByVal properties As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference), ByVal prop As Mono.Cecil.PropertyReference)
+        For i As Integer = 0 To properties.Count - 1
+            If Helper.CompareParameterTypes(prop.Parameters, properties(i).Parameters) = True Then Return
+        Next
+        properties.Add(prop)
+    End Sub
+
+
     ''' <summary>
     ''' Returns true if the type has a default property
     ''' </summary>
@@ -1202,23 +1218,24 @@ Public Class Helper
     ''' <remarks></remarks>
     Shared Function HasDefaultProperty(ByVal Context As BaseObject, ByVal tp As Mono.Cecil.TypeReference, ByRef properties As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)) As Boolean
         Dim Compiler As Compiler = Context.Compiler
-        Dim members As Generic.List(Of Mono.Cecil.MemberReference)
+        Dim members As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference)
         Dim defaultName As String = Nothing
 
         If tp Is Nothing Then Return False
 
-        properties = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
-        members = Compiler.TypeManager.GetCache(tp).GetAllMembers(MemberVisibility.All)
+        If properties Is Nothing Then properties = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
+        members = Compiler.TypeManager.GetCache(tp).GetAllMembers()
 
         For i As Integer = 0 To members.Count - 1
             Dim p As Mono.Cecil.PropertyReference = TryCast(members(i), Mono.Cecil.PropertyReference)
             Dim pD As PropertyDeclaration
+
             If p Is Nothing Then Continue For
 
             If p.Annotations.Contains(Compiler) Then
                 pD = DirectCast(p.Annotations(Compiler), PropertyDeclaration)
                 If pD.Modifiers.Is(ModifierMasks.Default) Then
-                    properties.Add(p)
+                    AddPropertyUnlessSignatureMatches(properties, p)
                 End If
                 Continue For
             End If
@@ -1227,7 +1244,7 @@ Public Class Helper
             If p2.Annotations.Contains(Compiler) Then
                 pD = DirectCast(p2.Annotations(Compiler), PropertyDeclaration)
                 If pD.Modifiers.Is(ModifierMasks.Default) Then
-                    properties.Add(p)
+                    AddPropertyUnlessSignatureMatches(properties, p)
                 End If
                 Continue For
             End If
@@ -1240,10 +1257,12 @@ Public Class Helper
             If TypeOf defaultAttribute.ConstructorArguments(0).Value Is String = False Then Continue For
             defaultName = DirectCast(defaultAttribute.ConstructorArguments(0).Value, String)
 
-            If Helper.CompareNameOrdinal(p.Name, defaultName) Then properties.Add(p)
+            If Helper.CompareNameOrdinal(p.Name, defaultName) Then
+                AddPropertyUnlessSignatureMatches(properties, p)
+            End If
         Next
 
-        If properties.Count = 0 AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, tp) = False Then
+        If Helper.CompareType(Compiler.TypeCache.System_Object, tp) = False Then
             If CecilHelper.IsInterface(tp) Then
                 Dim interfaces As Mono.Collections.Generic.Collection(Of TypeReference) = CecilHelper.GetInterfaces(tp, False)
                 Dim result As Boolean
@@ -1252,6 +1271,7 @@ Public Class Helper
                         result = HasDefaultProperty(Context, interfaces(i), properties) OrElse result
                     Next
                 End If
+                Return properties.Count > 0
             Else
                 Return HasDefaultProperty(Context, CecilHelper.GetBaseType(tp), properties)
             End If
@@ -1544,7 +1564,7 @@ Public Class Helper
 
         'Dim members() As MemberInfo
         Dim members As Generic.List(Of Mono.Cecil.MemberReference)
-        members = Compiler.TypeManager.GetCache(Type).GetAllMembers(MemberVisibility.All)
+        members = Compiler.TypeManager.GetCache(Type).GetAllFlattenedMembers(MemberVisibility.All)
 
         For Each testName As String In Names
             For Each member As Mono.Cecil.MemberReference In members
