@@ -1208,7 +1208,7 @@ Public Class Helper
         If tp Is Nothing Then Return False
 
         properties = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)
-        members = Compiler.TypeManager.GetCache(tp).AllMembers
+        members = Compiler.TypeManager.GetCache(tp).GetAllMembers(MemberVisibility.All)
 
         For i As Integer = 0 To members.Count - 1
             Dim p As Mono.Cecil.PropertyReference = TryCast(members(i), Mono.Cecil.PropertyReference)
@@ -1544,7 +1544,7 @@ Public Class Helper
 
         'Dim members() As MemberInfo
         Dim members As Generic.List(Of Mono.Cecil.MemberReference)
-        members = Compiler.TypeManager.GetCache(Type).AllMembers
+        members = Compiler.TypeManager.GetCache(Type).GetAllMembers(MemberVisibility.All)
 
         For Each testName As String In Names
             For Each member As Mono.Cecil.MemberReference In members
