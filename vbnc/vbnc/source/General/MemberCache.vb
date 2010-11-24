@@ -50,10 +50,10 @@ End Enum
 Public Class MemberCache
     Private m_Compiler As Compiler
 
-    Private m_Cache As MemberVisibilityEntries
-    Private m_CacheInsensitive As MemberVisibilityEntries
-    Private m_FlattenedCache As MemberVisibilityEntries
-    Private m_FlattenedCacheInsensitive As MemberVisibilityEntries
+    Private m_Cache(MemberVisibility.All) As MemberCacheEntries
+    Private m_CacheInsensitive(MemberVisibility.All) As MemberCacheEntries
+    Private m_FlattenedCache(MemberVisibility.All) As MemberCacheEntries
+    Private m_FlattenedCacheInsensitive(MemberVisibility.All) As MemberCacheEntries
 
     Private m_ShadowedInterfaceMembers As Generic.List(Of Mono.Cecil.MemberReference)
 
@@ -74,8 +74,9 @@ Public Class MemberCache
 #If DEBUG Then
     Sub DumpFlattenedCache()
         Console.WriteLine("Cache for: " & m_Type.FullName)
-        For Each access As MemberVisibility In m_FlattenedCache.Keys
-            Dim entries As MemberCacheEntries = m_FlattenedCache(access)
+        For i As Integer = 0 To m_FlattenedCache.Length - 1
+            Dim entries As MemberCacheEntries = m_FlattenedCache(i)
+            Dim access As MemberVisibility = CType(i, MemberVisibility)
             If entries Is Nothing Then
                 Console.WriteLine(" Access: " & access.ToString & " has 0 entries.")
             Else
@@ -201,11 +202,9 @@ Public Class MemberCache
 
         'Log("Caching type: " & m_Type.Name & " (current type: " & Type.Name & ")")
 
-        If m_Cache Is Nothing Then m_Cache = New MemberVisibilityEntries()
-
-        If Not m_Cache.TryGetValue(Visibility, entries) Then
+        If m_Cache(Visibility) Is Nothing Then
             entries = New MemberCacheEntries()
-            m_Cache.Add(Visibility, entries)
+            m_Cache(Visibility) = entries
         End If
 
         For m As Integer = 0 To Members.Count - 1
@@ -324,23 +323,22 @@ Public Class MemberCache
 
         'Console.WriteLine("{0} FlattenWith: ({1}, {2})", m_Type.FullName, Name, MemberCache.Type.FullName)
 
-        If m_FlattenedCache Is Nothing Then m_FlattenedCache = New MemberVisibilityEntries()
-        If m_FlattenedCache.TryGetValue(Visibility, cache_entries) = False Then
+        If m_FlattenedCache(Visibility) Is Nothing Then
             cache_entries = New MemberCacheEntries()
-            m_FlattenedCache.Add(Visibility, cache_entries)
+            m_FlattenedCache(Visibility) = cache_entries
         End If
 
         AddToFlattenedCache(cache_entries, Name, MemberCache, m_Cache(Visibility), Visibility)
 
         Dim isFriendAccessible As Boolean = Compiler.Assembly.IsDefinedHere(m_Type)
 
-        Dim cache2 As MemberVisibilityEntries
-        cache2 = MemberCache.m_FlattenedCache
+        Dim cache2 As MemberCacheEntries
+        cache2 = MemberCache.m_FlattenedCache(Visibility)
         If cache2 Is Nothing Then
-            cache2 = MemberCache.m_Cache
+            cache2 = MemberCache.m_Cache(Visibility)
         End If
 
-        For Each cache As MemberCacheEntry In cache2(Visibility).Values
+        For Each cache As MemberCacheEntry In cache2.Values
             If Name IsNot Nothing AndAlso Helper.CompareName(Name, cache.Name) = False Then
                 Continue For
             End If
@@ -525,13 +523,11 @@ Public Class MemberCache
 
         Load(Name, Visibility)
 
-        If m_FlattenedCacheInsensitive Is Nothing Then m_FlattenedCacheInsensitive = New MemberVisibilityEntries()
-
         cache = m_FlattenedCache(Visibility)
 
-        If Not m_FlattenedCacheInsensitive.TryGetValue(Visibility, cache_insensitive) Then
+        If m_FlattenedCacheInsensitive(Visibility) Is Nothing Then
             cache_insensitive = New MemberCacheEntries(cache.Count, Helper.StringComparer)
-            m_FlattenedCacheInsensitive.Add(Visibility, cache_insensitive)
+            m_FlattenedCacheInsensitive(Visibility) = cache_insensitive
         End If
 
         If Not cache_insensitive.TryGetValue(Name, result) Then
@@ -583,11 +579,9 @@ Public Class MemberCache
 
         If Not PreventLoad Then Load(Name, Visibility)
 
-        If m_CacheInsensitive Is Nothing Then m_CacheInsensitive = New MemberVisibilityEntries()
-
-        If Not m_CacheInsensitive.TryGetValue(Visibility, cache_insensitive) Then
+        If m_CacheInsensitive(Visibility) Is Nothing Then
             cache_insensitive = New MemberCacheEntries(Helper.StringComparer)
-            m_CacheInsensitive.Add(Visibility, cache_insensitive)
+            m_CacheInsensitive(Visibility) = cache_insensitive
         End If
 
         If Not cache_insensitive.TryGetValue(Name, result) Then
@@ -634,29 +628,6 @@ Public Class MemberCache
 
         Return result
     End Function
-
-End Class
-
-Public Class MemberVisibilityEntries
-    Inherits Generic.Dictionary(Of MemberVisibility, MemberCacheEntries)
-
-    Private Shared KeyComparer As VisibilityComparer = New VisibilityComparer()
-
-    Public Sub New()
-        MyBase.New(MemberVisibility.All, KeyComparer)
-    End Sub
-
-    Class VisibilityComparer
-        Implements IEqualityComparer(Of MemberVisibility)
-
-        Public Function Equals1(ByVal x As MemberVisibility, ByVal y As MemberVisibility) As Boolean Implements System.Collections.Generic.IEqualityComparer(Of MemberVisibility).Equals
-            Return x = y
-        End Function
-
-        Public Function GetHashCode1(ByVal obj As MemberVisibility) As Integer Implements System.Collections.Generic.IEqualityComparer(Of MemberVisibility).GetHashCode
-            Return obj.GetHashCode()
-        End Function
-    End Class
 
 End Class
 
