@@ -3997,7 +3997,7 @@ Public Class Parser
         ElseIf m_NonArrayTypeName.IsConstructedTypeName Then
             Dim constructedTypeName As ConstructedTypeName = m_NonArrayTypeName.AsConstructedTypeName
             If constructedTypeName.QualifiedIdentifier IsNot Nothing AndAlso constructedTypeName.ConstructedTypeName IsNot Nothing AndAlso constructedTypeName.TypeArgumentList Is Nothing Then
-                If constructedTypeName.QualifiedIdentifier.IsFirstIdentifier AndAlso constructedTypeName.QualifiedIdentifier.Second Is Nothing Then
+                If constructedTypeName.QualifiedIdentifier.IsFirstIdentifier AndAlso Token.IsSomething(constructedTypeName.QualifiedIdentifier.Second) = False Then
                     m_1 = New NonArrayTypeName(result)
                     m_1.Init(constructedTypeName.ConstructedTypeName)
                     m_2 = New IdentifierOrKeyword(result, constructedTypeName.QualifiedIdentifier.FirstAsIdentifier.Identifier, KS.None)

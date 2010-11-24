@@ -17,12 +17,12 @@
 ' Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ' 
 
-Public Class Token
+Public Structure Token
     Public m_TokenType As TokenType
     Public m_TokenObject As Object
 
     Shared Function IsSomething(ByVal Token As Token) As Boolean
-        Return Token IsNot Nothing AndAlso Token.IsSomething
+        'Return Token IsNot Nothing AndAlso Token.IsSomething
         Return Token.IsSomething
     End Function
 
@@ -474,6 +474,6 @@ Public Class Token
             Return "not a symbol"
         End Get
     End Property
-End Class
+End Structure
 
 
