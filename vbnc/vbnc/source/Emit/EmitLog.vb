@@ -36,10 +36,14 @@ Public Class EmitLog
     Private m_Compiler As Compiler
 
     Private m_CilBody As Mono.Cecil.Cil.MethodBody
+    Private m_CilWorker As Mono.Cecil.Cil.ILProcessor
 
     ReadOnly Property CilWorker() As Mono.Cecil.Cil.ILProcessor
         Get
-            Return m_CilBody.GetILProcessor
+            If m_CilWorker Is Nothing Then
+                m_CilWorker = m_CilBody.GetILProcessor
+            End If
+            Return m_CilWorker
         End Get
     End Property
 
@@ -49,6 +53,7 @@ Public Class EmitLog
         End Get
         Set(ByVal value As Mono.Cecil.Cil.MethodBody)
             m_CilBody = value
+            m_CilWorker = Nothing
         End Set
     End Property
 
