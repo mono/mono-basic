@@ -86,7 +86,7 @@ Public MustInherit Class UnaryExpression
         operandType = Me.OperandTypeCode
 
         If operandType = TypeCode.Empty Then
-            Compiler.Report.ShowMessage(Messages.VBNC30487, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Expression.ExpressionType.Name)
+            Compiler.Report.ShowMessage(Messages.VBNC30487, Enums.strSpecial(Me.Keyword), Expression.ExpressionType.Name)
             result = False
         Else
             'If X is an intrinsic types, look up the result type in our operator tables and use that.

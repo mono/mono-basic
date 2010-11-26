@@ -167,10 +167,10 @@ Public MustInherit Class BinaryExpression
                     ElseIf Helper.CompareType(Me.RightType, Compiler.TypeCache.System_DateTime) Then
                         Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Me.LeftType.Name, Me.RightType.Name)
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                        Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.strSpecial(Me.Keyword), Me.LeftType.Name, Me.RightType.Name)
                     End If
                 Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.GetKSStringAttribute(Me.Keyword).FriendlyValue, Me.LeftType.Name, Me.RightType.Name)
+                    Compiler.Report.ShowMessage(Messages.VBNC30452, Location, Enums.strSpecial(Me.Keyword), Me.LeftType.Name, Me.RightType.Name)
                 End If
                 result = False
             End If
@@ -247,7 +247,7 @@ Public MustInherit Class BinaryExpression
             Next
         End If
         If methods.Count = 0 Then
-            result = Compiler.Report.ShowMessage(Messages.VBNC30452, Me.Location, Enums.GetKSStringAttribute(Me.Keyword).Value, Me.LeftType.FullName, Me.RightType.FullName) AndAlso result
+            result = Compiler.Report.ShowMessage(Messages.VBNC30452, Me.Location, Enums.strSpecial(Me.Keyword), Me.LeftType.FullName, Me.RightType.FullName) AndAlso result
             If result = False Then Return result
         End If
         methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)

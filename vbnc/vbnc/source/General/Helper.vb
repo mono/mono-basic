@@ -1526,7 +1526,7 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function GetConversionOperators(ByVal Compiler As Compiler, ByVal Names As Generic.List(Of String), ByVal Type As Mono.Cecil.TypeReference, ByVal ReturnType As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
+    Shared Function GetConversionOperators(ByVal Compiler As Compiler, ByVal Names As String(), ByVal Type As Mono.Cecil.TypeReference, ByVal ReturnType As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
         Dim ops As Generic.List(Of Mono.Cecil.MethodReference)
 
         ops = GetOperators(Compiler, Names, Type)
@@ -1552,21 +1552,22 @@ Public Class Helper
 
 
     Shared Function GetWideningConversionOperators(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference, ByVal ReturnType As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
-        Return GetConversionOperators(Compiler, New Generic.List(Of String)(New String() {"op_Implicit"}), Type, ReturnType)
+        Return GetConversionOperators(Compiler, New String() {"op_Implicit"}, Type, ReturnType)
     End Function
 
     Shared Function GetNarrowingConversionOperators(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference, ByVal ReturnType As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
-        Return GetConversionOperators(Compiler, New Generic.List(Of String)(New String() {"op_Explicit"}), Type, ReturnType)
+        Return GetConversionOperators(Compiler, New String() {"op_Explicit"}, Type, ReturnType)
     End Function
 
-    Shared Function GetOperators(ByVal Compiler As Compiler, ByVal Names As Generic.List(Of String), ByVal Type As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
+    Shared Function GetOperators(ByVal Compiler As Compiler, ByVal Names() As String, ByVal Type As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
         Dim result As New Generic.List(Of Mono.Cecil.MethodReference)
 
         'Dim members() As MemberInfo
         Dim members As Generic.List(Of Mono.Cecil.MemberReference)
         members = Compiler.TypeManager.GetCache(Type).GetAllFlattenedMembers(MemberVisibility.All)
 
-        For Each testName As String In Names
+        For i As Integer = 0 To Names.Length - 1
+            Dim testName As String = Names(i)
             For Each member As Mono.Cecil.MemberReference In members
                 Dim mR As Mono.Cecil.MethodReference = TryCast(member, Mono.Cecil.MethodReference)
                 If mR IsNot Nothing Then
@@ -1589,37 +1590,69 @@ Public Class Helper
     End Function
 
     Shared Function GetUnaryOperators(ByVal Compiler As Compiler, ByVal Op As UnaryOperators, ByVal Type As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
-        Dim opName As String
-        Dim opNameAlternatives As New Generic.List(Of String)
-
-        opName = Enums.GetStringAttribute(Op).Value
-        opNameAlternatives.Add(opName)
+        Dim opNameAlternatives As String() = Nothing
 
         Select Case Op
+            Case UnaryOperators.Add
+                opNameAlternatives = New String() {"op_UnaryPlus"}
+            Case UnaryOperators.Minus
+                opNameAlternatives = New String() {"op_UnaryNegation"}
             Case UnaryOperators.Not
-                opNameAlternatives.Add("op_LogicalNot")
+                opNameAlternatives = New String() {"op_OnesComplement", "op_LogicalNot"}
         End Select
 
         Return GetOperators(Compiler, opNameAlternatives, Type)
     End Function
 
     Shared Function GetBinaryOperators(ByVal Compiler As Compiler, ByVal Op As BinaryOperators, ByVal Type As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
-        Dim opName As String
-        Dim opNameAlternatives As New Generic.List(Of String)
-
-        opName = Enums.GetStringAttribute(Op).Value
-        opNameAlternatives.Add(opName)
+        Dim opNameAlternatives As String() = Nothing
 
         Select Case Op
             Case BinaryOperators.And
-                opNameAlternatives.Add("op_LogicalAnd")
+                opNameAlternatives = New String() {"op_BitwiseAnd", "op_LogicalAnd"}
+            Case BinaryOperators.Like
+                opNameAlternatives = New String() {"op_Like"}
+            Case BinaryOperators.Mod
+                opNameAlternatives = New String() {"op_Modulus"}
             Case BinaryOperators.Or
-                opNameAlternatives.Add("op_LogicalOr")
+                opNameAlternatives = New String() {"op_BitwiseOr", "op_LogicalOr"}
+            Case BinaryOperators.XOr
+                opNameAlternatives = New String() {"op_ExclusiveOr"}
+            Case BinaryOperators.LT
+                opNameAlternatives = New String() {"op_LessThan"}
+            Case BinaryOperators.GT
+                opNameAlternatives = New String() {"op_GreaterThan"}
+            Case BinaryOperators.Equals
+                opNameAlternatives = New String() {"op_Equality"}
+            Case BinaryOperators.NotEqual
+                opNameAlternatives = New String() {"op_Inequality"}
+            Case BinaryOperators.LE
+                opNameAlternatives = New String() {"op_LessThanOrEqual"}
+            Case BinaryOperators.GE
+                opNameAlternatives = New String() {"op_GreaterThanOrEqual"}
+            Case BinaryOperators.Concat
+                opNameAlternatives = New String() {"op_Concatenate"}
+            Case BinaryOperators.Mult
+                opNameAlternatives = New String() {"op_Multiply"}
+            Case BinaryOperators.Add
+                opNameAlternatives = New String() {"op_Addition"}
+            Case BinaryOperators.Minus
+                opNameAlternatives = New String() {"op_Subtraction"}
+            Case BinaryOperators.Power
+                opNameAlternatives = New String() {"op_Exponent"}
+            Case BinaryOperators.RealDivision
+                opNameAlternatives = New String() {"op_Division"}
+            Case BinaryOperators.IntDivision
+                opNameAlternatives = New String() {"op_IntegerDivision"}
             Case BinaryOperators.ShiftLeft
                 'See: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconOperatorOverloadingUsageGuidelines.asp
-                opNameAlternatives.Add("op_SignedRightShift")
+                opNameAlternatives = New String() {"op_LeftShift", "op_SignedRightShift"}
             Case BinaryOperators.ShiftRight
-                opNameAlternatives.Add("op_UnsignedRightShift")
+                opNameAlternatives = New String() {"op_RightShift", "op_UnsignedRightShift"}
+            Case BinaryOperators.IsTrue
+                opNameAlternatives = New String() {"op_True"}
+            Case BinaryOperators.IsFalse
+                opNameAlternatives = New String() {"op_False"}
         End Select
 
         Return GetOperators(Compiler, opNameAlternatives, Type)

@@ -146,10 +146,8 @@
     <Compile Include="Emit\EmitInfo.vb" />
     <Compile Include="Emit\Emitter.DecimalFields.vb" />
     <Compile Include="Enums\BuiltInDataTypes.vb" />
-    <Compile Include="Enums\EnumStringAttribute.vb" />
     <Compile Include="Enums\IntegerBase.vb" />
     <Compile Include="Enums\KS.vb" />
-    <Compile Include="Enums\KSEnumStringAttribute.vb" />
     <Compile Include="Enums\LiteralTypeCharacters.vb" />
     <Compile Include="Enums\ModifierMasks.vb" />
     <Compile Include="Enums\Operators.vb" />

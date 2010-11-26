@@ -862,8 +862,6 @@ Public Class Scanner
             Loop
         End If
 
-        Dim strIdent As String = StringBuilderToString()
-
         'The type character ! presents a special problem in that it can be used both as a type character and 
         'as a separator in the language. To remove ambiguity, a ! character is a type character as long as 
         'the character that follows it cannot start an identifier. If it can, then the ! character is a separator, 
@@ -873,14 +871,14 @@ Public Class Scanner
         If TypeCharacters.IsTypeCharacter(CurrentChar, typecharacter) AndAlso (canstartidentifier = False OrElse typecharacter <> TypeCharacters.Characters.SingleTypeCharacter) Then
             NextChar()
             m_CurrentTypeCharacter = typecharacter
-            Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
+            Return Token.CreateIdentifierToken(GetCurrentLocation, StringBuilderToString())
         Else
             Dim keyword As KS
-            If Escaped = False AndAlso Token.IsKeyword(strIdent, keyword) Then
+            If Escaped = False AndAlso Token.IsKeyword(m_StringBuilder, m_StringBuilderLength, keyword) Then
                 Return Token.CreateKeywordToken(GetCurrentLocation, keyword)
             Else
                 m_CurrentTypeCharacter = typecharacter
-                Return Token.CreateIdentifierToken(GetCurrentLocation, strIdent)
+                Return Token.CreateIdentifierToken(GetCurrentLocation, StringBuilderToString())
             End If
         End If
     End Function

@@ -18,32 +18,32 @@
 ' 
 
 Public Enum UnaryOperators
-    <KSEnumString("op_UnaryPlus")> [Add] = KS.Add
-    <KSEnumString("op_UnaryNegation")> [Minus] = KS.Minus
-    <KSEnumString("op_OnesComplement")> [Not] = KS.Not
+    [Add] = KS.Add
+    [Minus] = KS.Minus
+    [Not] = KS.Not
 End Enum
 
 Public Enum BinaryOperators
-    <KSEnumString("op_BitwiseAnd")> [And] = KS.And
-    <KSEnumString("op_Like")> [Like] = KS.Like
-    <KSEnumString("op_Modulus")> [Mod] = KS.Mod
-    <KSEnumString("op_BitwiseOr")> [Or] = KS.Or
-    <KSEnumString("op_ExclusiveOr")> [XOr] = KS.Xor
-    <KSEnumString("op_LessThan")> LT = KS.LT
-    <KSEnumString("op_GreaterThan")> GT = KS.GT
-    <KSEnumString("op_Equality")> Equals = KS.Equals
-    <KSEnumString("op_Inequality")> NotEqual = KS.NotEqual
-    <KSEnumString("op_LessThanOrEqual")> LE = KS.LE
-    <KSEnumString("op_GreaterThanOrEqual")> GE = KS.GE
-    <KSEnumString("op_Concatenate")> Concat = KS.Concat
-    <KSEnumString("op_Multiply")> Mult = KS.Mult
-    <KSEnumString("op_Addition")> Add = KS.Add
-    <KSEnumString("op_Subtraction")> Minus = KS.Minus
-    <KSEnumString("op_Exponent")> Power = KS.Power
-    <KSEnumString("op_Division")> RealDivision = KS.RealDivision
-    <KSEnumString("op_IntegerDivision")> IntDivision = KS.IntDivision
-    <KSEnumString("op_LeftShift")> ShiftLeft = KS.ShiftLeft
-    <KSEnumString("op_RightShift")> ShiftRight = KS.ShiftRight
-    <KSEnumString("op_True")> IsTrue = KS.NumberOfItems + 1
-    <KSEnumString("op_False")> IsFalse
+    [And] = KS.And
+    [Like] = KS.Like
+    [Mod] = KS.Mod
+    [Or] = KS.Or
+    [XOr] = KS.Xor
+    LT = KS.LT
+    GT = KS.GT
+    Equals = KS.Equals
+    NotEqual = KS.NotEqual
+    LE = KS.LE
+    GE = KS.GE
+    Concat = KS.Concat
+    Mult = KS.Mult
+    Add = KS.Add
+    Minus = KS.Minus
+    Power = KS.Power
+    RealDivision = KS.RealDivision
+    IntDivision = KS.IntDivision
+    ShiftLeft = KS.ShiftLeft
+    ShiftRight = KS.ShiftRight
+    IsTrue = KS.NumberOfItems + 1
+    IsFalse
 End Enum

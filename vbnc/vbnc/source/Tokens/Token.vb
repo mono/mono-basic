@@ -389,9 +389,9 @@ Public Structure Token
         End If
     End Function
 
-    Shared Function IsKeyword(ByVal str As String, ByRef Keyword As KS) As Boolean
+    Shared Function IsKeyword(ByVal str As Char(), ByVal length As Integer, ByRef Keyword As KS) As Boolean
         Dim special As KS
-        special = Enums.GetKS(str)
+        special = Enums.GetKS(str, length)
         If special <> KS.None Then
             Keyword = special
             Return True

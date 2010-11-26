@@ -6,10 +6,8 @@
 ../../source/Emit/EmitInfo.vb
 ../../source/Emit/Emitter.DecimalFields.vb
 ../../source/Enums/BuiltInDataTypes.vb
-../../source/Enums/EnumStringAttribute.vb
 ../../source/Enums/IntegerBase.vb
 ../../source/Enums/KS.vb
-../../source/Enums/KSEnumStringAttribute.vb
 ../../source/Enums/LiteralTypeCharacters.vb
 ../../source/Enums/ModifierMasks.vb
 ../../source/Enums/Operators.vb
