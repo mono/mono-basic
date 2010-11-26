@@ -8,11 +8,11 @@ cp ../../../../class/lib/vbnc/Mono.Cecil* .
 rerun.sh && rerun.sh
 
 rm output.mlpd
-mono --profile=log:zip vbnc.exe @SelfCompileLinux.response -out:vbnc.profile.exe
+mono --profile=log:nocalls,zip vbnc.exe @SelfCompileLinux.response -out:vbnc.profile.exe
 I=1
 while test -e profile$I.log; do
 	let I=I+1
 done
-mprof-report --reports=header,gc,alloc,metadata,exception,monitor,thread,heapshot --alloc-sort=count --traces output.mlpd > profile$I.log
+mprof-report --reports=header,gc,alloc,exception --maxframes=8 --alloc-sort=count --traces output.mlpd > profile$I.log
 biiip
 
