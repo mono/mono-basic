@@ -476,7 +476,7 @@
   <data name="30654"><value>CHANGEME</value></data>
   <data name="30655"><value>CHANGEME</value></data>
   <data name="30656"><value>CHANGEME</value></data>
-  <data name="30657"><value>CHANGEME</value></data>
+  <data name="30657"><value>'{0}' has a return type or a parameter type that are not supported.</value></data>
   <data name="30658"><value>CHANGEME</value></data>
   <data name="30659"><value>CHANGEME</value></data>
   <data name="30660"><value>CHANGEME</value></data>

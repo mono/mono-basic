@@ -2229,7 +2229,7 @@
 	</Message>
 	<Message id="30657" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' has a return type or a parameter type that are not supported.</VBNCValue>
 		<VBValue>'|1' has a return type that is not supported or parameter types that are not supported.</VBValue>
 	</Message>
 	<Message id="30658" level="Error">

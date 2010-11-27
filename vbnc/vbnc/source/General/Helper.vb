@@ -1347,6 +1347,13 @@ Public Class Helper
         Return result
     End Function
 
+    Shared Function GetReturnType(ByVal Member As MemberReference) As TypeReference
+        Dim mr As MethodReference = TryCast(Member, MethodReference)
+        If mr IsNot Nothing Then Return mr.ReturnType
+
+        Return Nothing
+    End Function
+
     Shared Function GetTypes(ByVal Arguments As Generic.List(Of Argument)) As Mono.Cecil.TypeReference()
         Dim result() As Mono.Cecil.TypeReference = New Mono.Cecil.TypeReference() {}
 

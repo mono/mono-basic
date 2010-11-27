@@ -3131,7 +3131,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30656 = 30656
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' has a return type or a parameter type that are not supported."
     ''' VB   = "'|1' has a return type that is not supported or parameter types that are not supported."
     ''' </summary>
     ''' <remarks></remarks>

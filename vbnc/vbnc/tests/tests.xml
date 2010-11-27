@@ -7360,4 +7360,13 @@
 	<test id="1859" name="ArrayCreationExpression6" category="" priority="0" knownfailure="We crash instead of showing correct error message (or compile like vb10 does)" expectedexitcode="1" expectederrorcode="30201" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library">
 		<file>CompileTime\ArrayCreationExpression6.vb</file>
 	</test>
+	<test id="1860" name="MethodsWithPointers1" category="" priority="0" target="library">
+		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
+		<file>CompileTime\MethodsWithPointers1.vb</file>
+		<dependency>Bin\MethodsWithPointers1_CS.dll</dependency>
+	</test>
+	<test id="1861" name="30657" category="" priority="0" expectedexitcode="1" expectederrorcode="30657" target="exe">
+		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30657.vb</file>
+	</test>
 </rt>

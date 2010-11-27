@@ -1,0 +1,1 @@
+This directory contains binary files used during vbnc testing - mostly as references (using il features vb doesn't support, so they have to be compiled using another language).

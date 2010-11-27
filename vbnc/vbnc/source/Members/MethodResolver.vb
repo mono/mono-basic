@@ -153,15 +153,20 @@ Public Class MethodResolver
 
         If result Then
             Helper.Assert(CandidatesLeft = 1 OrElse IsLateBound)
+
             If IsLateBound Then
                 m_ResolvedCandidate = Nothing
             Else
                 For Each member As MemberCandidate In m_Candidates
-                    If member IsNot Nothing Then
-                        m_ResolvedCandidate = member
-                        m_ResolvedCandidate.SelectOutputArguments()
+                    If member Is Nothing Then Continue For
+
+                    If IsValidCandidate(member) = False Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30657, Parent.Location, member.Member.Name)
                         Exit For
                     End If
+                    m_ResolvedCandidate = member
+                    m_ResolvedCandidate.SelectOutputArguments()
+                    Exit For
                 Next
             End If
         End If
@@ -262,6 +267,12 @@ Public Class MethodResolver
 
         SelectLessGeneric()
         Log("After selecting the less generic candidates, there are " & CandidatesLeft & " candidates left.")
+        If CandidatesLeft = 1 Then
+            Return True
+        End If
+
+        RemoveInvalid()
+
         If ShowErrors AndAlso CandidatesLeft <> 1 Then
             If CandidatesLeft > 1 Then
                 Helper.AddError(Me.m_Parent, String.Format("After selecting the less generic method for method '{0}', there are still {1} candidates left", Me.m_InitialCandidates(0).Member.Name, CandidatesLeft))
@@ -278,9 +289,24 @@ Public Class MethodResolver
             End If
         End If
 
-
         Return CandidatesLeft = 1
     End Function
+
+    Function IsValidCandidate(ByVal candidate As MemberCandidate) As Boolean
+        If CecilHelper.IsValidType(candidate.ReturnType) = False Then Return False
+        For j As Integer = 0 To candidate.DefinedParametersTypes.Length - 1
+            If CecilHelper.IsValidType(candidate.DefinedParametersTypes(j)) = False Then Return False
+        Next
+        Return True
+    End Function
+
+    Sub RemoveInvalid()
+        For i As Integer = 0 To m_Candidates.Count - 1
+            Dim m As MemberCandidate = m_Candidates(i)
+            If m Is Nothing Then Continue For
+            If IsValidCandidate(m) = False Then m_Candidates(i) = Nothing
+        Next
+    End Sub
 
     Sub SelectLessGeneric()
         'Find less generic methods
@@ -535,6 +561,7 @@ Public Class MemberCandidate
     Private m_DefinedParameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
     Private m_DefinedParametersTypes As Mono.Cecil.TypeReference()
     Private m_Parent As MethodResolver
+    Private m_ReturnType As TypeReference
 
     Private m_ExactArguments As Generic.List(Of Argument)
     Private m_TypesInInvokedOrder As Mono.Cecil.TypeReference()
@@ -573,6 +600,13 @@ Public Class MemberCandidate
         Get
             If m_DefinedParametersTypes Is Nothing Then m_DefinedParametersTypes = Helper.GetTypes(DefinedParameters)
             Return m_DefinedParametersTypes
+        End Get
+    End Property
+
+    ReadOnly Property ReturnType As TypeReference
+        Get
+            If m_ReturnType Is Nothing Then m_ReturnType = Helper.GetReturnType(m_Member)
+            Return m_ReturnType
         End Get
     End Property
 
