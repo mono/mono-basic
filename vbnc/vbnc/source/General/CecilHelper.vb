@@ -86,19 +86,55 @@ Public Class CecilHelper
 
         tD = FindDefinition(Type)
 
-        result = New Mono.Collections.Generic.Collection(Of MemberReference)()
+        result = New Mono.Collections.Generic.Collection(Of MemberReference)(tD.Events.Count + tD.Methods.Count + tD.Properties.Count + tD.NestedTypes.Count + tD.Fields.Count)
 
-        For Each list As System.Collections.IList In New System.Collections.IList() {tD.Events, tD.Methods, tD.Properties, tD.NestedTypes, tD.Fields}
-            For Each item As Mono.Cecil.MemberReference In list
-                If Helper.CompareType(item.DeclaringType, Type) = False Then
-                    item = GetCorrectMember(item, Type)
-                End If
-                result.Add(item)
-            Next
+        For i As Integer = 0 To tD.Events.Count - 1
+            Dim item As EventDefinition = tD.Events(i)
+            'I don't think events need to call GetCorrectMember
+            result.Add(item)
+        Next
+
+        For i As Integer = 0 To tD.Methods.Count - 1
+            Dim item As MethodReference = tD.Methods(i)
+            If Helper.CompareType(item.DeclaringType, Type) = False Then item = GetCorrectMember(item, Type)
+            result.Add(item)
+        Next
+
+        For i As Integer = 0 To tD.Properties.Count - 1
+            Dim pd As PropertyDefinition = tD.Properties(i)
+            Dim item As PropertyReference = pd
+            If Helper.CompareType(item.DeclaringType, Type) = False Then item = GetCorrectMember(pd, Type)
+            result.Add(item)
+        Next
+
+        For i As Integer = 0 To tD.NestedTypes.Count - 1
+            Dim item As TypeReference = tD.NestedTypes(i)
+            If Helper.CompareType(item.DeclaringType, Type) = False Then item = GetCorrectMember(item, Type)
+            result.Add(item)
+        Next
+
+        For i As Integer = 0 To tD.Fields.Count - 1
+            Dim fd As FieldDefinition = tD.Fields(i)
+            Dim item As FieldReference = fd
+            If Helper.CompareType(item.DeclaringType, Type) = False Then item = GetCorrectMember(fd, Type)
+            result.Add(item)
         Next
 
         Return result
     End Function
+
+    Public Shared Function IsValidType(ByVal type As TypeReference) As Boolean
+        Dim arrayType As ArrayType
+
+        If type Is Nothing Then Return True
+        If TypeOf type Is PointerType Then Return False
+
+        arrayType = TryCast(type, ArrayType)
+        If arrayType IsNot Nothing AndAlso IsValidType(arrayType.ElementType) = False Then Return False
+
+        Return True
+    End Function
+
 
     Public Shared Function GetCorrectMember(ByVal Member As TypeReference, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Dim tD As Mono.Cecil.TypeDefinition = TryCast(Member, Mono.Cecil.TypeDefinition)
@@ -118,26 +154,6 @@ Public Class CecilHelper
         Return GetCorrectMember(tD, Type)
 
         Throw New NotImplementedException
-    End Function
-
-    Public Shared Function GetCorrectMember(ByVal Member As MemberReference, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.MemberReference
-        Dim method As MethodDefinition = TryCast(Member, MethodDefinition)
-        Dim field As FieldDefinition = TryCast(Member, FieldDefinition)
-        Dim prop As PropertyDefinition = TryCast(Member, PropertyDefinition)
-        Dim t As TypeDefinition = TryCast(Member, TypeDefinition)
-
-        If method IsNot Nothing Then
-            Return GetCorrectMember(method, Type)
-        ElseIf field IsNot Nothing Then
-            Return GetCorrectMember(field, Type)
-        ElseIf prop IsNot Nothing Then
-            Return GetCorrectMember(prop, Type)
-        ElseIf t IsNot Nothing Then
-            Return GetCorrectMember(t, Type)
-        Else
-            Throw New NotImplementedException
-        End If
-
     End Function
 
     Public Shared Function GetCorrectMember(ByVal Member As Mono.Cecil.TypeDefinition, ByVal Type As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
