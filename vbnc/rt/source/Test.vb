@@ -935,14 +935,18 @@ Public Class Test
         If SkipTest() Then
             m_Result = Results.Skipped
         Else
-            'Copy dependencies
-            For Each file As String In m_Dependencies
-                Dim src As String = IO.Path.GetFullPath(file)
-                Dim dst As String = IO.Path.Combine(FullWorkingDirectory, IO.Path.GetFileName(src))
-                IO.File.Copy(src, dst, True)
-                dst = IO.Path.Combine(IO.Path.GetDirectoryName(OutputAssemblyFull), IO.Path.GetFileName(src))
-                If dst <> src Then IO.File.Copy(src, dst, True)
-            Next
+            Try
+                'Copy dependencies
+                For Each file As String In m_Dependencies
+                    Dim src As String = IO.Path.Combine(FullWorkingDirectory, file)
+                    Dim dst As String = IO.Path.Combine(FullWorkingDirectory, IO.Path.GetFileName(src))
+                    IO.File.Copy(src, dst, True)
+                    dst = IO.Path.Combine(IO.Path.GetDirectoryName(OutputAssemblyFull), IO.Path.GetFileName(src))
+                    If dst <> src Then IO.File.Copy(src, dst, True)
+                Next
+            Catch
+                m_Result = Results.Failed
+            End Try
 
             'Run test
             For i As Integer = 0 To m_Verifications.Count - 1
