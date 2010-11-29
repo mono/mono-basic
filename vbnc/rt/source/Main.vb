@@ -57,6 +57,16 @@ Module MainModule
 
     Sub ViewFiles(ByVal ParamArray Filenames As String())
         For Each file As String In Filenames
+            If Not IO.File.Exists(file) Then
+                Dim result As MsgBoxResult = MsgBox(String.Format("The file '{0}' does not exist. Do you want to create it?", file), MsgBoxStyle.YesNoCancel Or MsgBoxStyle.Question, "File does not exist")
+                If result = MsgBoxResult.Yes Then
+                    IO.File.WriteAllText(file, String.Empty)
+                ElseIf result = MsgBoxResult.Cancel Then
+                    Return
+                Else
+                    Continue For
+                End If
+            End If
             Process.Start(file)
         Next
     End Sub
