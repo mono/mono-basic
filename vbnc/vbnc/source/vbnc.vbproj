@@ -66,7 +66,8 @@
     <DocumentationFile>vbnc.xml</DocumentationFile>
     <TreatSpecificWarningsAsErrors>42016,42017,42018,42019,42020,42021,42022,42028,42104,42030,42024</TreatSpecificWarningsAsErrors>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
-    <NoWarn>42353,42354,42355</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <RunFxCop>false</RunFxCop>
     <FxCopRules>
     </FxCopRules>
@@ -125,7 +126,8 @@
     <DefineConstants>
     </DefineConstants>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>42353,42354,42355</NoWarn>
+    <NoWarn>
+    </NoWarn>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>On</OptionStrict>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -516,7 +518,9 @@
     <EmbeddedResource Include="vbnc.rsp" />
     <Content Include="Notes.txt" />
     <None Include="General\TypeCache.in" />
-    <None Include="Resources\Source.xml" />
+    <None Include="Resources\Source.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="My Application\" />
