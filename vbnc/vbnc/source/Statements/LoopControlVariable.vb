@@ -48,11 +48,11 @@ Public Class LoopControlVariable
 
     ReadOnly Property TypeName() As TypeName
         Get
-            Return m_typename
+            Return m_TypeName
         End Get
     End Property
 
-    ReadOnly Property Expression() As expression
+    ReadOnly Property Expression() As Expression
         Get
             Return m_Expression
         End Get
@@ -166,9 +166,13 @@ Public Class LoopControlVariable
             sne = TryCast(m_Expression, SimpleNameExpression)
             If sne IsNot Nothing Then
                 sne.InferEnabled = Me.IsOptionInferOn
-                If sne.ResolveExpression(Info) = False AndAlso sne.InferPossible Then
-                    MustInfer = True
-                    result = True 'So far so good
+                If sne.ResolveExpression(Info) = False Then
+                    If sne.InferPossible Then
+                        MustInfer = True
+                        result = True 'So far so good
+                    Else
+                        result = False
+                    End If
                 End If
             Else
                 result = m_Expression.ResolveExpression(Info) AndAlso result
