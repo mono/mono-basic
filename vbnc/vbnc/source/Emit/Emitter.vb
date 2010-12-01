@@ -1389,51 +1389,39 @@ Partial Public Class Emitter
                 EmitLoadValue(Info, CInt(Value))
                 Return
             Case TypeCode.Int64
-                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Int64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CLng(Value))
                 Return
             Case TypeCode.Single
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Single, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Emitter.EmitLoadR4Value(Info, CSng(Value))
                 Return
             Case TypeCode.Double
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Double, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldc_R8, CDbl(Value))
                 Return
             Case TypeCode.String
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_String, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.System_Object, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 Info.ILGen.Emit(OpCodes.Ldstr, CStr(Value))
                 Return
             Case TypeCode.Byte
-                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Byte, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_Byte)
                 Return
             Case TypeCode.UInt16
-                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt16, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CInt(Value), Info.Compiler.TypeCache.System_UInt16)
                 Return
             Case TypeCode.UInt32
-                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt32, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, CUInt(Value))
                 Return
             Case TypeCode.UInt64
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_UInt64, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI8Value(Info, CULng(Value))
                 Return
             Case TypeCode.Decimal
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Decimal, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDecimalValue(Info, CDec(Value))
                 Return
             Case TypeCode.DateTime
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_DateTime, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadDateValue(Info, CDate(Value))
                 Return
             Case TypeCode.Char
-                Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.System_Char, DesiredType) OrElse Helper.CompareType(Info.Compiler.TypeCache.System_String, DesiredType), "Expected " & ActualTypeCode.ToString() & ", got " & DesiredType.Name)
                 EmitLoadI4Value(Info, Microsoft.VisualBasic.AscW(CChar(Value)), Info.Compiler.TypeCache.System_Char)
                 Return
             Case TypeCode.Boolean
-                'Helper.Assert(Helper.CompareType(Info.Compiler.TypeCache.Boolean, DesiredType))
                 If CBool(Value) Then
                     EmitLoadI4Value(Info, 1, Info.Compiler.TypeCache.System_Boolean)
                 Else
