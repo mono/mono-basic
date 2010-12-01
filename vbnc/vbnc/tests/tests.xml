@@ -7229,46 +7229,46 @@
 		<file>Errors\error.vb</file>
 	</test>
 	<test id="1815" name="30199" category="" priority="0" expectedexitcode="1" expectederrorcode="30199" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30199.vb</file>
+		<file>Errors\30199.vb</file>
 	</test>
 	<test id="1817" name="33104" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33104.vb</file>
+		<file>Errors\33104.vb</file>
 	</test>
 	<test id="1818" name="33104-1" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33104-1.vb</file>
+		<file>Errors\33104-1.vb</file>
 	</test>
 	<test id="1819" name="30201" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" expectedvbcexitcode="1" expectedvbcerrorcode="33104" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30201.vb</file>
+		<file>Errors\30201.vb</file>
 	</test>
 	<test id="1820" name="30198" category="" priority="0" expectedexitcode="1" expectederrorcode="30198" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30198.vb</file>
+		<file>Errors\30198.vb</file>
 	</test>
 	<test id="1821" name="33104-2" category="" priority="0" expectedexitcode="1" expectederrorcode="33104" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33104-2.vb</file>
+		<file>Errors\33104-2.vb</file>
 	</test>
 	<test id="1822" name="30512-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30512-1.vb</file>
+		<file>Errors\30512-1.vb</file>
 	</test>
 	<test id="1823" name="33107" category="" priority="0" expectedexitcode="1" expectederrorcode="33107" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33107.vb</file>
+		<file>Errors\33107.vb</file>
 	</test>
 	<test id="1824" name="33106" category="" priority="0" expectedexitcode="1" expectederrorcode="33106" expectedvbcexitcode="1" expectedvbcerrorcode="36913" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33106.vb</file>
+		<file>Errors\33106.vb</file>
 	</test>
 	<test id="1825" name="33110" category="" priority="0" expectedexitcode="1" expectederrorcode="33110" expectedvbcexitcode="1" expectedvbcerrorcode="36913" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33110.vb</file>
+		<file>Errors\33110.vb</file>
 	</test>
 	<test id="1826" name="33110-1" category="" priority="0" knownfailure="Earlier VB compilers (&lt;10) showed an error (#33110) for this code" expectedexitcode="1" expectederrorcode="33110" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33110-1.vb</file>
+		<file>Errors\33110-1.vb</file>
 	</test>
 	<test id="1827" name="33107-1" category="" priority="0" expectedexitcode="1" expectederrorcode="33107" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\33107-1.vb</file>
+		<file>Errors\33107-1.vb</file>
 	</test>
 	<test id="1828" name="30512-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30512-2.vb</file>
+		<file>Errors\30512-2.vb</file>
 	</test>
 	<test id="1829" name="30512-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30512-3.vb</file>
+		<file>Errors\30512-3.vb</file>
 	</test>
 	<test id="1830" name="ByRefStructureReturn1" category="" priority="0" target="library">
 		<file>CompileTime\ByRefStructureReturn1.vb</file>
@@ -7277,13 +7277,13 @@
 		<file>CompileTime2\ImplicitNullableConversions1.vb</file>
 	</test>
 	<test id="1832" name="30311-36" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30311-36.vb</file>
+		<file>Errors\30311-36.vb</file>
 	</test>
 	<test id="1833" name="30512-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30512-4.vb</file>
+		<file>Errors\30512-4.vb</file>
 	</test>
 	<test id="1834" name="30311-37" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30311-37.vb</file>
+		<file>Errors\30311-37.vb</file>
 	</test>
 	<test id="1835" name="UserDefinedNullableConversions1" category="" priority="0" knownfailure="User defined conversions not yet implemented" target="exe">
 		<file>CompileTime2\UserDefinedNullableConversions1.vb</file>
@@ -7301,16 +7301,16 @@
 		<file>Bugs\bug-629373.vb</file>
 	</test>
 	<test id="1840" name="30439-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30439" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30439-2.vb</file>
+		<file>Errors\30439-2.vb</file>
 	</test>
 	<test id="1841" name="ImportsType2" category="" priority="0" target="library">
 		<file>CompileTime\ImportsType2.vb</file>
 	</test>
 	<test id="1842" name="30002" category="" priority="0" expectedexitcode="1" expectederrorcode="30002" target="library">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30002.vb</file>
+		<file>Errors\30002.vb</file>
 	</test>
 	<test id="1843" name="30182" category="" priority="0" expectedexitcode="1" expectederrorcode="30182" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30182.vb</file>
+		<file>Errors\30182.vb</file>
 	</test>
 	<test id="1844" name="End2" category="" priority="0" target="exe">
 		<file>RunTime\End2.vb</file>
@@ -7340,16 +7340,16 @@
 		<file>CompileTime2\For7.vb</file>
 	</test>
 	<test id="1853" name="30108-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30108" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30108-1.vb</file>
+		<file>Errors\30108-1.vb</file>
 	</test>
 	<test id="1854" name="30112" category="" priority="0" expectedexitcode="1" expectederrorcode="30112" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30112.vb</file>
+		<file>Errors\30112.vb</file>
 	</test>
 	<test id="1855" name="32022" category="" priority="0" expectedexitcode="1" expectederrorcode="32022" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\32022.vb</file>
+		<file>Errors\32022.vb</file>
 	</test>
 	<test id="1856" name="30491" category="" priority="0" expectedexitcode="1" expectederrorcode="30491" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30491.vb</file>
+		<file>Errors\30491.vb</file>
 	</test>
 	<test id="1857" name="Delegate8" category="" priority="0" expectedexitcode="1" expectederrorcode="30408" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library">
 		<file>1Declarations\Delegate8.vb</file>
@@ -7367,6 +7367,6 @@
 	</test>
 	<test id="1861" name="30657" category="" priority="0" expectedexitcode="1" expectederrorcode="30657" target="exe">
 		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30657.vb</file>
+		<file>Errors\30657.vb</file>
 	</test>
 </rt>
