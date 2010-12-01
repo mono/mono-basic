@@ -566,6 +566,16 @@ Public Class CommandLine
         End Get
     End Property
 
+    ''' <summary>
+    ''' /optioninfer[+|-]       Allow type inference of variables.
+    ''' </summary>
+    ''' <remarks></remarks>
+    ReadOnly Property OptionInfer As OptionInferTypes
+        Get
+            Return m_eOptionInfer
+        End Get
+    End Property
+
     ' - MISCELLANEOUS -
 
     ''' <summary>
@@ -1006,7 +1016,6 @@ Public Class CommandLine
                 Console.WriteLine("Warning: Option Strict Off will probably fail.")
                 m_eOptionStrict = OptionStrictTypes.Off
             Case "optioninfer+", "optioninfer"
-                Console.WriteLine("Warning: Option Infer On does not work yet.")
                 m_eOptionInfer = OptionInferTypes.On
             Case "optioninfer-"
                 m_eOptionInfer = OptionInferTypes.Off

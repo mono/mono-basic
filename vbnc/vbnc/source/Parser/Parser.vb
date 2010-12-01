@@ -73,6 +73,7 @@ Public Class Parser
         Dim m_OptionExplicit As OptionExplicitStatement = CodeFile.OptionExplicit
         Dim m_OptionStrict As OptionStrictStatement = CodeFile.OptionStrict
         Dim m_OptionCompare As OptionCompareStatement = CodeFile.OptionCompare
+        Dim m_OptionInfer As OptionInferStatement = CodeFile.OptionInfer
         Dim m_Imports As ImportsClauses = CodeFile.Imports
 
         While tm.CurrentToken.Equals(KS.Option)
@@ -94,6 +95,12 @@ Public Class Parser
                 End If
                 m_OptionCompare = ParseOptionCompareStatement(CodeFile)
                 If m_OptionCompare Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            ElseIf OptionInferStatement.IsMe(tm) Then
+                If m_OptionInfer IsNot Nothing Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30225, tm.CurrentLocation, "Infer") AndAlso result
+                End If
+                m_OptionInfer = ParseOptionInferStatement(CodeFile)
+                If m_OptionInfer Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
                 result = Compiler.Report.ShowMessage(Messages.VBNC30206, tm.CurrentLocation) AndAlso result
                 tm.GotoNewline(False)
@@ -107,7 +114,7 @@ Public Class Parser
             m_Imports.AddRange(imp.Clauses)
         Next
 
-        CodeFile.Init(m_OptionCompare, m_OptionStrict, m_OptionExplicit, m_Imports)
+        CodeFile.Init(m_OptionCompare, m_OptionStrict, m_OptionExplicit, m_OptionInfer, m_Imports)
 
         Return result
     End Function
@@ -139,6 +146,33 @@ Public Class Parser
 
         Return result
     End Function
+
+    ''' <summary>
+    ''' OptionStrictStatement  ::=  "Option" "Strict" [  OnOff  ]  StatementTerminator
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Function ParseOptionInferStatement(ByVal Parent As BaseObject) As OptionInferStatement
+        Dim result As New OptionInferStatement(Parent)
+
+        Dim m_Off As Boolean
+
+        tm.AcceptIfNotInternalError(KS.Option)
+        tm.AcceptIfNotInternalError("Infer")
+
+        If tm.Accept(KS.On) Then
+            m_Off = False
+        ElseIf tm.Accept("Off") Then
+            m_Off = True
+        ElseIf Not tm.AcceptEndOfStatement() Then
+            Compiler.Report.ShowMessage(Messages.VBNC30620, tm.CurrentLocation)
+            tm.GotoNewline(False)
+        End If
+
+        result.Init(m_Off)
+
+        Return result
+    End Function
+
 
     ''' <summary>
     ''' OptionStrictStatement  ::=  "Option" "Strict" [  OnOff  ]  StatementTerminator

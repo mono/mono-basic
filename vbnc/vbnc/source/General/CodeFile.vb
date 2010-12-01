@@ -69,6 +69,11 @@ Public Class CodeFile
     ''' </summary>
     Private m_OptionCompare As OptionCompareStatement
 
+    ''' <summary>
+    ''' The state of the Option Infer flag in this file.
+    ''' </summary>
+    Private m_OptionInfer As OptionInferStatement
+
     Private m_SymbolDocument As Mono.Cecil.Cil.Document
 
     Private m_ConditionalConstants As New Generic.List(Of ConditionalConstants)
@@ -150,10 +155,17 @@ Public Class CodeFile
         End Get
     End Property
 
-    Sub Init(ByVal OptionCompare As OptionCompareStatement, ByVal OptionStrict As OptionStrictStatement, ByVal OptionExplicit As OptionExplicitStatement, ByVal [Imports] As ImportsClauses)
+    ReadOnly Property OptionInfer As OptionInferStatement
+        Get
+            Return m_OptionInfer
+        End Get
+    End Property
+
+    Sub Init(ByVal OptionCompare As OptionCompareStatement, ByVal OptionStrict As OptionStrictStatement, ByVal OptionExplicit As OptionExplicitStatement, ByVal OptionInfer As OptionInferStatement, ByVal [Imports] As ImportsClauses)
         m_OptionCompare = OptionCompare
         m_OptionStrict = OptionStrict
         m_OptionExplicit = OptionExplicit
+        m_OptionInfer = OptionInfer
         m_Imports = [Imports]
         Helper.AssertNotNothing(m_Imports)
     End Sub
@@ -196,6 +208,16 @@ Public Class CodeFile
                 Return Compiler.CommandLine.OptionCompare = CommandLine.OptionCompareTypes.Binary
             Else
                 Return m_OptionCompare.IsBinary
+            End If
+        End Get
+    End Property
+
+    Public Shadows ReadOnly Property IsOptionInferOn As Boolean
+        Get
+            If m_OptionInfer Is Nothing Then
+                Return Compiler.CommandLine.OptionInfer = CommandLine.OptionInferTypes.On
+            Else
+                Return m_OptionInfer.IsOn
             End If
         End Get
     End Property

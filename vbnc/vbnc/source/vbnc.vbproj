@@ -239,6 +239,7 @@
     <Compile Include="Members\RegularEventHandlerDeclaration.vb" />
     <Compile Include="Statements\AssignStatements\CompoundAssignmentStatement.vb" />
     <Compile Include="Statements\BlockStatement.vb" />
+    <Compile Include="Statements\OptionInferStatement.vb" />
     <Compile Include="Tokens\IdentifierOrKeyword.vb" />
     <Compile Include="Expressions\InvocationOrIndexExpression.vb" />
     <Compile Include="Expressions\NamedArgument.vb" />

@@ -306,6 +306,12 @@ Public MustInherit Class BaseObject
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
+    Public ReadOnly Property IsOptionInferOn As Boolean
+        Get
+            Return Location.File(Compiler).IsOptionInferOn
+        End Get
+    End Property
+
     ''' <summary>
     ''' Define = create a builder for the object.
     ''' </summary>
