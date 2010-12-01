@@ -26,6 +26,7 @@ Public Class MissingExpression
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Helper.Stop() 'A missing expression doesn't know how to emit itself.
+        Return False
     End Function
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference

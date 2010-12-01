@@ -817,7 +817,7 @@ Public Class AssemblyDeclaration
         Return True
     End Function
 
-    Private Function SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte()) As Boolean
+    Private Sub SignWithKeyFileMono(ByVal result As Mono.Cecil.AssemblyNameDefinition, ByVal KeyFile As String, ByVal DelaySign As Boolean, ByVal blob As Byte())
         Dim CryptoConvert As Type
         Dim FromCapiKeyBlob As System.Reflection.MethodInfo
         Dim ToCapiPublicKeyBlob As System.Reflection.MethodInfo
@@ -868,8 +868,7 @@ Public Class AssemblyDeclaration
         Catch ex As Exception
             Helper.AddError(Me, "Invalid key file: " & KeyFile & ", got error: " & ex.Message)
         End Try
-
-    End Function
+    End Sub
 
     Private Function SetVersion(ByVal Name As Mono.Cecil.AssemblyNameDefinition, ByVal Attribute As Attribute, ByVal Location As Span) As Boolean
         Dim result As Version

@@ -554,6 +554,8 @@ Public Class TypeNameResolutionInfo
             Helper.AddError(Name)
             Return False
         End If
+
+        Return False
     End Function
 
     ''' <summary>

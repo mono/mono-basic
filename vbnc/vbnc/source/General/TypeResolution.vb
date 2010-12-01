@@ -473,6 +473,7 @@ Public Class TypeResolution
         For Each t As Mono.Cecil.TypeReference In NumericTypes
             If Helper.CompareType(t, Type) Then Return True
         Next
+        Return False
     End Function
 
     Function IsIntegralType(ByVal Type As Mono.Cecil.TypeReference) As Boolean
@@ -917,6 +918,8 @@ Public Class TypeResolution
             End Select
             Helper.Stop()
         End If
+
+        Return False
     End Function
 
     ''' <summary>

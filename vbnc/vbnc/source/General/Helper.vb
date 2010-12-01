@@ -1312,6 +1312,7 @@ Public Class Helper
             Case Else
                 Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
         End Select
+        Return False
     End Function
 
     Shared Function IsShared(ByVal Member As Mono.Cecil.MemberReference) As Boolean
@@ -3298,6 +3299,7 @@ Public Class Helper
         '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect to type parameters on the method, or Mj is less generic with respect to type parameters on the method, and at least one Mj is less generic than Nj, then M is less generic than N.
         '-	Otherwise, if for each pair of matching parameters Mj and Nj, Mj and Nj are equally generic with respect to type parameters on the type, or Mj is less generic with respect to type parameters on the type, and at least one Mj is less generic than Nj, then M is less generic than N.
         Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
+        Return False
     End Function
 
     Shared Function IsAccessible(ByVal Context As BaseObject, ByVal Caller As Mono.Cecil.TypeReference, ByVal Method As Mono.Cecil.MethodReference) As Boolean

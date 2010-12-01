@@ -177,6 +177,7 @@ Public Class ConditionalConstant
                 Throw New InternalException("Wrong conditional type code.")
         End Select
         'Return Const1.Value = Const2.Value
+        Return False
     End Operator
 
     ''' <summary>

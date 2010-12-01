@@ -50,6 +50,8 @@ Public Class Defines
             If VB.IsNumeric(def.Value) Then Return CBool(CDbl(def.Value))
             Return False
         End If
+
+        Return False
     End Function
 
     Default Shadows ReadOnly Property Item(ByVal Name As String) As Define

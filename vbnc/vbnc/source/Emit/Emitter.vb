@@ -1217,6 +1217,7 @@ Partial Public Class Emitter
                 Return True
         End Select
         Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Info.Location)
+        Return False
     End Function
 
     Overloads Shared Function EmitLoadValue(ByVal Info As EmitInfo, ByVal Value As Long) As Boolean
