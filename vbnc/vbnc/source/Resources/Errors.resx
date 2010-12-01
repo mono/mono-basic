@@ -635,6 +635,7 @@
   <data name="30918"><value>CHANGEME</value></data>
   <data name="30919"><value>CHANGEME</value></data>
   <data name="30920"><value>CHANGEME</value></data>
+  <data name="30983"><value>Type of '{0}' is ambiguous because the loop bounds and the step clause do not convert to the same type.</value></data>
   <data name="31007"><value>CHANGEME</value></data>
   <data name="31011"><value>CHANGEME</value></data>
   <data name="31013"><value>CHANGEME</value></data>

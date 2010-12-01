@@ -99,6 +99,7 @@ source/Members/NamedBaseList.vb
 source/Members/RegularEventHandlerDeclaration.vb
 source/Statements/AssignStatements/CompoundAssignmentStatement.vb
 source/Statements/BlockStatement.vb
+source/Statements/OptionInferStatement.vb
 source/Tokens/IdentifierOrKeyword.vb
 source/Expressions/InvocationOrIndexExpression.vb
 source/Expressions/NamedArgument.vb

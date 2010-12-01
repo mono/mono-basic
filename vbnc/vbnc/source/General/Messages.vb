@@ -4244,6 +4244,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30920 = 30920
 
     ''' <summary>
+    ''' VBNC = "Type of '{0}' is ambiguous because the loop bounds and the step clause do not convert to the same type."
+    ''' VB   = "Type of 'i' is ambiguous because the loop bounds and the step clause do not convert to the same type."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC30983 = 30983
+
+    ''' <summary>
     ''' VBNC = "CHANGEME"
     ''' VB   = "Unable to open module file '|1': |0"
     ''' </summary>

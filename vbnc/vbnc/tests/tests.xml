@@ -7369,4 +7369,22 @@
 		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
 		<file>Errors\30657.vb</file>
 	</test>
+	<test id="1862" name="InferFor1" category="" priority="0" target="exe">
+		<file>CompileTime\InferFor1.vb</file>
+	</test>
+	<test id="1863" name="30983" category="" priority="0" expectedexitcode="1" expectederrorcode="30983" target="exe">
+		<file>Errors\30983.vb</file>
+	</test>
+	<test id="1864" name="30983-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30983" target="exe">
+		<file>Errors\30983-1.vb</file>
+	</test>
+	<test id="1865" name="30983-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30983" target="exe">
+		<file>Errors\30983-2.vb</file>
+	</test>
+	<test id="1866" name="30983-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30983" target="exe">
+		<file>Errors\30983-3.vb</file>
+	</test>
+	<test id="1867" name="30108-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30108" target="exe">
+		<file>Errors\30108-2.vb</file>
+	</test>
 </rt>

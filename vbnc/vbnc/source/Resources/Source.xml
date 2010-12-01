@@ -3022,6 +3022,11 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>First statement of this 'Sub New' must be an explicit call to 'MyBase.New' or 'MyClass.New' because the '|1' in the base class '|2' of '|3' is marked obsolete: '|4'</VBValue>
 	</Message>
+  <Message id="30983" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type of '{0}' is ambiguous because the loop bounds and the step clause do not convert to the same type.</VBNCValue>
+    <VBValue>Type of 'i' is ambiguous because the loop bounds and the step clause do not convert to the same type.</VBValue>
+  </Message>
 	<Message id="31007" level="Error">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>

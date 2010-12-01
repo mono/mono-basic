@@ -565,6 +565,59 @@ Public Class TypeResolution
         End If
     End Function
 
+    Public Function GetWidestType(ByVal tp1 As TypeReference, ByVal tp2 As TypeReference, ByVal tp3 As TypeReference) As TypeReference
+        Dim cont1(), cont2(), cont3() As Mono.Cecil.TypeReference
+
+        Helper.Assert(tp1 IsNot Nothing, "tp1 Is Nothing")
+        Helper.Assert(tp2 IsNot Nothing, "tp2 Is Nothing")
+
+        If tp1 Is tp2 Then
+            If tp3 Is Nothing Then Return tp1
+            If tp1 Is tp3 Then Return tp2
+        End If
+
+        Dim itp1, itp2, itp3 As Mono.Cecil.TypeReference
+        itp1 = GetIntegralType(Compiler, tp1)
+        itp2 = GetIntegralType(Compiler, tp2)
+
+        cont1 = valCanBeContainBy(getTypeIndex(CType(TypeToKeyword(itp1), BuiltInDataTypes)))
+        cont2 = valCanBeContainBy(getTypeIndex(CType(TypeToKeyword(itp2), BuiltInDataTypes)))
+
+        If tp3 Is Nothing Then
+            itp3 = Nothing
+            cont3 = Nothing
+        Else
+            itp3 = GetIntegralType(Compiler, tp3)
+            cont3 = valCanBeContainBy(getTypeIndex(CType(TypeToKeyword(itp3), BuiltInDataTypes)))
+        End If
+
+        If cont1 Is Nothing Or cont2 Is Nothing Then Return Nothing
+
+        For i As Integer = 0 To cont1.Length - 1
+            For j As Integer = 0 To cont2.Length - 1
+                If Not cont2(j) Is cont1(i) Then Continue For
+
+                If itp3 Is Nothing Then
+                    'We've found a type that can contain both input types
+                    If cont2(j) Is itp1 Then Return tp1
+                    If cont2(j) Is itp2 Then Return tp2
+                    'Continue looking, the type we want is neither of the two input types
+                Else
+                    For k As Integer = 0 To cont3.Length - 1
+                        If Not cont3(k) Is cont2(j) Then Continue For
+                        'We've found a type that can contain all three input types
+                        If cont3(k) Is itp1 Then Return tp1
+                        If cont3(k) Is itp2 Then Return tp2
+                        If cont3(k) Is itp3 Then Return tp3
+                        'Continue looking, the type we want is neither of the three input types
+                    Next
+                End If
+            Next
+        Next
+
+        Return Nothing
+    End Function
+
 
     Private Shared Sub setImplicit(ByVal type As TypeCode, ByVal implicit() As TypeCode)
         For i As Integer = 0 To VB.UBound(implicit)

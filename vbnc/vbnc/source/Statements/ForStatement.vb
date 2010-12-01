@@ -427,9 +427,15 @@ Public Class ForStatement
 
         If result = False Then Return result
 
-        If m_LoopControlVariable.Expression IsNot Nothing Then
+        If m_LoopControlVariable.MustInfer = False AndAlso m_LoopControlVariable.Expression IsNot Nothing Then
             If m_LoopControlVariable.Expression.Classification.IsVariableClassification = False Then
                 Select Case m_LoopControlVariable.Expression.Classification.Classification
+                    Case ExpressionClassification.Classifications.Type
+                        If Me.IsOptionInferOn Then
+                            m_LoopControlVariable.MustInfer = True
+                        Else
+                            Return Compiler.Report.ShowMessage(Messages.VBNC30108, Me.Location, m_LoopControlVariable.Identifier.Identifier)
+                        End If
                     Case ExpressionClassification.Classifications.PropertyAccess, ExpressionClassification.Classifications.PropertyGroup, ExpressionClassification.Classifications.LateBoundAccess
                         Return Compiler.Report.ShowMessage(Messages.VBNC30039, Me.Location) AndAlso result
                     Case ExpressionClassification.Classifications.Value
@@ -440,8 +446,6 @@ Public Class ForStatement
             End If
         End If
 
-        m_LoopType = m_LoopControlVariable.VariableType
-
         If m_LoopStepExpression IsNot Nothing Then
             result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
             If Not m_LoopStepExpression.Classification.CanBeValueClassification Then
@@ -450,9 +454,6 @@ Public Class ForStatement
                 m_LoopStepExpression = m_LoopStepExpression.ReclassifyToValueExpression()
                 result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
             End If
-        Else
-            m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
-            result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
         End If
 
         If Not m_LoopStartExpression.Classification.CanBeValueClassification Then
@@ -470,6 +471,36 @@ Public Class ForStatement
         End If
 
         If result = False Then Return result
+
+        If m_LoopControlVariable.MustInfer Then
+            Dim start_type As TypeReference = m_LoopStartExpression.ExpressionType
+            Dim end_type As TypeReference = m_LoopEndExpression.ExpressionType
+            Dim step_type As TypeReference = If(m_LoopStepExpression IsNot Nothing, m_LoopStepExpression.ExpressionType, Nothing)
+
+            m_LoopType = Compiler.TypeResolution.GetWidestType(start_type, end_type, step_type)
+            If m_LoopType Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30983, Me.Location, m_LoopControlVariable.Identifier.Identifier)
+                Return False
+            End If
+
+            m_LoopControlVariable.CreateInferredVariable(m_LoopType)
+        Else
+            m_LoopType = m_LoopControlVariable.VariableType
+        End If
+
+        If m_LoopStepExpression Is Nothing Then
+            If m_LoopControlVariable.MustInfer Then
+                m_LoopStepExpression = New ConstantExpression(Me, 1, m_LoopType)
+                result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
+                If Helper.IsEnum(Compiler, m_LoopType) Then
+                    m_LoopStepExpression = New CTypeExpression(Me, m_LoopStepExpression, m_LoopType)
+                    result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
+                End If
+            Else
+                m_LoopStepExpression = New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
+                result = m_LoopStepExpression.ResolveExpression(Info) AndAlso result
+            End If
+        End If
 
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result
         m_LoopStepExpression = Helper.CreateTypeConversion(Me, m_LoopStepExpression, m_LoopType, result)

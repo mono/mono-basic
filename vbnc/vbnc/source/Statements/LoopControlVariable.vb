@@ -32,6 +32,7 @@ Public Class LoopControlVariable
     Private m_Expression As Expression
 
     Private m_Declaration As LocalVariableDeclaration
+    Public MustInfer As Boolean
 
     ReadOnly Property Identifier() As Identifier
         Get
@@ -86,7 +87,7 @@ Public Class LoopControlVariable
 
     ReadOnly Property IsVariableDeclaration() As Boolean
         Get
-            Return m_TypeName IsNot Nothing
+            Return m_TypeName IsNot Nothing OrElse m_Declaration IsNot Nothing
         End Get
     End Property
 
@@ -149,21 +150,33 @@ Public Class LoopControlVariable
         Get
             If m_Expression IsNot Nothing Then
                 Return m_Expression.ExpressionType
-            Else
+            ElseIf m_TypeName IsNot Nothing Then
                 Return m_TypeName.ResolvedType
+            Else
+                Return m_Declaration.VariableType
             End If
         End Get
     End Property
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+        Dim sne As SimpleNameExpression
 
         If m_Expression IsNot Nothing Then
-            result = m_Expression.ResolveExpression(Info) AndAlso result
+            sne = TryCast(m_Expression, SimpleNameExpression)
+            If sne IsNot Nothing Then
+                sne.InferEnabled = Me.IsOptionInferOn
+                If sne.ResolveExpression(Info) = False AndAlso sne.InferPossible Then
+                    MustInfer = True
+                    result = True 'So far so good
+                End If
+            Else
+                result = m_Expression.ResolveExpression(Info) AndAlso result
 
-            Dim iie As InvocationOrIndexExpression = TryCast(m_Expression, InvocationOrIndexExpression)
-            If iie IsNot Nothing AndAlso iie.IsLateBoundArray Then
-                Return Compiler.Report.ShowMessage(Messages.VBNC30039, Location) AndAlso result
+                Dim iie As InvocationOrIndexExpression = TryCast(m_Expression, InvocationOrIndexExpression)
+                If iie IsNot Nothing AndAlso iie.IsLateBoundArray Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30039, Location) AndAlso result
+                End If
             End If
         Else
             'result = m_Identifier.Resolve AndAlso result
@@ -172,9 +185,15 @@ Public Class LoopControlVariable
             m_Declaration = New LocalVariableDeclaration(Me, New Modifiers(), m_Identifier, False, m_TypeName, Nothing, Nothing)
             result = m_Declaration.ResolveTypeReferences() AndAlso result
             'result = m_Declaration.ResolveMember(ResolveInfo.Default(Info.Compiler)) AndAlso result
-            result = m_Declaration.ResolveCode(info) AndAlso result
+            result = m_Declaration.ResolveCode(Info) AndAlso result
         End If
 
         Return result
     End Function
+
+    Public Sub CreateInferredVariable(ByVal Type As TypeReference)
+        m_Declaration = New LocalVariableDeclaration(Me)
+        m_Declaration.Init(New Modifiers(), m_Identifier.Identifier, Type)
+        m_Expression = Nothing
+    End Sub
 End Class

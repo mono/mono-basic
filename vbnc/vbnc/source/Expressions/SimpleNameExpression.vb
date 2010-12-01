@@ -32,6 +32,9 @@ Public Class SimpleNameExpression
 
     Private m_Identifier As Identifier
     Private m_TypeArgumentList As TypeArgumentList
+    'When Infer is possible, Resolve returns false, no errors are reported, and InferPossible is true
+    Public InferEnabled As Boolean
+    Public InferPossible As Boolean
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
@@ -536,6 +539,12 @@ Public Class SimpleNameExpression
                 Me.Classification = New VariableClassification(Me, varD)
                 Return True
             End If
+        End If
+
+        'Check if Local Type Inference is enabled        
+        If InferEnabled Then
+            InferPossible = True
+            Return False
         End If
 
         '* Otherwise, the name given by the identifier is undefined and a compile-time error occurs.
