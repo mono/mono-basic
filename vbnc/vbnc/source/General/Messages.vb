@@ -1815,7 +1815,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30371 = 30371
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'New' cannot be used on an interface."
     ''' VB   = "'New' cannot be used on an interface."
     ''' </summary>
     ''' <remarks></remarks>

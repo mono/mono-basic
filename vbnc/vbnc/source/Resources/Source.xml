@@ -1289,7 +1289,7 @@
 	</Message>
 	<Message id="30375" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'New' cannot be used on an interface.</VBNCValue>
 		<VBValue>'New' cannot be used on an interface.</VBValue>
 	</Message>
 	<Message id="30376" level="Error">

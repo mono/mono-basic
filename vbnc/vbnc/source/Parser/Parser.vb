@@ -4928,6 +4928,7 @@ Public Class Parser
             Else
                 varD = New TypeVariableDeclaration(Parent, Modifiers, identifier, m_IsNew, m_TypeName, m_VariableInitializer, m_ArgumentList)
             End If
+            varD.Location = identifier.Location
             varD.CustomAttributes = Info.Attributes
             result.Add(varD)
         Next

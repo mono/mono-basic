@@ -7393,4 +7393,7 @@
 	<test id="1869" name="MethodInvocation24" category="" priority="0" target="exe">
 		<file>CompileTime2\MethodInvocation24.vb</file>
 	</test>
+	<test id="1870" name="30375" category="" priority="0" expectedexitcode="1" expectederrorcode="30375" target="exe">
+		<file>Errors\30375.vb</file>
+	</test>
 </rt>

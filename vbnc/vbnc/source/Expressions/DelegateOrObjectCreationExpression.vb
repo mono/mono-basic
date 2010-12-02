@@ -186,6 +186,8 @@ Public Class DelegateOrObjectCreationExpression
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
+            ElseIf CecilHelper.IsInterface(resolvedType) Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30375, Me.Location)
             Else
                 Helper.AddError(Me, "Delegate problems 4, " & Me.Location.ToString(Compiler))
             End If
