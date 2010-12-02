@@ -3178,7 +3178,7 @@
 		<arguments>-target:library</arguments>
 		<file>Errors\30074-1.vb</file>
 	</test>
-	<test id="805" name="30108" category="Errors" priority="20" knownfailure="We're giving the wrong error" expectedexitcode="1" expectederrorcode="30108" target="library">
+	<test id="805" name="30108" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30108" target="library">
 		<arguments>-optioninfer-</arguments>
 		<file>Errors\30108.vb</file>
 	</test>
