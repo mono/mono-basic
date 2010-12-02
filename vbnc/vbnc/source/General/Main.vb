@@ -72,6 +72,8 @@ Public Class Main
             '#End If
 #End If
             Return result
+        Catch ex As TooManyErrorsException
+            Return 1 'An appropiate message has already been shown to the user
         Catch ex As vbncException
             Console.WriteLine(ex.Message & VB.vbNewLine & ex.StackTrace)
             Console.WriteLine("Failed compilation took " & (Date.Now.Subtract(start)).ToString())
