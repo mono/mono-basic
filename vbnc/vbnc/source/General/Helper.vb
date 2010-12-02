@@ -2604,9 +2604,13 @@ Public Class Helper
         ElseIf TypeOf FromType Is Mono.Cecil.ArrayType AndAlso Helper.Compare(ToType, Compiler.TypeCache.System_Array) Then
             Return True
         ElseIf CecilHelper.IsArray(FromType) AndAlso CecilHelper.IsArray(ToType) Then
+            Dim fromArray As ArrayType = DirectCast(FromType, ArrayType)
+            Dim toArray As ArrayType = DirectCast(ToType, ArrayType)
             Dim fromElement As Mono.Cecil.TypeReference = CecilHelper.GetElementType(FromType)
             Dim toElement As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ToType)
             If CecilHelper.IsValueType(fromElement) Xor CecilHelper.IsValueType(toElement) Then
+                Return False
+            ElseIf fromArray.Rank <> toArray.Rank Then
                 Return False
             Else
                 Return Helper.IsAssignable(Context, fromElement, toElement)
