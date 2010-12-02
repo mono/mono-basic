@@ -736,7 +736,7 @@ EndOfCompilation:
     ''' </summary>
     ''' <remarks></remarks>
     Sub ShowLogo()
-        Compiler.Report.WriteLine(Logo)
+        Compiler.Report.Write(Logo)
     End Sub
 
     ''' <summary>
@@ -744,7 +744,7 @@ EndOfCompilation:
     ''' </summary>
     ''' <remarks></remarks>
     Sub ShowHelp()
-        Compiler.Report.WriteLine(Help)
+        Compiler.Report.Write(Help)
     End Sub
 
     Private Function AddResources() As Boolean
