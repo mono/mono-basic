@@ -87,12 +87,6 @@ Public Class TypeManager
         End Get
     End Property
 
-    ReadOnly Property CecilTypes() As TypeList
-        Get
-            Return m_CecilTypes
-        End Get
-    End Property
-
     ''' <summary>
     ''' All the non-nested types available.
     ''' </summary>
@@ -320,7 +314,7 @@ Public Class TypeManager
     ''' <remarks></remarks>
     Private Sub LoadType(ByVal Type As Mono.Cecil.TypeDefinition)
         'Add the type to the list of all types.
-        Me.CecilTypes.Add(Type)
+        Me.Types.Add(Type)
 
         'Add the namespace to the list of all namespaces.
         Me.Namespaces.AddAllNamespaces(Compiler, Type.Namespace, True)
