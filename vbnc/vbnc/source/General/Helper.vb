@@ -3675,6 +3675,22 @@ Public Class Helper
         Return False
     End Function
 
+    Shared Function GetCoClassType(ByVal Compiler As Compiler, ByVal Type As TypeReference) As TypeReference
+        Dim td As TypeDefinition = CecilHelper.FindDefinition(Type)
+        Dim result As TypeReference = Nothing
+
+        For i As Integer = 0 To td.CustomAttributes.Count - 1
+            Dim attrib As CustomAttribute = td.CustomAttributes(i)
+            If Helper.CompareType(attrib.AttributeType, Compiler.TypeCache.System_Runtime_InteropServices_CoClassAttribute) = False Then Continue For
+            If attrib.Constructor Is Nothing Then Continue For
+            If attrib.ConstructorArguments.Count <> 1 Then Continue For
+            result = TryCast(attrib.ConstructorArguments(0).Value, TypeReference)
+            If result IsNot Nothing Then Exit For
+        Next
+
+        Return result
+    End Function
+
 End Class
 
 

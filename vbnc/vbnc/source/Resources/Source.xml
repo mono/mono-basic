@@ -974,7 +974,7 @@
 	</Message>
 	<Message id="30251" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Type '{0}' has no constructors.</VBNCValue>
 		<VBValue>Type '|1' has no constructors.</VBValue>
 	</Message>
 	<Message id="30252" level="Error">
@@ -3344,7 +3344,7 @@
 	</Message>
 	<Message id="31094" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Implemnting class '{0}' cannot be found.</VBNCValue>
 		<VBValue>Implementing class '|1' cannot be found.</VBValue>
 	</Message>
 	<Message id="31095" level="Error">

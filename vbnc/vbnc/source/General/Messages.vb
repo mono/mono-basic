@@ -1374,7 +1374,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30249 = 30249
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Type '{0}' has no constructors."
     ''' VB   = "Type '|1' has no constructors."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4692,7 +4692,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31093 = 31093
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Implemnting class '{0}' cannot be found."
     ''' VB   = "Implementing class '|1' cannot be found."
     ''' </summary>
     ''' <remarks></remarks>

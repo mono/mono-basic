@@ -225,7 +225,7 @@
   <data name="30247"><value>CHANGEME</value></data>
   <data name="30248"><value>CHANGEME</value></data>
   <data name="30249"><value>CHANGEME</value></data>
-  <data name="30251"><value>CHANGEME</value></data>
+  <data name="30251"><value>Type '{0}' has no constructors.</value></data>
   <data name="30252"><value>CHANGEME</value></data>
   <data name="30253"><value>CHANGEME</value></data>
   <data name="30256"><value>CHANGEME</value></data>
@@ -699,7 +699,7 @@
   <data name="31091"><value>CHANGEME</value></data>
   <data name="31092"><value>CHANGEME</value></data>
   <data name="31093"><value>CHANGEME</value></data>
-  <data name="31094"><value>CHANGEME</value></data>
+  <data name="31094"><value>Implemnting class '{0}' cannot be found.</value></data>
   <data name="31095"><value>CHANGEME</value></data>
   <data name="31096"><value>CHANGEME</value></data>
   <data name="31097"><value>CHANGEME</value></data>

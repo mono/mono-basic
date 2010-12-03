@@ -163,7 +163,30 @@ Public Class DelegateOrObjectCreationExpression
             End If
         Else
             Dim resolvedType As Mono.Cecil.TypeReference = m_ResolvedType
-            If CecilHelper.IsValueType(resolvedType) AndAlso m_ArgumentList.Count = 0 Then
+            Dim isCoClass As Boolean = False
+
+            If CecilHelper.IsInterface(resolvedType) Then
+                Dim coClass As TypeReference = Helper.GetCoClassType(Compiler, resolvedType)
+                If coClass Is Nothing Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30375, Me.Location)
+                Else
+                    m_ResolvedType = coClass
+                    resolvedType = m_ResolvedType
+
+                    If CecilHelper.IsValueType(resolvedType) = False AndAlso CecilHelper.IsClass(resolvedType) = False Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC31094, Me.Location, resolvedType.Name)
+                    End If
+
+                    Dim ctors As Mono.Collections.Generic.Collection(Of MethodReference)
+                    ctors = CecilHelper.GetConstructors(resolvedType)
+                    If ctors Is Nothing OrElse ctors.Count = 0 Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30251, Me.Location, resolvedType.Name)
+                    End If
+                    isCoClass = True
+                End If
+            End If
+
+            If isCoClass = False AndAlso CecilHelper.IsValueType(resolvedType) AndAlso m_ArgumentList.Count = 0 Then
                 'Nothing to resolve. A structure with no parameters can always be created.
                 m_IsValueTypeInitializer = True
             ElseIf CecilHelper.IsGenericParameter(resolvedType) Then
@@ -181,15 +204,13 @@ Public Class DelegateOrObjectCreationExpression
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
                 result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList) AndAlso result
                 If result = False Then
+                    'Show the error
                     result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, , True) AndAlso result
-                    Helper.AddError(Me, "Delegate problems 3, " & Me.Location.ToString(Compiler) & ">" & Me.Parent.Location.ToString(Compiler))
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
-            ElseIf CecilHelper.IsInterface(resolvedType) Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC30375, Me.Location)
             Else
-                Helper.AddError(Me, "Delegate problems 4, " & Me.Location.ToString(Compiler))
+                Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, String.Format("Delegate type {0} is neither ValueType, GenericParameter nor Class. This is a problem in the compiler, please file a bug report here: http://bugzilla.novell.com", resolvedType.FullName))
             End If
 
             Classification = New ValueClassification(Me, resolvedType)

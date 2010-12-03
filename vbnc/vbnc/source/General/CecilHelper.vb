@@ -1114,6 +1114,7 @@ Public Class CecilHelper
 
     Public Shared Function IsInterface(ByVal Type As TypeReference) As Boolean
         If TypeOf Type Is ArrayType Then Return False
+        If TypeOf Type Is GenericParameter Then Return False
         Return FindDefinition(Type).IsInterface
     End Function
 
