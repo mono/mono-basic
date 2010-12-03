@@ -3440,7 +3440,7 @@
 		<arguments>-target:library</arguments>
 		<file>Errors\30471.vb</file>
 	</test>
-	<test id="872" name="30506-1" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
+	<test id="872" name="30506-1" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30506" target="library">
 		<file>Errors\30506-1.vb</file>
 	</test>
 	<test id="873" name="30506-2" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30506" target="library">
