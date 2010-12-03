@@ -194,6 +194,7 @@ Public Class TypeManager
         Dim result As Boolean = True
         Dim refAssembly As Mono.Cecil.AssemblyDefinition
         Dim loadedFiles As New Generic.List(Of String)
+        Dim loaded As Boolean
 
         For Each strFile As String In Compiler.CommandLine.References
             If loadedFiles.Contains(strFile) Then Continue For
@@ -205,9 +206,14 @@ Public Class TypeManager
                 Return False
             End If
 
-            For Each Assembly As Mono.Cecil.AssemblyDefinition In CecilAssemblies
-                If Helper.CompareNameOrdinal(Assembly.Name.FullName, refAssembly.Name.FullName) Then Continue For
+            loaded = False
+            For a As Integer = 0 To CecilAssemblies.Count - 1
+                If Helper.CompareNameOrdinal(CecilAssemblies(a).Name.FullName, refAssembly.Name.FullName) Then
+                    loaded = True
+                    Exit For
+                End If
             Next
+            If loaded Then Continue For
 
             If Compiler.CommandLine.Verbose Then
                 Compiler.Report.WriteLine("Loaded '" & refAssembly.Name.FullName & "'")

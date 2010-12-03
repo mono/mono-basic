@@ -7414,4 +7414,8 @@
 	<test id="1876" name="30251-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30251" target="exe">
 		<file>Errors\30251-1.vb</file>
 	</test>
+	<test id="1877" name="DuplicateReference1" category="" priority="0" target="winexe">
+		<arguments>-r:System.Web.dll -rootnamespace:WindowsApplication1 -define:_MYTYPE=\"WindowsForms\" -r:System.Windows.Forms.dll,System.Windows.forms.dll</arguments>
+		<file>CompileTime\DuplicateReference1.vb</file>
+	</test>
 </rt>
