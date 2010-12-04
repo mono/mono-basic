@@ -259,14 +259,7 @@ Public Class Attribute
                     members = cache.LookupFlattenedMembers(name)
                     members = Helper.FilterExternalInaccessible(Info.Compiler, members)
                     If members.Count <> 1 Then
-                        If members(0) Is members(1) Then
-                            Console.WriteLine("They are the same!")
-                        End If
-                        For Each m As Mono.Cecil.MemberReference In members
-                            Console.WriteLine(m.DeclaringType.FullName & ":" & m.Name)
-                        Next
                         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-                        '                        Helper.NotImplemented(String.Format("Property resolution for attribute arguments ({0} members named '{1}' in {2})" & Me.Location.AsString, members.Count, name, m_ResolvedType.FullName))
                     End If
                     member = members(0)
                     If TypeOf member Is Mono.Cecil.FieldReference Then
