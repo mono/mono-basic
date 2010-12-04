@@ -402,6 +402,14 @@ Public Class InvocationOrIndexExpression
                 exp = Helper.CreateTypeConversion(Me, m_ArgumentList(i).Expression, Compiler.TypeCache.System_Int32, result)
                 If result = False Then Return result
                 m_ArgumentList(i).Expression = exp
+            ElseIf Helper.CompareType(argtype, Compiler.TypeCache.System_Int32) = False Then
+                Dim exp As Expression
+                exp = Helper.CreateTypeConversion(Me, m_ArgumentList(i).Expression, Compiler.TypeCache.System_Int32, result)
+                If result = False Then Return result
+                If CecilHelper.IsByRef(exp.ExpressionType) Then
+                    exp = New DeRefExpression(Me, exp)
+                End If
+                m_ArgumentList(i).Expression = exp
             End If
         Next
 

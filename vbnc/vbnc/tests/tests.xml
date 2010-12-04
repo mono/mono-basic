@@ -7418,4 +7418,26 @@
 		<arguments>-r:System.Web.dll -rootnamespace:WindowsApplication1 -define:_MYTYPE=\"WindowsForms\" -r:System.Windows.Forms.dll,System.Windows.forms.dll</arguments>
 		<file>CompileTime\DuplicateReference1.vb</file>
 	</test>
+	<test id="1878" name="ArrayRef1" category="" priority="0" target="library">
+		<file>CompileTime\ArrayRef1.vb</file>
+	</test>
+	<test id="1879" name="RedimPreserve3" category="" priority="0" target="library">
+		<file>CompileTime\RedimPreserve3.vb</file>
+	</test>
+	<test id="1880" name="ByRefStore1" category="" priority="0" target="library">
+		<file>CompileTime\ByRefStore1.vb</file>
+	</test>
+	<test id="1881" name="ByRefProperty1" category="" priority="0" target="exe">
+		<file>CompileTime\ByRefProperty1.vb</file>
+	</test>
+	<test id="1882" name="30524" category="" priority="0" expectedexitcode="1" expectederrorcode="30524" target="exe">
+		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30524.vb</file>
+	</test>
+	<test id="1883" name="ArrayRef2" category="" priority="0" target="library">
+		<file>CompileTime\ArrayRef2.vb</file>
+	</test>
+	<test id="1884" name="Attributes7" category="" priority="0" target="library">
+		<arguments>/define:_MYTYPE=\"Empty\"</arguments>
+		<file>CompileTime\Attributes7.vb</file>
+	</test>
 </rt>

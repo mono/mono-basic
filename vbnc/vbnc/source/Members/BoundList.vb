@@ -50,8 +50,12 @@ Public Class BoundList
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+
         For i As Integer = 0 To m_Expressions.Length - 1
             result = m_Expressions(i).ResolveExpression(Info) AndAlso result
+            If result Then
+                m_Expressions(i) = Helper.CreateTypeConversion(Me, m_Expressions(i), Compiler.TypeCache.System_Int32, result)
+            End If
         Next
         Return result
     End Function

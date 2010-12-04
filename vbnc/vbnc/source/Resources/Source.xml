@@ -1744,7 +1744,7 @@
 	</Message>
 	<Message id="30524" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Property '{0}' is 'WriteOnly'.</VBNCValue>
 		<VBValue>Property '|1' is 'WriteOnly'.</VBValue>
 	</Message>
 	<Message id="30526" level="Error">

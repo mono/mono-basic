@@ -379,7 +379,7 @@
   <data name="30521"><value>Overload resolution failed because no most specific '{0}' was found:</value></data>
   <data name="30522"><value>CHANGEME</value></data>
   <data name="30523"><value>CHANGEME</value></data>
-  <data name="30524"><value>CHANGEME</value></data>
+  <data name="30524"><value>Property '{0}' is 'WriteOnly'.</value></data>
   <data name="30526"><value>CHANGEME</value></data>
   <data name="30528"><value>CHANGEME</value></data>
   <data name="30529"><value>CHANGEME</value></data>

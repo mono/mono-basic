@@ -300,6 +300,7 @@ Public Class Attribute
         If m_PropertyValues Is Nothing Then m_PropertyValues = New Generic.List(Of Object)
 
         Dim ctors As Mono.Collections.Generic.Collection(Of MethodReference)
+        Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         ctors = CecilHelper.GetConstructors(m_ResolvedType)
 
         Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, ctors)
@@ -307,6 +308,8 @@ Public Class Attribute
         m_ResolvedTypeConstructor = groupClassification.ResolvedConstructor
         result = m_ResolvedTypeConstructor IsNot Nothing AndAlso result
         result = argList.FillWithOptionalParameters(m_ResolvedTypeConstructor) AndAlso result
+
+        parameters = Helper.GetParameters(Me, m_ResolvedTypeConstructor)
 
         ReDim m_Arguments(argList.Count - 1)
         For i As Integer = 0 To m_Arguments.Length - 1
@@ -319,6 +322,12 @@ Public Class Attribute
         m_IsResolved = result
 
         If result Then
+            For i As Integer = 0 To m_Arguments.Length - 1
+                Dim value As Object = Nothing
+                If TypeOf m_Arguments(i) Is TypeReference Then Continue For
+                result = TypeConverter.ConvertTo(Me, m_Arguments(i), parameters(i).ParameterType, value)
+                If result Then m_Arguments(i) = value
+            Next
             For i As Integer = 0 To m_FieldValues.Count - 1
                 Dim value As Object = Nothing
                 'TypeConverter.ConvertTo will report any errors

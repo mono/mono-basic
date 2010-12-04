@@ -120,15 +120,8 @@ Public Class RedimClause
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
-        Dim preserve As Boolean = Me.IsPreserve
 
-        Dim exp As CompilerGeneratedExpression
-        If preserve Then
-            exp = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeForPreserve), m_ArrayType)
-            result = m_Expression.GenerateCode(Info.Clone(Me, exp)) AndAlso result
-        Else
-            result = m_AssignStatement.GenerateCode(Info) AndAlso result
-        End If
+        result = m_AssignStatement.GenerateCode(Info) AndAlso result
 
         Return result
     End Function
@@ -165,13 +158,25 @@ Public Class RedimClause
         End If
 
         If Me.IsPreserve Then
+            Dim assign As New AssignmentStatement(Me)
+            Dim arr As CompilerGeneratedExpression
+
+            arr = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeForPreserve), m_ArrayType)
 
             For i As Integer = 0 To m_ArgumentList.Count - 1
                 Dim arg As Argument = m_ArgumentList(i)
                 Dim add As New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
-                arg.Expression = New BinaryAddExpression(Me, arg.Expression, add)
+                Dim exp As Expression
+                exp = Helper.CreateTypeConversion(Me, arg.Expression, Compiler.TypeCache.System_Int32, result)
+                If result = False Then Return result
+
+                arg.Expression = New BinaryAddExpression(Me, exp, add)
                 result = arg.Expression.ResolveExpression(Info) AndAlso result
             Next
+
+            assign.Init(m_Expression, arr)
+            result = assign.ResolveStatement(Info) AndAlso result
+            m_AssignStatement = assign
         Else
             Dim assign As New AssignmentStatement(Me)
             Dim arr As New ArrayCreationExpression(Me)

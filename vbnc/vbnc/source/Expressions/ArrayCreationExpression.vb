@@ -244,6 +244,11 @@ Public Class ArrayCreationExpression
             result = m_ArrayElementInitializer.ResolveCode(elementInfo) AndAlso result
         End If
 
+        If m_ArrayNameModifier IsNot Nothing Then
+            Dim elementInfo As New ExpressionResolveInfo(Compiler, m_ExpressionType)
+            result = m_ArrayNameModifier.ResolveCode(elementInfo) AndAlso result
+        End If
+
         Classification = New ValueClassification(Me, m_ExpressionType)
 
         Return result

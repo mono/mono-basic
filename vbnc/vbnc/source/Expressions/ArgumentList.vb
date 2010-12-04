@@ -125,7 +125,14 @@ Public Class ArgumentList
             End If
 
             If CecilHelper.IsByRef(par.ParameterType) AndAlso CecilHelper.IsByRef(arg.Expression.ExpressionType) = False AndAlso CecilHelper.IsValueType(CecilHelper.GetElementType(par.ParameterType)) = False Then
-                If Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
+                If arg.Expression.Classification.IsPropertyAccessClassification Then
+                    Dim propRef As PropertyReference = arg.Expression.Classification.AsPropertyAccess.Property
+                    Dim propDef As PropertyDefinition = CecilHelper.FindDefinition(propRef)
+                    If propDef.GetMethod Is Nothing Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30524, m_Arguments(i).Location, propDef.Name)
+                    End If
+                    exp = arg.Expression
+                ElseIf Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
                     exp = New GetRefExpression(Me, arg.Expression)
                 Else
                     exp = arg.Expression
@@ -161,9 +168,9 @@ Public Class ArgumentList
 #End If
                 exp = Helper.CreateTypeConversion(arg, arg.Expression, par.ParameterType, result)
             End If
-            If exp IsNot arg.Expression Then
-                m_Arguments(i) = New PositionalArgument(Me, i, exp)
-            End If
+                If exp IsNot arg.Expression Then
+                    m_Arguments(i) = New PositionalArgument(Me, i, exp)
+                End If
         Next
 
         Return result

@@ -2452,7 +2452,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30523 = 30523
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Property '{0}' is 'WriteOnly'."
     ''' VB   = "Property '|1' is 'WriteOnly'."
     ''' </summary>
     ''' <remarks></remarks>

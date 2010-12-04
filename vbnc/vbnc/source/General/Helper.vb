@@ -1117,6 +1117,7 @@ Public Class Helper
                 Dim arg As Argument
                 Dim exp As Expression
                 Dim local As Mono.Cecil.Cil.VariableDefinition
+                Dim propAccess As PropertyAccessClassification
 
                 If CecilHelper.IsByRef(methodParameters(i).ParameterType) = False Then Continue For
 
@@ -1124,8 +1125,11 @@ Public Class Helper
                 exp = arg.Expression
 
                 If exp Is Nothing Then Continue For
+
                 If exp.Classification Is Nothing Then Continue For
                 If exp.Classification.IsPropertyAccessClassification = False Then Continue For
+
+                propAccess = exp.Classification.AsPropertyAccess
 
                 If copyBacksA Is Nothing Then
                     copyBacksA = New Generic.List(Of Mono.Cecil.Cil.VariableDefinition)
@@ -1133,7 +1137,7 @@ Public Class Helper
                 End If
                 local = Emitter.DeclareLocal(Info, CecilHelper.GetElementType(methodParameters(i).ParameterType))
                 copyBacksA.Add(local)
-                If CecilHelper.FindDefinition(exp.Classification.AsPropertyAccess.Property).SetMethod Is Nothing Then
+                If CecilHelper.FindDefinition(propAccess.Property).SetMethod Is Nothing Then
                     copyBacksB.Add(Nothing)
                 Else
                     copyBacksB.Add(exp)

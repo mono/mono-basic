@@ -136,6 +136,12 @@ Public Class GetRefExpression
                     Else
                         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                     End If
+                ElseIf varC.Method IsNot Nothing Then
+                    If varC.Method.DefaultReturnVariable Is Nothing Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
+                    Else
+                        Emitter.EmitLoadVariableLocation(refInfo, varC.Method.DefaultReturnVariable)
+                    End If
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC99997, Parent.Location)
                 End If

@@ -1,0 +1,85 @@
+Class C1
+
+    Private Sub A(ByRef B As Byte, ByRef SB As SByte, ByRef S As Short, ByRef US As UShort, ByRef I As Integer, ByRef UI As UInteger, ByRef L As Long, ByRef UL As ULong, ByRef D As Decimal, ByRef F As Single, ByRef R As Double)
+        Dim arr() As Integer
+
+        ReDim Preserve arr(B)
+        ReDim Preserve arr(sb)
+        ReDim Preserve arr(s)
+        ReDim Preserve arr(us)
+        ReDim Preserve arr(i)
+        ReDim Preserve arr(ui)
+        ReDim Preserve arr(l)
+        ReDim Preserve arr(ul)
+        ReDim Preserve arr(d)
+        ReDim Preserve arr(f)
+        ReDim Preserve arr(r)
+
+        ReDim arr(B)
+        ReDim arr(sb)
+        ReDim arr(s)
+        ReDim arr(us)
+        ReDim arr(i)
+        ReDim arr(ui)
+        ReDim arr(l)
+        ReDim arr(ul)
+        ReDim arr(d)
+        ReDim arr(f)
+        ReDim arr(r)
+    End Sub
+
+    Private Sub B(ByVal arr() As Integer, ByRef B As Byte, ByRef SB As SByte, ByRef S As Short, ByRef US As UShort, ByRef I As Integer, ByRef UI As UInteger, ByRef L As Long, ByRef UL As ULong, ByRef D As Decimal, ByRef F As Single, ByRef R As Double)
+
+        ReDim Preserve arr(B)
+        ReDim Preserve arr(sb)
+        ReDim Preserve arr(s)
+        ReDim Preserve arr(us)
+        ReDim Preserve arr(i)
+        ReDim Preserve arr(ui)
+        ReDim Preserve arr(l)
+        ReDim Preserve arr(ul)
+        ReDim Preserve arr(d)
+        ReDim Preserve arr(f)
+        ReDim Preserve arr(r)
+
+        ReDim arr(B)
+        ReDim arr(sb)
+        ReDim arr(s)
+        ReDim arr(us)
+        ReDim arr(i)
+        ReDim arr(ui)
+        ReDim arr(l)
+        ReDim arr(ul)
+        ReDim arr(d)
+        ReDim arr(f)
+        ReDim arr(r)
+    End Sub
+
+    Private Sub C(ByRef arr() As Integer, ByRef B As Byte, ByRef SB As SByte, ByRef S As Short, ByRef US As UShort, ByRef I As Integer, ByRef UI As UInteger, ByRef L As Long, ByRef UL As ULong, ByRef D As Decimal, ByRef F As Single, ByRef R As Double)
+
+        ReDim Preserve arr(B)
+        ReDim Preserve arr(sb)
+        ReDim Preserve arr(s)
+        ReDim Preserve arr(us)
+        ReDim Preserve arr(i)
+        ReDim Preserve arr(ui)
+        ReDim Preserve arr(l)
+        ReDim Preserve arr(ul)
+        ReDim Preserve arr(d)
+        ReDim Preserve arr(f)
+        ReDim Preserve arr(r)
+
+        ReDim arr(B)
+        ReDim arr(sb)
+        ReDim arr(s)
+        ReDim arr(us)
+        ReDim arr(i)
+        ReDim arr(ui)
+        ReDim arr(l)
+        ReDim arr(ul)
+        ReDim arr(d)
+        ReDim arr(f)
+        ReDim arr(r)
+    End Sub
+
+End Class
