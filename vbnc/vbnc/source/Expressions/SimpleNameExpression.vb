@@ -475,10 +475,14 @@ Public Class SimpleNameExpression
             modulemembers = Helper.GetMembersOfTypes(Compiler, Compiler.TypeManager.GetModulesByNamespace(currentNS), Name)
             If modulemembers Is Nothing Then
                 'do nothing
-            ElseIf modulemembers.Count = 1 Then
+            ElseIf modulemembers.Count >= 1 Then
+                'Check that they're all from the same module
+                For i As Integer = 1 To modulemembers.Count - 1
+                    If Helper.CompareType(modulemembers(0).DeclaringType, modulemembers(i).DeclaringType) = False Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30562, Me.Location, Name, modulemembers(0).DeclaringType.Name, modulemembers(i).DeclaringType.Name)
+                    End If
+                Next
                 Return SetClassificationOfModuleMembers(modulemembers)
-            ElseIf modulemembers.Count > 1 Then
-                Return Helper.AddError(Me)
             End If
 
             currentNS = Helper.GetNamespaceParent(currentNS)

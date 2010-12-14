@@ -2578,7 +2578,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30561 = 30561
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' is ambiguous between declarations in Modules '{1}' and '{2}'."
     ''' VB   = "'|1' is ambiguous between declarations in Modules '|2' and '|3'."
     ''' </summary>
     ''' <remarks></remarks>

@@ -397,7 +397,7 @@
   <data name="30555"><value>CHANGEME</value></data>
   <data name="30560"><value>CHANGEME</value></data>
   <data name="30561"><value>CHANGEME</value></data>
-  <data name="30562"><value>CHANGEME</value></data>
+  <data name="30562"><value>'{0}' is ambiguous between declarations in Modules '{1}' and '{2}'.</value></data>
   <data name="30563"><value>CHANGEME</value></data>
   <data name="30565"><value>CHANGEME</value></data>
   <data name="30566"><value>CHANGEME</value></data>

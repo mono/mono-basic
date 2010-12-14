@@ -1834,7 +1834,7 @@
 	</Message>
 	<Message id="30562" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' is ambiguous between declarations in Modules '{1}' and '{2}'.</VBNCValue>
 		<VBValue>'|1' is ambiguous between declarations in Modules '|2' and '|3'.</VBValue>
 	</Message>
 	<Message id="30563" level="Error">

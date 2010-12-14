@@ -7443,4 +7443,13 @@
 	<test id="1885" name="OptionCompareText2" category="" priority="0" target="library">
 		<file>CompileTime2\OptionCompareText2.vb</file>
 	</test>
+	<test id="1886" name="30562" category="" priority="0" expectedexitcode="1" expectederrorcode="30562" target="exe">
+		<file>Errors\30562.vb</file>
+	</test>
+	<test id="1887" name="30562-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30562" target="exe">
+		<file>Errors\30562-1.vb</file>
+	</test>
+	<test id="1888" name="Module3" category="" priority="0" target="exe">
+		<file>CompileTime2\Module3.vb</file>
+	</test>
 </rt>
