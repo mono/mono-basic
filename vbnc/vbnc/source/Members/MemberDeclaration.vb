@@ -95,6 +95,13 @@ Public MustInherit Class MemberDeclaration
         End Set
     End Property
 
+    Public Sub AddCustomAttribute(ByVal Attribute As Attribute)
+        If m_CustomAttributes Is Nothing Then
+            m_CustomAttributes = New Attributes(Me)
+        End If
+        m_CustomAttributes.Add(Attribute)
+    End Sub
+
     Public Property DeclaringType() As TypeDeclaration Implements IMember.DeclaringType
         Get
             Return m_DeclaringType

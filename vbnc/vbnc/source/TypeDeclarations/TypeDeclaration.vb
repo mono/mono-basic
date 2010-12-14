@@ -50,6 +50,7 @@ Public MustInherit Class TypeDeclaration
     Private m_StaticVariables As Generic.List(Of LocalVariableDeclaration)
     Private m_BeforeFieldInit As Boolean
     Private m_Serializable As Boolean
+    Private m_AddedCompareTextAttribute As Boolean
 
     'Information collected during define phase.
     Private m_CecilType As Mono.Cecil.TypeDefinition
@@ -290,10 +291,9 @@ Public MustInherit Class TypeDeclaration
 
         result = MyBase.ResolveTypeReferences AndAlso result
 
-        If File IsNot Nothing AndAlso File.IsOptionCompareText Then
-            Dim textAttribute As Attribute
-            textAttribute = New Attribute(Me, Compiler.TypeCache.MS_VB_CS_OptionTextAttribute)
-            CustomAttributes.Add(textAttribute)
+        If File IsNot Nothing AndAlso File.IsOptionCompareText AndAlso m_AddedCompareTextAttribute = False Then
+            m_AddedCompareTextAttribute = True
+            AddCustomAttribute(New Attribute(Me, Compiler.TypeCache.MS_VB_CS_OptionTextAttribute))
         End If
 
         m_StaticVariables = New Generic.List(Of LocalVariableDeclaration)

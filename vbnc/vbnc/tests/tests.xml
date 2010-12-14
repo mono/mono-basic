@@ -7440,4 +7440,7 @@
 		<arguments>/define:_MYTYPE=\"Empty\"</arguments>
 		<file>CompileTime\Attributes7.vb</file>
 	</test>
+	<test id="1885" name="OptionCompareText2" category="" priority="0" target="library">
+		<file>CompileTime2\OptionCompareText2.vb</file>
+	</test>
 </rt>
