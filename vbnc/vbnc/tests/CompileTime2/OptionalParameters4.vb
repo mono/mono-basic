@@ -8,6 +8,14 @@ Class OptionalParameters4
         Return 1
     End Function
 
+    Const DateConstant As Date = #1/1/2001#
+
+    Shared Sub Foo(Optional ByVal Param1 As Date = DateConstant)
+
+    End Sub
+
+
+
     Shared Function Main() As Integer
         Return Test(0, Nothing, 0)
     End Function

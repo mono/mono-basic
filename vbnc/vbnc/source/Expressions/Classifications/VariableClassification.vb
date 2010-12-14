@@ -90,6 +90,15 @@ Public Class VariableClassification
                     End If
                 ElseIf Me.FieldDefinition.IsInitOnly Then
                     Dim dec As Decimal, dt As Date
+                    Dim constant As ConstantDeclaration
+                    Dim attrib As Object
+
+                    attrib = FieldDefinition.Annotations(Compiler)
+                    If attrib IsNot Nothing Then
+                        constant = TryCast(attrib, ConstantDeclaration)
+                        Return constant.ConstantValue
+                    End If
+
                     If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
                         Return dec
                     ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
@@ -116,6 +125,11 @@ Public Class VariableClassification
                     Return True
                 ElseIf FieldDefinition.IsInitOnly Then
                     Dim dec As Decimal, dt As Date
+                    Dim attrib As Object
+
+                    attrib = FieldDefinition.Annotations(Compiler)
+                    If attrib IsNot Nothing Then Return TypeOf attrib Is ConstantDeclaration
+
                     If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
                         Return True
                     ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
