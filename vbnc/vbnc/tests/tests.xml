@@ -7452,4 +7452,7 @@
 	<test id="1888" name="Module3" category="" priority="0" target="exe">
 		<file>CompileTime2\Module3.vb</file>
 	</test>
+	<test id="1889" name="PropertyAccess6" category="" priority="0" target="exe">
+		<file>CompileTime2\PropertyAccess6.vb</file>
+	</test>
 </rt>

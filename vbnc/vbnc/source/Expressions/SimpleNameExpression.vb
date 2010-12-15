@@ -915,8 +915,7 @@ Public Class SimpleNameExpression
             Return True
         End If
         If Helper.IsPropertyDeclaration(first) Then
-            Dim var As Mono.Cecil.PropertyReference = DirectCast(first, Mono.Cecil.PropertyReference)
-            Classification = New PropertyAccessClassification(Me, var, Nothing, Nothing)
+            Classification = New PropertyGroupClassification(Me, Nothing, found)
             Return True
         End If
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
