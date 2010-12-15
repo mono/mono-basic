@@ -43,8 +43,11 @@ Public Class DirectCastExpression
             If CecilHelper.IsValueType(Expression.ExpressionType) Then
                 If Helper.CompareType(ExpressionType, Expression.ExpressionType) Then
                     result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
+                ElseIf Helper.IsEnum(Compiler, ExpressionType) Then
+                    result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
+                    Emitter.EmitConversion(Expression.ExpressionType, Helper.GetEnumType(Compiler, ExpressionType), Info)
                 Else
-                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, ExpressionType.FullName & " - " & Expression.ExpressionType.FullName)
                 End If
             ElseIf CecilHelper.IsGenericParameter(ExpressionType) = False AndAlso CecilHelper.IsClass(Expression.ExpressionType) AndAlso CecilHelper.IsValueType(ExpressionType) Then
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result

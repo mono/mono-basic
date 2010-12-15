@@ -1,5 +1,9 @@
 Class DirectCastExpression2
-	Sub Test()
-		DirectCast(1, Integer).tostring()
-	End Sub
+    Enum E
+        A
+    End Enum
+    Sub Test()
+        DirectCast(1, Integer).tostring()
+        Dim e As E = DirectCast(1, E)
+    End Sub
 End Class
