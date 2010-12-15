@@ -357,9 +357,10 @@ Public Class Attribute
                 Dim fld As IFieldMember = TryCast(memberparent, IFieldMember)
                 Dim prop As PropertyDeclaration = TryCast(memberparent, PropertyDeclaration)
                 Dim param As Parameter = TryCast(memberparent, Parameter)
+                Dim evt As EventDeclaration = TryCast(memberparent, EventDeclaration)
 
                 If ctro IsNot Nothing Then mthd = Nothing
-                Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing)
+                Helper.Assert(tp IsNot Nothing Xor mthd IsNot Nothing Xor ctro IsNot Nothing Xor fld IsNot Nothing Xor prop IsNot Nothing Xor param IsNot Nothing OrElse evt IsNot Nothing)
 
                 If tp IsNot Nothing Then
                     If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_SerializableAttribute) Then
@@ -482,11 +483,13 @@ Public Class Attribute
                     prop.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 ElseIf param IsNot Nothing Then
                     param.CecilBuilder.CustomAttributes.Add(CecilBuilder)
+                ElseIf evt IsNot Nothing Then
+                    evt.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 Else
-                    Throw New InternalException(Me)
+                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                 End If
             Else
-                Throw New InternalException(Me)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             End If
         End If
 

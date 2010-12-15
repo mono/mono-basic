@@ -7455,4 +7455,7 @@
 	<test id="1889" name="PropertyAccess6" category="" priority="0" target="exe">
 		<file>CompileTime2\PropertyAccess6.vb</file>
 	</test>
+	<test id="1890" name="Attributes8" category="" priority="0" target="library">
+		<file>CompileTime2\Attributes8.vb</file>
+	</test>
 </rt>
