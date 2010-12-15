@@ -103,7 +103,7 @@ Public Class CStrExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
-            Return Expression.IsConstant AndAlso (Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char))
+            Return Expression.IsConstant AndAlso (Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char) OrElse Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.Nothing))
         End Get
     End Property
 
@@ -111,11 +111,14 @@ Public Class CStrExpression
         Get
             Dim tpCode As TypeCode
             Dim originalValue As Object
+
             originalValue = Expression.ConstantValue
             tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
             Select Case tpCode
                 Case TypeCode.Char, TypeCode.String
                     Return CStr(originalValue)
+                Case TypeCode.DBNull
+                    Return DBNull.Value
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
                     Return False
