@@ -155,6 +155,13 @@ Public Class CommandLine
     ''' </summary>
     Private m_strTarget As Targets
 
+    ''' <summary>
+    ''' /doc[+|-]               Generates XML documentation file.
+    ''' /doc:(file)             Generates XML documentation file to (file).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_strDoc As String
+
     ' - INPUT FILES -
 
     ''' <summary>
@@ -1113,6 +1120,14 @@ Public Class CommandLine
                     Case Else
                         Helper.AddWarning("Unknown vb version: " & strValue & ", will use default vbversion (8)")
                 End Select
+            Case "doc-"
+                m_strDoc = Nothing
+            Case "doc+"
+                m_strDoc = String.Empty
+                Compiler.Report.SaveMessage(Messages.VBNC99998, "Support for /doc+ has not been implemented. No documentation file will be generated.")
+            Case "doc"
+                m_strDoc = strValue
+                Compiler.Report.SaveMessage(Messages.VBNC99998, "Support for /doc:<file> has not been implemented. No documentation file will be generated.")
             Case Else
                 'result = False 'OK since this is only a warning.
                 result = Compiler.Report.SaveMessage(Messages.VBNC2009, strName) AndAlso result
