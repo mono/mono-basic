@@ -7097,6 +7097,7 @@
 		<file>..\..\rt\source\Settings.vb</file>
 		<file>..\..\rt\source\Test.Results.vb</file>
 		<file>..\..\rt\source\Test.Targets.vb</file>
+		<file>..\..\rt\source\Test.MyTypes.vb</file>
 		<file>..\..\rt\source\Test.vb</file>
 		<file>..\..\rt\source\TestExecutor.vb</file>
 		<file>..\..\rt\source\Tests.vb</file>

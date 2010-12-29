@@ -736,8 +736,11 @@ Class frmMain
             gridTestProperties.SelectedObject = Nothing
         Else
             txtTestMessage.Text = Test.FailedVerificationMessage
-            If txtTestMessage.Text Is Nothing Then
+            If String.IsNullOrEmpty(txtTestMessage.Text) Then
                 txtTestMessage.Text = Test.StdOut
+            End If
+            If String.IsNullOrEmpty(txtTestMessage.Text) Then
+                txtTestMessage.Text = Test.Message
             End If
             gridTestProperties.SelectedObject = Test
         End If
@@ -835,13 +838,15 @@ Class frmMain
                 Throw New ApplicationException("The test has more than one file!")
             End If
 
+            If test.VBCVerification Is Nothing Then Throw New ApplicationException("No VBC results")
+
             Dim output As String
             Dim errnumber As String
             Dim source As String = IO.Path.Combine(test.FullWorkingDirectory, test.Files(0))
             Dim iStart, iEnd As Integer
             Dim vStart As String = ": error BC"
             Dim vEnd As String = ":"
-            output = test.FailedVerification.DescriptiveMessage
+            output = test.VBCVerification.DescriptiveMessage
             iStart = output.IndexOf(vStart)
             iEnd = output.IndexOf(vEnd, iStart + vStart.Length)
             errnumber = output.Substring(iStart + vStart.Length, iEnd - iStart - vEnd.Length - vStart.Length + 1)
@@ -1045,6 +1050,9 @@ Class frmMain
 
             test = New Test(m_Tests)
             test.Name = name
+            test.Target = rt.Test.Targets.Library
+            test.MyType = rt.Test.MyTypes.Empty
+
             m_Tests.Append(test)
             PopulateTestList()
             For Each item As ListViewItem In lstTests.Items

@@ -108,6 +108,7 @@ Public Class Test
 
     Private m_Tag As Object
     Private m_DontExecute As Boolean
+    Private m_MyType As MyTypes
     ''' <summary>
     ''' The arguments to pass to the compiled executable (if it is an executable) to test it.
     ''' </summary>
@@ -122,6 +123,15 @@ Public Class Test
     Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
     Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
     Private Shared m_FileCacheTime As Date = Date.MinValue
+
+    Public Property MyType As MyTypes
+        Get
+            Return m_MyType
+        End Get
+        Set(ByVal value As MyTypes)
+            m_MyType = value
+        End Set
+    End Property
 
     Public Property TestArguments() As String
         Get
@@ -204,6 +214,7 @@ Public Class Test
 
     Public Sub Load(ByVal xml As XmlNode)
         Dim target As String
+        Dim mytype As String
         Dim tmp As String
 
         m_ID = xml.Attributes("id").Value
@@ -252,7 +263,7 @@ Public Class Test
 
         target = GetAttributeValue(xml.Attributes("target"))
         If target IsNot Nothing Then target = target.ToLower()
-        Select Case GetAttributeValue(xml.Attributes("target"))
+        Select Case target
             Case "exe"
                 m_Target = Targets.Exe
             Case "winexe"
@@ -267,6 +278,32 @@ Public Class Test
             Case Else
                 Throw New InvalidOperationException("Invalid target: " & target)
         End Select
+
+        mytype = GetAttributeValue(xml.Attributes("mytype"))
+        If mytype IsNot Nothing Then mytype = mytype.ToLower()
+        Select Case mytype
+            Case "console"
+                m_MyType = MyTypes.Console
+            Case "custom"
+                m_MyType = MyTypes.Custom
+            Case "empty"
+                m_MyType = MyTypes.Empty
+            Case "web"
+                m_MyType = MyTypes.Web
+            Case "webcontrol"
+                m_MyType = MyTypes.WebControl
+            Case "windows"
+                m_MyType = MyTypes.Windows
+            Case "windowsforms"
+                m_MyType = MyTypes.WindowsForms
+            Case "windowsformswithcustomsubmain"
+                m_MyType = MyTypes.WindowsFormsWithCustomSubMain
+            Case "", Nothing
+                m_MyType = MyTypes.Default
+            Case Else
+                Throw New InvalidOperationException("Invalid mytype: " & mytype)
+        End Select
+
         For Each file As XmlNode In xml.SelectNodes("file")
             m_Files.Add(file.InnerText)
         Next
@@ -318,6 +355,8 @@ Public Class Test
             If m_ExpectedVBCErrorCode.HasValue Then xml.WriteAttributeString("expectedvbcerrorcode", m_ExpectedVBCErrorCode.Value.ToString())
 
             xml.WriteAttributeString("target", m_Target.ToString().ToLower())
+            If m_MyType <> MyTypes.Default Then xml.WriteAttributeString("mytype", m_MyType.ToString().ToLower())
+
             If Not String.IsNullOrEmpty(m_WorkingDirectory) Then xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
             If Not String.IsNullOrEmpty(m_Arguments) Then xml.WriteElementString("arguments", m_Arguments)
             If Not String.IsNullOrEmpty(m_VBCArguments) Then xml.WriteElementString("vbcarguments", m_VBCArguments)
@@ -729,6 +768,8 @@ Public Class Test
                 result.Add("/target:module")
         End Select
 
+        If m_MyType <> MyTypes.Default Then result.Add("/define:_MYTYPE=\""" & m_MyType.ToString & "\""")
+
         If ForVBC AndAlso Not String.IsNullOrEmpty(m_VBCArguments) Then
             result.Add(m_VBCArguments)
         End If
@@ -791,6 +832,17 @@ Public Class Test
         End Get
     End Property
 
+    ReadOnly Property VBCVerification As ExternalProcessVerification
+        Get
+            For Each v As VerificationBase In m_Verifications
+                Dim epv As ExternalProcessVerification = TryCast(v, ExternalProcessVerification)
+                If epv Is Nothing Then Continue For
+                If epv.Name.StartsWith("VBC ") Then Return epv
+            Next
+            Return Nothing
+        End Get
+    End Property
+
     ''' <summary>
     ''' Returns true if new verifications have been created (only if source files has changed
     ''' or vbnc compiler has changed since last run).
@@ -812,7 +864,6 @@ Public Class Test
         If vbccompiler <> String.Empty AndAlso vbccmdline.Length > 0 Then
             vbc = New ExternalProcessVerification(Me, vbccompiler, Join(vbccmdline, " "))
             vbc.Process.WorkingDirectory = FullWorkingDirectory
-            vbc = vbc
         End If
 
         If vbc IsNot Nothing Then

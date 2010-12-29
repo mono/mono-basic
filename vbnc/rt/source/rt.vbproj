@@ -112,6 +112,7 @@
     <Compile Include="ListViewItemComparer.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="Settings.vb" />
+    <Compile Include="Test.MyTypes.vb" />
     <Compile Include="Test.Results.vb" />
     <Compile Include="Test.Targets.vb" />
     <Compile Include="Test.vb" />
