@@ -130,6 +130,8 @@ Public Class AddOrRemoveHandlerStatement
         result = m_Event.ResolveExpression(Info) AndAlso result
         result = m_EventHandler.ResolveExpression(info) AndAlso result
 
+        If result = False Then Return result
+
         Dim delegatetp As Mono.Cecil.TypeReference = m_Event.Classification.AsEventAccess.Type
 
         If m_EventHandler.Classification.IsMethodPointerClassification Then

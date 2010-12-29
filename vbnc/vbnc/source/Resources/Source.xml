@@ -1574,7 +1574,7 @@
 	</Message>
 	<Message id="30469" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Reference to a non-shared member requires an object reference.</VBNCValue>
 		<VBValue>Reference to a non-shared member requires an object reference.</VBValue>
 	</Message>
 	<Message id="30470" level="Error">

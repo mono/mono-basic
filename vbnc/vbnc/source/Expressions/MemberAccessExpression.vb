@@ -450,7 +450,14 @@ Public Class MemberAccessExpression
                 End If
 
                 '** Otherwise, E.I is an invalid member reference, and a compile-time error occurs.
-                Helper.AddError(Me, "Could not resolve name '" & Name & "'" & ", " & Me.Location.ToString(Compiler))
+                'Now we need to check for default instances
+                If m_First.Classification.AsTypeClassification.CanBeExpression Then
+                    Dim aliasExpression As Expression = Nothing
+                    m_First.Classification.AsTypeClassification.CreateAliasExpression(m_First, aliasExpression)
+                    m_First = aliasExpression
+                Else
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30469, Me.Location)
+                End If
             Else
                 Helper.AddError(Me, "Could not resolve name '" & Name & "'" & "," & Me.Location.ToString(Compiler))
             End If

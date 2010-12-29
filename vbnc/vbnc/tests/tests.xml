@@ -7458,4 +7458,11 @@
 	<test id="1890" name="Attributes8" category="" priority="0" target="library">
 		<file>CompileTime2\Attributes8.vb</file>
 	</test>
+	<test id="1891" name="AddHandler4" category="" priority="0" target="library">
+		<arguments>-define:_MYTYPE=\"WindowsForms\" -r:System.Windows.Forms.dll</arguments>
+		<file>CompileTime2\AddHandler4.vb</file>
+	</test>
+	<test id="1892" name="30469" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="library">
+		<file>Errors\30469.vb</file>
+	</test>
 </rt>

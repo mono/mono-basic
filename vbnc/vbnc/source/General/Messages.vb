@@ -2214,7 +2214,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30468 = 30468
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Reference to a non-shared member requires an object reference."
     ''' VB   = "Reference to a non-shared member requires an object reference."
     ''' </summary>
     ''' <remarks></remarks>

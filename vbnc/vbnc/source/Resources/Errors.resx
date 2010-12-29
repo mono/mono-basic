@@ -345,7 +345,7 @@
   <data name="30466"><value>CHANGEME</value></data>
   <data name="30467"><value>CHANGEME</value></data>
   <data name="30468"><value>CHANGEME</value></data>
-  <data name="30469"><value>CHANGEME</value></data>
+  <data name="30469"><value>Reference to a non-shared member requires an object reference.</value></data>
   <data name="30470"><value>CHANGEME</value></data>
   <data name="30471"><value>Only arrays and methods can have argument lists.</value></data>
   <data name="30474"><value>CHANGEME</value></data>
