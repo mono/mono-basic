@@ -411,38 +411,6 @@ Public Class TypeManager
         Return result
     End Function
 
-
-    ''' <summary>
-    ''' Creates a closed method on a generic type.
-    ''' </summary>
-    ''' <param name="Parent"></param>
-    ''' <param name="OpenMethod"></param>
-    ''' <param name="TypeParameters"></param>
-    ''' <param name="TypeArguments"></param>
-    ''' <param name="ClosedType"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function MakeGenericMethod(ByVal Parent As ParsedObject, ByVal OpenMethod As Mono.Cecil.MethodReference, ByVal TypeParameters As Mono.Collections.Generic.Collection(Of TypeReference), ByVal TypeArguments As Mono.Collections.Generic.Collection(Of TypeReference), ByVal ClosedType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
-        Dim result As Mono.Cecil.MethodReference
-
-        Dim declaringType As Mono.Cecil.TypeReference
-        declaringType = OpenMethod.DeclaringType
-        declaringType = Helper.ApplyTypeArguments(Parent, declaringType, TypeParameters, TypeArguments)
-
-        If CecilHelper.IsGenericType(declaringType) = False AndAlso CecilHelper.IsGenericParameter(declaringType) = False AndAlso CecilHelper.IsGenericTypeDefinition(declaringType) = False AndAlso CecilHelper.ContainsGenericParameters(declaringType) = False Then
-            result = OpenMethod
-            Helper.Stop()
-        Else
-            Dim gim As New Mono.Cecil.GenericInstanceMethod(OpenMethod)
-            Helper.Stop()
-            result = gim
-
-            'result = New GenericMethodDescriptor(Parent, OpenMethod, TypeParameters, TypeArguments, declaringType)
-        End If
-
-        Return result
-    End Function
-
     ''' <summary>
     ''' Creates a closed method of an open generic method.
     ''' </summary>
