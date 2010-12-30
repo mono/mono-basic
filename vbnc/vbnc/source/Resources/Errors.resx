@@ -805,7 +805,7 @@
   <data name="32041"><value>CHANGEME</value></data>
   <data name="32042"><value>CHANGEME</value></data>
   <data name="32043"><value>CHANGEME</value></data>
-  <data name="32044"><value>CHANGEME</value></data>
+  <data name="32044"><value>Type argument '{0}' does not inherit from or implement '{1}'.</value></data>
   <data name="32045"><value>CHANGEME</value></data>
   <data name="32046"><value>'New' cannot be used on a type parameter not declared 'As New()'</value></data>
   <data name="32047"><value>CHANGEME</value></data>
@@ -833,6 +833,8 @@
   <data name="32069"><value>CHANGEME</value></data>
   <data name="32070"><value>CHANGEME</value></data>
   <data name="32071"><value>CHANGEME</value></data>
+  <data name="32083"><value>Type argument '{0}' must have a public parameterless instance constructor to satisfy the 'New' constraint for type parameter '{1}'.</value></data>
+  <data name="32084"><value>Type parameter '{0}' must have either a 'New' constraint or a 'Structure' constraint to satisfy the 'New' constraint for type parameter '{1}'.</value></data>
   <data name="32085"><value>Arguments cannot be passed when calling a type parameter constructor.</value></data>
   <data name="32098"><value>Type parameters can't be used as a qualifier.</value></data>
   <data name="32101"><value>'Class' constraint cannot be specified multiple times for the same type parameter.</value></data>
@@ -896,6 +898,7 @@
   <data name="33034"><value>CHANGEME</value></data>
   <data name="33035"><value>CHANGEME</value></data>
   <data name="33036"><value>CHANGEME</value></data>
+  <data name="33101"><value>Type '{0}' must be a value type or a type argument constrained to 'Structure' in order to be used with 'Nullable' or nullable modifier '?'. </value></data>
   <data name="33104"><value>'If' operator requires either two or three operands.</value></data>
   <data name="33106"><value>Cannot infer a common type for the second and third operands of the 'If' operator. One must have a widening conversion to the other.</value></data>
   <data name="33107"><value>First operand in a binary 'If' expression must be nullable or a reference type.</value></data>

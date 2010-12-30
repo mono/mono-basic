@@ -94,4 +94,11 @@ Public Class ArrayTypeName
         Return m_TypeName.ToString & m_ArrayTypeModifiers.ToString
     End Function
 
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = m_TypeName.ResolveCode(Info) AndAlso result
+
+        Return result
+    End Function
 End Class

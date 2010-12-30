@@ -3874,7 +3874,7 @@
 	</Message>
 	<Message id="32044" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Type argument '{0}' does not inherit from or implement '{1}'.</VBNCValue>
 		<VBValue>Type argument '|1' does not inherit from or implement '|2'.</VBValue>
 	</Message>
 	<Message id="32045" level="Error">
@@ -4012,6 +4012,14 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Constraint type '|1' already specified for this type parameter.</VBValue>
 	</Message>
+  <Message id="32083" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type argument '{0}' must have a public parameterless instance constructor to satisfy the 'New' constraint for type parameter '{1}'.</VBNCValue>
+  </Message>
+  <Message id="32084" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type parameter '{0}' must have either a 'New' constraint or a 'Structure' constraint to satisfy the 'New' constraint for type parameter '{1}'.</VBNCValue>
+  </Message>
   <Message id="32085" level="Error">
     <Comment>NC</Comment>
     <VBNCValue>Arguments cannot be passed when calling a type parameter constructor.</VBNCValue>
@@ -4327,6 +4335,10 @@
 		<VBNCValue>CHANGEME</VBNCValue>
 		<VBValue>Type '|1' and type '|2' both declare '|3'.</VBValue>
 	</Message>
+  <Message id="33101" level="Error">
+    <Comment>NC</Comment>
+    <VBNCValue>Type '{0}' must be a value type or a type argument constrained to 'Structure' in order to be used with 'Nullable' or nullable modifier '?'. </VBNCValue>
+  </Message>
   <Message id="33104" level="Error">
     <Comment>NC</Comment>
     <VBNCValue>'If' operator requires either two or three operands.</VBNCValue>

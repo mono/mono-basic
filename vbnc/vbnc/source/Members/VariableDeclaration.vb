@@ -204,6 +204,8 @@ Public MustInherit Class VariableDeclaration
 
         Compiler.Report.Trace("{0}: VariableDeclaration.ResolveCode: {1}", Me.Location, Me.FullName)
 
+        If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveCode(Info) AndAlso result
+
         result = MyBase.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
         If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
 

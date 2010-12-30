@@ -115,6 +115,10 @@ Public Class QualifiedIdentifier
         Return result
     End Function
 
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Return True 'Nothing to do here
+    End Function
+
     ''' <summary>
     ''' Resolves this typename to a type.
     ''' </summary>

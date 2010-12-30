@@ -235,6 +235,7 @@ Public Class Parameter
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveCode(Info) AndAlso result
         If m_CustomAttributes IsNot Nothing Then result = m_CustomAttributes.ResolveCode(Info) AndAlso result
 
         If m_ConstantExpression IsNot Nothing Then

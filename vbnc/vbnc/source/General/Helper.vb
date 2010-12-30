@@ -3226,8 +3226,8 @@ Public Class Helper
 
         If Member Is Nothing Then Return "Nothing"
 
-        TypeDefinition = TryCast(Member, TypeDefinition)
-        If TypeDefinition IsNot Nothing AndAlso Helper.IsDelegate(Context.Compiler, TypeDefinition) Then
+        typeDefinition = TryCast(Member, TypeDefinition)
+        If typeDefinition IsNot Nothing AndAlso Helper.IsDelegate(Context.Compiler, typeDefinition) Then
             Dim builder As New Text.StringBuilder()
             Dim delegateType As Mono.Cecil.TypeDefinition = DirectCast(Member, Mono.Cecil.TypeDefinition)
             Dim invoke As Mono.Cecil.MethodReference = GetInvokeMethod(Context.Compiler, delegateType)
@@ -3911,6 +3911,98 @@ Public Class Helper
         'The dominant type is then the most encompassed of the remaining types. 
         'If there is more than one type that is most encompassed, then there is no dominant type. 
         Return GetMostEncompassedType(Compiler, types)
+    End Function
+
+    Public Shared Function VerifyConstraints(ByVal Context As ParsedObject, ByVal parameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByVal arguments As Mono.Collections.Generic.Collection(Of TypeReference)) As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Math.Min(parameters.Count, arguments.Count) - 1
+            Dim param As GenericParameter = parameters(i)
+            Dim arg As TypeReference = arguments(i)
+            Dim gt As GenericParameter = TryCast(arg, GenericParameter)
+
+            If param.HasDefaultConstructorConstraint Then
+                If gt IsNot Nothing Then
+                    If gt.HasDefaultConstructorConstraint = False AndAlso gt.HasNotNullableValueTypeConstraint = False Then
+                        Dim tr As TypeReference = TryCast(param.Owner, TypeReference)
+                        If Helper.CompareType(tr, Context.Compiler.TypeCache.System_Nullable1) Then
+                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC33101, Context.Location, Helper.ToString(Context, arg))
+                        Else
+                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC32084, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        End If
+                        Continue For
+                    End If
+                Else
+                    Dim ctor As MethodReference = Helper.GetDefaultConstructor(arg)
+                    If (ctor Is Nothing OrElse Helper.IsPublic(ctor) = False) AndAlso CecilHelper.IsValueType(arg) = False Then
+                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32083, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        Continue For
+                    End If
+                End If
+            End If
+
+            If param.HasNotNullableValueTypeConstraint Then
+                If gt Is Nothing Then
+                    If CecilHelper.IsValueType(arg) = False Then
+                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                    End If
+                Else
+                    If gt.HasNotNullableValueTypeConstraint = False Then
+                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                    End If
+                End If
+            End If
+
+            If param.HasReferenceTypeConstraint Then
+                If gt IsNot Nothing Then
+                    If gt.HasReferenceTypeConstraint = False Then
+                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                    End If
+                Else
+                    If CecilHelper.IsClass(arg) = False Then
+                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                    End If
+                End If
+            End If
+
+            If param.HasConstraints Then
+                For c As Integer = 0 To param.Constraints.Count - 1
+                    Dim constr As TypeReference = param.Constraints(i)
+
+                    If param.HasNotNullableValueTypeConstraint AndAlso Helper.CompareType(constr, Context.Compiler.TypeCache.System_ValueType) Then Continue For
+                    If Helper.CompareType(constr, arg) Then Continue For
+
+                    If gt Is Nothing Then
+                        If Helper.IsInterface(Context, constr) Then
+                            If Helper.DoesTypeImplementInterface(Context, arg, constr) = False Then
+                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                            End If
+                        Else
+                            If Helper.IsSubclassOf(constr, arg) = False Then
+                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                            End If
+                        End If
+                    Else
+                        Dim found As Boolean = False
+
+                        For c2 As Integer = 0 To gt.Constraints.Count - 1
+                            If Helper.CompareType(constr, gt.Constraints(c2)) Then
+                                found = True
+                                Exit For
+                            End If
+                            If Helper.DoesTypeImplementInterface(Context, gt.Constraints(c2), constr) Then
+                                found = True
+                                Exit For
+                            End If
+                        Next
+                        If found = False Then
+                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                        End If
+                    End If
+                Next
+            End If
+        Next
+        Return result
     End Function
 End Class
 

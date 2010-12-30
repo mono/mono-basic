@@ -742,7 +742,6 @@ Public Class CecilHelper
             result.GenericArguments.Add(Types(i))
         Next
         Return result
-        Throw New NotImplementedException
     End Function
 
     Public Shared Function GetNestedType(ByVal Type As TypeReference, ByVal Name As String) As TypeReference
@@ -956,6 +955,7 @@ Public Class CecilHelper
     Public Shared Function IsNullable(ByVal Type As TypeReference) As Boolean
         Dim git As GenericInstanceType
 
+        If Type Is Nothing Then Return False
         If Not Type.IsGenericInstance Then Return False
 
         If Helper.CompareNameOrdinal(Type.Name, "Nullable`1") = False Then Return False

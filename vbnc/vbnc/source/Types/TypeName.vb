@@ -142,9 +142,22 @@ Public Class TypeName
         End Get
     End Property
 
-    <Obsolete("No code to resolve here.")> Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Helper.Assert(m_ResolvedType IsNot Nothing)
-        Return True
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+        Dim atn As ArrayTypeName
+        Dim natn As NonArrayTypeName
+
+        atn = TryCast(m_TypeName, ArrayTypeName)
+        If atn IsNot Nothing Then
+            result = atn.ResolveCode(Info) AndAlso result
+        Else
+            natn = TryCast(m_TypeName, NonArrayTypeName)
+            If natn IsNot Nothing Then
+                result = natn.ResolveCode(Info) AndAlso result
+            End If
+        End If
+
+        Return result
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean

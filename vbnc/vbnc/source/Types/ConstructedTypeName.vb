@@ -209,6 +209,35 @@ Public Class ConstructedTypeName
         Return result
     End Function
 
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = VerifyConstraints() AndAlso result
+
+        Return result
+    End Function
+
+    Function VerifyConstraints() As Boolean
+        Dim result As Boolean = True
+
+        Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter)
+        Dim arguments As Mono.Collections.Generic.Collection(Of TypeReference)
+        Dim git As GenericInstanceType
+        Dim td As TypeDefinition
+
+        git = TryCast(m_ResolvedType, GenericInstanceType)
+        td = CecilHelper.FindDefinition(git)
+
+        If git Is Nothing OrElse td Is Nothing Then Return True
+
+        parameters = td.GenericParameters
+        arguments = git.GenericArguments
+
+        result = Helper.VerifyConstraints(Me, parameters, arguments)
+
+        Return result
+    End Function
+
     ReadOnly Property Name() As String
         Get
             Return m_QualifiedIdentifier.Name

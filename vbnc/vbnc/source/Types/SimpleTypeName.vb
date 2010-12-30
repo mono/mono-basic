@@ -75,6 +75,15 @@ Public Class SimpleTypeName
         End Get
     End Property
 
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveCode(Info) AndAlso result
+        If m_TypeParameter IsNot Nothing Then result = m_TypeParameter.ResolveCode(Info) AndAlso result
+
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return ResolveTypeReferences(False)
     End Function

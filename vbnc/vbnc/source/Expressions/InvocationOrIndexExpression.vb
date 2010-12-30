@@ -525,6 +525,8 @@ Public Class InvocationOrIndexExpression
                 If mgc.IsLateBound = False Then
                     m_ArgumentList.ReplaceAndVerifyArguments(mgc.FinalArguments, mgc.ResolvedMethod)
                 End If
+                result = mgc.VerifyConstraints AndAlso result
+                If result = False Then Return False
             Else
                 mgc.ResolveGroup(m_ArgumentList, True)
                 Return False

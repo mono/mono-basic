@@ -154,6 +154,13 @@ Public Class NonArrayTypeName
         End If
 
         If m_IsNullable Then
+            If CecilHelper.IsValueType(m_ResolvedType) = False Then
+                Dim gp As GenericParameter = TryCast(m_ResolvedType, GenericParameter)
+                If gp Is Nothing OrElse gp.HasNotNullableValueTypeConstraint = False Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC33101, Me.Location, Helper.ToString(Me, m_ResolvedType))
+                End If
+            End If
+
             Dim git As New GenericInstanceType(Compiler.TypeCache.System_Nullable1)
             git.GenericArguments.Add(m_ResolvedType)
             m_ResolvedType = git
@@ -164,8 +171,22 @@ Public Class NonArrayTypeName
         Return result
     End Function
 
-    <Obsolete("No code to resolve here.")> Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Return True
+    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+        Dim stn As SimpleTypeName
+        Dim ctn As ConstructedTypeName
+
+        stn = TryCast(m_TypeName, SimpleTypeName)
+        If stn IsNot Nothing Then
+            result = stn.ResolveCode(Info) AndAlso result
+        Else
+            ctn = TryCast(m_TypeName, ConstructedTypeName)
+            If ctn IsNot Nothing Then
+                result = ctn.ResolveCode(Info) AndAlso result
+            End If
+        End If
+
+        Return result
     End Function
 
     Overrides Function ToString() As String

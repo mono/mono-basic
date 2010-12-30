@@ -477,4 +477,25 @@ Public Class MethodGroupClassification
             Return DirectCast(MyBase.Parent, ParsedObject)
         End Get
     End Property
+
+    Function VerifyConstraints() As Boolean
+        Dim result As Boolean = True
+
+        Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter)
+        Dim arguments As Mono.Collections.Generic.Collection(Of TypeReference)
+        Dim mit As GenericInstanceMethod
+        Dim md As MethodDefinition
+
+        mit = TryCast(ResolvedMethod, GenericInstanceMethod)
+        md = CecilHelper.FindDefinition(mit)
+
+        If mit Is Nothing OrElse md Is Nothing Then Return True
+
+        parameters = md.GenericParameters
+        arguments = mit.GenericArguments
+
+        result = Helper.VerifyConstraints(Me.Parent, parameters, arguments)
+
+        Return result
+    End Function
 End Class

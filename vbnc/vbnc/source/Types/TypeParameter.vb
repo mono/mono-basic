@@ -154,7 +154,6 @@ Public Class TypeParameter
         Return result
     End Function
 
-    <Obsolete("No code to resolve here.")> _
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 

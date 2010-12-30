@@ -142,6 +142,7 @@ Public Class FunctionSignature
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveCode(Info) AndAlso result
         result = MyBase.ResolveCode(info) AndAlso result
 
         Helper.Assert(m_ReturnType IsNot Nothing OrElse Compiler.Report.Errors > 0)

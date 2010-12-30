@@ -5434,7 +5434,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32043 = 32043
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Type argument '{0}' does not inherit from or implement '{1}'."
     ''' VB   = "Type argument '|1' does not inherit from or implement '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5628,6 +5628,20 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC32071 = 32071
+
+    ''' <summary>
+    ''' VBNC = "Type argument '{0}' must have a public parameterless instance constructor to satisfy the 'New' constraint for type parameter '{1}'."
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32083 = 32083
+
+    ''' <summary>
+    ''' VBNC = "Type parameter '{0}' must have either a 'New' constraint or a 'Structure' constraint to satisfy the 'New' constraint for type parameter '{1}'."
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC32084 = 32084
 
     ''' <summary>
     ''' VBNC = "Arguments cannot be passed when calling a type parameter constructor."
@@ -6069,6 +6083,13 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC33036 = 33036
+
+    ''' <summary>
+    ''' VBNC = "Type '{0}' must be a value type or a type argument constrained to 'Structure' in order to be used with 'Nullable' or nullable modifier '?'. "
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC33101 = 33101
 
     ''' <summary>
     ''' VBNC = "'If' operator requires either two or three operands."

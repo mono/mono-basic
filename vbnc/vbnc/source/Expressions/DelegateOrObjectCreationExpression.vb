@@ -134,6 +134,9 @@ Public Class DelegateOrObjectCreationExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        If m_NonArrayTypeName IsNot Nothing Then result = m_NonArrayTypeName.ResolveCode(Info) AndAlso result
+        If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(Info) AndAlso result
+
         Helper.Assert(m_ResolvedType IsNot Nothing)
         If m_IsDelegateCreationExpression = False Then
             If TypeOf m_ResolvedType Is Mono.Cecil.GenericParameter = False Then

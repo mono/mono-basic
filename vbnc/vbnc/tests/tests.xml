@@ -7226,7 +7226,7 @@
 		<arguments>/debug:full</arguments>
 		<file>CompileTime2\ConditionalExpression1.vb</file>
 	</test>
-	<test id="1812" name="error" category="" priority="0" target="exe">
+	<test id="1812" name="error" category="" priority="0" target="library">
 		<file>Errors\error.vb</file>
 	</test>
 	<test id="1815" name="30199" category="" priority="0" expectedexitcode="1" expectederrorcode="30199" target="exe">
@@ -7506,7 +7506,7 @@
 		<arguments>/nowarn</arguments>
 		<file>Errors\36657-1.vb</file>
 	</test>
-	<test id="1905" name="33101" category="" priority="0" expectedexitcode="1" expectederrorcode="33101" target="exe">
+	<test id="1905" name="33101" category="" priority="0" expectedexitcode="1" expectederrorcode="33101" target="library">
 		<arguments>/nowarn</arguments>
 		<file>Errors\33101.vb</file>
 	</test>
@@ -7578,5 +7578,38 @@
 	</test>
 	<test id="1928" name="Property9" category="" priority="0" target="library" mytype="empty">
 		<file>CompileTime2\Property9.vb</file>
+	</test>
+	<test id="1929" name="33101-1" category="" priority="0" expectedexitcode="1" expectederrorcode="33101" target="exe">
+		<file>Errors\33101-1.vb</file>
+	</test>
+	<test id="1930" name="32083" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083.vb</file>
+	</test>
+	<test id="1931" name="32083-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-1.vb</file>
+	</test>
+	<test id="1932" name="32083-2" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-2.vb</file>
+	</test>
+	<test id="1933" name="32083-3" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-3.vb</file>
+	</test>
+	<test id="1934" name="32083-4" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="library" mytype="empty">
+		<file>Errors\32083-4.vb</file>
+	</test>
+	<test id="1935" name="TypeArguments17" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\TypeArguments17.vb</file>
+	</test>
+	<test id="1936" name="32083-5" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-5.vb</file>
+	</test>
+	<test id="1937" name="32083-6" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-6.vb</file>
+	</test>
+	<test id="1938" name="32083-7" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-7.vb</file>
+	</test>
+	<test id="1939" name="32083-8" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
+		<file>Errors\32083-8.vb</file>
 	</test>
 </rt>
