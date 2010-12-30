@@ -7432,7 +7432,7 @@
 		<file>CompileTime\ByRefProperty1.vb</file>
 	</test>
 	<test id="1882" name="30524" category="" priority="0" expectedexitcode="1" expectederrorcode="30524" target="exe">
-		<file>Z:\main\git\mono-basic\vbnc\vbnc\tests\Errors\30524.vb</file>
+		<file>Errors\30524.vb</file>
 	</test>
 	<test id="1883" name="ArrayRef2" category="" priority="0" target="library">
 		<file>CompileTime\ArrayRef2.vb</file>
