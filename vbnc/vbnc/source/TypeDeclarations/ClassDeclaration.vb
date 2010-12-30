@@ -71,9 +71,9 @@ Public Class ClassDeclaration
     ''' <remarks></remarks>
     Function GetBaseDefaultConstructor() As Mono.Cecil.MethodReference
         If CecilHelper.IsGenericType(Me.BaseType) Then
-            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
+            Return Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
-            Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
+            Return Helper.GetDefaultConstructor(Me.BaseType)
         End If
     End Function
 
@@ -84,9 +84,9 @@ Public Class ClassDeclaration
     ''' <remarks></remarks>
     Function GetBaseDefaultConstructorCecil() As Mono.Cecil.MethodReference
         If CecilHelper.IsGenericType(Me.BaseType) Then
-            Return Compiler.Helper.GetDefaultGenericConstructor(Me.BaseType)
+            Return Helper.GetDefaultGenericConstructor(Me.BaseType)
         Else
-            Return Compiler.Helper.GetDefaultConstructor(Me.BaseType)
+            Return Helper.GetDefaultConstructor(Me.BaseType)
         End If
     End Function
 
