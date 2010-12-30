@@ -41,6 +41,7 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <remarks></remarks>
     Private m_InstanceExpression As Expression
+    Private m_TypeArguments As TypeArgumentList
     Private m_Parameters As Expression()
 
     ''' <summary>
@@ -140,7 +141,7 @@ Public Class MethodGroupClassification
     Overloads Function ReclassifyToValue() As ValueClassification
         Dim result As ValueClassification
         If m_Resolved = False Then
-            Me.ResolveGroup(New ArgumentList(Me.Parent), Nothing)
+            Me.ResolveGroup(New ArgumentList(Me.Parent))
         End If
         result = New ValueClassification(Me)
         Return result
@@ -374,7 +375,7 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <param name="SourceParameters"></param>
     ''' <remarks></remarks>
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal TypeArguments As TypeArgumentList = Nothing, Optional ByVal ShowErrors As Boolean = False) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal ShowErrors As Boolean = False) As Boolean
         Dim result As Boolean = True
         Dim FinalSourceArguments As ArgumentList = Nothing
 
@@ -388,7 +389,7 @@ Public Class MethodGroupClassification
 
         If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
         m_Resolver.ShowErrors = ShowErrors
-        m_Resolver.Init(m_Group, SourceParameters, TypeArguments)
+        m_Resolver.Init(m_Group, SourceParameters, m_TypeArguments)
         result = m_Resolver.Resolve AndAlso result
 
         If result Then
@@ -431,39 +432,41 @@ Public Class MethodGroupClassification
     End Function
 
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Method As MethodDeclaration)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Method As MethodDeclaration)
         MyBase.New(Classifications.MethodGroup, Parent)
         m_Group = New Generic.List(Of Mono.Cecil.MemberReference)
         m_Group.Add(Method.CecilBuilder)
         m_Resolved = True
         m_InstanceExpression = InstanceExpression
+        m_TypeArguments = TypeArguments
     End Sub
 
-    Private Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression)
+    Private Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Parameters() As Expression)
         MyBase.new(Classifications.MethodGroup, Parent)
         m_InstanceExpression = InstanceExpression
         m_CallingType = Parent.FindFirstParent(Of TypeDeclaration)()
         m_Parameters = Parameters
+        m_TypeArguments = TypeArguments
         'Helper.Assert(m_CallingType IsNot Nothing)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal ParamArray Methods As Mono.Cecil.MemberReference())
-        Me.New(Parent, InstanceExpression, Parameters)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Parameters() As Expression, ByVal ParamArray Methods As Mono.Cecil.MemberReference())
+        Me.New(Parent, InstanceExpression, TypeArguments, Parameters)
         SetMethods(New Generic.List(Of Mono.Cecil.MemberReference)(Methods))
         Helper.Assert(Methods.Length > 0)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MethodReference))
-        Me.new(Parent, InstanceExpression, Parameters)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MethodReference))
+        Me.new(Parent, InstanceExpression, TypeArguments, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference))
-        Me.new(Parent, InstanceExpression, Parameters)
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Parameters() As Expression, ByVal Methods As Mono.Collections.Generic.Collection(Of Mono.Cecil.MemberReference))
+        Me.new(Parent, InstanceExpression, TypeArguments, Parameters)
         SetMethods(Methods)
         Helper.Assert(Methods.Count > 0)
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)

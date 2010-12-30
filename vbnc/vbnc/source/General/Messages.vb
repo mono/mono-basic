@@ -5476,7 +5476,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32049 = 32049
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Type parameter '{0}' for '{1}' cannot be inferred."
     ''' VB   = "Type parameter '|1' cannot be determined."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6223,6 +6223,20 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC36017 = 36017
+
+    ''' <summary>
+    ''' VBNC = "Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because more than one type is possible. Specifying the data type(s) explicitly might correct this error."
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC36651 = 36651
+
+    ''' <summary>
+    ''' VBNC = "Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because they do not convert to the same type. Specifying the data type(s) explicitly might correct this error."
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC36657 = 36657
 
     ''' <summary>
     ''' VBNC = "CHANGEME"

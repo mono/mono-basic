@@ -110,8 +110,8 @@ Public MustInherit Class UnaryExpression
 
                 methods = Helper.GetUnaryOperators(Compiler, CType(Me.Keyword, UnaryOperators), Me.m_Expression.ExpressionType)
 
-                methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_Expression}, methods.ToArray)
-                result = methodClassification.ResolveGroup(New ArgumentList(Me, New Expression() {Me.m_Expression}), Nothing) AndAlso result
+                methodClassification = New MethodGroupClassification(Me, Nothing, Nothing, New Expression() {Me.m_Expression}, methods.ToArray)
+                result = methodClassification.ResolveGroup(New ArgumentList(Me, New Expression() {Me.m_Expression})) AndAlso result
                 result = methodClassification.SuccessfullyResolved AndAlso result
                 m_ExpressionType = methodClassification.ResolvedMethodInfo.ReturnType
                 Classification = methodClassification

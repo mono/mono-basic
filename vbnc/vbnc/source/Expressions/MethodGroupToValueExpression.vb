@@ -45,13 +45,13 @@ Public Class MethodGroupToValueExpression
         Dim arguments As ArgumentList = New ArgumentList(Me.Parent)
 
         If m_MethodGroup.Resolved = False Then
-            result = m_MethodGroup.ResolveGroup(arguments, Nothing) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments) AndAlso result
         Else
             'm_FinalArguments = m_MethodGroup.
         End If
 
         If result = False Then
-            result = m_MethodGroup.ResolveGroup(arguments, , True) AndAlso result
+            result = m_MethodGroup.ResolveGroup(arguments, True) AndAlso result
             Return False
         End If
 

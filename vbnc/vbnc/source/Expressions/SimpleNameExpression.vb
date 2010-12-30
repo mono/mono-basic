@@ -45,6 +45,12 @@ Public Class SimpleNameExpression
         m_TypeArgumentList = TypeArgumentList
     End Sub
 
+    ReadOnly Property TypeArguments As TypeArgumentList
+        Get
+            Return m_TypeArgumentList
+        End Get
+    End Property
+
     Public Overrides ReadOnly Property AsString() As String
         Get
             If m_TypeArgumentList Is Nothing OrElse m_TypeArgumentList.Count = 0 Then
@@ -572,7 +578,7 @@ Public Class SimpleNameExpression
         '** If I identifies one or more methods, then the result is a method group with the associated 
         '   type argument list and no associated instance expression.
         If Helper.IsMethodDeclaration(first) Then
-            Return New MethodGroupClassification(Me, Nothing, Nothing, members)
+            Return New MethodGroupClassification(Me, Nothing, m_TypeArgumentList, Nothing, members)
         End If
 
         '** If I identifies one or more properties, then the result is a property group with no associated 
@@ -654,7 +660,7 @@ Public Class SimpleNameExpression
         '** If I identifies one or more methods, then the result is a method group with the associated type 
         '   argument list and an associated instance expression of E.
         If Helper.IsMethodDeclaration(first) Then
-            result = New MethodGroupClassification(Me, CreateMeExpression, Nothing, members)
+            result = New MethodGroupClassification(Me, CreateMeExpression, m_TypeArgumentList, Nothing, members)
             Return result
         End If
 
@@ -849,7 +855,7 @@ Public Class SimpleNameExpression
             'then the identifier refers to that type or type member. If the identifier matches the name of 
             'an accessible type or type member in more than one import, a compile-time error occurs.
             If Helper.IsMethodDeclaration(impmembers(0)) Then
-                Classification = New MethodGroupClassification(Me, Nothing, Nothing, impmembers)
+                Classification = New MethodGroupClassification(Me, Nothing, m_TypeArgumentList, Nothing, impmembers)
                 Return True
             End If
             If Helper.IsTypeDeclaration(impmembers(0)) Then
@@ -896,7 +902,7 @@ Public Class SimpleNameExpression
         End If
 
         If Helper.IsMethodDeclaration(found(0)) Then
-            Classification = New MethodGroupClassification(Me, Nothing, Nothing, found)
+            Classification = New MethodGroupClassification(Me, Nothing, m_TypeArgumentList, Nothing, found)
             Return True
         End If
         If found.Count > 1 Then

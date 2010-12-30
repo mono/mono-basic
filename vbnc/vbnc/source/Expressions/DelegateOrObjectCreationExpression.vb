@@ -201,11 +201,11 @@ Public Class DelegateOrObjectCreationExpression
                 Dim ctors As Mono.Collections.Generic.Collection(Of Mono.Cecil.MethodReference)
 
                 ctors = CecilHelper.GetConstructors(resolvedType)
-                m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, ctors)
+                m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, Nothing, ctors)
                 result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList) AndAlso result
                 If result = False Then
                     'Show the error
-                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, , True) AndAlso result
+                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, True) AndAlso result
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If

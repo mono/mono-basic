@@ -303,8 +303,8 @@ Public Class Attribute
         Dim parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         ctors = CecilHelper.GetConstructors(m_ResolvedType)
 
-        Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, ctors)
-        result = groupClassification.ResolveGroup(argList, Nothing) AndAlso result
+        Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, Nothing, ctors)
+        result = groupClassification.ResolveGroup(argList) AndAlso result
         m_ResolvedTypeConstructor = groupClassification.ResolvedConstructor
         result = m_ResolvedTypeConstructor IsNot Nothing AndAlso result
         result = argList.FillWithOptionalParameters(m_ResolvedTypeConstructor) AndAlso result

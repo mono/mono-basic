@@ -221,7 +221,13 @@ Public Class MemberAccessExpression
         '---------------------------------------------------------------------------------------------------------
 
         Dim Name As String = m_Second.Name
+        Dim typeArguments As TypeArgumentList = Nothing
 
+        Dim iokwta As IdentifierOrKeywordWithTypeArguments = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
+        If iokwta IsNot Nothing Then
+            typeArguments = iokwta.TypeArguments
+        End If
+        
         Helper.Assert(Name IsNot Nothing AndAlso Name <> "")
 
         If m_First IsNot Nothing Then
@@ -292,7 +298,7 @@ Public Class MemberAccessExpression
             If members IsNot Nothing AndAlso members.Count > 0 Then
                 Dim first As Object = members(0)
                 If Helper.IsMethodDeclaration(first) Then
-                    Classification = New MethodGroupClassification(Me, Nothing, Nothing, members)
+                    Classification = New MethodGroupClassification(Me, Nothing, typeArguments, Nothing, members)
                     Return True
                 ElseIf Helper.IsTypeDeclaration(first) Then
                     If members.Count = 1 Then
@@ -350,10 +356,8 @@ Public Class MemberAccessExpression
 
             If entry IsNot Nothing Then
                 members = entry.Members
-                Dim withTypeArgs As IdentifierOrKeywordWithTypeArguments
-                withTypeArgs = TryCast(m_Second, IdentifierOrKeywordWithTypeArguments)
-                If withTypeArgs IsNot Nothing AndAlso withTypeArgs.TypeArguments IsNot Nothing Then
-                    members = Helper.FilterByTypeArguments(members, withTypeArgs.TypeArguments)
+                If typeArguments IsNot Nothing Then
+                    members = Helper.FilterByTypeArguments(members, typeArguments)
                     'For i As Integer = 0 To members.Count - 1
                     '    Dim mR As Mono.Cecil.MethodReference = TryCast(members(i), Mono.Cecil.MethodReference)
                     '    If mR Is Nothing Then
@@ -373,7 +377,7 @@ Public Class MemberAccessExpression
                 '** If I identifies one or more methods, then the result is a method group with the associated 
                 '   type argument list and no associated instance expression.
                 If Helper.IsMethodDeclaration(first) Then
-                    Classification = New MethodGroupClassification(Me, Nothing, Nothing, members)
+                    Classification = New MethodGroupClassification(Me, Nothing, typeArguments, Nothing, members)
                     Return True
                 End If
                 '** If I identifies one or more properties, then the result is a property group with no associated 
@@ -519,7 +523,7 @@ Public Class MemberAccessExpression
             '   instance expression of E and no type argument list. Otherwise, a compile-time error occurs.
             If m_Second.IsKeyword AndAlso m_Second.Keyword = KS.New Then
                 If TypeOf m_First Is InstanceExpression Then
-                    Classification = New MethodGroupClassification(Me, m_First, Nothing, Helper.GetInstanceConstructors(T))
+                    Classification = New MethodGroupClassification(Me, m_First, typeArguments, Nothing, Helper.GetInstanceConstructors(T))
                     Return True
                 Else
                     Helper.AddError(Me)
@@ -569,7 +573,7 @@ Public Class MemberAccessExpression
                 '   argument list and an associated instance expression of E.
                 If Helper.IsMethodDeclaration(first) Then
                     m_First = m_First.GetObjectReference
-                    Classification = New MethodGroupClassification(Me, m_First, Nothing, members)
+                    Classification = New MethodGroupClassification(Me, m_First, typeArguments, Nothing, members)
                     Return True
                 End If
                 '** If I identifies one or more properties, then the result is a property group with an 

@@ -250,7 +250,7 @@ Public MustInherit Class BinaryExpression
             result = Compiler.Report.ShowMessage(Messages.VBNC30452, Me.Location, Enums.strSpecial(Me.Keyword), Me.LeftType.FullName, Me.RightType.FullName) AndAlso result
             If result = False Then Return result
         End If
-        methodClassification = New MethodGroupClassification(Me, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
+        methodClassification = New MethodGroupClassification(Me, Nothing, Nothing, New Expression() {Me.m_LeftExpression, Me.m_RightExpression}, methods.ToArray)
         result = methodClassification.ResolveGroup(New ArgumentList(Me, Me.m_LeftExpression, m_RightExpression)) AndAlso result
         result = methodClassification.SuccessfullyResolved AndAlso result
         If result = False Then Return result

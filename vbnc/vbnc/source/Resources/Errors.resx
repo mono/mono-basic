@@ -811,7 +811,7 @@
   <data name="32047"><value>CHANGEME</value></data>
   <data name="32048"><value>CHANGEME</value></data>
   <data name="32049"><value>CHANGEME</value></data>
-  <data name="32050"><value>CHANGEME</value></data>
+  <data name="32050"><value>Type parameter '{0}' for '{1}' cannot be inferred.</value></data>
   <data name="32051"><value>CHANGEME</value></data>
   <data name="32052"><value>CHANGEME</value></data>
   <data name="32053"><value>CHANGEME</value></data>
@@ -918,6 +918,8 @@
   <data name="36015"><value>CHANGEME</value></data>
   <data name="36016"><value>CHANGEME</value></data>
   <data name="36017"><value>CHANGEME</value></data>
+  <data name="36651"><value>Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because more than one type is possible. Specifying the data type(s) explicitly might correct this error.</value></data>
+  <data name="36657"><value>Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because they do not convert to the same type. Specifying the data type(s) explicitly might correct this error.</value></data>
   <data name="40000"><value>CHANGEME</value></data>
   <data name="40003"><value>CHANGEME</value></data>
   <data name="40004"><value>CHANGEME</value></data>

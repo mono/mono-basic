@@ -68,7 +68,7 @@ Public Class AddressOfExpression
     End Sub
 
     Sub Init(ByVal Method As MethodDeclaration, ByVal InstanceExpression As Expression)
-        Classification = New MethodPointerClassification(Me, New MethodGroupClassification(Me, InstanceExpression, Method))
+        Classification = New MethodPointerClassification(Me, New MethodGroupClassification(Me, InstanceExpression, Nothing, Method))
     End Sub
 
     Shared Function IsMe(ByVal tm As tm) As Boolean

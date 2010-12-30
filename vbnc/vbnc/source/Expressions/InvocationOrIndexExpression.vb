@@ -526,7 +526,7 @@ Public Class InvocationOrIndexExpression
                     m_ArgumentList.ReplaceAndVerifyArguments(mgc.FinalArguments, mgc.ResolvedMethod)
                 End If
             Else
-                mgc.ResolveGroup(m_ArgumentList, , True)
+                mgc.ResolveGroup(m_ArgumentList, True)
                 Return False
             End If
         End If

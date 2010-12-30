@@ -2642,6 +2642,55 @@ Public Class Helper
         End If
     End Function
 
+    Shared Function GetMostEncompassedType(ByVal Compiler As Compiler, ByVal Types As Generic.List(Of TypeReference)) As TypeReference
+        Dim result() As Boolean
+
+        '•	If an intrinsic widening conversion exists from a type A to a type B, and if neither A nor B are interfaces, then A is encompassed by B, and B encompasses A.
+        '•	The most encompassing type in a set of types is the one type that encompasses all other types in the set. 
+        '   If no single type encompasses all other types, then the set has no most encompassing type. 
+        '   In intuitive terms, the most encompassing type is the “largest” type in the set—the one type to 
+        '   which each of the other types can be converted through a widening conversion.
+        '•	The most encompassed type in a set of types is the one type that is encompassed by all other types in the set. 
+        '   If no single type is encompassed by all other types, then the set has no most encompassed type. 
+        '   In intuitive terms, the most encompassed type is the “smallest” type in the set—the one type that 
+        '   can be converted to each of the other types through a narrowing conversion.
+
+        If Types Is Nothing OrElse Types.Count = 0 Then Return Nothing
+        If Types.Count = 1 Then Return Types(0)
+
+        ReDim result(Types.Count - 1)
+        For i As Integer = 0 To result.Length - 1
+            result(i) = True
+        Next
+
+        For i As Integer = 0 To result.Length - 1
+            For j As Integer = i + 1 To result.Length - 1
+                If result(j) AndAlso IsFirstEncompassingSecond(Compiler, Types(i), Types(j)) Then
+                    result(j) = False
+                ElseIf result(i) AndAlso IsFirstEncompassingSecond(Compiler, Types(j), Types(i)) Then
+                    result(i) = False
+                End If
+            Next
+        Next
+
+        Dim count As Integer
+        Dim index As Integer
+        For i As Integer = 0 To result.Length - 1
+            If result(i) Then
+                count += 1
+                index = i
+            End If
+        Next
+
+        If count <> 1 Then Return Nothing
+        Return Types(index)
+    End Function
+
+    Shared Function IsFirstEncompassingSecond(ByVal Compiler As Compiler, ByVal First As TypeReference, ByVal Second As TypeReference) As Boolean
+        If First Is Second Then Return False
+        Return Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, Second, First)
+    End Function
+
     Shared Function GetMostEncompassedTypes(ByVal Compiler As Compiler, ByVal Types() As TypeCode) As TypeCode()
         Dim result As Generic.List(Of TypeCode)
 
@@ -3787,6 +3836,51 @@ Public Class Helper
         Return result
     End Function
 
+    Shared Function GetDominantType(ByVal Compiler As Compiler, ByVal types As Generic.List(Of TypeReference)) As TypeReference
+        Dim implicit() As Boolean
+        Dim count As Integer
+        Dim index As Integer
+
+        'Given a set of types, it is often necessary in situations such as type inference to determine the dominant type of the set. 
+
+        If types Is Nothing OrElse types.Count = 0 Then Return Nothing
+        If types.Count = 1 Then Return types(0)
+
+        ReDim implicit(types.Count - 1)
+
+        For i As Integer = 0 To implicit.Length - 1
+            implicit(i) = True
+        Next
+
+        'The dominant type of a set of types is determined by first removing any types that one or more other types do not have an implicit conversion to. 
+        For i As Integer = 0 To types.Count - 1
+            For j As Integer = 0 To types.Count - 1
+                If i = j Then Continue For
+                If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, types(i), types(j)) = False Then
+                    implicit(i) = False
+                    Exit For
+                End If
+            Next
+        Next
+
+        count = 0
+        For i As Integer = 0 To implicit.Length - 1
+            If implicit(i) Then
+                index = i
+                count += 1
+            End If
+        Next
+
+        'If there are no types left at this point, there is no dominant type. 
+        If count = 0 Then Return Nothing
+
+        'The dominant type is then the most encompassed of the remaining types. 
+        If count = 1 Then Return types(index)
+
+        'The dominant type is then the most encompassed of the remaining types. 
+        'If there is more than one type that is most encompassed, then there is no dominant type. 
+        Return GetMostEncompassedType(Compiler, types)
+    End Function
 End Class
 
 

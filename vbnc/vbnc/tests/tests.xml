@@ -7466,4 +7466,60 @@
 	<test id="1892" name="30469" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="library">
 		<file>Errors\30469.vb</file>
 	</test>
+	<test id="1893" name="AddressOfExpression4" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\AddressOfExpression4.vb</file>
+	</test>
+	<test id="1894" name="Nullable2" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\Nullable2.vb</file>
+	</test>
+	<test id="1895" name="36657" category="" priority="0" expectedexitcode="1" expectederrorcode="36657" target="exe">
+		<file>Errors\36657.vb</file>
+	</test>
+	<test id="1896" name="ArgumentTypeInference" category="" priority="0" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>CompileTime2\ArgumentTypeInference.vb</file>
+	</test>
+	<test id="1897" name="30530" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="library" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30530.vb</file>
+	</test>
+	<test id="1898" name="MethodDeclaration1" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\MethodDeclaration1.vb</file>
+	</test>
+	<test id="1899" name="30530-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+		<file>Errors\30530-1.vb</file>
+	</test>
+	<test id="1900" name="30530-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+		<file>Errors\30530-2.vb</file>
+	</test>
+	<test id="1901" name="30530-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+		<file>Errors\30530-3.vb</file>
+	</test>
+	<test id="1902" name="30530-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+		<file>Errors\30530-4.vb</file>
+	</test>
+	<test id="1903" name="36651" category="" priority="0" expectedexitcode="1" expectederrorcode="36651" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\36651.vb</file>
+	</test>
+	<test id="1904" name="36657-1" category="" priority="0" expectedexitcode="1" expectederrorcode="36657" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\36657-1.vb</file>
+	</test>
+	<test id="1905" name="33101" category="" priority="0" expectedexitcode="1" expectederrorcode="33101" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\33101.vb</file>
+	</test>
+	<test id="1906" name="30057-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30057" target="exe">
+		<file>Errors\30057-1.vb</file>
+	</test>
+	<test id="1907" name="32050" category="" priority="0" expectedexitcode="1" expectederrorcode="32050" target="exe">
+		<file>Errors\32050.vb</file>
+	</test>
+	<test id="1908" name="30455-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30455" target="exe">
+		<file>Errors\30455-3.vb</file>
+	</test>
+	<test id="1909" name="32050-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32050" target="library" mytype="empty">
+		<file>Errors\32050-1.vb</file>
+	</test>
 </rt>
