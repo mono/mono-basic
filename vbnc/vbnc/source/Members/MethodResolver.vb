@@ -351,7 +351,7 @@ Public Class MethodResolver
         '   type parameters on the type, then M is less generic than N.
         '
         'A parameter M is considered to be equally generic to a parameter N if their types Mt and Nt
-        'both refer to type parameters or both dont refer to type parameters.
+        'both refer to type parameters or both don't refer to type parameters.
         'M is considered to be less generic than N if Mt does not refer to a type parameter and Nt does.
         '
 
