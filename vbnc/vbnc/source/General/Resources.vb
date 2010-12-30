@@ -73,19 +73,19 @@ Public Class Resources
                     Case "private"
                         isPublic = False
                     Case Else
-                        Compiler.Report.SaveMessage(Messages.VBNC2019, "resource", strItems(2))
+                        Compiler.Report.SaveMessage(Messages.VBNC2019, Span.CommandLineSpan, "resource", strItems(2))
                         Return False
                 End Select
             Case Else
-                Compiler.Report.SaveMessage(Messages.VBNC2009, str)
+                Compiler.Report.SaveMessage(Messages.VBNC2009, Span.CommandLineSpan, str)
                 Return False
         End Select
 
         If files Is Nothing OrElse files.Length = 0 Then
             If m_IsLinkedResources Then
-                Compiler.Report.SaveMessage(Messages.VBNC30145, String.Format("The file '{0}' does not exist.", strItems(0)))
+                Compiler.Report.SaveMessage(Messages.VBNC30145, Span.CommandLineSpan, String.Format("The file '{0}' does not exist.", strItems(0)))
             Else
-                Compiler.Report.SaveMessage(Messages.VBNC31027, strItems(0))
+                Compiler.Report.SaveMessage(Messages.VBNC31027, Span.CommandLineSpan, strItems(0))
             End If
             Return False
         End If

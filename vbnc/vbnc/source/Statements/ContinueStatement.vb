@@ -88,19 +88,19 @@ Public Class ContinueStatement
                 m_ContainingStatement = Me.FindFirstParent(Of WhileStatement)()
                 If m_ContainingStatement Is Nothing Then
                     'Helper.AddCheck("error BC30784: 'Continue While' can only appear inside a 'While' statement.")
-                    Compiler.Report.ShowMessage(Messages.VBNC30784)
+                    Compiler.Report.ShowMessage(Messages.VBNC30784, Location)
                 End If
             Case KS.For
                 m_ContainingStatement = CType(Me.FindFirstParent(Of ForEachStatement, ForStatement)(), Statement)
                 If m_ContainingStatement Is Nothing Then
                     'Helper.AddError("error BC30783: 'Continue For' can only appear inside a 'For' statement.")
-                    Compiler.Report.ShowMessage(Messages.VBNC30783)
+                    Compiler.Report.ShowMessage(Messages.VBNC30783, Location)
                 End If
             Case KS.Do
                 m_ContainingStatement = Me.FindFirstParent(Of DoStatement)()
                 If m_ContainingStatement Is Nothing Then
                     'Helper.AddCheck("error BC30782: 'Continue Do' can only appear inside a 'Do' statement.")
-                    Compiler.Report.ShowMessage(Messages.VBNC30782)
+                    Compiler.Report.ShowMessage(Messages.VBNC30782, Location)
                 End If
             Case KS.Else
                 Throw New InternalException(Me)

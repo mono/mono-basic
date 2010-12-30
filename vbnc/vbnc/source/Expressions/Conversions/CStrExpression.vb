@@ -36,13 +36,32 @@ Public Class CStrExpression
         Dim result As Boolean = True
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
+
+        Dim expType As TypeReference = Expression.ExpressionType
+        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
+        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_String
+
+        Select Case expTypeCode
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.System_Char_Array) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
+        End Select
 
         Return result
     End Function
@@ -120,7 +139,7 @@ Public Class CStrExpression
                 Case TypeCode.DBNull
                     Return DBNull.Value
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
                     Return False
             End Select
         End Get

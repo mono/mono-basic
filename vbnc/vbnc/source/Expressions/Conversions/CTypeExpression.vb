@@ -95,14 +95,14 @@ Public Class CTypeExpression
                 CUIntExpression.GenerateCode(Me.Expression, Info)
             Case TypeCode.UInt64
                 CULngExpression.GenerateCode(Me.Expression, Info)
-            Case TypeCode.Object
+            Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(expType, Compiler.TypeCache.System_Object) Then
                     CObjExpression.GenerateCode(Me.Expression, Info)
                 Else
                     result = GenerateCTypeCode(Info, expType, Me.Expression.ExpressionType)
                 End If
             Case Else
-                Throw New InternalException(Me)
+                Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End Select
 
         Return result
@@ -181,16 +181,16 @@ Public Class CTypeExpression
                 ElseIf CecilHelper.IsArray(DestinationType) AndAlso Helper.DoesTypeImplementInterface(Me, CecilHelper.GetElementType(SourceType), CecilHelper.GetElementType(DestinationType)) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 Else
-                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
+                    Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Helper.ToString(Expression, SourceType), Helper.ToString(Expression, DestinationType))
                     result = False
                 End If
             ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_Array) Then
                 Emitter.EmitCastClass(Info, SourceType, DestinationType)
             ElseIf CecilHelper.IsArray(DestinationType) = False Then
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Helper.ToString(Expression, SourceType), Helper.ToString(Expression, DestinationType))
                 result = False
             ElseIf CecilHelper.GetArrayRank(SourceType) <> CecilHelper.GetArrayRank(DestinationType) Then
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, SourceType.Name, DestinationType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Helper.ToString(Expression, SourceType), Helper.ToString(Expression, DestinationType))
                 result = False
             Else
                 Dim SourceElementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(SourceType)
@@ -365,47 +365,47 @@ Public Class CTypeExpression
 
         Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
             Case TypeCode.Boolean
-                result = CBoolExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CBoolExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Byte
-                result = CByteExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CByteExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Char
-                result = CCharExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CCharExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.DateTime
-                result = CDateExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CDateExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Decimal
-                result = CDecExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CDecExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Double
-                result = CDblExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CDblExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Int16
-                result = CShortExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CShortExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Int32
-                result = CIntExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CIntExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Int64
-                result = CLngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CLngExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.SByte
-                result = CSByteExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CSByteExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Single
-                result = CSngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CSngExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.String
-                result = CStrExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CStrExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.UInt16
-                result = CUShortExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CUShortExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.UInt32
-                result = CUIntExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CUIntExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.UInt64
-                result = CULngExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                result = CULngExpression.Validate(Info, Expression) AndAlso result
             Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Object) Then
-                    result = CObjExpression.Validate(Info, Expression.ExpressionType) AndAlso result
+                    result = CObjExpression.Validate(Info, Expression) AndAlso result
                 ElseIf Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Char_Array) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) Then
                     If Location.File(Compiler).IsOptionStrictOn Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Location, Expression.ExpressionType.FullName, Me.ExpressionType.FullName)
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Location, Helper.ToString(Expression, Expression.ExpressionType), Helper.ToString(Expression, Me.ExpressionType))
                     Else
                         m_IsStringToCharArray = True
                     End If
                 ElseIf CecilHelper.IsNullable(Me.ExpressionType) AndAlso CecilHelper.IsNullable(Me.Expression.ExpressionType) Then
                     If Not Compiler.TypeResolution.IsImplicitlyConvertible(Me, CecilHelper.GetNulledType(Me.Expression.ExpressionType), CecilHelper.GetNulledType(Me.ExpressionType)) Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Me.Location, Helper.PrettyFormatType(Me.Expression.ExpressionType), Helper.PrettyFormatType(Me.ExpressionType)) AndAlso result
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Me.Location, Helper.ToString(Me, Me.Expression.ExpressionType), Helper.ToString(Me, Me.ExpressionType)) AndAlso result
                     End If
                 End If
             Case Else

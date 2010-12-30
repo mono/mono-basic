@@ -48,12 +48,12 @@ Public Class ConstraintList
                 Case KS.None
                 Case KS.Class
                     If hasClass Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC32101) AndAlso result
+                        result = Compiler.Report.ShowMessage(Messages.VBNC32101, Location) AndAlso result
                     End If
                     hasClass = True
                 Case KS.Structure
                     If hasStructure Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC32102) AndAlso result
+                        result = Compiler.Report.ShowMessage(Messages.VBNC32102, Location) AndAlso result
                     End If
                     hasStructure = True
                 Case KS.[New]
@@ -63,11 +63,11 @@ Public Class ConstraintList
         Next
 
         If hasNew AndAlso hasStructure Then
-            result = Compiler.Report.ShowMessage(Messages.VBNC32103) AndAlso result
+            result = Compiler.Report.ShowMessage(Messages.VBNC32103, Location) AndAlso result
         End If
 
         If hasStructure AndAlso hasClass Then
-            result = Compiler.Report.ShowMessage(Messages.VBNC32104) AndAlso result
+            result = Compiler.Report.ShowMessage(Messages.VBNC32104, Location) AndAlso result
         End If
 
         Return result

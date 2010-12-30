@@ -257,7 +257,7 @@ Public Class Parser
                     If newClause.IsNamespaceClause Then '
                         'ignore the duplication
                     ElseIf newClause.IsAliasClause Then
-                        Parent.Compiler.Report.SaveMessage(Messages.VBNC30572, newClause.AsAliasClause.Name)
+                        Parent.Compiler.Report.SaveMessage(Messages.VBNC30572, Span.CommandLineSpan, newClause.AsAliasClause.Name)
                     Else
                         Throw New InternalException("")
                     End If
@@ -1306,7 +1306,7 @@ Public Class Parser
                 m_Second = tm.CurrentToken
                 tm.NextToken()
             Else
-                Compiler.Report.ShowMessage(Messages.VBNC30203)
+                Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation)
                 Return Nothing
             End If
         End While
@@ -1974,7 +1974,7 @@ Public Class Parser
             m_SecondPart = ParseIdentifierOrKeyword(result)
             If m_SecondPart Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         Else
-            Compiler.Report.ShowMessage(Messages.VBNC30203)
+            Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation)
             Return Nothing
         End If
 
@@ -2233,7 +2233,7 @@ Public Class Parser
         Dim m_ArrayNameModifier As ArrayNameModifier
 
         If tm.CurrentToken.IsIdentifier = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30203)
+            Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation)
             Return Nothing
         End If
 
@@ -5090,14 +5090,14 @@ Public Class Parser
                     tm.NextToken(2)
                 Else
                     Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-                    Compiler.Report.ShowMessage(Messages.VBNC90011, "-1")
+                    Compiler.Report.ShowMessage(Messages.VBNC90011, tm.CurrentLocation, "-1")
                 End If
             ElseIf tm.CurrentToken.IsIdentifier Then
                 m_Label = tm.CurrentToken
                 tm.NextToken()
             Else
                 Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-                Compiler.Report.ShowMessage(Messages.VBNC30203)
+                Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation)
                 Return Nothing
             End If
         End If
@@ -5138,7 +5138,7 @@ Public Class Parser
             m_ExitWhat = tm.CurrentToken.Keyword
             tm.NextToken()
         Else
-            Compiler.Report.ShowMessage(Messages.VBNC30240)
+            Compiler.Report.ShowMessage(Messages.VBNC30240, tm.CurrentLocation)
             Return Nothing
         End If
 
@@ -5169,7 +5169,7 @@ Public Class Parser
             m_ContinueWhat = tm.CurrentToken.Keyword
             tm.NextToken()
         Else
-            Compiler.Report.ShowMessage(Messages.VBNC30781)
+            Compiler.Report.ShowMessage(Messages.VBNC30781, tm.CurrentLocation)
             Return Nothing
         End If
 
@@ -5585,7 +5585,7 @@ Public Class Parser
 
         If m_PreCondition IsNot Nothing AndAlso m_PostCondition IsNot Nothing Then
             'helper.AddError "error BC30238: 'Loop' cannot have a condition if matching 'Do' has one."
-            Compiler.Report.ShowMessage(Messages.VBNC30238)
+            Compiler.Report.ShowMessage(Messages.VBNC30238, tm.CurrentLocation)
             result.HasErrors = True
         End If
 
@@ -5997,7 +5997,7 @@ Public Class Parser
 
         If tm.Accept(KS.Is) Then
             If tm.CurrentToken.Equals(CaseClause.RelationalOperators) = False Then
-                Compiler.Report.ShowMessage(Messages.VBNC30239)
+                Compiler.Report.ShowMessage(Messages.VBNC30239, tm.CurrentLocation)
                 m_Comparison = KS.Equals
             Else
                 m_Comparison = tm.CurrentToken.Symbol

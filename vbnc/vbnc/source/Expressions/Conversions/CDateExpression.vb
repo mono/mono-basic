@@ -44,13 +44,13 @@ Public Class CDateExpression
             Case TypeCode.DateTime
                 'Nothing to do
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.System_Double.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Info.Compiler.TypeCache.System_Double.Name, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Double
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30533, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30533, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Boolean, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Decimal, TypeCode.Single
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Object
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
@@ -74,27 +74,35 @@ Public Class CDateExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_DateTime
         Select Case expTypeCode
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Info.Compiler.TypeCache.System_Double.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Info.Compiler.TypeCache.System_Double.Name, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Double
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30533, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30533, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Boolean, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Decimal, TypeCode.Single
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, ExpressionType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
                 result = False
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
         End Select
 
 

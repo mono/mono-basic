@@ -3042,21 +3042,6 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function PrettyFormatType(ByVal type As TypeReference) As String
-        If type Is Nothing Then Return "Nothing"
-
-        If CecilHelper.IsNullable(type) Then
-            Return CecilHelper.GetNulledType(type).ToString() & "?"
-        Else
-            Return type.ToString()
-        End If
-    End Function
-
-    Shared Function PrettyFormatType(ByVal type As Type) As String
-        If type Is Nothing Then Return "Nothing"
-        Return type.ToString()
-    End Function
-
     Overloads Shared Function ToString(ByVal Types As Mono.Cecil.TypeReference()) As String
         Dim result As String = ""
         Dim sep As String = ""
@@ -3234,15 +3219,13 @@ Public Class Helper
         Return builder.ToString()
     End Function
 
-    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
-        Dim result As String
-        Dim methodReference As MethodReference = TryCast(Member, MethodReference)
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As TypeReference) As String
+        Dim typeDefinition As TypeDefinition
 
-        If TypeOf Member Is Mono.Cecil.MethodReference Then
-            Return ToString(Context, methodReference)
-        ElseIf TypeOf Member Is Mono.Cecil.PropertyReference Then
-            result = Member.Name & "(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
-        ElseIf TypeOf Member Is Mono.Cecil.TypeDefinition AndAlso Helper.IsDelegate(Context.Compiler, DirectCast(Member, Mono.Cecil.TypeDefinition)) Then
+        If Member Is Nothing Then Return "Nothing"
+
+        TypeDefinition = TryCast(Member, TypeDefinition)
+        If TypeDefinition IsNot Nothing AndAlso Helper.IsDelegate(Context.Compiler, TypeDefinition) Then
             Dim builder As New Text.StringBuilder()
             Dim delegateType As Mono.Cecil.TypeDefinition = DirectCast(Member, Mono.Cecil.TypeDefinition)
             Dim invoke As Mono.Cecil.MethodReference = GetInvokeMethod(Context.Compiler, delegateType)
@@ -3254,14 +3237,65 @@ Public Class Helper
             Else
                 builder.Replace("Delegate Function " + invoke.Name + "(", "Delegate Function " + delegateType.Name + "(")
             End If
-            result = builder.ToString()
-        ElseIf TypeOf Member Is TypeReference Then
-            Return PrettyFormatType(DirectCast(Member, TypeReference))
+            Return builder.ToString()
+        ElseIf CecilHelper.IsNullable(Member) Then
+            Return ToString(Context, CecilHelper.GetNulledType(Member)) & "?"
         Else
-            Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
-            result = ""
+            If Helper.CompareType(Member, Context.Compiler.TypeCache.System_Byte) Then
+                Return "Byte"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Boolean) Then
+                Return "Boolean"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Char) Then
+                Return "Char"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_DateTime) Then
+                Return "Date"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_DBNull) Then
+                Return "DBNull"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Decimal) Then
+                Return "Decimal"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Double) Then
+                Return "Double"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Int16) Then
+                Return "Short"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Int32) Then
+                Return "Integer"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Int64) Then
+                Return "Long"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_SByte) Then
+                Return "SByte"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_Single) Then
+                Return "Single"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_String) Then
+                Return "String"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_UInt16) Then
+                Return "UShort"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_UInt32) Then
+                Return "UInteger"
+            ElseIf Helper.CompareType(Member, Context.Compiler.TypeCache.System_UInt64) Then
+                Return "ULong"
+            Else
+                Return Member.ToString()
+            End If
         End If
-        Return result
+    End Function
+
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
+        Dim methodReference As MethodReference
+        Dim propertyReference As PropertyReference
+        Dim typeReference As TypeReference
+
+        methodReference = TryCast(Member, MethodReference)
+        If methodReference IsNot Nothing Then Return ToString(Context, methodReference)
+
+        propertyReference = TryCast(Member, PropertyReference)
+        If propertyReference IsNot Nothing Then Return Member.Name & "(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
+
+        typeReference = TryCast(Member, TypeReference)
+        If typeReference IsNot Nothing Then Return ToString(Context, DirectCast(Member, TypeReference))
+
+        Context.Compiler.Report.ShowMessage(Messages.VBNC99997, Context.Location)
+
+        Return String.Empty
     End Function
 
     <Diagnostics.Conditional("DEBUGMETHODRESOLUTION")> Shared Sub LogResolutionMessage(ByVal Compiler As Compiler, ByVal msg As String)

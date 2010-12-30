@@ -37,21 +37,29 @@ Public Class CDecExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Decimal
         Select Case expTypeCode
             Case TypeCode.DateTime, TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
                 result = False
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
         End Select
 
 
@@ -72,7 +80,7 @@ Public Class CDecExpression
             Case TypeCode.Decimal
                 'Nothing to do
             Case TypeCode.DateTime, TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.SByte, TypeCode.Int16
                 Emitter.EmitConv_I4_Overflow(Info, expType)
@@ -96,6 +104,8 @@ Public Class CDecExpression
                 End If
             Case TypeCode.Object
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDecimal_Object)
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDecimal_Object)
                 Else
                     Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
@@ -123,11 +133,11 @@ Public Class CDecExpression
                     If Compiler.TypeResolution.CheckNumericRange(originalValue, resultvalue, ExpressionType) Then
                         Return resultvalue
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30439, ExpressionType.ToString)
+                        Compiler.Report.ShowMessage(Messages.VBNC30439, Expression.Location, ExpressionType.ToString)
                         Return New Decimal
                     End If
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Expression.Location, originalValue.ToString, ExpressionType.ToString)
                     Return New Decimal
             End Select
         End Get

@@ -177,7 +177,7 @@ Public Class tm
     ''' <param name="ReportError">Report the error "End of line expected."? (Always shown if this paramter is true.</param>
     ''' <remarks></remarks>
     Sub GotoNewline(ByVal EatNewLine As Boolean, Optional ByVal ReportError As Boolean = False)
-        If ReportError Then Compiler.Report.ShowMessage(Messages.VBNC90018)
+        If ReportError Then Compiler.Report.ShowMessage(Messages.VBNC90018, CurrentLocation)
 
         Do Until CurrentToken.IsEndOfLine
             NextToken()
@@ -204,7 +204,7 @@ Public Class tm
     ''' <remarks></remarks>
     Function FindNewLineAndShowError(ByVal Message As Messages) As Boolean
         If Not AcceptNewLine() Then
-            Compiler.Report.ShowMessage(Message)
+            Compiler.Report.ShowMessage(Message, CurrentLocation)
             GotoNewline(True, False)
             Return False
         Else
@@ -296,7 +296,7 @@ Public Class tm
             Return True
         Else
             If GotoNewline Then Me.GotoNewline(True)
-            Compiler.Report.ShowMessage(Message)
+            Compiler.Report.ShowMessage(Message, CurrentLocation)
             Return False
         End If
     End Function
@@ -314,7 +314,7 @@ Public Class tm
             Return True
         Else
             If GotoNewline Then Me.GotoNewline(True)
-            Compiler.Report.ShowMessage(Message, MessageParameters)
+            Compiler.Report.ShowMessage(Message, CurrentLocation, MessageParameters)
             Return False
         End If
     End Function
@@ -324,7 +324,7 @@ Public Class tm
             Return True
         Else
             If GotoNewline Then Me.GotoNewline(True)
-            Compiler.Report.ShowMessage(Message, MessageParameter)
+            Compiler.Report.ShowMessage(Message, CurrentLocation, MessageParameter)
             Return False
         End If
     End Function
@@ -380,7 +380,7 @@ Public Class tm
 #If DEBUG Then
                 System.Console.WriteLine("Found: " & CurrentToken.ToString)
 #End If
-                Compiler.Report.ShowMessage(Messages.VBNC30205)
+                Compiler.Report.ShowMessage(Messages.VBNC30205, CurrentLocation)
             End If
             Return result
         Else
@@ -396,7 +396,7 @@ Public Class tm
 #If DEBUG Then
                     System.Console.WriteLine("Found: " & CurrentToken.ToString)
 #End If
-                    Compiler.Report.ShowMessage(Messages.VBNC30205)
+                    Compiler.Report.ShowMessage(Messages.VBNC30205, CurrentLocation)
                 End If
                 Return False
             End If

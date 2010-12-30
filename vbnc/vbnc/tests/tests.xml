@@ -7226,7 +7226,7 @@
 		<arguments>/debug:full</arguments>
 		<file>CompileTime2\ConditionalExpression1.vb</file>
 	</test>
-	<test id="1812" name="error" category="" priority="0" expectedexitcode="1" target="exe">
+	<test id="1812" name="error" category="" priority="0" target="exe">
 		<file>Errors\error.vb</file>
 	</test>
 	<test id="1815" name="30199" category="" priority="0" expectedexitcode="1" expectederrorcode="30199" target="exe">
@@ -7524,5 +7524,53 @@
 	</test>
 	<test id="1910" name="Nullable3" category="" priority="0" target="library" mytype="empty">
 		<file>CompileTime2\Nullable3.vb</file>
+	</test>
+	<test id="1911" name="30311-40" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-40.vb</file>
+	</test>
+	<test id="1912" name="30311-39" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-39.vb</file>
+	</test>
+	<test id="1913" name="30311-41" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-41.vb</file>
+	</test>
+	<test id="1914" name="30311-42" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-42.vb</file>
+	</test>
+	<test id="1915" name="30311-43" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-43.vb</file>
+	</test>
+	<test id="1916" name="30311-44" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-44.vb</file>
+	</test>
+	<test id="1917" name="30311-45" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-45.vb</file>
+	</test>
+	<test id="1918" name="30311-46" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-46.vb</file>
+	</test>
+	<test id="1919" name="30311-47" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-47.vb</file>
+	</test>
+	<test id="1920" name="30311-48" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-48.vb</file>
+	</test>
+	<test id="1921" name="30311-49" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-49.vb</file>
+	</test>
+	<test id="1922" name="30311-50" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-50.vb</file>
+	</test>
+	<test id="1923" name="30311-51" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-51.vb</file>
+	</test>
+	<test id="1924" name="30311-52" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-52.vb</file>
+	</test>
+	<test id="1925" name="Nothing1" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\Nothing1.vb</file>
+	</test>
+	<test id="1926" name="30311-53" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-53.vb</file>
 	</test>
 </rt>

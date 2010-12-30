@@ -37,24 +37,32 @@ Public Class CDblExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Double
         Select Case expTypeCode
             Case TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30532, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30532, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, ExpressionType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
                 result = False
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
         End Select
 
         Return result
@@ -77,10 +85,10 @@ Public Class CDblExpression
             Case TypeCode.Double
                 'Nothing to do
             Case TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30532, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30532, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
                 Emitter.EmitConv_R8(Info, expType)
@@ -90,6 +98,8 @@ Public Class CDblExpression
                 Emitter.EmitConv_R8(Info, expType)
             Case TypeCode.Object
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDouble_Object)
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     Emitter.EmitCall(Info, Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToDouble_Object)
                 Else
                     Return Info.Compiler.Report.ShowMessage(Messages.VBNC99997, Expression.Location)
@@ -124,7 +134,7 @@ Public Class CDblExpression
                 Case TypeCode.DBNull
                     Return CDbl(0)
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
                     Return New Double
             End Select
         End Get

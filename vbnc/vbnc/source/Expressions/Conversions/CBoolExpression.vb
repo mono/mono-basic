@@ -44,7 +44,7 @@ Public Class CBoolExpression
             Case TypeCode.Boolean
                 'Nothing to do
             Case TypeCode.Char, TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Byte, TypeCode.UInt16, TypeCode.UInt32, TypeCode.SByte, TypeCode.Int16, TypeCode.Int32
                 Emitter.EmitLoadI4Value(Info, 0I, expType)
@@ -94,20 +94,30 @@ Public Class CBoolExpression
 
         If result = False Then Return result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
+        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Boolean
+
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, Info.Compiler.TypeCache.System_Boolean.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, Info.Compiler.TypeCache.System_Boolean))
                 result = False
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
         End Select
 
         Return result
@@ -133,7 +143,7 @@ Public Class CBoolExpression
                 Case TypeCode.DBNull
                     Return CBool(Nothing)
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
                     Return False
             End Select
         End Get

@@ -517,7 +517,7 @@ Public Class ForStatement
 
         Select Case Helper.GetTypeCode(Compiler, m_LoopType)
             Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
-                result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name) AndAlso result
             Case TypeCode.Decimal
                 m_IsLateBound = False
                 m_IsDecimal = True
@@ -529,7 +529,7 @@ Public Class ForStatement
                 Compiler.Helper.AddCheck("The loop control variable of a For statement must be of a primitive numeric type (...), Object, or a type T that has the following operators: (...)")
 
             Case Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30337, m_LoopType.Name) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name) AndAlso result
         End Select
 
 

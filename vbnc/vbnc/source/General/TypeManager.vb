@@ -202,7 +202,7 @@ Public Class TypeManager
 
             refAssembly = LoadAssembly(strFile)
             If refAssembly Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC2017, strFile)
+                Compiler.Report.ShowMessage(Messages.VBNC2017, Span.CommandLineSpan, strFile)
                 Return False
             End If
 

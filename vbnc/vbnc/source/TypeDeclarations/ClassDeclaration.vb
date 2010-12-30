@@ -227,7 +227,7 @@ Public Class ClassDeclaration
 
             If baseDefaultCtor IsNot Nothing Then
                 If Helper.IsPrivate(baseDefaultCtor) Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
                 Else
                     DefaultInstanceConstructor = ConstructorDeclaration.CreateDefaultConstructor(Me)
                     Members.Add(DefaultInstanceConstructor)
@@ -235,7 +235,7 @@ Public Class ClassDeclaration
                     result = AddInitializeComponentCall(DefaultInstanceConstructor) AndAlso result
                 End If
             Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30387, Name, BaseType.Name) AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
             End If
         End If
 

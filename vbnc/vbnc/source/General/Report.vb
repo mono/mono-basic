@@ -269,19 +269,6 @@ Public Class Report
     End Function
 
     ''' <summary>
-    ''' Shows the message with the specified parameters.
-    ''' Tries to look up the current location in the token manager.
-    ''' </summary>
-    <Diagnostics.DebuggerHidden()> _
-    Function ShowMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
-        If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            Return ShowMessage(Message, Compiler.tm.CurrentLocation, Parameters)
-        Else
-            Return ShowMessageNoLocation(Message, Parameters)
-        End If
-    End Function
-
-    ''' <summary>
     ''' Shows the multiline message with the specified location and parameters.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
@@ -293,21 +280,8 @@ Public Class Report
     ''' Saves the message with the specified location and parameters.
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Private Function SaveMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String) As Boolean
+    Function SaveMessage(ByVal Message As Messages, ByVal Location As Span, ByVal ParamArray Parameters() As String) As Boolean
         Return ShowMessage(True, New Message(Compiler, Message, Parameters, Location))
-    End Function
-
-    ''' <summary>
-    ''' Saves the message with the specified parameters.
-    ''' Tries to look up the current location in the token manager.
-    ''' </summary>
-    <Diagnostics.DebuggerHidden()> _
-    Function SaveMessage(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
-        If Compiler IsNot Nothing AndAlso Compiler.tm IsNot Nothing AndAlso Compiler.tm.IsCurrentTokenValid Then
-            Return SaveMessage(Message, Compiler.tm.CurrentLocation, Parameters)
-        Else
-            Return SaveMessage(Message, Nothing, Parameters)
-        End If
     End Function
 
     ''' <summary>
@@ -315,7 +289,7 @@ Public Class Report
     ''' to show it later with ShowSavedMessages()
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
-    Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
+    Private Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
         Dim isOnlyWarning As Boolean = False
 
         isOnlyWarning = Message.Level <= MessageLevel.Warning

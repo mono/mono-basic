@@ -206,7 +206,7 @@ Public Class Scanner
         Me.NextUnconditionally()
 
         If m_Current.IsIdentifier = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30203)
+            Compiler.Report.ShowMessage(Messages.VBNC30203, GetCurrentLocation())
             Me.EatLine(False)
             Return
         End If
@@ -777,12 +777,12 @@ Public Class Scanner
             Count += 1
             Dim ch As Char = NextChar()
             If (IsNewLine()) Then
-                Compiler.Report.ShowMessage(Messages.VBNC90000)
+                Compiler.Report.ShowMessage(Messages.VBNC90000, GetCurrentLocation())
                 bCont = False
             Else
                 Select Case ch
                     Case nl0
-                        Compiler.Report.ShowMessage(Messages.VBNC90001)
+                        Compiler.Report.ShowMessage(Messages.VBNC90001, GetCurrentLocation())
                         bCont = False
                     Case "#"c
                         NextChar() 'The ending #
@@ -897,11 +897,11 @@ Public Class Scanner
                     End If
                 Case nlA, nlD, nl2028, nl2029
                     'vbc accepts this...
-                    Compiler.Report.ShowMessage(Messages.VBNC90003)
+                    Compiler.Report.ShowMessage(Messages.VBNC90003, GetCurrentLocation())
                     bEndOfString = True
                 Case Else
                     If m_EndOfFile Then
-                        Compiler.Report.ShowMessage(Messages.VBNC90004)
+                        Compiler.Report.ShowMessage(Messages.VBNC90004, GetCurrentLocation())
                         'PreviousChar() 'Step back
                         bEndOfString = True
                     Else
@@ -914,7 +914,7 @@ Public Class Scanner
             'Is a char type character
             NextChar()
             If StringBuilderLength <> 1 Then
-                Compiler.Report.ShowMessage(Messages.VBNC30004)
+                Compiler.Report.ShowMessage(Messages.VBNC30004, GetCurrentLocation())
                 Return Token.CreateStringLiteral(GetCurrentLocation, StringBuilderToString)
             Else
                 Return Token.CreateCharToken(GetCurrentLocation, m_StringBuilder(0))
@@ -1056,7 +1056,7 @@ Public Class Scanner
                             GetNumber = Token.CreateSingleToken(GetCurrentLocation, Single.Parse(strResult, Helper.USCulture))
                         Case BuiltInDataTypes.Integer, BuiltInDataTypes.Long, BuiltInDataTypes.Short, BuiltInDataTypes.UInteger, BuiltInDataTypes.ULong, BuiltInDataTypes.UShort
                             If bReal Then
-                                Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
+                                Compiler.Report.ShowMessage(Messages.VBNC90002, GetCurrentLocation(), typeCharacter.ToString)
                                 IntegerValue = 0
                             Else
                                 'Try to parse the result
@@ -1082,18 +1082,18 @@ Public Class Scanner
                                     Throw New InternalException("")
                             End Select
                             If bOutOfRange AndAlso typeCharacter <> LiteralTypeCharacters_Characters.None Then
-                                Compiler.Report.ShowMessage(Messages.VBNC30439, typeCharacter.ToString)
+                                Compiler.Report.ShowMessage(Messages.VBNC30439, GetCurrentLocation(), typeCharacter.ToString)
                             End If
                             GetNumber = GetIntegralToken(ULong.Parse(strResult, Helper.USCulture), Base, typeCharacter)
                         Case Else
-                            Compiler.Report.ShowMessage(Messages.VBNC90002, typeCharacter.ToString)
+                            Compiler.Report.ShowMessage(Messages.VBNC90002, GetCurrentLocation(), typeCharacter.ToString)
                             GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                     End Select
                 Catch ex As System.OverflowException
-                    Compiler.Report.ShowMessage(Messages.VBNC30036)
+                    Compiler.Report.ShowMessage(Messages.VBNC30036, GetCurrentLocation())
                     GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 Catch ex As Exception
-                    Compiler.Report.ShowMessage(Messages.VBNC90005)
+                    Compiler.Report.ShowMessage(Messages.VBNC90005, GetCurrentLocation())
                     GetNumber = Token.CreateDoubleToken(GetCurrentLocation, 0)
                 End Try
 #If EXTENDED Then
@@ -1118,7 +1118,7 @@ Public Class Scanner
                 Try
                     IntegerValue = Helper.OctToInt(strResult)
                 Catch ex As Exception
-                    Compiler.Report.ShowMessage(Messages.VBNC90006, "octal")
+                    Compiler.Report.ShowMessage(Messages.VBNC90006, GetCurrentLocation(), "octal")
                 End Try
                 GetNumber = GetIntegralToken(IntegerValue, Base, typeCharacter)
             Case Else
@@ -1525,7 +1525,7 @@ Public Class Scanner
                             Result = Nothing
                         End If
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30037)
+                        Compiler.Report.ShowMessage(Messages.VBNC30037, GetCurrentLocation())
                         EatLine(False)
                     End If
             End Select

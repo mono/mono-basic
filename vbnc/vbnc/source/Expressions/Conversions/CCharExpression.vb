@@ -44,10 +44,10 @@ Public Class CCharExpression
             Case TypeCode.Char
                 'Nothing to do
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
-                Info.Compiler.Report.ShowMessage(Messages.VBNC32007, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32007, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Boolean, TypeCode.Double, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Single
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Object
                 If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
@@ -71,23 +71,23 @@ Public Class CCharExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Char
         Select Case expTypeCode
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
-                Info.Compiler.Report.ShowMessage(Messages.VBNC32007, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32007, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.Boolean, TypeCode.Double, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Single
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, ExpressionType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
                 result = False
         End Select
 
@@ -111,13 +111,13 @@ Public Class CCharExpression
                     If CStr(originalValue).Length = 1 Then
                         Return CChar(originalValue)
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                        Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
                         Return New Char
                     End If
                 Case TypeCode.Char
                     Return CChar(originalValue)
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
                     Return New Char
             End Select
         End Get

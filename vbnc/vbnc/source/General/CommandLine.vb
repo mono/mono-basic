@@ -845,7 +845,7 @@ Public Class CommandLine
     ''' </summary>
     Private Function ParseResponseFile(ByVal Filename As String) As Boolean
         If m_lstResponseFiles.Contains(Filename) Then
-            Compiler.Report.ShowMessage(Messages.VBNC2014, Filename)
+            Compiler.Report.ShowMessage(Messages.VBNC2014, Span.CommandLineSpan, Filename)
             Return False
         Else
             m_lstResponseFiles.Add(Filename)
@@ -864,7 +864,7 @@ Public Class CommandLine
             Compiler.Report.WriteLine("IO.File.Exists(" & Filename & ") => " & IO.File.Exists(Filename).ToString)
             Compiler.Report.WriteLine("IO.File.Exists(" & IO.Path.GetFullPath(Filename) & ") >= " & IO.File.Exists(IO.Path.GetFullPath(Filename)).ToString)
 #End If
-            Compiler.Report.ShowMessage(Messages.VBNC2001, Filename)
+            Compiler.Report.ShowMessage(Messages.VBNC2001, Span.CommandLineSpan, Filename)
             Return False
         End If
 
@@ -873,7 +873,7 @@ Public Class CommandLine
         Try
             strLines = IO.File.ReadAllLines(Filename)
         Catch ex As IO.IOException
-            Compiler.Report.ShowMessage(Messages.VBNC2007, Filename)
+            Compiler.Report.ShowMessage(Messages.VBNC2007, Span.CommandLineSpan, Filename)
             Return False
         End Try
 
@@ -929,7 +929,7 @@ Public Class CommandLine
                     Case "module"
                         m_strTarget = Targets.Module
                     Case Else
-                        Compiler.Report.SaveMessage(Messages.VBNC2019, "target", strValue)
+                        Compiler.Report.SaveMessage(Messages.VBNC2019, Span.CommandLineSpan, "target", strValue)
                         result = False
                 End Select
                 ' - INPUT FILES -
@@ -981,7 +981,7 @@ Public Class CommandLine
                         m_eDebugInfo = DebugTypes.Full
                     Case Else
                         'TODO: AddError 2014 (saved).
-                        Compiler.Report.SaveMessage(Messages.VBNC2019, strName, strValue)
+                        Compiler.Report.SaveMessage(Messages.VBNC2019, Span.CommandLineSpan, strName, strValue)
                         result = False
                 End Select
                 ' - ERRORS AND WARNINGS -
@@ -999,7 +999,7 @@ Public Class CommandLine
                     If str.Contains("=") = False Then str = str & "=True"
                     Dim strSplit() As String = Split(str, "=")
                     If strSplit.GetUpperBound(0) <> 1 Then
-                        Compiler.Report.ShowMessage(Messages.VBNC90017, str)
+                        Compiler.Report.ShowMessage(Messages.VBNC90017, Span.CommandLineSpan, str)
                         result = False
                     Else
                         m_lstDefine.Add(New Define(Compiler, strSplit(0), strSplit(1)))
@@ -1037,7 +1037,7 @@ Public Class CommandLine
                     Case Else
                         result = False
                         'TODO: AddError 2014 (saved).
-                        Compiler.Report.SaveMessage(Messages.VBNC2019, strName, strValue)
+                        Compiler.Report.SaveMessage(Messages.VBNC2019, Span.CommandLineSpan, strName, strValue)
                 End Select
                 ' - MISCELLANEOUS -
             Case "help", "?"
@@ -1061,13 +1061,13 @@ Public Class CommandLine
                 m_strBugReport = strValue
             Case "codepage"
                 If strValue = "" Then
-                    Compiler.Report.ShowMessage(Messages.VBNC2006, "codepage", "<number>")
+                    Compiler.Report.ShowMessage(Messages.VBNC2006, Span.CommandLineSpan, "codepage", "<number>")
                     result = False
                 Else
                     Try
                         m_Encoding = System.Text.Encoding.GetEncoding(Integer.Parse(strValue, Globalization.NumberStyles.AllowLeadingWhite Or Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture))
                     Catch
-                        Compiler.Report.ShowMessage(Messages.VBNC2016, strValue)
+                        Compiler.Report.ShowMessage(Messages.VBNC2016, Span.CommandLineSpan, strValue)
                         result = False
                     End Try
                 End If
@@ -1092,7 +1092,7 @@ Public Class CommandLine
             Case "netcf"
                 m_bNetCF = True
                 result = False
-                Compiler.Report.ShowMessage(Messages.VBNC90016, ".NET Compact Framework")
+                Compiler.Report.ShowMessage(Messages.VBNC90016, Span.CommandLineSpan, ".NET Compact Framework")
             Case "sdkpath"
                 m_strSDKPath = strValue
             Case "utf8output+", "utf8output"
@@ -1108,7 +1108,7 @@ Public Class CommandLine
             Case "vbruntime"
                 m_VBRuntime = strValue
             Case "errorreport"
-                result = Compiler.Report.SaveMessage(Messages.VBNC99998, "/errorreport isn't implemented yet.") AndAlso result
+                result = Compiler.Report.SaveMessage(Messages.VBNC99998, Span.CommandLineSpan, "/errorreport isn't implemented yet.") AndAlso result
             Case "vbversion"
                 Select Case strValue
                     Case "7"
@@ -1124,13 +1124,13 @@ Public Class CommandLine
                 m_strDoc = Nothing
             Case "doc+"
                 m_strDoc = String.Empty
-                Compiler.Report.SaveMessage(Messages.VBNC99998, "Support for /doc+ has not been implemented. No documentation file will be generated.")
+                Compiler.Report.SaveMessage(Messages.VBNC99998, Span.CommandLineSpan, "Support for /doc+ has not been implemented. No documentation file will be generated.")
             Case "doc"
                 m_strDoc = strValue
-                Compiler.Report.SaveMessage(Messages.VBNC99998, "Support for /doc:<file> has not been implemented. No documentation file will be generated.")
+                Compiler.Report.SaveMessage(Messages.VBNC99998, Span.CommandLineSpan, "Support for /doc:<file> has not been implemented. No documentation file will be generated.")
             Case Else
                 'result = False 'OK since this is only a warning.
-                result = Compiler.Report.SaveMessage(Messages.VBNC2009, strName) AndAlso result
+                result = Compiler.Report.SaveMessage(Messages.VBNC2009, Span.CommandLineSpan, strName) AndAlso result
         End Select
         Return result
     End Function
@@ -1145,7 +1145,7 @@ Public Class CommandLine
 
         If strFiles Is Nothing OrElse strFiles.Length = 0 Then
             If IsPattern(File) = False Then
-                result = Compiler.Report.SaveMessage(Messages.VBNC2001, File) AndAlso result
+                result = Compiler.Report.SaveMessage(Messages.VBNC2001, Span.CommandLineSpan, File) AndAlso result
             End If
             Return result
         End If

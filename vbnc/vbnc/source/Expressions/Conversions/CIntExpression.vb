@@ -37,26 +37,33 @@ Public Class CIntExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression.ExpressionType) AndAlso result
+        result = Validate(Info, Expression) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal SourceType As Mono.Cecil.TypeReference) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = SourceType
+        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
         Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Int32
         Select Case expTypeCode
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                End If
         End Select
-
 
         Return result
     End Function
@@ -78,10 +85,10 @@ Public Class CIntExpression
             Case TypeCode.Int32
                 'Nothing to do
             Case TypeCode.Char
-                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC32006, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.DateTime
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, expType.Name, expType.Name)
+                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, expType))
                 result = False
             Case TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64
                 Emitter.EmitConv_I4_Overflow(Info, expType)
@@ -127,11 +134,11 @@ Public Class CIntExpression
                     If Compiler.TypeResolution.CheckNumericRange(originalValue, resultvalue, ExpressionType) Then
                         Return resultvalue
                     Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30439, ExpressionType.ToString)
+                        Compiler.Report.ShowMessage(Messages.VBNC30439, Location, Helper.ToString(Expression, ExpressionType))
                         Return CInt(0)
                     End If
                 Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, originalValue.ToString, ExpressionType.ToString)
+                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
                     Return CInt(0)
             End Select
         End Get

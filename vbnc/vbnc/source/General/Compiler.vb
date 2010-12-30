@@ -306,7 +306,7 @@ Public Class Compiler
             Case vbnc.CommandLine.Targets.Library
                 kind = Mono.Cecil.ModuleKind.Dll
             Case vbnc.CommandLine.Targets.Module
-                Report.ShowMessage(Messages.VBNC99999, "Compiling modules (-target:module) hasn't been implemented yet.")
+                Report.ShowMessage(Messages.VBNC99999, Span.CommandLineSpan, "Compiling modules (-target:module) hasn't been implemented yet.")
                 kind = Mono.Cecil.ModuleKind.NetModule
             Case vbnc.CommandLine.Targets.Winexe
                 kind = Mono.Cecil.ModuleKind.Windows
@@ -434,7 +434,7 @@ Public Class Compiler
 
             'Exit if no source files were specified
             If m_CommandLine.Files.Count = 0 Then
-                Report.ShowMessage(Messages.VBNC2011)
+                Report.ShowMessage(Messages.VBNC2011, Span.CommandLineSpan)
                 Return 1
             End If
 
@@ -539,7 +539,7 @@ EndOfCompilation:
                 Return 1
             End If
         Catch ex As TooManyErrorsException
-            Report.ShowMessage(Messages.VBNC30041)
+            Report.ShowMessage(Messages.VBNC30041, Span.CommandLineSpan)
             Return 1
         Catch ex As Exception
             ShowExceptionInfo(ex)
@@ -595,7 +595,7 @@ EndOfCompilation:
         Compiler.Report.Unindent()
         Compiler.Report.WriteLine(ex.Message)
 #Else
-        Compiler.Report.ShowMessage (Messages.VBNC99999, "Unexpected error: " & ex.Message & vb.vbNewLine & ex.StackTrace)
+        Compiler.Report.ShowMessage(Messages.VBNC99999, Span.CommandLineSpan, "Unexpected error: " & ex.Message & VB.vbNewLine & ex.StackTrace)
 #End If
     End Sub
 
@@ -777,7 +777,7 @@ EndOfCompilation:
                     Try
                         reader = New System.Resources.ResourceReader(r.Filename)
                     Catch ex As Exception
-                        result = Compiler.Report.ShowMessage(Messages.VBNC31509, r.Filename, ex.Message) AndAlso result
+                        result = Compiler.Report.ShowMessage(Messages.VBNC31509, Span.CommandLineSpan, r.Filename, ex.Message) AndAlso result
                         Continue For
                     End Try
                 Case Else
@@ -897,7 +897,7 @@ EndOfCompilation:
         mainClass = theAss.FindType(CommandLine.Main)
 
         If mainClass Is Nothing Then
-            Report.ShowMessage(Messages.VBNC90013, CommandLine.Main, "0")
+            Report.ShowMessage(Messages.VBNC90013, Span.CommandLineSpan, CommandLine.Main, "0")
             Result = Nothing
             Return False
         End If

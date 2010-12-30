@@ -297,7 +297,7 @@ Public Class CodeFile
 
                 Return StreamReader
             Catch e As Exception
-                Compiler.Report.ShowMessage(Messages.VBNC31007, FileName)
+                Compiler.Report.ShowMessage(Messages.VBNC31007, Span.CommandLineSpan, FileName)
                 Return Nothing
             End Try
         End Get
