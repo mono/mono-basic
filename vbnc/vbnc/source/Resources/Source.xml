@@ -1764,7 +1764,7 @@
 	</Message>
 	<Message id="30530" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Parameter cannot have the same name as its defining function.</VBNCValue>
 		<VBValue>Parameter cannot have the same name as its defining function.</VBValue>
 	</Message>
 	<Message id="30532" level="Error">

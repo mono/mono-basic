@@ -2480,7 +2480,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30529 = 30529
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Parameter cannot have the same name as its defining function."
     ''' VB   = "Parameter cannot have the same name as its defining function."
     ''' </summary>
     ''' <remarks></remarks>

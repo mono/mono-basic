@@ -56,4 +56,13 @@ Public Class ExternalFunctionDeclaration
             Return DirectCast(MyBase.Signature, FunctionSignature)
         End Get
     End Property
+
+    Public Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
+        Dim result As Boolean = True
+
+        result = Signature.VerifyParameterNamesDoesntMatchFunctionName() AndAlso result
+        result = MyBase.ResolveMember(Info) AndAlso result
+
+        Return result
+    End Function
 End Class

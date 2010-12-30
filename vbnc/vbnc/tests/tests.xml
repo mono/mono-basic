@@ -7489,13 +7489,13 @@
 	<test id="1899" name="30530-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
 		<file>Errors\30530-1.vb</file>
 	</test>
-	<test id="1900" name="30530-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+	<test id="1900" name="30530-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="library">
 		<file>Errors\30530-2.vb</file>
 	</test>
-	<test id="1901" name="30530-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+	<test id="1901" name="30530-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="library">
 		<file>Errors\30530-3.vb</file>
 	</test>
-	<test id="1902" name="30530-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="exe">
+	<test id="1902" name="30530-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="library">
 		<file>Errors\30530-4.vb</file>
 	</test>
 	<test id="1903" name="36651" category="" priority="0" expectedexitcode="1" expectederrorcode="36651" target="exe">
@@ -7572,5 +7572,11 @@
 	</test>
 	<test id="1926" name="30311-53" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
 		<file>Errors\30311-53.vb</file>
+	</test>
+	<test id="1927" name="30530-5" category="" priority="0" expectedexitcode="1" expectederrorcode="30530" target="library">
+		<file>Errors\30530-5.vb</file>
+	</test>
+	<test id="1928" name="Property9" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\Property9.vb</file>
 	</test>
 </rt>

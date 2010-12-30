@@ -383,7 +383,7 @@
   <data name="30526"><value>CHANGEME</value></data>
   <data name="30528"><value>CHANGEME</value></data>
   <data name="30529"><value>CHANGEME</value></data>
-  <data name="30530"><value>CHANGEME</value></data>
+  <data name="30530"><value>Parameter cannot have the same name as its defining function.</value></data>
   <data name="30532"><value>Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method.</value></data>
   <data name="30533"><value>Conversion from 'Double' to 'Date' requires calling the 'Date.FromOADate' method.</value></data>
   <data name="30542"><value>Division by zero occured.</value></data>

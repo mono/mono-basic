@@ -186,4 +186,17 @@ Public Class SubSignature
         End Set
     End Property
 
+    Public Function VerifyParameterNamesDoesntMatchFunctionName() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Parameters.Count - 1
+            Dim p As Parameter = Parameters(i)
+
+            If Helper.CompareName(p.Name, Name) Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30530, Me.Location)
+            End If
+        Next
+
+        Return result
+    End Function
 End Class

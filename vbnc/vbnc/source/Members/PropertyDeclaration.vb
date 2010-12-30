@@ -212,6 +212,8 @@ Public Class PropertyDeclaration
 
         UpdateDefinition()
 
+        result = Signature.VerifyParameterNamesDoesntMatchFunctionName() AndAlso result
+
         Return result
     End Function
 
