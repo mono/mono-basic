@@ -481,10 +481,7 @@ Public Class MethodResolver
 
             If candidate Is Nothing Then Continue For
 
-            Dim body As Mono.Cecil.Cil.MethodBody
-            If TypeOf candidate.Member Is Mono.Cecil.MethodDefinition Then body = DirectCast(candidate.Member, Mono.Cecil.MethodDefinition).Body
-
-            If candidate.IsApplicable = False Then
+            If candidate.DefineApplicability = False Then
                 Log("NOT APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
                 m_Candidates(i) = Nothing
             Else
@@ -732,12 +729,6 @@ Public Class MemberCandidate
             Else
                 Return Helper.IsAccessible(Compiler, Resolver.Caller.CecilType, m_Member)
             End If
-        End Get
-    End Property
-
-    ReadOnly Property IsApplicable() As Boolean
-        Get
-            Return DefineApplicability()
         End Get
     End Property
 
