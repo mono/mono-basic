@@ -308,68 +308,146 @@ Public Class MethodResolver
         Next
     End Sub
 
+    Private Function ContainsGenericParameters(ByVal Type As TypeReference, ByVal Find As Mono.Collections.Generic.Collection(Of GenericParameter)) As Boolean
+        Dim elementType As TypeReference
+        Dim tg As GenericParameter
+        Dim git As GenericInstanceType
+
+        If Type Is Nothing Then Return False
+
+        tg = TryCast(Type, GenericParameter)
+        If tg IsNot Nothing AndAlso Find.Contains(tg) Then Return True
+
+        git = TryCast(Type, GenericInstanceType)
+        If git IsNot Nothing AndAlso git.HasGenericArguments Then
+            For i As Integer = 0 To Find.Count - 1
+                If git.GenericArguments.Contains(Find(i)) Then Return True
+            Next
+        End If
+
+        elementType = Type.GetElementType()
+        If elementType IsNot Nothing AndAlso elementType IsNot Type Then
+            Return ContainsGenericParameters(elementType, Find)
+        End If
+
+        Return False
+    End Function
+
     Sub SelectLessGeneric()
-        'Find less generic methods
-        'Dim expandedArgumentTypes(m_Candidates.Count - 1)() As Type
+        '
+        'A member M is determined to be less generic than a member N as follows:
+        '1.	If, for each pair of matching parameters Mj and Nj, Mj is less or equally 
+        '   generic than Nj with respect to type parameters on the method, and at least 
+        '   one Mj is less generic with respect to type parameters on the method.
+        '2.	Otherwise, if for each pair of matching parameters Mj and Nj, Mj is less or equally generic than Nj 
+        '   with respect to type parameters on the type, and at least one Mj is less generic with respect to 
+        '   type parameters on the type, then M is less generic than N.
+        '
+        'A parameter M is considered to be equally generic to a parameter N if their types Mt and Nt
+        'both refer to type parameters or both dont refer to type parameters.
+        'M is considered to be less generic than N if Mt does not refer to a type parameter and Nt does.
+        '
 
-        'For i As Integer = 0 To m_Candidates.Count - 1
-        '    If m_Candidates(i) Is Nothing Then Continue For
+        Dim gpType As Mono.Collections.Generic.Collection(Of GenericParameter) = Nothing
+        Dim gp() As Mono.Collections.Generic.Collection(Of GenericParameter) = Nothing
 
-        '    For j As Integer = i + 1 To m_Candidates.Count - 1
-        '        If m_Candidates(j) Is Nothing Then Continue For
+        For i As Integer = 0 To m_Candidates.Count - 1
+            If m_Candidates(i) Is Nothing Then Continue For
 
-        '        Dim candidateI As MemberCandidate = m_Candidates(i)
-        '        Dim candidateJ As MemberCandidate = m_Candidates(j)
+            For j As Integer = i + 1 To m_Candidates.Count - 1
+                If m_Candidates(j) Is Nothing Then Continue For
 
-        '        Helper.Assert(candidateI.ExactArguments IsNot Nothing)
-        '        Helper.Assert(candidateJ.ExactArguments IsNot Nothing)
+                Dim candidateI As MemberCandidate = m_Candidates(i)
+                Dim candidateJ As MemberCandidate = m_Candidates(j)
+                Dim parametersI As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetOriginalParameters(candidateI.Member)
+                Dim parametersJ As Mono.Collections.Generic.Collection(Of ParameterDefinition) = Helper.GetOriginalParameters(candidateJ.Member)
+                Dim paramCount As Integer = Math.Min(parametersI.Count, parametersJ.Count)
+                Dim gpI As Mono.Collections.Generic.Collection(Of GenericParameter)
+                Dim gpJ As Mono.Collections.Generic.Collection(Of GenericParameter)
+                Dim timesLessGenericI As Integer
+                Dim timesLessGenericJ As Integer
 
-        '        Dim a, b As Boolean
+                'Not sure if the # of parameters can be different between I and J here
+                If paramCount = 0 Then Continue For
 
-        '        If expandedArgumentTypes(i) Is Nothing Then
-        '            expandedArgumentTypes(i) = candidateI.TypesInInvokedOrder() ' Helper.GetExpandedTypes(Compiler, candidateI.InputParameters, Arguments.Count)
-        '        End If
-        '        If expandedArgumentTypes(j) Is Nothing Then
-        '            expandedArgumentTypes(j) = candidateJ.TypesInInvokedOrder() 'Helper.GetExpandedTypes(Compiler, candidateJ.InputParameters, Arguments.Count)
-        '        End If
+                If gp Is Nothing Then ReDim gp(m_Candidates.Count - 1)
 
-        '        a = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(i), expandedArgumentTypes(j))
-        '        b = Helper.IsFirstMoreApplicable(Compiler, Arguments.Arguments, expandedArgumentTypes(j), expandedArgumentTypes(i))
+                gpI = gp(i)
+                gpJ = gp(j)
 
-        '        If a = b Then ' AndAlso b = False Then
-        '            'It is possible for M and N to have the same signature if one or both contains an expanded 
-        '            'paramarray parameter. In that case, the member with the fewest number of arguments matching
-        '            'expanded paramarray parameters is considered more applicable. 
-        '            Dim iParamArgs, jParamArgs As Integer
+                If gpI Is Nothing Then
+                    gp(i) = Helper.GetGenericParameters(candidateI.Member)
+                    gpI = gp(i)
+                End If
+                If gpJ Is Nothing Then
+                    gp(j) = Helper.GetGenericParameters(candidateJ.Member)
+                    gpJ = gp(j)
+                End If
 
-        '            If candidateI.IsParamArrayCandidate Then
-        '                iParamArgs = candidateI.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
-        '            End If
-        '            If candidateJ.IsParamArrayCandidate Then
-        '                jParamArgs = candidateJ.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
-        '            End If
-        '            If jParamArgs > iParamArgs Then
-        '                a = True : b = False
-        '            ElseIf iParamArgs > jParamArgs Then
-        '                b = True : a = False
-        '            End If
-        '            Helper.Assert(iParamArgs <> jParamArgs OrElse (iParamArgs = 0 AndAlso jParamArgs = 0), MethodName)
-        '        End If
+                '1.	If, for each pair of matching parameters Mj and Nj, Mj is less or equally 
+                '   generic than Nj with respect to type parameters on the method, and at least 
+                '   one Mj is less generic with respect to type parameters on the method.
 
-        '        If a Xor b Then
-        '            If a = False Then
-        '                Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
-        '                m_Candidates(i) = Nothing
-        '                Exit For
-        '            Else
-        '                Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
-        '                m_Candidates(j) = Nothing
-        '            End If
-        '        Else
-        '            Log("EQUALLY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", ArgumentsTypesAsString, Helper.ToString(candidateI.DefinedParametersTypes), Helper.ToString(candidateJ.DefinedParametersTypes))
-        '        End If
-        '    Next
-        'Next
+                For p As Integer = 0 To paramCount - 1
+                    Dim paramI As ParameterDefinition = parametersI(p)
+                    Dim paramJ As ParameterDefinition = parametersJ(p)
+                    Dim containsI As Boolean = ContainsGenericParameters(paramI.ParameterType, gpI)
+                    Dim containsJ As Boolean = ContainsGenericParameters(paramJ.ParameterType, gpJ)
+
+                    If containsI = False AndAlso containsJ = True Then
+                        timesLessGenericI += 1
+                    ElseIf containsI = True AndAlso containsJ = False Then
+                        timesLessGenericJ += 1
+                    End If
+                Next
+
+                If timesLessGenericI > 0 AndAlso timesLessGenericJ = 0 Then
+                    Log("MORE METHOD GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
+                    m_Candidates(j) = Nothing
+                    Exit For
+                ElseIf timesLessGenericI = 0 AndAlso timesLessGenericJ > 0 Then
+                    Log("MORE METHOD GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
+                    m_Candidates(i) = Nothing
+                    Exit For
+                End If
+
+                '2.	Otherwise, if for each pair of matching parameters Mj and Nj, Mj is less or equally generic than Nj 
+                '   with respect to type parameters on the type, and at least one Mj is less generic with respect to 
+                '   type parameters on the type, then M is less generic than N.
+                timesLessGenericI = 0
+                timesLessGenericJ = 0
+
+                If gpType Is Nothing Then
+                    gpType = CecilHelper.FindDefinition(m_Candidates(i).Member.DeclaringType).GenericParameters
+                End If
+
+                'Not sure if the # of parameters can be different between I and J here
+                For p As Integer = 0 To paramCount - 1
+                    Dim paramI As ParameterDefinition = parametersI(p)
+                    Dim paramJ As ParameterDefinition = parametersJ(p)
+                    Dim containsI As Boolean = ContainsGenericParameters(paramI.ParameterType, gpType)
+                    Dim containsJ As Boolean = ContainsGenericParameters(paramJ.ParameterType, gpType)
+
+                    If containsI = False AndAlso containsJ = True Then
+                        timesLessGenericI += 1
+                    ElseIf containsI = True AndAlso containsJ = False Then
+                        timesLessGenericJ += 1
+                    End If
+                Next
+
+                If timesLessGenericI > 0 AndAlso timesLessGenericJ = 0 Then
+                    Log("MORE TYPE GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
+                    m_Candidates(j) = Nothing
+                    Exit For
+                ElseIf timesLessGenericI = 0 AndAlso timesLessGenericJ > 0 Then
+                    Log("MORE TYPE GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
+                    m_Candidates(i) = Nothing
+                    Exit For
+                End If
+
+                Log("EQUALLY GENERIC: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", ArgumentsTypesAsString, Helper.ToString(candidateI.DefinedParametersTypes), Helper.ToString(candidateJ.DefinedParametersTypes))
+            Next
+        Next
     End Sub
 
     Sub RemoveInaccessible()

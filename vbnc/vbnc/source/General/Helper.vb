@@ -347,6 +347,19 @@ Public Class Helper
         Return result
     End Function
 
+    Shared Function GetGenericParameters(ByVal Member As MemberReference) As Mono.Collections.Generic.Collection(Of GenericParameter)
+        Dim methodReference As MethodReference
+        Dim typeReference As TypeReference
+
+        methodReference = TryCast(Member, MethodReference)
+        If methodReference IsNot Nothing Then Return CecilHelper.FindDefinition(methodReference).GenericParameters
+
+        typeReference = TryCast(Member, TypeReference)
+        If typeReference IsNot Nothing Then Return CecilHelper.FindDefinition(typeReference).GenericParameters
+
+        Return Nothing
+    End Function
+
     Shared Function GetGenericParameterConstraints(ByVal Context As BaseObject, ByVal Type As Mono.Cecil.TypeReference) As Mono.Collections.Generic.Collection(Of TypeReference)
         Dim tG As Mono.Cecil.GenericParameter = TryCast(Type, Mono.Cecil.GenericParameter)
 
@@ -3529,6 +3542,31 @@ Public Class Helper
     Overloads Shared Function GetParameters(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         Dim mR As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
         If mR IsNot Nothing Then Return mR.ResolvedParameters
+
+        Dim pR As Mono.Cecil.PropertyReference = TryCast(Member, Mono.Cecil.PropertyReference)
+        If pR IsNot Nothing Then Return CecilHelper.FindDefinition(pR).Parameters
+
+        Dim tR As Mono.Cecil.TypeReference = TryCast(Member, Mono.Cecil.TypeReference)
+        If tR IsNot Nothing Then Return Nothing
+
+        Dim fR As Mono.Cecil.FieldReference = TryCast(Member, Mono.Cecil.FieldReference)
+        If fR IsNot Nothing Then Return Nothing
+
+        Dim eR As Mono.Cecil.EventReference = TryCast(Member, Mono.Cecil.EventReference)
+        If eR IsNot Nothing Then Return CecilHelper.FindDefinition(eR).InvokeMethod.Parameters()
+
+        Throw New NotImplementedException
+    End Function
+
+    ''' <summary>
+    ''' Gets the parameters in the definition (not inflated)
+    ''' </summary>
+    ''' <param name="Member"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Overloads Shared Function GetOriginalParameters(ByVal Member As Mono.Cecil.MemberReference) As Mono.Collections.Generic.Collection(Of ParameterDefinition)
+        Dim mR As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
+        If mR IsNot Nothing Then Return CecilHelper.FindDefinition(mR).Parameters
 
         Dim pR As Mono.Cecil.PropertyReference = TryCast(Member, Mono.Cecil.PropertyReference)
         If pR IsNot Nothing Then Return CecilHelper.FindDefinition(pR).Parameters
