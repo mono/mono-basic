@@ -428,10 +428,8 @@ Public Class TypeResolution
         If Helper.CompareType(Compiler.TypeCache.Nothing, FromType) Then Return True
         If CecilHelper.IsByRef(FromType) Then FromType = CecilHelper.GetElementType(FromType)
         If CecilHelper.IsByRef(ToType) Then ToType = CecilHelper.GetElementType(ToType)
-        If CecilHelper.IsNullable(FromType) AndAlso CecilHelper.IsNullable(ToType) Then
-            FromType = CecilHelper.GetNulledType(FromType)
-            ToType = CecilHelper.GetNulledType(ToType)
-        End If
+        If CecilHelper.IsNullable(FromType) Then FromType = CecilHelper.GetNulledType(FromType)
+        If CecilHelper.IsNullable(ToType) Then ToType = CecilHelper.GetNulledType(ToType)
         tpFrom = Helper.GetTypeCode(Compiler, FromType)
         tpTo = Helper.GetTypeCode(Compiler, ToType)
         If tpTo = TypeCode.Object Then

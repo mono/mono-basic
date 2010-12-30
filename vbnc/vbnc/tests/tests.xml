@@ -7522,4 +7522,7 @@
 	<test id="1909" name="32050-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32050" target="library" mytype="empty">
 		<file>Errors\32050-1.vb</file>
 	</test>
+	<test id="1910" name="Nullable3" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\Nullable3.vb</file>
+	</test>
 </rt>

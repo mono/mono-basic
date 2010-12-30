@@ -1593,20 +1593,15 @@ Public Class Helper
 
         For i As Integer = 0 To Names.Length - 1
             Dim testName As String = Names(i)
-            For Each member As Mono.Cecil.MemberReference In members
+            For m As Integer = 0 To members.Count - 1
+                Dim member As MemberReference = members(m)
                 Dim mR As Mono.Cecil.MethodReference = TryCast(member, Mono.Cecil.MethodReference)
                 If mR IsNot Nothing Then
                     Dim mD As Mono.Cecil.MethodDefinition = CecilHelper.FindDefinition(mR)
                     If mD.IsSpecialName AndAlso Helper.CompareName(mD.Name, testName) AndAlso mD.IsStatic Then
-                        result.Add(mD)
+                        result.Add(mR)
                     End If
                 End If
-                'If member.MemberType = MemberTypes.Method Then
-                '    Dim method As MethodInfo = DirectCast(member, MethodInfo)
-                '    If method.IsSpecialName AndAlso Helper.CompareName(method.Name, testName) AndAlso method.IsStatic Then
-                '        result.Add(method)
-                '    End If
-                'End If
             Next
             If result.Count > 0 Then Exit For
         Next
