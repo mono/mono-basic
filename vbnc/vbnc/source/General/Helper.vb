@@ -3852,7 +3852,7 @@ Public Class Helper
             For j As Integer = 0 To types.Count - 1
                 If i = j Then Continue For
                 If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, types(i), types(j)) = False Then
-                    implicit(i) = False
+                    implicit(j) = False
                     Exit For
                 End If
             Next
