@@ -848,7 +848,7 @@ Public Class Helper
         Return result
     End Function
 
-    Function GetDefaultGenericConstructor(ByVal closedResolvedType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
+    Shared Function GetDefaultGenericConstructor(ByVal closedResolvedType As Mono.Cecil.TypeReference) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
         Dim candidates As Mono.Collections.Generic.Collection(Of MethodDefinition)
 
@@ -862,7 +862,7 @@ Public Class Helper
         Return result
     End Function
 
-    Function HasOnlyOptionalParameters(ByVal Constructor As Mono.Cecil.MethodDefinition) As Boolean
+    Shared Function HasOnlyOptionalParameters(ByVal Constructor As Mono.Cecil.MethodDefinition) As Boolean
         Helper.Assert(HasParameters(Constructor))
         Return Constructor.Parameters(0).IsOptional
     End Function
@@ -884,7 +884,7 @@ Public Class Helper
     ''' <param name="Constructors"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function GetDefaultConstructor(ByVal Constructors As Mono.Collections.Generic.Collection(Of MethodDefinition)) As Mono.Cecil.MethodDefinition
+    Shared Function GetDefaultConstructor(ByVal Constructors As Mono.Collections.Generic.Collection(Of MethodDefinition)) As Mono.Cecil.MethodDefinition
         For i As Integer = 0 To Constructors.Count - 1
             If Not Constructors(i).IsConstructor Then Continue For
             If HasParameters(Constructors(i)) = False OrElse HasOnlyOptionalParameters(Constructors(i)) Then
@@ -896,8 +896,10 @@ Public Class Helper
         Return Nothing
     End Function
 
-    Function GetDefaultConstructor(ByVal tp As Mono.Cecil.TypeReference) As Mono.Cecil.MethodDefinition
-        Return GetDefaultConstructor(CecilHelper.FindDefinition(tp).Methods)
+    Shared Function GetDefaultConstructor(ByVal tp As Mono.Cecil.TypeReference) As Mono.Cecil.MethodDefinition
+        Dim td As TypeDefinition = CecilHelper.FindDefinition(tp)
+        If td Is Nothing Then Return Nothing
+        Return GetDefaultConstructor(td.Methods)
     End Function
 
     Shared Function GetParameterTypes(ByVal Parameters As Mono.Cecil.ParameterReference()) As Mono.Cecil.TypeReference()
