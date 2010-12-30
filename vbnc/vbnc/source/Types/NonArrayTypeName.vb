@@ -34,6 +34,7 @@ Public Class NonArrayTypeName
     Private m_TypeName As ParsedObject
 
     Private m_ResolvedType As Mono.Cecil.TypeReference
+    Private m_IsNullable As Boolean
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
@@ -47,9 +48,19 @@ Public Class NonArrayTypeName
         m_TypeName = TypeName
     End Sub
 
+    Property IsNullable As Boolean
+        Get
+            Return m_IsNullable
+        End Get
+        Set(ByVal value As Boolean)
+            m_IsNullable = value
+        End Set
+    End Property
+
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As NonArrayTypeName
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New NonArrayTypeName(NewParent)
+        result.IsNullable = IsNullable
         If Me.IsConstructedTypeName Then
             result.Init(Me.AsConstructedTypeName.Clone)
         ElseIf Me.IsSimpleTypeName Then
@@ -140,6 +151,12 @@ Public Class NonArrayTypeName
             m_ResolvedType = ctn.ResolvedType
         Else
             Throw New InternalException(Me)
+        End If
+
+        If m_IsNullable Then
+            Dim git As New GenericInstanceType(Compiler.TypeCache.System_Nullable1)
+            git.GenericArguments.Add(m_ResolvedType)
+            m_ResolvedType = git
         End If
 
         Helper.Assert(m_ResolvedType IsNot Nothing OrElse result = False)

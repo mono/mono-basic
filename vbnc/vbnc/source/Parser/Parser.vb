@@ -1054,6 +1054,10 @@ Public Class Parser
             result.Init(m_SimpleTypeName)
         End If
 
+        If tm.Accept(KS.Interrogation) Then
+            result.IsNullable = True
+        End If
+
         Return result
     End Function
 

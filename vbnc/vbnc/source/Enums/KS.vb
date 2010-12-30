@@ -188,6 +188,7 @@ Public Enum KS
     LE
     GE
     Exclamation
+    Interrogation
     Concat
     Mult
     Add

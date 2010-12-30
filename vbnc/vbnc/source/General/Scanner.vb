@@ -1416,6 +1416,9 @@ Public Class Scanner
                 Case "!"c
                     NextChar()
                     Result = NewToken(KS.Exclamation)
+                Case "?"c
+                    NextChar()
+                    Result = NewToken(KS.Interrogation)
                 Case "&"c
                     Select Case PeekChar()
 #If EXTENDED Then
