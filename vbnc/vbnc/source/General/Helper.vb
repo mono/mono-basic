@@ -2987,7 +2987,12 @@ Public Class Helper
 
     Shared Function PrettyFormatType(ByVal type As TypeReference) As String
         If type Is Nothing Then Return "Nothing"
-        Return type.ToString()
+
+        If CecilHelper.IsNullable(type) Then
+            Return CecilHelper.GetNulledType(type).ToString() & "?"
+        Else
+            Return type.ToString()
+        End If
     End Function
 
     Shared Function PrettyFormatType(ByVal type As Type) As String
@@ -3098,37 +3103,86 @@ Public Class Helper
         End Select
     End Function
 
-    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
-        Dim result As String
-        If TypeOf Member Is Mono.Cecil.MethodReference Then
-            If Helper.CompareNameOrdinal(Member.Name, ".ctor") Then
-                result = "Sub New(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
-            Else
-                Dim builder As New Text.StringBuilder()
-                Dim invoke As Mono.Cecil.MethodReference = DirectCast(Member, MethodReference)
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As MethodReference) As String
+        Dim builder As New Text.StringBuilder()
+        Dim isSub As Boolean = Helper.CompareType(Member.ReturnType, Context.Compiler.TypeCache.System_Void)
 
-                If Helper.CompareType(invoke.ReturnType, Context.Compiler.TypeCache.System_Void) Then
-                    builder.Append("Sub ")
-                Else
-                    builder.Append("Function ")
-                End If
-                builder.Append(invoke.Name)
-                builder.Append(" (")
-                For i As Integer = 0 To invoke.Parameters.Count - 1
+        If Helper.CompareNameOrdinal(Member.Name, ".ctor") Then
+            builder.Append("Sub New(")
+            builder.Append(Helper.ToString(Context, Helper.GetParameters(Context, Member)))
+            builder.Append(")")
+        Else
+            If isSub Then
+                builder.Append("Sub ")
+            Else
+                builder.Append("Function ")
+            End If
+            builder.Append(Member.Name)
+            If Member.HasGenericParameters Then
+                builder.Append("(Of ")
+                For i As Integer = 0 To Member.GenericParameters.Count - 1
+                    Dim gp As GenericParameter = Member.GenericParameters(i)
+                    Dim constraints As New Text.StringBuilder
+                    Dim constraintCount As Integer
+
                     If i > 0 Then builder.Append(", ")
-                    Dim param As ParameterDefinition = invoke.Parameters(i)
-                    If CecilHelper.IsByRef(param.ParameterType) Then builder.Append("ByRef ")
-                    builder.Append(param.Name)
-                    builder.Append(" As ")
-                    builder.Append(Helper.ToString(Context, param.ParameterType))
+                    builder.Append(gp.Name)
+
+                    If gp.HasNotNullableValueTypeConstraint Then
+                        If constraintCount > 0 Then constraints.Append(", ")
+                        constraints.Append("Structure")
+                        constraintCount += 1
+                    End If
+                    If gp.HasDefaultConstructorConstraint AndAlso gp.HasNotNullableValueTypeConstraint = False Then
+                        If constraintCount > 0 Then constraints.Append(", ")
+                        constraints.Append("New")
+                        constraintCount += 1
+                    End If
+                    If gp.HasReferenceTypeConstraint Then
+                        If constraintCount > 0 Then constraints.Append(", ")
+                        constraints.Append("Class")
+                        constraintCount += 1
+                    End If
+                    For c As Integer = 0 To gp.Constraints.Count - 1
+                        If Helper.CompareType(Context.Compiler.TypeCache.System_ValueType, gp.Constraints(i)) Then Continue For
+                        If constraintCount > 0 Then constraints.Append(", ")
+                        constraints.Append(gp.Constraints(i).Name)
+                        constraintCount += 1
+                    Next
+                    If constraintCount > 0 Then
+                        builder.Append(" As ")
+                        If constraintCount > 1 Then builder.Append("{")
+                        builder.Append(constraints)
+                        If constraintCount > 1 Then builder.Append("}")
+                    End If
                 Next
                 builder.Append(")")
-                If Helper.CompareType(invoke.ReturnType, Context.Compiler.TypeCache.System_Void) = False Then
-                    builder.Append(" As ")
-                    builder.Append(Helper.ToString(Context, invoke.ReturnType))
-                End If
-                result = builder.ToString()
             End If
+            builder.Append("(")
+            For i As Integer = 0 To Member.Parameters.Count - 1
+                If i > 0 Then builder.Append(", ")
+                Dim param As ParameterDefinition = Member.Parameters(i)
+                If CecilHelper.IsByRef(param.ParameterType) Then builder.Append("ByRef ")
+                builder.Append(param.Name)
+                builder.Append(" As ")
+                builder.Append(Helper.ToString(Context, param.ParameterType))
+            Next
+            builder.Append(")")
+            If isSub = False Then
+                builder.Append(" As ")
+                builder.Append(Helper.ToString(Context, Member.ReturnType))
+            End If
+        End If
+
+        Return builder.ToString()
+    End Function
+
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
+        Dim result As String
+        Dim methodReference As MethodReference = TryCast(Member, MethodReference)
+
+        If TypeOf Member Is Mono.Cecil.MethodReference Then
+            Return ToString(Context, methodReference)
         ElseIf TypeOf Member Is Mono.Cecil.PropertyReference Then
             result = Member.Name & "(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
         ElseIf TypeOf Member Is Mono.Cecil.TypeDefinition AndAlso Helper.IsDelegate(Context.Compiler, DirectCast(Member, Mono.Cecil.TypeDefinition)) Then
