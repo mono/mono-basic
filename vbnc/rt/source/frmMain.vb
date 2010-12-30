@@ -881,7 +881,7 @@ Class frmMain
             new_test.ExpectedErrorCode = CInt(errnumber)
             new_test.Arguments = test.Arguments
             new_test.Name = name
-            new_test.Files.Add(destination)
+            new_test.Files.Add(Path.Combine("Errors", Path.GetFileName(destination)))
             m_Tests.Append(new_test)
 
             PopulateTestList()

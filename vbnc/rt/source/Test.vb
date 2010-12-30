@@ -917,7 +917,7 @@ Public Class Test
             If vbccompiler <> String.Empty AndAlso Me.m_Target = Targets.Exe AndAlso m_DontExecute = False AndAlso Me.OutputVBCAssembly IsNot Nothing Then
                 Dim testOutputVerification As ExternalProcessVerification
                 testOutputVerification = New ExternalProcessVerification(Me, Me.OutputVBCAssemblyFull, Me.TestArguments)
-                testOutputVerification.Name = "Test executable verification"
+                testOutputVerification.Name = "VBC compiled executable verification"
                 testOutputVerification.Process.WorkingDirectory = Me.FullWorkingDirectory
                 m_Verifications.Add(testOutputVerification)
             End If
@@ -956,7 +956,7 @@ Public Class Test
         If m_ExpectedExitCode = 0 Then
             If Me.m_Target = Targets.Exe AndAlso m_DontExecute = False Then
                 m_Verifications.Add(New ExternalProcessVerification(Me, Me.OutputAssemblyFull, Me.TestArguments))
-                m_Verifications(m_Verifications.Count - 1).Name = "Output executable verification"
+                m_Verifications(m_Verifications.Count - 1).Name = "VBNC compiled executable verification"
             End If
         End If
 
