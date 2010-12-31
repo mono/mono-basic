@@ -3391,7 +3391,7 @@
 		<arguments>-target:library</arguments>
 		<file>Errors\30337-3.vb</file>
 	</test>
-	<test id="859" name="30337-4" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="30337" target="exe">
+	<test id="859" name="30337-4" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="30337" target="exe">
 		<arguments>-target:library</arguments>
 		<file>Errors\30337-4.vb</file>
 	</test>
@@ -3606,10 +3606,10 @@
 		<arguments>-target:library</arguments>
 		<file>Errors\32104.vb</file>
 	</test>
-	<test id="915" name="32105" category="Errors" priority="20" knownfailure="We should show an error" expectedexitcode="1" expectederrorcode="32105" target="library">
+	<test id="915" name="32105" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="32105" target="library">
 		<file>Errors\32105.vb</file>
 	</test>
-	<test id="916" name="32106" category="Errors" priority="20" knownfailure="We give the wrong error" expectedexitcode="1" expectederrorcode="32106" target="library">
+	<test id="916" name="32106" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="32106" target="library">
 		<file>Errors\32106.vb</file>
 	</test>
 	<test id="917" name="32304-DefaultProperty4" category="Errors" priority="20" expectedexitcode="1" expectederrorcode="32304" target="exe">
@@ -7277,16 +7277,16 @@
 	<test id="1831" name="ImplicitNullableConversions1" category="" priority="0" target="exe">
 		<file>CompileTime2\ImplicitNullableConversions1.vb</file>
 	</test>
-	<test id="1832" name="30311-36" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
+	<test id="1832" name="30311-36" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
 		<file>Errors\30311-36.vb</file>
 	</test>
 	<test id="1833" name="30512-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
 		<file>Errors\30512-4.vb</file>
 	</test>
-	<test id="1834" name="30311-37" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" expectedvbcexitcode="1" expectedvbcerrorcode="30311" target="exe">
+	<test id="1834" name="30311-37" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
 		<file>Errors\30311-37.vb</file>
 	</test>
-	<test id="1835" name="UserDefinedNullableConversions1" category="" priority="0" knownfailure="User defined conversions not yet implemented" target="exe">
+	<test id="1835" name="UserDefinedNullableConversions1" category="" priority="0" knownfailure="We give the wrong error number" target="exe">
 		<file>CompileTime2\UserDefinedNullableConversions1.vb</file>
 	</test>
 	<test id="1836" name="bug-629103" category="Bugs" priority="0" target="library">
@@ -7611,5 +7611,127 @@
 	</test>
 	<test id="1939" name="32083-8" category="" priority="0" expectedexitcode="1" expectederrorcode="32083" target="exe">
 		<file>Errors\32083-8.vb</file>
+	</test>
+	<test id="1940" name="32105-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32105" target="exe">
+		<file>Errors\32105-1.vb</file>
+	</test>
+	<test id="1941" name="32106-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32106" target="exe">
+		<file>Errors\32106-1.vb</file>
+	</test>
+	<test id="1942" name="32106-2" category="" priority="0" expectedexitcode="1" expectederrorcode="32106" target="exe">
+		<file>Errors\32106-2.vb</file>
+	</test>
+	<test id="1943" name="32106-3" category="" priority="0" expectedexitcode="1" expectederrorcode="32106" target="exe">
+		<file>Errors\32106-3.vb</file>
+	</test>
+	<test id="1944" name="33101-2" category="" priority="0" expectedexitcode="1" expectederrorcode="33101" target="exe">
+		<file>Errors\33101-2.vb</file>
+	</test>
+	<test id="1945" name="32105-2" category="" priority="0" expectedexitcode="1" expectederrorcode="32105" target="exe">
+		<file>Errors\32105-2.vb</file>
+	</test>
+	<test id="1946" name="32106-4" category="" priority="0" expectedexitcode="1" expectederrorcode="32106" target="exe">
+		<file>Errors\32106-4.vb</file>
+	</test>
+	<test id="1947" name="32084" category="" priority="0" expectedexitcode="1" expectederrorcode="32084" target="exe">
+		<file>Errors\32084.vb</file>
+	</test>
+	<test id="1948" name="32044" category="" priority="0" expectedexitcode="1" expectederrorcode="32044" target="exe">
+		<file>Errors\32044.vb</file>
+	</test>
+	<test id="1949" name="32044-1" category="" priority="0" expectedexitcode="1" expectederrorcode="32044" target="exe">
+		<file>Errors\32044-1.vb</file>
+	</test>
+	<test id="1950" name="30512-5" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-5.vb</file>
+	</test>
+	<test id="1951" name="30512-6" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-6.vb</file>
+	</test>
+	<test id="1952" name="30512-7" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-7.vb</file>
+	</test>
+	<test id="1953" name="30512-8" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-8.vb</file>
+	</test>
+	<test id="1954" name="30512-9" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-9.vb</file>
+	</test>
+	<test id="1955" name="30512-10" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-10.vb</file>
+	</test>
+	<test id="1956" name="30512-11" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-11.vb</file>
+	</test>
+	<test id="1957" name="30512-12" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-12.vb</file>
+	</test>
+	<test id="1958" name="30512-13" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-13.vb</file>
+	</test>
+	<test id="1959" name="30512-14" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-14.vb</file>
+	</test>
+	<test id="1960" name="30512-15" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-15.vb</file>
+	</test>
+	<test id="1961" name="30512-16" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-16.vb</file>
+	</test>
+	<test id="1962" name="30512-17" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-17.vb</file>
+	</test>
+	<test id="1963" name="30512-18" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-18.vb</file>
+	</test>
+	<test id="1964" name="30512-19" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-19.vb</file>
+	</test>
+	<test id="1965" name="UserConversion2" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\UserConversion2.vb</file>
+	</test>
+	<test id="1966" name="30311-54" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-54.vb</file>
+	</test>
+	<test id="1967" name="30512-20" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-20.vb</file>
+	</test>
+	<test id="1968" name="30512-21" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
+		<file>Errors\30512-21.vb</file>
+	</test>
+	<test id="1969" name="UserConversion3" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\UserConversion3.vb</file>
+	</test>
+	<test id="1970" name="30311-55" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-55.vb</file>
+	</test>
+	<test id="1971" name="CType7" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\CType7.vb</file>
+	</test>
+	<test id="1972" name="Nullable4" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\Nullable4.vb</file>
+	</test>
+	<test id="1973" name="30512-22" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-22.vb</file>
+	</test>
+	<test id="1974" name="30311-56" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
+		<file>Errors\30311-56.vb</file>
 	</test>
 </rt>

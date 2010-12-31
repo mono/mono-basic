@@ -20,8 +20,8 @@
 Public Class CBoolExpression
     Inherits ConversionExpression
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+    Sub New(ByVal Parent As ParsedObject, ByVal IsExplicit As Boolean)
+        MyBase.New(Parent, IsExplicit)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression)
@@ -29,16 +29,16 @@ Public Class CBoolExpression
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Return GenerateCode(Me.Expression, Info)
+        Return GenerateCode(Me, Info)
     End Function
 
-    Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
+    Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-
-        result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
+        result = GenerateCodeForExpression(Conversion, Info, expTypeCode, expType) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Boolean
@@ -63,7 +63,7 @@ Public Class CBoolExpression
             Case TypeCode.Single
                 Emitter.EmitLoadR4Value(Info, 0.0!, expType)
                 Emitter.EmitEquals(Info, expType)
-                Emitter.EmitLoadI4Value(Info, 0I, info.Compiler.TypeCache.System_Boolean)
+                Emitter.EmitLoadI4Value(Info, 0I, Info.Compiler.TypeCache.System_Boolean)
                 Emitter.EmitEquals(Info, Info.Compiler.TypeCache.System_Boolean)
             Case TypeCode.Object
                 Helper.Assert(Info.Compiler.TypeCache.MS_VB_CS_Conversions__ToBoolean_Object IsNot Nothing, "MS_VB_CS_Conversions_ToBoolean__Object Is Nothing")
@@ -94,17 +94,20 @@ Public Class CBoolExpression
 
         If result = False Then Return result
 
-        result = Validate(Info, Expression) AndAlso result
+        result = Validate(Info, Me) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Boolean
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
+        Dim ExpressionType As TypeReference = Conversion.ExpressionType
+        
+        result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
@@ -116,7 +119,7 @@ Public Class CBoolExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'OK
                 Else
-                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                    result = Conversion.FindUserDefinedConversionOperator() AndAlso result
                 End If
         End Select
 

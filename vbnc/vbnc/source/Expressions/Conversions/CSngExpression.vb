@@ -24,12 +24,12 @@ Public Class CSngExpression
         MyBase.New(Parent, Expression)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+    Sub New(ByVal Parent As ParsedObject, ByVal IsExplicit As Boolean)
+        MyBase.New(Parent, IsExplicit)
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Return GenerateCode(Me.Expression, Info)
+        Return GenerateCode(Me, Info)
     End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
@@ -37,17 +37,21 @@ Public Class CSngExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression) AndAlso result
+        result = Validate(Info, Me) AndAlso result
 
         Return result
     End Function
-
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
+    
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Single
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
+        Dim ExpressionType As TypeReference = Conversion.ExpressionType
+
+        result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
+
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
@@ -58,21 +62,20 @@ Public Class CSngExpression
                 ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
                     'OK
                 Else
-                    Return Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
+                    result = Conversion.FindUserDefinedConversionOperator() AndAlso result
                 End If
         End Select
 
         Return result
     End Function
-
-
-    Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
+    
+    Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-
-        result = Expression.Classification.GenerateCode(Info.Clone(Expression, expType)) AndAlso result
+        result = GenerateCodeForExpression(Conversion, Info, expTypeCode, expType) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Boolean

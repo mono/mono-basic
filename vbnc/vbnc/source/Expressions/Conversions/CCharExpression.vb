@@ -24,21 +24,21 @@ Public Class CCharExpression
         MyBase.New(Parent, Expression)
     End Sub
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+    Sub New(ByVal Parent As ParsedObject, ByVal IsExplicit As Boolean)
+        MyBase.New(Parent, IsExplicit)
     End Sub
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
-        Return GenerateCode(Me.Expression, Info)
+        Return GenerateCode(Me, Info)
     End Function
 
-    Overloads Shared Function GenerateCode(ByVal Expression As Expression, ByVal Info As EmitInfo) As Boolean
+    Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-
-        result = Expression.GenerateCode(Info.Clone(Expression, Info.Compiler.TypeCache.System_Char)) AndAlso result
+        result = GenerateCodeForExpression(Conversion, Info, expTypeCode, expType) AndAlso result
 
         Select Case expTypeCode
             Case TypeCode.Char
@@ -71,24 +71,38 @@ Public Class CCharExpression
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
-        result = Validate(Info, Expression) AndAlso result
+        result = Validate(Info, Me) AndAlso result
 
         Return result
     End Function
 
-    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Expression As Expression) As Boolean
+    Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean
         Dim result As Boolean = True
 
-        Dim expType As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim expTypeCode As TypeCode = Helper.GetTypeCode(Info.Compiler, expType)
-        Dim ExpressionType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Char
+        Dim expType As Mono.Cecil.TypeReference = Nothing
+        Dim expTypeCode As TypeCode
+        Dim Expression As Expression = Conversion.Expression
+        Dim ExpressionType As TypeReference = Conversion.ExpressionType
+
+        result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
+
         Select Case expTypeCode
+            Case TypeCode.Char
+                'Nothing to do
             Case TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32007, Expression.Location, Helper.ToString(Expression, expType))
                 result = False
-            Case TypeCode.Boolean, TypeCode.Double, TypeCode.DateTime, TypeCode.Decimal, TypeCode.Single
-                Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
-                result = False
+            Case TypeCode.String
+                'OK
+            Case TypeCode.Object
+                If Helper.CompareType(expType, Info.Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Helper.CompareType(expType, Info.Compiler.TypeCache.Nothing) Then
+                    'OK
+                Else
+                    result = Conversion.FindUserDefinedConversionOperator() AndAlso result
+                End If
+            Case Else
         End Select
 
         Return result
@@ -96,6 +110,7 @@ Public Class CCharExpression
 
     Public Overrides ReadOnly Property IsConstant() As Boolean
         Get
+            If Helper.CompareType(Compiler.TypeCache.Nothing, Me.Expression.ExpressionType) Then Return True
             Return Expression.IsConstant AndAlso (TypeOf Expression.ConstantValue Is Char OrElse (TypeOf Expression.ConstantValue Is String AndAlso CStr(Expression.ConstantValue).Length = 1))
         End Get
     End Property
@@ -116,6 +131,8 @@ Public Class CCharExpression
                     End If
                 Case TypeCode.Char
                     Return CChar(originalValue)
+                Case TypeCode.DBNull
+                    Return VB.ChrW(0)
                 Case Else
                     Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
                     Return New Char

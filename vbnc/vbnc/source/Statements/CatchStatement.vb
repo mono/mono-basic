@@ -86,9 +86,7 @@ Public Class CatchStatement
             'Do the when clause.
             Emitter.MarkLabel(Info, DoWhenComparison)
             Emitter.EmitPop(Info, Compiler.TypeCache.System_Exception)
-            'result = m_When.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-            result = CBoolExpression.GenerateCode(m_When, Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
-            'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
+            result = m_When.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
             Emitter.MarkLabel(Info, EndWhen)
             Emitter.EmitBeginCatch(Info, Nothing)
         Else
@@ -149,6 +147,14 @@ Public Class CatchStatement
         End If
         If m_When IsNot Nothing Then result = m_When.ResolveExpression(Info) AndAlso result
         result = CodeBlock.ResolveCode(Info) AndAlso result
+
+        If m_When IsNot Nothing Then
+            m_When = Helper.CreateTypeConversion(Me, m_When, Compiler.TypeCache.System_Boolean, result)
+            If result = False Then
+                Helper.AddError(Me)
+                Return result
+            End If
+        End If
 
         Return result
     End Function

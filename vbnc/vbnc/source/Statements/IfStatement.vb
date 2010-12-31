@@ -86,9 +86,7 @@ Public Class IfStatement
         Dim startFalse As Label = Emitter.DefineLabel(Info)
         EndLabel = Emitter.DefineLabel(Info)
 
-        'result = m_Condition.GenerateCode(Info.Clone(True, False, Compiler.TypeCache.Boolean)) AndAlso result
-        'Emitter.EmitConversion(Compiler.TypeCache.Boolean, Info)
-        result = CBoolExpression.GenerateCode(m_Condition, Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
+        result = m_Condition.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Boolean)) AndAlso result
 
         Emitter.EmitBranchIfFalse(Info, startFalse)
         'True code
@@ -132,14 +130,15 @@ Public Class IfStatement
                 Helper.AddError(Me)
                 Return result
             End If
-            m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
-
-            If result = False Then
-                Helper.AddError(Me)
-                Return result
-            End If
         Else
             Helper.AddError(Me, "Each expression in an If...Then...Else statement must be classified as a value and be implicitly convertible to Boolean")
+        End If
+
+        m_Condition = Helper.CreateTypeConversion(Me, m_Condition, Compiler.TypeCache.System_Boolean, result)
+
+        If result = False Then
+            Helper.AddError(Me)
+            Return result
         End If
 
         Return result

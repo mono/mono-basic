@@ -96,21 +96,11 @@ Class UserConversion1
         dt = CType(wdt, Date)
         dt = wdt
 
-        Dim a1 As wa1
-        Dim b1 As wb1
-        b1 = CType(a1, wb1)
-        b1 = a1
-
-        Dim a2 As wa2
-        Dim b2 As wb2
-        b2 = CType(a2, wb2)
-        b2 = a2
-
         Return 0
     End Function
 
     Class WString
-        Shared Widening Operator CType(ByVal v As WString) As String
+        Shared Narrowing Operator CType(ByVal v As WString) As String
             Return ""
         End Operator
     End Class
@@ -183,27 +173,5 @@ Class UserConversion1
         Shared Widening Operator CType(ByVal v As WDate) As Date
             Return Date.MinValue
         End Operator
-    End Class
-
-    Class WA1
-        'Shared Widening Operator CType(ByVal v As WA1) As WB1
-        '    Return Nothing
-        'End Operator
-    End Class
-    Class WB1
-        Shared Widening Operator CType(ByVal v As WA1) As WB1
-            Return Nothing
-        End Operator
-    End Class
-
-    Class WA2
-        Shared Widening Operator CType(ByVal v As WA2) As WB2
-            Return Nothing
-        End Operator
-    End Class
-    Class WB2
-        'Shared Widening Operator CType(ByVal v As WA2) As WB2
-        '    Return Nothing
-        'End Operator
     End Class
 End Class

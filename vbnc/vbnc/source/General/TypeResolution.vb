@@ -64,6 +64,8 @@ Public Class TypeResolution
                 Conversion(i, j) = New TypeConversionInfo
                 If j = TypeCode.Object OrElse j = i Then
                     Conversion(i, j).Conversion = ConversionType.Implicit
+                ElseIf i = TypeCode.Char Then
+                    Conversion(i, j).Conversion = ConversionType.None
                 Else
                     Conversion(i, j).Conversion = ConversionType.Explicit
                 End If
@@ -617,10 +619,15 @@ Public Class TypeResolution
         Return Nothing
     End Function
 
-
     Private Shared Sub setImplicit(ByVal type As TypeCode, ByVal implicit() As TypeCode)
         For i As Integer = 0 To VB.UBound(implicit)
             Conversion(type, implicit(i)).Conversion = ConversionType.Implicit
+        Next
+    End Sub
+
+    Private Shared Sub setNone(ByVal type As TypeCode, ByVal explicit() As TypeCode)
+        For i As Integer = 0 To explicit.Length - 1
+            Conversion(type, explicit(i)).Conversion = ConversionType.None
         Next
     End Sub
 

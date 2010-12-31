@@ -1,14 +1,11 @@
 Option Strict On
 Class UserDefinedNullableConversions1
     Shared Function Main() As Integer
-        Dim d As Nullable(Of Decimal)
-        Dim c As Nullable(Of Char)
         Dim from As Nullable(Of From)
         Dim [to] As Nullable(Of [To])
 
-        ' vbc compiles char? -> decimal? using a user defined char->decimal widening operator on decimal
-        d = c
         [to] = [from]
+        Return 0
     End Function
 
     Structure From

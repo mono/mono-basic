@@ -1984,7 +1984,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCByteExpression(ByVal Parent As ParsedObject) As CByteExpression
-        Dim result As New CByteExpression(Parent)
+        Dim result As New CByteExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -1998,7 +1998,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCBoolExpression(ByVal Parent As ParsedObject) As CBoolExpression
-        Dim result As New CBoolExpression(Parent)
+        Dim result As New CBoolExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2013,7 +2013,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCCharExpression(ByVal Parent As ParsedObject) As CCharExpression
-        Dim result As New CCharExpression(Parent)
+        Dim result As New CCharExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2028,7 +2028,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCDateExpression(ByVal Parent As ParsedObject) As CDateExpression
-        Dim result As New CDateExpression(Parent)
+        Dim result As New CDateExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2043,7 +2043,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCDblExpression(ByVal Parent As ParsedObject) As CDblExpression
-        Dim result As New CDblExpression(Parent)
+        Dim result As New CDblExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2058,7 +2058,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCDecExpression(ByVal Parent As ParsedObject) As CDecExpression
-        Dim result As New CDecExpression(Parent)
+        Dim result As New CDecExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2073,7 +2073,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCIntExpression(ByVal Parent As ParsedObject) As CIntExpression
-        Dim result As New CIntExpression(Parent)
+        Dim result As New CIntExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2088,7 +2088,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCLngExpression(ByVal Parent As ParsedObject) As CLngExpression
-        Dim result As New CLngExpression(Parent)
+        Dim result As New CLngExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2103,7 +2103,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCObjExpression(ByVal Parent As ParsedObject) As CObjExpression
-        Dim result As New CObjExpression(Parent)
+        Dim result As New CObjExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2118,7 +2118,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCSByteExpression(ByVal Parent As ParsedObject) As CSByteExpression
-        Dim result As New CSByteExpression(Parent)
+        Dim result As New CSByteExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2133,7 +2133,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCShortExpression(ByVal Parent As ParsedObject) As CShortExpression
-        Dim result As New CShortExpression(Parent)
+        Dim result As New CShortExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2148,7 +2148,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCSngExpression(ByVal Parent As ParsedObject) As CSngExpression
-        Dim result As New CSngExpression(Parent)
+        Dim result As New CSngExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2163,7 +2163,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCStrExpression(ByVal Parent As ParsedObject) As CStrExpression
-        Dim result As New CStrExpression(Parent)
+        Dim result As New CStrExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2178,7 +2178,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCUIntExpression(ByVal Parent As ParsedObject) As CUIntExpression
-        Dim result As New CUIntExpression(Parent)
+        Dim result As New CUIntExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2193,7 +2193,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCULngExpression(ByVal Parent As ParsedObject) As CULngExpression
-        Dim result As New CULngExpression(Parent)
+        Dim result As New CULngExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2208,7 +2208,7 @@ Public Class Parser
     End Function
 
     Private Function ParseCUShortExpression(ByVal Parent As ParsedObject) As CUShortExpression
-        Dim result As New CUShortExpression(Parent)
+        Dim result As New CUShortExpression(Parent, True)
 
         Dim m_Expression As Expression
 
@@ -2366,7 +2366,7 @@ Public Class Parser
 
         Select Case GetKeyword
             Case KS.CType
-                result = New CTypeExpression(Parent)
+                result = New CTypeExpression(Parent, True)
             Case KS.DirectCast
                 result = New DirectCastExpression(Parent)
             Case KS.TryCast

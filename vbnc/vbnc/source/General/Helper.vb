@@ -1577,7 +1577,6 @@ Public Class Helper
         Return ops
     End Function
 
-
     Shared Function GetWideningConversionOperators(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference, ByVal ReturnType As Mono.Cecil.TypeReference) As Generic.List(Of Mono.Cecil.MethodReference)
         Return GetConversionOperators(Compiler, New String() {"op_Implicit"}, Type, ReturnType)
     End Function
@@ -2580,6 +2579,14 @@ Public Class Helper
             '    Return True
             '    'ElseIf TypeOf ToType Is TypeDescriptor = False AndAlso TypeOf FromType Is TypeDescriptor = False AndAlso ToType.IsAssignableFrom(FromType) Then
             '    '    Return True
+        ElseIf TypeOf FromType Is GenericParameter Then
+            Dim gp As GenericParameter = DirectCast(FromType, GenericParameter)
+            If gp.HasConstraints Then
+                For i As Integer = 0 To gp.Constraints.Count - 1
+                    If Helper.IsAssignable(Context, gp.Constraints(i), ToType) Then Return True
+                Next
+            End If
+            Return False
         ElseIf IsInterface(Context, ToType) Then
             Dim ifaces As Mono.Collections.Generic.Collection(Of TypeReference) = CecilHelper.GetInterfaces(FromType, True)
             If ifaces IsNot Nothing Then
@@ -2735,11 +2742,11 @@ Public Class Helper
         If TypeOf BaseClass Is Mono.Cecil.ArrayType Or TypeOf DerivedClass Is Mono.Cecil.ArrayType Then Return False
         Dim base As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(BaseClass)
         Dim derived As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(DerivedClass)
-        Dim current As Mono.Cecil.TypeReference = derived.BaseType
+        Dim current As Mono.Cecil.TypeDefinition = CecilHelper.FindDefinition(derived.BaseType)
 
         Do While current IsNot Nothing
             If Helper.CompareType(current, base) Then Return True
-            current = CecilHelper.FindDefinition(current).BaseType
+            current = CecilHelper.FindDefinition(CecilHelper.FindDefinition(current).BaseType)
         Loop
         Return False
     End Function
@@ -2849,6 +2856,8 @@ Public Class Helper
             fromExpr = CTypeExp
         ElseIf CompareType(DestinationType, Parent.Compiler.TypeCache.System_ValueType) AndAlso fromExpr.ExpressionType.IsValueType Then
             fromExpr = New BoxExpression(Parent, fromExpr, fromExpr.ExpressionType)
+        ElseIf TypeOf fromExpr.ExpressionType Is GenericParameter Then
+            fromExpr = New CTypeExpression(Parent, fromExpr, DestinationType)
         End If
 
 #If EXTENDEDDEBUG Then

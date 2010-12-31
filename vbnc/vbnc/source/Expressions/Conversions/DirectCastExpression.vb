@@ -20,7 +20,7 @@ Public Class DirectCastExpression
     Inherits CTypeExpression
 
     Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+        MyBase.New(Parent, True)
     End Sub
 
     Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As TypeName)

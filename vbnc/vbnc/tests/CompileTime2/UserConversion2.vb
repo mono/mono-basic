@@ -1,4 +1,4 @@
-Option Strict On
+Option Strict Off
 
 Imports System
 Imports System.Collections
@@ -110,77 +110,77 @@ Class UserConversion1
     End Function
 
     Class WString
-        Shared Widening Operator CType(ByVal v As WString) As String
+        Shared Narrowing Operator CType(ByVal v As WString) As String
             Return ""
         End Operator
     End Class
     Class WByte
-        Shared Widening Operator CType(ByVal v As WByte) As Byte
+        Shared Narrowing Operator CType(ByVal v As WByte) As Byte
             Return 0
         End Operator
     End Class
     Class WSByte
-        Shared Widening Operator CType(ByVal v As WSByte) As SByte
+        Shared Narrowing Operator CType(ByVal v As WSByte) As SByte
             Return 0
         End Operator
     End Class
     Class WShort
-        Shared Widening Operator CType(ByVal v As WShort) As Short
+        Shared Narrowing Operator CType(ByVal v As WShort) As Short
             Return 0
         End Operator
     End Class
     Class WUShort
-        Shared Widening Operator CType(ByVal v As WUShort) As UShort
+        Shared Narrowing Operator CType(ByVal v As WUShort) As UShort
             Return 0
         End Operator
     End Class
     Class WInteger
-        Shared Widening Operator CType(ByVal v As WInteger) As Integer
+        Shared Narrowing Operator CType(ByVal v As WInteger) As Integer
             Return 0
         End Operator
     End Class
     Class WUInteger
-        Shared Widening Operator CType(ByVal v As WUInteger) As UInteger
+        Shared Narrowing Operator CType(ByVal v As WUInteger) As UInteger
             Return 0
         End Operator
     End Class
     Class WLong
-        Shared Widening Operator CType(ByVal v As WLong) As Long
+        Shared Narrowing Operator CType(ByVal v As WLong) As Long
             Return 0
         End Operator
     End Class
     Class WULong
-        Shared Widening Operator CType(ByVal v As WULong) As ULong
+        Shared Narrowing Operator CType(ByVal v As WULong) As ULong
             Return 0
         End Operator
     End Class
     Class WSingle
-        Shared Widening Operator CType(ByVal v As WSingle) As Single
+        Shared Narrowing Operator CType(ByVal v As WSingle) As Single
             Return 0
         End Operator
     End Class
     Class WDouble
-        Shared Widening Operator CType(ByVal v As WDouble) As Double
+        Shared Narrowing Operator CType(ByVal v As WDouble) As Double
             Return 0
         End Operator
     End Class
     Class WDecimal
-        Shared Widening Operator CType(ByVal v As WDecimal) As Decimal
+        Shared Narrowing Operator CType(ByVal v As WDecimal) As Decimal
             Return 0
         End Operator
     End Class
     Class WChar
-        Shared Widening Operator CType(ByVal v As WChar) As Char
+        Shared Narrowing Operator CType(ByVal v As WChar) As Char
             Return "0"c
         End Operator
     End Class
     Class WBoolean
-        Shared Widening Operator CType(ByVal v As WBoolean) As Boolean
+        Shared Narrowing Operator CType(ByVal v As WBoolean) As Boolean
             Return False
         End Operator
     End Class
     Class WDate
-        Shared Widening Operator CType(ByVal v As WDate) As Date
+        Shared Narrowing Operator CType(ByVal v As WDate) As Date
             Return Date.MinValue
         End Operator
     End Class

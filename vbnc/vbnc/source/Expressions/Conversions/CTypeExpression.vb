@@ -37,8 +37,8 @@ Public Class CTypeExpression
         Return result
     End Function
 
-    Sub New(ByVal Parent As ParsedObject)
-        MyBase.New(Parent)
+    Sub New(ByVal Parent As ParsedObject, ByVal IsExplicit As Boolean)
+        MyBase.New(Parent, IsExplicit)
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference)
@@ -57,7 +57,6 @@ Public Class CTypeExpression
         m_ResolvedDestinationType = DestinationType
     End Sub
 
-
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -66,35 +65,35 @@ Public Class CTypeExpression
 
         Select Case expTypeCode
             Case TypeCode.Boolean
-                CBoolExpression.GenerateCode(Me.Expression, Info)
+                CBoolExpression.GenerateCode(Me, Info)
             Case TypeCode.Byte
-                CByteExpression.GenerateCode(Me.Expression, Info)
+                CByteExpression.GenerateCode(Me, Info)
             Case TypeCode.Char
-                CCharExpression.GenerateCode(Me.Expression, Info)
+                CCharExpression.GenerateCode(Me, Info)
             Case TypeCode.DateTime
-                CDateExpression.GenerateCode(Me.Expression, Info)
+                CDateExpression.GenerateCode(Me, Info)
             Case TypeCode.Decimal
-                CDecExpression.GenerateCode(Me.Expression, Info)
+                CDecExpression.GenerateCode(Me, Info)
             Case TypeCode.Double
-                CDblExpression.GenerateCode(Me.Expression, Info)
+                CDblExpression.GenerateCode(Me, Info)
             Case TypeCode.Int16
-                CShortExpression.GenerateCode(Me.Expression, Info)
+                CShortExpression.GenerateCode(Me, Info)
             Case TypeCode.Int32
-                CIntExpression.GenerateCode(Me.Expression, Info)
+                CIntExpression.GenerateCode(Me, Info)
             Case TypeCode.Int64
-                CLngExpression.GenerateCode(Me.Expression, Info)
+                CLngExpression.GenerateCode(Me, Info)
             Case TypeCode.SByte
-                CSByteExpression.GenerateCode(Me.Expression, Info)
+                CSByteExpression.GenerateCode(Me, Info)
             Case TypeCode.Single
-                CSngExpression.GenerateCode(Me.Expression, Info)
+                CSngExpression.GenerateCode(Me, Info)
             Case TypeCode.String
-                CStrExpression.GenerateCode(Me.Expression, Info)
+                CStrExpression.GenerateCode(Me, Info)
             Case TypeCode.UInt16
-                CUShortExpression.GenerateCode(Me.Expression, Info)
+                CUShortExpression.GenerateCode(Me, Info)
             Case TypeCode.UInt32
-                CUIntExpression.GenerateCode(Me.Expression, Info)
+                CUIntExpression.GenerateCode(Me, Info)
             Case TypeCode.UInt64
-                CULngExpression.GenerateCode(Me.Expression, Info)
+                CULngExpression.GenerateCode(Me, Info)
             Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(expType, Compiler.TypeCache.System_Object) Then
                     CObjExpression.GenerateCode(Me.Expression, Info)
@@ -105,28 +104,6 @@ Public Class CTypeExpression
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
         End Select
 
-        Return result
-    End Function
-
-    Public Shared Function GenerateUserDefinedConversionCode(ByVal Info As EmitInfo, ByVal Expression As Expression, ByVal DestinationType As Mono.Cecil.TypeReference) As Boolean
-        Dim result As Boolean = True
-        Dim exptype As Mono.Cecil.TypeReference = Expression.ExpressionType
-        Dim ops As Generic.List(Of Mono.Cecil.MethodReference)
-        ops = Helper.GetWideningConversionOperators(Info.Compiler, exptype, DestinationType)
-        If ops.Count = 0 Then
-            ops = Helper.GetNarrowingConversionOperators(Info.Compiler, exptype, DestinationType)
-            Helper.AddWarning("narrowing operator")
-        End If
-
-        If ops.Count = 0 Then
-            Helper.AddError(Expression, "Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
-            result = False
-        ElseIf ops.Count > 1 Then
-            Helper.AddError(Expression, "Cannot convert from '" & exptype.Name & "' to '" & DestinationType.Name & "'")
-            result = False
-        Else
-            Emitter.EmitCall(Info, ops(0))
-        End If
         Return result
     End Function
 
@@ -245,62 +222,93 @@ Public Class CTypeExpression
             Else
                 Throw New InternalException(Me)
             End If
-        ElseIf CecilHelper.IsNullable(DestinationType) AndAlso CecilHelper.IsNullable(SourceType) Then
-            Dim nullable_src_type As GenericInstanceType
-            Dim nullable_dst_type As GenericInstanceType
-            Dim get_value As MethodReference
-            Dim has_value As MethodReference
-            Dim ctor As MethodReference
-            Dim localsrc, localdst As Mono.Cecil.Cil.VariableDefinition
-            Dim falseLabel As Label = Emitter.DefineLabel(Info)
-            Dim endLabel As Label = Emitter.DefineLabel(Info)
-            Dim vose As ValueOnStackExpression
-            Dim type_conversion As Expression
+        ElseIf CecilHelper.IsNullable(DestinationType) Then
+            If CecilHelper.IsNullable(SourceType) Then
+                Dim nullable_src_type As GenericInstanceType
+                Dim nullable_dst_type As GenericInstanceType
+                Dim get_value As MethodReference
+                Dim has_value As MethodReference
+                Dim ctor As MethodReference
+                Dim localsrc, localdst As Mono.Cecil.Cil.VariableDefinition
+                Dim falseLabel As Label = Emitter.DefineLabel(Info)
+                Dim endLabel As Label = Emitter.DefineLabel(Info)
+                Dim vose As ValueOnStackExpression
+                Dim type_conversion As Expression
 
-            nullable_src_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
-            nullable_src_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(SourceType)))
-            has_value = New MethodReference("get_HasValue", nullable_src_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Boolean), True, False, MethodCallingConvention.Default)
-            get_value = New MethodReference("GetValueOrDefault", nullable_src_type, Compiler.TypeCache.System_Nullable1.GenericParameters(0), True, False, MethodCallingConvention.Default)
+                nullable_src_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_src_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(SourceType)))
+                has_value = New MethodReference("get_HasValue", nullable_src_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Boolean), True, False, MethodCallingConvention.Default)
+                get_value = New MethodReference("GetValueOrDefault", nullable_src_type, Compiler.TypeCache.System_Nullable1.GenericParameters(0), True, False, MethodCallingConvention.Default)
 
-            nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
-            nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(DestinationType)))
-            ctor = New MethodReference(".ctor", nullable_dst_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, MethodCallingConvention.Default)
-            ctor.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
+                nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(DestinationType)))
+                ctor = New MethodReference(".ctor", nullable_dst_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, MethodCallingConvention.Default)
+                ctor.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
 
-            'store in local
-            localsrc = Emitter.DeclareLocal(Info, SourceType)
-            Emitter.EmitStoreVariable(Info, localsrc)
+                'store in local
+                localsrc = Emitter.DeclareLocal(Info, SourceType)
+                Emitter.EmitStoreVariable(Info, localsrc)
 
-            'call Nullable`1.HasValue to check the condition
-            Emitter.EmitLoadVariableLocation(Info, localsrc)
-            Emitter.EmitCall(Info, has_value)
-            Emitter.EmitBranchIfFalse(Info, falseLabel)
+                'call Nullable`1.HasValue to check the condition
+                Emitter.EmitLoadVariableLocation(Info, localsrc)
+                Emitter.EmitCall(Info, has_value)
+                Emitter.EmitBranchIfFalse(Info, falseLabel)
 
-            localdst = Emitter.DeclareLocal(Info, DestinationType)
+                localdst = Emitter.DeclareLocal(Info, DestinationType)
 
-            'true branch: we have a value, get it to create a new nullable with the right value
-            Emitter.EmitLoadVariableLocation(Info, localdst)
-            Emitter.EmitLoadVariableLocation(Info, localsrc)
-            Emitter.EmitCall(Info, get_value)
+                'true branch: we have a value, get it to create a new nullable with the right value
+                Emitter.EmitLoadVariableLocation(Info, localdst)
+                Emitter.EmitLoadVariableLocation(Info, localsrc)
+                Emitter.EmitCall(Info, get_value)
 
-            'convert value
-            vose = New ValueOnStackExpression(Me, CecilHelper.GetNulledType(SourceType))
-            type_conversion = Helper.CreateTypeConversion(Me, vose, CecilHelper.GetNulledType(DestinationType), result)
-            result = type_conversion.GenerateCode(Info) AndAlso result
+                'convert value
+                vose = New ValueOnStackExpression(Me, CecilHelper.GetNulledType(SourceType))
+                type_conversion = Helper.CreateTypeConversion(Me, vose, CecilHelper.GetNulledType(DestinationType), result)
+                result = type_conversion.GenerateCode(Info) AndAlso result
 
-            Emitter.EmitCall(Info, ctor)
-            Emitter.EmitLoadVariable(Info, localdst)
-            Emitter.EmitBranch(Info, endLabel)
+                Emitter.EmitCall(Info, ctor)
+                Emitter.EmitLoadVariable(Info, localdst)
+                Emitter.EmitBranch(Info, endLabel)
 
-            'false branch: no value
-            Emitter.MarkLabel(Info, falseLabel)
-            Emitter.EmitLoadVariableLocation(Info, localdst)
-            Emitter.EmitInitObj(Info, localdst.VariableType)
-            Emitter.EmitLoadVariable(Info, localdst)
+                'false branch: no value
+                Emitter.MarkLabel(Info, falseLabel)
+                Emitter.EmitLoadVariableLocation(Info, localdst)
+                Emitter.EmitInitObj(Info, localdst.VariableType)
+                Emitter.EmitLoadVariable(Info, localdst)
 
-            'end
-            Emitter.MarkLabel(Info, endLabel)
+                'end
+                Emitter.MarkLabel(Info, endLabel)
+            Else
+                Dim nullable_dst_type As GenericInstanceType
+                Dim ctor As MethodReference
+                Dim localsrc, localdst As Mono.Cecil.Cil.VariableDefinition
+                Dim falseLabel As Label = Emitter.DefineLabel(Info)
+                Dim endLabel As Label = Emitter.DefineLabel(Info)
+                Dim vose As ValueOnStackExpression
+                Dim type_conversion As Expression
 
+                nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(DestinationType)))
+                ctor = New MethodReference(".ctor", nullable_dst_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, MethodCallingConvention.Default)
+                ctor.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
+
+                'store in local
+                localsrc = Emitter.DeclareLocal(Info, SourceType)
+                Emitter.EmitStoreVariable(Info, localsrc)
+
+                localdst = Emitter.DeclareLocal(Info, DestinationType)
+
+                Emitter.EmitLoadVariableLocation(Info, localdst)
+                Emitter.EmitLoadVariable(Info, localsrc)
+
+                'convert value
+                vose = New ValueOnStackExpression(Me, SourceType)
+                type_conversion = Helper.CreateTypeConversion(Me, vose, CecilHelper.GetNulledType(DestinationType), result)
+                result = type_conversion.GenerateCode(Info) AndAlso result
+
+                Emitter.EmitCall(Info, ctor)
+                Emitter.EmitLoadVariable(Info, localdst)
+            End If
         ElseIf CecilHelper.IsValueType(SourceType) Then
             'A value type value can be converted to one of its base reference types or an interface type that it implements through a process called boxing
             If Helper.CompareType(DestinationType, Compiler.TypeCache.System_Object) Then
@@ -365,35 +373,35 @@ Public Class CTypeExpression
 
         Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
             Case TypeCode.Boolean
-                result = CBoolExpression.Validate(Info, Expression) AndAlso result
+                result = CBoolExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Byte
-                result = CByteExpression.Validate(Info, Expression) AndAlso result
+                result = CByteExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Char
-                result = CCharExpression.Validate(Info, Expression) AndAlso result
+                result = CCharExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.DateTime
-                result = CDateExpression.Validate(Info, Expression) AndAlso result
+                result = CDateExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Decimal
-                result = CDecExpression.Validate(Info, Expression) AndAlso result
+                result = CDecExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Double
-                result = CDblExpression.Validate(Info, Expression) AndAlso result
+                result = CDblExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Int16
-                result = CShortExpression.Validate(Info, Expression) AndAlso result
+                result = CShortExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Int32
-                result = CIntExpression.Validate(Info, Expression) AndAlso result
+                result = CIntExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Int64
-                result = CLngExpression.Validate(Info, Expression) AndAlso result
+                result = CLngExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.SByte
-                result = CSByteExpression.Validate(Info, Expression) AndAlso result
+                result = CSByteExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Single
-                result = CSngExpression.Validate(Info, Expression) AndAlso result
+                result = CSngExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.String
-                result = CStrExpression.Validate(Info, Expression) AndAlso result
+                result = CStrExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.UInt16
-                result = CUShortExpression.Validate(Info, Expression) AndAlso result
+                result = CUShortExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.UInt32
-                result = CUIntExpression.Validate(Info, Expression) AndAlso result
+                result = CUIntExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.UInt64
-                result = CULngExpression.Validate(Info, Expression) AndAlso result
+                result = CULngExpression.Validate(Info, Me) AndAlso result
             Case TypeCode.Object, TypeCode.DBNull
                 If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.System_Object) Then
                     result = CObjExpression.Validate(Info, Expression) AndAlso result
@@ -403,10 +411,20 @@ Public Class CTypeExpression
                     Else
                         m_IsStringToCharArray = True
                     End If
-                ElseIf CecilHelper.IsNullable(Me.ExpressionType) AndAlso CecilHelper.IsNullable(Me.Expression.ExpressionType) Then
-                    If Not Compiler.TypeResolution.IsImplicitlyConvertible(Me, CecilHelper.GetNulledType(Me.Expression.ExpressionType), CecilHelper.GetNulledType(Me.ExpressionType)) Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC30512, Me.Location, Helper.ToString(Me, Me.Expression.ExpressionType), Helper.ToString(Me, Me.ExpressionType)) AndAlso result
-                    End If
+                ElseIf Helper.CompareType(Me.Expression.ExpressionType, Compiler.TypeCache.Nothing) Then
+                    'OK
+                ElseIf Helper.CompareType(Me.Expression.ExpressionType, Compiler.TypeCache.System_Object) Then
+                    'OK
+                ElseIf Compiler.TypeResolver.IsImplicitlyConvertible(Me, Me.Expression.ExpressionType, Me.ExpressionType) Then
+                    'OK
+                ElseIf Helper.CompareType(Compiler.TypeCache.System_Array, Me.Expression.ExpressionType) AndAlso CecilHelper.IsArray(Me.ExpressionType) Then
+                    'System.Array -> array type OK
+                ElseIf CecilHelper.IsArray(Me.ExpressionType) AndAlso CecilHelper.IsArray(Me.Expression.ExpressionType) Then
+                    'OKish
+                ElseIf Location.File(Compiler).IsOptionStrictOn = False AndAlso CecilHelper.IsInterface(Me.Expression.ExpressionType) Then
+                    'OKish
+                Else
+                    result = FindUserDefinedConversionOperator(Not IsExplicit) AndAlso result
                 End If
             Case Else
                 Throw New InternalException(Me)
@@ -423,6 +441,41 @@ Public Class CTypeExpression
 
     Public Overrides ReadOnly Property ConstantValue() As Object
         Get
+            If Helper.CompareType(Compiler.TypeCache.Nothing, Expression.ExpressionType) Then
+                Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
+                    Case TypeCode.Boolean
+                        Return CBool(Nothing)
+                    Case TypeCode.Byte
+                        Return CByte(Nothing)
+                    Case TypeCode.Char
+                        Return CChar(Nothing)
+                    Case TypeCode.DateTime
+                        Return CDate(Nothing)
+                    Case TypeCode.Decimal
+                        Return CDec(Nothing)
+                    Case TypeCode.Double
+                        Return CDbl(Nothing)
+                    Case TypeCode.Int16
+                        Return CShort(Nothing)
+                    Case TypeCode.Int32
+                        Return CInt(Nothing)
+                    Case TypeCode.Int64
+                        Return CLng(Nothing)
+                    Case TypeCode.SByte
+                        Return CSByte(Nothing)
+                    Case TypeCode.Single
+                        Return CSng(Nothing)
+                    Case TypeCode.UInt16
+                        Return CUShort(Nothing)
+                    Case TypeCode.UInt32
+                        Return CUInt(Nothing)
+                    Case TypeCode.UInt64
+                        Return CULng(Nothing)
+                    Case Else
+                        Return Nothing
+                End Select
+            End If
+
             Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
                 Case TypeCode.String
                     Select Case Helper.GetTypeCode(Compiler, Me.Expression.ExpressionType)
@@ -441,6 +494,8 @@ Public Class CTypeExpression
         Get
             If Expression.IsConstant Then
                 If m_ResolvedDestinationType IsNot Nothing AndAlso Helper.CompareType(m_ResolvedDestinationType, Compiler.TypeCache.System_String) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char) Then
+                    Return True
+                ElseIf Helper.CompareType(Compiler.TypeCache.Nothing, Expression.ExpressionType) Then
                     Return True
                 Else
                     Return False
