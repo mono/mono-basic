@@ -62,8 +62,6 @@ Public Class AddOrRemoveHandlerStatement
         objCreation.Init(eventInfo.EventType, New ArgumentList(objCreation, methodPointer))
         result = objCreation.ResolveExpression(ResolveInfo.Default(Compiler)) AndAlso result
         m_EventHandler = objCreation
-
-        Helper.Assert(result)
     End Sub
 
     ReadOnly Property [Event]() As Expression
