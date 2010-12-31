@@ -7740,4 +7740,10 @@
 	<test id="1976" name="bug-652241" category="" priority="0" expectedexitcode="1" expectederrorcode="30408" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library" mytype="empty">
 		<file>Bugs\bug-652241.vb</file>
 	</test>
+	<test id="1977" name="30737" category="" priority="0" expectedexitcode="1" expectederrorcode="30737" target="exe">
+		<file>Errors\30737.vb</file>
+	</test>
+	<test id="1978" name="30737-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30737" target="exe">
+		<file>Errors\30737-1.vb</file>
+	</test>
 </rt>

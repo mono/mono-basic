@@ -826,8 +826,10 @@ EndOfCompilation:
             Dim lstMethods As New Generic.List(Of Mono.Cecil.MethodDefinition)
             Dim mainClass As TypeDeclaration = Nothing
             Dim mainCecil As Mono.Cecil.MethodDefinition = Nothing
+            Dim hasMainMethod As Boolean
+
             result = FindMainClass(mainClass) AndAlso result
-            result = FindMainMethod(mainClass, lstMethods) AndAlso result
+            result = FindMainMethod(mainClass, lstMethods, hasMainMethod) AndAlso result
 
             If result = False Then Return result
 
@@ -852,12 +854,17 @@ EndOfCompilation:
             'Set the entry point of the assembly
             If lstMethods.Count > 1 Then
                 Dim name As String
-                If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
+                If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
                 Report.ShowMessageNoLocation(Messages.VBNC30738, name)
+                Return False
+            ElseIf hasMainMethod Then
+                Dim name As String
+                If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
+                Report.ShowMessageNoLocation(Messages.VBNC30737, name)
                 Return False
             ElseIf lstMethods.Count = 0 Then
                 Dim name As String
-                If mainClass IsNot Nothing Then name = mainClass.Name Else name = theAss.Name
+                If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
                 Report.ShowMessageNoLocation(Messages.VBNC30420, name)
                 Return False
             Else
@@ -908,7 +915,7 @@ EndOfCompilation:
         Return True
     End Function
 
-    Function FindMainMethod(ByVal MainClass As TypeDeclaration, ByVal Result As Generic.List(Of Mono.Cecil.MethodDefinition)) As Boolean
+    Function FindMainMethod(ByVal MainClass As TypeDeclaration, ByVal Result As Generic.List(Of Mono.Cecil.MethodDefinition), ByRef hasMainMethod As Boolean) As Boolean
         Dim tps() As TypeDeclaration
 
         If MainClass Is Nothing Then
@@ -920,6 +927,7 @@ EndOfCompilation:
         Result.Clear()
         For Each t As TypeDeclaration In tps
             For Each m As Mono.Cecil.MethodDefinition In t.CecilType.Methods
+                If hasMainMethod = False Then hasMainMethod = vbnc.Helper.CompareName(m.Name, "Main")
                 If IsMainMethod(m) Then Result.Add(m)
             Next
         Next
