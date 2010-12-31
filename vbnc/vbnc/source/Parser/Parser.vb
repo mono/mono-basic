@@ -3128,6 +3128,9 @@ Public Class Parser
                 newExp = ParseDictionaryAccessExpression(Info.Parent, value)
                 value = newExp
             ElseIf tm.CurrentToken = KS.LParenthesis Then
+                If tm.PeekToken.IsIntegerLiteral AndAlso tm.PeekToken.IntegralLiteral = 0 AndAlso tm.PeekToken(2).Equals(KS.To) Then
+                    Exit Do
+                End If
                 Dim newExp As InvocationOrIndexExpression
                 newExp = ParseInvocationOrIndexExpression(Info.Parent, value)
                 value = newExp
@@ -5234,22 +5237,33 @@ Public Class Parser
         Dim result As New RedimClause(Parent)
 
         Dim m_Expression As Expression
-        Dim m_ArgumentList As ArgumentList
+        Dim asim As ArraySizeInitializationModifier
 
-        Dim tmpExpression As Expression = Nothing
-        tmpExpression = ParseExpression(result)
-        If tmpExpression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        m_Expression = ParseExpression(result)
+        If m_Expression Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        Dim invExpression As InvocationOrIndexExpression = TryCast(tmpExpression, InvocationOrIndexExpression)
+        Dim invExpression As InvocationOrIndexExpression = TryCast(m_Expression, InvocationOrIndexExpression)
         If invExpression IsNot Nothing Then
             m_Expression = invExpression.Expression
-            m_ArgumentList = invExpression.ArgumentList
+            asim = New ArraySizeInitializationModifier(result)
+            Dim bl As New BoundList(asim)
+            Dim exp() As Expression
+
+            ReDim exp(invExpression.ArgumentList.Count - 1)
+            For i As Integer = 0 To invExpression.ArgumentList.Count - 1
+                exp(i) = invExpression.ArgumentList(i).Expression
+            Next
+            bl.Init(exp)
+            asim.Init(bl, Nothing)
+
+        ElseIf tm.CurrentToken.Equals(KS.LParenthesis) AndAlso tm.PeekToken.IsIntegerLiteral AndAlso tm.PeekToken.IntegralLiteral = 0 AndAlso tm.PeekToken(2).Equals(KS.To) Then
+            asim = ParseArraySizeInitializationModifer(result)
         Else
             Compiler.Report.ShowMessage(Messages.VBNC99997, tm.CurrentLocation)
             Return Nothing
         End If
 
-        result.Init(m_Expression, m_ArgumentList)
+        result.Init(m_Expression, asim)
 
         Return result
     End Function

@@ -7749,4 +7749,7 @@
 	<test id="1979" name="bug-504791" category="" priority="0" target="exe" mytype="empty">
 		<file>Bugs\bug-504791.vb</file>
 	</test>
+	<test id="1980" name="bug-438656" category="" priority="0" target="library" mytype="empty">
+		<file>Bugs\bug-438656.vb</file>
+	</test>
 </rt>

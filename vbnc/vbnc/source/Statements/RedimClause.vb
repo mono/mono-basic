@@ -39,8 +39,7 @@ Public Class RedimClause
     Inherits ParsedObject
 
     Private m_Expression As Expression
-    'Private m_ArraySizeInitModifier As ArraySizeInitializationModifier
-    Private m_ArgumentList As ArgumentList
+    Private m_ArraySizeInitModifier As ArraySizeInitializationModifier
 
     Private m_Rank As Integer
     Private m_IsObjectArray As Boolean
@@ -53,7 +52,7 @@ Public Class RedimClause
         Dim result As Boolean = True
 
         If m_Expression IsNot Nothing Then result = m_Expression.ResolveTypeReferences AndAlso result
-        If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveTypeReferences AndAlso result
+        If m_ArraySizeInitModifier IsNot Nothing Then result = m_ArraySizeInitModifier.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
@@ -62,10 +61,9 @@ Public Class RedimClause
         MyBase.New(Parent)
     End Sub
 
-    Sub Init(ByVal Expression As Expression, ByVal ArgumentList As ArgumentList) ', ByVal ArraySizeInitModifier As ArraySizeInitializationModifier)
+    Sub Init(ByVal Expression As Expression, ByVal ArraySizeInitModifier As ArraySizeInitializationModifier)
         m_Expression = Expression
-        ' m_ArraySizeInitModifier = ArraySizeInitModifier
-        m_ArgumentList = ArgumentList
+        m_ArraySizeInitModifier = ArraySizeInitModifier
     End Sub
 
     Private Function GenerateCodeForNewArray(ByVal Info As EmitInfo) As Boolean
@@ -75,7 +73,7 @@ Public Class RedimClause
         Helper.Assert(m_Rank >= 1)
 
         If m_Rank = 1 Then
-            result = m_ArgumentList.GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32), rankTypes) AndAlso result
+            result = m_ArraySizeInitModifier.BoundList.Expressions(0).GenerateCode(Info.Clone(Me, True, False, Compiler.TypeCache.System_Int32)) AndAlso result
             Emitter.EmitNewArr(Info, m_ElementType)
         Else
             'Dim ctor As ConstructorInfo
@@ -94,7 +92,7 @@ Public Class RedimClause
             Emitter.EmitLoadToken(Info, ElementType)
             Emitter.EmitCallOrCallVirt(Info, Compiler.TypeCache.System_Type__GetTypeFromHandle_RuntimeTypeHandle)
 
-            result = Helper.EmitIntegerArray(Info, m_ArgumentList) AndAlso result
+            result = Helper.EmitIntegerArray(Info, m_ArraySizeInitModifier.BoundList.Expressions) AndAlso result
             Emitter.EmitCall(Info, Compiler.TypeCache.System_Array__CreateInstance)
 
             Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array, ArrayType)
@@ -128,9 +126,10 @@ Public Class RedimClause
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
+        Dim expCount As Integer
 
         result = m_Expression.ResolveExpression(Info) AndAlso result
-        result = m_ArgumentList.ResolveCode(Info) AndAlso result
+        result = m_ArraySizeInitModifier.ResolveCode(Info) AndAlso result
 
         If CecilHelper.IsByRef(m_Expression.ExpressionType) Then
             m_Expression = m_Expression.DereferenceByRef
@@ -139,8 +138,10 @@ Public Class RedimClause
         m_ArrayType = m_Expression.ExpressionType
         m_IsObjectArray = Helper.CompareType(Compiler.TypeCache.System_Object, m_ArrayType)
 
+        expCount = m_ArraySizeInitModifier.BoundList.Expressions.Length
+
         If m_IsObjectArray Then
-            m_Rank = m_ArgumentList.Count
+            m_Rank = expCount
             m_ElementType = Compiler.TypeCache.System_Object
             If m_Rank = 1 Then
                 m_ArrayType = CecilHelper.MakeArrayType(m_ElementType)
@@ -152,7 +153,7 @@ Public Class RedimClause
         Else
             m_Rank = CecilHelper.GetArrayRank(m_ArrayType)
             m_ElementType = CecilHelper.GetElementType(m_ArrayType)
-            If m_ArgumentList.Count <> m_Rank Then
+            If expCount <> m_Rank Then
                 Return Helper.AddError(Me)
             End If
         End If
@@ -163,15 +164,17 @@ Public Class RedimClause
 
             arr = New CompilerGeneratedExpression(Me, New CompilerGeneratedExpression.GenerateCodeDelegate(AddressOf GenerateCodeForPreserve), m_ArrayType)
 
-            For i As Integer = 0 To m_ArgumentList.Count - 1
-                Dim arg As Argument = m_ArgumentList(i)
+            For i As Integer = 0 To expCount - 1
                 Dim add As New ConstantExpression(Me, 1, Compiler.TypeCache.System_Int32)
                 Dim exp As Expression
-                exp = Helper.CreateTypeConversion(Me, arg.Expression, Compiler.TypeCache.System_Int32, result)
+                Dim addExp As Expression
+
+                exp = Helper.CreateTypeConversion(Me, m_ArraySizeInitModifier.BoundList.Expressions(i), Compiler.TypeCache.System_Int32, result)
                 If result = False Then Return result
 
-                arg.Expression = New BinaryAddExpression(Me, exp, add)
-                result = arg.Expression.ResolveExpression(Info) AndAlso result
+                addExp = New BinaryAddExpression(Me, exp, add)
+                result = addExp.ResolveExpression(Info) AndAlso result
+                m_ArraySizeInitModifier.BoundList.Expressions(i) = addExp
             Next
 
             assign.Init(m_Expression, arr)
@@ -182,7 +185,7 @@ Public Class RedimClause
             Dim arr As New ArrayCreationExpression(Me)
             Dim exps() As Expression
 
-            exps = Helper.ArgumentsToExpressions(m_ArgumentList.Arguments)
+            exps = m_ArraySizeInitModifier.BoundList.Expressions
             arr.Init(m_Expression.ExpressionType, exps, Nothing)
 
             assign.Init(m_Expression, arr)

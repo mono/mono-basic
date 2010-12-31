@@ -946,6 +946,45 @@ Public Class Helper
     ''' <param name="Arguments"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    Shared Function EmitIntegerArray(ByVal Info As EmitInfo, ByVal Arguments As Expression()) As Boolean
+        Dim result As Boolean = True
+
+        Dim arrayType As Mono.Cecil.TypeReference = Info.Compiler.TypeCache.System_Int32_Array
+        Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(arrayType)
+        Dim tmpVar As Mono.Cecil.Cil.VariableDefinition = Emitter.DeclareLocal(Info, arrayType)
+        Dim elementInfo As EmitInfo = Info.Clone(Info.Context, True, False, elementType)
+
+        'Create the array.
+        ArrayCreationExpression.EmitArrayCreation(Info, arrayType, New Generic.List(Of Integer)(New Integer() {Arguments.Length}))
+
+        'Save it into a temporary variable.
+        Emitter.EmitStoreVariable(Info, tmpVar)
+
+        'Store every element into its index in the array.
+        For i As Integer = 0 To Arguments.Length - 1
+            'Load the array variable.
+            Emitter.EmitLoadVariable(Info, tmpVar)
+            Emitter.EmitLoadI4Value(Info, i)
+            'Load all the indices.
+            result = Arguments(i).GenerateCode(elementInfo) AndAlso result
+            'Store the element in the arry.
+            Emitter.EmitStoreElement(elementInfo, elementType, arrayType)
+            'Increment the indices.
+        Next
+
+        'Load the final array onto the stack.
+        Emitter.EmitLoadVariable(Info, tmpVar)
+
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Creates an integer array of the arguments.
+    ''' </summary>
+    ''' <param name="Info"></param>
+    ''' <param name="Arguments"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Shared Function EmitIntegerArray(ByVal Info As EmitInfo, ByVal Arguments As ArgumentList) As Boolean
         Dim result As Boolean = True
 
