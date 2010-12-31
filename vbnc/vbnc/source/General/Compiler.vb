@@ -608,6 +608,8 @@ EndOfCompilation:
     Function IsMainMethod(ByVal method As Mono.Cecil.MethodDefinition) As Boolean
         'Only static methods
         If method.IsStatic = False Then Return False
+        'Only non-private methods (or maybe only public?)
+        If method.IsPrivate Then Return False
         'Only methods called 'Main'
         If vbnc.Helper.CompareName(method.Name, "Main") = False Then Return False
         'Only methods with no return type or Integer return type
