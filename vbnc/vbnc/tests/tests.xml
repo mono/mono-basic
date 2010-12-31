@@ -7734,6 +7734,9 @@
 	<test id="1974" name="30311-56" category="" priority="0" expectedexitcode="1" expectederrorcode="30311" target="exe">
 		<file>Errors\30311-56.vb</file>
 	</test>
+	<test id="1975" name="30452" category="" priority="0" knownfailure="Missing error when passing invalid parameters to applicable method" expectedexitcode="1" expectederrorcode="30452" target="exe">
+		<file>Errors\30452.vb</file>
+	</test>
 	<test id="1976" name="bug-652241" category="" priority="0" expectedexitcode="1" expectederrorcode="30408" expectedvbcexitcode="0" expectedvbcerrorcode="0" target="library" mytype="empty">
 		<file>Bugs\bug-652241.vb</file>
 	</test>
