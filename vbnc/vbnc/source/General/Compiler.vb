@@ -857,16 +857,18 @@ EndOfCompilation:
                 If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
                 Report.ShowMessageNoLocation(Messages.VBNC30738, name)
                 Return False
-            ElseIf hasMainMethod Then
-                Dim name As String
-                If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
-                Report.ShowMessageNoLocation(Messages.VBNC30737, name)
-                Return False
             ElseIf lstMethods.Count = 0 Then
-                Dim name As String
-                If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
-                Report.ShowMessageNoLocation(Messages.VBNC30420, name)
-                Return False
+                If hasMainMethod Then
+                    Dim name As String
+                    If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
+                    Report.ShowMessageNoLocation(Messages.VBNC30737, name)
+                    Return False
+                Else
+                    Dim name As String
+                    If mainClass IsNot Nothing Then name = mainClass.Name Else name = AssemblyBuilderCecil.Name.Name
+                    Report.ShowMessageNoLocation(Messages.VBNC30420, name)
+                    Return False
+                End If
             Else
                 Dim entryMethod As Mono.Cecil.MethodDefinition = lstMethods(0)
                 If mainCecil Is Nothing Then
