@@ -7746,4 +7746,7 @@
 	<test id="1978" name="30737-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30737" target="exe">
 		<file>Errors\30737-1.vb</file>
 	</test>
+	<test id="1979" name="bug-504791" category="" priority="0" target="exe" mytype="empty">
+		<file>Bugs\bug-504791.vb</file>
+	</test>
 </rt>
