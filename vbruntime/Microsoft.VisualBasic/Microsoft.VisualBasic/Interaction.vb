@@ -33,8 +33,10 @@ Imports System
 Imports Microsoft.VisualBasic.CompilerServices
 #If TARGET_JVM = False Then 'Win32,Windows.Forms Not Supported by Grasshopper
 Imports Microsoft.Win32
+#If Not MOONLIGHT Then
 Imports System.Windows.Forms
 Imports System.Drawing
+#End If
 #End If
 
 Namespace Microsoft.VisualBasic
