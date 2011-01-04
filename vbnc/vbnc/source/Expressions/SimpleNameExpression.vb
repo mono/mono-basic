@@ -846,7 +846,7 @@ Public Class SimpleNameExpression
                     Return Helper.AddError(Me, "If the identifier matches the name of an accessible type or type member in more than one import, a compile-time error occurs.")
                 End If
                 impmembers.AddRange(result)
-                'result.Clear()
+                result = Nothing
             End If
         Next
 
