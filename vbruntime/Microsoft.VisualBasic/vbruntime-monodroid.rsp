@@ -1,4 +1,4 @@
-/define:MOONLIGHT=True
+/define:MOONLIGHT=True,MONODROID=True
 /define:NET_VER=2.0
 /res:strings2.resources,strings.resources
 /debug:full

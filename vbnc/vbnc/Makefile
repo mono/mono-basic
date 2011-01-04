@@ -2,9 +2,9 @@ thisdir = vbnc/vbnc
 SUBDIRS = tests
 include ../../build/rules.make
 
-LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS)
+LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS) /r:../../class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
-PROGRAM = $(topdir)/class/lib/vbnc/vbnc.exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/vbnc.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
 include ../../build/executable.make
@@ -22,12 +22,16 @@ DISTFILES = \
 	source/vbnc.rsp		\
 	setversion.sh
 
-CLEAN_FILES = version.tmp $(topdir)/vbnc/vbnc/source/General/Version.vb
+CLEAN_FILES = \
+	version.tmp 					\
+	$(topdir)/vbnc/vbnc/source/General/Version.vb 	\
+	../../class/lib/$(PROFILE)/vbnc.rsp
 
 version.tmp: $(topdir)/configure setversion.sh
 	-$(topdir)/vbnc/vbnc/setversion.sh $(topdir)/vbnc/vbnc/source/General/Version.vb
 
 all-local: vbnc.Errors.resources vbnc.exe.sources version.tmp
+	@cp -pu vbnc.vbnc.rsp ../../class/lib/$(PROFILE)/vbnc.rsp
 	
 vbnc.Errors.resources: source/Resources/Errors.resx
 	resgen2 source/Resources/Errors.resx vbnc.Errors.resources

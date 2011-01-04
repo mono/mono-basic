@@ -14,6 +14,10 @@ vbnc/vbnc/version.tmp
 *.pidb
 *.usertasks
 *.userprefs
-class/lib/vbnc/
+class/lib/monotouch
+class/lib/moonlight
+class/lib/monodroid
+class/lib/net_2_0
+class/lib/net_4_0
 scripts/vbnc
 

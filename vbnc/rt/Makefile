@@ -9,7 +9,7 @@ REFERENCES = \
 	-r:System.dll \
 	-r:System.Windows.Forms.dll \
 	-r:System.Drawing.dll \
-	-r:../../class/lib/vbnc/Mono.Cecil.VB.dll
+	-r:../../class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
 IMPORTS = \
 	-imports:System,Microsoft.VisualBasic \
@@ -20,7 +20,7 @@ IMPORTS = \
 	-imports:System.Drawing \
 	-imports:System.Xml
 
-TARGET = ../../class/lib/vbnc/rt.exe
+TARGET = ../../class/lib/$(PROFILE)/rt.exe
 
 DISTFILES = \
 	Makefile	\

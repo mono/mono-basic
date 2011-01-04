@@ -1,6 +1,9 @@
 thisdir := .
 
-SUBDIRS := build man class tools vbnc vbruntime scripts
+SUBDIRS := build man class vbruntime
+net_4_0_SUBDIRS := tools vbnc scripts $(SUBDIRS)
+
+DIST_SUBDIRS := $(net_4_0_SUBDIRS)
 
 include build/rules.make
 

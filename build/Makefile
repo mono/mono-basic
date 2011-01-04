@@ -8,9 +8,6 @@ all-local install-local test-local run-test-local run-test-ondotnet-local uninst
 clean-local:
 	-rm -f $(BUILT_FILES) deps/*
 
-PLATFORMS = linux win32
-
-PROFILES = bootstrap vbnc moonlight net_4_0
 
 DISTFILES = \
 	config-default.make		\

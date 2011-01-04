@@ -61,7 +61,7 @@ init: bin/nunit-console.exe bin/nunit.framework.dll bin/nunit.core.dll bin/nunit
 	MONO_PATH=$(MONO_VB_PATH) mono ../../tools/extract-source/extract-source.exe -s:2008VB_test_CS.csproj -d:2008VB_test_CS.dll.sources.win -m:w
 
 test-first:
-	cd ../Microsoft.VisualBasic && make && cp ../../class/lib/vbnc/Microsoft.VisualBasic.dll* ../Test/bin
+	cd ../Microsoft.VisualBasic && make && cp ../../class/lib/$(PROFILE)/Microsoft.VisualBasic.dll* ../Test/bin
 
 test-cs: test-first 2008VB_test_CS.dll.sources
 	$(CSCOMPILER) "-out:bin/2008VB_test_CS.dll" @2008VB_test_CS.dll.rsp @2008VB_test_CS.dll.sources -lib:bin $(CSDEFINES)

@@ -26,7 +26,7 @@ make-dependencies:
 	$(MAKE) -C ../../rt rt.exe
 
 test-local: make-dependencies
-	mono --debug $(PWD)/../../../class/lib/vbnc/rt.exe -console
+	mono --debug $(PWD)/../../../class/lib/$(PROFILE)/rt.exe -console
 
 clean-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
 	@:

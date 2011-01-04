@@ -21,7 +21,7 @@ DISTFILES = \
 
 dist-default: lib/bootstrap/Microsoft.VisualBasic.dll lib/bootstrap/vbnc.exe lib/bootstrap/vbnc.rsp
 
-DIST_PROFILE_DIRS = bootstrap vbnc
+DIST_PROFILE_DIRS = bootstrap net_2_0 net_4_0 monotouch monodroid moonlight
 
 dist-local: dist-default
 	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%) $(COMPAT_PROFILE_DIRS:%=$(distdir)/compat/%)

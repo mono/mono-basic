@@ -3,18 +3,15 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualBasic.dll
 
-ifeq ("$(PROFILE)", "moonlight")
-LOCAL_VBNC_FLAGS = @vbruntime-moonlight.rsp $(EXTRA_VBRUNTIME_FLAGS)
-LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
-else
-ifeq ("$(PROFILE)", "net_4_0")
-LOCAL_VBNC_FLAGS = @vbruntime4.rsp $(EXTRA_VBRUNTIME_FLAGS) /libpath:$(prefix)/lib/mono/4.0/
-else
-LOCAL_VBNC_FLAGS = @vbruntime2.rsp $(EXTRA_VBRUNTIME_FLAGS)
-endif
+rspfile = vbruntime.rsp
+
+# If the directory contains the per profile rsp file, use it
+PROFILE_rspfile = vbruntime-$(PROFILE).rsp
+ifeq ($(wildcard $(PROFILE_rspfile)), $(PROFILE_rspfile))
+rspfile = $(PROFILE_rspfile)
 endif
 
-LIBRARY_COMPILE = $(BOOT_COMPILE)
+LIBRARY_COMPILE = $(BOOT_COMPILE) @$(rspfile)
 
 BUILT_FILES = strings2.resources
 
@@ -32,19 +29,15 @@ DISTFILES =	\
 	mono.snk				\
 	strings.txt				\
 	strings-only2.txt			\
-	2005VB.vbproj				\
 	strings2.resources			\
 	ChangeLog				\
 	Makefile				\
-	Microsoft.VisualBasic.dll.sources	\
+	$(wildcard Microsoft.VisualBasic.dll*.sources)	\
 	Microsoft.VisualBasic.dll.sources.win	\
-	Microsoft.VisualBasic.dll.moonlight.sources\
-	vbruntime.rsp				\
-	vbruntime2.rsp				\
-	vbruntime4.rsp				\
-	vbruntime-moonlight.rsp			\
+	$(wildcard vbruntime*.rsp)		\
 	Helper.vb				\
-	2005VB.sln
+	$(wildcard *.sln)			\
+	$(wildcard *.vbproj)
 
 Microsoft.VisualBasic.dll.sources: 2005VB.vbproj
 	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -x:r -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l

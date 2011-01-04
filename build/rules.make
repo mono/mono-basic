@@ -20,7 +20,9 @@ USE_VBNC_FLAGS = $(LOCAL_VBNC_FLAGS) $(PLATFORM_VBNC_FLAGS) $(PROFILE_VBNC_FLAGS
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS)
 CSCOMPILE = $(MCS) $(USE_MCS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
+BOOTSTRAP_VBNC = MONO_PATH="$(topdir)/class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) --debug $(topdir)/class/lib/bootstrap/vbnc.exe
 BOOT_COMPILE = $(BOOTSTRAP_VBNC) $(USE_VBNC_FLAGS)
+VBNC = MONO_PATH="$(topdir)/class/lib/net_4_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) --debug $(topdir)/class/lib/net_4_0/vbnc.exe
 INSTALL = $(SHELL) $(topdir)/install-sh
 INSTALL_DATA = $(INSTALL) -c -m 644
 INSTALL_BIN = $(INSTALL) -c -m 755
@@ -91,11 +93,18 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-PROFILE = vbnc
+PROFILE = net_4_0
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
+
+
+# vbnc is built in one the profiles (currently net_2_0, this will likely change to net_4_0 soon)
+PROFILES = net_2_0 net_4_0 moonlight $(CONFIGURED_PROFILES)
+PLATFORMS = linux win32
+
+
 
 ifdef OVERRIDE_TARGET_ALL
 all: all.override
