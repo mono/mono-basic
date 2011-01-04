@@ -746,7 +746,7 @@ Class frmMain
         End If
     End Sub
 
-    Private Sub AllTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AllTestsToolStripMenuItem.Click
+    Private Sub AllTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Me.m_TestExecutor.RunAsync(m_Tests.Values)
         Catch ex As Exception
@@ -754,7 +754,7 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub FailedTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FailedTestsToolStripMenuItem.Click
+    Private Sub FailedTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Me.m_TestExecutor.RunAsync(m_Tests.GetRedTests.Values)
         Catch ex As Exception
@@ -762,7 +762,7 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub SucceededTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SucceededTestsToolStripMenuItem.Click
+    Private Sub SucceededTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Me.m_TestExecutor.RunAsync(m_Tests.GetGreenTests.Values)
         Catch ex As Exception
@@ -770,7 +770,7 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub NotRunTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NotRunTestsToolStripMenuItem.Click
+    Private Sub NotRunTestsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Me.m_TestExecutor.RunAsync(m_Tests.GetNotRunTests.Values)
         Catch ex As Exception
@@ -778,7 +778,7 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub RunTestsToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles RunTestsToolStripMenuItem1.Click
+    Private Sub RunTestsToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Me.m_TestExecutor.RunAsync(m_Tests.GetRunTests.Values)
         Catch ex As Exception
@@ -903,7 +903,7 @@ Class frmMain
         End Try
     End Sub
 
-    Private Sub CreateKnownFailurestxtToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreateKnownFailurestxtToolStripMenuItem.Click
+    Private Sub CreateKnownFailurestxtToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Try
             Dim failures As New Generic.List(Of String)
             ListKnownFailures(m_Tests, m_Tests, failures)
@@ -1025,6 +1025,25 @@ Class frmMain
         End Try
     End Sub
 
+    Private Sub cmdCreateTest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCreateTest.Click
+        Try
+            Using frmNewTest As frmNewTest = New frmNewTest(Me)
+                frmNewTest.ShowDialog(Me)
+            End Using
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub cmdFindTests_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdFindTests.Click
+        Try
+            Dim frmFiles As frmFiles = New frmFiles(Me)
+            frmFiles.Show(Me)
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
     Private Sub cmbVBCCompiler_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbVBCCompiler.TextChanged
         Try
             m_Tests.VBCPath = cmbVBCCompiler.Text
@@ -1041,34 +1060,38 @@ Class frmMain
         End Try
     End Sub
 
+    Public Sub CreateTest(ByVal Name As String, ByVal ParamArray Files() As String)
+        Dim test As Test
+
+        If String.IsNullOrEmpty(Name) Then Return
+
+        test = New Test(m_Tests)
+        test.Name = Name
+        test.Target = rt.Test.Targets.Library
+        test.MyType = rt.Test.MyTypes.Empty
+        test.Files.AddRange(Files)
+
+        m_Tests.Append(test)
+        PopulateTestList()
+        For Each item As ListViewItem In lstTests.Items
+            If item.Tag Is test Then
+                lstTests.EnsureVisible(item.Index)
+                lstTests.SelectedItems.Clear()
+                lstTests.SelectedIndices.Add(item.Index)
+                Exit For
+            End If
+        Next
+
+        If m_SaveTimer Is Nothing Then
+            m_SaveTimer = New Timer()
+            m_SaveTimer.Interval = 30000
+            m_SaveTimer.Start()
+        End If
+    End Sub
+
     Private Sub CreateNewTestToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreateNewTestToolStripMenuItem.Click
         Try
-            Dim name As String = InputBox("The name of the test:")
-            Dim test As Test
-
-            If String.IsNullOrEmpty(name) Then Return
-
-            test = New Test(m_Tests)
-            test.Name = name
-            test.Target = rt.Test.Targets.Library
-            test.MyType = rt.Test.MyTypes.Empty
-
-            m_Tests.Append(test)
-            PopulateTestList()
-            For Each item As ListViewItem In lstTests.Items
-                If item.Tag Is test Then
-                    lstTests.EnsureVisible(item.Index)
-                    lstTests.SelectedItems.Clear()
-                    lstTests.SelectedIndices.Add(item.Index)
-                    Exit For
-                End If
-            Next
-
-            If m_SaveTimer Is Nothing Then
-                m_SaveTimer = New Timer()
-                m_SaveTimer.Interval = 30000
-                m_SaveTimer.Start()
-            End If
+            CreateTest(InputBox("The name of the test:"))
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
