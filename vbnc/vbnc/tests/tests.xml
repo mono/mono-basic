@@ -7795,4 +7795,7 @@
 	<test id="1994" name="TypeNameResolution3" category="" priority="0" knownfailure="doesn't work" target="library" mytype="empty">
 		<file>CompileTime\TypeNameResolution3.vb</file>
 	</test>
+	<test id="1995" name="GenericNestedType3" category="" priority="0" knownfailure="bug #431978" target="library" mytype="empty">
+		<file>CompileTime2\GenericNestedType3.vb</file>
+	</test>
 </rt>
