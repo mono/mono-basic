@@ -7792,4 +7792,7 @@
 	<test id="1993" name="30203-ImplicitLineContinuationsSub" category="" priority="0" expectedexitcode="1" expectederrorcode="30203" target="library" mytype="empty">
 		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\Errors\Sub.vb</file>
 	</test>
+	<test id="1994" name="TypeNameResolution3" category="" priority="0" knownfailure="doesn't work" target="library" mytype="empty">
+		<file>CompileTime\TypeNameResolution3.vb</file>
+	</test>
 </rt>
