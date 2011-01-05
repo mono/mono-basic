@@ -40,13 +40,13 @@ WINTEST=-echo Linux environment.
 endif
 
 bin/nunit-console.exe:
-	wget -O bin/nunit-console.exe "http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit-console.exe?revision=76123&view=co&pathrev=76123"
+	wget --no-check-certificate -O bin/nunit-console.exe "http://github.com/mono/mono-basic/raw/70f26b5b6f3c16999cb3e0b5864df88752fe683a/vbruntime/Test/bin/nunit-console.exe"
 bin/nunit.framework.dll:
-	wget -O bin/nunit.framework.dll "http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.framework.dll?revision=76123&view=co&pathrev=76123"
+	wget --no-check-certificate -O bin/nunit.framework.dll "http://github.com/mono/mono-basic/raw/70f26b5b6f3c16999cb3e0b5864df88752fe683a/vbruntime/Test/bin/nunit.framework.dll"
 bin/nunit.core.dll:
-	wget -O bin/nunit.core.dll "http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.core.dll?revision=76123&view=co&pathrev=76123"
+	wget --no-check-certificate -O bin/nunit.core.dll "http://github.com/mono/mono-basic/raw/70f26b5b6f3c16999cb3e0b5864df88752fe683a/vbruntime/Test/bin/nunit.core.dll"
 bin/nunit.util.dll:
-	wget -O bin/nunit.util.dll "http://anonsvn.mono-project.com/viewvc/trunk/mono-basic/vbruntime/Test/bin/nunit.util.dll?revision=76123&view=co&pathrev=76123"
+	wget --no-check-certificate -O bin/nunit.util.dll "http://github.com/mono/mono-basic/raw/70f26b5b6f3c16999cb3e0b5864df88752fe683a/vbruntime/Test/bin//nunit.util.dll"
 
 init: bin/nunit-console.exe bin/nunit.framework.dll bin/nunit.core.dll bin/nunit.util.dll
 	cp bin/nunit-console$(NUNIT_VERSION).exe.config bin/nunit-console.exe.config
