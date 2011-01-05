@@ -262,19 +262,19 @@ endif
 # The library
 
 $(build_lib): $(response) $(BUILT_SOURCES) $(BUILT_FILES)
-	mkdir -p $(the_lib_dir)
+	@mkdir -p $(the_lib_dir)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
 	mv -f $(LIBRARY_NAME) $@
 	test ! -f $(LIBRARY_NAME).mdb || mv -f $(LIBRARY_NAME).mdb $@.mdb
 else
+	@echo "VBNC   [$(PROFILE)] $(LIBRARY)"
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 
 $(makefrag): $(sourcefile) $(depsdir)
-	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
 
 ifneq ($(response),$(sourcefile))

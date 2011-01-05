@@ -6,7 +6,10 @@ SUBDIRS := Microsoft.VisualBasic Test
 DISTFILES = Makefile VB.build.bat
 
 clean-local all-local install-local uninstall-local:
-	@for p in $(PROFILES); do echo Building Microsoft.VisualBasic.dll for \'$$p\'; $(MAKE) $@ PROFILE=$$p -C Microsoft.VisualBasic; done
+	@set . $$MAKEFLAGS; final_exit=:; \
+	for p in $(PROFILES) ; do \
+	    (cd Microsoft.VisualBasic && $(MAKE) profile-check PROFILE=$$p $@) || { final_exit="exit 1"; exit 1; } ; \
+	done; \
 
 test-local run-test-local run-test-ondotnet-local:
 	@:
