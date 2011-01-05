@@ -7757,44 +7757,44 @@
 		<file>Bugs\bug-438656.vb</file>
 	</test>
 	<test id="1981" name="ImplicitLineContinuationsAssignmentOperator" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\AssignmentOperator.vb</file>
+		<file>CompileTime2\AssignmentOperator.vb</file>
 	</test>
 	<test id="1982" name="ImplicitLineContinuationsBinaryOperator" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\BinaryOperator.vb</file>
+		<file>CompileTime2\BinaryOperator.vb</file>
 	</test>
 	<test id="1983" name="ImplicitLineContinuationsComma" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\Comma.vb</file>
+		<file>CompileTime2\Comma.vb</file>
 	</test>
 	<test id="1984" name="ImplicitLineContinuationsConcatenation" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\Concatenation.vb</file>
+		<file>CompileTime2\Concatenation.vb</file>
 	</test>
 	<test id="1985" name="ImplicitLineContinuationsCurlyBraces" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\CurlyBraces.vb</file>
+		<file>CompileTime2\CurlyBraces.vb</file>
 	</test>
 	<test id="1986" name="ImplicitLineContinuationsForEach" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\ForEach.vb</file>
+		<file>CompileTime2\ForEach.vb</file>
 	</test>
 	<test id="1987" name="ImplicitLineContinuationsFrom" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
 		<arguments>-imports:System.Collections.Generic</arguments>
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\From.vb</file>
+		<file>CompileTime2\From.vb</file>
 	</test>
 	<test id="1988" name="ImplicitLineContinuationsIsandIsNotOperators" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\IsandIsNotOperators.vb</file>
+		<file>CompileTime2\IsandIsNotOperators.vb</file>
 	</test>
 	<test id="1989" name="ImplicitLineContinuationsParenthesis" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\Parenthesis.vb</file>
+		<file>CompileTime2\Parenthesis.vb</file>
 	</test>
 	<test id="1990" name="30203-ImplicitLineContinuationsClassonnewline" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" expectederrorcode="30203" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\Errors\Classonnewline.vb</file>
+		<file>Errors\Classonnewline.vb</file>
 	</test>
 	<test id="1991" name="30203-ImplicitLineContinuationsDimonnewline" category="" priority="0" expectedexitcode="1" expectederrorcode="30203" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\Errors\Dimonnewline.vb</file>
+		<file>Errors\Dimonnewline.vb</file>
 	</test>
 	<test id="1992" name="30198-ImplicitLineContinuationsFunctionDec" category="" priority="0" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" expectederrorcode="30198" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\Errors\FunctionDec.vb</file>
+		<file>Errors\FunctionDec.vb</file>
 	</test>
 	<test id="1993" name="30203-ImplicitLineContinuationsSub" category="" priority="0" expectedexitcode="1" expectederrorcode="30203" target="library" mytype="empty">
-		<file>D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\Errors\Sub.vb</file>
+		<file>Errors\Sub.vb</file>
 	</test>
 	<test id="1994" name="TypeNameResolution3" category="" priority="0" knownfailure="doesn't work" target="library" mytype="empty">
 		<file>CompileTime\TypeNameResolution3.vb</file>
