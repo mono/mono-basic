@@ -7091,6 +7091,10 @@
 		<file>..\..\rt\source\FileTabPage.vb</file>
 		<file>..\..\rt\source\frmMain.Designer.vb</file>
 		<file>..\..\rt\source\frmMain.vb</file>
+		<file>..\..\rt\source\frmNewTest.vb</file>
+		<file>..\..\rt\source\frmNewTest.Designer.vb</file>
+		<file>..\..\rt\source\frmFiles.vb</file>
+		<file>..\..\rt\source\frmFiles.Designer.vb</file>
 		<file>..\..\rt\source\Helper.vb</file>
 		<file>..\..\rt\source\ListViewItemComparer.vb</file>
 		<file>..\..\rt\source\Main.vb</file>
