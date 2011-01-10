@@ -1,6 +1,6 @@
 .TH vbnc 1 "21 February 2006"
 .SH NAME 
-vbnc \- Mono Visual Basic Compiler.
+vbnc, vbnc2 \- Mono Visual Basic Compiler.
 .SH SYNOPSIS
 .B vbnc
 [option] [source-files]
@@ -33,6 +33,15 @@ The Mono Basic compiler by default only references these assemblies:
 mscorlib.dll, Microsoft.VisualBasic.dll, System.dll and System.Xml.dll.
 If you want to reference extra libraries you must manually specify 
 them using the the -r: command line option.
+.PP
+The
+.I vbnc
+compiler is used to compile against the latest available profile (currently
+the 4.0 profile).
+.PP
+The
+.I vbnc2
+compiler is used to compile against the 2.0 profile.
 .PP
 .SH OPTIONS
 .TP
@@ -120,6 +129,12 @@ explicitly given with the -L option.
 You can also use a semicolon to separate the assemblies instead of a
 comma. 
 .TP
+.I \-sdkpath:PATH
+Sets the path to the required framework assemblies (mscorlib.dll and
+Microsoft.VisualBasic.dll). To compile to a different profile than the
+default, use this option to the path to the mscorlib.dll of the profile
+you want to compile to.
+.TP
 .I \-removeintchecks[+|-]
 Remove integer checks. Default off.
 .TP
@@ -140,10 +155,10 @@ Shows the compiler version.
 .I \-warnaserror, \-warnaserror+
 Treat warnings as errors.
 .SH STABILITY
-As of early 2007, the Mono Visual Basic compiler is still considered preview 
-software. The compiler is almost feature-complete (targeting the Microsoft
-Visual Basic 8 compiler), only lacking support for the 'My' namespace.
-Frequent crashes are still occuring, especially with incorrect code.
+As of early 2011, the Mono Visual Basic compiler is still considered beta
+software. The compiler is feature-complete (targeting the Microsoft
+Visual Basic 8 compiler), however crashes are still occuring, most notably
+with incorrect code.
 .PP
 .SH AUTHORS
 See the ChangeLog for authors
