@@ -4,7 +4,7 @@ SUBDIRS :=
 include ../../../../build/rules.make
 
 LIBRARY = Mono.Cecil.VB.Mdb.dll
-LIBRARY_COMPILE = gmcs -keyfile:$(topdir)/vbnc/cecil/mono.snk -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.VB.dll -d:CECIL -debug
+LIBRARY_COMPILE = dmcs -keyfile:$(topdir)/vbnc/cecil/mono.snk -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.VB.dll -d:CECIL -debug
 BUILT_FILES = $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
 include ../../../../build/library.make

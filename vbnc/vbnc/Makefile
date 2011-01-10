@@ -52,8 +52,8 @@ uninstall-extras:
 	rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc.rsp
 
 install-binary: default
-	cp ../../class/lib/vbnc/vbnc.* ../../class/lib/bootstrap
-	cp ../../class/lib/vbnc/Mono.Cecil.* ../../class/lib/bootstrap
+	cp ../../class/lib/$(PROFILE)/vbnc.* ../../class/lib/bootstrap
+	cp ../../class/lib/$(PROFILE)/Mono.Cecil.* ../../class/lib/bootstrap
 	cp source/vbnc.rsp ../../class/lib/bootstrap/vbnc.rsp
 
 boot-from-ms:

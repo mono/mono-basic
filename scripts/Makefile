@@ -4,23 +4,25 @@ include ../build/rules.make
 
 PROGRAM_INSTALL_DIR = $(prefix)/bin
 
-all-local: vbnc
+all-local: vbnc vbnc2
 
-vbnc: vbnc.in Makefile
-	sed -e s,@prefix@,$(prefix),g < vbnc.in > $@.tmp
+vbnc vbnc2: vbnc.in vbnc2.in Makefile
+	sed -e s,@prefix@,$(prefix),g < $@.in > $@.tmp
 	mv $@.tmp $@
 
 install-local: all-local
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_BIN) vbnc $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_BIN) vbnc2 $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 uninstall-local: 
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc
+	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/vbnc2
 
-DISTFILES = vbnc.in Makefile
+DISTFILES = vbnc.in vbnc2.in Makefile
 
 clean-local:
-	rm -f vbnc
+	rm -f vbnc vbnc2
 
 test-local run-test-local run-test-ondotnet-local all-local:
 	@:

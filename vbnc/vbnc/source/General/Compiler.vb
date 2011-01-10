@@ -318,9 +318,9 @@ Public Class Compiler
         AssemblyBuilderCecil = AssemblyDefinition.CreateAssembly(an, IO.Path.GetFileNameWithoutExtension(OutFileName), kind)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
         ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
-        ModuleBuilderCecil.Runtime = TargetRuntime.Net_2_0
+        ModuleBuilderCecil.Runtime = TypeManager.Corlib.MainModule.Runtime
         ModuleBuilderCecil.AssemblyResolver = AssemblyResolver
-
+        If CommandLine.Verbose Then Report.WriteLine(String.Format("Using runtime version: {0}", ModuleBuilderCecil.Runtime))
         Return Compiler.Report.Errors = 0
     End Function
 
@@ -945,12 +945,22 @@ EndOfCompilation:
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function GetSystemDir() As String
-        Dim assemblies() As Reflection.Assembly = AppDomain.CurrentDomain.GetAssemblies
+        Dim assemblies() As Reflection.Assembly
+        Dim result As String
+
+        If Not String.IsNullOrEmpty(CommandLine.SDKPath) Then
+            If CommandLine.Verbose Then Report.WriteLine(string.Format ("Using alternate system path: {0}", CommandLine.SDKPath))
+            Return CommandLine.SDKPath
+        End If
+
+        assemblies = AppDomain.CurrentDomain.GetAssemblies
 
         For Each a As Reflection.Assembly In assemblies
             Dim codebase As String = a.Location
             If codebase.EndsWith("corlib.dll") Then
-                Return codebase.Substring(0, codebase.LastIndexOf(System.IO.Path.DirectorySeparatorChar))
+                result = codebase.Substring(0, codebase.LastIndexOf(System.IO.Path.DirectorySeparatorChar))
+                If CommandLine.Verbose Then Report.WriteLine(String.Format("Using system path: {0}", result))
+                Return result
             End If
         Next
         Throw New InternalException("Cannot compute the system directory.")

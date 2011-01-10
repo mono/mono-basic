@@ -58,6 +58,15 @@ Public Class TypeManager
 
     Public MemberCache As New Generic.Dictionary(Of Mono.Cecil.TypeReference, MemberCache)(New TypeComparer)
 
+    ReadOnly Property Corlib As AssemblyDefinition
+        Get
+            For i As Integer = 0 To m_CecilAssemblies.Count - 1
+                If Helper.CompareNameOrdinal(m_CecilAssemblies(i).Name.Name, "mscorlib") Then Return m_CecilAssemblies(i)
+            Next
+            Return Nothing
+        End Get
+    End Property
+
     Function FindAssemblyDefinition(ByVal Fullname As String) As Mono.Cecil.AssemblyDefinition
         For i As Integer = 0 To m_CecilAssemblies.Count - 1
             Dim a As Mono.Cecil.AssemblyDefinition
@@ -195,12 +204,13 @@ Public Class TypeManager
         Dim refAssembly As Mono.Cecil.AssemblyDefinition
         Dim loadedFiles As New Generic.List(Of String)
         Dim loaded As Boolean
+        Dim fullPath As String = Nothing
 
         For Each strFile As String In Compiler.CommandLine.References
             If loadedFiles.Contains(strFile) Then Continue For
             loadedFiles.Add(strFile)
 
-            refAssembly = LoadAssembly(strFile)
+            refAssembly = LoadAssembly(strFile, fullPath)
             If refAssembly Is Nothing Then
                 Compiler.Report.ShowMessage(Messages.VBNC2017, Span.CommandLineSpan, strFile)
                 Return False
@@ -216,7 +226,7 @@ Public Class TypeManager
             If loaded Then Continue For
 
             If Compiler.CommandLine.Verbose Then
-                Compiler.Report.WriteLine("Loaded '" & refAssembly.Name.FullName & "'")
+                Compiler.Report.WriteLine(String.Format("Loaded {0} => {1}", fullPath, refAssembly.Name))
             End If
             m_CecilAssemblies.Add(refAssembly)
             Compiler.AssemblyResolver.RegisterAssembly(refAssembly)
@@ -277,22 +287,17 @@ Public Class TypeManager
     ''' <param name="Filename"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function LoadAssembly(ByVal Filename As String) As Mono.Cecil.AssemblyDefinition
+    Private Function LoadAssembly(ByVal Filename As String, ByRef FullPath As String) As Mono.Cecil.AssemblyDefinition
         Dim refAss As Mono.Cecil.AssemblyDefinition
         Dim readerParameters As New ReaderParameters(ReadingMode.Deferred)
         readerParameters.AssemblyResolver = Compiler.AssemblyResolver
 
+        FullPath = Nothing
+
         '  Try
         If IO.File.Exists(Filename) Then
             refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, readerParameters)
-            'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
-            Return refAss
-        End If
-
-        If Reflection.Assembly.GetExecutingAssembly.Location <> String.Empty AndAlso IO.File.Exists(IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)) Then
-            Filename = IO.Path.Combine(IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly.Location), Filename)
-            refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(Filename, readerParameters)
-            'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & Filename & "'")
+            FullPath = Filename
             Return refAss
         End If
 
@@ -302,7 +307,7 @@ Public Class TypeManager
             Try
                 If IO.File.Exists(strFullPath) Then
                     refAss = Mono.Cecil.AssemblyDefinition.ReadAssembly(strFullPath, readerParameters)
-                    'If Compiler.CommandLine.Verbose Then Compiler.Report.WriteLine("Loaded '" & strFullPath & "'")
+                    FullPath = strFullPath
                     Return refAss
                 End If
             Catch ex2 As Exception
