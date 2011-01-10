@@ -17,6 +17,9 @@ while test x$1 != x; do
                 --with-monodroid=yes)
                         configured_profiles="monodroid $configured_profiles"
                         ;;
+                --with-moonlight=yes)
+                        configured_profiles="moonlight $configured_profiles"
+                        ;;
                 *)
                         echo Unknown argument $1 >&2
         esac
