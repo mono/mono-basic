@@ -5,7 +5,7 @@ include ../../build/rules.make
 LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS) /r:../../class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/vbnc.exe
-PROGRAM_COMPILE = $(BOOT_COMPILE)
+PROGRAM_COMPILE = $(BOOT_COMPILE) /novbruntimeref /r:../../class/lib/bootstrap/Microsoft.VisualBasic.dll
 
 include ../../build/executable.make
 
