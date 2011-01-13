@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=2.9
+VERSION=2.11
 prefix=/usr/local
 configured_profiles=
 while test x$1 != x; do
