@@ -358,16 +358,22 @@ Public Class TypeNameResolutionInfo
                 '** If R matches the name of a namespace or type in N, 
                 '** then the qualified name refers to that namespace or type.
                 Dim tp As Mono.Cecil.TypeReference = Qualifier.FoundAs(Of Mono.Cecil.TypeReference)()
-                Dim nestedtp As Mono.Cecil.TypeReference = CecilHelper.GetNestedType(tp, Helper.CreateGenericTypename(R, TypeArgumentCount))
+                Dim members As Mono.Collections.Generic.Collection(Of MemberReference)
 
-                If nestedtp IsNot Nothing Then m_FoundObjects.Add(nestedtp)
+                members = Name.Compiler.TypeManager.GetCache(tp).LookupFlattenedMembers(Helper.CreateGenericTypename(R, TypeArgumentCount))
+
+                If members IsNot Nothing Then
+                    For i As Integer = 0 To members.Count - 1
+                        If Not TypeOf members(i) Is TypeDefinition Then Continue For
+                        m_FoundObjects.Add(members(i))
+                    Next
+                End If
 
                 '**	If N contains one or more standard modules, and R matches the name of a type in 
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
-                    modules = Helper.CreateList(CecilHelper.GetNestedTypes(tp))
+                    Return Name.Compiler.Report.ShowMessage(Messages.VBNC30002, Name.Location, tp.FullName & "." & R)
                 End If
             Else
                 '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 
