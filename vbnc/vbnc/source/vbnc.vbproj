@@ -33,7 +33,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OptionStrict>On</OptionStrict>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>http://localhost/vbnc</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -48,6 +48,7 @@
     <ApplicationVersion>0.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\bin\</OutputPath>
@@ -518,6 +519,7 @@
     <EmbeddedResource Include="Resources\Errors.resx" />
     <EmbeddedResource Include="vbnc.rsp" />
     <Content Include="Notes.txt" />
+    <None Include="app.config" />
     <None Include="General\TypeCache.in" />
     <None Include="Resources\Source.xml">
       <SubType>Designer</SubType>
