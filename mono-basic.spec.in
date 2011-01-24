@@ -1,0 +1,49 @@
+Name:           mono-basic
+BuildRequires:  mono-devel mono-winforms unzip
+License:        LGPL v2.1 only
+Group:          Development/Languages/Mono
+Summary:        Mono's VB Runtime
+Url:            http://go-mono.org/
+Version:        @VERSION@
+Release:        0
+Source0:        %{name}-%{version}.tar.bz2
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildArch:      noarch
+
+%description
+The Mono Project is an open development initiative that is working to
+develop an open source, Unix version of the .NET development platform.
+Its objective is to enable Unix developers to build and deploy
+cross-platform .NET applications. The project will implement various
+technologies that have been submitted to the ECMA for standardization.
+
+Mono's VB runtime.
+
+%files
+%defattr(-, root, root)
+%_mandir/man1/vbnc.1*
+%_prefix/bin/vbnc*
+%_prefix/lib/mono/*/Microsoft.VisualBasic.dll
+%_prefix/lib/mono/*/Mono.Cecil.VB*.dll
+%_prefix/lib/mono/4.0/vbnc*
+%_prefix/lib/mono/gac/Microsoft.VisualBasic
+%_prefix/lib/mono/gac/Mono.Cecil.VB*
+
+%prep
+%setup -q
+
+%build
+./configure --prefix=%{_prefix}
+make
+
+%install
+make install DESTDIR=%{buildroot}
+rm -f %{buildroot}%{_prefix}/lib/mono/2.0/extract-source.exe*
+rm -f %{buildroot}%{_prefix}/lib/mono/2.0/rt-console.exe*
+rm -f %{buildroot}%{_prefix}/lib/mono/2.0/rt-execute.exe*
+rm -f %{buildroot}%{_prefix}/lib/mono/2.0/rt.exe*
+
+%clean
+rm -rf %{buildroot}
+
+%changelog

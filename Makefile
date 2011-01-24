@@ -29,6 +29,7 @@ dist-tarball: dist-pre
 
 dist: dist-tarball
 	rm -rf $(package)
+	sed -e s,@VERSION@,$(VERSION),g < mono-basic.spec.in > mono-basic.spec
 
 # the egrep -v is kind of a hack (to get rid of the makefrags)
 # but otherwise we have to make dist then make clean which
