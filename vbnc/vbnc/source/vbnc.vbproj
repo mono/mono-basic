@@ -201,6 +201,7 @@
     <Compile Include="General\NamespaceDictionary.vb" />
     <Compile Include="General\TypeDictionary.vb" />
     <Compile Include="General\TypeList.vb" />
+    <Compile Include="General\Version.vb" />
     <Compile Include="Infos\ExpressionResolveInfo.vb" />
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
