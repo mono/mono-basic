@@ -104,8 +104,8 @@ Class frmMain
         tmp = IO.Path.GetFullPath("..\..\vbnc\bin\vbnc.exe")
         If IO.File.Exists(tmp) Then cmbCompiler.Items.Add(tmp)
 
-        tmp = IO.Path.GetFullPath("..\..\vbnc\tests")
-        If IO.Directory.Exists(tmp) Then cmbBasepath.Items.Add(tmp)
+        tmp = IO.Path.GetFullPath("..\..\vbnc\tests\tests.xml")
+        If IO.File.Exists(tmp) Then cmbBasepath.Items.Add(tmp)
 
         tmp = IO.Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "Microsoft.Net\Framework\v2.0.50727\vbc.exe")
         If IO.File.Exists(tmp) Then cmbVBCCompiler.Items.Add(tmp)
