@@ -9,7 +9,7 @@ GIT_REVISION=`git log --no-color --first-parent -n1 --pretty=format:%h`
 cat ../LicenseFileHeader.txt > $VERSION_TMP
 echo "" >> $VERSION_TMP
 echo -n "<Assembly: AssemblyInformationalVersion (\"" >> $VERSION_TMP
-echo -n `more ../../configure | grep VERSION | grep -v echo | grep -v sed | sed 's/VERSION=//'` >> $VERSION_TMP
+echo -n `grep VERSION ../../configure | grep -v echo | grep -v sed | sed 's/VERSION=//'` >> $VERSION_TMP
 echo -n " - " >> $VERSION_TMP
 if [[ "x$GIT_REVISION" != "x" ]]; then
 	echo -n $GIT_BRANCH/$GIT_REVISION >> $VERSION_TMP
