@@ -300,6 +300,12 @@ Public Class CommandLine
     Private m_bNoConfig As Boolean
 
     ''' <summary>
+    ''' /nostdlib               Do not reference standard libraries (System.dll and vbnc.rsp)
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_bNoStdLib As Boolean
+
+    ''' <summary>
     ''' /trace                  Output trace messages (vbnc extension)
     ''' </summary>
     ''' <remarks></remarks>
@@ -631,6 +637,15 @@ Public Class CommandLine
     End Property
 
     ''' <summary>
+    ''' /nostdlib               Do not reference the standard libraries (vbnc.rsp and System.dll)
+    ''' </summary>
+    ReadOnly Property NoStdLib As Boolean
+        Get
+            Return m_bNoStdLib
+        End Get
+    End Property
+
+    ''' <summary>
     ''' /trace                  Output trace messages (vbnc extension)
     ''' </summary>
     ''' <value></value>
@@ -805,7 +820,7 @@ Public Class CommandLine
         Try
             result = ParseInternal(CommandLine) AndAlso result
 
-            If m_bNoConfig = False Then
+            If m_bNoConfig = False AndAlso m_bNoStdLib = False Then
                 Dim defaultrspfile As String = Nothing
                 Dim compiler_path As String = System.Reflection.Assembly.GetExecutingAssembly.Location
                 If compiler_path = String.Empty Then
@@ -1052,6 +1067,8 @@ Public Class CommandLine
                 m_bVerbose = False
             Case "noconfig"
                 m_bNoConfig = True
+            Case "nostdlib"
+                m_bNoStdLib = True
             Case "trace"
                 m_bTrace = True
                 ' - ADVANCED -

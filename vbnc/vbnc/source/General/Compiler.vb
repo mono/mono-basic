@@ -445,6 +445,9 @@ Public Class Compiler
             If Not CommandLine.References.Contains("mscorlib.dll") Then
                 CommandLine.References.Add("mscorlib.dll")
             End If
+            If CommandLine.NoStdLib = False AndAlso Not CommandLine.References.Contains("System.dll") Then
+                CommandLine.References.Add("System.dll")
+            End If
 
             If Not String.IsNullOrEmpty(CommandLine.VBRuntime) Then
                 CommandLine.References.Add(CommandLine.VBRuntime)
@@ -715,6 +718,7 @@ EndOfCompilation:
             result.AppendLine("/quiet                 Specifies a quiet mode - only errors will be shown.")
             result.AppendLine("/verbose               Show verbose messages.")
             result.AppendLine("/noconfig              Disable the automatic inclusion of the vbnc.rsp response file.")
+            result.AppendLine("/nostdlib              Do not include the standard libraries (System.dll and vbnc.rsp.)")
             result.AppendLine("")
             result.AppendLine("                       >>> Advanced options >>>")
             result.AppendLine("/baseaddress:<number>  Specifies the base address of the library or module (in hex).")
