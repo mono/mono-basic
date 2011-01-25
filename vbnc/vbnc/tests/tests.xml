@@ -7811,4 +7811,8 @@
 	<test id="1998" name="30002-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30002" target="exe">
 		<file>Errors\30002-2.vb</file>
 	</test>
+	<test id="1999" name="NoConfigWithMy" category="My" priority="0" target="library">
+		<arguments>/noconfig /verbose</arguments>
+		<file>My\NoConfigWithMy.vb</file>
+	</test>
 </rt>

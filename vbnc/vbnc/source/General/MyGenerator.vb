@@ -136,6 +136,7 @@ Public Class MyGenerator
             ProjectCode.AppendLine("    End Module")
 
             Code.Insert(0, "Namespace My" & Environment.NewLine)
+            Code.Insert(0, "    Imports System" & Environment.NewLine)
             Code.Append(ProjectCode)
             Code.AppendLine("End Namespace")
 
