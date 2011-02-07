@@ -17,7 +17,7 @@ test-local run-test-local run-test-ondotnet-local all-local install-local uninst
 dist-local: dist-default
 
 tuner.exe: tuner.vb
-	mono --debug $(topdir)/class/lib/bootstrap/vbnc.exe tuner.vb -out:tuner.exe -r:$(MCS_PATH)/class/lib/basic/Mono.Cecil.dll -debug+
+	mono --debug $(topdir)/class/lib/bootstrap/vbnc.exe tuner.vb -out:tuner.exe -r:`pkg-config --variable=Libraries cecil` -debug+
 
 moonlight:
 	mkdir -p $(topdir)/class/lib/moonlight
