@@ -27,7 +27,7 @@ moonlight: tuner.exe
 	
 tune: moonlight tuner.exe
 	mkdir -p $(topdir)/class/lib/2.1/
-	MONO_PATH=$(MONO_PATH)::$(MCS_PATH)/class/lib/basic/ $(MCS_PATH)/../mono/mini/mono --debug tuner.exe $(DLL_TO_TUNE) $(TUNED_DLL)
+	mono --debug tuner.exe $(DLL_TO_TUNE) $(TUNED_DLL)
 	-cp $(DLL_TO_TUNE).mdb $(TUNED_DLL).mdb
 	
 install-moonlight: tune
