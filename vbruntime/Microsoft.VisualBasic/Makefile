@@ -11,7 +11,7 @@ ifeq ($(wildcard $(PROFILE_rspfile)), $(PROFILE_rspfile))
 rspfile = $(PROFILE_rspfile)
 endif
 
-LIBRARY_COMPILE = $(VBNC) @$(rspfile)
+LIBRARY_COMPILE = $(BOOT_COMPILE) @$(rspfile)
 
 BUILT_FILES = strings2.resources
 
