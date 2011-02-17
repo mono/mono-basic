@@ -3,7 +3,7 @@
 profile-check:
 	@:
 
-PROFILE_VBNC_FLAGS = /sdkpath:$(MCS_PATH)/class/lib/moonlight_raw/
+PROFILE_VBNC_FLAGS = /sdkpath:$(MOONLIGHT_SDK_LOCATION)
 
 LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
 NO_INSTALL=yes

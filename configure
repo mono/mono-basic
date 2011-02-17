@@ -3,10 +3,15 @@
 VERSION=2.11
 prefix=/usr/local
 configured_profiles=
+moonlight_sdk_location=
 while test x$1 != x; do
         case $1 in
                 --prefix=*)
                         prefix=`echo $1 | sed 's/--prefix=//'`
+                        ;;
+                --moonlight-sdk-location=*)
+                        moonlight_sdk_location=`echo $1 | sed 's/--moonlight-sdk-location=//'`
+                        configured_profiles="moonlight $configured_profiles"
                         ;;
                 --prefix)
                         echo --prefix needs an argument: --prefix=directory >&2
@@ -26,6 +31,13 @@ while test x$1 != x; do
         shift
 done
 
+if test "x$moonlight_sdk_location" == "x"; then
+	if test "x`echo $configured_profiles | grep moonlight`" != "x"; then
+		echo Configure error: --with-moonlight=yes requires --moonlight-sdk-location
+		exit 1
+	fi
+fi
+
 echo "prefix=$prefix" > build/config.make
 echo "exec_prefix=\${prefix}" >> build/config.make
 echo "mono_libdir=\${exec_prefix}/lib" >> build/config.make
@@ -36,6 +48,7 @@ echo "RUNTIME=mono" >> build/config.make
 echo "MONO_BASIC_VERSION=$VERSION" >> build/config.make
 echo "VERSION :=$VERSION" >> build/config.make
 echo "CONFIGURED_PROFILES :=$configured_profiles" >> build/config.make
+echo "MOONLIGHT_SDK_LOCATION :=$sdk_location" >> build/config.make
 
 echo "mono-basic $VERSION module configure to use prefix=$prefix"
 
