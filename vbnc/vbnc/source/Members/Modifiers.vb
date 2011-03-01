@@ -70,20 +70,6 @@ Public Structure Modifiers
         Return Me
     End Function
 
-    ''' <summary>
-    ''' Returns true if the modifier Publis is set, or any other modifiers (Private, Friend, Protected) 
-    ''' is not set.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    ReadOnly Property IsPublic() As Boolean
-        Get
-            Dim mask As ModifierMasks = ModifierMasks.AccessModifiers
-            Return mask = ModifierMasks.Public OrElse mask = 0
-        End Get
-    End Property
-
     ReadOnly Property AccessibilityMask() As ModifierMasks
         Get
             Return m_ModifierMask And (ModifierMasks.Public Or ModifierMasks.Private Or ModifierMasks.Friend Or ModifierMasks.Protected)
