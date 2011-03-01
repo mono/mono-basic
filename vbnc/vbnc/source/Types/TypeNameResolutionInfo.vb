@@ -366,8 +366,7 @@ Public Class TypeNameResolutionInfo
                 '** exactly one standard module, then the qualified name refers to that type. If R 
                 '** matches the name of types in more than one standard module, a compile-time error occurs.
                 If m_FoundObjects.Count = 0 Then
-                    Return Name.Compiler.Report.ShowMessage(Messages.VBNC99997, Name.Location)
-                    modules = Helper.CreateList(CecilHelper.GetNestedTypes(tp))
+                    Return Name.Compiler.Report.ShowMessage(Messages.VBNC30002, Name.Location, tp.FullName.Replace("/"c, "."c) & "." & R)
                 End If
             Else
                 '**	If resolution of N fails, resolves to a type parameter, or does not resolve to a namespace 

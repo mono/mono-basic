@@ -749,7 +749,8 @@ Public Class CecilHelper
         For i As Integer = 0 To tD.NestedTypes.Count - 1
             If Helper.CompareName(tD.NestedTypes(i).Name, Name) Then Return tD.NestedTypes(i)
         Next
-        Return Nothing
+        If tD.BaseType Is Nothing Then Return Nothing
+        Return GetNestedType(tD.BaseType, Name)
     End Function
 
     Public Shared Function GetNestedTypes(ByVal Type As TypeReference) As Mono.Collections.Generic.Collection(Of TypeDefinition)
@@ -1360,5 +1361,4 @@ Public Class CecilHelper
         End If
         Return Helper.CompareNameOrdinal(a.FullName, b.FullName)
     End Function
-
 End Class

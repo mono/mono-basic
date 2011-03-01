@@ -7230,7 +7230,7 @@
 		<arguments>/debug:full</arguments>
 		<file>CompileTime2\ConditionalExpression1.vb</file>
 	</test>
-	<test id="1812" name="error" category="" priority="0" target="library">
+	<test id="1812" name="error" category="" priority="0" target="library" mytype="empty">
 		<file>Errors\error.vb</file>
 	</test>
 	<test id="1815" name="30199" category="" priority="0" expectedexitcode="1" expectederrorcode="30199" target="exe">
@@ -7829,8 +7829,17 @@
 	<test id="2004" name="30480-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="exe">
 		<file>Errors\30480-4.vb</file>
 	</test>
-	<test id="2005" name="NoConfigWithMy" category="My" priority="0" target="library">
+	<test id="2005" name="NoConfigWithMy" category="My" priority="0" knownfailure="Not automatically adding a reference to System with /noconfig" target="library">
 		<arguments>/noconfig /verbose</arguments>
 		<file>My\NoConfigWithMy.vb</file>
+	</test>
+	<test id="2006" name="30002-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30002" target="exe">
+		<file>Errors\30002-3.vb</file>
+	</test>
+	<test id="2007" name="NestedType4" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime2\NestedType4.vb</file>
+	</test>
+	<test id="2008" name="StaticVariable6" category="" priority="0" target="library" mytype="empty">
+		<file>CompileTime\StaticVariable6.vb</file>
 	</test>
 </rt>

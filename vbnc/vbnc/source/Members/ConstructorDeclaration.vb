@@ -229,6 +229,7 @@ Public Class ConstructorDeclaration
         For Each variable As LocalVariableDeclaration In parent.StaticVariables
             If variable.HasInitializer AndAlso variable.DeclaringMethod.IsShared = Me.IsShared Then
                 If Me.IsShared = False Then Emitter.EmitLoadMe(Info, Me.DeclaringType.CecilType)
+                result = variable.CreateDefinition AndAlso result
                 Emitter.EmitNew(Info, Compiler.TypeCache.MS_VB_CS_StaticLocalInitFlag__ctor)
                 Emitter.EmitStoreField(Info, CecilHelper.GetCorrectMember(variable.StaticInitBuilder, variable.StaticInitBuilder.DeclaringType))
             End If
