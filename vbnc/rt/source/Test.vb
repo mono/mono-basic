@@ -19,8 +19,10 @@
 
 <Serializable()> _
 Public Class Test
-    Private ReadOnly PEVerifyPath As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe")
+    Private ReadOnly PEVerifyPath As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\PEVerify.exe")
     Private ReadOnly PEVerifyPath2 As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft SDKs\\Windows\v6.0A\bin\PEVerify.exe")
+    Private ReadOnly PEVerifyPath3 As String = System.Environment.ExpandEnvironmentVariables("%programfiles%\Microsoft Visual Studio 8\SDK\v2.0\Bin\PEVerify.exe")
+
     ''' <summary>
     ''' The id of the test
     ''' </summary>
@@ -930,6 +932,7 @@ Public Class Test
             Else
                 peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath)
                 If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath2)
+                If peverify = String.Empty OrElse IO.File.Exists(peverify) = False Then peverify = Environment.ExpandEnvironmentVariables(PEVerifyPath3)
             End If
             If peverify <> String.Empty AndAlso (Helper.IsOnMono OrElse IO.File.Exists(peverify)) Then
                 Dim peV As ExternalProcessVerification
