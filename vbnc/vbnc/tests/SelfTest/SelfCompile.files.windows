@@ -59,6 +59,7 @@
 ..\..\source\General\NamespaceDictionary.vb
 ..\..\source\General\TypeDictionary.vb
 ..\..\source\General\TypeList.vb
+..\..\source\General\Version.vb
 ..\..\source\Infos\ExpressionResolveInfo.vb
 ..\..\source\Interfaces\IHasImplicitMembers.vb
 ..\..\source\Interfaces\IHasImplicitTypes.vb

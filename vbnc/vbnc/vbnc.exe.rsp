@@ -1,6 +1,7 @@
 /r:System.dll
 /r:System.Xml.dll
 /r:System.Windows.Forms.dll
+/r:System.Core.dll
 /imports:system,system.collections,vb=microsoft.visualbasic,system.reflection,system.reflection.emit
 /imports:Mono.Cecil
 /rootnamespace:vbnc

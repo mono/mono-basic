@@ -87,9 +87,7 @@ source/Interfaces/IFieldMember.vb
 source/Interfaces/IAttributableDeclaration.vb
 source/Interfaces/IAttributableNamedDeclaration.vb
 source/Interfaces/IBaseObject.vb
-source/Interfaces/IDefinableType.vb
 source/Interfaces/IEmittable.vb
-source/Interfaces/IDefinableMember.vb
 source/Interfaces/IMember.vb
 source/Interfaces/IMethod.vb
 source/Interfaces/INameable.vb

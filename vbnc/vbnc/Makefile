@@ -64,7 +64,7 @@ test-thorough:
 	cd tests/SelfTest/ && updatesources.sh
 	cd tests/SelfTest/ && rerun.sh && rerun.sh && rerun.sh
 	cp tests/SelfTest/vbnc.exe* ../../class/lib/bootstrap
-	cd ../../vbruntime && make install && cp ../class/lib/vbnc/Microsoft.VisualBasic.dll* ../class/lib/bootstrap/
-	cd ../../ && make clean && make install
+	cd ../../vbruntime && $(MAKE) && $(MAKE) install && cp ../class/lib/net_4_0/Microsoft.VisualBasic.dll* ../class/lib/bootstrap/
+	cd ../../ && $(MAKE) clean && $(MAKE) && $(MAKE) install
 	
 	
