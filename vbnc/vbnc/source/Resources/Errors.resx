@@ -467,7 +467,7 @@
   <data name="30644"><value>CHANGEME</value></data>
   <data name="30645"><value>CHANGEME</value></data>
   <data name="30647"><value>CHANGEME</value></data>
-  <data name="30648"><value>CHANGEME</value></data>
+  <data name="30648"><value>String constants must end with a double quote.</value></data>
   <data name="30649"><value>CHANGEME</value></data>
   <data name="30650"><value>Invalid enum type.</value></data>
   <data name="30651"><value>CHANGEME</value></data>

@@ -7842,4 +7842,10 @@
 	<test id="2008" name="StaticVariable6" category="" priority="0" target="library" mytype="empty">
 		<file>CompileTime\StaticVariable6.vb</file>
 	</test>
+	<test id="2009" name="bug-674365" category="" priority="0" target="library" mytype="empty">
+		<file>Bugs\bug-674365.vb</file>
+	</test>
+	<test id="2010" name="30648" category="" priority="0" expectedexitcode="1" expectederrorcode="30648" target="exe">
+		<file>Errors\30648.vb</file>
+	</test>
 </rt>

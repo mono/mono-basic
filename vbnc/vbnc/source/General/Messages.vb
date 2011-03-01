@@ -3068,7 +3068,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30647 = 30647
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "String constants must end with a double quote."
     ''' VB   = "String constants must end with a double quote."
     ''' </summary>
     ''' <remarks></remarks>

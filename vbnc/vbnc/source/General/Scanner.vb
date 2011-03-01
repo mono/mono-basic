@@ -27,6 +27,9 @@ Public Class Scanner
     Inherits BaseObject
 
     'Useful constants.
+    Private Const nl27 As Char = """"c
+    Private Const nl201C As Char = Microsoft.VisualBasic.ChrW(&H201C)
+    Private Const nl201D As Char = Microsoft.VisualBasic.ChrW(&H201D)
     Private Const nl0 As Char = Microsoft.VisualBasic.ChrW(0)
     Private Const nlA As Char = Microsoft.VisualBasic.ChrW(&HA)
     Private Const nlD As Char = Microsoft.VisualBasic.ChrW(&HD)
@@ -890,20 +893,20 @@ Public Class Scanner
         StringBuilderLength = 0
         Do
             Select Case NextChar()
-                Case """"c '
+                Case nl27, nl201C, nl201D
                     'If " followed by a ", output one "
-                    If NextChar() = """" Then
-                        StringBuilderAppend(""""c)
+                    Dim nc As Char = NextChar()
+                    If nc = nl27 OrElse nc = nl201C OrElse nc = nl201D Then
+                        StringBuilderAppend(nc)
                     Else
                         bEndOfString = True
                     End If
                 Case nlA, nlD, nl2028, nl2029
-                    'vbc accepts this...
-                    Compiler.Report.ShowMessage(Messages.VBNC90003, GetCurrentLocation())
+                    Compiler.Report.ShowMessage(Messages.VBNC30648, GetCurrentLocation)
                     bEndOfString = True
                 Case Else
                     If m_EndOfFile Then
-                        Compiler.Report.ShowMessage(Messages.VBNC90004, GetCurrentLocation())
+                        Compiler.Report.ShowMessage(Messages.VBNC30648, GetCurrentLocation)
                         'PreviousChar() 'Step back
                         bEndOfString = True
                     Else
@@ -1331,7 +1334,7 @@ Public Class Scanner
         Dim Result As Token = Nothing
         Do
             Select Case CurrentChar()
-                Case """"c 'String Literal
+                Case nl27, nl201C, nl201D 'String Literal
                     Result = GetString()
                 Case COMMENTCHAR1, COMMENTCHAR2, COMMENTCHAR3 'VB Comment
                     EatComment()

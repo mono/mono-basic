@@ -2184,7 +2184,7 @@
 	</Message>
 	<Message id="30648" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>String constants must end with a double quote.</VBNCValue>
 		<VBValue>String constants must end with a double quote.</VBValue>
 	</Message>
 	<Message id="30649" level="Error">
