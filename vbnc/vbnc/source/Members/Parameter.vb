@@ -87,7 +87,7 @@ Public Class Parameter
         result.m_Modifiers = m_Modifiers
         result.m_ParameterIdentifier = m_ParameterIdentifier.Clone(result)
         If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName.Clone(result)
-        If m_ConstantExpression IsNot Nothing Then result.m_ConstantExpression = m_ConstantExpression.Clone(result)
+        If m_ConstantExpression IsNot Nothing Then result.m_ConstantExpression = m_ConstantExpression
         Return result
     End Function
 

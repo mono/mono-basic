@@ -7848,4 +7848,7 @@
 	<test id="2010" name="30648" category="" priority="0" expectedexitcode="1" expectederrorcode="30648" target="exe">
 		<file>Errors\30648.vb</file>
 	</test>
+	<test id="2011" name="bug-438669" category="" priority="0" target="library" mytype="empty">
+		<file>Bugs\bug-438669.vb</file>
+	</test>
 </rt>
