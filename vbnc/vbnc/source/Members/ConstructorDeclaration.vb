@@ -74,55 +74,6 @@ Public Class ConstructorDeclaration
         MyBase.Init(Modifiers, Signature, Block)
     End Sub
 
-    Shared Function CreateTypeConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
-        Dim result As New ConstructorDeclaration(Parent)
-
-        result.Init(New Modifiers(ModifierMasks.Shared), New SubSignature(result, SharedConstructorName, New ParameterList(result)), New CodeBlock(result))
-
-        result.UpdateDefinition()
-        If result.ResolveTypeReferences() = False Then
-            Helper.ErrorRecoveryNotImplemented(Parent.Location)
-        End If
-
-        Return result
-    End Function
-
-    Shared Function CreateDefaultConstructor(ByVal Parent As TypeDeclaration) As ConstructorDeclaration
-        Dim result As New ConstructorDeclaration(Parent)
-        Dim modifiers As Modifiers
-
-        If Parent.Modifiers.Is(ModifierMasks.MustInherit) Then
-            modifiers.AddModifier(KS.Protected)
-        End If
-        result.Init(modifiers, New SubSignature(result, ConstructorName, New ParameterList(result)), New CodeBlock(result))
-
-        If result.ResolveTypeReferences() = False Then
-            Helper.ErrorRecoveryNotImplemented(Parent.Location)
-        End If
-
-        Return result
-    End Function
-
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveTypeReferences AndAlso result
-
-        UpdateDefinition()
-
-        Return result
-    End Function
-
-    Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveMember(Info) AndAlso result
-
-        UpdateDefinition()
-
-        Return result
-    End Function
-
     ReadOnly Property ExplicitCtorCall() As Mono.Cecil.MethodReference
         Get
             Dim firststatement As BaseObject
@@ -179,36 +130,15 @@ Public Class ConstructorDeclaration
         Return result
     End Function
 
-    Public Overrides Function DefineMember() As Boolean
+    Public Overrides Function CreateDefinition() As Boolean
         Dim result As Boolean = True
 
-        result = MyBase.DefineMember AndAlso result
+        result = MyBase.CreateDefinition AndAlso result
 
-        'Helper.SetTypeOrTypeBuilder(Compiler, ParameterTypes)
-
-        UpdateDefinition()
+        MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
 
         Return result
     End Function
-
-    Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
-
-        If Signature IsNot Nothing AndAlso Signature.Parameters IsNot Nothing Then
-            For i As Integer = 0 To Signature.Parameters.Count - 1
-                Signature.Parameters(i).UpdateDefinition()
-            Next
-        End If
-        CecilBuilder.Name = Name
-
-        MethodAttributes = Helper.GetAttributes(Me)
-        MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL
-
-        If DeclaringType IsNot Nothing AndAlso DeclaringType.CecilType IsNot Nothing AndAlso m_Added = False Then
-            m_Added = True
-            DeclaringType.CecilType.Methods.Add(CecilBuilder)
-        End If
-    End Sub
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
@@ -295,15 +225,17 @@ Public Class ConstructorDeclaration
     Private Function EmitConstantInitialization(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         Dim parent As TypeDeclaration
+        Dim constant As Object = Nothing
 
         Parent = Me.DeclaringType
 
-        For Each variable As ConstantDeclaration In Parent.Members.GetSpecificMembers(Of ConstantDeclaration)()
+        For Each variable As ConstantDeclaration In parent.Members.GetSpecificMembers(Of ConstantDeclaration)()
+            result = variable.GetConstant(constant, True) AndAlso result
             If Helper.CompareType(variable.FieldType, Compiler.TypeCache.System_DateTime) Then
-                Emitter.EmitLoadDateValue(Info, DirectCast(variable.ConstantValue, Date))
+                Emitter.EmitLoadDateValue(Info, DirectCast(constant, Date))
                 Emitter.EmitStoreField(Info, variable.FieldBuilder)
             ElseIf Helper.CompareType(variable.FieldType, Compiler.TypeCache.System_Decimal) Then
-                Emitter.EmitLoadDecimalValue(Info, DirectCast(variable.ConstantValue, Decimal))
+                Emitter.EmitLoadDecimalValue(Info, DirectCast(constant, Decimal))
                 Emitter.EmitStoreField(Info, variable.FieldBuilder)
             End If
         Next
@@ -333,8 +265,6 @@ Public Class ConstructorDeclaration
                     End Try
 #End If
                 End If
-            Else
-                Helper.AddError(Me, "Base class does not have a default constructor")
             End If
         End If
     End Sub
@@ -362,8 +292,6 @@ Public Class ConstructorDeclaration
                     End Try
 #End If
                 End If
-            Else
-                Helper.AddError(Compiler, Location, "Base class does not have a default constructor")
             End If
         End If
     End Sub

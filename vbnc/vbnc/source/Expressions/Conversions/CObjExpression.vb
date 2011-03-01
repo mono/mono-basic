@@ -62,12 +62,6 @@ Public Class CObjExpression
         Return GenerateCode(Me.Expression, Info)
     End Function
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Object

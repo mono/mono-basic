@@ -1,4 +1,4 @@
-﻿' 
+' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -29,21 +29,54 @@ Public Class IfExpression
     Public ThirdPart As Expression
 
     Private m_ExpressionType As TypeReference
-    Private m_ConstantValue As Object
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            If ThirdPart Is Nothing AndAlso TypeOf Condition Is NothingConstantExpression AndAlso TypeOf SecondPart Is NothingConstantExpression Then Return True
-            If Not Condition.IsConstant Then Return False
-            If Not SecondPart.IsConstant Then Return False
-            If ThirdPart IsNot Nothing AndAlso Not ThirdPart.IsConstant Then Return False
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim first As Object = Nothing
+        Dim second As Object = Nothing
+        Dim third As Object = Nothing
+
+        If ThirdPart IsNot Nothing Then
+            If Not Condition.GetConstant(first, ShowError) Then Return False
+            If Not SecondPart.GetConstant(second, ShowError) Then Return False
+            If Not ThirdPart.GetConstant(third, ShowError) Then Return False
+
+            result = If(CBool(first), second, third)
+            If TypeConverter.ConvertTo(Me, result, m_ExpressionType, result) = False Then
+                If ShowError Then Show30059()
+                Return False
+            End If
             Return True
-        End Get
-    End Property
+        End If
+
+        If TypeOf SecondPart Is NothingConstantExpression Then
+            If TypeOf Condition Is NothingConstantExpression Then
+                result = Nothing
+                Return True
+            Else
+                If ShowError Then Show30059()
+                Return False
+            End If
+        ElseIf TypeOf Condition Is NothingConstantExpression Then
+            If ShowError Then Show30059()
+            Return False
+        Else
+            If Not Condition.GetConstant(first, ShowError) Then Return False
+            If Not SecondPart.GetConstant(second, ShowError) Then Return False
+            
+            If TypeConverter.ConvertTo(Me, result, m_ExpressionType, result) = False Then
+                If ShowError Then Show30059()
+                Return False
+            End If
+            Return True
+        End If
+
+        If ShowError Then Show30059()
+        Return False
+    End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -77,12 +110,6 @@ Public Class IfExpression
             Else
                 m_ExpressionType = SecondPart.ExpressionType
             End If
-
-            If Condition.IsConstant AndAlso SecondPart.IsConstant AndAlso ThirdPart.IsConstant Then
-                m_ConstantValue = If(CBool(Condition.ConstantValue), SecondPart.ConstantValue, ThirdPart.ConstantValue)
-                'We checked that the conversion is possible above
-                result = TypeConverter.ConvertTo(Me, m_ConstantValue, m_ExpressionType, m_ConstantValue) AndAlso result
-            End If
         Else
             If Condition.ExpressionType.IsValueType AndAlso CecilHelper.IsNullable(Condition.ExpressionType) = False Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC33107, Condition.Location) AndAlso result
@@ -90,7 +117,6 @@ Public Class IfExpression
 
             If TypeOf SecondPart Is NothingConstantExpression Then
                 If TypeOf Condition Is NothingConstantExpression Then
-                    m_ConstantValue = Nothing
                     m_ExpressionType = Compiler.TypeCache.System_Object
                 Else
                     Return Compiler.Report.ShowMessage(Messages.VBNC30512, Condition.Location, Condition.ExpressionType.Name, "Integer")
@@ -120,12 +146,6 @@ Public Class IfExpression
                 Else
                     m_ExpressionType = SecondPart.ExpressionType
                 End If
-
-                If Condition.IsConstant AndAlso SecondPart.IsConstant Then
-                    m_ConstantValue = If(Condition.ConstantValue, SecondPart.ConstantValue)
-                    'We checked that the conversion is possible above
-                    result = TypeConverter.ConvertTo(Me, m_ConstantValue, m_ExpressionType, m_ConstantValue) AndAlso result
-                End If
             End If
         End If
 
@@ -146,7 +166,7 @@ Public Class IfExpression
         Dim nullable_type As GenericInstanceType = Nothing
         Dim has_value As MethodReference
         Dim get_value As MethodReference
-        
+
         If ThirdPart IsNot Nothing Then
             result = Condition.GenerateCode(Info) AndAlso result
             Emitter.EmitBranchIfFalse(Info, falseLabel)
@@ -228,12 +248,6 @@ Public Class IfExpression
 
         Return result
     End Function
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_ConstantValue
-        End Get
-    End Property
 
     Public Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get

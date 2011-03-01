@@ -187,7 +187,7 @@ Public Class CTypeExpression
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf Helper.IsInterface(Info.Compiler, DestinationElementType) AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
-                ElseIf helper.IsEnum(compiler, sourceelementtype)AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
+                ElseIf Helper.IsEnum(Compiler, SourceElementType) AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
                     'Conversions also exist between an array of an enumerated type and an array of the enumerated type's underlying type of the same rank.
                     Emitter.EmitCastClass(Info, SourceType, DestinationType)
                 ElseIf CecilHelper.IsGenericParameter(SourceElementType) AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
@@ -361,6 +361,62 @@ Public Class CTypeExpression
         Return result
     End Function
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        If Helper.CompareType(Compiler.TypeCache.Nothing, Expression.ExpressionType) Then
+            Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
+                Case TypeCode.Boolean
+                    result = CBool(Nothing)
+                Case TypeCode.Byte
+                    result = CByte(Nothing)
+                Case TypeCode.Char
+                    result = CChar(Nothing)
+                Case TypeCode.DateTime
+                    result = CDate(Nothing)
+                Case TypeCode.Decimal
+                    result = CDec(Nothing)
+                Case TypeCode.Double
+                    result = CDbl(Nothing)
+                Case TypeCode.Int16
+                    result = CShort(Nothing)
+                Case TypeCode.Int32
+                    result = CInt(Nothing)
+                Case TypeCode.Int64
+                    result = CLng(Nothing)
+                Case TypeCode.SByte
+                    result = CSByte(Nothing)
+                Case TypeCode.Single
+                    result = CSng(Nothing)
+                Case TypeCode.UInt16
+                    result = CUShort(Nothing)
+                Case TypeCode.UInt32
+                    result = CUInt(Nothing)
+                Case TypeCode.UInt64
+                    result = CULng(Nothing)
+                Case Else
+                    result = Nothing
+            End Select
+            Return True
+        End If
+
+        Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
+            Case TypeCode.String
+                Select Case Helper.GetTypeCode(Compiler, Me.Expression.ExpressionType)
+                    Case TypeCode.Char
+                        If Not Expression.GetConstant(result, ShowError) Then Return False
+                        result = CStr(result)
+                        Return True
+                    Case Else
+                        If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                        Return False
+                End Select
+            Case Else
+                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                Return False
+        End Select
+
+        Return False
+    End Function
+
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -439,78 +495,9 @@ Public Class CTypeExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            If Helper.CompareType(Compiler.TypeCache.Nothing, Expression.ExpressionType) Then
-                Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
-                    Case TypeCode.Boolean
-                        Return CBool(Nothing)
-                    Case TypeCode.Byte
-                        Return CByte(Nothing)
-                    Case TypeCode.Char
-                        Return CChar(Nothing)
-                    Case TypeCode.DateTime
-                        Return CDate(Nothing)
-                    Case TypeCode.Decimal
-                        Return CDec(Nothing)
-                    Case TypeCode.Double
-                        Return CDbl(Nothing)
-                    Case TypeCode.Int16
-                        Return CShort(Nothing)
-                    Case TypeCode.Int32
-                        Return CInt(Nothing)
-                    Case TypeCode.Int64
-                        Return CLng(Nothing)
-                    Case TypeCode.SByte
-                        Return CSByte(Nothing)
-                    Case TypeCode.Single
-                        Return CSng(Nothing)
-                    Case TypeCode.UInt16
-                        Return CUShort(Nothing)
-                    Case TypeCode.UInt32
-                        Return CUInt(Nothing)
-                    Case TypeCode.UInt64
-                        Return CULng(Nothing)
-                    Case Else
-                        Return Nothing
-                End Select
-            End If
-
-            Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
-                Case TypeCode.String
-                    Select Case Helper.GetTypeCode(Compiler, Me.Expression.ExpressionType)
-                        Case TypeCode.Char
-                            Return CStr(Expression.ConstantValue)
-                        Case Else
-                            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-                    End Select
-                Case Else
-                    Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
-            End Select
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            If Expression.IsConstant Then
-                If m_ResolvedDestinationType IsNot Nothing AndAlso Helper.CompareType(m_ResolvedDestinationType, Compiler.TypeCache.System_String) AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_Char) Then
-                    Return True
-                ElseIf Helper.CompareType(Compiler.TypeCache.Nothing, Expression.ExpressionType) Then
-                    Return True
-                Else
-                    Return False
-                End If
-            Else
-                Return False
-            End If
-            Return False 'TODO: This isn't true.
-        End Get
-    End Property
-
     Protected Overridable ReadOnly Property GetKeyword() As KS
         Get
             Return KS.CType
         End Get
     End Property
-
 End Class

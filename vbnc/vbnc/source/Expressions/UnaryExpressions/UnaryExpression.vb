@@ -60,12 +60,6 @@ Public MustInherit Class UnaryExpression
         Return tm.CurrentToken.Equals(Enums.UnaryOperators)
     End Function
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_Expression.IsConstant
-        End Get
-    End Property
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
         Dim operandType As TypeCode

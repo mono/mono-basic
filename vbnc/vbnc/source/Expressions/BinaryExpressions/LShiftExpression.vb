@@ -76,61 +76,42 @@ Public Class LShiftExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef m_ConstantValue As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        Dim shifts As Integer 'This needs to be an integer.
+        Dim tmpShifts As Object = Nothing
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            Else
+        If Compiler.TypeResolution.CheckNumericRange(rvalue, tmpShifts, Compiler.TypeCache.System_Int32) = False Then
+            Return False
+        Else
+            shifts = CInt(tmpShifts)
+        End If
 
-                Dim shifts As Integer 'This needs to be an integer.
-                Dim tmpShifts As Object = Nothing
-                If Compiler.TypeResolution.CheckNumericRange(rvalue, tmpShifts, Compiler.TypeCache.System_Int32) = False Then
-                    Helper.Stop() 'Add error.
-                Else
-                    shifts = CInt(tmpShifts)
-                End If
+        Dim tlvalue As Mono.Cecil.TypeReference
+        Dim clvalue As TypeCode
+        tlvalue = CecilHelper.GetType(Compiler, lvalue)
+        clvalue = Helper.GetTypeCode(Compiler, tlvalue)
 
-                Dim tlvalue As Mono.Cecil.TypeReference
-                Dim clvalue As TypeCode
-                tlvalue = CecilHelper.GetType(Compiler, lvalue)
-                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
+        Select Case clvalue
+            Case TypeCode.Byte
+                m_ConstantValue = CByte(lvalue) << shifts
+            Case TypeCode.SByte
+                m_ConstantValue = CSByte(lvalue) << shifts
+            Case TypeCode.Int16
+                m_ConstantValue = CShort(lvalue) << shifts
+            Case TypeCode.UInt16
+                m_ConstantValue = CUShort(lvalue) << shifts
+            Case TypeCode.Int32
+                m_ConstantValue = CInt(lvalue) << shifts
+            Case TypeCode.UInt32
+                m_ConstantValue = CUInt(lvalue) << shifts
+            Case TypeCode.Int64
+                m_ConstantValue = CLng(lvalue) << shifts
+            Case TypeCode.UInt64
+                m_ConstantValue = CULng(lvalue) << shifts
+            Case Else
+                Return False
+        End Select
 
-                Select Case clvalue
-                    Case TypeCode.Byte
-                        Return CByte(lvalue) << shifts
-                    Case TypeCode.SByte
-                        Return CSByte(lvalue) << shifts
-                    Case TypeCode.Int16
-                        Return CShort(lvalue) << shifts
-                    Case TypeCode.UInt16
-                        Return CUShort(lvalue) << shifts
-                    Case TypeCode.Int32
-                        Return CInt(lvalue) << shifts
-                    Case TypeCode.UInt32
-                        Return CUInt(lvalue) << shifts
-                    Case TypeCode.Int64
-                        Return CLng(lvalue) << shifts
-                    Case TypeCode.UInt64
-                        Return CULng(lvalue) << shifts
-                    Case TypeCode.Double
-                        Throw New InternalException(Me)
-                    Case TypeCode.Single
-                        Throw New InternalException(Me)
-                    Case TypeCode.Decimal
-                        Throw New InternalException(Me)
-                    Case Else
-                        Throw New InternalException(Me)
-                End Select
-            End If
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

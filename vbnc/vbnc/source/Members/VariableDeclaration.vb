@@ -80,19 +80,6 @@ Public MustInherit Class VariableDeclaration
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As Mono.Cecil.TypeReference)
         MyBase.Init(Modifiers, Name)
         m_VariableType = VariableType
-
-    End Sub
-
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As TypeName)
-        MyBase.Init(Modifiers, Name)
-        m_TypeName = VariableType
-
-        Helper.Assert(m_TypeName IsNot Nothing)
-    End Sub
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
     End Sub
 
     ReadOnly Property DeclaringMethod() As MethodDeclaration
@@ -107,10 +94,13 @@ Public MustInherit Class VariableDeclaration
         End Get
     End Property
 
-    Public ReadOnly Property VariableType() As Mono.Cecil.TypeReference
+    Public Property VariableType() As Mono.Cecil.TypeReference
         Get
             Return m_VariableType
         End Get
+        Set(ByVal value As Mono.Cecil.TypeReference)
+            m_VariableType = value
+        End Set
     End Property
 
     ReadOnly Property VariableTypeOrTypeBuilder() As Mono.Cecil.TypeReference
@@ -119,10 +109,13 @@ Public MustInherit Class VariableDeclaration
         End Get
     End Property
 
-    ReadOnly Property TypeName() As TypeName
+    Property TypeName() As TypeName
         Get
             Return m_TypeName
         End Get
+        Set(ByVal value As TypeName)
+            m_TypeName = value
+        End Set
     End Property
 
     ReadOnly Property IsNew() As Boolean
@@ -166,6 +159,8 @@ Public MustInherit Class VariableDeclaration
                     End If
                     m_NewExpression = New DelegateOrObjectCreationExpression(Me, m_TypeName.AsNonArrayTypeName, m_ArgumentList)
                 End If
+            ElseIf m_VariableIdentifier Is Nothing Then
+                'Do nothing, we've been created by an event that hasn't ResolveTypeReferences yet.
             ElseIf m_VariableIdentifier.Identifier.HasTypeCharacter Then
                 m_VariableType = TypeCharacters.TypeCharacterToType(Compiler, m_VariableIdentifier.Identifier.TypeCharacter)
             Else

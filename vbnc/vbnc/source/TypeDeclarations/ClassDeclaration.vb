@@ -33,12 +33,12 @@ Imports System.Reflection.Emit
 ''' <remarks></remarks>
 Public Class ClassDeclaration
     Inherits PartialTypeDeclaration
-    Implements IHasImplicitMembers
 
     'Due to partial classes there may be more than one inherits clause per class
     Private m_InheritsClauses As Generic.List(Of NonArrayTypeName)
     Private m_InheritsType As Mono.Cecil.TypeReference
     Private m_CreatedImplicitMembers As Boolean
+    Private m_HasImplicitInstanceConstructor As Boolean
 
     Sub New(ByVal Parent As ParsedObject, ByVal [Namespace] As String, ByVal Name As Identifier, ByVal TypeParameters As TypeParameters)
         MyBase.New(Parent, [Namespace], Name, TypeParameters)
@@ -51,21 +51,9 @@ Public Class ClassDeclaration
         m_InheritsClauses.Add(Clause)
     End Sub
 
-    Function CreateBaseImplicitMembers() As Boolean
-        Dim tD As Mono.Cecil.TypeDefinition
-        Dim cD As ClassDeclaration
-
-        tD = CecilHelper.FindDefinition(Me.BaseType)
-        If tD Is Nothing Then Return True
-
-        cD = TryCast(tD.Annotations(Compiler), ClassDeclaration)
-        If cD Is Nothing Then Return True
-
-        Return cD.CreateImplicitMembers
-    End Function
-
     ''' <summary>
-    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).          ''' If no constructor found, returns nothing.
+    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).         
+    ''' If no constructor found, returns nothing.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
@@ -78,7 +66,8 @@ Public Class ClassDeclaration
     End Function
 
     ''' <summary>
-    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).          ''' If no constructor found, returns nothing.
+    ''' Returns the default constructor (non-private, non-shared, with no parameters) for the base type (if any).          
+    ''' If no constructor found, returns nothing.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
@@ -90,28 +79,24 @@ Public Class ClassDeclaration
         End If
     End Function
 
-    Private Function GetTypeAttributes() As Mono.Cecil.TypeAttributes
-        Dim result As Mono.Cecil.TypeAttributes = MyBase.TypeAttributes
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
 
         If Me.Modifiers.Is(ModifierMasks.MustInherit) Then
-            result = result Or Mono.Cecil.TypeAttributes.Abstract
+            TypeAttributes = TypeAttributes Or Mono.Cecil.TypeAttributes.Abstract
         ElseIf Me.Modifiers.Is(ModifierMasks.NotInheritable) Then
-            result = result Or Mono.Cecil.TypeAttributes.Sealed
+            TypeAttributes = TypeAttributes Or Mono.Cecil.TypeAttributes.Sealed
         End If
 
         Return result
     End Function
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
-
-        TypeAttributes = GetTypeAttributes()
-    End Sub
-
-    Overrides Function ResolveTypeReferences() As Boolean
+    Public Overrides Function ResolveBaseType() As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(m_InheritsClauses Is Nothing OrElse m_InheritsClauses.Count > 0) 'Perf check
+        result = MyBase.ResolveBaseType() AndAlso result
 
         If m_InheritsClauses IsNot Nothing AndAlso m_InheritsClauses.Count > 0 Then
             For i As Integer = 0 To m_InheritsClauses.Count - 1
@@ -131,10 +116,18 @@ Public Class ClassDeclaration
             BaseType = Compiler.TypeCache.System_Object
         End If
 
-        result = MyBase.ResolveTypeReferences AndAlso result
+        'We need to clear the member cache here since our base type has changed
+        Compiler.TypeManager.ClearCache(Me.CecilType)
 
-        'Find the default constructors for this class
-        Me.FindDefaultConstructors()
+        Return result
+    End Function
+
+    Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        Helper.Assert(m_InheritsClauses Is Nothing OrElse m_InheritsClauses.Count > 0) 'Perf check
+
+        result = MyBase.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
@@ -142,8 +135,9 @@ Public Class ClassDeclaration
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        result = VerifyImplicitConstructor() AndAlso result
+
         result = MyBase.ResolveCode(Info) AndAlso result
-        'vbnc.Helper.Assert(result = (Compiler.Report.Errors = 0))
 
         Return result
     End Function
@@ -206,14 +200,13 @@ Public Class ClassDeclaration
         Return result
     End Function
 
-    Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
+    Public Overrides Function CreateImplicitInstanceConstructors() As Boolean
         Dim result As Boolean = True
 
-        If m_CreatedImplicitMembers Then Return True
+        'Find the default constructors for this class
+        Me.FindDefaultConstructors()
 
-        result = CreateBaseImplicitMembers() AndAlso result
-
-        If result = False Then Return result
+        result = MyBase.CreateImplicitInstanceConstructors() AndAlso result
 
         'If a type contains no instance constructor declarations, a default constructor 
         'is automatically provided. The default constructor simply invokes the 
@@ -222,37 +215,56 @@ Public Class ClassDeclaration
         'a compile-time error occurs. 
         'The declared access type for the default constructor is always Public. 
         If HasInstanceConstructors = False Then
-            Dim baseDefaultCtor As Mono.Cecil.MethodReference
-            baseDefaultCtor = Me.GetBaseDefaultConstructor()
+            Dim ctor As ConstructorDeclaration
+            Dim modifiers As Modifiers
 
-            If baseDefaultCtor IsNot Nothing Then
-                If Helper.IsPrivate(baseDefaultCtor) Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
-                Else
-                    DefaultInstanceConstructor = ConstructorDeclaration.CreateDefaultConstructor(Me)
-                    Members.Add(DefaultInstanceConstructor)
-
-                    result = AddInitializeComponentCall(DefaultInstanceConstructor) AndAlso result
-                End If
-            Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
+            If Me.Modifiers.Is(ModifierMasks.MustInherit) Then
+                modifiers.AddModifier(KS.Protected)
             End If
+
+            ctor = New ConstructorDeclaration(Me)
+            ctor.Init(modifiers, New SubSignature(ctor, ConstructorDeclaration.ConstructorName, New ParameterList(ctor)), New CodeBlock(ctor))
+
+            Members.Add(ctor)
+
+            result = ctor.CreateDefinition AndAlso result
+            result = AddInitializeComponentCall(ctor) AndAlso result
+
+            DefaultInstanceConstructor = ctor
+            m_HasImplicitInstanceConstructor = True
         End If
-
-        If DefaultSharedConstructor Is Nothing AndAlso Me.HasSharedFieldsWithInitializers Then
-            DefaultSharedConstructor = ConstructorDeclaration.CreateTypeConstructor(Me)
-            Members.Add(DefaultSharedConstructor)
-            BeforeFieldInit = True
-        End If
-
-        result = CreateMyGroupMembers() AndAlso result
-
-        m_CreatedImplicitMembers = True
 
         Return result
     End Function
 
-    Private Function CreateMyGroupMembers() As Boolean
+    Protected Overrides ReadOnly Property NeedsSharedConstructor As Boolean
+        Get
+            Return Me.HasSharedFieldsWithInitializers
+        End Get
+    End Property
+
+    Private Function VerifyImplicitConstructor() As Boolean
+        Dim result As Boolean = True
+        Dim baseDefaultCtor As Mono.Cecil.MethodReference
+
+        If m_HasImplicitInstanceConstructor = False Then Return result
+
+        baseDefaultCtor = Me.GetBaseDefaultConstructor()
+
+        If baseDefaultCtor IsNot Nothing Then
+            If Helper.IsPrivate(baseDefaultCtor) Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
+            Else
+                result = AddInitializeComponentCall(Me.DefaultInstanceConstructor) AndAlso result
+            End If
+        Else
+            result = Compiler.Report.ShowMessage(Messages.VBNC30387, Location, Name, BaseType.Name) AndAlso result
+        End If
+
+        Return result
+    End Function
+
+    Public Function CreateMyGroupMembers() As Boolean
         Dim result As Boolean = True
 
         If Me.CustomAttributes Is Nothing Then Return result
@@ -506,14 +518,14 @@ Public Class ClassDeclaration
 
             setter.Code.AddStatement(set_if1)
 
-            result = setter.ResolveTypeReferences AndAlso result
-            result = getter.ResolveTypeReferences AndAlso result
-
             Members.Add(field)
             Members.Add(prop)
 
-            field.UpdateDefinition()
-            prop.UpdateDefinition()
+            result = field.CreateDefinition AndAlso result
+            result = prop.CreateDefinition AndAlso result
+
+            result = setter.ResolveTypeReferences AndAlso result
+            result = getter.ResolveTypeReferences AndAlso result
 
             'Me.TypeDescriptor.ClearCache()
 

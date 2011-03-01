@@ -80,16 +80,6 @@ Public Class SubSignature
         End If
     End Sub
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        Helper.Assert(TypeOf Parent Is ClassDeclaration = False)
-
-        If m_Identifier IsNot Nothing Then m_Identifier.Initialize(Me)
-        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
-        If m_ParameterList IsNot Nothing Then m_ParameterList.Initialize(Me)
-    End Sub
-
     Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList)
         m_Identifier = Identifier
         m_TypeParameters = TypeParameters
@@ -104,6 +94,16 @@ Public Class SubSignature
         Me.Init(New Identifier(Me, Identifier, Nothing, TypeCharacters.Characters.None), TypeParameters, ParameterList)
     End Sub
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+        If m_TypeParameters IsNot Nothing Then result = m_TypeParameters.CreateDefinition AndAlso result
+        If m_ParameterList IsNot Nothing Then result = m_ParameterList.CreateDefinition AndAlso result
+
+        Return result
+    End Function
+
     Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As SubSignature
         If NewParent Is Nothing Then NewParent = Me.Parent
         Dim result As New SubSignature(NewParent)
@@ -114,12 +114,11 @@ Public Class SubSignature
     Sub CloneTo(ByVal ClonedSignature As SubSignature)
         ClonedSignature.m_Identifier = m_Identifier
         If m_TypeParameters IsNot Nothing Then
-            ClonedSignature.m_TypeParameters = m_TypeParameters.Clone()
-            ClonedSignature.m_TypeParameters.Initialize(ClonedSignature)
+            ClonedSignature.m_TypeParameters = m_TypeParameters.Clone(ClonedSignature)
         End If
         If m_ParameterList IsNot Nothing Then
             ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
-            ClonedSignature.m_ParameterList.Initialize(ClonedSignature)
+            ClonedSignature.m_ParameterList.Parent = ClonedSignature
         End If
     End Sub
 

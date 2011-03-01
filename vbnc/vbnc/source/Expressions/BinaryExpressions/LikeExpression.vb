@@ -55,12 +55,6 @@ Public Class LikeExpression
         MyBase.New(Parent, LExp, RExp)
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Public Overrides ReadOnly Property Keyword() As KS
         Get
             Return KS.Like

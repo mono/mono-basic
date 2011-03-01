@@ -35,34 +35,38 @@ Public Class TypeParameter
         MyBase.New(Parent)
     End Sub
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        Helper.Assert(m_Identifier IsNot Nothing)
+        result = MyBase.CreateDefinition() AndAlso result
 
-        If m_CecilBuilder Is Nothing Then
-            Dim p As BaseObject = Me.Parent
-            Dim owner As Mono.Cecil.IGenericParameterProvider = Nothing
-            While p IsNot Nothing AndAlso owner Is Nothing
-                Dim tD As TypeDeclaration = TryCast(p, TypeDeclaration)
-                Dim mD As MethodBaseDeclaration = TryCast(p, MethodBaseDeclaration)
+        If m_CecilBuilder IsNot Nothing Then Return result
 
-                If tD IsNot Nothing Then
-                    owner = tD.CecilType
-                    Exit While
-                ElseIf mD IsNot Nothing Then
-                    owner = mD.CecilBuilder
-                    Exit While
-                Else
-                    p = p.Parent
-                End If
-            End While
-            Helper.Assert(owner IsNot Nothing)
-            m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, owner)
-            m_CecilBuilder.Annotations.Add(Compiler, Me)
-            owner.GenericParameters.Add(m_CecilBuilder)
-        End If
-    End Sub
+        Dim p As BaseObject = Me.Parent
+        Dim owner As Mono.Cecil.IGenericParameterProvider = Nothing
+        While p IsNot Nothing AndAlso owner Is Nothing
+            Dim tD As TypeDeclaration = TryCast(p, TypeDeclaration)
+            Dim mD As MethodBaseDeclaration = TryCast(p, MethodBaseDeclaration)
+
+            If tD IsNot Nothing Then
+                owner = tD.CecilType
+                Exit While
+            ElseIf mD IsNot Nothing Then
+                owner = mD.CecilBuilder
+                Exit While
+            Else
+                p = p.Parent
+            End If
+        End While
+
+        Helper.Assert(owner IsNot Nothing)
+
+        m_CecilBuilder = New Mono.Cecil.GenericParameter(m_Identifier.Identifier, owner)
+        m_CecilBuilder.Annotations.Add(Compiler, Me)
+        owner.GenericParameters.Add(m_CecilBuilder)
+
+        Return result
+    End Function
 
     ReadOnly Property CecilBuilder() As Mono.Cecil.GenericParameter
         Get
@@ -214,5 +218,4 @@ Public Class TypeParameter
         m_CecilBuilder.Attributes = CType(attributes, Mono.Cecil.GenericParameterAttributes)
         Return result
     End Function
-
 End Class

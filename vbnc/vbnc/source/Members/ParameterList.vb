@@ -54,6 +54,16 @@ Public Class ParameterList
         Return result
     End Function
 
+    Function DefineOptionalParameters() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Me.Count - 1
+            result = Item(i).DefineOptionalParameters AndAlso result
+        Next
+
+        Return result
+    End Function
+
     Overloads Function Add(ByVal Name As String, ByVal Type As Mono.Cecil.TypeReference) As Parameter
         Return MyBase.Add(New Parameter(Me, Name, Type))
     End Function

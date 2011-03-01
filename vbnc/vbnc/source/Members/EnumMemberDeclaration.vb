@@ -25,8 +25,6 @@ Public Class EnumMemberDeclaration
     Inherits MemberDeclaration
     Implements IFieldMember
 
-    'Private m_Descriptor As New FieldDescriptor(Me)
-
     ''' <summary>
     ''' The index of the constant in the enum.
     ''' </summary>
@@ -37,11 +35,8 @@ Public Class EnumMemberDeclaration
 
     Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
-    Private m_ResolvedMember As Boolean
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
-        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal EnumIndex As Integer, ByVal Identifier As Identifier, ByVal ConstantExpression As Expression)
@@ -49,15 +44,10 @@ Public Class EnumMemberDeclaration
         m_EnumIndex = EnumIndex
         m_Identifier = Identifier
         m_ConstantExpression = ConstantExpression
-        UpdateDefinition()
     End Sub
 
     Public Property ConstantValue() As Object
         Get
-            If m_ResolvedMember = False Then
-                'Helper.StopIfDebugging()
-                ResolveMember(ResolveInfo.Default(Compiler))
-            End If
             Return m_FieldBuilderCecil.Constant
         End Get
         Set(ByVal value As Object)
@@ -65,18 +55,20 @@ Public Class EnumMemberDeclaration
         End Set
     End Property
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.Static Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault, Parent.CecilType)
-            m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
-            Parent.CecilType.Fields.Add(m_FieldBuilderCecil)
-        End If
+        result = MyBase.CreateDefinition AndAlso result
 
+        Helper.Assert(m_FieldBuilderCecil Is Nothing)
+        m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.Static Or Mono.Cecil.FieldAttributes.Literal Or Mono.Cecil.FieldAttributes.HasDefault, Parent.CecilType)
+        m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
+        Parent.CecilType.Fields.Add(m_FieldBuilderCecil)
         m_FieldBuilderCecil.Name = Name
         m_FieldBuilderCecil.IsLiteral = True
-    End Sub
+
+        Return result
+    End Function
 
     ReadOnly Property EnumIndex() As Integer
         Get
@@ -129,21 +121,18 @@ Public Class EnumMemberDeclaration
         Return result
     End Function
 
-    Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
-        Dim result As Boolean = True
+    Function GetConstantValue(ByRef result As Object) As Boolean
+        Dim obj As Object = Nothing
 
-        If m_ResolvedMember Then Return True
-        m_ResolvedMember = True
-
-        Dim obj As Object
         If m_ConstantExpression IsNot Nothing Then
-            result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
-            obj = m_ConstantExpression.ConstantValue
+            If Not m_ConstantExpression.GetConstant(obj, True) Then Return False
         Else
             If m_EnumIndex = 0 Then
                 obj = 0
+            ElseIf Not Parent.Constants(m_EnumIndex - 1).GetConstantValue(obj) Then
+                Return False
             Else
-                obj = CDec(Parent.Constants(m_EnumIndex - 1).ConstantValue) + 1
+                obj = CDec(obj) + 1
             End If
         End If
 
@@ -164,21 +153,26 @@ Public Class EnumMemberDeclaration
                 obj = CLng(obj)
             Case KS.ULong
                 obj = CULng(obj)
-            Case Else
-                Throw New InternalException(Me)
         End Select
 
-        ConstantValue = obj
-        result = ConstantValue IsNot Nothing AndAlso result
+        result = obj
+        Return True
+    End Function
+
+    Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
+        Dim result As Boolean = True
+        
+        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
 
         Return result
     End Function
 
-    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+    Function DefineConstant() As Boolean
         Dim result As Boolean = True
+        Dim obj As Object = Nothing
 
-        result = MyBase.ResolveCode(Info) AndAlso result
-        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
+        result = GetConstantValue(obj) AndAlso result
+        ConstantValue = obj
 
         Return result
     End Function
@@ -188,23 +182,4 @@ Public Class EnumMemberDeclaration
             Return Me.FindFirstParent(Of EnumDeclaration)()
         End Get
     End Property
-
-    ''' <summary>
-    ''' Define the enum constant.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
-        Dim result As Boolean = True
-
-        Return result
-    End Function
-
-    Public Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean Implements IFieldMember.ResolveAndGetConstantValue
-        If m_ResolvedMember = False Then
-            If ResolveMember(ResolveInfo.Default(Compiler)) = False Then Return False
-        End If
-        value = ConstantValue
-        Return True
-    End Function
 End Class

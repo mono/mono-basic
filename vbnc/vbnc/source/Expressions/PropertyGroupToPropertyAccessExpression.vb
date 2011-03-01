@@ -23,18 +23,6 @@ Public Class PropertyGroupToPropertyAccessExpression
     Private m_PropertyGroup As PropertyGroupClassification
     Private m_ExpressionType As Mono.Cecil.TypeReference
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_PropertyGroup.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_PropertyGroup.ConstantValue
-        End Get
-    End Property
-
     Sub New(ByVal Parent As ParsedObject, ByVal PropertyGroupClassification As PropertyGroupClassification)
         MyBase.new(Parent)
         m_PropertyGroup = PropertyGroupClassification

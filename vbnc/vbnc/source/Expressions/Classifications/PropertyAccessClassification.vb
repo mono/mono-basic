@@ -38,12 +38,6 @@ Public Class PropertyAccessClassification
     Private m_Property As Mono.Cecil.PropertyReference
     Private m_Classification As PropertyGroupClassification
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     ReadOnly Property Parameters() As ArgumentList
         Get
             If m_Parameters Is Nothing AndAlso m_Classification IsNot Nothing Then
@@ -178,7 +172,6 @@ Public Class PropertyAccessClassification
     Sub New(ByVal Classification As PropertyGroupClassification)
         MyBase.New(Classifications.PropertyAccess, Classification.Parent)
         m_Classification = Classification
-
     End Sub
 
     Sub New(ByVal Expression As LateBoundAccessToPropertyAccessExpression)

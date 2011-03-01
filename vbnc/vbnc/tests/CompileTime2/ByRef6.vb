@@ -21,6 +21,15 @@ Namespace ByRef6
         End Property
 
         Shared Function Main() As Integer
+            Try
+                Return Main2
+            Catch ex As Exception
+                Console.WriteLine(ex)
+                Return 1
+            End Try
+        End Function
+
+        Shared Function Main2() As Integer
             Console.WriteLine(String.Format("Pushed stack type ({1} left on the stack): {0,-30} Stack now: {2}", Type.ToString, Count.ToString, StackState))
             Return 0
         End Function

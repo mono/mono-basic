@@ -19,7 +19,7 @@
 
 Public Class PropertyDeclaration
     Inherits MemberDeclaration
-    Implements IDefinableMember, INonTypeMember
+    Implements INonTypeMember
 
     Private m_Signature As FunctionSignature
     Private m_Get As MethodDeclaration
@@ -159,6 +159,32 @@ Public Class PropertyDeclaration
         End Set
     End Property
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+
+        Helper.Assert(m_CecilBuilder Is Nothing)
+        m_CecilBuilder = New Mono.Cecil.PropertyDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType))
+        m_CecilBuilder.Annotations.Add(Compiler, Me)
+        DeclaringType.CecilType.Properties.Add(m_CecilBuilder)
+        m_CecilBuilder.Name = Me.Name
+
+        If m_Signature IsNot Nothing Then result = m_Signature.CreateDefinition AndAlso result
+
+        If m_Get IsNot Nothing Then
+            result = m_Get.CreateDefinition AndAlso result
+            m_CecilBuilder.GetMethod = m_Get.CecilBuilder
+        End If
+
+        If m_Set IsNot Nothing Then
+            result = m_Set.CreateDefinition AndAlso result
+            m_CecilBuilder.SetMethod = m_Set.CecilBuilder
+        End If
+
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -167,35 +193,12 @@ Public Class PropertyDeclaration
         If m_Get IsNot Nothing Then result = m_Get.ResolveTypeReferences AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.ResolveTypeReferences AndAlso result
 
+        m_CecilBuilder.PropertyType = Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType)
+
         If m_MemberImplementsClause IsNot Nothing Then result = m_MemberImplementsClause.ResolveTypeReferences AndAlso result
 
         Return result
     End Function
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        UpdateDefinition()
-    End Sub
-
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
-
-        If m_CecilBuilder Is Nothing Then
-            m_CecilBuilder = New Mono.Cecil.PropertyDefinition(Name, 0, Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType))
-            m_CecilBuilder.Annotations.Add(Compiler, Me)
-            DeclaringType.CecilType.Properties.Add(m_CecilBuilder)
-        End If
-        m_CecilBuilder.Name = Me.Name
-        m_CecilBuilder.PropertyType = Helper.GetTypeOrTypeReference(Compiler, Me.Signature.ReturnType)
-
-        If m_Get IsNot Nothing Then
-            m_CecilBuilder.GetMethod = m_Get.CecilBuilder
-        End If
-        If m_Set IsNot Nothing Then
-            m_CecilBuilder.SetMethod = m_Set.CecilBuilder
-        End If
-    End Sub
 
     Public Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
@@ -210,8 +213,6 @@ Public Class PropertyDeclaration
             result = tp.SetDefaultAttribute(Me.Name) AndAlso result
         End If
 
-        UpdateDefinition()
-
         result = Signature.VerifyParameterNamesDoesntMatchFunctionName() AndAlso result
 
         Return result
@@ -223,35 +224,6 @@ Public Class PropertyDeclaration
         result = MyBase.ResolveCode(Info) AndAlso result
         If m_Get IsNot Nothing Then result = m_Get.ResolveCode(Info) AndAlso result
         If m_Set IsNot Nothing Then result = m_Set.ResolveCode(Info) AndAlso result
-
-        Return result
-    End Function
-
-    Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
-        Dim result As Boolean = True
-
-        If m_Get IsNot Nothing Then
-            result = m_Get.DefineMember() AndAlso result
-        End If
-
-        If m_Set IsNot Nothing Then
-            result = m_Set.DefineMember AndAlso result
-        End If
-
-        Dim name As String
-        Dim attributes As Mono.Cecil.PropertyAttributes
-        Dim returnType As Mono.Cecil.TypeReference
-        Dim parameterTypes() As Mono.Cecil.TypeReference
-
-        name = Me.Name
-        attributes = 0 'Mono.Cecil.PropertyAttributes.None
-        returnType = Me.Signature.ReturnType
-        parameterTypes = Me.Signature.Parameters.ToTypeArray
-
-        Helper.SetTypeOrTypeBuilder(Compiler, parameterTypes)
-        returnType = Helper.GetTypeOrTypeBuilder(Compiler, returnType)
-
-        UpdateDefinition()
 
         Return result
     End Function

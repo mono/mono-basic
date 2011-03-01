@@ -343,7 +343,6 @@ Public Class Compiler
         Try
             theAss = New AssemblyDeclaration(Me)
             result = Parser.Parse(RootNamespace, theAss) AndAlso result
-            theAss.Initialize(Me)
         Catch ex As TooManyErrorsException
             Throw
         Catch ex As vbncException
@@ -377,11 +376,19 @@ Public Class Compiler
         VerifyConsistency(result, "CreateImplicitTypes")
         If result = False Then Return result
 
+        result = theAss.ResolveBaseTypes AndAlso result
+        VerifyConsistency(result, "ResolveBaseTypes")
+        If result = False Then Return result
+
         result = theAss.ResolveTypeReferences AndAlso result
         VerifyConsistency(result, "ResolveTypeReferences")
         If result = False Then Return result
 
         m_TypeCache.InitInternalVBMembers()
+
+        result = theAss.CreateMyGroupMembers AndAlso result
+        VerifyConsistency(result, "CreateMyGroupMembers")
+        If result = False Then Return result
 
         result = theAss.CreateImplicitMembers AndAlso result
         VerifyConsistency(result, "CreateImplicitMembers")
@@ -389,9 +396,26 @@ Public Class Compiler
 
         result = theAss.ResolveMembers AndAlso result
         VerifyConsistency(result, "ResolveMembers")
-        result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
+        If result = False Then Return result
 
-        VerifyConsistency(result, "FinishedResolve")
+        result = theAss.DefineConstants AndAlso result
+        VerifyConsistency(result, "DefineConstants")
+        If result = False Then Return result
+
+        result = theAss.DefineOptionalParameters AndAlso result
+        VerifyConsistency(result, "DefineOptionalParameters")
+        If result = False Then Return result
+
+        result = theAss.CreateImplicitSharedConstructors AndAlso result
+        VerifyConsistency(result, "CreateImplicitSharedConstructors")
+        If result = False Then Return result
+
+        result = theAss.ResolveCode(ResolveInfo.Default(Me)) AndAlso result
+        VerifyConsistency(result, "ResovleCode")
+
+        result = theAss.DefineSecurityDeclarations AndAlso result
+        VerifyConsistency(result, "DefineSecurityDeclarations")
+        If result = False Then Return result
 
         Return result
     End Function
@@ -454,7 +478,6 @@ Public Class Compiler
             End If
 
             m_Helper = New Helper(Me)
-            m_Helper = New Helper(Me)
 
             'Calculate the output filename
             result = Compile_CalculateOutputFilename() AndAlso result
@@ -477,6 +500,26 @@ Public Class Compiler
             result = Compile_Parse() AndAlso result
             If Report.Errors > 0 Then GoTo ShowErrors
 
+            'Create definitions
+            result = theAss.CreateDefinitions AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
+            'Create implicit constructors
+            result = theAss.CreateImplicitInstanceConstructors AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
+            'Create implicit constructors
+            result = theAss.CreateDelegateMembers AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
+            'Create withevents members
+            result = theAss.CreateWithEventsMembers AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
+            'Create regular events members
+            result = theAss.CreateRegularEventMembers AndAlso result
+            If Report.Errors > 0 Then GoTo ShowErrors
+
             m_TypeManager.LoadCompiledTypes()
 
             If String.IsNullOrEmpty(CommandLine.VBRuntime) Then
@@ -493,14 +536,8 @@ Public Class Compiler
 
             'Passed this step no errors should be found...
 
-            result = theAss.DefineTypes AndAlso result
-            VerifyConsistency(result, "DefineTypes")
-
             result = theAss.DefineTypeHierarchy AndAlso result
             VerifyConsistency(result, "DefineTypeHierarchy")
-
-            result = theAss.DefineMembers AndAlso result
-            VerifyConsistency(result, "DefineMembers")
 
             result = theAss.Emit AndAlso result
             VerifyConsistency(result, "Emit")

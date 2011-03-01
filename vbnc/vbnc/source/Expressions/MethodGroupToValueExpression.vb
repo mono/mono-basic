@@ -28,17 +28,9 @@ Public Class MethodGroupToValueExpression
         m_MethodGroup = MethodGroupClassification
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_MethodGroup.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_MethodGroup.ConstantValue
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return m_MethodGroup.GetConstant(result, ShowError)
+    End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True

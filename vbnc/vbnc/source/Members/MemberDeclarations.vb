@@ -89,6 +89,13 @@ Public Class MemberDeclarations
         Return result
     End Function
 
+    Function HasSpecificMember(Of T)() As Boolean
+        For i As Integer = 0 To Count - 1
+            If TypeOf Me.Item(i) Is T Then Return True
+        Next
+        Return False
+    End Function
+
     Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
     End Sub

@@ -79,26 +79,10 @@ Public Class AndAlsoExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            ElseIf TypeOf lvalue Is Boolean = False Then
-                Throw New InternalException(Me) 'TODO: Add error
-            ElseIf TypeOf rvalue Is Boolean = False Then
-                Throw New InternalException(Me) 'TODO: Add error
-            Else
-                Return CBool(lvalue) AndAlso CBool(rvalue)
-            End If
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        If TypeOf lvalue Is Boolean = False Then Return False
+        If TypeOf rvalue Is Boolean = False Then Return False
+        result = CBool(lvalue) AndAlso CBool(rvalue)
+        Return True
+    End Function
 End Class

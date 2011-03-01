@@ -89,11 +89,6 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
     ''' <summary>
     ''' Has ResolveGroup been called?
     ''' </summary>

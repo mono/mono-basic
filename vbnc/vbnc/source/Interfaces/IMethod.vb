@@ -18,7 +18,7 @@
 ' 
 
 Public Interface IMethod
-    Inherits INonTypeMember, IDefinableMember
+    Inherits INonTypeMember
     ReadOnly Property Signature() As SubSignature
     ReadOnly Property HasReturnValue() As Boolean
     ReadOnly Property GetParameters() As Mono.Cecil.ParameterDefinition()

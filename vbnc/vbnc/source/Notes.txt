@@ -1,51 +1,42 @@
-Another (the last?) order of compiling:
+Processing order:
 
-Scan()
+Scan
 - Tokens are scanned and created.
 
+Parse
+- Tokens are parsed and the parse tree is created.
 
+CreateDefinition
+- Every class or member's builder is created. 
+- Properties that doesn't depend on any resolution to happen is also set (member visibility for instance).
 
-Parse()
-- Tokens are parsed and te parse tree is created.
+CreateImplicitInstanceConstructors
+- We know for sure if we need implicit instance ctors or not
+- We don't know if we need an implicit shared cctor so we postpone that to later
 
-Initialize
-- Every class' parent is set, and builders are created.
+CreateDelegateMembers
+CreateWithEventsMembers
+CreateRegularEventsMembers
 
-
-
-
-ResolveMembers()
+Resolve imports
+Resolve command line files
+CreateImplicitTypes
+ResolveBaseTypes
+ResolveTypeReferences
+- Type of constants
+CreateMyGroupMembers
+CreateImplicitMembers
+ResolveMembers
 - All the types and members are resolved, but not any run-time code (initializers, method bodies).
-ResolveCode()
+DefineConstants
+- This needs to come after ResolveMembers, otherwise member access expressions can't be constant
+CreateImplicitSharedConstructors
+  - We need to know if there are date/decimal constants, which we know after ResolveTypeReferences has been executed
+  - This can be done very late in the process, since the shared cctor isn't needed anywhere.
+DefineSecurityDeclarations
+ResolveCode
 - All the run-time code is resolved (initializers, method bodies).
 - Past this point there should be no errors.
 
-
-DefineTypes()
-- Types are defined with the reflection.emit namespace. 
-- Only classes, modules, structures, interfaces, enums, delegates and eventnos (not a type by itself, bu an event might declare a new delegate). They are only defined, nothing else.
-- Classes, modules, structures, interfaces, enums,  delegates and events should implement IDefinableType.DefineTypes()
-- The enum type defines the special "value__" field as well.
-
-DefineTypeHierarchy()
-- Base classes for classes, modules, structures, enums, interfaces and delegates are set.
-- Implemented interfaces for classes are set.
-- Type parameters for classes and structures are set.
-- Classes, modules, structures, interfaces, enums,  delegates and events should implement IDefinable.DefineTypeHierarchy()
-
-DefineMembers()
-- All the type's members are defined (methods, constructors, properties, fields, events, operators). They should all implement IDefinableMember.DefineMember()
-
-ResolveMembers()
-ResolveCode()
-
-Emit()
-- All code is emitted for fields with initializers.
-- All the code is emitted for each and every method, constructor, operator and property.
-- Classes, modules, structures, methods, constructors, properties, events, operators should implement IEmittable.Emit(Info as EmitInfo)
-
-CreateTypes()
-- CreateType() is called on the builders for all classes, modules, structures, interfaces and delegates.
-- Classes, modules, structures, enums, delegates, interfaces should implement IType.CreateType
-
-
+DefineTypeHierarchy
+Emit

@@ -28,4 +28,5 @@ Public Interface IMember
     ReadOnly Property MemberDescriptor() As Mono.Cecil.MemberReference
     ReadOnly Property IsShared() As Boolean
     Property DeclaringType() As TypeDeclaration
+    Function CreateDefinition() As Boolean
 End Interface

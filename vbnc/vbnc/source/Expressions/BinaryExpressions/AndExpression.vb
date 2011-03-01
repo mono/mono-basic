@@ -71,68 +71,58 @@ Public Class AndExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim rvalue As Object = Nothing
+        Dim lvalue As Object = Nothing
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            Else
+        If Not m_LeftExpression.GetConstant(lvalue, ShowError) Then Return False
+        If Not m_RightExpression.GetConstant(rvalue, ShowError) Then Return False
 
-                Dim tlvalue, trvalue As Mono.Cecil.TypeReference
-                Dim clvalue, crvalue As TypeCode
-                tlvalue = CecilHelper.GetType(Compiler, lvalue)
-                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-                trvalue = CecilHelper.GetType(Compiler, rvalue)
-                crvalue = Helper.GetTypeCode(Compiler, trvalue)
+        If lvalue Is Nothing Or rvalue Is Nothing Then
+            result = Nothing
+            Return True
+        End If
 
-                If clvalue = TypeCode.Boolean AndAlso crvalue = TypeCode.Boolean Then
-                    Return CBool(lvalue) AndAlso CBool(rvalue)
-                End If
+        Dim tlvalue, trvalue As Mono.Cecil.TypeReference
+        Dim clvalue, crvalue As TypeCode
+        tlvalue = CecilHelper.GetType(Compiler, lvalue)
+        clvalue = Helper.GetTypeCode(Compiler, tlvalue)
+        trvalue = CecilHelper.GetType(Compiler, rvalue)
+        crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
-                Dim smallest As Mono.Cecil.TypeReference
-                Dim csmallest As TypeCode
-                smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
-                Helper.Assert(smallest IsNot Nothing)
-                csmallest = Helper.GetTypeCode(Compiler, smallest)
+        If clvalue = TypeCode.Boolean AndAlso crvalue = TypeCode.Boolean Then
+            result = CBool(lvalue) AndAlso CBool(rvalue)
+            Return True
+        End If
 
-                Select Case csmallest
-                    Case TypeCode.Byte
-                        Return CByte(lvalue) And CByte(rvalue)
-                    Case TypeCode.SByte
-                        Return CSByte(lvalue) And CSByte(rvalue)
-                    Case TypeCode.Int16
-                        Return CShort(lvalue) And CShort(rvalue)
-                    Case TypeCode.UInt16
-                        Return CUShort(lvalue) And CUShort(rvalue)
-                    Case TypeCode.Int32
-                        Return CInt(lvalue) And CInt(rvalue)
-                    Case TypeCode.UInt32
-                        Return CUInt(lvalue) And CUInt(rvalue)
-                    Case TypeCode.Int64
-                        Return CLng(lvalue) And CLng(rvalue)
-                    Case TypeCode.UInt64
-                        Return CULng(lvalue) And CULng(rvalue)
-                    Case TypeCode.Double
-                        'Return CDbl(lvalue) And CDbl(rvalue)
-                        Throw New InternalException(Me)
-                    Case TypeCode.Single
-                        'Return CSng(lvalue) And CSng(rvalue)
-                        Throw New InternalException(Me)
-                    Case TypeCode.Decimal
-                        'Return CDec(lvalue) And CDec(rvalue)
-                        Throw New InternalException(Me)
-                    Case Else
-                        Throw New InternalException(Me)
-                End Select
-            End If
-        End Get
-    End Property
+        Dim smallest As Mono.Cecil.TypeReference
+        Dim csmallest As TypeCode
+        smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
+        Helper.Assert(smallest IsNot Nothing)
+        csmallest = Helper.GetTypeCode(Compiler, smallest)
+
+        Select Case csmallest
+            Case TypeCode.Byte
+                result = CByte(lvalue) And CByte(rvalue)
+            Case TypeCode.SByte
+                result = CSByte(lvalue) And CSByte(rvalue)
+            Case TypeCode.Int16
+                result = CShort(lvalue) And CShort(rvalue)
+            Case TypeCode.UInt16
+                result = CUShort(lvalue) And CUShort(rvalue)
+            Case TypeCode.Int32
+                result = CInt(lvalue) And CInt(rvalue)
+            Case TypeCode.UInt32
+                result = CUInt(lvalue) And CUInt(rvalue)
+            Case TypeCode.Int64
+                result = CLng(lvalue) And CLng(rvalue)
+            Case TypeCode.UInt64
+                result = CULng(lvalue) And CULng(rvalue)
+            Case Else
+                If ShowError Then Show30059()
+                Return False
+        End Select
+
+        Return True
+    End Function
 End Class

@@ -35,35 +35,15 @@ Public Class ValueClassification
     Private m_Field As Mono.Cecil.FieldReference
     Private m_Classification As ExpressionClassification
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Dim result As Boolean
-            Static recursive As Boolean
-            Helper.Assert(recursive = False)
-            recursive = True
-            If ReclassifiedClassification IsNot Nothing Then
-                result = ReclassifiedClassification.IsConstant
-            ElseIf m_Value IsNot Nothing AndAlso m_Value.IsConstant Then
-                result = True
-            Else
-                result = False
-            End If
-            recursive = False
-            Return result
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            If ReclassifiedClassification IsNot Nothing Then
-                Return ReclassifiedClassification.ConstantValue
-            ElseIf m_Value IsNot Nothing Then
-                Return m_Value.ConstantValue
-            Else
-                Return MyBase.ConstantValue
-            End If
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        If ReclassifiedClassification IsNot Nothing Then
+            Return ReclassifiedClassification.GetConstant(result, ShowError)
+        ElseIf m_Value IsNot Nothing Then
+            Return m_Value.GetConstant(result, ShowError)
+        Else
+            Return MyBase.GetConstant(result, ShowError)
+        End If
+    End Function
 
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True

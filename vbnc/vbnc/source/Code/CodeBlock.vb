@@ -508,6 +508,7 @@ Public Class CodeBlock
             Dim var As LocalVariableDeclaration = m_Variables(i)
             result = CreateLabelForCurrentInstruction(Info) AndAlso result
             result = var.DefineLocalVariable(Info) AndAlso result
+            result = var.CreateDefinition AndAlso result
         Next
 
         For i As Integer = 0 To m_Sequence.Count - 1
@@ -539,13 +540,6 @@ Public Class CodeBlock
             End If
         End Get
     End Property
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        If m_Variables IsNot Nothing Then m_Variables.Initialize(Me)
-        If m_Statements IsNot Nothing Then m_Statements.Initialize(Me)
-    End Sub
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True

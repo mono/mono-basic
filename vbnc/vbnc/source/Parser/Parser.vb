@@ -502,10 +502,11 @@ Public Class Parser
     ''' </summary>
     ''' <remarks></remarks>
     Private Function ParseAttributes(ByVal Parent As ParsedObject) As Attributes
-        Dim result As New Attributes(Parent)
+        Dim result As Attributes = Nothing
 
         If Attributes.IsMe(tm) Then
             While AttributeBlock.IsMe(tm)
+                If result Is Nothing Then result = New Attributes(Parent)
                 If ParseAttributeBlock(Parent, result) = False Then
                     Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 End If
@@ -641,7 +642,7 @@ Public Class Parser
     ''' Parses lists of type List ::= Item | List "," Item
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseList(Of T As BaseObject)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
+    Private Function ParseList(Of T As ParsedObject)(ByVal List As BaseList(Of T), ByVal ParseMethod As ParseDelegate_Parent(Of T), ByVal Parent As ParsedObject) As Boolean
         Helper.Assert(List IsNot Nothing, "List was nothing, tm.CurrentToken=" & tm.CurrentLocation.ToString(Compiler))
         Do
             Dim newObject As T
@@ -3830,7 +3831,7 @@ Public Class Parser
     ''' <remarks></remarks>
     ''' 
     Private Function ParseTypeParameters(ByVal Parent As ParsedObject) As TypeParameters
-        Dim result As New TypeParameters()
+        Dim result As New TypeParameters(Parent)
 
         If tm.AcceptIfNotError(KS.LParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptIfNotError(KS.Of) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -6158,7 +6159,6 @@ Public Class Parser
                 result = New StructureDeclaration(Parent, [Namespace], GenericName, m_TypeParameters)
             End If
             result.Modifiers = m_Modifiers
-            result.UpdateDefinition()
         End If
 
         Return result
@@ -6250,7 +6250,6 @@ Public Class Parser
         Else
             result.CustomAttributes = Attributes
         End If
-        result.UpdateDefinition()
 
         Return result
     End Function
@@ -6324,7 +6323,6 @@ Public Class Parser
 
         result.CustomAttributes = Attributes
         result.Modifiers = Modifiers
-        result.UpdateDefinition()
 
         Return result
     End Function
@@ -6453,7 +6451,6 @@ Public Class Parser
 
         result.CustomAttributes = Attributes
         result.Modifiers = m_Modifiers
-        result.UpdateDefinition()
 
         Return result
     End Function
@@ -6493,7 +6490,6 @@ Public Class Parser
             result.CustomAttributes = Attributes
         End If
         result.Modifiers = m_Modifiers
-        result.UpdateDefinition()
 
         Return result
     End Function

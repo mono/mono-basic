@@ -25,7 +25,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Interface IType
-    Inherits INameable, IModifiable, IDefinableType, IMember ', ICreatableType
+    Inherits INameable, IModifiable, IMember
 
     Property TypeAttributes() As Mono.Cecil.TypeAttributes
     ReadOnly Property CecilType() As Mono.Cecil.TypeDefinition

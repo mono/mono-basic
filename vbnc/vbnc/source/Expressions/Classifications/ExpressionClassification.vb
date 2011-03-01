@@ -26,7 +26,6 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class ExpressionClassification
-    'Inherits BaseObject
     Private m_Parent As ParsedObject
 
     Private m_Classification As Classifications
@@ -43,28 +42,10 @@ Public Class ExpressionClassification
         End Get
     End Property
 
-    ''' <summary>
-    ''' Base definition returns true if ConstantValue isnot nothing.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Overridable ReadOnly Property IsConstant() As Boolean
-        Get
-            Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
-            Return False
-        End Get
-    End Property
-
-    Overridable ReadOnly Property ConstantValue() As Object
-        Get
-            'IsConstant should have been called before ConstantValue
-            'and if a classification overrides IsConstant to return true,
-            'it should also override ConstantValue
-            Helper.StopIfDebugging()
-            Return Nothing
-        End Get
-    End Property
+    Public Overridable Function GetConstant(ByRef value As Object, ByVal ShowError As Boolean) As Boolean
+        If ShowError Then m_Parent.Show30059()
+        Return False
+    End Function
 
     Overloads Function [GetType](ByVal ThrowIfNoType As Boolean) As Mono.Cecil.TypeReference
         Select Case m_Classification
@@ -280,5 +261,3 @@ Classifications.MethodPointer, Classifications.PropertyAccess, Classifications.V
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, m_Parent.Location)
     End Function
 End Class
-
-

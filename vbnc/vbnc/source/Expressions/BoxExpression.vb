@@ -48,12 +48,6 @@ Public Class BoxExpression
 
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return True
     End Function

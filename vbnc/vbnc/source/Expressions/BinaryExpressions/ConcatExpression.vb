@@ -56,6 +56,7 @@ Public Class ConcatExpression
 
         Return result
     End Function
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -88,23 +89,20 @@ Public Class ConcatExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_LeftExpression.IsConstant AndAlso (Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_Char)) _
-              AndAlso m_RightExpression.IsConstant AndAlso (Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_String) OrElse Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_Char))
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim lvalue As Object = Nothing
+        Dim rvalue As Object = Nothing
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            If IsConstant = False Then Throw New InternalException(Me)
+        If Not m_LeftExpression.GetConstant(lvalue, ShowError) Then Return False
+        If Not m_RightExpression.GetConstant(rvalue, ShowError) Then Return False
 
-            Dim rvalue, lvalue As String
+        If ((TypeOf lvalue Is String OrElse TypeOf lvalue Is Char) AndAlso (TypeOf rvalue Is String OrElse TypeOf rvalue Is Char)) = False Then
+            If ShowError Then Show30059()
+            Return False
+        End If
 
-            lvalue = CStr(m_LeftExpression.ConstantValue)
-            rvalue = CStr(m_RightExpression.ConstantValue)
+        result = CStr(lvalue) & CStr(rvalue)
 
-            Return lvalue & rvalue
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

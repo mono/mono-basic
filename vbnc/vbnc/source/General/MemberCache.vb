@@ -50,14 +50,14 @@ End Enum
 Public Class MemberCache
     Private m_Compiler As Compiler
 
-    Private m_CacheInsensitive(MemberVisibility.All) As MemberCacheEntries
-    Private m_FlattenedCacheInsensitive(MemberVisibility.All) As MemberCacheEntries
+    Public m_CacheInsensitive(MemberVisibility.All) As MemberCacheEntries
+    Public m_FlattenedCacheInsensitive(MemberVisibility.All) As MemberCacheEntries
     Private m_ShadowedInterfaceMembers As Generic.List(Of Mono.Cecil.MemberReference)
     Private m_Type As Mono.Cecil.TypeReference
     Private m_Types As List(Of Mono.Cecil.TypeReference)
     Private m_Members As List(Of Mono.Collections.Generic.Collection(Of MemberReference))
     Private m_Bases As List(Of MemberCache)
-    Private m_LoadedNames(MemberVisibility.All) As System.Collections.Generic.Dictionary(Of String, String)
+    Private m_LoadedNames(MemberVisibility.All) As System.Collections.Generic.HashSet(Of String)
     Private m_LoadedAll(MemberVisibility.All) As Boolean
 
     Sub New(ByVal Compiler As Compiler, ByVal Type As Mono.Cecil.TypeReference)
@@ -124,6 +124,7 @@ Public Class MemberCache
         For i As Integer = 0 To MemberVisibility.All - 1
             Clear(CType(i, MemberVisibility))
         Next
+        m_Bases = Nothing
     End Sub
 
     Public Sub Clear(ByVal Visibility As MemberVisibility)
@@ -164,14 +165,14 @@ Public Class MemberCache
         If m_LoadedAll(Visibility) Then
             Return
         ElseIf m_LoadedNames(Visibility) Is Nothing Then
-            m_LoadedNames(Visibility) = New Dictionary(Of String, String)(Helper.StringComparer)
-        ElseIf Name IsNot Nothing AndAlso m_LoadedNames(Visibility).ContainsKey(Name) Then
+            m_LoadedNames(Visibility) = New HashSet(Of String)(Helper.StringComparer)
+        ElseIf Name IsNot Nothing AndAlso m_LoadedNames(Visibility).Contains(Name) Then
             Return
         End If
 
         If Name Is Nothing Then Clear(Visibility)
 
-        If Name IsNot Nothing Then m_LoadedNames(Visibility).Add(Name, Name)
+        If Name IsNot Nothing Then m_LoadedNames(Visibility).Add(Name)
 
         For i As Integer = 0 To m_Types.Count - 1
             Load(m_Types(i), m_Members(i), Name, Visibility)
@@ -327,7 +328,7 @@ Public Class MemberCache
             isHidden = False
             If m_ShadowedInterfaceMembers IsNot Nothing AndAlso m_ShadowedInterfaceMembers.Contains(member) Then
                 isHidden = True
-            ElseIf Me.IsHidden(member, Visibility) Then
+            ElseIf Me.IsHidden(member, Visibility, cache.Members) Then
                 isHidden = True
                 If m_ShadowedInterfaceMembers IsNot Nothing Then m_ShadowedInterfaceMembers.Add(member)
             End If
@@ -409,7 +410,7 @@ Public Class MemberCache
         End If
     End Sub
 
-    Private Function IsHidden(ByVal baseMember As Mono.Cecil.MemberReference, ByVal Visibility As MemberVisibility) As Boolean
+    Private Function IsHidden(ByVal baseMember As Mono.Cecil.MemberReference, ByVal Visibility As MemberVisibility, ByVal exclude As Mono.Collections.Generic.Collection(Of MemberReference)) As Boolean
         Dim current As MemberCacheEntry
         Dim memberParameterTypes As Mono.Cecil.TypeReference() = Nothing
 
@@ -424,6 +425,8 @@ Public Class MemberCache
             If CecilHelper.GetMemberType(thisMember) <> CecilHelper.GetMemberType(baseMember) Then
                 Return True
             End If
+
+            If exclude.Contains(thisMember) Then Continue For
 
             Select Case CecilHelper.GetMemberType(thisMember)
                 Case MemberTypes.Constructor, MemberTypes.Event, MemberTypes.Field, MemberTypes.NestedType, MemberTypes.TypeInfo

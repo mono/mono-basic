@@ -76,6 +76,35 @@ Public Class CCharExpression
         Return result
     End Function
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim tpCode As TypeCode
+        Dim originalValue As Object = Nothing
+
+        If Helper.CompareType(Compiler.TypeCache.Nothing, Me.Expression.ExpressionType) Then Return True
+
+        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
+
+        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
+        Select Case tpCode
+            Case TypeCode.String
+                If CStr(originalValue).Length = 1 Then
+                    result = CChar(originalValue)
+                Else
+                    If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
+                    Return False
+                End If
+            Case TypeCode.Char
+                result = CChar(originalValue)
+            Case TypeCode.DBNull
+                result = VB.ChrW(0)
+            Case Else
+                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
+                Return False
+        End Select
+
+        Return True
+    End Function
+
     Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean
         Dim result As Boolean = True
 
@@ -108,41 +137,8 @@ Public Class CCharExpression
         Return result
     End Function
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            If Helper.CompareType(Compiler.TypeCache.Nothing, Me.Expression.ExpressionType) Then Return True
-            Return Expression.IsConstant AndAlso (TypeOf Expression.ConstantValue Is Char OrElse (TypeOf Expression.ConstantValue Is String AndAlso CStr(Expression.ConstantValue).Length = 1))
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim tpCode As TypeCode
-            Dim originalValue As Object
-            originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-            Select Case tpCode
-                Case TypeCode.String
-                    If CStr(originalValue).Length = 1 Then
-                        Return CChar(originalValue)
-                    Else
-                        Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
-                        Return New Char
-                    End If
-                Case TypeCode.Char
-                    Return CChar(originalValue)
-                Case TypeCode.DBNull
-                    Return VB.ChrW(0)
-                Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
-                    Return New Char
-            End Select
-        End Get
-    End Property
-
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-
             Return Compiler.TypeCache.System_Char
         End Get
     End Property

@@ -49,8 +49,17 @@ Public Class CustomEventHandlerDeclaration
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal ParameterList As ParameterList, ByVal Block As CodeBlock, ByVal HandlerType As KS, ByVal EventName As Identifier)
         MyBase.Init(Modifiers, HandlerType, EventName, ParameterList, Block)
-        MyBase.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
     End Sub
+
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+
+        MyBase.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
+
+        Return result
+    End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -69,23 +78,6 @@ Public Class CustomEventHandlerDeclaration
 
         result = MyBase.ResolveMember(Info) AndAlso result
 
-        'Dim m_MethodAttributes As MethodAttributes
-        'If m_HandlerType = KS.RaiseEvent Then
-        '    m_MethodAttributes = m_MethodAttributes Or MethodAttributes.Private
-        'Else
-        '    m_MethodAttributes = m_MethodAttributes Or Me.Modifiers.GetMethodAttributeScope
-        'End If
-        'm_MethodAttributes = m_MethodAttributes Or MethodAttributes.SpecialName
-        'If DeclaringType.IsInterface Then
-        '    m_MethodAttributes = m_MethodAttributes Or Reflection.MethodAttributes.Abstract Or Reflection.MethodAttributes.Virtual Or MethodAttributes.CheckAccessOnOverride Or MethodAttributes.NewSlot
-        'End If
-        'If Me.IsShared Then
-        '    m_MethodAttributes = m_MethodAttributes Or MethodAttributes.Static
-        'End If
-        'MyBase.Attributes = m_MethodAttributes
-
         Return result
     End Function
-
-
 End Class

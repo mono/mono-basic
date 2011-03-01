@@ -52,15 +52,6 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveTypeReferences() AndAlso result
-        UpdateDefinition()
-
-        Return result
-    End Function
-
     ReadOnly Property EnumConstantTypeKeyword() As KS
         Get
             Return m_QualifiedName
@@ -72,24 +63,6 @@ Public Class EnumDeclaration
             Return Compiler.TypeResolution.TypeCodeToType(TypeResolution.KeywordToTypeCode(m_QualifiedName))
         End Get
     End Property
-
-    Overrides Function DefineType() As Boolean
-        Dim result As Boolean = True
-
-        UpdateDefinition()
-
-        Return result
-    End Function
-
-    Public Overrides Function DefineTypeHierarchy() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.DefineTypeHierarchy AndAlso result
-
-        UpdateDefinition()
-
-        Return result
-    End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim i As Integer
@@ -105,21 +78,21 @@ Public Class EnumDeclaration
         End Get
     End Property
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
+        Helper.Assert(m_ValueField Is Nothing)
+
+        result = MyBase.CreateDefinition() AndAlso result
+
+        TypeAttributes = TypeAttributes Or Mono.Cecil.TypeAttributes.Sealed
         BaseType = Compiler.TypeCache.System_Enum
 
-        If m_ValueField Is Nothing AndAlso m_QualifiedName <> KS.None Then
-            m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType))
-            CecilType.Fields.Add(m_ValueField)
-        End If
+        m_ValueField = New Mono.Cecil.FieldDefinition(EnumTypeMemberName, Mono.Cecil.FieldAttributes.Public Or Mono.Cecil.FieldAttributes.SpecialName Or Mono.Cecil.FieldAttributes.RTSpecialName, Helper.GetTypeOrTypeReference(Compiler, EnumConstantType))
+        CecilType.Fields.Add(m_ValueField)
 
-        If m_ValueField IsNot Nothing Then
-            m_ValueField.FieldType = Helper.GetTypeOrTypeReference(Compiler, EnumConstantType)
-        End If
-    End Sub
+        Return result
+    End Function
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get

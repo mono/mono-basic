@@ -32,7 +32,6 @@ Public Class PropertyGetDeclaration
     End Sub
 
     Public Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
-
         Dim mySignature As FunctionSignature
 
         mySignature = New FunctionSignature(Me)
@@ -44,8 +43,7 @@ Public Class PropertyGetDeclaration
         Dim typename As TypeName
 
         If PropertySignature.TypeParameters IsNot Nothing Then
-            typeParams = PropertySignature.TypeParameters.Clone()
-            typeParams.Initialize(mySignature)
+            typeParams = PropertySignature.TypeParameters.Clone(mySignature)
         Else
             typeParams = Nothing
         End If

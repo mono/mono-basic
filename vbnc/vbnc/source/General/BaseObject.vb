@@ -87,18 +87,8 @@ Public MustInherit Class BaseObject
 #End If
     End Sub
 
-    Public Initialized As Boolean
-    Public Overridable Sub Initialize(ByVal Parent As BaseObject)
-        If Parent Is Nothing Then Throw New InternalException(Me.Location.AsString(Compiler))
-        If Initialized Then
-            'Throw New InternalException(Me.Location.AsString(Compiler))
-        End If
-        m_Parent = Parent
-        Initialized = True
-    End Sub
-
     Public Shared Sub ClearCache()
-        m_compiler = Nothing
+        m_Compiler = Nothing
     End Sub
 
     ''' <summary>

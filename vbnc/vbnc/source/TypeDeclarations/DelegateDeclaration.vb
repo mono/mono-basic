@@ -31,7 +31,6 @@ Imports System.Reflection.Emit
 ''' <remarks></remarks>
 Public Class DelegateDeclaration
     Inherits GenericTypeDeclaration
-    Implements IHasImplicitTypes
 
     Public Const STR_Invoke As String = "Invoke"
     Public Const STR_EndInvoke As String = "EndInvoke"
@@ -55,13 +54,7 @@ Public Class DelegateDeclaration
         m_Signature = Signature
     End Sub
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        If m_Signature IsNot Nothing Then m_Signature.Initialize(Me)
-    End Sub
-
-    Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes
+    Function CreateDelegateMembers() As Boolean
         Dim result As Boolean = True
         Dim ReturnType As TypeName
         Dim Parameters As ParameterList = m_Signature.Parameters
@@ -83,6 +76,8 @@ Public Class DelegateDeclaration
         m_Constructor.Init(Nothing)
         m_Constructor.Signature.Parameters.Add("TargetObject", Compiler.TypeCache.System_Object)
         m_Constructor.Signature.Parameters.Add("TargetMethod", Compiler.TypeCache.System_IntPtr)
+        result = m_Constructor.CreateDefinition() AndAlso result
+
         m_Constructor.MethodAttributes = Mono.Cecil.MethodAttributes.Public Or Mono.Cecil.MethodAttributes.SpecialName Or Mono.Cecil.MethodAttributes.RTSpecialName
         m_Constructor.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
 
@@ -139,8 +134,11 @@ Public Class DelegateDeclaration
         beginInvokeSignature = New FunctionSignature(m_BeginInvoke, STR_BeginInvoke, beginInvokeParameters, Compiler.TypeCache.System_IAsyncResult, Me.Location)
 
         m_Invoke.Init(New Modifiers(), invokeSignature, Nothing, Nothing)
+        result = m_Invoke.CreateDefinition AndAlso result
         m_BeginInvoke.Init(New Modifiers(), beginInvokeSignature, Nothing, Nothing)
+        result = m_BeginInvoke.CreateDefinition AndAlso result
         m_EndInvoke.Init(New Modifiers(), endInvokeSignature, Nothing, Nothing)
+        result = m_EndInvoke.CreateDefinition AndAlso result
 
         Dim attr As Mono.Cecil.MethodAttributes
         Dim implattr As Mono.Cecil.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Runtime
@@ -161,10 +159,6 @@ Public Class DelegateDeclaration
         Members.Add(m_BeginInvoke)
         Members.Add(m_EndInvoke)
         Members.Add(m_Invoke)
-
-        m_BeginInvoke.Initialize(Me)
-        m_EndInvoke.Initialize(Me)
-        m_Invoke.Initialize(Me)
 
         Return result
     End Function
@@ -195,9 +189,14 @@ Public Class DelegateDeclaration
         End Get
     End Property
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
 
         TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
-    End Sub
+        If m_Signature IsNot Nothing Then result = m_Signature.CreateDefinition AndAlso result
+
+        Return result
+    End Function
 End Class

@@ -18,8 +18,7 @@
 ' 
 
 Public Interface IFieldMember
-    Inherits INonTypeMember, IDefinableMember
+    Inherits INonTypeMember
     ReadOnly Property FieldBuilder() As Mono.Cecil.FieldDefinition
     ReadOnly Property FieldType() As Mono.Cecil.TypeReference
-    Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean
 End Interface

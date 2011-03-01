@@ -65,86 +65,46 @@ Public Class VariableClassification
         End Get
     End Property
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Helper.Assert(IsConstant)
-            If Me.FieldInfo IsNot Nothing Then
-                If Me.FieldDefinition.IsLiteral Then
-                    If Me.FieldDefinition.HasConstant = False OrElse Me.FieldDefinition.Constant Is Nothing Then
-                        Dim field As IFieldMember = TryCast(Me.FieldInfo.Annotations(Compiler), IFieldMember)
-                        Dim value As Object = Nothing
-                        If field Is Nothing Then
-                            'A field from an external assembly
-                            Return Me.FieldDefinition.Constant
-                        End If
-                        If field.ResolveAndGetConstantValue(value) Then
-                            Return value
-                        Else
-                            Helper.Stop()
-                            Return Nothing
-                        End If
-                        Helper.Stop() 'Constant value hasn't been set yet
-                        Return Nothing
-                    Else
-                        Return Me.FieldDefinition.Constant
-                    End If
-                ElseIf Me.FieldDefinition.IsInitOnly Then
-                    Dim dec As Decimal, dt As Date
-                    Dim constant As ConstantDeclaration
-                    Dim attrib As Object
+    Public Overrides Function GetConstant(ByRef value As Object, ByVal ShowError As Boolean) As Boolean
+        If Me.FieldInfo IsNot Nothing Then
+            Dim attrib As Object
+            Dim dec As Decimal, dt As Date
+            Dim constant As ConstantDeclaration
+            Dim enumc As EnumMemberDeclaration
 
-                    attrib = FieldDefinition.Annotations(Compiler)
-                    If attrib IsNot Nothing Then
-                        constant = TryCast(attrib, ConstantDeclaration)
-                        Return constant.ConstantValue
-                    End If
+            attrib = FieldDefinition.Annotations(Compiler)
 
-                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
-                        Return dec
-                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
-                        Return dt
-                    Else
-                        Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
-                        Return Nothing
-                    End If
-                Else
-                    Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
-                    Return Nothing
-                End If
-            Else
-                Helper.Stop() 'This shouldn't really happen (IsConstant should return false)
-                Return Nothing
+            If attrib IsNot Nothing Then
+                enumc = TryCast(attrib, EnumMemberDeclaration)
+                If enumc IsNot Nothing Then Return enumc.GetConstantValue(value)
+
+                constant = TryCast(attrib, ConstantDeclaration)
+                If constant IsNot Nothing Then Return constant.GetConstant(value, ShowError)
             End If
-        End Get
-    End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            If Me.FieldInfo IsNot Nothing Then
-                If FieldDefinition.IsLiteral Then
+            If Me.FieldDefinition.IsLiteral Then
+                value = Me.FieldDefinition.Constant
+                Return True
+            ElseIf Me.FieldDefinition.IsInitOnly Then
+                If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
+                    value = dec
                     Return True
-                ElseIf FieldDefinition.IsInitOnly Then
-                    Dim dec As Decimal, dt As Date
-                    Dim attrib As Object
-
-                    attrib = FieldDefinition.Annotations(Compiler)
-                    If attrib IsNot Nothing Then Return TypeOf attrib Is ConstantDeclaration
-
-                    If ConstantDeclaration.GetDecimalConstant(Compiler, FieldDefinition, dec) Then
-                        Return True
-                    ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
-                        Return True
-                    Else
-                        Return False
-                    End If
+                ElseIf ConstantDeclaration.GetDateConstant(Compiler, FieldDefinition, dt) Then
+                    value = dt
+                    Return True
                 Else
+                    If ShowError Then Parent.Show30059()
                     Return False
                 End If
             Else
+                If ShowError Then Parent.Show30059()
                 Return False
             End If
-        End Get
-    End Property
+        Else
+            If ShowError Then Parent.Show30059()
+            Return False
+        End If
+    End Function
 
     ReadOnly Property ParameterInfo() As Mono.Cecil.ParameterDefinition
         Get
@@ -431,7 +391,6 @@ Public Class VariableClassification
         m_InstanceExpression = InstanceExpression
         Helper.Assert(m_InstanceExpression Is Nothing OrElse m_InstanceExpression.IsResolved)
         Helper.Assert((Helper.IsShared(variable) AndAlso m_InstanceExpression Is Nothing) OrElse (Helper.IsShared(variable) = False AndAlso m_InstanceExpression IsNot Nothing))
-        Helper.Assert(variable IsNot Nothing AndAlso variable.FieldType IsNot Nothing)
     End Sub
 
     ''' <summary>
@@ -448,7 +407,7 @@ Public Class VariableClassification
         Helper.Assert(Arguments IsNot Nothing)
     End Sub
 
-    ReadOnly Property Type() As Mono.Cecil.TypeReference 'Descriptor
+    ReadOnly Property Type() As Mono.Cecil.TypeReference
         Get
             Dim result As Mono.Cecil.TypeReference
             If m_ExpressionType IsNot Nothing Then
@@ -474,5 +433,4 @@ Public Class VariableClassification
             Return result
         End Get
     End Property
-
 End Class

@@ -62,38 +62,36 @@ Public Class UnaryMinusExpression
         Return result
     End Function
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Helper.Assert(IsConstant)
-            Dim value As Object = Expression.ConstantValue
-            Helper.Assert(value IsNot Nothing)
-            Select Case Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))
-                Case TypeCode.SByte
-                    Return -CSByte(value)
-                Case TypeCode.Int16
-                    Return -CShort(value)
-                Case TypeCode.Int32
-                    Return -CInt(value)
-                Case TypeCode.Int64
-                    Return -CLng(value)
-                Case TypeCode.Byte
-                Case TypeCode.UInt16
-                Case TypeCode.UInt32
-                Case TypeCode.UInt64
-                    Return -CULng(value)
-                Case TypeCode.Decimal
-                    Return -CDec(value)
-                Case TypeCode.Double
-                    Return -CDbl(value)
-                Case TypeCode.Single
-                    Return -CSng(value)
-                Case Else
-                    Helper.Stop()
-            End Select
-            Helper.Stop()
-            Return Nothing
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+
+        Select Case Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, result))
+            Case TypeCode.SByte
+                result = -CSByte(result)
+            Case TypeCode.Int16
+                result = -CShort(result)
+            Case TypeCode.Int32
+                result = -CInt(result)
+            Case TypeCode.Int64
+                result = -CLng(result)
+            Case TypeCode.Byte
+            Case TypeCode.UInt16
+            Case TypeCode.UInt32
+            Case TypeCode.UInt64
+                result = -CULng(result)
+            Case TypeCode.Decimal
+                result = -CDec(result)
+            Case TypeCode.Double
+                result = -CDbl(result)
+            Case TypeCode.Single
+                result = -CSng(result)
+            Case Else
+                If ShowError Then Show30059()
+                Return False
+        End Select
+
+        Return True
+    End Function
 
     Public Overrides ReadOnly Property Keyword() As KS
         Get

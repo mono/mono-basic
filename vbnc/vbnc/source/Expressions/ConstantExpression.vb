@@ -49,24 +49,8 @@ Public Class ConstantExpression
         m_ExpressionType = ExpressionType
     End Sub
 
-    Protected Property Value() As Object
-        Get
-            Return m_Value
-        End Get
-        Set(ByVal value As Object)
-            m_Value = value
-        End Set
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_Value
-        End Get
-    End Property
-
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-
             Return m_ExpressionType
         End Get
     End Property
@@ -79,12 +63,10 @@ Public Class ConstantExpression
         MyBase.New(Parent)
         m_Value = Constant
         m_ExpressionType = ExpressionType
-
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return True
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        result = m_Value
+        Return True
+    End Function
 End Class

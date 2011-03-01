@@ -145,9 +145,9 @@ Public Class ForStatement
     End Property
 
     Private Function IsNegativeStep() As Boolean
-        Dim constant As Object
+        Dim constant As Object = Nothing
 
-        constant = m_LoopStepExpression.ConstantValue
+        If Not m_LoopStepExpression.GetConstant(constant, True) Then Return False
 
         If TypeOf constant Is Decimal Then
             Return CDec(constant) < 0
@@ -157,9 +157,9 @@ Public Class ForStatement
     End Function
 
     Private Function IsPositiveStep() As Boolean
-        Dim constant As Object
+        Dim constant As Object = Nothing
 
-        constant = m_LoopStepExpression.ConstantValue
+        If Not m_LoopStepExpression.GetConstant(constant, True) Then Return False
 
         If TypeOf constant Is Decimal Then
             Return CDec(constant) > 0
@@ -169,7 +169,7 @@ Public Class ForStatement
     End Function
 
     Private Function IsKnownStep() As Boolean
-        Return m_LoopStepExpression.IsConstant
+        Return m_LoopStepExpression.GetConstant(Nothing, False)
     End Function
 
     Private Function EmitLoadAddressCounter(ByVal Info As EmitInfo, ByVal Data As LoopCounterData) As Boolean

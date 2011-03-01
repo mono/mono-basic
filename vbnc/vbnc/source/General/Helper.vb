@@ -131,14 +131,11 @@ Public Class Helper
 
         'LAMESPEC: shared constructors have implicit public access.
         'VBC: shared constructors defaults to private.
-        If m_Declaration.Modifiers.IsAny(ModifierMasks.AccessModifiers) = False AndAlso m_Declaration.IsShared Then
-            flags = flags Or Mono.Cecil.MethodAttributes.Private
+        'VBC: errors if shared constructors aren't private
+        If m_Declaration.IsShared Then
+            flags = flags Or Mono.Cecil.MethodAttributes.Private Or Mono.Cecil.MethodAttributes.Static
         Else
             flags = flags Or m_Declaration.Modifiers.GetMethodAttributeScope
-        End If
-
-        If m_Declaration.IsShared Then
-            flags = flags Or Mono.Cecil.MethodAttributes.Static
         End If
 
         Return flags
@@ -146,6 +143,9 @@ Public Class Helper
 
     Public Shared Function GetAttributes(ByVal m_Declaration As MethodBaseDeclaration) As Mono.Cecil.MethodAttributes
         Dim result As Mono.Cecil.MethodAttributes
+        Dim cd As ConstructorDeclaration = TryCast(m_Declaration, ConstructorDeclaration)
+
+        If cd IsNot Nothing Then Return GetAttributes(cd)
 
         result = m_Declaration.Modifiers.GetMethodAttributeScope
 
@@ -2062,20 +2062,6 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function DefineMembersCollection(ByVal Collection As Generic.IEnumerable(Of IDefinableMember)) As Boolean
-        Dim result As Boolean = True
-        For Each obj As IDefinableMember In Collection
-            result = obj.DefineMember AndAlso result
-        Next
-        Return result
-    End Function
-
-    Shared Sub InitializeCollection(ByVal Collection As IEnumerable, ByVal Parent As BaseObject)
-        For Each obj As BaseObject In Collection
-            obj.Initialize(Parent)
-        Next
-    End Sub
-
     Shared Function ResolveTypeReferencesCollection(ByVal Collection As IEnumerable) As Boolean
         Dim result As Boolean = True
         For Each obj As ParsedObject In Collection
@@ -3487,12 +3473,14 @@ Public Class Helper
     End Function
 
     Shared Function IsLiteral0Expression(ByVal Compiler As Compiler, ByVal exp As Expression) As Boolean
+        Dim constant As Object = Nothing
+
         If exp Is Nothing Then Return False
         Dim litExp As LiteralExpression = TryCast(exp, LiteralExpression)
         If litExp Is Nothing Then Return False
-        If litExp.ConstantValue Is Nothing Then Return False
-        If Compiler.TypeResolution.IsIntegralType(CecilHelper.GetType(Compiler, litExp.ConstantValue)) = False Then Return False
-        If CDbl(litExp.ConstantValue) = 0.0 Then Return True
+        If litExp.GetConstant(constant, False) = False Then Return False
+        If Compiler.TypeResolution.IsIntegralType(CecilHelper.GetType(Compiler, constant)) = False Then Return False
+        If CDbl(constant) = 0.0 Then Return True
         Return False
     End Function
 
@@ -3880,7 +3868,6 @@ Public Class Helper
         Return CType(CInt(tp1) << TypeCombinations.SHIFT Or CInt(tp2), TypeCombinations)
     End Function
 
-
     Shared Function ShowClassificationError(ByVal Compiler As Compiler, ByVal Location As Span, ByVal ActualClassification As ExpressionClassification, ByVal Expected As String) As Boolean
         Select Case ActualClassification.Classification
             Case ExpressionClassification.Classifications.Type
@@ -3888,7 +3875,8 @@ Public Class Helper
                 Return Compiler.Report.ShowMessage(Messages.VBNC30691, Location, tp.Name, tp.Namespace)
             Case ExpressionClassification.Classifications.Value
                 Dim vC As ValueClassification = ActualClassification.AsValueClassification
-                If vC.IsConstant Then
+                Dim constant As Object = Nothing
+                If vC.GetConstant(constant, False) Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC30074, Location)
                 Else
                     Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
@@ -4053,5 +4041,4 @@ Public Class Helper
         Return result
     End Function
 End Class
-
 

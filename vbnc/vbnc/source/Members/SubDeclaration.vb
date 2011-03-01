@@ -47,30 +47,20 @@ Public Class SubDeclaration
         MyBase.New(Parent)
         MyBase.Init(New Modifiers(), New SubSignature(Me, Name, ParameterTypes))
         MyBase.MethodAttributes = MethodAttributes
-        UpdateDefinition()
-    End Sub
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        If m_HandlesOrImplements IsNot Nothing Then m_HandlesOrImplements.Initialize(Me)
     End Sub
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Block As CodeBlock)
         MyBase.Init(Modifiers, Signature, Block)
-        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal HandlesOrImplements As HandlesOrImplements, ByVal Block As CodeBlock)
         MyBase.Init(Modifiers, Signature, Block)
         m_HandlesOrImplements = HandlesOrImplements
-        UpdateDefinition()
     End Sub
 
     Protected Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal ImplementsClause As MemberImplementsClause, ByVal Block As CodeBlock)
         MyBase.Init(Modifiers, Signature, Block)
         If ImplementsClause IsNot Nothing Then m_HandlesOrImplements = New HandlesOrImplements(Me, ImplementsClause)
-        UpdateDefinition()
     End Sub
 
     Public Overrides ReadOnly Property HandlesOrImplements() As HandlesOrImplements
@@ -78,14 +68,6 @@ Public Class SubDeclaration
             Return m_HandlesOrImplements
         End Get
     End Property
-
-    Public Overrides Function DefineMember() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.DefineMember AndAlso result
-
-        Return result
-    End Function
 
     Function DefineHandlesOrImplements() As Boolean
         Dim result As Boolean = True

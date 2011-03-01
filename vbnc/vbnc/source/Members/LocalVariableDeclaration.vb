@@ -1,4 +1,4 @@
-﻿' 
+' 
 ' Visual Basic.Net Compiler
 ' Copyright (C) 2004 - 2010 Rolf Bjarne Kvinge, RKvinge@novell.com
 ' 
@@ -55,8 +55,10 @@ Public Class LocalVariableDeclaration
         MyBase.Init(Modifiers, Name, VariableType)
     End Sub
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition() AndAlso result
 
         If IsStatic Then
             If m_FieldBuilderStaticInit Is Nothing AndAlso HasInitializer Then
@@ -72,7 +74,9 @@ Public Class LocalVariableDeclaration
         Else
             'TODO: Create local builder here too
         End If
-    End Sub
+
+        Return result
+    End Function
 
     Private Function DefineField() As Boolean
         Dim result As Boolean = True

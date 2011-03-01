@@ -53,85 +53,73 @@ Public Class IntDivisionExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim rvalue As Object = Nothing
+        Dim lvalue As Object = Nothing
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            Else
+        If Not m_LeftExpression.GetConstant(lvalue, ShowError) Then Return False
+        If Not m_RightExpression.GetConstant(rvalue, ShowError) Then Return False
 
-                Dim tlvalue, trvalue As Mono.Cecil.TypeReference
-                Dim clvalue, crvalue As TypeCode
-                tlvalue = CecilHelper.GetType(Compiler, lvalue)
-                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-                trvalue = CecilHelper.GetType(Compiler, rvalue)
-                crvalue = Helper.GetTypeCode(Compiler, trvalue)
+        If lvalue Is Nothing Or rvalue Is Nothing Then
+            result = Nothing
+            Return True
+        End If
 
-                Dim smallest As Mono.Cecil.TypeReference
-                Dim csmallest As TypeCode
-                smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
-                Helper.Assert(smallest IsNot Nothing)
-                csmallest = Helper.GetTypeCode(Compiler, smallest)
-                If CDbl(rvalue) = 0 Then
-                    Helper.Stop() 'TODO: Adderror (Divide by zero).
+        Dim tlvalue, trvalue As Mono.Cecil.TypeReference
+        Dim clvalue, crvalue As TypeCode
+        tlvalue = CecilHelper.GetType(Compiler, lvalue)
+        clvalue = Helper.GetTypeCode(Compiler, tlvalue)
+        trvalue = CecilHelper.GetType(Compiler, rvalue)
+        crvalue = Helper.GetTypeCode(Compiler, trvalue)
+
+        Dim smallest As Mono.Cecil.TypeReference
+        Dim csmallest As TypeCode
+        smallest = Compiler.TypeResolution.GetSmallestIntegralType(tlvalue, trvalue)
+        Helper.Assert(smallest IsNot Nothing)
+        csmallest = Helper.GetTypeCode(Compiler, smallest)
+
+        If CDbl(rvalue) = 0 Then
+            result = Helper.AddError(Me, "Divide by zero")
+        End If
+
+        Select Case csmallest
+            Case TypeCode.Byte
+                result = CByte(lvalue) \ CByte(rvalue)
+            Case TypeCode.SByte
+                If CSByte(lvalue) = SByte.MinValue AndAlso CSByte(rvalue) = -1 Then
+                    result = CShort(lvalue) \ CShort(rvalue)
+                Else
+                    result = CSByte(lvalue) \ CSByte(rvalue)
                 End If
+            Case TypeCode.Int16
+                If CShort(lvalue) = Short.MinValue AndAlso CShort(rvalue) = -1 Then
+                    result = CInt(lvalue) \ CInt(rvalue)
+                Else
+                    result = CShort(lvalue) \ CShort(rvalue)
+                End If
+            Case TypeCode.UInt16
+                result = CUShort(lvalue) \ CUShort(rvalue)
+            Case TypeCode.Int32
+                If CInt(lvalue) = Integer.MinValue AndAlso CInt(rvalue) = -1 Then
+                    result = CLng(lvalue) \ CLng(rvalue)
+                Else
+                    result = CInt(lvalue) \ CInt(rvalue)
+                End If
+            Case TypeCode.UInt32
+                result = CUInt(lvalue) / CUInt(rvalue)
+            Case TypeCode.Int64
+                If CLng(lvalue) = Long.MinValue AndAlso CLng(rvalue) = -1 Then
+                    result = MyBase.Show30059
+                Else
+                    result = CLng(lvalue) \ CLng(rvalue)
+                End If
+            Case TypeCode.UInt64
+                result = CULng(lvalue) \ CULng(rvalue)
+            Case Else
+                If ShowError Then Show30059()
+                Return False
+        End Select
 
-                Select Case csmallest
-                    Case TypeCode.Byte
-                        Return CByte(lvalue) \ CByte(rvalue)
-                    Case TypeCode.SByte
-                        If CSByte(lvalue) = SByte.MinValue AndAlso CSByte(rvalue) = -1 Then
-                            Return CShort(lvalue) \ CShort(rvalue)
-                        Else
-                            Return CSByte(lvalue) \ CSByte(rvalue)
-                        End If
-                    Case TypeCode.Int16
-                        If CShort(lvalue) = Short.MinValue AndAlso CShort(rvalue) = -1 Then
-                            Return CInt(lvalue) \ CInt(rvalue)
-                        Else
-                            Return CShort(lvalue) \ CShort(rvalue)
-                        End If
-                    Case TypeCode.UInt16
-                        Return CUShort(lvalue) \ CUShort(rvalue)
-                    Case TypeCode.Int32
-                        If CInt(lvalue) = Integer.MinValue AndAlso CInt(rvalue) = -1 Then
-                            Return CLng(lvalue) \ CLng(rvalue)
-                        Else
-                            Return CInt(lvalue) \ CInt(rvalue)
-                        End If
-                    Case TypeCode.UInt32
-                        Return CUInt(lvalue) / CUInt(rvalue)
-                    Case TypeCode.Int64
-                        If CLng(lvalue) = Long.MinValue AndAlso CLng(rvalue) = -1 Then
-                            'Return CDec(lvalue) \ CDec(rvalue)
-                            Throw New InternalException(Me)
-                        Else
-                            Return CLng(lvalue) \ CLng(rvalue)
-                        End If
-                    Case TypeCode.UInt64
-                        Return CULng(lvalue) \ CULng(rvalue)
-                    Case TypeCode.Double
-                        'Return CDbl(lvalue) \ CDbl(rvalue)
-                        Throw New InternalException(Me)
-                    Case TypeCode.Single
-                        'Return CSng(lvalue) \ CSng(rvalue)
-                        Throw New InternalException(Me)
-                    Case TypeCode.Decimal
-                        'Return CDec(lvalue) \ CDec(rvalue)
-                        Throw New InternalException(Me)
-                    Case Else
-                        Helper.Stop()
-                        Throw New InternalException(Me)
-                End Select
-            End If
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

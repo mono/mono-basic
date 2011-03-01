@@ -230,9 +230,7 @@
     <Compile Include="Interfaces\IAttributableDeclaration.vb" />
     <Compile Include="Interfaces\IAttributableNamedDeclaration.vb" />
     <Compile Include="Interfaces\IBaseObject.vb" />
-    <Compile Include="Interfaces\IDefinableType.vb" />
     <Compile Include="Interfaces\IEmittable.vb" />
-    <Compile Include="Interfaces\IDefinableMember.vb" />
     <Compile Include="Interfaces\IMember.vb" />
     <Compile Include="Interfaces\IMethod.vb" />
     <Compile Include="Interfaces\INameable.vb" />

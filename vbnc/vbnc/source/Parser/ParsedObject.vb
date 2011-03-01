@@ -59,4 +59,16 @@ Public MustInherit Class ParsedObject
     Overridable Function ResolveTypeReferences() As Boolean
         Return True
     End Function
+
+    Overridable Function ResolveBaseType() As Boolean
+        Return True
+    End Function
+
+    Overridable Function CreateDefinition() As Boolean
+        Return True
+    End Function
+
+    Public Function Show30059() As Boolean
+        Return Compiler.Report.ShowMessage(Messages.VBNC30059, Me.Location)
+    End Function
 End Class

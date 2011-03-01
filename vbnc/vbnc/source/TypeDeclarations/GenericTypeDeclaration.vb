@@ -28,12 +28,6 @@ Public MustInherit Class GenericTypeDeclaration
         m_TypeParameters = TypeParameters
     End Sub
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        If m_TypeParameters IsNot Nothing Then m_TypeParameters.Initialize(Me)
-    End Sub
-
     ReadOnly Property TypeParameters() As TypeParameters Implements IConstructable.TypeParameters
         Get
             Return m_TypeParameters
@@ -59,5 +53,13 @@ Public MustInherit Class GenericTypeDeclaration
         Return result
     End Function
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
+        result = MyBase.CreateDefinition() AndAlso result
+
+        If m_TypeParameters IsNot Nothing Then result = m_TypeParameters.CreateDefinition AndAlso result
+
+        Return result
+    End Function
 End Class

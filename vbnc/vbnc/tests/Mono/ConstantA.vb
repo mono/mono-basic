@@ -9,7 +9,7 @@ Module ConstantA
     Const f% = 10, g# = 20
     Function Main() As Integer
         If a.GetTypeCode() <> TypeCode.Int32 Then
-            System.Console.WriteLine("#A1, Type mismatch found") : Return 1
+            System.Console.WriteLine("#A1, Type mismatch found: {0}", a.GetTypeCode()) : Return 1
         End If
         If b.GetTypeCode() <> TypeCode.Boolean Then
             System.Console.WriteLine("#A2, Type mismatch found") : Return 1

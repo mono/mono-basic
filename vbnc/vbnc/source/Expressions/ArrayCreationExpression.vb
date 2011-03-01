@@ -42,12 +42,6 @@ Public Class ArrayCreationExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 

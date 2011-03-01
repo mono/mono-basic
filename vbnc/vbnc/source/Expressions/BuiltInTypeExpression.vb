@@ -41,15 +41,7 @@ Public Class BuiltInTypeExpression
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-
-            'Return New TypeDescriptor(TypeResolution.BuiltInTypeToType(m_Type))
             Return Compiler.TypeResolution.BuiltInTypeToType(m_Type)
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
         End Get
     End Property
 End Class

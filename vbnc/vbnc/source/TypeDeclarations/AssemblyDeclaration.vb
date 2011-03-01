@@ -95,13 +95,17 @@ Public Class AssemblyDeclaration
         Helper.Assert(m_Members.Count = m_TypeDeclarations.Length)
     End Sub
 
-    Private Function DefineType(ByVal Type As TypeDeclaration) As Boolean
+    Public Function CreateDefinitions() As Boolean
         Dim result As Boolean = True
 
-        result = Type.DefineType AndAlso result
+        If m_Attributes IsNot Nothing Then
+            For i As Integer = 0 To m_Attributes.Count - 1
+                result = m_Attributes(i).CreateDefinition() AndAlso result
+            Next
+        End If
 
-        For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
-            result = DefineType(NestedType) AndAlso result
+        For i As Integer = 0 To Types.Length - 1
+            result = Types(i).CreateDefinition() AndAlso result
         Next
 
         Return result
@@ -114,30 +118,6 @@ Public Class AssemblyDeclaration
 
         For Each NestedType As TypeDeclaration In Type.Members.GetSpecificMembers(Of TypeDeclaration)()
             result = DefineTypeHierarchy(NestedType) AndAlso result
-        Next
-
-        Return result
-    End Function
-
-    Private Function DefineMembers(ByVal Type As TypeDeclaration) As Boolean
-        Dim result As Boolean = True
-
-        Helper.Assert(Type.CecilType IsNot Nothing)
-
-        For Each i As IMember In Type.Members.GetSpecificMembers(Of IMember)()
-            If TypeOf i Is TypeDeclaration Then
-                'If TypeOf i Is DelegateDeclaration = False Then
-                result = DefineMembers(DirectCast(i, TypeDeclaration)) AndAlso result
-                vbnc.Helper.Assert(result = (Report.Errors = 0))
-                'Else
-                'Skip the delagete declarations, they are already defined.
-                'End If
-            ElseIf TypeOf i Is IDefinableMember Then
-                result = DirectCast(i, IDefinableMember).DefineMember AndAlso result
-                vbnc.Helper.Assert(result = (Report.Errors = 0))
-            Else
-                Throw New InternalException("Type " & CObj(i).GetType.ToString & " is not a definable object")
-            End If
         Next
 
         Return result
@@ -217,13 +197,15 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
+    Function ResolveBaseTypes() As Boolean
+        Dim result As Boolean = True
 
         For i As Integer = 0 To m_TypeDeclarations.Length - 1
-            m_TypeDeclarations(i).Initialize(Me)
+            result = m_TypeDeclarations(i).ResolveBaseType() AndAlso result
         Next
-    End Sub
+
+        Return result
+    End Function
 
     Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
@@ -280,6 +262,156 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
+    Public Function CreateImplicitInstanceConstructors() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Me.Types.Length - 1
+            result = CreateImplicitInstanceConstructors(Me.Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateImplicitInstanceConstructors(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        result = Type.CreateImplicitInstanceConstructors() AndAlso result
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If t Is Nothing Then Continue For
+            result = CreateImplicitInstanceConstructors(t) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Function CreateImplicitSharedConstructors() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Me.Types.Length - 1
+            result = CreateImplicitSharedConstructors(Me.Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateImplicitSharedConstructors(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        result = Type.CreateImplicitSharedConstructors() AndAlso result
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If t Is Nothing Then Continue For
+            result = CreateImplicitSharedConstructors(t) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Function CreateDelegateMembers() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Types.Length - 1
+            result = CreateDelegateMembers(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateDelegateMembers(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+        Dim dd As DelegateDeclaration = TryCast(Type, DelegateDeclaration)
+
+        If dd IsNot Nothing Then result = dd.CreateDelegateMembers() AndAlso result
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If t Is Nothing Then Continue For
+            result = CreateDelegateMembers(t) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Function CreateRegularEventMembers() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Types.Length - 1
+            result = CreateRegularEventMembers(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateRegularEventMembers(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If t IsNot Nothing Then result = CreateRegularEventMembers(t) AndAlso result
+            Dim red As RegularEventDeclaration = TryCast(Type.Members(i), RegularEventDeclaration)
+            If red IsNot Nothing Then result = red.CreateRegularEventMembers AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Function CreateWithEventsMembers() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Types.Length - 1
+            result = CreateWithEventsMembers(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateWithEventsMembers(ByVal member As IMember) As Boolean
+        Dim result As Boolean = True
+        Dim tvd As TypeVariableDeclaration
+        Dim t As TypeDeclaration
+
+        tvd = TryCast(member, TypeVariableDeclaration)
+        If tvd IsNot Nothing Then result = tvd.CreateWithEventsMembers AndAlso result
+
+        t = TryCast(member, TypeDeclaration)
+        If t Is Nothing Then Return result
+
+        For i As Integer = 0 To t.Members.Count - 1
+            result = CreateWithEventsMembers(t.Members(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Function CreateMyGroupMembers() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Me.Types.Length - 1
+            result = CreateMyGroupMembers(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function CreateMyGroupMembers(ByVal Type As TypeDeclaration) As Boolean
+        Dim cd As ClassDeclaration
+        Dim result As Boolean = True
+
+        cd = TryCast(Type, ClassDeclaration)
+        If cd IsNot Nothing Then result = cd.CreateMyGroupMembers() AndAlso result
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If t Is Nothing Then Continue For
+            result = CreateMyGroupMembers(t) AndAlso result
+        Next
+
+        Return result
+    End Function
+
     Private Function CreateImplicitMembers(ByVal Type As TypeDeclaration) As Boolean
         Dim result As Boolean = True
 
@@ -329,29 +461,6 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-
-    ''' <summary>
-    ''' - Types are defined with the reflection.emit namespace. 
-    ''' - Only classes, modules, structures, interfaces, enums, delegates and eventnos (not a type by itself, bu an event might declare a new delegate). They are only defined, nothing else.
-    ''' - Classes, modules, structures, interfaces, enums,  delegates and events should implement IDefinable.DefineType()
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function DefineTypes() As Boolean
-        Dim result As Boolean = True
-
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "DefineTypes " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-#End If
-            result = DefineType(type) AndAlso result
-        Next
-
-        Return result
-    End Function
-
     ''' <summary>
     ''' - Base classes for classes, modules, structures, enums, interfaces and delegates are set.
     ''' - Implemented interfaces for classes are set.
@@ -375,31 +484,97 @@ Public Class AssemblyDeclaration
         Return result
     End Function
 
-    ''' <summary>
-    ''' - All the type's members are defined (methods, constructors, properties, fields, events, operators).
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Function DefineMembers() As Boolean
+    Function DefineConstants() As Boolean
         Dim result As Boolean = True
 
-        For Each type As TypeDeclaration In m_TypeDeclarations
-#If EXTENDEDDEBUG Then
-            Dim iCount As Integer
-            iCount += 1
-            Try
-                System.Console.ForegroundColor = ConsoleColor.Green
-            Catch ex As Exception
+        For i As Integer = 0 To Types.Length - 1
+            result = DefineConstants(Types(i)) AndAlso result
+        Next
 
-            End Try
-            Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, "DefineMembers " & type.FullName & " (" & iCount & " of " & m_TypeDeclarations.Length & " types)")
-            Try
-                System.Console.ResetColor()
-            Catch ex As Exception
+        Return result
+    End Function
 
-            End Try
-#End If
-            result = DefineMembers(type) AndAlso result
+    Private Function DefineConstants(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim nestedType As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If nestedType IsNot Nothing Then
+                result = DefineConstants(nestedType) AndAlso result
+                Continue For
+            End If
+
+            Dim constant As ConstantDeclaration = TryCast(Type.Members(i), ConstantDeclaration)
+            If constant IsNot Nothing Then
+                result = constant.DefineConstant AndAlso result
+                Continue For
+            End If
+
+            Dim enumc As EnumMemberDeclaration = TryCast(Type.Members(i), EnumMemberDeclaration)
+            If enumc IsNot Nothing Then
+                result = enumc.DefineConstant AndAlso result
+                Continue For
+            End If
+        Next
+
+        Return result
+    End Function
+
+    Function DefineOptionalParameters() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Types.Length - 1
+            result = DefineOptionalParameters(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function DefineOptionalParameters(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim nestedType As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If nestedType IsNot Nothing Then
+                result = DefineOptionalParameters(nestedType) AndAlso result
+                Continue For
+            End If
+
+            Dim method As MethodBaseDeclaration = TryCast(Type.Members(i), MethodBaseDeclaration)
+            If method IsNot Nothing Then
+                result = method.DefineOptionalParameters AndAlso result
+                Continue For
+            End If
+        Next
+
+        Return result
+    End Function
+
+    Public Function DefineSecurityDeclarations() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Types.Length - 1
+            result = DefineSecurityDeclarations(Types(i)) AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Private Function DefineSecurityDeclarations(ByVal Type As TypeDeclaration) As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Type.Members.Count - 1
+            Dim nestedType As TypeDeclaration = TryCast(Type.Members(i), TypeDeclaration)
+            If nestedType IsNot Nothing Then
+                result = DefineSecurityDeclarations(nestedType) AndAlso result
+                Continue For
+            End If
+
+            Dim method As MethodBaseDeclaration = TryCast(Type.Members(i), MethodBaseDeclaration)
+            If method IsNot Nothing Then
+                result = method.DefineSecurityDeclarations AndAlso result
+                Continue For
+            End If
         Next
 
         Return result
@@ -721,7 +896,7 @@ Public Class AssemblyDeclaration
 
                 w.Write(win32versionresources)
 
-                Compiler.ModuleBuilderCecil.Win32resources = ms.ToArray()
+                Compiler.ModuleBuilderCecil.Win32Resources = ms.ToArray()
             End Using
         End Using
     End Sub

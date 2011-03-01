@@ -113,76 +113,64 @@ Public Class ConstructedTypeName
         If m_ConstructedTypeName IsNot Nothing Then
             Dim cache As MemberCache
             Dim entry As MemberCacheEntry
-            Dim stack As New Generic.Stack(Of QualifiedIdentifier)
             Dim argumentCount As Integer
+            Dim tp As TypeReference
+            Dim git As GenericInstanceType
+            Dim tpGit As Mono.Cecil.GenericInstanceType
+            Dim allArguments As New Generic.List(Of TypeReference)
+            Dim declType As TypeReference
+            Dim declGit As GenericInstanceType
 
-            argumentCount = CecilHelper.GetGenericArguments(m_ConstructedTypeName.ResolvedType).Count
-            cache = Compiler.TypeManager.GetCache(m_ConstructedTypeName.ResolvedType)
+            tp = m_ConstructedTypeName.ResolvedType
+            tpGit = TryCast(tp, GenericInstanceType)
+            cache = Compiler.TypeManager.GetCache(CecilHelper.GetGenericTypeDefinition(m_ConstructedTypeName.ResolvedType))
 
-            Dim tmp As QualifiedIdentifier = m_QualifiedIdentifier
-
-            While tmp.IsFirstQualifiedIdentifier
-                stack.Push(tmp)
-                tmp = tmp.FirstAsQualifiedIdentifier
+            'Get the generic arguments
+            declType = tp
+            While declType IsNot Nothing
+                declGit = TryCast(declType, GenericInstanceType)
+                If declGit IsNot Nothing Then
+                    allArguments.InsertRange(0, declGit.GenericArguments)
+                End If
+                declType = declType.DeclaringType
             End While
 
-            Do
-                If tmp.IsFirstIdentifier Then
-                    Dim id As Identifier = tmp.FirstAsIdentifier
-                    If tmp Is m_QualifiedIdentifier AndAlso m_TypeArgumentList IsNot Nothing Then
-                        argumentCount = m_TypeArgumentList.Count
-                    Else
-                        argumentCount = 0
-                    End If
-                    entry = cache.LookupFlattened(Helper.CreateGenericTypename(id.Name, argumentCount), Me.FindFirstParent_IType.CecilType)
-                    If entry Is Nothing OrElse entry.Members.Count = 0 Then
-                        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-                        Return False
-                    ElseIf entry.Members.Count > 1 Then
-                        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-                        Return False
-                    Else
-                        Dim memberType As Mono.Cecil.TypeReference = TryCast(entry.Members(0), Mono.Cecil.TypeReference)
-                        If memberType IsNot Nothing Then
-                            Dim nextCache As MemberCache
+            If m_TypeArgumentList IsNot Nothing Then
+                argumentCount = allArguments.Count + m_TypeArgumentList.Count
+            Else
+                argumentCount = allArguments.Count
+            End If
 
-                            nextCache = Compiler.TypeManager.GetCache(memberType)
-                            argumentCount += CecilHelper.GetGenericArguments(memberType).Count
+            If m_TypeArgumentList IsNot Nothing Then
+                For i As Integer = 0 To m_TypeArgumentList.Count - 1
+                    allArguments.Add(m_TypeArgumentList(i).ResolvedType)
+                Next
+            End If
 
+            entry = cache.LookupFlattened(Helper.CreateGenericTypename(m_QualifiedIdentifier.Name, If(m_TypeArgumentList IsNot Nothing, m_TypeArgumentList.Count, 0)), Me.FindFirstParent_IType.CecilType)
 
-                            cache = nextCache
-                        Else
-                            Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-                            Return False
-                        End If
-                    End If
-                ElseIf tmp.IsFirstGlobal Then
+            If entry Is Nothing OrElse entry.Members.Count = 0 Then
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return False
+            ElseIf entry.Members.Count > 1 Then
+                Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+                Return False
+            Else
+                Dim memberType As Mono.Cecil.TypeReference = TryCast(entry.Members(0), Mono.Cecil.TypeReference)
+                If memberType IsNot Nothing Then
+                    git = New GenericInstanceType(CecilHelper.GetGenericTypeDefinition(memberType))
+                    git.GenericArguments.AddRange(allArguments)
+                Else
                     Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
                     Return False
-                Else
-                    Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, "Internal compiler error.")
-                    Return False
                 End If
+            End If
 
-                If stack.Count = 0 Then Exit Do
-                tmp = stack.Pop
-            Loop While True
-
-            Dim nextCacheGenericInstance As Mono.Cecil.GenericInstanceType
-            nextCacheGenericInstance = TryCast(cache.Type, Mono.Cecil.GenericInstanceType)
-            If m_TypeArgumentList IsNot Nothing AndAlso nextCacheGenericInstance IsNot Nothing Then
-                Dim gi As New Mono.Cecil.GenericInstanceType(nextCacheGenericInstance.ElementType)
-                For i As Integer = 0 To nextCacheGenericInstance.GenericArguments.Count - 1
-                    gi.GenericArguments.Add(nextCacheGenericInstance.GenericArguments(i))
-                Next
-                For i As Integer = 0 To m_TypeArgumentList.Count - 1
-                    gi.GenericArguments.Add(Helper.GetTypeOrTypeReference(Me.Compiler, m_TypeArgumentList(i).ResolvedType))
-                Next
-                m_ResolvedType = gi
+            If git IsNot Nothing Then
+                m_ResolvedType = git
             Else
                 m_ResolvedType = cache.Type
             End If
-
         ElseIf m_TypeArgumentList IsNot Nothing Then
             Dim nri As New TypeNameResolutionInfo(Me, Me, m_TypeArgumentList.Count)
             result = nri.Resolve AndAlso result
@@ -243,5 +231,4 @@ Public Class ConstructedTypeName
             Return m_QualifiedIdentifier.Name
         End Get
     End Property
-
 End Class

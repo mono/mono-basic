@@ -92,15 +92,7 @@ Public Class ParenthesizedExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_Expression.ConstantValue
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_Expression.IsConstant
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return m_Expression.GetConstant(result, ShowError)
+    End Function
 End Class

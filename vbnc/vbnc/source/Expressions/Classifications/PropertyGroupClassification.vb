@@ -51,12 +51,6 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Function ResolveGroup(ByVal SourceParameters As ArgumentList) As Boolean
         Dim result As Boolean = True
         Dim destinationParameterTypes()() As Mono.Cecil.TypeReference

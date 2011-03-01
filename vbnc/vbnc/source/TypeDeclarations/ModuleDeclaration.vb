@@ -27,15 +27,21 @@
 ''' <remarks></remarks>
 Public Class ModuleDeclaration
     Inherits TypeDeclaration
-    Implements IHasImplicitMembers
 
-    Private m_DefinedStandardModuleAttribute As Boolean
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition() AndAlso result
+        result = AddAttribute() AndAlso result
+
+        TypeAttributes = TypeAttributes Or Mono.Cecil.TypeAttributes.Sealed
+
+        Return result
+    End Function
 
     Private Function AddAttribute() As Boolean
         Dim result As Boolean = True
         Dim newAttrib As Attribute
-
-        If m_DefinedStandardModuleAttribute Then Return True
 
         If Compiler.TypeCache.MS_VB_CS_StandardModuleAttribute Is Nothing Then Return True
 
@@ -44,16 +50,6 @@ Public Class ModuleDeclaration
 
         If MyBase.CustomAttributes Is Nothing Then MyBase.CustomAttributes = New Attributes(Me)
         MyBase.CustomAttributes.Add(newAttrib)
-        m_DefinedStandardModuleAttribute = True
-
-        Return result
-    End Function
-
-    Public Overrides Function DefineType() As Boolean
-        Dim result As Boolean = True
-
-        result = AddAttribute() AndAlso result
-        result = MyBase.DefineType() AndAlso result
 
         Return result
     End Function
@@ -68,8 +64,6 @@ Public Class ModuleDeclaration
         MyBase.BaseType = Compiler.TypeCache.System_Object
         result = MyBase.ResolveTypeReferences AndAlso result
 
-        Me.FindDefaultConstructors()
-
         Return result
     End Function
 
@@ -81,30 +75,15 @@ Public Class ModuleDeclaration
         Return tm.PeekToken(i).Equals(KS.Module)
     End Function
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
-
-        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Sealed
-        AddAttribute()
-    End Sub
-
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get
             Return True
         End Get
     End Property
 
-    Private Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
-        Dim result As Boolean = True
-
-        If DefaultSharedConstructor Is Nothing AndAlso (Me.HasSharedConstantFields OrElse Me.HasSharedFieldsWithInitializers) Then
-            DefaultSharedConstructor = New ConstructorDeclaration(Me)
-            DefaultSharedConstructor.Init(New Modifiers(ModifierMasks.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
-            result = DefaultSharedConstructor.ResolveTypeReferences AndAlso result
-            Members.Add(DefaultSharedConstructor)
-            BeforeFieldInit = True
-        End If
-
-        Return result
-    End Function
+    Protected Overrides ReadOnly Property NeedsSharedConstructor As Boolean
+        Get
+            Return Me.HasSharedConstantFields OrElse Me.HasSharedFieldsWithInitializers
+        End Get
+    End Property
 End Class

@@ -35,12 +35,6 @@ Public Class LateBoundAccessClassification
     Private m_Arguments As ArgumentList
     Private m_LateBoundType As Mono.Cecil.TypeReference
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
     Property Arguments() As ArgumentList
         Get
             Return m_Arguments

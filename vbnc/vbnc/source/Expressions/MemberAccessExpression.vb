@@ -45,18 +45,6 @@ Public Class MemberAccessExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return Classification.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return Classification.ConstantValue
-        End Get
-    End Property
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -155,6 +143,10 @@ Public Class MemberAccessExpression
         End Get
     End Property
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return Me.Classification.GetConstant(result, ShowError)
+    End Function
+
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -227,7 +219,7 @@ Public Class MemberAccessExpression
         If iokwta IsNot Nothing Then
             typeArguments = iokwta.TypeArguments
         End If
-        
+
         Helper.Assert(Name IsNot Nothing AndAlso Name <> "")
 
         If m_First IsNot Nothing Then
@@ -352,7 +344,7 @@ Public Class MemberAccessExpression
             If entry Is Nothing Then
                 Compiler.Report.ShowMessage(Messages.VBNC30456, Me.Location, Name, m_First.Classification.AsTypeClassification.Type.FullName)
                 Return False
-            End If			
+            End If
 
             If entry IsNot Nothing Then
                 members = entry.Members

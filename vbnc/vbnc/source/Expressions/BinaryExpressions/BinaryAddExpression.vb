@@ -83,111 +83,90 @@ Public Class BinaryAddExpression
         End Get
     End Property
 
-    Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-        Dim result As Boolean
+    Public Overrides Function GetConstant(ByRef m_ConstantValue As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        Dim tlvalue, trvalue As Mono.Cecil.TypeReference
+        Dim clvalue, crvalue As TypeCode
 
-        result = MyBase.ResolveExpressionInternal(Info)
+        tlvalue = CecilHelper.GetType(Compiler, lvalue)
+        clvalue = Helper.GetTypeCode(Compiler, tlvalue)
+        trvalue = CecilHelper.GetType(Compiler, rvalue)
+        crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
-        Return result
-    End Function
+        If clvalue = TypeCode.String AndAlso crvalue = TypeCode.String Then
+            m_ConstantValue = CStr(lvalue) & CStr(rvalue)
+            Return True
+        End If
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+        Dim csmallest As TypeCode
+        csmallest = vbnc.TypeConverter.GetBinaryAddResultType(clvalue, crvalue)
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            Else
-
-                Dim tlvalue, trvalue As Mono.Cecil.TypeReference
-                Dim clvalue, crvalue As TypeCode
-                tlvalue = CecilHelper.GetType(Compiler, lvalue)
-                clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-                trvalue = CecilHelper.GetType(Compiler, rvalue)
-                crvalue = Helper.GetTypeCode(Compiler, trvalue)
-
-                If clvalue = TypeCode.String AndAlso crvalue = TypeCode.String Then
-                    Return CStr(lvalue) & CStr(rvalue)
+        Select Case csmallest
+            Case TypeCode.Byte
+                Dim tmp As UShort = CUShort(lvalue) + CUShort(rvalue)
+                If tmp < Byte.MinValue OrElse tmp > Byte.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CByte(tmp)
                 End If
+            Case TypeCode.SByte
+                Dim tmp As Short = CShort(lvalue) + CShort(rvalue)
+                If tmp < SByte.MinValue OrElse tmp > SByte.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CSByte(tmp)
+                End If
+            Case TypeCode.Int16
+                Dim tmp As Integer = CInt(lvalue) + CInt(rvalue)
+                If tmp > Short.MaxValue OrElse tmp < Short.MinValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CShort(tmp)
+                End If
+            Case TypeCode.UInt16
+                Dim tmp As UInteger = CUInt(lvalue) + CUInt(rvalue)
+                If tmp > UShort.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CUShort(tmp)
+                End If
+            Case TypeCode.Int32
+                Dim tmp As Long = CLng(lvalue) + CLng(rvalue)
+                If tmp > Integer.MaxValue OrElse tmp < Integer.MinValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CInt(tmp)
+                End If
+            Case TypeCode.UInt32
+                Dim tmp As ULong = CULng(lvalue) + CULng(rvalue)
+                If tmp > UInteger.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CUInt(tmp)
+                End If
+            Case TypeCode.Int64
+                Dim tmp As Double = CLng(lvalue) + CLng(rvalue)
+                If tmp < Long.MinValue OrElse tmp > Long.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CLng(tmp)
+                End If
+            Case TypeCode.UInt64
+                Dim tmp As Double = CULng(lvalue) + CULng(rvalue)
+                If tmp < ULong.MinValue OrElse tmp > ULong.MaxValue Then
+                    m_ConstantValue = tmp
+                Else
+                    m_ConstantValue = CULng(tmp)
+                End If
+            Case TypeCode.Double
+                m_ConstantValue = CDbl(lvalue) + CDbl(rvalue) 'No overflow possible
+            Case TypeCode.Single
+                m_ConstantValue = CSng(lvalue) + CSng(rvalue) 'No overflow possible
+            Case TypeCode.Decimal
+                m_ConstantValue = CDec(lvalue) + CDec(rvalue)
+            Case Else
+                Return False
+        End Select
 
-                Dim csmallest As TypeCode
-                csmallest = vbnc.TypeConverter.GetBinaryAddResultType(clvalue, crvalue)
-
-                Select Case csmallest
-                    Case TypeCode.Byte
-                        Dim tmp As UShort = CUShort(lvalue) + CUShort(rvalue)
-                        If tmp < Byte.MinValue OrElse tmp > Byte.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CByte(tmp)
-                        End If
-                    Case TypeCode.SByte
-                        Dim tmp As Short = CShort(lvalue) + CShort(rvalue)
-                        If tmp < SByte.MinValue OrElse tmp > SByte.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CSByte(tmp)
-                        End If
-                    Case TypeCode.Int16
-                        Dim tmp As Integer = CInt(lvalue) + CInt(rvalue)
-                        If tmp > Short.MaxValue OrElse tmp < Short.MinValue Then
-                            Return tmp
-                        Else
-                            Return CShort(tmp)
-                        End If
-                    Case TypeCode.UInt16
-                        Dim tmp As UInteger = CUInt(lvalue) + CUInt(rvalue)
-                        If tmp > UShort.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CUShort(tmp)
-                        End If
-                    Case TypeCode.Int32
-                        Dim tmp As Long = CLng(lvalue) + CLng(rvalue)
-                        If tmp > Integer.MaxValue OrElse tmp < Integer.MinValue Then
-                            Return tmp
-                        Else
-                            Return CInt(tmp)
-                        End If
-                    Case TypeCode.UInt32
-                        Dim tmp As ULong = CULng(lvalue) + CULng(rvalue)
-                        If tmp > UInteger.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CUInt(tmp)
-                        End If
-                    Case TypeCode.Int64
-                        Dim tmp As Double = CLng(lvalue) + CLng(rvalue)
-                        If tmp < Long.MinValue OrElse tmp > Long.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CLng(tmp)
-                        End If
-                    Case TypeCode.UInt64
-                        Dim tmp As Double = CULng(lvalue) + CULng(rvalue)
-                        If tmp < ULong.MinValue OrElse tmp > ULong.MaxValue Then
-                            Return tmp
-                        Else
-                            Return CULng(tmp)
-                        End If
-                    Case TypeCode.Double
-                        Return CDbl(lvalue) + CDbl(rvalue) 'No overflow possible
-                    Case TypeCode.Single
-                        Return CSng(lvalue) + CSng(rvalue) 'No overflow possible
-                    Case TypeCode.Decimal
-                        Return CDec(lvalue) + CDec(rvalue)
-                    Case Else
-                        Helper.Stop()
-                        Throw New InternalException(Me)
-                End Select
-            End If
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

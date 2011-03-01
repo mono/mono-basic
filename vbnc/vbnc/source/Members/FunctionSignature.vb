@@ -149,5 +149,4 @@ Public Class FunctionSignature
 
         Return result
     End Function
-
 End Class

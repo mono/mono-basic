@@ -89,6 +89,22 @@ Public Class Is_IsNotExpression
         Return result
     End Function
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim rvalue As Object = Nothing
+        Dim lvalue As Object = Nothing
+
+        If Not m_LeftExpression.GetConstant(lvalue, ShowError) Then Return False
+        If Not m_RightExpression.GetConstant(rvalue, ShowError) Then Return False
+
+        If lvalue Is Nothing Or rvalue Is Nothing Then
+            result = True
+            Return True
+        End If
+
+        If ShowError Then Show30059()
+        Return False
+    End Function
+
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Boolean
@@ -100,12 +116,6 @@ Public Class Is_IsNotExpression
         m_Keyword = Keyword
         Helper.Assert(m_Keyword = KS.Is OrElse m_Keyword = KS.IsNot)
     End Sub
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
 
     Public Overrides ReadOnly Property Keyword() As KS
         Get

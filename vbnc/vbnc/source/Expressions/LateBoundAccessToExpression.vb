@@ -28,18 +28,6 @@ Public MustInherit Class LateBoundAccessToExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Throw New InternalException("A late bound expression does not have a constant value.")
-        End Get
-    End Property
-
     Sub New(ByVal Parent As ParsedObject, ByVal LateBoundAccessClassification As LateBoundAccessClassification)
         MyBase.new(Parent)
         m_LateBoundAccess = LateBoundAccessClassification

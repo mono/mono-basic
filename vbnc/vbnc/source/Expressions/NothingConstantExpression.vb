@@ -30,7 +30,7 @@ Public Class NothingConstantExpression
     End Function
 
     Sub New(ByVal Parent As ParsedObject)
-        MyBase.new(Parent, Nothing, Nothing)
+        MyBase.new(Parent, System.DBNull.Value, Nothing)
     End Sub
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
@@ -41,12 +41,6 @@ Public Class NothingConstantExpression
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.Nothing
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return System.DBNull.Value
         End Get
     End Property
 

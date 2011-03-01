@@ -32,8 +32,6 @@ Public Class Parameter
     Private m_ParameterIdentifier As ParameterIdentifier
     Private m_TypeName As TypeName
     Private m_ConstantExpression As Expression
-
-    Private m_ParameterAttributes As Mono.Cecil.ParameterAttributes = Mono.Cecil.ParameterAttributes.None
     
     Private m_ParameterBuilderCecil As Mono.Cecil.ParameterDefinition
     Private m_ParamArrayAttribute As Mono.Cecil.CustomAttribute
@@ -46,18 +44,13 @@ Public Class Parameter
 
     Sub New(ByVal Parent As ParameterList)
         MyBase.New(Parent)
-        UpdateDefinition()
     End Sub
 
     Sub New(ByVal Parent As ParameterList, ByVal Name As String, ByVal ParameterType As Mono.Cecil.TypeReference)
         MyBase.New(Parent)
 
         m_ParameterIdentifier = New ParameterIdentifier(Me, Name)
-        Me.ParameterType = ParameterType
-
-        UpdateDefinition()
-
-        Helper.Assert(m_ParameterIdentifier IsNot Nothing)
+        m_TypeName = New TypeName(Me, ParameterType)
     End Sub
 
     Sub New(ByVal Parent As ParameterList, ByVal Name As String, ByVal ParameterType As TypeName)
@@ -65,10 +58,6 @@ Public Class Parameter
 
         m_ParameterIdentifier = New ParameterIdentifier(Me, Name)
         m_TypeName = ParameterType
-
-        UpdateDefinition()
-
-        Helper.Assert(m_ParameterIdentifier IsNot Nothing)
     End Sub
 
     ReadOnly Property ParameterIdentifier() As ParameterIdentifier
@@ -89,10 +78,6 @@ Public Class Parameter
         m_ParameterIdentifier = ParameterIdentifier
         m_TypeName = TypeName
         m_ConstantExpression = ConstantExpression
-
-        Helper.Assert(m_ParameterIdentifier IsNot Nothing)
-
-        UpdateDefinition()
     End Sub
 
     Function Clone(Optional ByVal NewParent As ParameterList = Nothing) As Parameter
@@ -103,7 +88,6 @@ Public Class Parameter
         result.m_ParameterIdentifier = m_ParameterIdentifier.Clone(result)
         If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName.Clone(result)
         If m_ConstantExpression IsNot Nothing Then result.m_ConstantExpression = m_ConstantExpression.Clone(result)
-        result.UpdateDefinition()
         Return result
     End Function
 
@@ -124,7 +108,6 @@ Public Class Parameter
             End If
             If value Is DBNull.Value Then value = Nothing
             m_ParameterBuilderCecil.Constant = value
-            UpdateDefinition()
         End Set
     End Property
 
@@ -139,11 +122,10 @@ Public Class Parameter
 
     Property ParameterAttributes() As Mono.Cecil.ParameterAttributes
         Get
-            Return m_ParameterAttributes
+            Return m_ParameterBuilderCecil.Attributes
         End Get
         Set(ByVal value As Mono.Cecil.ParameterAttributes)
-            m_ParameterAttributes = value
-            UpdateDefinition()
+            m_ParameterBuilderCecil.Attributes = value
         End Set
     End Property
 
@@ -158,10 +140,7 @@ Public Class Parameter
             Return m_ParameterBuilderCecil.ParameterType
         End Get
         Set(ByVal value As Mono.Cecil.TypeReference)
-            If value.FullName.Contains("Void") Then Stop
-            If m_ParameterBuilderCecil Is Nothing Then UpdateDefinition()
             m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, value)
-            UpdateDefinition()
         End Set
     End Property
 
@@ -172,7 +151,9 @@ Public Class Parameter
         End Get
         Set(ByVal value As String)
             m_ParameterIdentifier = New ParameterIdentifier(Me, value)
-            UpdateDefinition()
+            If m_ParameterBuilderCecil IsNot Nothing Then
+                m_ParameterBuilderCecil.Name = m_ParameterIdentifier.Name
+            End If
         End Set
     End Property
 
@@ -191,13 +172,12 @@ Public Class Parameter
         End Get
     End Property
 
-    <Obsolete("Call Define(Builder")> Public Overrides Function Define() As Boolean
-        Throw New InternalException(Me)
-    End Function
-
-    Public Sub UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
         Dim Parent As MethodBaseDeclaration = FindFirstParent(Of MethodBaseDeclaration)()
         Dim Builder As Mono.Cecil.MethodDefinition = Nothing
+
+        result = MyBase.CreateDefinition AndAlso result
 
         If Parent IsNot Nothing Then
             Builder = Parent.CecilBuilder
@@ -205,11 +185,11 @@ Public Class Parameter
             'Helper.StopIfDebugging()
         End If
 
-        If m_ParameterBuilderCecil Is Nothing Then
-            m_ParameterBuilderCecil = New Mono.Cecil.ParameterDefinition(Nothing)
-            m_ParameterBuilderCecil.Sequence = -1
-            m_ParameterBuilderCecil.Annotations.Add(Compiler, Me)
-        End If
+        Helper.Assert(m_ParameterBuilderCecil Is Nothing)
+        m_ParameterBuilderCecil = New Mono.Cecil.ParameterDefinition(Nothing)
+        m_ParameterBuilderCecil.Sequence = -1
+        m_ParameterBuilderCecil.Annotations.Add(Compiler, Me)
+        m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
 
         m_ParameterBuilderCecil.Name = Name
         m_ParameterBuilderCecil.IsOptional = Modifiers.Is(ModifierMasks.Optional)
@@ -224,13 +204,11 @@ Public Class Parameter
         End If
 
         If m_ParameterBuilderCecil.IsOptional Then
-            'm_ParameterBuilderCecil.Constant = TypeConverter.ConvertTo(Compiler, m_ConstantValue, ParameterType)
             m_ParameterBuilderCecil.HasDefault = True
         End If
-        If m_ParameterBuilderCecil.ParameterType Is Nothing Then
-            m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
-        End If
-    End Sub
+
+        Return result
+    End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -242,21 +220,27 @@ Public Class Parameter
             result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
         End If
 
+        Return result
+    End Function
+
+    Function DefineOptionalParameters() As Boolean
+        Dim result As Boolean = True
+
         If Me.Modifiers.Is(ModifierMasks.Optional) Then
-            m_ParameterAttributes = Mono.Cecil.ParameterAttributes.Optional
+            Dim constant As Object = Nothing
+            ParameterAttributes = Mono.Cecil.ParameterAttributes.Optional
             If m_ConstantExpression Is Nothing Then
                 Helper.AddError(Me, "Optional parameters must have a constant expression.")
                 result = False
-            ElseIf m_ConstantExpression.IsConstant = False Then
+            ElseIf m_ConstantExpression.GetConstant(constant, True) = False Then
                 Helper.AddError(Me, "Optional expressions must be constant.")
                 result = False
             Else
-                Dim cv As Object = m_ConstantExpression.ConstantValue
-                result = TypeConverter.ConvertTo(Me, cv, ParameterType, cv) AndAlso result
-                If cv Is DBNull.Value Then
-                    cv = Nothing
+                result = TypeConverter.ConvertTo(Me, constant, ParameterType, constant) AndAlso result
+                If constant Is DBNull.Value Then
+                    constant = Nothing
                 End If
-                ConstantValue = cv
+                ConstantValue = constant
             End If
         Else
             If m_ConstantExpression IsNot Nothing Then
@@ -264,8 +248,6 @@ Public Class Parameter
                 result = False
             End If
         End If
-
-        UpdateDefinition()
 
         Return result
     End Function
@@ -304,8 +286,6 @@ Public Class Parameter
             ParameterType = Compiler.TypeManager.MakeByRefType(Me, ParameterType)
         End If
 
-        UpdateDefinition()
-
         Return result
     End Function
 
@@ -318,5 +298,4 @@ Public Class Parameter
 
         Return result
     End Function
-
 End Class

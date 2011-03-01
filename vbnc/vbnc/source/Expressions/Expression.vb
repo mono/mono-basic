@@ -145,40 +145,23 @@ Public MustInherit Class Expression
         MyBase.New(Parent)
     End Sub
 
-    ''' <summary>
-    ''' The default implementation returns false.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    Overridable ReadOnly Property IsConstant() As Boolean
-        Get
-            Return False 'm_Classification.IsConstant
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' The default implementation throws an internal exception.
-    ''' </summary>
-    ''' <value></value>
-    ''' <remarks></remarks>
-    Overridable ReadOnly Property ConstantValue() As Object
-        Get
-            Helper.Assert(m_Classification IsNot Nothing)
-            Return m_Classification.ConstantValue
-        End Get
-    End Property
+    Overridable Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        If ShowError Then Show30059()
+        Return False
+    End Function
 
     Friend NotOverridable Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
+        Dim constant As Object = Nothing
 
         Try
-            If Me.IsConstant Then
+            If GetConstant(constant, False) Then
                 If Helper.CompareType(Me.ExpressionType, Compiler.TypeCache.Nothing) Then
-                    Emitter.EmitLoadValue(Info, Me.ConstantValue)
+                    Emitter.EmitLoadValue(Info, constant)
                 ElseIf Info.DesiredType IsNot Nothing AndAlso CecilHelper.IsByRef(Info.DesiredType) Then
-                    Emitter.EmitLoadValueAddress(Info, Me.ConstantValue)
+                    Emitter.EmitLoadValueAddress(Info, constant)
                 Else
-                    Emitter.EmitLoadValue(Info.Clone(Me, Me.ExpressionType), Me.ConstantValue)
+                    Emitter.EmitLoadValue(Info.Clone(Me, Me.ExpressionType), constant)
                 End If
             ElseIf TypeOf Me.Classification Is MethodGroupClassification Then
                 result = Me.Classification.AsMethodGroupClassification.GenerateCode(Info) AndAlso result

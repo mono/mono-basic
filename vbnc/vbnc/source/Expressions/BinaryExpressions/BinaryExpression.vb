@@ -271,12 +271,6 @@ Public MustInherit Class BinaryExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_LeftExpression.IsConstant AndAlso m_RightExpression.IsConstant
-        End Get
-    End Property
-
     Protected Sub New(ByVal Parent As ParsedObject)
         MyBase.new(Parent)
     End Sub
@@ -299,6 +293,30 @@ Public MustInherit Class BinaryExpression
             Return m_ExpressionType
         End Get
     End Property
+
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim rvalue As Object = Nothing
+        Dim lvalue As Object = Nothing
+
+        If Not m_LeftExpression.GetConstant(lvalue, ShowError) Then Return False
+        If Not m_RightExpression.GetConstant(rvalue, ShowError) Then Return False
+
+        If lvalue Is Nothing Or rvalue Is Nothing Then
+            result = Nothing
+            Return True
+        End If
+
+        If Not GetConstant(result, lvalue, rvalue) Then
+            If ShowError Then Show30059()
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Public Overridable Overloads Function GetConstant(ByRef m_ConstantValue As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        Return False
+    End Function
 
 #If DEBUG Then
     Protected MustOverride Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean

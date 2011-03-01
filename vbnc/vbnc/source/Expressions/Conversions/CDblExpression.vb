@@ -71,7 +71,28 @@ Public Class CDblExpression
 
         Return result
     End Function
-    
+
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim tpCode As TypeCode
+        Dim originalValue As Object = Nothing
+
+        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
+
+        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
+        Select Case tpCode
+            Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, _
+            TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal
+                result = CDbl(originalValue) 'No range checking needed.
+            Case TypeCode.DBNull
+                result = CDbl(0)
+            Case Else
+                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
+                Return False
+        End Select
+
+        Return True
+    End Function
+
     Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         Dim expType As Mono.Cecil.TypeReference = Nothing
@@ -118,31 +139,6 @@ Public Class CDblExpression
 
         Return result
     End Function
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_String) = False
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim tpCode As TypeCode
-            Dim originalValue As Object
-            originalValue = Expression.ConstantValue
-            tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-            Select Case tpCode
-                Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, _
-                TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal
-                    Return CDbl(originalValue) 'No range checking needed.
-                Case TypeCode.DBNull
-                    Return CDbl(0)
-                Case Else
-                    Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
-                    Return New Double
-            End Select
-        End Get
-    End Property
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get

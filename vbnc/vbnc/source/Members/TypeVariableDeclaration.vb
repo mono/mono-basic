@@ -27,7 +27,7 @@
 ''' <remarks></remarks>
 Public Class TypeVariableDeclaration
     Inherits VariableDeclaration
-    Implements IFieldMember, IHasImplicitMembers
+    Implements IFieldMember
 
     Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
@@ -35,38 +35,21 @@ Public Class TypeVariableDeclaration
 
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        UpdateDefinition()
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As VariableIdentifier, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent, Modifiers, VariableIdentifier, IsNew, TypeName, VariableInitializer, ArgumentList)
-        UpdateDefinition()
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Modifiers As Modifiers, ByVal VariableIdentifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As TypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent, Modifiers, VariableIdentifier, IsNew, TypeName, VariableInitializer, ArgumentList)
-        UpdateDefinition()
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Identifier, _
     ByVal IsNew As Boolean, ByVal TypeName As NonArrayTypeName, ByVal VariableInitializer As VariableInitializer, ByVal ArgumentList As ArgumentList)
         MyBase.New(Parent, Identifier, IsNew, TypeName, VariableInitializer, ArgumentList)
-        UpdateDefinition()
-    End Sub
-
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As Mono.Cecil.TypeReference)
-        MyBase.Init(Modifiers, Name, VariableType)
-        UpdateDefinition()
-
-        Helper.Assert(FieldType IsNot Nothing)
-    End Sub
-
-    Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal VariableType As TypeName)
-        MyBase.Init(Modifiers, Name, VariableType)
-        UpdateDefinition()
-
     End Sub
 
     ReadOnly Property FieldBuilder() As Mono.Cecil.FieldDefinition Implements IFieldMember.FieldBuilder
@@ -99,53 +82,37 @@ Public Class TypeVariableDeclaration
         End Get
     End Property
 
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveTypeReferences AndAlso result
-
-        If result = False Then Return result
-
-        Helper.Assert(VariableType IsNot Nothing)
-
-        UpdateDefinition()
-
-        Return result
-    End Function
-
     Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
         Dim result As Boolean = True
 
         Return result
     End Function
 
-    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
+    Public Overrides Function CreateDefinition() As Boolean
         Dim result As Boolean = True
 
-        result = MyBase.ResolveCode(Info) AndAlso result
+        result = MyBase.CreateDefinition AndAlso result
+
+        Helper.Assert(m_FieldBuilderCecil Is Nothing)
+        m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetAttributes(Compiler, Me), Helper.GetTypeOrTypeReference(Compiler, FieldType))
+        DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
+        m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
+        m_FieldBuilderCecil.Name = Name
+        m_FieldBuilderCecil.IsStatic = Me.IsShared
 
         Return result
     End Function
 
-    Overrides Sub UpdateDefinition()
-        If Compiler Is Nothing Then Return
-        MyBase.UpdateDefinition()
+    Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
-        If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, Helper.GetAttributes(Compiler, Me), Helper.GetTypeOrTypeReference(Compiler, FieldType))
-            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
-        End If
-        m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
-        If VariableType IsNot Nothing AndAlso m_FieldBuilderCecil.FieldType Is Nothing Then
+        result = MyBase.ResolveTypeReferences AndAlso result
+
+        If result = False Then Return False
+
+        If VariableType IsNot Nothing Then
             m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, VariableType)
         End If
-        m_FieldBuilderCecil.Name = Name
-        m_FieldBuilderCecil.IsStatic = Me.IsShared
-    End Sub
-
-    Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
-        Dim result As Boolean = True
 
         Return result
     End Function
@@ -189,7 +156,7 @@ Public Class TypeVariableDeclaration
         End If
     End Sub
 
-    Public Function CreateImplicitMembers() As Boolean Implements IHasImplicitMembers.CreateImplicitMembers
+    Public Function CreateWithEventsMembers() As Boolean
         Dim result As Boolean = True
 
         If Me.Modifiers.Is(ModifierMasks.WithEvents) = False Then Return result
@@ -210,7 +177,8 @@ Public Class TypeVariableDeclaration
         End If
 
         propertyAccessor.Init(modifiers, Name, Me.TypeName)
-        result = propertyAccessor.ResolveTypeReferences() AndAlso result
+        result = propertyAccessor.CreateDefinition AndAlso result
+
         propertyAccessor.HandlesField = Me
         propertyAccessor.SetDeclaration.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Synchronized
 
@@ -220,9 +188,5 @@ Public Class TypeVariableDeclaration
         parentType.Members.Add(propertyAccessor)
 
         Return result
-    End Function
-
-    Public Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean Implements IFieldMember.ResolveAndGetConstantValue
-        Return False
     End Function
 End Class

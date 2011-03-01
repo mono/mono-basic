@@ -78,10 +78,6 @@ Public Class EventAccessorDeclarations
         End Set
     End Property
 
-    Public Function DefineMembers() As Boolean
-        Return Helper.DefineMembersCollection(m_Handlers)
-    End Function
-
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Return Helper.GenerateCodeCollection(m_Handlers, Info)
     End Function

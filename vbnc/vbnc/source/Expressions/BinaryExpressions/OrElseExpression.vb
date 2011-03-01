@@ -76,26 +76,15 @@ Public Class OrElseExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef m_ConstantValue As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        If TypeOf lvalue Is Boolean = False Then
+            Return False
+        ElseIf TypeOf rvalue Is Boolean = False Then
+            Return False
+        Else
+            m_ConstantValue = CBool(lvalue) OrElse CBool(rvalue)
+        End If
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
-            If lvalue Is Nothing Or rvalue Is Nothing Then
-                Return Nothing
-            ElseIf TypeOf lvalue Is Boolean = False Then
-                Throw New InternalException(Me) 'TODO: Add error
-            ElseIf TypeOf rvalue Is Boolean = False Then
-                Throw New InternalException(Me) 'TODO: Add error
-            Else
-                Return CBool(lvalue) OrElse CBool(rvalue)
-            End If
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

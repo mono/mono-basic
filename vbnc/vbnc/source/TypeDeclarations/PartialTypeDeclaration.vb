@@ -38,20 +38,6 @@ Public MustInherit Class PartialTypeDeclaration
         End Set
     End Property
 
-    Private Function GetTypeAttributes() As Mono.Cecil.TypeAttributes
-        Dim result As Mono.Cecil.TypeAttributes
-
-        result = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType)
-
-        Return result
-    End Function
-
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
-
-        TypeAttributes = GetTypeAttributes()
-    End Sub
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -92,21 +78,6 @@ Public MustInherit Class PartialTypeDeclaration
         Return result
     End Function
 
-    '''' <summary>
-    '''' Checks that all types are equal.
-    '''' Returns nothing if types are not equal.
-    '''' </summary>
-    '''' <param name="Types"></param>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Private Function CheckUniqueType(ByVal Types() As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
-    '    Helper.Assert(Types.Length >= 1)
-    '    For i As Integer = 1 To Types.Length - 1
-    '        If Helper.CompareType(Types(0), Types(i)) = False Then Return Nothing
-    '    Next
-    '    Return Types(0)
-    'End Function
-
     ''' <summary>
     ''' Checks that all types are equal.
     ''' Returns nothing if types are not equal.
@@ -121,24 +92,4 @@ Public MustInherit Class PartialTypeDeclaration
         Next
         Return Types(0)
     End Function
-
-    '''' <summary>
-    '''' Returns the inherited types of all the partial classes.
-    '''' There will be one type for every class that has an inherits clause.
-    '''' Types may be duplicated.
-    '''' </summary>
-    '''' <returns></returns>
-    '''' <remarks></remarks>
-    'Private Function GetInheritedTypes() As Mono.Cecil.TypeReference()
-    '    Helper.Assert(Me.IsPartial)
-    '    If TypeOf Me Is StructureDeclaration Then Return New Mono.Cecil.TypeReference() {}
-    '    Dim result As New Generic.List(Of Mono.Cecil.TypeReference)
-    '    For Each partialDeclaration As ClassDeclaration In m_PartialDeclarations
-    '        If partialDeclaration.Inherits IsNot Nothing Then
-    '            Helper.Assert(partialDeclaration.Inherits.ResolvedCecilType IsNot Nothing)
-    '            result.Add(partialDeclaration.Inherits.ResolvedCecilType)
-    '        End If
-    '    Next
-    '    Return result.ToArray
-    'End Function
 End Class

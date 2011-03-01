@@ -21,19 +21,11 @@
 ''' Base class for lists of type List ::= Item | List "," Item
 ''' </summary>
 ''' <remarks></remarks>
-Public Class BaseList(Of T As BaseObject)
+Public Class BaseList(Of T As ParsedObject)
     Inherits ParsedObject
     Implements Generic.IEnumerable(Of T)
 
     Private m_List As New Generic.List(Of T)
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        For i As Integer = 0 To m_List.Count - 1
-            m_List(i).Initialize(Parent)
-        Next
-    End Sub
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -45,6 +37,16 @@ Public Class BaseList(Of T As BaseObject)
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return Helper.ResolveTypeReferencesCollection(m_List)
+    End Function
+
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To m_List.Count - 1
+            result = m_List(i).CreateDefinition() AndAlso result
+        Next
+
+        Return result
     End Function
 
     Sub Insert(ByVal index As Integer, ByVal Item As T)

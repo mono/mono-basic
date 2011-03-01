@@ -28,6 +28,10 @@ Public Class UnaryPlusExpression
         MyBase.Init(Expression)
     End Sub
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return Expression.GetConstant(result, ShowError)
+    End Function
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
@@ -50,14 +54,6 @@ Public Class UnaryPlusExpression
 
         Return result
     End Function
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Helper.Assert(IsConstant)
-            Dim value As Object = Expression.ConstantValue
-            Return value
-        End Get
-    End Property
 
     Public Overrides ReadOnly Property Keyword() As KS
         Get

@@ -28,6 +28,12 @@ Public Class Attributes
         MyBase.New(Parent)
     End Sub
 
+    Sub SetParent(ByVal Parent As ParsedObject)
+        For Each item As IBaseObject In Me
+            item.Parent = Parent
+        Next
+    End Sub
+
     Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Attributes
         If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
         Dim result As New Attributes(NewParent)
@@ -74,5 +80,4 @@ Public Class Attributes
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken = KS.LT
     End Function
-
 End Class

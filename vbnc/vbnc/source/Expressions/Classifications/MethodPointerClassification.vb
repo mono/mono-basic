@@ -42,7 +42,7 @@ Public Class MethodPointerClassification
 
     ReadOnly Property Resolved() As Boolean
         Get
-            Return m_resolved
+            Return m_Resolved
         End Get
     End Property
 

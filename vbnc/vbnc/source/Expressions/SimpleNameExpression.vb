@@ -182,17 +182,9 @@ Public Class SimpleNameExpression
         Return result
     End Function
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return Classification.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return Classification.ConstantValue
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return Classification.GetConstant(result, ShowError)
+    End Function
 
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken.IsIdentifier
@@ -200,10 +192,6 @@ Public Class SimpleNameExpression
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim Name As String = m_Identifier.Identifier
-
-        If False Then
-            Helper.Stop()
-        End If
 
         '---------------------------------------------------------------------------------------------------------
         'A simple name expression consists of a single identifier followed by an optional type argument list. 

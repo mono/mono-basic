@@ -20,33 +20,26 @@
 Public Class BooleanLiteralExpression
     Inherits LiteralExpression
 
-    Private m_Value As Boolean
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
 
     Shadows Sub Init(ByVal Value As Boolean)
-        m_Value = Value
+        MyBase.Init(Value, ExpressionType)
     End Sub
 
     Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
         If NewParent IsNot Nothing Then NewParent = Me.Parent
+        Dim constant As Object = Nothing
         Dim result As New BooleanLiteralExpression(NewParent)
-        result.Init(m_Value)
+        GetConstant(constant, True)
+        result.Init(DirectCast(constant, Boolean))
         Return result
     End Function
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
-
             Return Compiler.TypeCache.System_Boolean
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_Value
         End Get
     End Property
 End Class

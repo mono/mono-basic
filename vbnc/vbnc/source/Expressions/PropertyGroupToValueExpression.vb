@@ -33,18 +33,10 @@ Public Class PropertyGroupToValueExpression
             Return result
         End Get
     End Property
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_PropertyGroup.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_PropertyGroup.ConstantValue
-        End Get
-    End Property
+    
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return m_PropertyGroup.GetConstant(result, ShowError)
+    End Function
 
     Sub New(ByVal Parent As ParsedObject, ByVal PropertyGroupClassification As PropertyGroupClassification)
         MyBase.new(Parent)

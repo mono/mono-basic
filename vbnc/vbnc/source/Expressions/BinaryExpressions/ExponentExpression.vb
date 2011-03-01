@@ -53,38 +53,28 @@ Public Class ExponentExpression
         End Get
     End Property
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return MyBase.IsConstant 'CHECK: is this true?
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef m_ConstantValue As Object, ByVal lvalue As Object, ByVal rvalue As Object) As Boolean
+        If lvalue Is Nothing Then lvalue = 0
+        If rvalue Is Nothing Then rvalue = 0
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim rvalue, lvalue As Object
-            lvalue = m_LeftExpression.ConstantValue
-            rvalue = m_RightExpression.ConstantValue
+        Dim tlvalue, trvalue As Mono.Cecil.TypeReference
+        Dim clvalue, crvalue As TypeCode
+        tlvalue = CecilHelper.GetType(Compiler, lvalue)
+        clvalue = Helper.GetTypeCode(Compiler, tlvalue)
+        trvalue = CecilHelper.GetType(Compiler, rvalue)
+        crvalue = Helper.GetTypeCode(Compiler, trvalue)
 
-            If lvalue Is Nothing Then lvalue = 0
-            If rvalue Is Nothing Then rvalue = 0
+        Helper.Assert(Compiler.TypeResolution.IsNumericType(tlvalue) AndAlso Compiler.TypeResolution.IsNumericType(trvalue))
 
-            Dim tlvalue, trvalue As Mono.Cecil.TypeReference
-            Dim clvalue, crvalue As TypeCode
-            tlvalue = CecilHelper.GetType(Compiler, lvalue)
-            clvalue = Helper.GetTypeCode(Compiler, tlvalue)
-            trvalue = CecilHelper.GetType(Compiler, rvalue)
-            crvalue = Helper.GetTypeCode(Compiler, trvalue)
+        'An exponent operator always returns a double result.
+        Select Case clvalue
+            Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, _
+             TypeCode.Int64, TypeCode.UInt64, TypeCode.Double, TypeCode.Single, TypeCode.Decimal
+                m_ConstantValue = Math.Pow(CDbl(lvalue), CDbl(rvalue))
+            Case Else
+                Return False
+        End Select
 
-            Helper.Assert(Compiler.TypeResolution.IsNumericType(tlvalue) AndAlso Compiler.TypeResolution.IsNumericType(trvalue))
-
-            'An exponent operator always returns a double result.
-            Select Case clvalue
-                Case TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, _
-                 TypeCode.Int64, TypeCode.UInt64, TypeCode.Double, TypeCode.Single, TypeCode.Decimal
-                    Return Math.Pow(CDbl(lvalue), CDbl(rvalue))
-                Case Else
-                    Throw New InternalException(Me)
-            End Select
-        End Get
-    End Property
+        Return True
+    End Function
 End Class

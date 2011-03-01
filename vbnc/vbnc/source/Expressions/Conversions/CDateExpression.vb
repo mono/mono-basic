@@ -78,6 +78,20 @@ Public Class CDateExpression
 
         Return result
     End Function
+
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim originalValue As Object = Nothing
+
+        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
+
+        If Not TypeOf originalValue Is Date Then
+            If ShowError Then Show30059()
+            Return False
+        End If
+
+        result = originalValue
+        Return True
+    End Function
     
     Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean
         Dim result As Boolean = True
@@ -109,24 +123,8 @@ Public Class CDateExpression
                 End If
         End Select
 
-
         Return result
     End Function
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return Expression.IsConstant AndAlso Helper.CompareType(Expression.ExpressionType, Compiler.TypeCache.System_DateTime)
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Dim originalValue As Object
-            originalValue = Expression.ConstantValue
-            Helper.Assert(TypeOf originalValue Is Date)
-            Return originalValue
-        End Get
-    End Property
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get

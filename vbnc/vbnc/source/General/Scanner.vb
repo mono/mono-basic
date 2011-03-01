@@ -127,7 +127,9 @@ Public Class Scanner
         For i As Integer = 0 To attribs.Count - 1
             Dim attrib As Mono.Cecil.CustomAttribute = attribs(i)
             Dim identifier As String
-
+            If Helper.CompareType(Compiler.TypeCache.System_Diagnostics_ConditionalAttribute, attrib.AttributeType) = False Then
+                Continue For
+            End If
             If attrib.ConstructorArguments.Count <> 1 Then
                 Continue For
             End If
@@ -1646,4 +1648,3 @@ Public Class Scanner
         End Get
     End Property
 End Class
-

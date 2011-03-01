@@ -108,23 +108,6 @@ Public MustInherit Class ConversionExpression
         m_Expression = Expression
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            If m_Expression.IsConstant = False Then
-                Return False
-            Else
-                Dim value As Object
-                value = m_Expression.ConstantValue
-                Dim result As Object = Nothing
-                If Compiler.TypeResolution.CheckNumericRange(value, result, ExpressionType) Then
-                    Return True
-                Else
-                    Return False
-                End If
-            End If
-        End Get
-    End Property
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -218,5 +201,4 @@ Public MustInherit Class ConversionExpression
 
         Return result
     End Function
-
 End Class

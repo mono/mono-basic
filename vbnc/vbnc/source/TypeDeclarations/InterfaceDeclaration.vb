@@ -34,11 +34,15 @@ Public Class InterfaceDeclaration
         MyBase.New(Parent, [Namespace], Name, TypeParameters)
     End Sub
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
         TypeAttributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType) Or Mono.Cecil.TypeAttributes.Interface Or Mono.Cecil.TypeAttributes.Abstract
-    End Sub
+
+        Return result
+    End Function
 
     Public Overrides ReadOnly Property IsShared() As Boolean
         Get

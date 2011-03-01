@@ -48,7 +48,6 @@ Public MustInherit Class TypeDeclaration
     Private m_DefaultInstanceConstructor As ConstructorDeclaration
     Private m_DefaultSharedConstructor As ConstructorDeclaration
     Private m_StaticVariables As Generic.List(Of LocalVariableDeclaration)
-    Private m_BeforeFieldInit As Boolean
     Private m_Serializable As Boolean
     Private m_AddedCompareTextAttribute As Boolean
 
@@ -78,14 +77,6 @@ Public MustInherit Class TypeDeclaration
             m_Serializable = value
         End Set
     End Property
-
-    Public Overrides Sub Initialize(ByVal Parent As BaseObject)
-        MyBase.Initialize(Parent)
-
-        For Each member As MemberDeclaration In m_Members
-            member.Initialize(Me)
-        Next
-    End Sub
 
     ReadOnly Property DescriptiveType() As String
         Get
@@ -122,38 +113,48 @@ Public MustInherit Class TypeDeclaration
 
         Helper.Assert(m_Namespace IsNot Nothing)
         Helper.Assert(m_Name IsNot Nothing)
-        UpdateDefinition()
     End Sub
 
-    Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        If m_CecilType Is Nothing Then
-            If Me.IsNestedType Then
-                m_CecilType = New Mono.Cecil.TypeDefinition(Nothing, Me.Name, 0)
-            Else
-                m_CecilType = New Mono.Cecil.TypeDefinition(Me.Namespace, Me.Name, 0)
-            End If
-            m_CecilType.Annotations.Add(Compiler, Me)
+        result = MyBase.CreateDefinition AndAlso result
+
+        If m_CecilType IsNot Nothing Then
+            'This may happen with partial types
+            Return result
         End If
+
+        If Me.IsNestedType Then
+            m_CecilType = New Mono.Cecil.TypeDefinition(Nothing, Me.Name, 0)
+        Else
+            m_CecilType = New Mono.Cecil.TypeDefinition(Me.Namespace, Me.Name, 0)
+        End If
+        m_CecilType.Annotations.Add(Compiler, Me)
         m_CecilType.Name = Name
+        m_CecilType.Attributes = Helper.getTypeAttributeScopeFromScope(Modifiers, IsNestedType)
 
-        If CecilType.Module Is Nothing AndAlso Me.Name IsNot Nothing Then
-            If IsNestedType Then
-                DeclaringType.CecilType.NestedTypes.Add(CecilType)
-            Else
-                Compiler.ModuleBuilderCecil.Types.Add(CecilType)
-            End If
+        If IsNestedType Then
+            DeclaringType.CecilType.NestedTypes.Add(m_CecilType)
+            m_CecilType.DeclaringType = DeclaringType.CecilType
+        Else
+            Compiler.ModuleBuilderCecil.Types.Add(m_CecilType)
         End If
-    End Sub
 
-    Protected Property BeforeFieldInit() As Boolean
+        'create definitions for all members
+        For i As Integer = 0 To Members.Count - 1
+            result = Members(i).CreateDefinition() AndAlso result
+        Next
+
+        Return result
+    End Function
+
+    Public Property BeforeFieldInit() As Boolean
         Get
-            Return m_BeforeFieldInit
+            Return m_CecilType.IsBeforeFieldInit
         End Get
         Set(ByVal value As Boolean)
-            m_BeforeFieldInit = value
-            UpdateDefinition()
+            m_CecilType.IsBeforeFieldInit = value
         End Set
     End Property
 
@@ -191,11 +192,9 @@ Public MustInherit Class TypeDeclaration
             End If
             If isdefault Then
                 If ctor.IsShared Then
-                    Helper.Assert(m_DefaultSharedConstructor Is Nothing OrElse m_DefaultSharedConstructor Is ctor)
-                    m_DefaultSharedConstructor = ctor
+                    If m_DefaultSharedConstructor Is Nothing Then m_DefaultSharedConstructor = ctor
                 Else
-                    Helper.Assert(m_DefaultInstanceConstructor Is Nothing OrElse m_DefaultInstanceConstructor Is ctor)
-                    m_DefaultInstanceConstructor = ctor
+                    If m_DefaultInstanceConstructor Is Nothing Then m_DefaultInstanceConstructor = ctor
                 End If
             End If
         Next
@@ -286,6 +285,18 @@ Public MustInherit Class TypeDeclaration
         End Get
     End Property
 
+    Public Overrides Function ResolveBaseType() As Boolean
+        Dim result As Boolean = True
+
+        For i As Integer = 0 To Me.Members.Count - 1
+            Dim t As TypeDeclaration = TryCast(Members(i), TypeDeclaration)
+            If t Is Nothing Then Continue For
+            result = t.ResolveBaseType AndAlso result
+        Next
+
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -347,24 +358,13 @@ Public MustInherit Class TypeDeclaration
         Return result
     End Function
 
-    Overridable Function DefineType() As Boolean Implements IDefinableType.DefineType
-        Dim result As Boolean = True
-
-        Helper.Assert(BaseType IsNot Nothing OrElse Me.CecilType.IsInterface)
-
-        Return result
-    End Function
-
-    Public Overridable Function DefineTypeHierarchy() As Boolean Implements IDefinableType.DefineTypeHierarchy
+    Public Overridable Function DefineTypeHierarchy() As Boolean
         Dim result As Boolean = True
 
         If BaseType Is Nothing Then
             If Me.IsInterface = False Then
                 m_CecilType.BaseType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
             End If
-        End If
-        If DeclaringType IsNot Nothing Then
-            m_CecilType.DeclaringType = DeclaringType.CecilType
         End If
 
         Return result
@@ -427,7 +427,6 @@ Public MustInherit Class TypeDeclaration
         End Get
         Set(ByVal value As Mono.Cecil.TypeAttributes)
             m_CecilType.Attributes = value
-            m_CecilType.IsBeforeFieldInit = m_BeforeFieldInit
             m_CecilType.IsSerializable = m_Serializable
         End Set
     End Property
@@ -470,10 +469,10 @@ Public MustInherit Class TypeDeclaration
 
     ReadOnly Property HasInstanceConstructors() As Boolean
         Get
-            Dim ctors As Generic.List(Of ConstructorDeclaration)
-            ctors = Me.Members.GetSpecificMembers(Of ConstructorDeclaration)()
-            For Each item As ConstructorDeclaration In ctors
-                If item.IsShared = False Then Return True
+            For i As Integer = 0 To Me.Members.Count - 1
+                Dim cd As ConstructorDeclaration = TryCast(Me.Members(i), ConstructorDeclaration)
+                If cd Is Nothing Then Continue For
+                If cd.IsShared = False Then Return True
             Next
             Return False
         End Get
@@ -481,27 +480,57 @@ Public MustInherit Class TypeDeclaration
 
     ReadOnly Property HasSharedConstantFields() As Boolean
         Get
-            Dim ctors As Generic.List(Of ConstantDeclaration)
-            ctors = Me.Members.GetSpecificMembers(Of ConstantDeclaration)()
-            Return ctors.Count > 0
+            Return Me.Members.HasSpecificMember(Of ConstantDeclaration)()
         End Get
     End Property
 
     ReadOnly Property HasSharedFieldsWithInitializers() As Boolean
         Get
-            Dim ctors As Generic.List(Of VariableDeclaration)
-            ctors = Me.Members.GetSpecificMembers(Of VariableDeclaration)()
-            For Each item As VariableDeclaration In ctors
-                If item.IsShared AndAlso item.HasInitializer Then Return True
+            For i As Integer = 0 To Me.Members.Count - 1
+                Dim item As VariableDeclaration = TryCast(Me.Members(i), VariableDeclaration)
+                If item IsNot Nothing AndAlso item.IsShared AndAlso item.HasInitializer Then Return True
+
+                Dim cd As ConstantDeclaration = TryCast(Me.Members(i), ConstantDeclaration)
+                If cd IsNot Nothing AndAlso cd.RequiresSharedInitialization Then Return True
             Next
-            For Each item As VariableDeclaration In m_StaticVariables
-                If item.DeclaringMethod.IsShared AndAlso item.HasInitializer Then Return True
-            Next
-            For Each item As ConstantDeclaration In Members.GetSpecificMembers(Of ConstantDeclaration)()
-                If item.RequiresSharedInitialization Then Return True
-            Next
+
+            If m_StaticVariables IsNot Nothing Then
+                For i As Integer = 0 To m_StaticVariables.Count - 1
+                    Dim item As VariableDeclaration = m_StaticVariables(i)
+                    If item.DeclaringMethod.IsShared AndAlso item.HasInitializer Then Return True
+                Next
+            End If
+
             Return False
         End Get
     End Property
 
+    Public Overridable Function CreateImplicitInstanceConstructors() As Boolean
+        Return True
+    End Function
+
+    Public Overridable Function CreateImplicitSharedConstructors() As Boolean
+        Dim result As Boolean = True
+
+        If Not NeedsSharedConstructor Then Return result
+        If DefaultSharedConstructor IsNot Nothing Then Return result
+
+        Me.FindDefaultConstructors()
+
+        If DefaultSharedConstructor IsNot Nothing Then Return result
+
+        DefaultSharedConstructor = New ConstructorDeclaration(Me)
+        DefaultSharedConstructor.Init(New Modifiers(ModifierMasks.Shared), New SubSignature(DefaultSharedConstructor, ConstructorDeclaration.SharedConstructorName, New ParameterList(DefaultSharedConstructor)), New CodeBlock(DefaultSharedConstructor))
+        Members.Add(DefaultSharedConstructor)
+        result = DefaultSharedConstructor.CreateDefinition AndAlso result
+        BeforeFieldInit = True
+
+        Return result
+    End Function
+
+    Protected Overridable ReadOnly Property NeedsSharedConstructor As Boolean
+        Get
+            Return False
+        End Get
+    End Property
 End Class

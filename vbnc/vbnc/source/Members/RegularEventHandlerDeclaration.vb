@@ -44,6 +44,13 @@ Public Class RegularEventHandlerDeclaration
 
         MyBase.Init(Modifiers, HandlerType, EventName, New ParameterList(Me), Code)
 
+    End Sub
+
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+
         If DeclaringType.IsValueType Then
             Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed
         ElseIf DeclaringType.IsInterface Then
@@ -52,14 +59,17 @@ Public Class RegularEventHandlerDeclaration
             Me.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.IL Or Mono.Cecil.MethodImplAttributes.Managed Or Mono.Cecil.MethodImplAttributes.Synchronized
         End If
 
-    End Sub
+        Return result
+    End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
         Helper.Assert(EventParent.EventType IsNot Nothing)
         If Signature.Parameters.Count = 0 Then
-            Signature.Parameters.Add(New Parameter(Signature.Parameters, "obj", EventParent.EventType))
+            Dim param As New Parameter(Signature.Parameters, "obj", EventParent.EventType)
+            Signature.Parameters.Add(param)
+            result = param.CreateDefinition AndAlso result
         End If
 
         result = MyBase.ResolveTypeReferences AndAlso result

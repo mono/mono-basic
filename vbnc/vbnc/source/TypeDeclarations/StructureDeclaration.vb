@@ -50,9 +50,12 @@ Public Class StructureDeclaration
         Return tm.PeekToken(i).Equals(KS.Structure)
     End Function
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        TypeAttributes = MyBase.TypeAttributes Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
-    End Sub
+        result = MyBase.CreateDefinition AndAlso result
+        TypeAttributes = Helper.getTypeAttributeScopeFromScope(Me.Modifiers, Me.IsNestedType) Or Mono.Cecil.TypeAttributes.SequentialLayout Or Mono.Cecil.TypeAttributes.Sealed
+
+        Return result
+    End Function
 End Class

@@ -52,43 +52,33 @@ Public Class UnaryNotExpression
         Return result
     End Function
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return Expression.IsConstant AndAlso Compiler.TypeResolution.IsIntegralType(Expression.ExpressionType)
-        End Get
-    End Property
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        If Not Expression.GetConstant(result, ShowError) Then Return False
 
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Helper.Assert(IsConstant)
-            Dim value As Object = Expression.ConstantValue
-            Helper.Assert(value IsNot Nothing)
-            Select Case Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, value))
-                Case TypeCode.SByte
-                    Return Not CSByte(value)
-                Case TypeCode.Byte
-                    Return Not CByte(value)
-                Case TypeCode.Int16
-                    Return Not CShort(value)
-                Case TypeCode.Int32
-                    Return Not CInt(value)
-                Case TypeCode.Int64
-                    Return Not CLng(value)
-                Case TypeCode.UInt16
-                    Return Not CUShort(value)
-                Case TypeCode.UInt32
-                    Return Not CUInt(value)
-                Case TypeCode.UInt64
-                    Return Not CULng(value)
-                Case TypeCode.Decimal, TypeCode.Double, TypeCode.Single
-                    Throw New InternalException(Me)
-                Case Else
-                    Throw New InternalException(Me)
-            End Select
-            Helper.Stop()
-            Return Nothing
-        End Get
-    End Property
+        Select Case Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, result))
+            Case TypeCode.SByte
+                result = Not CSByte(result)
+            Case TypeCode.Byte
+                result = Not CByte(result)
+            Case TypeCode.Int16
+                result = Not CShort(result)
+            Case TypeCode.Int32
+                result = Not CInt(result)
+            Case TypeCode.Int64
+                result = Not CLng(result)
+            Case TypeCode.UInt16
+                result = Not CUShort(result)
+            Case TypeCode.UInt32
+                result = Not CUInt(result)
+            Case TypeCode.UInt64
+                result = Not CULng(result)
+            Case Else
+                If ShowError Then Show30059()
+                Return False
+        End Select
+
+        Return True
+    End Function
 
     Public Overrides ReadOnly Property Keyword() As KS
         Get

@@ -26,12 +26,6 @@ Public Class BaseObjects(Of T)
 
     Private m_Parent As BaseObject
 
-    Sub SetParent(ByVal Parent As ParsedObject)
-        For Each item As IBaseObject In Me
-            item.Parent = Parent
-        Next
-    End Sub
-
     ''' <summary>
     ''' Get the compiler compiling right now.
     ''' </summary>
@@ -84,9 +78,4 @@ Public Class BaseObjects(Of T)
     Function ResolveTypeReferences() As Boolean
         Return Helper.ResolveTypeReferencesCollection(Me)
     End Function
-
-    Sub Initialize(ByVal Parent As BaseObject)
-        Helper.InitializeCollection(Me, Parent)
-    End Sub
-
 End Class

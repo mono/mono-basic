@@ -32,8 +32,6 @@ Public Class ConstantDeclaration
 
     Private m_FieldBuilderCecil As Mono.Cecil.FieldDefinition
 
-    Private m_Resolved As Boolean
-    Private m_ConstantValue As Object
     Private m_RequiresSharedInitialization As Boolean
 
     ReadOnly Property RequiresSharedInitialization() As Boolean
@@ -42,15 +40,8 @@ Public Class ConstantDeclaration
         End Get
     End Property
 
-    ReadOnly Property Resolved() As Boolean
-        Get
-            Return m_Resolved
-        End Get
-    End Property
-
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
-        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Identifier As Identifier, ByVal TypeName As TypeName, ByVal ConstantExpression As Expression)
@@ -58,7 +49,6 @@ Public Class ConstantDeclaration
         m_Identifier = Identifier
         m_TypeName = TypeName
         m_ConstantExpression = ConstantExpression
-        UpdateDefinition()
     End Sub
 
     ''' <summary>
@@ -73,43 +63,28 @@ Public Class ConstantDeclaration
         Return tm.PeekToken(i) = KS.Const
     End Function
 
-    ReadOnly Property ConstantValue() As Object
-        Get
-            If m_Resolved = False Then
-                Dim result As Boolean
-                result = ResolveConstantValue(ResolveInfo.Default(Compiler))
-                If result = False Then
-                    Helper.AddError(Me, "")
-                    Return Nothing
-                End If
-            End If
-            Return m_ConstantValue
-        End Get
-    End Property
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
+
+        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
 
         If m_TypeName IsNot Nothing Then
             result = m_TypeName.ResolveTypeReferences AndAlso result
             If m_Identifier.HasTypeCharacter Then
-                Helper.AddError(Me)
+                result = Helper.AddError(Me, "Type character and type name is not allowed")
             End If
         ElseIf m_Identifier.HasTypeCharacter Then
             m_TypeName = New TypeName(Me, TypeCharacters.TypeCharacterToType(Compiler, m_Identifier.TypeCharacter))
+        Else
+            m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
         End If
 
-        If m_ConstantExpression IsNot Nothing Then result = m_ConstantExpression.ResolveTypeReferences AndAlso result
+        m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)
 
-        UpdateDefinition()
-
-        If result AndAlso m_TypeName IsNot Nothing Then
-            Helper.Assert(m_TypeName IsNot Nothing)
-            If Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_Decimal) Then
-                m_RequiresSharedInitialization = True
-            ElseIf Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_DateTime) Then
-                m_RequiresSharedInitialization = True
-            End If
+        If Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_Decimal) Then
+            m_RequiresSharedInitialization = True
+        ElseIf Helper.CompareType(m_TypeName.ResolvedType, Compiler.TypeCache.System_DateTime) Then
+            m_RequiresSharedInitialization = True
         End If
 
         Return result
@@ -177,32 +152,31 @@ Public Class ConstantDeclaration
         Return False
     End Function
 
-    Function ResolveConstantValue(ByVal Info As ResolveInfo) As Boolean
-        Dim result As Boolean = True
-
-        Helper.Assert(m_ConstantExpression IsNot Nothing)
-        If m_ConstantExpression.IsResolved = False Then
-            result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
-            If m_ConstantExpression.IsConstant Then
-                m_ConstantValue = m_ConstantExpression.ConstantValue
-                Helper.Assert(m_ConstantValue IsNot Nothing)
-
-                If m_TypeName Is Nothing Then
-                    m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
-                Else
-                    result = TypeConverter.ConvertTo(m_ConstantExpression, m_ConstantValue, m_TypeName.ResolvedType, m_ConstantValue) AndAlso result
-                End If
-                UpdateDefinition()
-                'If m_ConstantValue IsNot Nothing Then Compiler.Report.WriteLine("Converted to: " & m_ConstantValue.GetType.FullName)
-            Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30059, m_ConstantExpression.Location)
-            End If
-            m_Resolved = True
+    Function GetConstant(ByRef result As Object, ByVal ShowErrors As Boolean) As Boolean
+        If m_ConstantExpression Is Nothing Then
+            If ShowErrors Then Show30059()
+            Return False
         End If
 
-        Helper.Assert(m_Resolved)
+        If m_ConstantExpression.IsResolved = False Then
+            If Not m_ConstantExpression.ResolveExpression(ResolveInfo.Default(Compiler)) Then
+                If ShowErrors Then Show30059()
+                Return False
+            End If
+        End If
 
-        Return result
+        If m_ConstantExpression.GetConstant(result, ShowErrors) = False Then Return False
+
+        If m_TypeName Is Nothing Then
+            m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
+        Else
+            If Not TypeConverter.ConvertTo(m_ConstantExpression, result, m_TypeName.ResolvedType, result) Then
+                If ShowErrors Then Show30059()
+                Return False
+            End If
+        End If
+
+        Return True
     End Function
 
     Function ResolveMember(ByVal Info As ResolveInfo) As Boolean Implements INonTypeMember.ResolveMember
@@ -212,12 +186,7 @@ Public Class ConstantDeclaration
             result = Compiler.Report.ShowMessage(Messages.VBNC30209, Me.Location) AndAlso result
         End If
 
-        If m_ConstantExpression Is Nothing Then
-            Helper.AddError(Me, "No constant expression.")
-            Return False
-        End If
-
-        result = ResolveConstantValue(Info) AndAlso result
+        result = m_ConstantExpression.ResolveExpression(Info) AndAlso result
 
         Return result
     End Function
@@ -226,12 +195,33 @@ Public Class ConstantDeclaration
         Return True
     End Function
 
-    Public Function DefineMember() As Boolean Implements IDefinableMember.DefineMember
+    Public Function DefineConstant() As Boolean
         Dim result As Boolean = True
+        Dim constant As Object = Nothing
 
-        If m_ConstantValue IsNot Nothing AndAlso m_ConstantValue IsNot DBNull.Value Then
-            If Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_Decimal) Then
-                Dim value As Decimal = DirectCast(m_ConstantValue, Decimal)
+        Helper.Assert(m_TypeName IsNot Nothing)
+
+        If m_ConstantExpression Is Nothing Then
+            Helper.AddError(Me, "No constant expression.")
+            Return False
+        End If
+
+        result = m_ConstantExpression.ResolveExpression(ResolveInfo.Default(Parent.Compiler)) AndAlso result
+
+        If Not GetConstant(constant, True) Then Return False
+
+        If m_RequiresSharedInitialization Then
+            m_FieldBuilderCecil.Constant = Nothing
+        ElseIf constant Is DBNull.Value Then
+            m_FieldBuilderCecil.Constant = Nothing
+        Else
+            m_FieldBuilderCecil.Constant = constant
+        End If
+        m_FieldBuilderCecil.HasConstant = Not m_RequiresSharedInitialization
+
+        If constant IsNot Nothing AndAlso constant IsNot DBNull.Value Then
+            If TypeOf constant Is Decimal Then
+                Dim value As Decimal = DirectCast(constant, Decimal)
                 Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32
                 Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
                 Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_UInt32_UInt32_UInt32()
@@ -239,45 +229,34 @@ Public Class ConstantDeclaration
                     attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
                 Next
                 m_FieldBuilderCecil.CustomAttributes.Add(attrib)
-            ElseIf Helper.CompareType(CecilHelper.GetType(Compiler, m_ConstantValue), Compiler.TypeCache.System_DateTime) Then
+            ElseIf TypeOf constant Is Date Then
                 Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
-                attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(m_ConstantValue, Date).Ticks))
+                attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(constant, Date).Ticks))
                 m_FieldBuilderCecil.CustomAttributes.Add(attrib)
             End If
         End If
 
-        UpdateDefinition()
+        m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
 
         Return result
     End Function
 
-    Public Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        If m_FieldBuilderCecil Is Nothing Then
-            m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, 0, Nothing)
-            m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
-            DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
-        End If
+        result = MyBase.CreateDefinition AndAlso result
 
-        If m_RequiresSharedInitialization Then
-            m_FieldBuilderCecil.Constant = Nothing
-        ElseIf m_ConstantValue Is DBNull.Value Then
-            m_FieldBuilderCecil.Constant = Nothing
-        Else
-            m_FieldBuilderCecil.Constant = m_ConstantValue
-        End If
+        Helper.Assert(m_FieldBuilderCecil Is Nothing)
+        m_FieldBuilderCecil = New Mono.Cecil.FieldDefinition(Name, 0, Nothing)
+        m_FieldBuilderCecil.Annotations.Add(Compiler, Me)
+        DeclaringType.CecilType.Fields.Add(m_FieldBuilderCecil)
+
         m_FieldBuilderCecil.HasDefault = True
-        m_FieldBuilderCecil.HasConstant = Not m_RequiresSharedInitialization
         m_FieldBuilderCecil.Name = Name
-        If m_TypeName IsNot Nothing Then
-            m_FieldBuilderCecil.FieldType = Helper.GetTypeOrTypeReference(Compiler, m_TypeName.ResolvedType)
-        Else
-            'Helper.StopIfDebugging()
-        End If
         m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
 
-    End Sub
+        Return result
+    End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
@@ -324,9 +303,4 @@ Public Class ConstantDeclaration
             Return m_ConstantExpression
         End Get
     End Property
-
-    Public Function ResolveAndGetConstantValue(ByRef value As Object) As Boolean Implements IFieldMember.ResolveAndGetConstantValue
-        value = ConstantValue
-        Return True
-    End Function
 End Class

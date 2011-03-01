@@ -24,7 +24,6 @@
 ''' <remarks></remarks>
 Public Class RegularEventDeclaration
     Inherits EventDeclaration
-    Implements IHasImplicitTypes
 
     Private m_ParametersOrType As ParametersOrType
 
@@ -63,6 +62,15 @@ Public Class RegularEventDeclaration
         End Get
     End Property
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+        If m_ParametersOrType IsNot Nothing Then result = m_ParametersOrType.CreateDefinition AndAlso result
+
+        Return result
+    End Function
+
     Public ReadOnly Property EventField() As Mono.Cecil.FieldDefinition
         Get
             Helper.Assert(m_Variable IsNot Nothing)
@@ -72,8 +80,9 @@ Public Class RegularEventDeclaration
         End Get
     End Property
 
-    Public Function CreateImplicitElements() As Boolean Implements IHasImplicitTypes.CreateImplicitTypes
+    Public Function CreateRegularEventMembers() As Boolean
         Dim result As Boolean = True
+
         'An event creates the following members.
         '1 - if the event is not an explicit delegate, and not an implemented interface event, a nested delegate in the 
         '    parent called (name)EventHandler.
@@ -91,18 +100,78 @@ Public Class RegularEventDeclaration
         '6 - an event in the parent called (name) with the add, remove and raise methods of 3, 4 & 5
         '    accessability is the same as for the event.
 
+        'TODO: remove m_ElementsCreated
+        Helper.Assert(m_ElementsCreated = False)
         If m_ElementsCreated Then Return result
         m_ElementsCreated = True
 
-        Dim m_AddMethod As RegularEventHandlerDeclaration
-        Dim m_RemoveMethod As RegularEventHandlerDeclaration
-        Dim m_Parameters As ParameterList = Me.Parameters
-        Dim m_Type As TypeName = Nothing
+        Dim addMethod As RegularEventHandlerDeclaration
+        Dim removeMethod As RegularEventHandlerDeclaration
+        Dim type As TypeName = Nothing
 
-        If Me.Type IsNot Nothing Then m_Type = New TypeName(Me, Me.Type)
-
+        If Me.Type IsNot Nothing Then type = New TypeName(Me, Me.Type)
 
         'Create the delegate, if necessary.
+        If ImplementsClause IsNot Nothing AndAlso ImplementsClause.ImplementsList.Count > 0 Then
+            'Nothing to do here
+        ElseIf Me.Parameters IsNot Nothing Then
+            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace, New SubSignature(Me, Me.Name & "EventHandler", Me.Parameters.Clone()))
+            m_ImplicitEventDelegate.Modifiers = Me.Modifiers
+            result = m_ImplicitEventDelegate.CreateDefinition() AndAlso result
+            result = m_ImplicitEventDelegate.CreateDelegateMembers AndAlso result
+
+            EventType = m_ImplicitEventDelegate.CecilType
+            DeclaringType.Members.Add(m_ImplicitEventDelegate)
+        ElseIf type IsNot Nothing Then
+            'nothing to do
+        Else
+            Throw New InternalException(Me)
+        End If
+
+        'Create the variable.
+        If DeclaringType.IsInterface = False Then
+            Dim eventVariableModifiers As Modifiers
+            m_Variable = New TypeVariableDeclaration(DeclaringType)
+            eventVariableModifiers = New Modifiers(ModifierMasks.Private)
+            If Me.IsShared Then eventVariableModifiers.AddModifiers(ModifierMasks.Shared)
+            If m_ImplicitEventDelegate IsNot Nothing Then
+                m_Variable.Modifiers = eventVariableModifiers
+                m_Variable.Name = Me.Name & "Event"
+                m_Variable.VariableType = m_ImplicitEventDelegate.CecilType
+            Else
+                m_Variable.Modifiers = eventVariableModifiers
+                m_Variable.Name = Me.Name & "Event"
+            End If
+            result = m_Variable.CreateDefinition AndAlso result
+            DeclaringType.Members.Add(m_Variable)
+        End If
+
+        'Create the add method
+        addMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.AddHandler, Me.Identifier)
+        result = addMethod.CreateDefinition AndAlso result
+        DeclaringType.Members.Add(addMethod)
+
+        'Create the remove method
+        removeMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.RemoveHandler, Me.Identifier)
+        result = removeMethod.CreateDefinition AndAlso result
+        DeclaringType.Members.Add(removeMethod)
+
+        Helper.Assert(addMethod IsNot Nothing)
+        Helper.Assert(addMethod.Name <> "")
+        Helper.Assert(removeMethod IsNot Nothing)
+        Helper.Assert(removeMethod.Name <> "")
+
+        MyBase.AddMethod = addMethod
+        MyBase.RemoveMethod = removeMethod
+
+        Return result
+    End Function
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+        Dim result As Boolean = True
+
+        result = m_ParametersOrType.ResolveTypeReferences AndAlso result
+
         If ImplementsClause IsNot Nothing AndAlso ImplementsClause.ImplementsList.Count > 0 Then
             Dim ism As InterfaceMemberSpecifier
             ism = ImplementsClause.ImplementsList(0)
@@ -122,7 +191,6 @@ Public Class RegularEventDeclaration
                 If eD.EventType Is Nothing Then
                     Dim red As RegularEventDeclaration = TryCast(eD.Annotations(Compiler), RegularEventDeclaration)
                     If red IsNot Nothing Then
-                        result = red.CreateImplicitElements AndAlso result
                         result = red.ResolveTypeReferences AndAlso result
                     End If
                 End If
@@ -131,68 +199,19 @@ Public Class RegularEventDeclaration
             Else
                 EventType = ism.ResolvedEventInfo.EventType
             End If
-            m_Type = New TypeName(Me, EventType)
-        ElseIf m_Parameters IsNot Nothing Then
-            m_ImplicitEventDelegate = New DelegateDeclaration(DeclaringType, DeclaringType.Namespace, New SubSignature(m_ImplicitEventDelegate, Me.Name & "EventHandler", m_Parameters.Clone()))
-            m_ImplicitEventDelegate.Modifiers = Me.Modifiers
-            m_ImplicitEventDelegate.UpdateDefinition()
-            If m_ImplicitEventDelegate.CreateImplicitElements() = False Then Helper.ErrorRecoveryNotImplemented(Me.Location)
-
-            EventType = m_ImplicitEventDelegate.CecilType
-        ElseIf m_Type IsNot Nothing Then
-            m_ImplicitEventDelegate = Nothing
-            'Helper.NotImplemented()
-        Else
-            Throw New InternalException(Me)
-        End If
-
-
-        'Create the variable.
-        If DeclaringType.IsInterface = False Then
-            Dim eventVariableModifiers As Modifiers
-            m_Variable = New TypeVariableDeclaration(DeclaringType)
-            eventVariableModifiers = New Modifiers(ModifierMasks.Private)
-            If Me.IsShared Then eventVariableModifiers.AddModifiers(ModifierMasks.Shared)
-            If m_ImplicitEventDelegate IsNot Nothing Then
-                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_ImplicitEventDelegate.CecilType)
-            Else
-                Helper.Assert(m_Type IsNot Nothing)
-                m_Variable.Init(eventVariableModifiers, Me.Name & "Event", m_Type)
+            If m_Variable IsNot Nothing AndAlso m_Variable.VariableType Is Nothing Then
+                m_Variable.VariableType = EventType
             End If
-        Else
-            m_Variable = Nothing
         End If
 
-        'Create the add method
-        m_AddMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.AddHandler, Me.Identifier)
-
-        'Create the remove method
-        m_RemoveMethod = New RegularEventHandlerDeclaration(Me, Me.Modifiers, KS.RemoveHandler, Me.Identifier)
-
-        Helper.Assert(m_AddMethod IsNot Nothing)
-        Helper.Assert(m_AddMethod.Name <> "")
-        Helper.Assert(m_RemoveMethod IsNot Nothing)
-        Helper.Assert(m_RemoveMethod.Name <> "")
-
-        'Add everything to the parent's members.
-        If m_ImplicitEventDelegate IsNot Nothing Then DeclaringType.Members.Add(m_ImplicitEventDelegate)
-        If m_Variable IsNot Nothing Then DeclaringType.Members.Add(m_Variable)
-
-        MyBase.AddMethod = m_AddMethod
-        MyBase.RemoveMethod = m_RemoveMethod
-
-        Return result
-    End Function
-
-    Public Overrides Function ResolveTypeReferences() As Boolean
-        Dim result As Boolean = True
-
-        result = m_ParametersOrType.ResolveTypeReferences AndAlso result
         If EventType IsNot Nothing Then
             'Nothing to do
         ElseIf Type IsNot Nothing Then
             Helper.Assert(EventType Is Nothing)
             EventType = Type.ResolvedType
+            If Not m_Variable Is Nothing Then
+                m_Variable.VariableType = EventType
+            End If
         ElseIf Parameters IsNot Nothing Then
             Helper.Assert(EventType IsNot Nothing OrElse ImplementsClause IsNot Nothing)
         Else

@@ -79,12 +79,21 @@ Public Class TypeManager
     End Function
 
     Function GetCache(ByVal Type As Mono.Cecil.TypeReference) As MemberCache
-        If MemberCache.ContainsKey(Type) Then
-            Return MemberCache(Type)
+        Dim result As MemberCache = Nothing
+
+        If MemberCache.TryGetValue(Type, result) Then
+            Return result
         Else
             Return New MemberCache(Compiler, Type)
         End If
     End Function
+
+    Sub ClearCache(ByVal Type As Mono.Cecil.TypeReference)
+        Dim result As MemberCache = Nothing
+        If MemberCache.TryGetValue(Type, result) Then
+            result.ClearAll()
+        End If
+    End Sub
 
     Function ContainsCache(ByVal Type As Mono.Cecil.TypeReference) As Boolean
         Return MemberCache.ContainsKey(Type)

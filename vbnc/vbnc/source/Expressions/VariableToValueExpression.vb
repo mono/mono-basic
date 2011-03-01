@@ -28,18 +28,6 @@ Public Class VariableToValueExpression
         m_Variable = VariableClassification
     End Sub
 
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Return m_Variable.IsConstant
-        End Get
-    End Property
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_Variable.ConstantValue
-        End Get
-    End Property
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
@@ -54,6 +42,10 @@ Public Class VariableToValueExpression
         Me.Classification = New ValueClassification(Me)
 
         Return result
+    End Function
+
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Return m_Variable.GetConstant(result, ShowError)
     End Function
 
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean

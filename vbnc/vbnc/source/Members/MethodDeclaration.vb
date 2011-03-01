@@ -24,8 +24,6 @@
 Public MustInherit Class MethodDeclaration
     Inherits MethodBaseDeclaration
 
-    Private added As Boolean
-
     Protected Sub New(ByVal Parent As TypeDeclaration)
         MyBase.new(Parent)
     End Sub
@@ -42,19 +40,16 @@ Public MustInherit Class MethodDeclaration
         Dim result As Boolean = True
 
         result = MyBase.ResolveTypeReferences AndAlso result
-        UpdateDefinition()
 
         Return result
     End Function
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature)
         MyBase.Init(Modifiers, Signature)
-        UpdateDefinition()
     End Sub
 
     Shadows Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As SubSignature, ByVal Code As CodeBlock)
         MyBase.Init(Modifiers, Signature, Code)
-        UpdateDefinition()
     End Sub
 
     Public Overrides Function ResolveMember(ByVal Info As ResolveInfo) As Boolean
@@ -65,30 +60,18 @@ Public MustInherit Class MethodDeclaration
         Return result
     End Function
 
-    Overrides Sub UpdateDefinition()
-        MyBase.UpdateDefinition()
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
 
-        If Not added Then
-            added = True
-            DeclaringType.CecilType.Methods.Add(CecilBuilder)
-        End If
+        result = MyBase.CreateDefinition AndAlso result
 
-    End Sub
+        Return result
+    End Function
 
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
         result = MyBase.ResolveCode(Info) AndAlso result
-
-        Return result
-    End Function
-
-    Public Overrides Function DefineMember() As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.DefineMember AndAlso result
-
-        Helper.Assert(Me.DeclaringType IsNot Nothing)
 
         Return result
     End Function

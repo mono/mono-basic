@@ -59,6 +59,15 @@ Public Class ParametersOrType
         Return result
     End Function
 
+    Public Overrides Function CreateDefinition() As Boolean
+        Dim result As Boolean = True
+
+        result = MyBase.CreateDefinition AndAlso result
+        If m_ParameterList IsNot Nothing Then result = m_ParameterList.CreateDefinition AndAlso result
+
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 
@@ -71,5 +80,4 @@ Public Class ParametersOrType
 
         Return result
     End Function
-
 End Class

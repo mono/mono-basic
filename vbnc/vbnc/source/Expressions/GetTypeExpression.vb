@@ -47,28 +47,25 @@ Public Class GetTypeExpression
         Return result
     End Function
 
+    Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
+        Dim attrib As Attribute = Me.FindFirstParent(Of Attribute)()
+        If attrib Is Nothing Then
+            If ShowError Then Show30059()
+            Return False
+        End If
+
+        result = m_TypeName.ResolvedType
+        Return True
+    End Function
+
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = m_TypeName.ResolveCode(info) AndAlso result
+        result = m_TypeName.ResolveCode(Info) AndAlso result
         Classification = New ValueClassification(Me)
 
         Return result
     End Function
-
-    Public Overrides ReadOnly Property ConstantValue() As Object
-        Get
-            Return m_TypeName.ResolvedType
-        End Get
-    End Property
-
-
-    Public Overrides ReadOnly Property IsConstant() As Boolean
-        Get
-            Dim attrib As Attribute = Me.FindFirstParent(Of Attribute)()
-            Return attrib IsNot Nothing
-        End Get
-    End Property
 
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
