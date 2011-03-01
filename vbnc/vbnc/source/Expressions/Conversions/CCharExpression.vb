@@ -77,32 +77,8 @@ Public Class CCharExpression
     End Function
 
     Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
-        Dim tpCode As TypeCode
-        Dim originalValue As Object = Nothing
-
-        If Helper.CompareType(Compiler.TypeCache.Nothing, Me.Expression.ExpressionType) Then Return True
-
-        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
-
-        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-        Select Case tpCode
-            Case TypeCode.String
-                If CStr(originalValue).Length = 1 Then
-                    result = CChar(originalValue)
-                Else
-                    If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
-                    Return False
-                End If
-            Case TypeCode.Char
-                result = CChar(originalValue)
-            Case TypeCode.DBNull
-                result = VB.ChrW(0)
-            Case Else
-                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, ExpressionType.ToString)
-                Return False
-        End Select
-
-        Return True
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+        Return ConvertToChar(result, ShowError)
     End Function
 
     Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean

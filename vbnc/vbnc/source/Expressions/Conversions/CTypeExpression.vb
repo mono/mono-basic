@@ -398,19 +398,52 @@ Public Class CTypeExpression
             Return True
         End If
 
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+
         Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
             Case TypeCode.String
                 Select Case Helper.GetTypeCode(Compiler, Me.Expression.ExpressionType)
                     Case TypeCode.Char
-                        If Not Expression.GetConstant(result, ShowError) Then Return False
                         result = CStr(result)
                         Return True
+                    Case TypeCode.String
+                        Return True
                     Case Else
-                        If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                        If ShowError Then Show30059()
                         Return False
                 End Select
+            Case TypeCode.Byte
+                Return ConvertToByte(result, ShowError)
+            Case TypeCode.SByte
+                Return ConvertToSByte(result, ShowError)
+            Case TypeCode.Int16
+                Return ConvertToShort(result, ShowError)
+            Case TypeCode.UInt16
+                Return ConvertToUShort(result, ShowError)
+            Case TypeCode.Int32
+                Return ConvertToInt32(result, ShowError)
+            Case TypeCode.UInt32
+                Return ConvertToUInt32(result, ShowError)
+            Case TypeCode.Int64
+                Return ConvertToLong(result, ShowError)
+            Case TypeCode.UInt64
+                Return ConvertToULong(result, ShowError)
+            Case TypeCode.Single
+                Return ConvertToSingle(result, ShowError)
+            Case TypeCode.Double
+                Return ConvertToDouble(result, ShowError)
+            Case TypeCode.Decimal
+                Return ConvertToDecimal(result, ShowError)
+            Case TypeCode.DateTime
+                Return ConvertToDate(result, ShowError)
+            Case TypeCode.Char
+                Return ConvertToChar(result, ShowError)
+            Case TypeCode.String
+                Return ConvertToString(result, ShowError)
+            Case TypeCode.Boolean
+                Return ConvertToBoolean(result, ShowError)
             Case Else
-                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
+                If ShowError Then Show30059()
                 Return False
         End Select
 
@@ -501,3 +534,4 @@ Public Class CTypeExpression
         End Get
     End Property
 End Class
+

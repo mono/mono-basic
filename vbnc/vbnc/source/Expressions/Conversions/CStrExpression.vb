@@ -33,25 +33,8 @@ Public Class CStrExpression
     End Function
 
     Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
-        Dim tpCode As TypeCode
-        Dim originalValue As Object = Nothing
-
-        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
-
-        If originalValue Is Nothing Then Return True
-
-        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-        Select Case tpCode
-            Case TypeCode.Char, TypeCode.String
-                result = CStr(originalValue)
-            Case TypeCode.DBNull
-                result = DBNull.Value
-            Case Else
-                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
-                Return False
-        End Select
-
-        Return True
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+        Return ConvertToString(result, ShowError)
     End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean

@@ -80,17 +80,8 @@ Public Class CDateExpression
     End Function
 
     Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
-        Dim originalValue As Object = Nothing
-
-        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
-
-        If Not TypeOf originalValue Is Date Then
-            If ShowError Then Show30059()
-            Return False
-        End If
-
-        result = originalValue
-        Return True
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+        Return ConvertToDate(result, ShowError)
     End Function
     
     Shared Function Validate(ByVal Info As ResolveInfo, ByVal Conversion As ConversionExpression) As Boolean

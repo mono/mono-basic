@@ -73,24 +73,8 @@ Public Class CDblExpression
     End Function
 
     Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
-        Dim tpCode As TypeCode
-        Dim originalValue As Object = Nothing
-
-        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
-
-        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-        Select Case tpCode
-            Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32, _
-            TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal
-                result = CDbl(originalValue) 'No range checking needed.
-            Case TypeCode.DBNull
-                result = CDbl(0)
-            Case Else
-                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
-                Return False
-        End Select
-
-        Return True
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+        Return ConvertToDouble(result, ShowError)
     End Function
 
     Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean

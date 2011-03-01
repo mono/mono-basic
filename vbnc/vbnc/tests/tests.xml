@@ -7851,4 +7851,7 @@
 	<test id="2011" name="bug-438669" category="" priority="0" target="library" mytype="empty">
 		<file>Bugs\bug-438669.vb</file>
 	</test>
+	<test id="2012" name="bug-438672" category="" priority="0" target="library" mytype="empty">
+		<file>Bugs\bug-438672.vb</file>
+	</test>
 </rt>

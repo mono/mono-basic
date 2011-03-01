@@ -33,27 +33,8 @@ Public Class CShortExpression
     End Function
 
     Public Overrides Function GetConstant(ByRef result As Object, ByVal ShowError As Boolean) As Boolean
-        Dim tpCode As TypeCode
-        Dim originalValue As Object = Nothing
-
-        If Not Expression.GetConstant(originalValue, ShowError) Then Return False
-
-        tpCode = Helper.GetTypeCode(Compiler, CecilHelper.GetType(Compiler, originalValue))
-
-        Select Case tpCode
-            Case TypeCode.Boolean, TypeCode.SByte, TypeCode.Byte, TypeCode.Int16
-                result = CShort(originalValue) 'No range checking needed.
-            Case TypeCode.UInt16, TypeCode.Int32, TypeCode.UInt32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Single, TypeCode.Double, TypeCode.Decimal, TypeCode.DBNull
-                If Compiler.TypeResolution.CheckNumericRange(originalValue, result, ExpressionType) = False Then
-                    If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30439, Location, Helper.ToString(Expression, ExpressionType))
-                    Return False
-                End If
-            Case Else
-                If ShowError Then Compiler.Report.ShowMessage(Messages.VBNC30060, Location, originalValue.ToString, Helper.ToString(Expression, ExpressionType))
-                Return False
-        End Select
-
-        Return True
+        If Not Expression.GetConstant(result, ShowError) Then Return False
+        Return ConvertToShort(result, ShowError)
     End Function
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
