@@ -104,6 +104,7 @@ Partial Class frmMain
         Me.tblTestsInQueue = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cmdFindTests = New System.Windows.Forms.Button()
         Me.cmdCreateTest = New System.Windows.Forms.Button()
+        Me.MakeErrorTestToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.tblLayoutMain.SuspendLayout()
@@ -120,7 +121,7 @@ Partial Class frmMain
         '
         'mnuTools
         '
-        Me.mnuTools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuViewCode, Me.mnuToolsRefresh, Me.NewTestToolStripMenuItem, Me.ViewQueuedTestsToolStripMenuItem})
+        Me.mnuTools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuViewCode, Me.mnuToolsRefresh, Me.NewTestToolStripMenuItem, Me.ViewQueuedTestsToolStripMenuItem, Me.MakeErrorTestToolStripMenuItem1})
         Me.mnuTools.Name = "mnuTools"
         Me.mnuTools.Size = New System.Drawing.Size(48, 20)
         Me.mnuTools.Text = "Tools"
@@ -128,27 +129,27 @@ Partial Class frmMain
         'cmnuViewCode
         '
         Me.cmnuViewCode.Name = "cmnuViewCode"
-        Me.cmnuViewCode.Size = New System.Drawing.Size(169, 22)
+        Me.cmnuViewCode.Size = New System.Drawing.Size(193, 22)
         Me.cmnuViewCode.Text = "View code"
         '
         'mnuToolsRefresh
         '
         Me.mnuToolsRefresh.Name = "mnuToolsRefresh"
         Me.mnuToolsRefresh.ShortcutKeys = System.Windows.Forms.Keys.F5
-        Me.mnuToolsRefresh.Size = New System.Drawing.Size(169, 22)
+        Me.mnuToolsRefresh.Size = New System.Drawing.Size(193, 22)
         Me.mnuToolsRefresh.Text = "&Refresh"
         '
         'NewTestToolStripMenuItem
         '
         Me.NewTestToolStripMenuItem.Name = "NewTestToolStripMenuItem"
         Me.NewTestToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(169, 22)
+        Me.NewTestToolStripMenuItem.Size = New System.Drawing.Size(193, 22)
         Me.NewTestToolStripMenuItem.Text = "New test"
         '
         'ViewQueuedTestsToolStripMenuItem
         '
         Me.ViewQueuedTestsToolStripMenuItem.Name = "ViewQueuedTestsToolStripMenuItem"
-        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(169, 22)
+        Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(193, 22)
         Me.ViewQueuedTestsToolStripMenuItem.Text = "View queued tests"
         '
         'lstImages
@@ -609,6 +610,13 @@ Partial Class frmMain
         Me.cmdCreateTest.Tag = ""
         Me.cmdCreateTest.Text = "Cre&ate Test"
         '
+        'MakeErrorTestToolStripMenuItem1
+        '
+        Me.MakeErrorTestToolStripMenuItem1.Name = "MakeErrorTestToolStripMenuItem1"
+        Me.MakeErrorTestToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.MakeErrorTestToolStripMenuItem1.Size = New System.Drawing.Size(193, 22)
+        Me.MakeErrorTestToolStripMenuItem1.Text = "Make error test"
+        '
         'frmMain
         '
         Me.AcceptButton = Me.cmdCreateTest
@@ -703,4 +711,6 @@ Partial Class frmMain
     Friend WithEvents mnuIldasmDump As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cmdFindTests As System.Windows.Forms.Button
     Friend WithEvents cmdCreateTest As System.Windows.Forms.Button
+    Friend WithEvents MakeErrorTestToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
 End Class
+

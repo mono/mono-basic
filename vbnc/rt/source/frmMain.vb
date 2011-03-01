@@ -1133,4 +1133,19 @@ Class frmMain
         End Try
     End Sub
 
+    Private Sub lstTests_KeyDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles lstTests.KeyDown
+        Try
+            Select Case e.KeyCode
+                Case Keys.Space
+                    AddWork(GetSelectedTests, True)
+            End Select
+        Catch ex As Exception
+            MsgBox(ex.Message & vbNewLine & ex.StackTrace)
+        End Try
+    End Sub
+
+    Private Sub MakeErrorTestToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MakeErrorTestToolStripMenuItem1.Click
+        MakeErrorTestToolStripMenuItem_Click(sender, e)
+    End Sub
 End Class
+
