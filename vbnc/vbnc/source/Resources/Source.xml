@@ -1604,7 +1604,7 @@
 	</Message>
 	<Message id="30480" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Shared 'Sub New' cannot be declared '{0}'.</VBNCValue>
 		<VBValue>Shared 'Sub New' cannot be declared '|1'.</VBValue>
 	</Message>
 	<Message id="30481" level="Error">

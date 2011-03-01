@@ -127,6 +127,21 @@ Public Class ConstructorDeclaration
             If m_BaseCtorCall IsNot Nothing Then Code.RemoveStatement(m_BaseCtorCall)
         End If
 
+        If Me.IsShared AndAlso (Me.Modifiers.Mask And Me.Modifiers.AccessibilityMask) <> 0 Then
+            Select Case Me.Modifiers.Mask And Me.Modifiers.AccessibilityMask
+                Case ModifierMasks.Private
+                    result = Report.ShowMessage(Messages.VBNC30480, Me.Location, "Private")
+                Case ModifierMasks.Protected
+                    result = Report.ShowMessage(Messages.VBNC30480, Me.Location, "Protected")
+                Case ModifierMasks.Friend
+                    result = Report.ShowMessage(Messages.VBNC30480, Me.Location, "Friend")
+                Case ModifierMasks.Protected Or ModifierMasks.Friend
+                    result = Report.ShowMessage(Messages.VBNC30480, Me.Location, "Protected Friend")
+                Case ModifierMasks.Public
+                    result = Report.ShowMessage(Messages.VBNC30480, Me.Location, "Public")
+            End Select
+        End If
+
         Return result
     End Function
 

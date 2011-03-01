@@ -6749,7 +6749,7 @@
 		<arguments>-r:System.Web.dll</arguments>
 		<file>My\WindowsFormsWithCustomSubMain.vb</file>
 	</test>
-	<test id="1706" name="GenericNestedType2" category="NonCecilRelated" priority="20" target="library">
+	<test id="1706" name="GenericNestedType2" category="NonCecilRelated" priority="20" target="library" mytype="empty">
 		<file>NonCecilRelated\GenericNestedType2.vb</file>
 	</test>
 	<test id="1707" name="GenericType3" category="NonCecilRelated" priority="20" target="library">
@@ -7226,7 +7226,7 @@
 	<test id="1731" name="DefaultProperty7" category="" priority="0" target="exe">
 		<file>CompileTime2\DefaultProperty7.vb</file>
 	</test>
-	<test id="1806" name="ConditionalExpression1" category="" priority="0" target="exe">
+	<test id="1806" name="ConditionalExpression1" category="" priority="0" target="exe" mytype="empty">
 		<arguments>/debug:full</arguments>
 		<file>CompileTime2\ConditionalExpression1.vb</file>
 	</test>
@@ -7811,7 +7811,25 @@
 	<test id="1998" name="30002-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30002" target="exe">
 		<file>Errors\30002-2.vb</file>
 	</test>
-	<test id="1999" name="NoConfigWithMy" category="My" priority="0" target="library">
+	<test id="1999" name="30480" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="library" mytype="empty">
+		<file>Errors\30480.vb</file>
+	</test>
+	<test id="2000" name="bug-434288" category="" priority="0" target="library" mytype="empty">
+		<file>Bugs\bug-434288.vb</file>
+	</test>
+	<test id="2001" name="30480-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="exe">
+		<file>Errors\30480-1.vb</file>
+	</test>
+	<test id="2002" name="30480-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="exe">
+		<file>Errors\30480-2.vb</file>
+	</test>
+	<test id="2003" name="30480-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="exe">
+		<file>Errors\30480-3.vb</file>
+	</test>
+	<test id="2004" name="30480-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30480" target="exe">
+		<file>Errors\30480-4.vb</file>
+	</test>
+	<test id="2005" name="NoConfigWithMy" category="My" priority="0" target="library">
 		<arguments>/noconfig /verbose</arguments>
 		<file>My\NoConfigWithMy.vb</file>
 	</test>

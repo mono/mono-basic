@@ -2256,7 +2256,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30479 = 30479
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Shared 'Sub New' cannot be declared '{0}'."
     ''' VB   = "Shared 'Sub New' cannot be declared '|1'."
     ''' </summary>
     ''' <remarks></remarks>
