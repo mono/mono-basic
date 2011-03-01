@@ -545,6 +545,18 @@ Public Class AssemblyDeclaration
                 result = method.DefineOptionalParameters AndAlso result
                 Continue For
             End If
+
+            Dim prop As PropertyDeclaration = TryCast(Type.Members(i), PropertyDeclaration)
+            If prop IsNot Nothing Then
+                result = prop.Signature.Parameters.DefineOptionalParameters AndAlso result
+                If prop.SetDeclaration IsNot Nothing Then
+                    result = prop.SetDeclaration.Signature.Parameters.DefineOptionalParameters AndAlso result
+                End If
+                If prop.GetDeclaration IsNot Nothing Then
+                    result = prop.GetDeclaration.Signature.Parameters.DefineOptionalParameters AndAlso result
+                End If
+                Continue For
+            End If
         Next
 
         Return result

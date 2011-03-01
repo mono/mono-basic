@@ -228,7 +228,6 @@ Public Class Parameter
 
         If Me.Modifiers.Is(ModifierMasks.Optional) Then
             Dim constant As Object = Nothing
-            ParameterAttributes = Mono.Cecil.ParameterAttributes.Optional
             If m_ConstantExpression Is Nothing Then
                 Helper.AddError(Me, "Optional parameters must have a constant expression.")
                 result = False
