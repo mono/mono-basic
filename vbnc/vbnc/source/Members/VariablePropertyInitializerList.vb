@@ -42,13 +42,4 @@ Public Class VariablePropertyInitializerList
     Sub New(ByVal Parent As ParsedObject)
         MyBase.New(Parent)
     End Sub
-
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As VariablePropertyInitializerList
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New VariablePropertyInitializerList(NewParent)
-        For Each item As VariablePropertyInitializer In Me
-            result.Add(item.Clone(result))
-        Next
-        Return result
-    End Function
 End Class

@@ -31,12 +31,6 @@ Public Class TypeParameters
         MyBase.New(Parent)
     End Sub
 
-    Function Clone(ByVal NewParent As ParsedObject) As TypeParameters
-        Dim result As New TypeParameters(NewParent)
-        result.Parameters.AddRange(m_TypeParameters.Clone())
-        Return result
-    End Function
-
     ReadOnly Property Parameters() As TypeParameterList
         Get
             Return m_TypeParameters

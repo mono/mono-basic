@@ -89,11 +89,4 @@ Public Class LiteralExpression
         Classification = New ValueClassification(Me, ExpressionType, constant)
         Return True
     End Function
-
-    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        If NewParent IsNot Nothing Then NewParent = Me.Parent
-        Dim result As New LiteralExpression(NewParent)
-        result.Init(m_Value)
-        Return result
-    End Function
 End Class

@@ -43,9 +43,4 @@ Public Class NothingConstantExpression
             Return Compiler.TypeCache.Nothing
         End Get
     End Property
-
-    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        If NewParent IsNot Nothing Then NewParent = Me.Parent
-        Return New NothingConstantExpression(NewParent)
-    End Function
 End Class

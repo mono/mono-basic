@@ -113,9 +113,7 @@ Public Class SubSignature
 
     Sub CloneTo(ByVal ClonedSignature As SubSignature)
         ClonedSignature.m_Identifier = m_Identifier
-        If m_TypeParameters IsNot Nothing Then
-            ClonedSignature.m_TypeParameters = m_TypeParameters.Clone(ClonedSignature)
-        End If
+        ClonedSignature.m_TypeParameters = m_TypeParameters
         If m_ParameterList IsNot Nothing Then
             ClonedSignature.m_ParameterList = m_ParameterList.Clone(ClonedSignature)
             ClonedSignature.m_ParameterList.Parent = ClonedSignature

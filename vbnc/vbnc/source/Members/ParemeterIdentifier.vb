@@ -60,16 +60,6 @@ Public Class ParameterIdentifier
         Return result
     End Function
 
-    Function Clone(Optional ByVal NewParent As Parameter = Nothing) As ParameterIdentifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ParameterIdentifier(NewParent)
-        result.m_Identifier = m_Identifier
-        If m_ArrayNameModifier IsNot Nothing Then
-            result.m_ArrayNameModifier = m_ArrayNameModifier.clone(result)
-        End If
-        Return result
-    End Function
-
     Shadows ReadOnly Property Parent() As Parameter
         Get
             Return DirectCast(MyBase.Parent, Parameter)

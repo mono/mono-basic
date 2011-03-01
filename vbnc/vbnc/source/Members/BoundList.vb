@@ -35,13 +35,6 @@ Public Class BoundList
         m_Expressions = Expressions
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As BoundList
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New BoundList(NewParent)
-        result.Init(Helper.CloneExpressionArray(m_Expressions, result))
-        Return result
-    End Function
-
     ReadOnly Property Expressions() As Expression()
         Get
             Return m_Expressions

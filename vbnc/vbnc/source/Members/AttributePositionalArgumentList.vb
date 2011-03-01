@@ -42,15 +42,6 @@ Public Class AttributePositionalArgumentList
         Return AttributeArgumentExpression.CanBeMe(tm)
     End Function
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As AttributePositionalArgumentList
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New AttributePositionalArgumentList(NewParent)
-        For Each item As AttributeArgumentExpression In Me
-            result.Add(item.Clone(result))
-        Next
-        Return result
-    End Function
-
     ReadOnly Property AsExpressions() As Expression()
         Get
             Dim result(Me.Count - 1) As Expression

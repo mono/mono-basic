@@ -40,15 +40,6 @@ Public Class AttributeArguments
         m_VariablePropertyInitializerList = VariablePropertyInitializerList
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As AttributeArguments
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New AttributeArguments(NewParent)
-        If m_AttributePositionalArgumentList IsNot Nothing Then result.m_AttributePositionalArgumentList = m_AttributePositionalArgumentList.clone(result)
-        If m_VariablePropertyInitializerList IsNot Nothing Then result.m_VariablePropertyInitializerList = m_VariablePropertyInitializerList.clone(result)
-
-        Return result
-    End Function
-
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 

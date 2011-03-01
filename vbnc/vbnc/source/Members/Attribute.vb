@@ -127,8 +127,8 @@ Public Class Attribute
         Dim result As New Attribute(NewParent)
         result.m_IsAssembly = m_IsAssembly
         result.m_IsModule = m_IsModule
-        If m_SimpleTypeName IsNot Nothing Then result.m_SimpleTypeName = m_SimpleTypeName.Clone(result)
-        If m_AttributeArguments IsNot Nothing Then result.m_AttributeArguments = m_AttributeArguments.Clone(result)
+        If m_SimpleTypeName IsNot Nothing Then result.m_SimpleTypeName = m_SimpleTypeName
+        If m_AttributeArguments IsNot Nothing Then result.m_AttributeArguments = m_AttributeArguments
         result.m_ResolvedType = m_ResolvedType
         result.m_ResolvedTypeConstructor = m_ResolvedTypeConstructor
 

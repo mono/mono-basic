@@ -44,13 +44,4 @@ Public Class TypeParameterList
 
         Return result
     End Function
-
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeParameterList
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeParameterList(NewParent)
-        For Each item As TypeParameter In Me
-            result.Add(item.clone(result))
-        Next
-        Return result
-    End Function
 End Class

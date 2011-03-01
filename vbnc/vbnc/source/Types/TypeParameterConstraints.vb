@@ -52,13 +52,6 @@ Public Class TypeParameterConstraints
         Return result
     End Function
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeParameterConstraints
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeParameterConstraints(NewParent)
-        result.Init(m_ConstraintList.clone(result))
-        Return result
-    End Function
-
     ReadOnly Property Constraints() As ConstraintList
         Get
             Return m_Constraintlist

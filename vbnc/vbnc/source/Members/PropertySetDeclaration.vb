@@ -43,11 +43,7 @@ Public Class PropertySetDeclaration
 
         mySignature = New SubSignature(Me)
 
-        If PropertySignature.TypeParameters IsNot Nothing Then
-            typeParams = PropertySignature.TypeParameters.Clone(mySignature)
-        Else
-            typeParams = Nothing
-        End If
+        typeParams = PropertySignature.TypeParameters
         If SetParameters IsNot Nothing Then
             params = SetParameters
         Else

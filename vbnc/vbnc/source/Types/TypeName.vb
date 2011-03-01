@@ -61,19 +61,6 @@ Public Class TypeName
         m_ResolvedType = Type
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeName
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeName(NewParent)
-        If Me.IsNonArrayTypeName Then
-            result.Init(Me.AsNonArrayTypeName.clone)
-        ElseIf Me.IsArrayTypeName Then
-            result.Init(Me.AsArrayTypeName.clone)
-        Else
-            Throw New InternalException(Me)
-        End If
-        Return result
-    End Function
-
     ReadOnly Property AsString() As String
         Get
             If TypeOf m_TypeName Is NonArrayTypeName Then Return AsNonArrayTypeName.Name

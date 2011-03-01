@@ -66,18 +66,7 @@ Public Class VariablePropertyInitializer
         m_AttributeArgumentExpression = AttributeArgumentExpression
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As VariablePropertyInitializer
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New VariablePropertyInitializer(NewParent)
-        If m_IdentifierOrKeyword IsNot Nothing Then result.m_IdentifierOrKeyword = m_IdentifierOrKeyword.Clone(result)
-        If m_AttributeArgumentExpression IsNot Nothing Then result.m_AttributeArgumentExpression = m_AttributeArgumentExpression.Clone(result)
-
-        Return result
-    End Function
-
-
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Return tm.CurrentToken.IsIdentifierOrKeyword AndAlso tm.PeekToken.Equals(KS.Colon) AndAlso tm.PeekToken(2).Equals(KS.Equals)
     End Function
-
 End Class

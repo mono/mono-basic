@@ -38,17 +38,6 @@ Public Class ArrayTypeModifiers
         m_ArrayTypeModifiers = ArrayTypeModifiers
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ArrayTypeModifiers
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ArrayTypeModifiers(NewParent)
-        Dim mods(m_ArrayTypeModifiers.GetUpperBound(0)) As ArrayTypeModifier
-        For i As Integer = 0 To mods.GetUpperBound(0)
-            mods(i) = m_ArrayTypeModifiers(i).Clone(result)
-        Next
-        result.Init(mods)
-        Return result
-    End Function
-
     Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         Dim result As Mono.Cecil.TypeReference = Helper.GetTypeOrTypeReference(Compiler, OriginalType)
         Dim mods() As ArrayTypeModifier = m_ArrayTypeModifiers

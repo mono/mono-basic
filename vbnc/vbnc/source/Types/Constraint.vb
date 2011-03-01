@@ -38,14 +38,6 @@ Public Class Constraint
         m_Special = Special
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Constraint
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New Constraint(NewParent)
-        If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName.Clone(result)
-        result.m_Special = m_Special
-        Return result
-    End Function
-
     ReadOnly Property TypeName() As TypeName
         Get
             Return m_TypeName

@@ -30,14 +30,8 @@ Public Class GlobalExpression
         MyBase.New(Parent)
     End Sub
 
-    Shadows Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As GlobalExpression
-        Return New GlobalExpression(NewParent)
-    End Function
-
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
-
         Classification = New NamespaceClassification(Me, New GlobalNamespace(Me))
-
         Return True
     End Function
 

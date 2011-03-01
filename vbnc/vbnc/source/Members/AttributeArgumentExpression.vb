@@ -37,13 +37,6 @@ Public Class AttributeArgumentExpression
         m_Expression = Expression
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As AttributeArgumentExpression
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New AttributeArgumentExpression(NewParent)
-        result.Init(m_Expression.Clone(result))
-        Return result
-    End Function
-
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 

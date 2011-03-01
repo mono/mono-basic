@@ -85,8 +85,8 @@ Public Class Parameter
         Dim result As New Parameter(NewParent)
         result.m_CustomAttributes = m_CustomAttributes
         result.m_Modifiers = m_Modifiers
-        result.m_ParameterIdentifier = m_ParameterIdentifier.Clone(result)
-        If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName.Clone(result)
+        result.m_ParameterIdentifier = m_ParameterIdentifier
+        If m_TypeName IsNot Nothing Then result.m_TypeName = m_TypeName
         If m_ConstantExpression IsNot Nothing Then result.m_ConstantExpression = m_ConstantExpression
         Return result
     End Function

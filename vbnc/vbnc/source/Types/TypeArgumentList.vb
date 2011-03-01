@@ -41,13 +41,4 @@ Public Class TypeArgumentList
             Return m_ArgumentCollection
         End Get
     End Property
-
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeArgumentList
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeArgumentList(NewParent)
-        For Each item As TypeName In Me
-            result.Add(item.Clone(result))
-        Next
-        Return result
-    End Function
 End Class

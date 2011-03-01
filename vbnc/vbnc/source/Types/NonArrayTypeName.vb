@@ -57,20 +57,6 @@ Public Class NonArrayTypeName
         End Set
     End Property
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As NonArrayTypeName
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New NonArrayTypeName(NewParent)
-        result.IsNullable = IsNullable
-        If Me.IsConstructedTypeName Then
-            result.Init(Me.AsConstructedTypeName.Clone)
-        ElseIf Me.IsSimpleTypeName Then
-            result.Init(Me.AsSimpleTypeName.Clone)
-        Else
-            Throw New InternalException(Me)
-        End If
-        Return result
-    End Function
-
     ReadOnly Property AsString() As String
         Get
             Return ToString()

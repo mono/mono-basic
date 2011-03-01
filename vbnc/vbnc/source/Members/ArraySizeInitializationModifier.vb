@@ -47,14 +47,6 @@ Public Class ArraySizeInitializationModifier
         m_ArrayTypeModifiers = ArrayTypeModifiers
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ArraySizeInitializationModifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ArraySizeInitializationModifier(NewParent)
-        result.m_BoundList = m_BoundList.Clone(result)
-        If m_ArrayTypeModifiers IsNot Nothing Then result.m_ArrayTypeModifiers = m_ArrayTypeModifiers.Clone(result)
-        Return result
-    End Function
-
     ReadOnly Property BoundList() As BoundList
         Get
             Return m_BoundList

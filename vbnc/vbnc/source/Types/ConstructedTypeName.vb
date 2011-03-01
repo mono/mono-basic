@@ -59,13 +59,6 @@ Public Class ConstructedTypeName
         m_TypeArgumentList = TypeArgumentList
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ConstructedTypeName
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ConstructedTypeName(NewParent)
-        result.Init(m_QualifiedIdentifier.Clone(result), m_TypeArgumentList.Clone(result))
-        Return result
-    End Function
-
     Public ReadOnly Property ConstructedTypeName() As ConstructedTypeName
         Get
             Return m_ConstructedTypeName

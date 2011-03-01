@@ -2104,16 +2104,6 @@ Public Class Helper
         Return result
     End Function
 
-    Shared Function CloneExpressionArray(ByVal Expressions() As Expression, ByVal NewParent As ParsedObject) As Expression()
-        Dim result(Expressions.GetUpperBound(0)) As Expression
-        For i As Integer = 0 To result.GetUpperBound(0)
-            If Expressions(i) IsNot Nothing Then
-                result(i) = Expressions(i).Clone(NewParent)
-            End If
-        Next
-        Return result
-    End Function
-
     ReadOnly Property Compiler() As Compiler
         Get
             Return m_Compiler

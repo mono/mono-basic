@@ -43,19 +43,6 @@ Public Class SimpleTypeName
         m_TypeName = BuiltInTypeName
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As SimpleTypeName
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New SimpleTypeName(NewParent)
-        If Me.IsBuiltInTypeName Then
-            result.Init(Me.AsBuiltInTypeName.Clone(result))
-        ElseIf Me.IsQualifiedIdentifier Then
-            result.Init(Me.AsQualifiedIdentifier.Clone(result))
-        Else
-            Throw New InternalException(Me)
-        End If
-        Return result
-    End Function
-
     Friend Sub ChangeQualifiedIdentifier(ByVal qi As QualifiedIdentifier)
         Helper.Assert(IsQualifiedIdentifier)
         'Helper.Assert(AsQualifiedIdentifier.Second IsNot Nothing)

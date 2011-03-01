@@ -45,23 +45,6 @@ Public Class IdentifierOrKeywordWithTypeArguments
         m_TypeArguments = TypeArguments
     End Sub
 
-    Shadows Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As IdentifierOrKeywordWithTypeArguments
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Dim result As New IdentifierOrKeywordWithTypeArguments(NewParent)
-        If m_TypeArguments IsNot Nothing Then
-            result.Init(Me.Identifier, Me.Keyword, m_TypeArguments.Clone(result))
-        Else
-            result.Init(Me.Identifier, Me.Keyword, Nothing)
-        End If
-        Return result
-    End Function
-
-    Shared Function CreateAndParseTo(ByRef result As Expression) As Boolean
-
-        Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
-
-    End Function
-
     Shared Function IsMe(ByVal tm As tm) As Boolean
         Dim result As Boolean = True
 

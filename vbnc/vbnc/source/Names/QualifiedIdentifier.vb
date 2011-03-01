@@ -49,23 +49,6 @@ Public Class QualifiedIdentifier
         m_Second = Second
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As QualifiedIdentifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New QualifiedIdentifier(NewParent, Me.Location)
-
-        If Me.IsFirstGlobal Then
-            result.Init(Me.FirstAsGlobal.Clone(result), m_Second)
-        ElseIf Me.IsFirstIdentifier Then
-            result.Init(Me.FirstAsIdentifier.Clone(result), m_Second)
-        ElseIf Me.IsFirstQualifiedIdentifier Then
-            result.Init(Me.FirstAsQualifiedIdentifier.Clone(result), m_Second)
-        Else
-            Throw New InternalException(Me)
-        End If
-
-        Return result
-    End Function
-
     ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType

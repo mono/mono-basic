@@ -28,15 +28,6 @@ Public Class ConstraintList
         MyBase.New(Parent, Objects)
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ConstraintList
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ConstraintList(NewParent)
-        For Each item As Constraint In Me
-            result.Add(item.Clone(result))
-        Next
-        Return result
-    End Function
-
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 

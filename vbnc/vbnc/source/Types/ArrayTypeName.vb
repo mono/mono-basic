@@ -52,15 +52,6 @@ Public Class ArrayTypeName
         m_ArrayTypeModifiers = ArrayTypeModifiers
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ArrayTypeName
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ArrayTypeName(NewParent)
-
-        result.Init(m_TypeName.Clone(result), m_ArrayTypeModifiers.Clone(result))
-
-        Return result
-    End Function
-
     ReadOnly Property ResolvedType() As Mono.Cecil.TypeReference
         Get
             Return m_ResolvedType

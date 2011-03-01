@@ -42,11 +42,7 @@ Public Class PropertyGetDeclaration
         Dim params As ParameterList
         Dim typename As TypeName
 
-        If PropertySignature.TypeParameters IsNot Nothing Then
-            typeParams = PropertySignature.TypeParameters.Clone(mySignature)
-        Else
-            typeParams = Nothing
-        End If
+        typeParams = PropertySignature.TypeParameters
         If PropertySignature.ReturnTypeAttributes IsNot Nothing Then
             retTypeAttributes = PropertySignature.ReturnTypeAttributes.Clone(mySignature)
         Else
@@ -58,7 +54,7 @@ Public Class PropertyGetDeclaration
             params = Nothing
         End If
         If PropertySignature.TypeName IsNot Nothing Then
-            typename = PropertySignature.TypeName.Clone(mySignature)
+            typename = PropertySignature.TypeName
         ElseIf PropertySignature.ReturnType IsNot Nothing Then
             typename = New TypeName(mySignature, PropertySignature.ReturnType)
         Else

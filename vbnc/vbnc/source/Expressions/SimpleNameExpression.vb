@@ -61,18 +61,6 @@ Public Class SimpleNameExpression
         End Get
     End Property
 
-    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New SimpleNameExpression(NewParent)
-        If m_TypeArgumentList Is Nothing Then
-            result.Init(m_Identifier, Nothing)
-        Else
-            result.Init(m_Identifier, m_TypeArgumentList.Clone(result))
-        End If
-
-        Return result
-    End Function
-
     Property Identifier() As Identifier
         Get
             Return m_Identifier

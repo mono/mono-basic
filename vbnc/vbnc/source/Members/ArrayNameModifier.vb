@@ -48,19 +48,6 @@ Public Class ArrayNameModifier
         m_ArrayModifier = ArrayModifier
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As ArrayNameModifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New ArrayNameModifier(NewParent)
-        If Me.IsArrayTypeModifiers Then
-            result.Init(Me.AsArrayTypeModifiers.Clone(result))
-        ElseIf Me.IsArraySizeInitializationModifier Then
-            result.Init(Me.AsArraySizeInitializationModifier.Clone(result))
-        Else
-            Throw New InternalException(Me)
-        End If
-        Return result
-    End Function
-
     Function CreateArrayType(ByVal OriginalType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
         If Me.IsArraySizeInitializationModifier Then
             Return Me.AsArraySizeInitializationModifier.CreateArrayType(OriginalType)

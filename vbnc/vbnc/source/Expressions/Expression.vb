@@ -283,11 +283,6 @@ Public MustInherit Class Expression
         Return ResolveExpression(Info)
     End Function
 
-    Overridable Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
-        Return Nothing
-    End Function
-
     Protected Overridable Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function

@@ -74,14 +74,6 @@ Public Class TypeParameter
         End Get
     End Property
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As TypeParameter
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New TypeParameter(NewParent)
-        result.m_Identifier = m_Identifier
-        If m_TypeParameterConstraints IsNot Nothing Then result.m_TypeParameterConstraints = m_TypeParameterConstraints.Clone(result)
-        Return result
-    End Function
-
     Shared Function Clone(ByVal Builder As Mono.Cecil.GenericParameter, ByVal Owner As Mono.Cecil.IGenericParameterProvider, ByVal Position As Integer) As Mono.Cecil.GenericParameter
         Dim result As New Mono.Cecil.GenericParameter(Builder.Name, Owner)
 

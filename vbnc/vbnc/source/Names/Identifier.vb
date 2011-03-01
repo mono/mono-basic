@@ -72,14 +72,6 @@ Public Class Identifier
         End Get
     End Property
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Identifier
-        Dim result As Identifier
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        result = New Identifier(NewParent)
-        result.Init(m_Name, Location, m_TypeCharacter)
-        Return result
-    End Function
-
     Property Name() As String
         Get
             Return m_Name

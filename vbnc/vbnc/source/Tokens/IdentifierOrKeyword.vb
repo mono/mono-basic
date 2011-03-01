@@ -53,11 +53,6 @@ Public Class IdentifierOrKeyword
         If Token.IsKeyword Then m_Keyword = Token.Keyword
     End Sub
 
-    Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As IdentifierOrKeyword
-        If NewParent Is Nothing Then NewParent = DirectCast(Me.Parent, ParsedObject)
-        Return New IdentifierOrKeyword(NewParent, m_Identifier, m_Keyword)
-    End Function
-
     ReadOnly Property Name() As String
         Get
             Return m_Identifier

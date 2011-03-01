@@ -28,15 +28,6 @@ Public Class BooleanLiteralExpression
         MyBase.Init(Value, ExpressionType)
     End Sub
 
-    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        If NewParent IsNot Nothing Then NewParent = Me.Parent
-        Dim constant As Object = Nothing
-        Dim result As New BooleanLiteralExpression(NewParent)
-        GetConstant(constant, True)
-        result.Init(DirectCast(constant, Boolean))
-        Return result
-    End Function
-
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return Compiler.TypeCache.System_Boolean

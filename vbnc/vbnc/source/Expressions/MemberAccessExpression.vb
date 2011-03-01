@@ -65,23 +65,6 @@ Public Class MemberAccessExpression
         m_Second = Second
     End Sub
 
-    Public Overrides Function Clone(Optional ByVal NewParent As ParsedObject = Nothing) As Expression
-        If NewParent Is Nothing Then NewParent = Me.Parent
-        Dim result As New MemberAccessExpression(NewParent)
-
-        Dim m_First As Expression = Nothing
-        Dim m_Second As IdentifierOrKeyword = Nothing
-        '  Dim m_TypeArguments As TypeParameters
-
-        If Me.m_First IsNot Nothing Then m_First = Me.m_First.Clone(result)
-        If Me.m_Second IsNot Nothing Then m_Second = Me.m_Second.Clone(result)
-        '  If Me.m_TypeArguments IsNot Nothing Then m_TypeArguments = Me.m_TypeArguments.Clone(result)
-
-        result.Init(m_First, m_Second)
-
-        Return result
-    End Function
-
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
