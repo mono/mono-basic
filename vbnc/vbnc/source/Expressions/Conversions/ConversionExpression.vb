@@ -335,7 +335,8 @@ Public MustInherit Class ConversionExpression
         Return True
     End Function
 
-    Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Mono.Cecil.TypeReference) As Expression
+    Shared Function GetTypeConversion(ByVal Parent As ParsedObject, ByVal fromExpr As Expression, ByVal DestinationType As Mono.Cecil.TypeReference, Optional ByVal IsExplicit As Boolean = False) As Expression
+        Dim convExp As ConversionExpression
 
         If Helper.CompareType(fromExpr.ExpressionType, DestinationType) Then
             Return fromExpr
@@ -343,35 +344,35 @@ Public MustInherit Class ConversionExpression
 
         Select Case Helper.GetTypeCode(Parent.Compiler, DestinationType)
             Case TypeCode.Boolean
-                Return New CBoolExpression(Parent, fromExpr)
+                convExp = New CBoolExpression(Parent, fromExpr)
             Case TypeCode.Byte
-                Return New CByteExpression(Parent, fromExpr)
+                convExp = New CByteExpression(Parent, fromExpr)
             Case TypeCode.Char
-                Return New CCharExpression(Parent, fromExpr)
+                convExp = New CCharExpression(Parent, fromExpr)
             Case TypeCode.DateTime
-                Return New CDateExpression(Parent, fromExpr)
+                convExp = New CDateExpression(Parent, fromExpr)
             Case TypeCode.Decimal
-                Return New CDecExpression(Parent, fromExpr)
+                convExp = New CDecExpression(Parent, fromExpr)
             Case TypeCode.Double
-                Return New CDblExpression(Parent, fromExpr)
+                convExp = New CDblExpression(Parent, fromExpr)
             Case TypeCode.Int16
-                Return New CShortExpression(Parent, fromExpr)
+                convExp = New CShortExpression(Parent, fromExpr)
             Case TypeCode.Int32
-                Return New CIntExpression(Parent, fromExpr)
+                convExp = New CIntExpression(Parent, fromExpr)
             Case TypeCode.Int64
-                Return New CLngExpression(Parent, fromExpr)
+                convExp = New CLngExpression(Parent, fromExpr)
             Case TypeCode.SByte
-                Return New CSByteExpression(Parent, fromExpr)
+                convExp = New CSByteExpression(Parent, fromExpr)
             Case TypeCode.Single
-                Return New CSngExpression(Parent, fromExpr)
+                convExp = New CSngExpression(Parent, fromExpr)
             Case TypeCode.String
-                Return New CStrExpression(Parent, fromExpr)
+                convExp = New CStrExpression(Parent, fromExpr)
             Case TypeCode.UInt16
-                Return New CUShortExpression(Parent, fromExpr)
+                convExp = New CUShortExpression(Parent, fromExpr)
             Case TypeCode.UInt32
-                Return New CUIntExpression(Parent, fromExpr)
+                convExp = New CUIntExpression(Parent, fromExpr)
             Case TypeCode.UInt64
-                Return New CULngExpression(Parent, fromExpr)
+                convExp = New CULngExpression(Parent, fromExpr)
             Case Else
                 If CecilHelper.IsByRef(DestinationType) AndAlso CecilHelper.IsByRef(fromExpr.ExpressionType) = False Then
                     Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(DestinationType)
@@ -384,9 +385,11 @@ Public MustInherit Class ConversionExpression
                     If result = False Then Throw New InternalException
                     Return tmp
                 Else
-                    Return New CTypeExpression(Parent, fromExpr, DestinationType)
+                    convExp = New CTypeExpression(Parent, fromExpr, DestinationType)
                 End If
         End Select
+        convExp.IsExplicit = IsExplicit
+        Return convExp
     End Function
 
     Public Overrides Function ResolveTypeReferences() As Boolean

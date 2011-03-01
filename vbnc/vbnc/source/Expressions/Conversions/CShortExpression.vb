@@ -57,6 +57,8 @@ Public Class CShortExpression
 
         result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
 
+        If Conversion.GetConstant(Nothing, False) Then Return result
+
         Select Case expTypeCode
             Case TypeCode.Char
                 Info.Compiler.Report.ShowMessage(Messages.VBNC32006, Expression.Location, Helper.ToString(Expression, expType))
@@ -71,6 +73,12 @@ Public Class CShortExpression
                     'OK
                 Else
                     result = Conversion.FindUserDefinedConversionOperator() AndAlso result
+                End If
+            Case TypeCode.Int16, TypeCode.Byte, TypeCode.SByte
+                'Implicitly convertible
+            Case Else
+                If Conversion.IsExplicit = False AndAlso Conversion.Location.File(Conversion.Compiler).IsOptionStrictOn Then
+                    result = Conversion.Compiler.Report.ShowMessage(Messages.VBNC30512, Conversion.Location, Helper.ToString(Conversion, expType), Helper.ToString(Conversion, ExpressionType)) AndAlso result
                 End If
         End Select
 
@@ -135,3 +143,4 @@ Public Class CShortExpression
         End Get
     End Property
 End Class
+

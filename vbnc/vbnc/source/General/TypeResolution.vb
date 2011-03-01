@@ -109,8 +109,6 @@ Public Class TypeResolution
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[ULong])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
         valCanBeContainBy(getTypeIndex(BuiltInDataTypes.[UShort])) = New Mono.Cecil.TypeReference() {Compiler.TypeCache.System_UInt16, Compiler.TypeCache.System_Int32, Compiler.TypeCache.System_UInt32, Compiler.TypeCache.System_Int64, Compiler.TypeCache.System_UInt64, Compiler.TypeCache.System_Decimal, Compiler.TypeCache.System_Double, Compiler.TypeCache.System_Single}
 
-
-
     End Sub
 
     ''' <summary>
@@ -419,10 +417,6 @@ Public Class TypeResolution
             Return KS.None
         End If
     End Function
-
-    'Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As TypeDescriptor, ByVal ToType As TypeDescriptor) As Boolean
-    '    Return IsImplicitlyConvertible(Context, FromType.TypeInReflection, ToType.TypeInReflection)
-    'End Function
 
     Function IsImplicitlyConvertible(ByVal Context As BaseObject, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference) As Boolean
         Dim Compiler As Compiler = Context.Compiler

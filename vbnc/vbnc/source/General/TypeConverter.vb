@@ -113,7 +113,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXHHJJJLLLLLLX-L" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXHXGHJJJLLLLLLX-L" & _
+            "XBXHXFHJJJLLLLLLX-L" & _
             "XBXHXHHIIJKLMLLLX-L" & _
             "XBXJXJIIJJLLLLLLX-L" & _
             "XBXJXJIJIJKLMLLLX-L" & _

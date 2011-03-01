@@ -7854,4 +7854,274 @@
 	<test id="2012" name="bug-438672" category="" priority="0" target="library" mytype="empty">
 		<file>Bugs\bug-438672.vb</file>
 	</test>
+	<test id="2013" name="bug-656602" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="library" mytype="empty">
+		<file>Bugs\bug-656602.vb</file>
+	</test>
+	<test id="2014" name="30512-23" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-23.vb</file>
+	</test>
+	<test id="2015" name="30512-24" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-24.vb</file>
+	</test>
+	<test id="2016" name="30512-25" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-25.vb</file>
+	</test>
+	<test id="2017" name="30512-26" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-26.vb</file>
+	</test>
+	<test id="2018" name="30512-27" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-27.vb</file>
+	</test>
+	<test id="2019" name="30512-28" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-28.vb</file>
+	</test>
+	<test id="2020" name="30512-29" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-29.vb</file>
+	</test>
+	<test id="2021" name="30512-30" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-30.vb</file>
+	</test>
+	<test id="2022" name="30512-31" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-31.vb</file>
+	</test>
+	<test id="2023" name="30512-32" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-32.vb</file>
+	</test>
+	<test id="2024" name="30512-33" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-33.vb</file>
+	</test>
+	<test id="2025" name="30512-34" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-34.vb</file>
+	</test>
+	<test id="2026" name="30512-35" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-35.vb</file>
+	</test>
+	<test id="2027" name="30512-36" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-36.vb</file>
+	</test>
+	<test id="2028" name="30512-37" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-37.vb</file>
+	</test>
+	<test id="2029" name="30512-38" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-38.vb</file>
+	</test>
+	<test id="2030" name="30512-39" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-39.vb</file>
+	</test>
+	<test id="2031" name="30512-40" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-40.vb</file>
+	</test>
+	<test id="2032" name="30512-41" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-41.vb</file>
+	</test>
+	<test id="2033" name="30512-42" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-42.vb</file>
+	</test>
+	<test id="2034" name="30512-43" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-43.vb</file>
+	</test>
+	<test id="2035" name="30512-44" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-44.vb</file>
+	</test>
+	<test id="2036" name="30512-45" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-45.vb</file>
+	</test>
+	<test id="2037" name="30512-46" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-46.vb</file>
+	</test>
+	<test id="2038" name="30512-47" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-47.vb</file>
+	</test>
+	<test id="2039" name="30512-48" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-48.vb</file>
+	</test>
+	<test id="2040" name="30512-49" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-49.vb</file>
+	</test>
+	<test id="2041" name="30512-50" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-50.vb</file>
+	</test>
+	<test id="2042" name="30512-51" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-51.vb</file>
+	</test>
+	<test id="2043" name="30512-52" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-52.vb</file>
+	</test>
+	<test id="2044" name="30512-53" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-53.vb</file>
+	</test>
+	<test id="2045" name="30512-54" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-54.vb</file>
+	</test>
+	<test id="2046" name="30512-55" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-55.vb</file>
+	</test>
+	<test id="2047" name="30512-56" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-56.vb</file>
+	</test>
+	<test id="2048" name="30512-57" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-57.vb</file>
+	</test>
+	<test id="2049" name="30512-58" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-58.vb</file>
+	</test>
+	<test id="2050" name="30512-59" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-59.vb</file>
+	</test>
+	<test id="2051" name="30512-60" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-60.vb</file>
+	</test>
+	<test id="2052" name="30512-61" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-61.vb</file>
+	</test>
+	<test id="2053" name="30512-62" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-62.vb</file>
+	</test>
+	<test id="2054" name="30512-63" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-63.vb</file>
+	</test>
+	<test id="2055" name="30512-64" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-64.vb</file>
+	</test>
+	<test id="2056" name="30512-65" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-65.vb</file>
+	</test>
+	<test id="2057" name="30512-66" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-66.vb</file>
+	</test>
+	<test id="2058" name="30512-67" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-67.vb</file>
+	</test>
+	<test id="2059" name="30512-68" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-68.vb</file>
+	</test>
+	<test id="2060" name="30512-69" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-69.vb</file>
+	</test>
+	<test id="2061" name="30512-70" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-70.vb</file>
+	</test>
+	<test id="2062" name="30512-71" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-71.vb</file>
+	</test>
+	<test id="2063" name="30512-72" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-72.vb</file>
+	</test>
+	<test id="2064" name="30512-73" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-73.vb</file>
+	</test>
+	<test id="2065" name="30512-74" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-74.vb</file>
+	</test>
+	<test id="2066" name="30512-75" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-75.vb</file>
+	</test>
+	<test id="2067" name="30512-76" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-76.vb</file>
+	</test>
+	<test id="2068" name="30512-77" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-77.vb</file>
+	</test>
+	<test id="2069" name="30512-78" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-78.vb</file>
+	</test>
+	<test id="2070" name="30512-79" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-79.vb</file>
+	</test>
+	<test id="2071" name="30512-80" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-80.vb</file>
+	</test>
+	<test id="2072" name="30512-81" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-81.vb</file>
+	</test>
+	<test id="2073" name="30512-82" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-82.vb</file>
+	</test>
+	<test id="2074" name="30512-83" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-83.vb</file>
+	</test>
+	<test id="2075" name="30512-84" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-84.vb</file>
+	</test>
+	<test id="2076" name="30512-85" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-85.vb</file>
+	</test>
+	<test id="2077" name="30512-86" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-86.vb</file>
+	</test>
+	<test id="2078" name="30512-87" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-87.vb</file>
+	</test>
+	<test id="2079" name="30512-88" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-88.vb</file>
+	</test>
+	<test id="2080" name="30512-89" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-89.vb</file>
+	</test>
+	<test id="2081" name="30512-90" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-90.vb</file>
+	</test>
+	<test id="2082" name="30512-91" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-91.vb</file>
+	</test>
+	<test id="2083" name="30512-92" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-92.vb</file>
+	</test>
+	<test id="2084" name="30512-93" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-93.vb</file>
+	</test>
+	<test id="2085" name="30512-94" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-94.vb</file>
+	</test>
+	<test id="2086" name="30512-95" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-95.vb</file>
+	</test>
+	<test id="2087" name="30512-96" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-96.vb</file>
+	</test>
+	<test id="2088" name="30512-97" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-97.vb</file>
+	</test>
+	<test id="2089" name="30512-98" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-98.vb</file>
+	</test>
+	<test id="2090" name="30512-99" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-99.vb</file>
+	</test>
+	<test id="2091" name="30512-100" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-100.vb</file>
+	</test>
+	<test id="2092" name="30512-101" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-101.vb</file>
+	</test>
+	<test id="2093" name="30512-102" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-102.vb</file>
+	</test>
+	<test id="2094" name="30512-103" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-103.vb</file>
+	</test>
+	<test id="2095" name="30512-104" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-104.vb</file>
+	</test>
+	<test id="2096" name="30512-105" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-105.vb</file>
+	</test>
+	<test id="2097" name="30512-106" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-106.vb</file>
+	</test>
+	<test id="2098" name="30512-107" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-107.vb</file>
+	</test>
+	<test id="2099" name="30512-108" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-108.vb</file>
+	</test>
+	<test id="2100" name="30512-109" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-109.vb</file>
+	</test>
+	<test id="2101" name="30512-110" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-110.vb</file>
+	</test>
+	<test id="2102" name="30512-111" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
+		<file>Errors\30512-111.vb</file>
+	</test>
 </rt>

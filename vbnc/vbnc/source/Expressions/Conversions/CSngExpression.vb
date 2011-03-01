@@ -57,6 +57,8 @@ Public Class CSngExpression
 
         result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
 
+        If Conversion.GetConstant(Nothing, False) Then Return result
+
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, ExpressionType))
@@ -69,11 +71,17 @@ Public Class CSngExpression
                 Else
                     result = Conversion.FindUserDefinedConversionOperator() AndAlso result
                 End If
+            Case TypeCode.Single, TypeCode.Decimal, TypeCode.UInt64, TypeCode.Int64, TypeCode.UInt32, TypeCode.Int32, TypeCode.Int16, TypeCode.Byte, TypeCode.SByte, TypeCode.UInt16
+                'Implicitly convertible
+            Case Else
+                If Conversion.IsExplicit = False AndAlso Conversion.Location.File(Conversion.Compiler).IsOptionStrictOn Then
+                    result = Conversion.Compiler.Report.ShowMessage(Messages.VBNC30512, Conversion.Location, Helper.ToString(Conversion, expType), Helper.ToString(Conversion, ExpressionType)) AndAlso result
+                End If
         End Select
 
         Return result
     End Function
-    
+
     Overloads Shared Function GenerateCode(ByVal Conversion As ConversionExpression, ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         Dim expType As Mono.Cecil.TypeReference = Nothing
@@ -124,3 +132,4 @@ Public Class CSngExpression
         End Get
     End Property
 End Class
+

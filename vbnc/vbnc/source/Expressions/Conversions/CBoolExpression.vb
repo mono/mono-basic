@@ -114,6 +114,8 @@ Public Class CBoolExpression
         
         result = ValidateForNullable(Info, Conversion, expTypeCode, expType) AndAlso result
 
+        If Conversion.GetConstant(Nothing, False) Then Return result
+
         Select Case expTypeCode
             Case TypeCode.Char, TypeCode.DateTime
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Expression.Location, Helper.ToString(Expression, expType), Helper.ToString(Expression, Info.Compiler.TypeCache.System_Boolean))
@@ -126,6 +128,12 @@ Public Class CBoolExpression
                 Else
                     result = Conversion.FindUserDefinedConversionOperator() AndAlso result
                 End If
+            Case TypeCode.Boolean
+                'Implicitly convertible
+            Case Else
+                If Conversion.IsExplicit = False AndAlso Conversion.Location.File(Conversion.Compiler).IsOptionStrictOn Then
+                    result = Conversion.Compiler.Report.ShowMessage(Messages.VBNC30512, Conversion.Location, Helper.ToString(Conversion, expType), Helper.ToString(Conversion, ExpressionType)) AndAlso result
+                End If
         End Select
 
         Return result
@@ -137,3 +145,4 @@ Public Class CBoolExpression
         End Get
     End Property
 End Class
+
