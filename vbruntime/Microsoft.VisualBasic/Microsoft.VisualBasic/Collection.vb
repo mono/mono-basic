@@ -467,7 +467,12 @@ Namespace Microsoft.VisualBasic
             Return IEnumerable_GetEnumerator()
         End Function
 
+#If NET_VER >= 4.0 Then
+        <System.Security.SecurityCritical()> _
         Private Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
+#Else
+        Private Sub GetObjectData(ByVal info As System.Runtime.Serialization.SerializationInfo, ByVal context As System.Runtime.Serialization.StreamingContext) Implements System.Runtime.Serialization.ISerializable.GetObjectData
+#End If
             Throw New NotImplementedException
         End Sub
 

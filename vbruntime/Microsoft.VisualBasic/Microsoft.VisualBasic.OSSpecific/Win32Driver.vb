@@ -35,7 +35,12 @@ Namespace Microsoft.VisualBasic.OSSpecific
     Friend Class Win32Driver
         Inherits OSDriver
 
+#If NET_VER >= 4.0 Then
+        <Security.SecuritySafeCritical()> _
         Public Overrides Sub SetDate(ByVal newDate As Date)
+#Else
+        Public Overrides Sub SetDate(ByVal newDate As Date)
+#End If
             Dim time As SystemTime
 
             GetLocalTime(time)
@@ -49,7 +54,12 @@ Namespace Microsoft.VisualBasic.OSSpecific
             End If
         End Sub
 
+#If NET_VER >= 4.0 Then
+        <Security.SecuritySafeCritical()> _
         Public Overrides Sub SetTime(ByVal newTime As Date)
+#Else
+        Public Overrides Sub SetTime(ByVal newTime As Date)
+#End If
             Dim time As SystemTime
 
             GetLocalTime(time)

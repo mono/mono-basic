@@ -17,5 +17,5 @@
 
 #Non-general arguments
 -debug:full
--define:DEBUG=False,TRACE=false,NET_2_0=True,_MYTYPE=\"Empty\",NET_VER=2.0 
+-define:DEBUG=False,TRACE=false,NET_2_0=True,_MYTYPE=\"Empty\",NET_VER=4.0 
 -define:mono_disabled=true

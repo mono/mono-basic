@@ -69,8 +69,14 @@ Namespace Microsoft.VisualBasic.FileIO
             m_AnyMessage = Not String.IsNullOrEmpty(message)
         End Sub
 
+#If NET_VER >= 4.0 Then
+        <EditorBrowsable(EditorBrowsableState.Advanced), SecurityPermission(SecurityAction.Demand, SerializationFormatter:=True)> _
+        <System.Security.SecurityCritical()> _
+        Public Overrides Sub GetObjectData(ByVal info As SerializationInfo, ByVal context As StreamingContext)
+#Else
         <EditorBrowsable(EditorBrowsableState.Advanced), SecurityPermission(SecurityAction.Demand, SerializationFormatter:=True)> _
         Public Overrides Sub GetObjectData(ByVal info As SerializationInfo, ByVal context As StreamingContext)
+#End If
             MyBase.GetObjectData(info, context)
             If info IsNot Nothing Then info.AddValue("LineNumber", m_LineNumber)
         End Sub
