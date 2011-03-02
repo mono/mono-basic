@@ -92,7 +92,11 @@ Public Class VariableInitializer
                 Else
                     initExp = initExp.ReclassifyToValueExpression
                 End If
-                result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+                If initExp Is Nothing Then
+                    result = False
+                Else
+                    result = initExp.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+                End If
             End If
 
             If result = False Then Return result
@@ -133,3 +137,4 @@ Public Class VariableInitializer
     End Property
 
 End Class
+

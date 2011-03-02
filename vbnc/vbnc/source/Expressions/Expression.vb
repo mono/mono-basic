@@ -422,7 +422,8 @@ Public MustInherit Class Expression
             Case ExpressionClassification.Classifications.EventAccess
                 Throw New InternalException(Me)
             Case ExpressionClassification.Classifications.Void
-                Throw New InternalException(Me)
+                Compiler.Report.ShowMessage(Messages.VBNC30491, Me.Location)
+                Return Nothing
             Case ExpressionClassification.Classifications.Type
                 Dim exp As Expression = Nothing
                 If m_Classification.AsTypeClassification.CreateAliasExpression(Me, exp) = False Then
