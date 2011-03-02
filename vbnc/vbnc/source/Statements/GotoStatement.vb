@@ -50,7 +50,10 @@ Public Class GotoStatement
         Dim result As Boolean = True
 
         m_Destination = Me.FindFirstParent(Of CodeBlock).FindLabel(m_GotoWhere)
-        result = m_Destination IsNot Nothing AndAlso result
+        If m_Destination Is Nothing Then
+            result = false
+            Report.ShowMessage(Messages.VBNC30132, Me.Location, m_GotoWhere.Identifier)
+        End If
 
         Return result
     End Function
@@ -61,3 +64,4 @@ Public Class GotoStatement
         End Get
     End Property
 End Class
+

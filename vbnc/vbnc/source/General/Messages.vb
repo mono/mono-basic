@@ -835,7 +835,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30131 = 30131
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Label '{0}' is not defined."
     ''' VB   = "Label '|1' is not defined."
     ''' </summary>
     ''' <remarks></remarks>

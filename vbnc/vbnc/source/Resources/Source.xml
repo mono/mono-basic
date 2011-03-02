@@ -589,7 +589,7 @@
 	</Message>
 	<Message id="30132" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Label '{0}' is not defined.</VBNCValue>
 		<VBValue>Label '|1' is not defined.</VBValue>
 	</Message>
 	<Message id="30133" level="Error">
