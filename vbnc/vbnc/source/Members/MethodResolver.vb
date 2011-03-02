@@ -234,15 +234,23 @@ Public Class MethodResolver
 
         RemoveNarrowingExceptObject()
         Log("After removing narrowing (except object) candidates, there are " & CandidatesLeft & " candidates left.")
-        If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Helper.AddError(Me.m_Parent, String.Format("After removing narrowing (except object) candidates for method '{0}', nothing was found", Me.m_InitialCandidates(0).Member.Name))
-            Helper.AddError(Me.m_Parent, String.Format("Tried to select using invocation list: '{0}' of {1} initial candidates", Me.ArgumentsTypesAsString, m_InitialCandidates.Length))
-            Dim reported As Integer = 0
-            For i As Integer = 0 To m_InitialCandidates.Length - 1
-                reported += 1
-                Dim mi As Mono.Cecil.MemberReference = m_InitialCandidates(i).Member
-                Helper.AddError(Me.m_Parent, String.Format("Candidate #{0}: {1} {2}", reported, mi.Name, Helper.ToString(Me.m_Parent, Helper.GetParameters(Me.m_Parent, mi))))
-            Next
+        If CandidatesLeft = 1 Then
+            Return True
+        ElseIf CandidatesLeft = 0 Then
+            If Parent.Location.File(Compiler).IsOptionStrictOn = False Then
+                m_IsLateBound = True
+                Return True
+            End If
+            If ShowErrors Then
+                Helper.AddError(Me.m_Parent, String.Format("After removing narrowing (except object) candidates for method '{0}', nothing was found", Me.m_InitialCandidates(0).Member.Name))
+                Helper.AddError(Me.m_Parent, String.Format("Tried to select using invocation list: '{0}' of {1} initial candidates", Me.ArgumentsTypesAsString, m_InitialCandidates.Length))
+                Dim reported As Integer = 0
+                For i As Integer = 0 To m_InitialCandidates.Length - 1
+                    reported += 1
+                    Dim mi As Mono.Cecil.MemberReference = m_InitialCandidates(i).Member
+                    Helper.AddError(Me.m_Parent, String.Format("Candidate #{0}: {1} {2}", reported, mi.Name, Helper.ToString(Me.m_Parent, Helper.GetParameters(Me.m_Parent, mi))))
+                Next
+            End If
         End If
 
         If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
