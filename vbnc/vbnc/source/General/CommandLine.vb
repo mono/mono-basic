@@ -1035,7 +1035,6 @@ Public Class CommandLine
             Case "optionstrict+", "optionstrict"
                 m_eOptionStrict = OptionStrictTypes.On
             Case "optionstrict-"
-                Console.WriteLine("Warning: Option Strict Off will probably fail.")
                 m_eOptionStrict = OptionStrictTypes.Off
             Case "optioninfer+", "optioninfer"
                 m_eOptionInfer = OptionInferTypes.On
