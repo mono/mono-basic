@@ -140,7 +140,7 @@
   <data name="30121"><value>CHANGEME</value></data>
   <data name="30122"><value>CHANGEME</value></data>
   <data name="30123"><value>CHANGEME</value></data>
-  <data name="30124"><value>CHANGEME</value></data>
+  <data name="30124"><value>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</value></data>
   <data name="30125"><value>CHANGEME</value></data>
   <data name="30126"><value>CHANGEME</value></data>
   <data name="30127"><value>Attribute '{0}' is not valid: {1}</value></data>

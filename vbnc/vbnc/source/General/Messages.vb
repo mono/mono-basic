@@ -779,7 +779,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30123 = 30123
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'."
     ''' VB   = "Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>

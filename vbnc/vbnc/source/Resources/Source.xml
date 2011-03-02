@@ -549,7 +549,7 @@
 	</Message>
 	<Message id="30124" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</VBNCValue>
 		<VBValue>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</VBValue>
 	</Message>
 	<Message id="30125" level="Error">

@@ -8124,4 +8124,8 @@
 	<test id="2102" name="30512-111" category="" priority="0" expectedexitcode="1" expectederrorcode="30512" target="exe">
 		<file>Errors\30512-111.vb</file>
 	</test>
+	<test id="2103" name="30124" category="" priority="0" expectedexitcode="1" expectederrorcode="30124" target="exe">
+		<arguments>-r:System.Data.dll</arguments>
+		<file>Errors\30124.vb</file>
+	</test>
 </rt>
