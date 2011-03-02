@@ -177,7 +177,7 @@
   <data name="30180"><value>Keyword does not name a type.</value></data>
   <data name="30181"><value>CHANGEME</value></data>
   <data name="30182"><value>Epxected type.</value></data>
-  <data name="30183"><value>CHANGEME</value></data>
+  <data name="30183"><value>Keyword is not valid as an identifier.</value></data>
   <data name="30184"><value>CHANGEME</value></data>
   <data name="30185"><value>CHANGEME</value></data>
   <data name="30186"><value>CHANGEME</value></data>
@@ -443,7 +443,7 @@
   <data name="30620"><value>'Option Strict' must be followed by 'On' or 'Off'.</value></data>
   <data name="30621"><value>CHANGEME</value></data>
   <data name="30622"><value>CHANGEME</value></data>
-  <data name="30623"><value>CHANGEME</value></data>
+  <data name="30623"><value>'End Namespace' must be preceded by a matching 'Namespace'.</value></data>
   <data name="30624"><value>CHANGEME</value></data>
   <data name="30625"><value>CHANGEME</value></data>
   <data name="30626"><value>CHANGEME</value></data>

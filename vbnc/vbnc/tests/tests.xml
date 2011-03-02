@@ -8137,4 +8137,10 @@
 	<test id="2106" name="bug-680380" mytype="empty">
 		<file>Bugs\bug-680380.vb</file>
 	</test>
+	<test id="2106.2" name="30183" category="" priority="0" expectedexitcode="1" expectederrorcode="30183" target="exe">
+		<file>Errors\30183.vb</file>
+	</test>
+	<test id="2107" name="30623" category="" priority="0" expectedexitcode="1" expectederrorcode="30623" target="exe">
+		<file>Errors\30623.vb</file>
+	</test>
 </rt>

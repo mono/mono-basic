@@ -734,7 +734,7 @@
 	</Message>
 	<Message id="30183" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Keyword is not valid as an identifier.</VBNCValue>
 		<VBValue>Keyword is not valid as an identifier.</VBValue>
 	</Message>
 	<Message id="30184" level="Error">
@@ -2064,7 +2064,7 @@
 	</Message>
 	<Message id="30623" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'End Namespace' must be preceded by a matching 'Namespace'.</VBNCValue>
 		<VBValue>'End Namespace' must be preceded by a matching 'Namespace'.</VBValue>
 	</Message>
 	<Message id="30624" level="Error">

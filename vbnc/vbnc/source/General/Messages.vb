@@ -1038,7 +1038,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30182 = 30182
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Keyword is not valid as an identifier."
     ''' VB   = "Keyword is not valid as an identifier."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2900,7 +2900,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30622 = 30622
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'End Namespace' must be preceded by a matching 'Namespace'."
     ''' VB   = "'End Namespace' must be preceded by a matching 'Namespace'."
     ''' </summary>
     ''' <remarks></remarks>

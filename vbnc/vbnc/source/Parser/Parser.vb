@@ -1588,7 +1588,7 @@ Public Class Parser
                         currentNameSpace &= currentNamespaces(currentNamespaces.Count - 1).Name
                     End If
                 Else
-                    Helper.AddError(Compiler, tm.CurrentLocation, "'End Namespace' without 'Namespace'.")
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30623, tm.CurrentLocation)
                 End If
             Else
                 If attributes IsNot Nothing AndAlso attributes.Count > 0 Then
@@ -6196,7 +6196,10 @@ Public Class Parser
         tm.AcceptIfNotInternalError(KS.Class)
 
         m_Identifier = ParseIdentifier(CType(Nothing, ParsedObject))
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If m_Identifier Is Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC30183, tm.CurrentLocation)
+            Return Nothing
+        End If
 
         If tm.AcceptEndOfStatement = False Then
             m_TypeParameters = ParseTypeParameters(Nothing)
