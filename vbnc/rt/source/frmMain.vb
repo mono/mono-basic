@@ -832,7 +832,7 @@ Class frmMain
 
             If test.Run = False Then
                 Throw New ApplicationException("The test has not been executed!")
-            ElseIf test.Result <> rt.Test.Results.Failed AndAlso test.Result <> rt.Test.Results.Regressed Then
+            ElseIf test.ExpectedExitCode = 0 AndAlso test.Result <> rt.Test.Results.Failed AndAlso test.Result <> rt.Test.Results.Regressed Then
                 Throw New ApplicationException("The test didn't fail!")
             ElseIf test.Files.Count <> 1 Then
                 Throw New ApplicationException("The test has more than one file!")
