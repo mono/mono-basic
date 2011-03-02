@@ -390,24 +390,43 @@ Public Class SimpleNameExpression
                 '(it can resolve to a method group with several methods, some shared, some not. 
                 'So we create a classification with an instance expression, if the member is 
                 'shared, the instance expression should not be used.
-                Dim hasInstanceExpression As Boolean
-                Dim hasNotInstanceExpression As Boolean
+                Dim instanceCount As Integer
 
                 For i As Integer = 0 To members.Count - 1
                     Dim member As Mono.Cecil.MemberReference = members(i)
                     If CecilHelper.GetMemberType(member) = MemberTypes.TypeInfo OrElse CecilHelper.GetMemberType(member) = MemberTypes.NestedType Then
-                        hasNotInstanceExpression = True
+                        '
                     ElseIf Helper.IsShared(member) Then
-                        hasNotInstanceExpression = True
+                        '
                     Else
-                        hasInstanceExpression = True
+                        instanceCount += 1
                     End If
                 Next
 
-                If container Is firstcontainer AndAlso hasInstanceExpression Then
+                If container Is firstcontainer AndAlso instanceCount > 0 Then
                     'Otherwise, if the type is the immediately enclosing type and the lookup identifies a non-shared 
                     'type member, then the result is the same as a member access of the form Me.E, where E is 
                     'the identifier.
+                    If instanceCount = members.Count AndAlso IsSharedContext() Then
+                        Dim show30369 As Boolean = True
+
+                        If instanceCount = 1 Then
+                            Dim fd As FieldReference
+                            Dim pd As PropertyReference
+
+                            'this is allowed: 11.6.1 Identical Type and Member Names
+                            fd = TryCast(members(0), FieldReference)
+                            If fd IsNot Nothing Then
+                                show30369 = Helper.CompareName(fd.Name, fd.FieldType.Name) = False
+                            Else
+                                pd = TryCast(members(0), PropertyReference)
+                                If pd IsNot Nothing Then
+                                    show30369 = Helper.CompareName(pd.Name, pd.PropertyType.Name) = False
+                                End If
+                            End If
+                            If show30369 Then Return Report.ShowMessage(Messages.VBNC30369, Me.Location)
+                        End If
+                    End If
                     Classification = GetMeClassification(members, firstcontainer)
                     Return True
                 Else
@@ -904,3 +923,4 @@ Public Class SimpleNameExpression
         Return True
     End Function
 End Class
+

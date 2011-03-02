@@ -42,6 +42,10 @@ Public Class PropertyGroupToPropertyAccessExpression
                 m_PropertyGroup.ResolveGroup(New ArgumentList(Me))
                 Return Helper.AddError(Me, "Failed to resolve property group.")
             End If
+
+            If m_PropertyGroup.InstanceExpression Is Nothing AndAlso CecilHelper.IsStatic(m_PropertyGroup.ResolvedProperty) = False Then
+                Return Report.ShowMessage(Messages.VBNC30469, Me.Location)
+            End If
         End If
 
         Helper.Assert(m_PropertyGroup.ResolvedProperty IsNot Nothing, "m_PropertyGroup.ResolvedProperty Is Nothing")
@@ -68,3 +72,4 @@ Public Class PropertyGroupToPropertyAccessExpression
         End Get
     End Property
 End Class
+

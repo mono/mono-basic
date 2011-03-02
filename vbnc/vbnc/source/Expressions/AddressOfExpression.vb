@@ -91,6 +91,8 @@ Public Class AddressOfExpression
 
         result = m_Expression.ResolveExpression(New ResolveInfo(Info.Compiler, True)) AndAlso result
 
+        If result = False Then Return False
+
         If m_Expression.Classification.IsMethodGroupClassification Then
             Dim mpClassification As MethodPointerClassification
             mpClassification = New MethodPointerClassification(Me, m_Expression.Classification.AsMethodGroupClassification)

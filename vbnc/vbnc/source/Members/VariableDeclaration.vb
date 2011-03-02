@@ -202,14 +202,19 @@ Public MustInherit Class VariableDeclaration
         If m_TypeName IsNot Nothing Then result = m_TypeName.ResolveCode(Info) AndAlso result
 
         result = MyBase.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
-        If m_ArgumentList IsNot Nothing Then result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
+        If m_ArgumentList IsNot Nothing Then
+            result = m_ArgumentList.ResolveCode(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            If result = False Then Return False
+        End If
 
         If m_NewExpression IsNot Nothing Then
             result = m_NewExpression.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
+            If result = False Then Return False
         End If
 
         If m_VariableInitializer IsNot Nothing Then
             result = m_VariableInitializer.ResolveCode(New ExpressionResolveInfo(Compiler, VariableType)) AndAlso result
+            If result = False Then Return False
         End If
 
         Return result
@@ -281,3 +286,4 @@ Public MustInherit Class VariableDeclaration
         Return i > 0 AndAlso tm.PeekToken(i).IsIdentifier
     End Function
 End Class
+

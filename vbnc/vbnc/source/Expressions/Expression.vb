@@ -116,6 +116,23 @@ Public MustInherit Class Expression
         End If
     End Function
 
+    Function IsSharedContext() As Boolean
+        Dim p As ParsedObject
+        Dim td As TypeDeclaration
+        Dim md As MethodDeclaration
+
+        p = Parent
+        While p IsNot Nothing
+            md = TryCast(p, MethodDeclaration)
+            If md IsNot Nothing Then Return md.IsShared
+            td = TryCast(p, TypeDeclaration)
+            If td IsNot Nothing Then Return td.IsShared
+            p = p.Parent
+        End While
+
+        Return False
+    End Function
+
     ''' <summary>
     ''' The classification of this expression
     ''' </summary>
@@ -466,3 +483,4 @@ Public MustInherit Class Expression
         End Get
     End Property
 End Class
+

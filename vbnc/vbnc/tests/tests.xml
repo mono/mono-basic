@@ -8143,4 +8143,79 @@
 	<test id="2107" name="30623" category="" priority="0" expectedexitcode="1" expectederrorcode="30623" target="exe">
 		<file>Errors\30623.vb</file>
 	</test>
+	<test id="2108" name="TypeInferArray1" category="" priority="0" knownfailure="bug 444995" target="library" mytype="empty">
+		<file>CompileTime2\TypeInferArray1.vb</file>
+	</test>
+	<test id="2109" name="30369" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369.vb</file>
+	</test>
+	<test id="2110" name="30369-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369-1.vb</file>
+	</test>
+	<test id="2111" name="30369-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369-2.vb</file>
+	</test>
+	<test id="2112" name="30369-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369-3.vb</file>
+	</test>
+	<test id="2113" name="30369-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369-4.vb</file>
+	</test>
+	<test id="2114" name="30369-5" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<file>Errors\30369-5.vb</file>
+	</test>
+	<test id="2115" name="30469-1" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-1.vb</file>
+	</test>
+	<test id="2116" name="30469-2" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-2.vb</file>
+	</test>
+	<test id="2117" name="30469-3" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-3.vb</file>
+	</test>
+	<test id="2118" name="30469-4" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-4.vb</file>
+	</test>
+	<test id="2119" name="30469-5" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-5.vb</file>
+	</test>
+	<test id="2120" name="30469-6" category="" priority="0" expectedexitcode="1" expectederrorcode="30469" target="exe">
+		<file>Errors\30469-6.vb</file>
+	</test>
+	<test id="2121" name="SharedExpressions1" category="" priority="0" target="library" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>CompileTime2\SharedExpressions1.vb</file>
+	</test>
+	<test id="2122" name="30369-6" category="" priority="0" knownfailure="https://connect.microsoft.com/VisualStudio/feedback/details/648816/addhandler-statements-cant-access-shared-members-through-instance-field-property" expectedvbcexitcode="1" expectedvbcerrorcode="30369" target="library">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-6.vb</file>
+	</test>
+	<test id="2123" name="30369-7" category="" priority="0" knownfailure="https://connect.microsoft.com/VisualStudio/feedback/details/648816/addhandler-statements-cant-access-shared-members-through-instance-field-property" expectedvbcexitcode="1" expectedvbcerrorcode="30369" target="library">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-7.vb</file>
+	</test>
+	<test id="2124" name="30369-8" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-8.vb</file>
+	</test>
+	<test id="2125" name="30369-9" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-9.vb</file>
+	</test>
+	<test id="2126" name="30369-10" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-10.vb</file>
+	</test>
+	<test id="2127" name="30369-11" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-11.vb</file>
+	</test>
+	<test id="2128" name="30369-12" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-12.vb</file>
+	</test>
+	<test id="2129" name="30369-13" category="" priority="0" expectedexitcode="1" expectederrorcode="30369" target="exe">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30369-13.vb</file>
+	</test>
 </rt>

@@ -547,6 +547,8 @@ Public Class InvocationOrIndexExpression
                     Dim exp As Expression = Nothing
                     result = mae.FirstExpression.Classification.AsTypeClassification.CreateAliasExpression(mae.FirstExpression, exp) AndAlso result
                     mgc.InstanceExpression = exp
+                Else
+                    result = Report.ShowMessage(Messages.VBNC30469, Me.Location)
                 End If
             End If
 
@@ -575,3 +577,4 @@ Public Class InvocationOrIndexExpression
         End Get
     End Property
 End Class
+

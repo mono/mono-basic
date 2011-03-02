@@ -285,7 +285,7 @@
   <data name="30366"><value>CHANGEME</value></data>
   <data name="30367"><value>CHANGEME</value></data>
   <data name="30368"><value>CHANGEME</value></data>
-  <data name="30369"><value>CHANGEME</value></data>
+  <data name="30369"><value>Cannot refer to an instance member of a class from within a shared method or shared member initializer without an explicit instance of the class.</value></data>
   <data name="30370"><value>CHANGEME</value></data>
   <data name="30371"><value>CHANGEME</value></data>
   <data name="30375"><value>'New' cannot be used on an interface.</value></data>

@@ -1794,7 +1794,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30368 = 30368
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Cannot refer to an instance member of a class from within a shared method or shared member initializer without an explicit instance of the class."
     ''' VB   = "Cannot refer to an instance member of a class from within a shared method or shared member initializer without an explicit instance of the class."
     ''' </summary>
     ''' <remarks></remarks>

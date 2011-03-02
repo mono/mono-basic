@@ -396,6 +396,9 @@ Public Class MemberAccessExpression
                         Classification = New ValueClassification(Me, fld, Nothing)
                         Return True
                     Else
+                        If instanceExpression Is Nothing AndAlso CecilHelper.IsStatic(fld) = False Then
+                            Return Report.ShowMessage(Messages.VBNC30469, Me.Location)
+                        End If
                         Classification = New VariableClassification(Me, fld, instanceExpression)
                         Return True
                     End If
@@ -740,3 +743,4 @@ Public Class MemberAccessExpression
         End Get
     End Property
 End Class
+

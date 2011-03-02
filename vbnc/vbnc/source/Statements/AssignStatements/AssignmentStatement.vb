@@ -115,7 +115,6 @@ Public Class AssignmentStatement
             m_LSide = LSide.ReclassifyToPropertyAccessExpression
             result = LSide.ResolveExpression(ResolveInfo.Default(Info.Compiler)) AndAlso result
             If result = False Then
-                result = Helper.AddError(Me) AndAlso result
                 Return result
             End If
         Else

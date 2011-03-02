@@ -1380,7 +1380,7 @@ Public Class Helper
                 Return CecilHelper.FindDefinition(DirectCast(Member, Mono.Cecil.MethodReference)).IsStatic
             Case MemberTypes.Property
                 Dim pInfo As Mono.Cecil.PropertyDefinition = CecilHelper.FindDefinition(DirectCast(Member, Mono.Cecil.PropertyReference))
-                Return CBool(Helper.GetPropertyAttributes(pInfo) And Mono.Cecil.MethodAttributes.Static)
+                Return CecilHelper.IsStatic(pInfo)
             Case MemberTypes.Field
                 Dim fInfo As Mono.Cecil.FieldDefinition = CecilHelper.FindDefinition(DirectCast(Member, Mono.Cecil.FieldReference))
                 Return fInfo.IsStatic

@@ -780,6 +780,15 @@ Public Class CecilHelper
         Return FindDefinition(Method).IsStatic
     End Function
 
+    Public Shared Function IsStatic(ByVal [Property] As PropertyReference) As Boolean
+        Dim pd As PropertyDefinition = FindDefinition([Property])
+
+        If pd.GetMethod IsNot Nothing Then Return IsStatic(pd.GetMethod)
+        If pd.SetMethod IsNot Nothing Then Return IsStatic(pd.SetMethod)
+
+        Return False
+    End Function
+
     Public Shared Function MakeArrayType(ByVal Type As Mono.Cecil.TypeReference, Optional ByVal Ranks As Integer = 1) As Mono.Cecil.ArrayType
         Dim result As ArrayType
         result = New Mono.Cecil.ArrayType(Type, Ranks)
@@ -1362,3 +1371,4 @@ Public Class CecilHelper
         Return Helper.CompareNameOrdinal(a.FullName, b.FullName)
     End Function
 End Class
+

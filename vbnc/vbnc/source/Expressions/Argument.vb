@@ -100,7 +100,6 @@ Public MustInherit Class Argument
             End If
         End If
 
-
         Return result
     End Function
 

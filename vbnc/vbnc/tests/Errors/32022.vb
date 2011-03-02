@@ -4,7 +4,7 @@ Imports System.Reflection
 
 Namespace For7
     Class Test
-        Event Foo(ByVal i As Integer)
+        Shared Event Foo(ByVal i As Integer)
         Shared Function Start() As Integer
             Return 1
         End Function

@@ -1274,7 +1274,7 @@
 	</Message>
 	<Message id="30369" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Cannot refer to an instance member of a class from within a shared method or shared member initializer without an explicit instance of the class.</VBNCValue>
 		<VBValue>Cannot refer to an instance member of a class from within a shared method or shared member initializer without an explicit instance of the class.</VBValue>
 	</Message>
 	<Message id="30370" level="Error">

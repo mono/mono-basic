@@ -4263,7 +4263,7 @@ Public Class Parser
         Dim m_Operand1 As Operand
         Dim m_Operand2 As Operand
         Dim m_TypeName As TypeName
-        Dim m_ReturnTypeAttributes As Attributes
+        Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_Block As CodeBlock
 
         m_Modifiers = ParseModifiers(ModifierMasks.OperatorModifiers)
