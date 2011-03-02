@@ -93,6 +93,11 @@ Public MustInherit Class MemberDeclaration
         End Set
     End Property
 
+    Public Function FindAttributes(ByVal Type As TypeReference) As Generic.List(Of Attribute)
+        If m_CustomAttributes Is Nothing Then Return Nothing
+        Return m_CustomAttributes.FindAttributes(Type)
+    End Function
+
     Public Sub AddCustomAttribute(ByVal Attribute As Attribute)
         If m_CustomAttributes Is Nothing Then
             m_CustomAttributes = New Attributes(Me)
@@ -163,3 +168,4 @@ Public MustInherit Class MemberDeclaration
         Return result
     End Function
 End Class
+

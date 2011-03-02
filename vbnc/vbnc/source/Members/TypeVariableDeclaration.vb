@@ -182,7 +182,7 @@ Public Class TypeVariableDeclaration
         propertyAccessor.HandlesField = Me
         propertyAccessor.SetDeclaration.MethodImplAttributes = Mono.Cecil.MethodImplAttributes.Synchronized
 
-        Me.CustomAttributes.Add(New Attribute(Me, Compiler.TypeCache.System_Runtime_CompilerServices_AccessedThroughPropertyAttribute, Name))
+        Me.AddCustomAttribute(New Attribute(Me, Compiler.TypeCache.System_Runtime_CompilerServices_AccessedThroughPropertyAttribute, Name))
         Rename("_" & Name)
 
         parentType.Members.Add(propertyAccessor)

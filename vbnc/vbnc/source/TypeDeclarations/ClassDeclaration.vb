@@ -148,7 +148,7 @@ Public Class ClassDeclaration
         'If the class has the Microsoft.VisualBasic.CompilerServices.DesignerGeneratedAttribute, we call InitializeComponent.
         'InitializeComponent must be correctly spelled (case-sensitive), have no parameters (not even optional) and must be private
         Dim attribs As Generic.List(Of Attribute)
-        attribs = Me.CustomAttributes.FindAttributes(Compiler.TypeCache.MS_VB_CS_DesignerGeneratedAttribute)
+        attribs = Me.FindAttributes(Compiler.TypeCache.MS_VB_CS_DesignerGeneratedAttribute)
 
         If attribs Is Nothing OrElse attribs.Count = 0 Then Return result
 

@@ -118,7 +118,7 @@ Public Class ExternalSubDeclaration
             Case Else
                 Throw New InternalException
         End Select
-        Me.CustomAttributes.Add(attrib)
+        Me.AddCustomAttribute(attrib)
 
         For i As Integer = 0 To Signature.Parameters.Count - 1
             If Helper.CompareType(Signature.Parameters(i).ParameterType, Compiler.TypeCache.System_String) AndAlso Signature.Parameters(i).CustomAttributes.Count = 0 Then

@@ -372,25 +372,28 @@ Public MustInherit Class TypeDeclaration
 
     Public Function SetDefaultAttribute(ByVal Name As String) As Boolean
         Dim result As Boolean = True
-        For Each att As Attribute In CustomAttributes
-            result = att.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
-            If result = False Then Return result
-            If Helper.CompareType(att.AttributeType, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute) Then
-                Dim tmpName As String
-                tmpName = TryCast(att.GetArgument(0), String)
-                If tmpName IsNot Nothing AndAlso Helper.CompareNameOrdinal(Name, tmpName) = False Then
-                    Compiler.Report.ShowMessage(Messages.VBNC32304, Location, Me.FullName, tmpName, Name)
-                    Return False
+
+        If CustomAttributes IsNot Nothing Then
+            For Each att As Attribute In CustomAttributes
+                result = att.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
+                If result = False Then Return result
+                If Helper.CompareType(att.AttributeType, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute) Then
+                    Dim tmpName As String
+                    tmpName = TryCast(att.GetArgument(0), String)
+                    If tmpName IsNot Nothing AndAlso Helper.CompareNameOrdinal(Name, tmpName) = False Then
+                        Compiler.Report.ShowMessage(Messages.VBNC32304, Location, Me.FullName, tmpName, Name)
+                        Return False
+                    End If
+                    Return True
                 End If
-                Return True
-            End If
-        Next
+            Next
+        End If
 
         'Helper.NotImplementedYet("Check that the property is indexed.")
         Dim attrib As Attribute
         attrib = New Attribute(Me, Compiler.TypeCache.System_Reflection_DefaultMemberAttribute, Name)
         result = attrib.ResolveCode(ResolveInfo.Default(Compiler)) AndAlso result
-        CustomAttributes.Add(attrib)
+        AddCustomAttribute(attrib)
         Return result
     End Function
 

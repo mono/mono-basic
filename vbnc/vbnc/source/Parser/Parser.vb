@@ -484,12 +484,11 @@ Public Class Parser
     '''  Attributes ::=	AttributeBlock  |	Attributes  AttributeBlock
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseAttributes(ByVal Parent As ParsedObject, ByVal Attributes As Attributes) As Boolean
+    Private Function ParseAttributes(ByVal Parent As ParsedObject, ByRef Attributes As Attributes) As Boolean
         Dim result As Boolean = True
 
-        Helper.Assert(Attributes IsNot Nothing)
-
         While AttributeBlock.IsMe(tm)
+            If Attributes Is Nothing Then Attributes = New Attributes(Parent)
             If ParseAttributeBlock(Parent, Attributes) = False Then
                 Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
@@ -1366,8 +1365,8 @@ Public Class Parser
     Private Function ParseInterfaceMembers(ByVal Parent As InterfaceDeclaration) As Boolean
         Dim newMembers As New Generic.List(Of IMember)
         While True
-            Dim attributes As Attributes
-            attributes = New Attributes(Parent)
+            Dim attributes As Attributes = Nothing
+
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
@@ -1390,7 +1389,7 @@ Public Class Parser
             ElseIf InterfacePropertyMemberDeclaration.IsMe(tm) Then
                 newMember = ParseInterfacePropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
             Else
-                If attributes.Count > 0 Then
+                If attributes IsNot Nothing AndAlso attributes.Count > 0 Then
                     Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
                 End If
                 Exit While
@@ -1418,8 +1417,8 @@ Public Class Parser
 
         Dim newMembers As New Generic.List(Of IMember)
         While True
-            Dim attributes As Attributes
-            attributes = New Attributes(Parent)
+            Dim attributes As Attributes = Nothing
+
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
@@ -1485,7 +1484,7 @@ Public Class Parser
                 newMember = ParseConstructorMember(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             Else
-                If attributes.Count > 0 Then
+                If attributes IsNot Nothing AndAlso attributes.Count > 0 Then
                     Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
                 End If
                 Exit While
@@ -1535,8 +1534,8 @@ Public Class Parser
         Dim currentNamespaces As New Generic.List(Of QualifiedIdentifier)
 
         While True
-            Dim attributes As Attributes
-            attributes = New Attributes(Parent)
+            Dim attributes As Attributes = Nothing
+
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, attributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
@@ -1592,7 +1591,7 @@ Public Class Parser
                     Helper.AddError(Compiler, tm.CurrentLocation, "'End Namespace' without 'Namespace'.")
                 End If
             Else
-                If attributes.Count > 0 Then
+                If attributes IsNot Nothing AndAlso attributes.Count > 0 Then
                     Helper.AddError(Compiler, tm.CurrentLocation, "Hanging attributes.")
                 End If
                 Exit While
@@ -1615,8 +1614,7 @@ Public Class Parser
         Dim m_RaiseEvent As CustomEventHandlerDeclaration = Nothing
 
         Do
-            Dim attributes As Attributes
-            attributes = New Attributes(result)
+            Dim attributes As Attributes = Nothing
             If vbnc.Attributes.IsMe(tm) Then
                 ParseAttributes(result, attributes)
             End If
@@ -3801,7 +3799,7 @@ Public Class Parser
         Dim m_Identifier As Identifier = Nothing
         Dim m_TypeParameters As TypeParameters = Nothing
         Dim m_ParameterList As New ParameterList(result)
-        Dim m_ReturnTypeAttributes As New Attributes(result)
+        Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_TypeName As TypeName = Nothing
 
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
@@ -4265,7 +4263,7 @@ Public Class Parser
         Dim m_Operand1 As Operand
         Dim m_Operand2 As Operand
         Dim m_TypeName As TypeName
-        Dim m_ReturnTypeAttributes As New Attributes(Parent)
+        Dim m_ReturnTypeAttributes As Attributes
         Dim m_Block As CodeBlock
 
         m_Modifiers = ParseModifiers(ModifierMasks.OperatorModifiers)
@@ -6245,10 +6243,12 @@ Public Class Parser
         If tm.AcceptIfNotError(KS.End, KS.Class) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-        If result.CustomAttributes IsNot Nothing Then
-            result.CustomAttributes.AddRange(Attributes)
-        Else
-            result.CustomAttributes = Attributes
+        If Attributes IsNot Nothing Then
+            If result.CustomAttributes IsNot Nothing Then
+                result.CustomAttributes.AddRange(Attributes)
+            Else
+                result.CustomAttributes = Attributes
+            End If
         End If
 
         Return result
@@ -6339,7 +6339,7 @@ Public Class Parser
         Dim constAttributes As Attributes
 
         Do Until tm.CurrentToken.Equals(KS.End, KS.Enum)
-            constAttributes = New Attributes(Parent)
+            constAttributes = Nothing
             If vbnc.Attributes.IsMe(tm) Then
                 If ParseAttributes(Parent, constAttributes) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             End If
@@ -6563,3 +6563,4 @@ Public Class Parser
     End Function
 
 End Class
+
