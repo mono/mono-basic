@@ -66,5 +66,4 @@ Public Class BuiltInTypeName
     Shared Function IsBuiltInTypeName(ByVal tm As tm) As Boolean
         Return tm.CurrentToken.Equals(Enums.BuiltInTypeTypeNames)
     End Function
-
 End Class

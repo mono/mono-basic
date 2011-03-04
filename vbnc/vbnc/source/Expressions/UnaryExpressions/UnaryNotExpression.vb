@@ -28,6 +28,23 @@ Public Class UnaryNotExpression
         MyBase.Init(Expression)
     End Sub
 
+    Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
+        Get
+            Dim result As Mono.Cecil.TypeReference
+            Dim lType As Mono.Cecil.TypeReference
+
+            lType = Me.Expression.ExpressionType
+
+            If Helper.IsEnum(Compiler, lType) Then
+                result = lType
+            Else
+                result = MyBase.ExpressionType()
+            End If
+
+            Return result
+        End Get
+    End Property
+
     Protected Overrides Function GenerateCodeInternal(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

@@ -103,7 +103,7 @@ Public Class Parameter
             Return m_ParameterBuilderCecil.Constant
         End Get
         Set(ByVal value As Object)
-            If TypeConverter.ConvertTo(Me, value, ParameterType, value) = False Then
+            If TypeConverter.ConvertTo(Me, value, ParameterType, value, True) = False Then
                 Throw New NotImplementedException
             End If
             If value Is DBNull.Value Then value = Nothing
@@ -235,7 +235,7 @@ Public Class Parameter
                 Helper.AddError(Me, "Optional expressions must be constant.")
                 result = False
             Else
-                result = TypeConverter.ConvertTo(Me, constant, ParameterType, constant) AndAlso result
+                result = TypeConverter.ConvertTo(Me, constant, ParameterType, constant, True) AndAlso result
                 If constant Is DBNull.Value Then
                     constant = Nothing
                 End If

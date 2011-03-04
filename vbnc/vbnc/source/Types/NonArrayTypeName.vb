@@ -140,16 +140,7 @@ Public Class NonArrayTypeName
         End If
 
         If m_IsNullable Then
-            If CecilHelper.IsValueType(m_ResolvedType) = False Then
-                Dim gp As GenericParameter = TryCast(m_ResolvedType, GenericParameter)
-                If gp Is Nothing OrElse gp.HasNotNullableValueTypeConstraint = False Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC33101, Me.Location, Helper.ToString(Me, m_ResolvedType))
-                End If
-            End If
-
-            Dim git As New GenericInstanceType(Compiler.TypeCache.System_Nullable1)
-            git.GenericArguments.Add(m_ResolvedType)
-            m_ResolvedType = git
+            result = CecilHelper.CreateNullableType(Me, m_ResolvedType, m_ResolvedType) AndAlso result
         End If
 
         Helper.Assert(m_ResolvedType IsNot Nothing OrElse result = False)

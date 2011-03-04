@@ -38,7 +38,7 @@ Public Class Report
     ''' The max number of errors before quit compiling.
     ''' </summary>
     ''' <remarks></remarks>
-    Const MAXERRORS As Integer = 50
+    Const MAXERRORS As Integer = 100
 
     ''' <summary>
     ''' The resource manager for this report.

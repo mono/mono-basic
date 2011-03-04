@@ -22,6 +22,7 @@ Public Class CTypeExpression
     Private m_DestinationType As TypeName
     Private m_ResolvedDestinationType As Mono.Cecil.TypeReference
     Private m_IsStringToCharArray As Boolean
+    Private m_ConversionType As CTypeConversionType
 
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
@@ -47,6 +48,12 @@ Public Class CTypeExpression
         Helper.Assert(CecilHelper.IsByRef(m_ResolvedDestinationType) = False, "Can't create TypeConversion to byref type (trying to convert from " & Expression.ExpressionType.FullName & " to " & DestinationType.FullName)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal Expression As Expression, ByVal DestinationType As TypeReference, ByVal ConversionType As CTypeConversionType)
+        MyBase.New(Parent, Expression)
+        m_ResolvedDestinationType = DestinationType
+        m_ConversionType = ConversionType
+    End Sub
+
     Shadows Sub Init(ByVal Expression As Expression, ByVal DestinationType As TypeName)
         MyBase.Init(Expression)
         m_DestinationType = DestinationType
@@ -62,6 +69,125 @@ Public Class CTypeExpression
 
         Dim expType As Mono.Cecil.TypeReference = Me.ExpressionType
         Dim expTypeCode As TypeCode = Helper.GetTypeCode(Compiler, expType)
+
+        If m_ConversionType <> CTypeConversionType.Undetermined AndAlso m_ConversionType <> CTypeConversionType.Intrinsic Then
+            result = Expression.Classification.GenerateCode(Info.Clone(Me, ExpressionType)) AndAlso result
+        End If
+
+        Select Case m_ConversionType
+            Case CTypeConversionType.FromNullable
+                Dim nullable_dst_type As GenericInstanceType
+                Dim explicit_op As MethodReference
+                Dim git As GenericInstanceType
+
+                nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(Expression.ExpressionType)))
+                git = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                git.GenericArguments.Add(Compiler.TypeCache.System_Nullable1.GenericParameters(0))
+                explicit_op = New MethodReference("op_Explicit", nullable_dst_type, ExpressionType, False, False, MethodCallingConvention.Default)
+                explicit_op.Parameters.Add(New ParameterDefinition(git))
+                Emitter.EmitCall(Info, explicit_op)
+                Return True
+            Case CTypeConversionType.ToNullable
+                Dim nullable_dst_type As GenericInstanceType
+                Dim implicit_op As MethodReference
+
+                nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(ExpressionType)))
+                implicit_op = New MethodReference("op_Implicit", nullable_dst_type, nullable_dst_type, False, False, MethodCallingConvention.Default)
+                implicit_op.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
+                Emitter.EmitCall(Info, implicit_op)
+                Return True
+            Case CTypeConversionType.Castclass
+                Emitter.EmitCastClass(Info, ExpressionType)
+                Return True
+            Case CTypeConversionType.Identity
+                'There is nothing to do here
+                Return True
+            Case CTypeConversionType.Box
+                Emitter.EmitBox(Info, Expression.ExpressionType)
+                Return True
+            Case CTypeConversionType.Box_CastClass
+                Emitter.EmitBox(Info, Expression.ExpressionType)
+                Emitter.EmitCastClass(Info, ExpressionType)
+                Return True
+            Case CTypeConversionType.Unbox
+                Emitter.EmitUnbox(Info, ExpressionType)
+                Return True
+            Case CTypeConversionType.Unbox_Ldobj
+                Emitter.EmitUnbox(Info, ExpressionType)
+                Emitter.EmitLdobj(Info, ExpressionType)
+                Return True
+            Case CTypeConversionType.Unbox_Any
+                Emitter.EmitUnbox_Any(Info, ExpressionType)
+                Return True
+            Case CTypeConversionType.MS_VB_CS_Conversions_ToGenericParameter
+                Dim gim As New GenericInstanceMethod(Compiler.TypeCache.MS_VB_CS_Conversions__ToGenericParameter_Object)
+                gim.GenericArguments.Add(ExpressionType)
+                Emitter.EmitCall(Info, gim)
+                Return True
+            Case CTypeConversionType.UserDefinedOperator
+                Emitter.EmitCall(Info, ConversionMethod)
+                Return True
+            Case CTypeConversionType.NullableToNullable
+                Dim SourceType As TypeReference = Expression.ExpressionType
+                Dim DestinationType As TypeReference = ExpressionType
+                Dim nullable_src_type As GenericInstanceType
+                Dim nullable_dst_type As GenericInstanceType
+                Dim get_value As MethodReference
+                Dim has_value As MethodReference
+                Dim ctor As MethodReference
+                Dim localsrc, localdst As Mono.Cecil.Cil.VariableDefinition
+                Dim falseLabel As Label = Emitter.DefineLabel(Info)
+                Dim endLabel As Label = Emitter.DefineLabel(Info)
+                Dim vose As ValueOnStackExpression
+                Dim type_conversion As Expression
+
+                nullable_src_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_src_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(SourceType)))
+                has_value = New MethodReference("get_HasValue", nullable_src_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Boolean), True, False, MethodCallingConvention.Default)
+                get_value = New MethodReference("GetValueOrDefault", nullable_src_type, Compiler.TypeCache.System_Nullable1.GenericParameters(0), True, False, MethodCallingConvention.Default)
+
+                nullable_dst_type = New GenericInstanceType(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Nullable1))
+                nullable_dst_type.GenericArguments.Add(Helper.GetTypeOrTypeReference(Compiler, CecilHelper.GetNulledType(DestinationType)))
+                ctor = New MethodReference(".ctor", nullable_dst_type, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void), True, False, MethodCallingConvention.Default)
+                ctor.Parameters.Add(New ParameterDefinition(Compiler.TypeCache.System_Nullable1.GenericParameters(0)))
+
+                'store in local
+                localsrc = Emitter.DeclareLocal(Info, SourceType)
+                Emitter.EmitStoreVariable(Info, localsrc)
+
+                'call Nullable`1.HasValue to check the condition
+                Emitter.EmitLoadVariableLocation(Info, localsrc)
+                Emitter.EmitCall(Info, has_value)
+                Emitter.EmitBranchIfFalse(Info, falseLabel)
+
+                localdst = Emitter.DeclareLocal(Info, DestinationType)
+
+                'true branch: we have a value, get it to create a new nullable with the right value
+                Emitter.EmitLoadVariableLocation(Info, localdst)
+                Emitter.EmitLoadVariableLocation(Info, localsrc)
+                Emitter.EmitCall(Info, get_value)
+
+                'convert value
+                vose = New ValueOnStackExpression(Me, CecilHelper.GetNulledType(SourceType))
+                type_conversion = Helper.CreateTypeConversion(Me, vose, CecilHelper.GetNulledType(DestinationType), result)
+                result = type_conversion.GenerateCode(Info) AndAlso result
+
+                Emitter.EmitCall(Info, ctor)
+                Emitter.EmitLoadVariable(Info, localdst)
+                Emitter.EmitBranch(Info, endLabel)
+
+                'false branch: no value
+                Emitter.MarkLabel(Info, falseLabel)
+                Emitter.EmitLoadVariableLocation(Info, localdst)
+                Emitter.EmitInitObj(Info, localdst.VariableType)
+                Emitter.EmitLoadVariable(Info, localdst)
+
+                'end
+                Emitter.MarkLabel(Info, endLabel)
+                Return True
+        End Select
 
         Select Case expTypeCode
             Case TypeCode.Boolean
@@ -137,7 +263,7 @@ Public Class CTypeExpression
                 If Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceType), DestinationType) Then
                     'Emitter.EmitUnbox_Any(Info, DestinationType)
                     Emitter.EmitBox(Info, SourceType)
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 Else
                     Helper.AddError(Me)
                 End If
@@ -145,24 +271,24 @@ Public Class CTypeExpression
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
             ElseIf Helper.IsInterface(Compiler, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
-                Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             Else
                 Throw New InternalException(Me)
             End If
         ElseIf CecilHelper.IsArray(SourceType) Then
             If CecilHelper.IsInterface(DestinationType) Then
                 If Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf Helper.CompareType(SourceType, Compiler.TypeCache.System_Object_Array) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf CecilHelper.IsArray(DestinationType) AndAlso Helper.DoesTypeImplementInterface(Me, CecilHelper.GetElementType(SourceType), CecilHelper.GetElementType(DestinationType)) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Helper.ToString(Expression, SourceType), Helper.ToString(Expression, DestinationType))
                     result = False
                 End If
             ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_Array) Then
-                Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             ElseIf CecilHelper.IsArray(DestinationType) = False Then
                 Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Location, Helper.ToString(Expression, SourceType), Helper.ToString(Expression, DestinationType))
                 result = False
@@ -180,20 +306,20 @@ Public Class CTypeExpression
                 'may actually be an element of an array whose element type is A, 
                 'provided that both A and B are reference types and that B is a base type of A or is implemented by A. 
                 If Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf Helper.CompareType(SourceElementType, DestinationElementType) OrElse Helper.IsSubclassOf(DestinationElementType, SourceElementType) OrElse Helper.IsSubclassOf(SourceElementType, DestinationElementType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf Helper.DoesTypeImplementInterface(Me, SourceElementType, DestinationElementType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf Helper.IsInterface(Info.Compiler, DestinationElementType) AndAlso Helper.CompareType(Compiler.TypeCache.System_Object, SourceElementType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf Helper.IsEnum(Compiler, SourceElementType) AndAlso Helper.CompareType(Helper.GetEnumType(Compiler, SourceElementType), DestinationElementType) Then
                     'Conversions also exist between an array of an enumerated type and an array of the enumerated type's underlying type of the same rank.
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf CecilHelper.IsGenericParameter(SourceElementType) AndAlso Helper.IsTypeConvertibleToAny(Helper.GetGenericParameterConstraints(Me, SourceElementType), DestinationElementType) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 ElseIf CecilHelper.IsGenericParameter(DestinationElementType) AndAlso Helper.IsTypeConvertibleToAny(SourceElementType, Helper.GetGenericParameterConstraints(Me, DestinationElementType)) Then
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 Else
                     Info.Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, SourceType.Name, DestinationType.Name)
                     result = False
@@ -209,9 +335,9 @@ Public Class CTypeExpression
                 Emitter.EmitCall(Info, Compiler.TypeCache.System_Runtime_CompilerServices_RuntimeHelpers__GetObjectValue_Object)
                 Emitter.EmitCall(Info, methodD)
             ElseIf CecilHelper.IsClass(DestinationType) Then
-                Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             ElseIf CecilHelper.IsInterface(DestinationType) Then
-                Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             ElseIf CecilHelper.IsValueType(DestinationType) Then
                 Emitter.EmitUnbox(Info, DestinationType)
                 Emitter.EmitLdobj(Info, DestinationType)
@@ -315,7 +441,7 @@ Public Class CTypeExpression
                 Throw New InternalException(Me) 'This is an elemental conversion already covered. 'Emitter.EmitBox(Info)
             ElseIf Helper.DoesTypeImplementInterface(Me, SourceType, DestinationType) Then
                 Emitter.EmitBox(Info, SourceType)
-                Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             ElseIf Helper.CompareType(DestinationType, Compiler.TypeCache.System_ValueType) Then
                 Emitter.EmitBox(Info, SourceType)
             ElseIf Helper.CompareType(CecilHelper.FindDefinition(SourceType).BaseType, DestinationType) Then
@@ -345,11 +471,11 @@ Public Class CTypeExpression
                     Emitter.EmitUnbox(Info, DestinationType)
                     Emitter.EmitLdobj(Info, DestinationType)
                 Else
-                    Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                    Emitter.EmitCastClass(Info, DestinationType)
                 End If
 
             ElseIf CecilHelper.IsClass(DestinationType) OrElse CecilHelper.IsInterface(DestinationType) Then
-                Emitter.EmitCastClass(Info, SourceType, DestinationType)
+                Emitter.EmitCastClass(Info, DestinationType)
             Else
                 'However, classes that represent COM classes may have interface implementations that are not known until run time. Consequently, a class type may also be converted to an interface type that it does not implement, an interface type may be converted to a class type that does not implement it, and an interface type may be converted to another interface type with which it has no inheritance relationship
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
@@ -459,6 +585,8 @@ Public Class CTypeExpression
         End If
 
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
+
+        If m_ConversionType <> CTypeConversionType.Undetermined Then Return result
 
         Select Case Helper.GetTypeCode(Compiler, Me.ExpressionType)
             Case TypeCode.Boolean

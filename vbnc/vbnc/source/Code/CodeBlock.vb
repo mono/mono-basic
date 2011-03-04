@@ -374,7 +374,7 @@ Public Class CodeBlock
 
         'create the catch block
         Info.ILGen.BeginCatchBlock(CType(Nothing, Mono.Cecil.TypeReference))
-        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, Compiler.TypeCache.System_Exception)
+        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Exception)
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_ProjectData__SetProjectError_Exception)
         Emitter.EmitLeave(Info, VB_ActiveHandlerLabel)
 

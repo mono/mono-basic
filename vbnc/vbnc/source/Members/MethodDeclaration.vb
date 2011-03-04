@@ -68,14 +68,6 @@ Public MustInherit Class MethodDeclaration
         Return result
     End Function
 
-    Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
-        Dim result As Boolean = True
-
-        result = MyBase.ResolveCode(Info) AndAlso result
-
-        Return result
-    End Function
-
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 

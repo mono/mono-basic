@@ -170,10 +170,7 @@ Public Class ConstantDeclaration
         If m_TypeName Is Nothing Then
             m_TypeName = New TypeName(Me, m_ConstantExpression.ExpressionType)
         Else
-            If Not TypeConverter.ConvertTo(m_ConstantExpression, result, m_TypeName.ResolvedType, result) Then
-                If ShowErrors Then Show30059()
-                Return False
-            End If
+            Return TypeConverter.ConvertTo(m_ConstantExpression, result, m_TypeName.ResolvedType, result, ShowErrors)
         End If
 
         Return True

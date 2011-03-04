@@ -186,18 +186,24 @@ Public MustInherit Class BinaryExpression
             Dim isLeftIntrinsic As Boolean = Me.LeftTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.LeftType)
             Dim isRightIntrinsic As Boolean = Me.RightTypeCode <> TypeCode.Object OrElse Helper.CompareType(Compiler.TypeCache.System_Object, Me.RightType)
             Dim doOpOverloading As Boolean = False
+            Dim isStrict As Boolean?
 
             If isLeftIntrinsic AndAlso isRightIntrinsic OrElse IsOverloadable = False Then
                 Dim destinationType As Mono.Cecil.TypeReference
                 m_ExpressionType = Compiler.TypeResolution.TypeCodeToType(TypeConverter.GetBinaryResultType(Keyword, LeftTypeCode, RightTypeCode))
+
+                If leftOperandType = TypeCode.String AndAlso rightOperandType = TypeCode.String AndAlso (Keyword = KS.Concat OrElse Keyword = KS.Add) Then
+                    isStrict = False
+                End If
+
                 If LeftTypeCode <> leftOperandType Then
                     destinationType = Compiler.TypeResolution.TypeCodeToType(leftOperandType)
-                    m_LeftExpression = Helper.CreateTypeConversion(Me, m_LeftExpression, destinationType, result)
+                    result = Helper.IsConvertible(Me, m_LeftExpression, m_LeftExpression.ExpressionType, destinationType, True, m_LeftExpression, True, isStrict)
                 End If
 
                 If RightTypeCode <> rightOperandType Then
                     destinationType = Compiler.TypeResolution.TypeCodeToType(rightOperandType)
-                    m_RightExpression = Helper.CreateTypeConversion(Me, m_RightExpression, destinationType, result)
+                    result = Helper.IsConvertible(Me, m_RightExpression, m_RightExpression.ExpressionType, destinationType, True, m_RightExpression, True, isStrict)
                 End If
                 Classification = New ValueClassification(Me)
             ElseIf isRightIntrinsic = False AndAlso isLeftIntrinsic = True Then
@@ -323,3 +329,4 @@ Public MustInherit Class BinaryExpression
 #End If
     MustOverride ReadOnly Property Keyword() As KS
 End Class
+

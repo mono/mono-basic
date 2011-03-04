@@ -187,6 +187,10 @@ Public MustInherit Class VariableDeclaration
             End If
         End If
 
+        If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.IsNullable Then
+            result = CecilHelper.CreateNullableType(Me, m_VariableType, m_VariableType) AndAlso result
+        End If
+
         If m_NewExpression IsNot Nothing Then result = m_NewExpression.ResolveTypeReferences AndAlso result
 
         'Helper.Assert(m_FieldType IsNot Nothing)

@@ -1184,7 +1184,7 @@
 	</Message>
 	<Message id="30311" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Cannot convert from '{0}' to '{1}'.</VBNCValue>
+		<VBNCValue>Value of type '{0}' cannot be converted to '{1}'.</VBNCValue>
 		<VBValue>Value of type '|1' cannot be converted to '|2'.</VBValue>
 	</Message>
 	<Message id="30321" level="Error">
@@ -1194,12 +1194,12 @@
 	</Message>
 	<Message id="30332" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Value of type '{0}' cannot be converted to '{1}' because '{2}' is not derived from '{3}'.</VBNCValue>
 		<VBValue>Value of type '|1' cannot be converted to '|2' because '|3' is not derived from '|4'.</VBValue>
 	</Message>
 	<Message id="30333" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Value of type '{0}' cannot be converted to '{1}' because '{2}' is not a reference type.</VBNCValue>
 		<VBValue>Value of type '|1' cannot be converted to '|2' because '|3' is not a reference type.</VBValue>
 	</Message>
 	<Message id="30337" level="Error">
@@ -1409,7 +1409,7 @@
 	</Message>
 	<Message id="30414" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Value of type '{0}' cannot be converted to '{1}' because the array types have different number of dimensions.</VBNCValue>
 		<VBValue>Value of type '|1' cannot be converted to '|2' because the array types have different numbers of dimensions.</VBValue>
 	</Message>
 	<Message id="30415" level="Error">
@@ -1699,7 +1699,7 @@
 	</Message>
 	<Message id="30512" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Option Strict On does not allow implicit conversions from '{0}' to '{1}'.</VBNCValue>
+		<VBNCValue>Option Strict On disallows implicit conversions from '{0}' to '{1}'.</VBNCValue>
 		<VBValue>Option Strict On disallows implicit conversions from '|1' to '|2'.</VBValue>
 	</Message>
 	<Message id="30516" level="Error">

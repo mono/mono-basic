@@ -205,10 +205,10 @@ Public Class DelegateOrObjectCreationExpression
 
                 ctors = CecilHelper.GetConstructors(resolvedType)
                 m_MethodClassification = New MethodGroupClassification(Me, Nothing, Nothing, Nothing, ctors)
-                result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList) AndAlso result
+                result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, , False) AndAlso result
                 If result = False Then
                     'Show the error
-                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, True) AndAlso result
+                    result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, True, False) AndAlso result
                 Else
                     result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
                 End If
@@ -222,3 +222,4 @@ Public Class DelegateOrObjectCreationExpression
         Return result
     End Function
 End Class
+

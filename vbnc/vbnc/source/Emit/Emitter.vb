@@ -356,8 +356,7 @@ Partial Public Class Emitter
         Info.ILGen.Emit(OpCodes.Newobj, Constructor)
     End Sub
 
-    Shared Sub EmitCastClass(ByVal Info As EmitInfo, ByVal FromType As Mono.Cecil.TypeReference, ByVal ToType As Mono.Cecil.TypeReference)
-        FromType = Helper.GetTypeOrTypeBuilder(Info.Compiler, FromType)
+    Shared Sub EmitCastClass(ByVal Info As EmitInfo, ByVal ToType As Mono.Cecil.TypeReference)
         ToType = Helper.GetTypeOrTypeBuilder(Info.Compiler, ToType)
         Helper.Assert(CecilHelper.IsByRef(ToType) = False)
         Info.ILGen.Emit(OpCodes.Castclass, ToType)
@@ -807,7 +806,7 @@ Partial Public Class Emitter
             Case TypeCombinations.DBNull_Object
                 converted = True 'Nothing to object
             Case TypeCombinations.Object_String
-                Emitter.EmitCastClass(Info, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_Object), Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_String))
+                Emitter.EmitCastClass(Info, Helper.GetTypeOrTypeReference(Info.Compiler, Info.Compiler.TypeCache.System_String))
                 converted = True
             Case TypeCombinations.Int32_Boolean
                 'Nothing to do here

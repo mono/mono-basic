@@ -389,7 +389,7 @@ Public Class ForStatement
 
                 Emitter.EmitLoadVariable(Info, loopStep)
                 Dim tmp As Object = Nothing
-                If TypeConverter.ConvertTo(Me, 0, m_LoopType, tmp) Then
+                If TypeConverter.ConvertTo(Me, 0, m_LoopType, tmp, True) Then
                     Emitter.EmitLoadValue(Info.Clone(Me, True, False, m_LoopType), tmp)
                 Else
                     Throw New InternalException
@@ -502,6 +502,23 @@ Public Class ForStatement
             End If
         End If
 
+        Select Case Helper.GetTypeCode(Compiler, m_LoopType)
+            Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
+                Return Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name)
+            Case TypeCode.Decimal
+                m_IsLateBound = False
+                m_IsDecimal = True
+            Case TypeCode.Byte, TypeCode.Double, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.Single, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
+                m_IsLateBound = False
+            Case TypeCode.Object
+                m_IsLateBound = True
+
+                Compiler.Helper.AddCheck("The loop control variable of a For statement must be of a primitive numeric type (...), Object, or a type T that has the following operators: (...)")
+
+            Case Else
+                Return Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name)
+        End Select
+
         'If m_NextExpressionList IsNot Nothing Then result = m_NextExpressionList.ResolveCode(info) AndAlso result
         m_LoopStepExpression = Helper.CreateTypeConversion(Me, m_LoopStepExpression, m_LoopType, result)
         m_LoopStartExpression = Helper.CreateTypeConversion(Me, m_LoopStartExpression, m_LoopType, result)
@@ -514,24 +531,6 @@ Public Class ForStatement
         result = CodeBlock.ResolveCode(Info) AndAlso result
 
         If result = False Then Return result
-
-        Select Case Helper.GetTypeCode(Compiler, m_LoopType)
-            Case TypeCode.Boolean, TypeCode.Char, TypeCode.DBNull, TypeCode.Empty, TypeCode.String
-                result = Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name) AndAlso result
-            Case TypeCode.Decimal
-                m_IsLateBound = False
-                m_IsDecimal = True
-            Case TypeCode.Byte, TypeCode.Double, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64, TypeCode.SByte, TypeCode.Single, TypeCode.UInt16, TypeCode.UInt32, TypeCode.UInt64
-                m_IsLateBound = False
-            Case TypeCode.Object
-                m_IsLateBound = True
-
-                Compiler.Helper.AddCheck("The loop control variable of a For statement must be of a primitive numeric type (...), Object, or a type T that has the following operators: (...)")
-
-            Case Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30337, Location, m_LoopType.Name) AndAlso result
-        End Select
-
 
         Compiler.Helper.AddCheck("Check that loop variable has not been used in another for statement.")
         Compiler.Helper.AddCheck("The bound and step expressions must be implicitly convertible to the type of the loop control. ")

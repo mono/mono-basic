@@ -52,7 +52,7 @@ Public Class Message
     ''' The format of the message
     ''' </summary>
     ''' <remarks></remarks>
-    Private Const MESSAGEFORMAT As String = "%MESSAGELEVEL% : %MESSAGE%"
+    Private Const MESSAGEFORMAT As String = "vbnc: %MESSAGELEVEL% : %MESSAGE%"
 
     ''' <summary>
     ''' Get the severity level of this message.
@@ -165,14 +165,14 @@ Public Class Message
             strLocation = Location.ToString(Compiler)
             result = MESSAGEFORMATWITHLOCATION
         Else
-            strLocation = ""
-            result = MESSAGEFORMAT
+            strLocation = "vbnc: Command line"
+            result = MESSAGEFORMATWITHLOCATION
         End If
 
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)
         result = result.Replace("%MESSAGE%", strMessage)
-        result = result.Replace("%MESSAGELEVEL%", Level.ToString)
+        result = result.Replace("%MESSAGELEVEL%", Level.ToString.ToLower())
 
         Return result
     End Function

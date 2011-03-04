@@ -64,7 +64,11 @@ Public Class TypeResolution
                 Conversion(i, j) = New TypeConversionInfo
                 If j = TypeCode.Object OrElse j = i Then
                     Conversion(i, j).Conversion = ConversionType.Implicit
-                ElseIf i = TypeCode.Char Then
+                ElseIf i = TypeCode.Char OrElse j = TypeCode.Char Then
+                    Conversion(i, j).Conversion = ConversionType.None
+                ElseIf i = TypeCode.DateTime OrElse j = TypeCode.DateTime Then
+                    Conversion(i, j).Conversion = ConversionType.None
+                ElseIf i = TypeCode.DBNull OrElse j = TypeCode.DBNull Then
                     Conversion(i, j).Conversion = ConversionType.None
                 Else
                     Conversion(i, j).Conversion = ConversionType.Explicit
@@ -84,7 +88,9 @@ Public Class TypeResolution
         setImplicit(TypeCode.Single, New TypeCode() {TypeCode.Double})
         setImplicit(TypeCode.Double, New TypeCode() {})
         setImplicit(TypeCode.Char, New TypeCode() {TypeCode.String})
+        setImplicit(TypeCode.DBNull, New TypeCode() {TypeCode.String})
 
+        Conversion(TypeCode.DateTime, TypeCode.String).Conversion = ConversionType.Explicit
         Conversion(TypeCode.Byte, TypeCode.Byte).BinaryAddResult = TypeCode.Byte
         Conversion(TypeCode.Boolean, TypeCode.Boolean).BinaryAddResult = TypeCode.SByte
     End Sub

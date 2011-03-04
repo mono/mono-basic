@@ -370,7 +370,7 @@ Public Class MethodGroupClassification
     ''' </summary>
     ''' <param name="SourceParameters"></param>
     ''' <remarks></remarks>
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal ShowErrors As Boolean = False) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal ShowErrors As Boolean = False, Optional ByVal CanBeLateBound As Boolean = True) As Boolean
         Dim result As Boolean = True
         Dim FinalSourceArguments As ArgumentList = Nothing
 
@@ -383,6 +383,7 @@ Public Class MethodGroupClassification
         Dim resolvedGroup As New Generic.List(Of Mono.Cecil.MemberReference)
 
         If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
+        m_Resolver.CanBeLateBound = CanBeLateBound
         m_Resolver.ShowErrors = ShowErrors
         m_Resolver.Init(m_Group, SourceParameters, m_TypeArguments)
         result = m_Resolver.Resolve AndAlso result

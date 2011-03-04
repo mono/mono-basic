@@ -148,7 +148,6 @@ Public MustInherit Class LateBoundAccessToExpression
             Emitter.EmitLoadNull(Info.Clone(Info.Context, Info.Compiler.TypeCache.System_String_Array))
         End If
 
-
         Return result
     End Function
 

@@ -27,6 +27,7 @@ Public Class VariableIdentifier
 
     Private m_Identifier As Identifier
     Private m_ArrayNameModifier As ArrayNameModifier
+    Public IsNullable As Boolean
 
     ReadOnly Property Identifier() As Identifier
         Get

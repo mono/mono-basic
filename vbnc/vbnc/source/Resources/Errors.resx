@@ -267,10 +267,10 @@
   <data name="30307"><value>CHANGEME</value></data>
   <data name="30308"><value>CHANGEME</value></data>
   <data name="30310"><value>CHANGEME</value></data>
-  <data name="30311"><value>Cannot convert from '{0}' to '{1}'.</value></data>
+  <data name="30311"><value>Value of type '{0}' cannot be converted to '{1}'.</value></data>
   <data name="30321"><value>CHANGEME</value></data>
-  <data name="30332"><value>CHANGEME</value></data>
-  <data name="30333"><value>CHANGEME</value></data>
+  <data name="30332"><value>Value of type '{0}' cannot be converted to '{1}' because '{2}' is not derived from '{3}'.</value></data>
+  <data name="30333"><value>Value of type '{0}' cannot be converted to '{1}' because '{2}' is not a reference type.</value></data>
   <data name="30337"><value>'For' loop control variable cannot be of the type '{0}'</value></data>
   <data name="30338"><value>CHANGEME</value></data>
   <data name="30345"><value>CHANGEME</value></data>
@@ -312,7 +312,7 @@
   <data name="30408"><value>Method '{0}' does not have the same signature as delegate '{1}'.</value></data>
   <data name="30412"><value>CHANGEME</value></data>
   <data name="30413"><value>CHANGEME</value></data>
-  <data name="30414"><value>CHANGEME</value></data>
+  <data name="30414"><value>Value of type '{0}' cannot be converted to '{1}' because the array types have different number of dimensions.</value></data>
   <data name="30415"><value>CHANGEME</value></data>
   <data name="30420"><value>Could not find a 'Sub Main' in '{0}'.</value></data>
   <data name="30423"><value>CHANGEME</value></data>
@@ -370,7 +370,7 @@
   <data name="30507"><value>CHANGEME</value></data>
   <data name="30508"><value>CHANGEME</value></data>
   <data name="30509"><value>CHANGEME</value></data>
-  <data name="30512"><value>Option Strict On does not allow implicit conversions from '{0}' to '{1}'.</value></data>
+  <data name="30512"><value>Option Strict On disallows implicit conversions from '{0}' to '{1}'.</value></data>
   <data name="30516"><value>Overload resolution failed because no '{0}' is accessible with the specified number of arguments.</value></data>
   <data name="30517"><value>Overload resolution failed because no '{0}' is accessible.</value></data>
   <data name="30518"><value>CHANGEME</value></data>

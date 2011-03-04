@@ -2239,6 +2239,8 @@ Public Class Parser
         m_Identifier = ParseIdentifier(result)
         If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
+        If tm.Accept(KS.Interrogation) Then result.IsNullable = True
+
         If vbnc.ArrayNameModifier.CanBeMe(tm) Then
             m_ArrayNameModifier = ParseArrayNameModifier(result)
             If m_ArrayNameModifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)

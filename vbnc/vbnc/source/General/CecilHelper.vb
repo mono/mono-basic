@@ -962,6 +962,20 @@ Public Class CecilHelper
         Return Type.IsValueType
     End Function
 
+    Public Shared Function CreateNullableType(ByVal Context As BaseObject, ByVal Type As TypeReference, ByRef result As TypeReference) As Boolean
+        If CecilHelper.IsValueType(Type) = False Then
+            Dim gp As GenericParameter = TryCast(Type, GenericParameter)
+            If gp Is Nothing OrElse gp.HasNotNullableValueTypeConstraint = False Then
+                Return Context.Compiler.Report.ShowMessage(Messages.VBNC33101, Context.Location, Helper.ToString(Context.Compiler, Type))
+            End If
+        End If
+
+        Dim git As New GenericInstanceType(Context.Compiler.TypeCache.System_Nullable1)
+        git.GenericArguments.Add(Type)
+        result = git
+        Return True
+    End Function
+
     Public Shared Function IsNullable(ByVal Type As TypeReference) As Boolean
         Dim git As GenericInstanceType
 
@@ -1112,6 +1126,19 @@ Public Class CecilHelper
         tD = FindDefinition(Type)
 
         Return tD.IsClass
+    End Function
+
+    Public Shared Function IsReferenceTypeOrGenericReferenceTypeParameter(ByVal Type As TypeReference) As Boolean
+        Dim tg As GenericParameter = TryCast(Type, GenericParameter)
+        Dim td As TypeDefinition
+
+        If tg IsNot Nothing Then
+            If tg.HasReferenceTypeConstraint Then Return True
+            Return False
+        End If
+
+        td = FindDefinition(Type)
+        Return (td.IsInterface OrElse td.IsClass) AndAlso td.IsValueType = False
     End Function
 
     Public Shared Function GetGenericParameterAttributes(ByVal Type As TypeReference) As GenericParameterAttributes

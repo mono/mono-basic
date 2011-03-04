@@ -168,9 +168,9 @@ Public Class ArgumentList
 #End If
                 exp = Helper.CreateTypeConversion(arg, arg.Expression, par.ParameterType, result)
             End If
-                If exp IsNot arg.Expression Then
-                    m_Arguments(i) = New PositionalArgument(Me, i, exp)
-                End If
+            If exp IsNot arg.Expression Then
+                m_Arguments(i) = New PositionalArgument(Me, i, exp)
+            End If
         Next
 
         Return result

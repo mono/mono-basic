@@ -1668,7 +1668,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30310 = 30310
 
     ''' <summary>
-    ''' VBNC = "Cannot convert from '{0}' to '{1}'."
+    ''' VBNC = "Value of type '{0}' cannot be converted to '{1}'."
     ''' VB   = "Value of type '|1' cannot be converted to '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1682,14 +1682,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30321 = 30321
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Value of type '{0}' cannot be converted to '{1}' because '{2}' is not derived from '{3}'."
     ''' VB   = "Value of type '|1' cannot be converted to '|2' because '|3' is not derived from '|4'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30332 = 30332
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Value of type '{0}' cannot be converted to '{1}' because '{2}' is not a reference type."
     ''' VB   = "Value of type '|1' cannot be converted to '|2' because '|3' is not a reference type."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1983,7 +1983,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30413 = 30413
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Value of type '{0}' cannot be converted to '{1}' because the array types have different number of dimensions."
     ''' VB   = "Value of type '|1' cannot be converted to '|2' because the array types have different numbers of dimensions."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2389,7 +2389,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30509 = 30509
 
     ''' <summary>
-    ''' VBNC = "Option Strict On does not allow implicit conversions from '{0}' to '{1}'."
+    ''' VBNC = "Option Strict On disallows implicit conversions from '{0}' to '{1}'."
     ''' VB   = "Option Strict On disallows implicit conversions from '|1' to '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6946,3 +6946,4 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC99999 = 99999
 
 End Enum
+

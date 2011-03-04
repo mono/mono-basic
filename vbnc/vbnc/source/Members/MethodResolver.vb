@@ -37,6 +37,7 @@ Public Class MethodResolver
 
     Private m_ResolvedCandidate As MemberCandidate
     Private m_ShowErrors As Boolean
+    Private m_CanBeLateBound As Boolean
     Private m_Resolved As Boolean
     Private m_IsLateBound As Boolean
 
@@ -44,6 +45,15 @@ Public Class MethodResolver
         Get
             Return m_IsLateBound
         End Get
+    End Property
+
+    Property CanBeLateBound As Boolean
+        Get
+            Return m_CanBeLateBound
+        End Get
+        Set(ByVal value As Boolean)
+            m_CanBeLateBound = value
+        End Set
     End Property
 
     Property ShowErrors() As Boolean
@@ -237,7 +247,7 @@ Public Class MethodResolver
         If CandidatesLeft = 1 Then
             Return True
         ElseIf CandidatesLeft = 0 Then
-            If Parent.Location.File(Compiler).IsOptionStrictOn = False Then
+            If Parent.Location.File(Compiler).IsOptionStrictOn = False AndAlso m_CanBeLateBound Then
                 m_IsLateBound = True
                 Return True
             End If
@@ -260,7 +270,7 @@ Public Class MethodResolver
         If CandidatesLeft = 1 Then
             Return True
         ElseIf CandidatesLeft = 0 Then
-            If Parent.Location.File(Compiler).IsOptionStrictOn = False Then
+            If Parent.Location.File(Compiler).IsOptionStrictOn = False AndAlso m_CanBeLateBound Then
                 m_IsLateBound = True
                 Return True
             End If
@@ -1508,3 +1518,4 @@ Public Class MemberCandidate
         End If
     End Sub
 End Class
+

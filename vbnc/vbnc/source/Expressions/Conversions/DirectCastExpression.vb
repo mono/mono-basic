@@ -57,12 +57,12 @@ Public Class DirectCastExpression
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
                     Emitter.EmitBox(Info, Expression.ExpressionType)
-                    Emitter.EmitCastClass(Info, Expression.ExpressionType, ExpressionType)
+                    Emitter.EmitCastClass(Info, ExpressionType)
                 End If
             Else
                 result = Expression.GenerateCode(Info.Clone(Me, True, False, Expression.ExpressionType)) AndAlso result
                 If Helper.CompareType(Expression.ExpressionType, ExpressionType) = False Then
-                    Emitter.EmitCastClass(Info, Expression.ExpressionType, ExpressionType)
+                    Emitter.EmitCastClass(Info, ExpressionType)
                 End If
             End If
         End If

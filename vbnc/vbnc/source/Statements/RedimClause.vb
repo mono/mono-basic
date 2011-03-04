@@ -95,7 +95,7 @@ Public Class RedimClause
             result = Helper.EmitIntegerArray(Info, m_ArraySizeInitModifier.BoundList.Expressions) AndAlso result
             Emitter.EmitCall(Info, Compiler.TypeCache.System_Array__CreateInstance)
 
-            Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array, ArrayType)
+            Emitter.EmitCastClass(Info, ArrayType)
         End If
         Return result
     End Function
@@ -103,10 +103,10 @@ Public Class RedimClause
     Private Function GenerateCodeForPreserve(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
         result = m_Expression.GenerateCode(Info.Clone(Me, True, False, m_ArrayType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_Expression.ExpressionType, Compiler.TypeCache.System_Array)
+        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array)
         result = GenerateCodeForNewArray(Info) AndAlso result
         Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Utils__CopyArray_Array_Array)
-        Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Array, m_ArrayType)
+        Emitter.EmitCastClass(Info, m_ArrayType)
         Return result
     End Function
 

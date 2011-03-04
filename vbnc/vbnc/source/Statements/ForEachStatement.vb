@@ -109,7 +109,7 @@ Public Class ForEachStatement
         If isGenericParameter Then
             Emitter.EmitUnbox_Any(Info, varType)
         ElseIf isClass Then
-            Emitter.EmitCastClass(Info, Compiler.TypeCache.System_Object, varType)
+            Emitter.EmitCastClass(Info, varType)
         ElseIf isValueType Then
             Emitter.MarkLabel(Info, valueTPLoad)
             Emitter.EmitUnbox(Info, varType)
@@ -141,7 +141,7 @@ Public Class ForEachStatement
 
         'Load the container variable and get the enumerator
         result = m_InExpression.GenerateCode(Info.Clone(Me, True, False, m_InExpression.ExpressionType)) AndAlso result
-        Emitter.EmitCastClass(Info, m_InExpression.ExpressionType, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable))
+        Emitter.EmitCastClass(Info, Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable))
         Emitter.EmitCallVirt(Info, Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Collections_IEnumerable__GetEnumerator))
         Emitter.EmitStoreVariable(Info, m_Enumerator)
 

@@ -331,19 +331,19 @@ Public Class Attribute
             For i As Integer = 0 To m_Arguments.Length - 1
                 Dim value As Object = Nothing
                 If TypeOf m_Arguments(i) Is TypeReference Then Continue For
-                result = TypeConverter.ConvertTo(Me, m_Arguments(i), parameters(i).ParameterType, value)
+                result = TypeConverter.ConvertTo(Me, m_Arguments(i), parameters(i).ParameterType, value, True)
                 If result Then m_Arguments(i) = value
             Next
             For i As Integer = 0 To m_FieldValues.Count - 1
                 Dim value As Object = Nothing
                 'TypeConverter.ConvertTo will report any errors
-                result = TypeConverter.ConvertTo(Me, m_FieldValues(i), m_Fields(i).FieldType, value)
+                result = TypeConverter.ConvertTo(Me, m_FieldValues(i), m_Fields(i).FieldType, value, True)
                 If result Then m_FieldValues(i) = value
             Next
             For i As Integer = 0 To m_PropertyValues.Count - 1
                 Dim value As Object = Nothing
                 'TypeConverter.ConvertTo will report any errors
-                result = TypeConverter.ConvertTo(Me, m_PropertyValues(i), m_Properties(i).PropertyType, value)
+                result = TypeConverter.ConvertTo(Me, m_PropertyValues(i), m_Properties(i).PropertyType, value, True)
                 If result Then m_PropertyValues(i) = value
             Next
         End If

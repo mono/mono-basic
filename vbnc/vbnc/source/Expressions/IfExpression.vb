@@ -45,11 +45,7 @@ Public Class IfExpression
             If Not ThirdPart.GetConstant(third, ShowError) Then Return False
 
             result = If(CBool(first), second, third)
-            If TypeConverter.ConvertTo(Me, result, m_ExpressionType, result) = False Then
-                If ShowError Then Show30059()
-                Return False
-            End If
-            Return True
+            Return TypeConverter.ConvertTo(Me, result, m_ExpressionType, result, ShowError)
         End If
 
         If TypeOf SecondPart Is NothingConstantExpression Then
@@ -66,12 +62,8 @@ Public Class IfExpression
         Else
             If Not Condition.GetConstant(first, ShowError) Then Return False
             If Not SecondPart.GetConstant(second, ShowError) Then Return False
-            
-            If TypeConverter.ConvertTo(Me, result, m_ExpressionType, result) = False Then
-                If ShowError Then Show30059()
-                Return False
-            End If
-            Return True
+
+            Return TypeConverter.ConvertTo(Me, result, m_ExpressionType, result, ShowError)
         End If
 
         If ShowError Then Show30059()
