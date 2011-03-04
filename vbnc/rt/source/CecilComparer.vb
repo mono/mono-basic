@@ -657,14 +657,14 @@ Public Class CecilComparer
         CompareList(Of MethodDefinition)(CloneCollection(Of MethodDefinition)(Ctors1), CloneCollection(Of MethodDefinition)(Ctors2), New ComparerMethod(Of MethodDefinition)(AddressOf CompareMethod), New EqualChecker(Of MethodDefinition)(AddressOf AreSameCtor), "Constructor", New AsString(Of MethodDefinition)(AddressOf CtorAsString))
     End Sub
 
-    Private Shared _assemblies As New Hashtable
+    Private _assemblies As New Hashtable
 
     Private Class resolver
         Inherits BaseAssemblyResolver
 
     End Class
 
-    Public Shared Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
+    Public Function FindDefinition(ByVal name As AssemblyNameReference) As AssemblyDefinition
         Dim asm As AssemblyDefinition = TryCast(_assemblies(name.Name), AssemblyDefinition)
         If asm Is Nothing Then
             Dim base As New DefaultAssemblyResolver
@@ -675,7 +675,7 @@ Public Class CecilComparer
         Return asm
     End Function
 
-    Public Shared Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
+    Public Function FindDefinition(ByVal type As TypeReference) As TypeDefinition
         If type Is Nothing Then Return Nothing
         Dim tD As TypeDefinition = TryCast(type, TypeDefinition)
         If tD IsNot Nothing Then Return tD

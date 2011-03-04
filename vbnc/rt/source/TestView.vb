@@ -44,7 +44,6 @@ Friend Class TestView
         newItem.SubItems.Add("")
         newItem.SubItems.Add("")
         newItem.SubItems.Add("")
-        newItem.SubItems.Add("")
         newItem.SubItems.Add(Test.KnownFailure)
 
         Update(newItem)
@@ -70,10 +69,9 @@ Friend Class TestView
 
             Item.ImageIndex = m_Form.GetIconIndex(Test.Result)
             Item.SubItems(1).Text = ""
-            Item.SubItems(2).Text = "Running..."
+            Item.SubItems(2).Text = ""
             Item.SubItems(3).Text = ""
-            Item.SubItems(4).Text = ""
-            Item.SubItems(5).Text = Test.KnownFailure
+            Item.SubItems(4).Text = Test.KnownFailure
         Catch ex As Exception
             MsgBox(ex.ToString)
         End Try
@@ -96,18 +94,17 @@ Friend Class TestView
                 testresult = test.Result
             End If
             If test.LastRun.Date <> Date.MinValue Then
-                Item.SubItems(4).Text = test.LastRun.ToString(datetimeformat)
+                Item.SubItems(3).Text = test.LastRun.ToString(datetimeformat)
             End If
             Item.ImageIndex = m_Form.GetIconIndex(testresult)
-            Item.SubItems(2).Text = test.Category
 
             Item.SubItems(1).Text = test.Result.ToString
             If test.FailedVerificationMessage <> "" Then
                 Dim idx As Integer = test.FailedVerificationMessage.IndexOf(vbNewLine)
                 If idx < 0 Then idx = test.FailedVerificationMessage.Length
-                Item.SubItems(3).Text = test.FailedVerificationMessage.Substring(0, idx)
+                Item.SubItems(2).Text = test.FailedVerificationMessage.Substring(0, idx)
             Else
-                Item.SubItems(3).Text = ""
+                Item.SubItems(2).Text = ""
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)

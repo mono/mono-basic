@@ -94,6 +94,7 @@
     <Compile Include="EnhancedProgressBar.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ErrorInfo.vb" />
     <Compile Include="ExternalProcessExecutor.vb" />
     <Compile Include="ExternalProcessVerification.vb" />
     <Compile Include="FileTabPage.Designer.vb">

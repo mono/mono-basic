@@ -20,7 +20,7 @@
 Friend Class TestExecutor
     Implements IDisposable
 
-    Private m_Thread As Threading.Thread
+    Private m_Threads() As Threading.Thread
     Private m_Queue As New Generic.LinkedList(Of Test)
     Private m_PausedQueue As New Generic.List(Of Test)
     Private m_RunningTest As Test
@@ -53,6 +53,10 @@ Friend Class TestExecutor
     ''' </summary>
     ''' <remarks></remarks>
     Private m_RunTestsHosted As Boolean
+
+    Sub New()
+        ReDim m_Threads(3) '4 threads for now
+    End Sub
 
     ReadOnly Property Queue() As Generic.IEnumerable(Of Test)
         Get
@@ -128,11 +132,12 @@ Friend Class TestExecutor
 
     Private Sub StartThread()
         SyncLock m_Queue
-            If m_Thread Is Nothing Then
-                m_Thread = New Threading.Thread(New Threading.ThreadStart(AddressOf Runner))
-                m_Thread.IsBackground = True
-                m_Thread.Start()
-            End If
+            For i As Integer = 0 To m_Threads.Length - 1
+                If m_Threads(i) IsNot Nothing Then Continue For
+                m_Threads(i) = New Threading.Thread(New Threading.ThreadStart(AddressOf Runner))
+                m_Threads(i).IsBackground = True
+                m_Threads(i).Start()
+            Next
         End SyncLock
     End Sub
 
@@ -253,13 +258,16 @@ Friend Class TestExecutor
     ''' <remarks></remarks>
     Public Sub [Stop]()
         Clear()
-        If m_Thread IsNot Nothing Then
-            If Threading.Thread.CurrentThread.Equals(m_Thread) = False Then
-                Do Until m_Thread.ThreadState <> Threading.ThreadState.Running
-                    Threading.Thread.Sleep(100)
-                Loop
-            End If
-        End If
+        For i As Integer = 0 To m_Threads.Length - 1
+            Dim m_Thread As Threading.Thread = m_Threads(i)
+
+            If m_Thread Is Nothing Then Continue For
+            If Threading.Thread.CurrentThread.Equals(m_Thread) Then Continue For
+
+            Do Until m_Thread.ThreadState <> Threading.ThreadState.Running
+                Threading.Thread.Sleep(100)
+            Loop
+        Next
     End Sub
 
     Private disposedValue As Boolean = False        ' To detect redundant calls
@@ -270,13 +278,15 @@ Friend Class TestExecutor
             If disposing Then
                 ' TODO: free unmanaged resources when explicitly called
             End If
-            If m_Thread IsNot Nothing Then
+            For i As Integer = 0 To m_Threads.Length - 1
+                Dim m_Thread As Threading.Thread = m_Threads(i)
+                If m_Thread Is Nothing Then Continue For
                 Me.disposedValue = True
                 If m_Thread.Join(60000) = False Then
                     m_Thread.Abort()
                 End If
-                m_Thread = Nothing
-            End If
+                m_Threads(i) = Nothing
+            Next
 
             ' TODO: free shared unmanaged resources
         End If
@@ -293,3 +303,4 @@ Friend Class TestExecutor
 #End Region
 
 End Class
+

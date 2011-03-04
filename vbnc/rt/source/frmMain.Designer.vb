@@ -44,6 +44,7 @@ Partial Class frmMain
         Me.mnuToolsRefresh = New System.Windows.Forms.ToolStripMenuItem()
         Me.NewTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ViewQueuedTestsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MakeErrorTestToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.lstImages = New System.Windows.Forms.ImageList(Me.components)
         Me.lblBasepath = New System.Windows.Forms.Label()
         Me.dlgBasepath = New System.Windows.Forms.FolderBrowserDialog()
@@ -69,6 +70,11 @@ Partial Class frmMain
         Me.CreateNewTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmnuDeleteTest = New System.Windows.Forms.ToolStripMenuItem()
         Me.MakeErrorTestToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UpdateErrorsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UpdateVbncErrorsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SetVbcErrorsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ClearVbcErrorsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.JustFixTheErrrsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmdPause = New System.Windows.Forms.Button()
         Me.cmdRun = New System.Windows.Forms.Button()
         Me.cmdExit = New System.Windows.Forms.Button()
@@ -82,7 +88,6 @@ Partial Class frmMain
         Me.lstTests = New System.Windows.Forms.ListView()
         Me.colName = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.colResult = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.colCategory = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.colFailedVerification = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.colDate = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.colKnownFailureReason = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
@@ -104,7 +109,7 @@ Partial Class frmMain
         Me.tblTestsInQueue = New System.Windows.Forms.ToolStripStatusLabel()
         Me.cmdFindTests = New System.Windows.Forms.Button()
         Me.cmdCreateTest = New System.Windows.Forms.Button()
-        Me.MakeErrorTestToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.cmdRunFailed = New System.Windows.Forms.Button()
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.tblLayoutMain.SuspendLayout()
@@ -151,6 +156,13 @@ Partial Class frmMain
         Me.ViewQueuedTestsToolStripMenuItem.Name = "ViewQueuedTestsToolStripMenuItem"
         Me.ViewQueuedTestsToolStripMenuItem.Size = New System.Drawing.Size(193, 22)
         Me.ViewQueuedTestsToolStripMenuItem.Text = "View queued tests"
+        '
+        'MakeErrorTestToolStripMenuItem1
+        '
+        Me.MakeErrorTestToolStripMenuItem1.Name = "MakeErrorTestToolStripMenuItem1"
+        Me.MakeErrorTestToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.MakeErrorTestToolStripMenuItem1.Size = New System.Drawing.Size(193, 22)
+        Me.MakeErrorTestToolStripMenuItem1.Text = "Make error test"
         '
         'lstImages
         '
@@ -203,49 +215,51 @@ Partial Class frmMain
         '
         'cmnuTest
         '
-        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem})
+        Me.cmnuTest.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.cmnuRunTest, Me.ToolStripSeparator1, Me.cmnuViewCodeAndDebugTest, Me.cmnuViewCode2, Me.cmnuDebugTest, Me.ToolStripSeparator3, Me.mnuIldasm, Me.ReflectToolStripMenuItem, Me.ToolStripSeparator2, Me.CreateNewTestToolStripMenuItem, Me.cmnuDeleteTest, Me.MakeErrorTestToolStripMenuItem, Me.UpdateErrorsToolStripMenuItem, Me.UpdateVbncErrorsToolStripMenuItem, Me.SetVbcErrorsToolStripMenuItem, Me.ClearVbcErrorsToolStripMenuItem, Me.JustFixTheErrrsToolStripMenuItem})
         Me.cmnuTest.Name = "cmnuTest"
-        Me.cmnuTest.Size = New System.Drawing.Size(390, 220)
+        Me.cmnuTest.Size = New System.Drawing.Size(409, 352)
         '
         'cmnuRunTest
         '
         Me.cmnuRunTest.Name = "cmnuRunTest"
-        Me.cmnuRunTest.Size = New System.Drawing.Size(389, 22)
+        Me.cmnuRunTest.ShortcutKeys = System.Windows.Forms.Keys.F5
+        Me.cmnuRunTest.Size = New System.Drawing.Size(408, 22)
         Me.cmnuRunTest.Text = "Run this test"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(386, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(405, 6)
         '
         'cmnuViewCodeAndDebugTest
         '
         Me.cmnuViewCodeAndDebugTest.Name = "cmnuViewCodeAndDebugTest"
-        Me.cmnuViewCodeAndDebugTest.Size = New System.Drawing.Size(389, 22)
+        Me.cmnuViewCodeAndDebugTest.ShortcutKeys = System.Windows.Forms.Keys.F2
+        Me.cmnuViewCodeAndDebugTest.Size = New System.Drawing.Size(408, 22)
         Me.cmnuViewCodeAndDebugTest.Text = "&View Code (external editor) and Set this test to be debugged"
         '
         'cmnuViewCode2
         '
         Me.cmnuViewCode2.Name = "cmnuViewCode2"
-        Me.cmnuViewCode2.Size = New System.Drawing.Size(389, 22)
+        Me.cmnuViewCode2.Size = New System.Drawing.Size(408, 22)
         Me.cmnuViewCode2.Text = "View code (external editor)"
         '
         'cmnuDebugTest
         '
         Me.cmnuDebugTest.Name = "cmnuDebugTest"
-        Me.cmnuDebugTest.Size = New System.Drawing.Size(389, 22)
+        Me.cmnuDebugTest.Size = New System.Drawing.Size(408, 22)
         Me.cmnuDebugTest.Text = "&Set this test to be debugged"
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(386, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(405, 6)
         '
         'mnuIldasm
         '
         Me.mnuIldasm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuIldasmBoth, Me.mnuIldasmDump})
         Me.mnuIldasm.Name = "mnuIldasm"
-        Me.mnuIldasm.Size = New System.Drawing.Size(389, 22)
+        Me.mnuIldasm.Size = New System.Drawing.Size(408, 22)
         Me.mnuIldasm.Text = "Ildasm"
         '
         'mnuIldasmBoth
@@ -264,54 +278,87 @@ Partial Class frmMain
         '
         Me.ReflectToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.VBNCAssemblyToolStripMenuItem, Me.VBCAssemblyToolStripMenuItem, Me.BothAssembliesToolStripMenuItem})
         Me.ReflectToolStripMenuItem.Name = "ReflectToolStripMenuItem"
-        Me.ReflectToolStripMenuItem.Size = New System.Drawing.Size(389, 22)
+        Me.ReflectToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
         Me.ReflectToolStripMenuItem.Text = "Reflect"
         '
         'VBNCAssemblyToolStripMenuItem
         '
         Me.VBNCAssemblyToolStripMenuItem.Name = "VBNCAssemblyToolStripMenuItem"
-        Me.VBNCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
+        Me.VBNCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.VBNCAssemblyToolStripMenuItem.Text = "VBNC assembly"
         '
         'VBCAssemblyToolStripMenuItem
         '
         Me.VBCAssemblyToolStripMenuItem.Name = "VBCAssemblyToolStripMenuItem"
-        Me.VBCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
+        Me.VBCAssemblyToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.VBCAssemblyToolStripMenuItem.Text = "VBC assembly"
         '
         'BothAssembliesToolStripMenuItem
         '
         Me.BothAssembliesToolStripMenuItem.Name = "BothAssembliesToolStripMenuItem"
-        Me.BothAssembliesToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
+        Me.BothAssembliesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8
+        Me.BothAssembliesToolStripMenuItem.Size = New System.Drawing.Size(178, 22)
         Me.BothAssembliesToolStripMenuItem.Text = "Both assemblies"
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(386, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(405, 6)
         '
         'CreateNewTestToolStripMenuItem
         '
         Me.CreateNewTestToolStripMenuItem.Name = "CreateNewTestToolStripMenuItem"
-        Me.CreateNewTestToolStripMenuItem.Size = New System.Drawing.Size(389, 22)
+        Me.CreateNewTestToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6
+        Me.CreateNewTestToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
         Me.CreateNewTestToolStripMenuItem.Text = "Create new test"
         '
         'cmnuDeleteTest
         '
         Me.cmnuDeleteTest.Name = "cmnuDeleteTest"
-        Me.cmnuDeleteTest.Size = New System.Drawing.Size(389, 22)
+        Me.cmnuDeleteTest.Size = New System.Drawing.Size(408, 22)
         Me.cmnuDeleteTest.Text = "Delete test"
         '
         'MakeErrorTestToolStripMenuItem
         '
         Me.MakeErrorTestToolStripMenuItem.Name = "MakeErrorTestToolStripMenuItem"
-        Me.MakeErrorTestToolStripMenuItem.Size = New System.Drawing.Size(389, 22)
+        Me.MakeErrorTestToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3
+        Me.MakeErrorTestToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
         Me.MakeErrorTestToolStripMenuItem.Text = "Make error test"
+        '
+        'UpdateErrorsToolStripMenuItem
+        '
+        Me.UpdateErrorsToolStripMenuItem.Name = "UpdateErrorsToolStripMenuItem"
+        Me.UpdateErrorsToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
+        Me.UpdateErrorsToolStripMenuItem.Text = "Update errors"
+        '
+        'UpdateVbncErrorsToolStripMenuItem
+        '
+        Me.UpdateVbncErrorsToolStripMenuItem.Name = "UpdateVbncErrorsToolStripMenuItem"
+        Me.UpdateVbncErrorsToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
+        Me.UpdateVbncErrorsToolStripMenuItem.Text = "Update vbnc errors"
+        '
+        'SetVbcErrorsToolStripMenuItem
+        '
+        Me.SetVbcErrorsToolStripMenuItem.Name = "SetVbcErrorsToolStripMenuItem"
+        Me.SetVbcErrorsToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
+        Me.SetVbcErrorsToolStripMenuItem.Text = "Set vbc errors"
+        '
+        'ClearVbcErrorsToolStripMenuItem
+        '
+        Me.ClearVbcErrorsToolStripMenuItem.Name = "ClearVbcErrorsToolStripMenuItem"
+        Me.ClearVbcErrorsToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
+        Me.ClearVbcErrorsToolStripMenuItem.Text = "Clear vbc errors"
+        '
+        'JustFixTheErrrsToolStripMenuItem
+        '
+        Me.JustFixTheErrrsToolStripMenuItem.Name = "JustFixTheErrrsToolStripMenuItem"
+        Me.JustFixTheErrrsToolStripMenuItem.Size = New System.Drawing.Size(408, 22)
+        Me.JustFixTheErrrsToolStripMenuItem.Text = "Just fix the errors"
         '
         'cmdPause
         '
         Me.cmdPause.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdPause.Location = New System.Drawing.Point(980, 157)
+        Me.cmdPause.Location = New System.Drawing.Point(982, 188)
         Me.cmdPause.Name = "cmdPause"
         Me.cmdPause.Size = New System.Drawing.Size(75, 25)
         Me.cmdPause.TabIndex = 20
@@ -342,7 +389,7 @@ Partial Class frmMain
         'cmdStop
         '
         Me.cmdStop.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cmdStop.Location = New System.Drawing.Point(980, 188)
+        Me.cmdStop.Location = New System.Drawing.Point(982, 219)
         Me.cmdStop.Name = "cmdStop"
         Me.cmdStop.Size = New System.Drawing.Size(75, 25)
         Me.cmdStop.TabIndex = 29
@@ -426,7 +473,7 @@ Partial Class frmMain
         '
         'lstTests
         '
-        Me.lstTests.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.colName, Me.colResult, Me.colCategory, Me.colFailedVerification, Me.colDate, Me.colKnownFailureReason})
+        Me.lstTests.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.colName, Me.colResult, Me.colFailedVerification, Me.colDate, Me.colKnownFailureReason})
         Me.lstTests.ContextMenuStrip = Me.cmnuTest
         Me.lstTests.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lstTests.FullRowSelect = True
@@ -452,15 +499,10 @@ Partial Class frmMain
         Me.colResult.Text = "Result"
         Me.colResult.Width = 80
         '
-        'colCategory
-        '
-        Me.colCategory.Text = "Category"
-        Me.colCategory.Width = 83
-        '
         'colFailedVerification
         '
         Me.colFailedVerification.Text = "Failed Verification"
-        Me.colFailedVerification.Width = 249
+        Me.colFailedVerification.Width = 515
         '
         'colDate
         '
@@ -610,12 +652,15 @@ Partial Class frmMain
         Me.cmdCreateTest.Tag = ""
         Me.cmdCreateTest.Text = "Cre&ate Test"
         '
-        'MakeErrorTestToolStripMenuItem1
+        'cmdRunFailed
         '
-        Me.MakeErrorTestToolStripMenuItem1.Name = "MakeErrorTestToolStripMenuItem1"
-        Me.MakeErrorTestToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
-        Me.MakeErrorTestToolStripMenuItem1.Size = New System.Drawing.Size(193, 22)
-        Me.MakeErrorTestToolStripMenuItem1.Text = "Make error test"
+        Me.cmdRunFailed.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cmdRunFailed.Location = New System.Drawing.Point(982, 157)
+        Me.cmdRunFailed.Name = "cmdRunFailed"
+        Me.cmdRunFailed.Size = New System.Drawing.Size(75, 25)
+        Me.cmdRunFailed.TabIndex = 27
+        Me.cmdRunFailed.Tag = ""
+        Me.cmdRunFailed.Text = "Run failed"
         '
         'frmMain
         '
@@ -632,11 +677,12 @@ Partial Class frmMain
         Me.Controls.Add(Me.cmdReload)
         Me.Controls.Add(Me.mnuMain)
         Me.Controls.Add(Me.lblVBCCompiler)
-        Me.Controls.Add(Me.cmdStop)
         Me.Controls.Add(Me.cmdRun)
-        Me.Controls.Add(Me.cmdPause)
+        Me.Controls.Add(Me.cmdRunFailed)
         Me.Controls.Add(Me.cmbBasepath)
+        Me.Controls.Add(Me.cmdStop)
         Me.Controls.Add(Me.cmdExit)
+        Me.Controls.Add(Me.cmdPause)
         Me.Controls.Add(Me.barProgress)
         Me.Controls.Add(Me.lblCompiler)
         Me.Controls.Add(Me.cmdCompiler)
@@ -687,7 +733,6 @@ Partial Class frmMain
     Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ViewQueuedTestsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents colCategory As System.Windows.Forms.ColumnHeader
     Friend WithEvents worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents MakeErrorTestToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents mnuIldasm As System.Windows.Forms.ToolStripMenuItem
@@ -712,5 +757,11 @@ Partial Class frmMain
     Friend WithEvents cmdFindTests As System.Windows.Forms.Button
     Friend WithEvents cmdCreateTest As System.Windows.Forms.Button
     Friend WithEvents MakeErrorTestToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents UpdateErrorsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents SetVbcErrorsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ClearVbcErrorsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents cmdRunFailed As System.Windows.Forms.Button
+    Friend WithEvents UpdateVbncErrorsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents JustFixTheErrrsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class
 

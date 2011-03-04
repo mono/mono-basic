@@ -33,6 +33,7 @@
 ../../source/Expressions/Classifications/VariableClassification.vb
 ../../source/Expressions/Classifications/VoidClassification.vb
 ../../source/Expressions/CompilerGeneratedExpression.vb
+../../source/Expressions/Conversions/ConversionType.vb
 ../../source/Expressions/IfExpression.vb
 ../../source/Expressions/LateBoundAccessToExpression.vb
 ../../source/Expressions/LateBoundAccessToPropertyAccessExpression.vb

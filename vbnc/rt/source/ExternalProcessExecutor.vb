@@ -37,6 +37,8 @@ Public Class ExternalProcessExecutor
 
     Private m_DirsToDelete As Generic.List(Of String)
     Private m_Retries As Integer
+    Private m_StdOutEvent As New Threading.ManualResetEvent(False)
+    Private m_StdErrEvent As New Threading.ManualResetEvent(False)
 
     ReadOnly Property FileVersion() As FileVersionInfo
         Get
@@ -165,16 +167,34 @@ Public Class ExternalProcessExecutor
         Next
     End Sub
 
-    Private Sub OutputReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
+    Private Sub OutputReader(ByVal state As Object)
         Try
-            m_StdOut.AppendLine(e.Data)
+            Dim line As String
+            Dim m_Process As Process = DirectCast(state, Process)
+            line = m_Process.StandardOutput.ReadLine
+            While line IsNot Nothing
+                m_StdOut.AppendLine(line)
+                line = m_Process.StandardOutput.ReadLine
+            End While
+            m_StdOutEvent.Set()
         Catch ex As OutOfMemoryException
             m_StdOut.AppendLine(ex.Message)
         End Try
     End Sub
 
-    Private Sub ErrorReader(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
-        m_StdErr.AppendLine(e.Data)
+    Private Sub ErrorReader(ByVal state As Object)
+        Try
+            Dim m_Process As Process = DirectCast(state, Process)
+            Dim line As String
+            line = m_Process.StandardError.ReadLine
+            While line IsNot Nothing
+                m_StdErr.AppendLine(line)
+                line = m_Process.StandardError.ReadLine
+            End While
+            m_StdErrEvent.Set()
+        Catch ex As OutOfMemoryException
+            m_StdOut.AppendLine(ex.Message)
+        End Try
     End Sub
 
 
@@ -246,17 +266,16 @@ Public Class ExternalProcessExecutor
             Catch
             End Try
 
-            AddHandler process.OutputDataReceived, AddressOf OutputReader
-            AddHandler process.ErrorDataReceived, AddressOf ErrorReader
-            process.BeginOutputReadLine()
-            process.BeginErrorReadLine()
+            Threading.ThreadPool.QueueUserWorkItem(AddressOf OutputReader, process)
+            Threading.ThreadPool.QueueUserWorkItem(AddressOf ErrorReader, process)
 
             m_TimedOut = Not process.WaitForExit(m_TimeOut)
             If m_TimedOut Then
                 process.Kill()
             End If
             m_ExitCode = process.ExitCode
-
+            m_StdErrEvent.WaitOne()
+            m_StdOutEvent.WaitOne()
             process.Close()
             'process.CancelOutputRead()
             'RemoveHandler process.OutputDataReceived, AddressOf OutputReader
@@ -300,3 +319,4 @@ Public Class ExternalProcessExecutor
     End Sub
 
 End Class
+

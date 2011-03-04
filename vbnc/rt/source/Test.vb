@@ -35,8 +35,6 @@ Public Class Test
     ''' <remarks></remarks>
     Private m_Name As String
 
-    Private m_Category As String
-    Private m_Priority As Integer
     Private m_Arguments As String
     ''' <summary>
     ''' Arguments specific to vbc (such as compile into a different location). Will be appended after the rest of the arguments.
@@ -68,13 +66,6 @@ Public Class Test
     ''' <remarks></remarks>
     Private m_ExpectedExitCode As Integer
     Private m_ExpectedVBCExitCode As Nullable(Of Integer)
-
-    ''' <summary>
-    ''' The error (or warning) the compiler should return (0 for none).
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_ExpectedErrorCode As Integer
-    Private m_ExpectedVBCErrorCode As Nullable(Of Integer)
 
     ''' <summary>
     ''' The result of the test
@@ -116,15 +107,39 @@ Public Class Test
     ''' </summary>
     ''' <remarks></remarks>
     Private m_TestArguments As String
+    Private m_Errors As New Generic.List(Of ErrorInfo)
+    Private m_VBCErrors As Generic.List(Of ErrorInfo)
+    Private m_Description As String
 
     Public Event Executed(ByVal Sender As Test)
     Public Event Executing(ByVal Sender As Test)
     Public Event Changed(ByVal Sender As Test)
 
     Private m_Compiler As String
-    Private Shared m_NegativeRegExpTest As New System.Text.RegularExpressions.Regex("^\d\d\d\d.*$", System.Text.RegularExpressions.RegexOptions.Compiled)
-    Private Shared m_FileCache As New Collections.Generic.Dictionary(Of String, String())
-    Private Shared m_FileCacheTime As Date = Date.MinValue
+
+    Public Property Description As String
+        Get
+            Return m_Description
+        End Get
+        Set(ByVal value As String)
+            m_Description = value
+        End Set
+    End Property
+
+    Public ReadOnly Property Errors As Generic.List(Of ErrorInfo)
+        Get
+            Return m_Errors
+        End Get
+    End Property
+
+    Public Property VBCErrors As Generic.List(Of ErrorInfo)
+        Get
+            Return m_VBCErrors
+        End Get
+        Set(ByVal value As Generic.List(Of ErrorInfo))
+            m_VBCErrors = value
+        End Set
+    End Property
 
     Public Property MyType As MyTypes
         Get
@@ -164,6 +179,11 @@ Public Class Test
     Private Function GetAttributeValue(ByVal attrib As XmlAttribute) As String
         If attrib Is Nothing Then Return Nothing
         Return attrib.Value
+    End Function
+
+    Private Function GetAttributeIntValue(ByVal attrib As XmlAttribute) As Integer
+        If attrib Is Nothing Then Return Nothing
+        Return Integer.Parse(attrib.Value)
     End Function
 
     Private Function GetNodeValue(ByVal node As XmlNode) As String
@@ -221,8 +241,6 @@ Public Class Test
 
         m_ID = xml.Attributes("id").Value
         m_Name = xml.Attributes("name").Value
-        m_Category = GetAttributeValue(xml.Attributes("category"))
-        m_Priority = Integer.Parse(xml.Attributes("priority").Value)
         m_Arguments = GetNodeValue(xml.SelectSingleNode("arguments"))
         m_VBCArguments = GetNodeValue(xml.SelectSingleNode("vbcarguments"))
         m_TestArguments = GetNodeValue(xml.SelectSingleNode("testarguments"))
@@ -230,38 +248,13 @@ Public Class Test
         m_OutputVBCAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputvbcassembly")))
         m_OutputAssembly = GetFullPath(GetAttributeValue(xml.Attributes("outputassembly")))
 
-        m_ExpectedErrorCode = CInt(GetAttributeValue(xml.Attributes("expectederrorcode")))
         m_ExpectedExitCode = CInt(GetAttributeValue(xml.Attributes("expectedexitcode")))
         tmp = GetAttributeValue(xml.Attributes("expectedvbcerrorcode"))
-        If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCErrorCode = CInt(tmp)
         tmp = GetAttributeValue(xml.Attributes("expectedvbcexitcode"))
         If Not String.IsNullOrEmpty(tmp) Then m_ExpectedVBCExitCode = CInt(tmp)
         m_WorkingDirectory = GetAttributeValue(xml.Attributes("workingdirectory"))
 
         SetResult(GetAttributeValue(xml.Attributes("result")))
-
-
-        '    'Test to see if it is a negative test.
-        '    'Negative tests are:
-        '    '0001.vb
-        '    '0001-2.vb
-        '    '0001-3 sometest.vb
-        If m_NegativeRegExpTest.IsMatch(m_Name) AndAlso m_ExpectedErrorCode = 0 Then
-            Dim firstNonNumber As Integer = m_Name.Length
-            For i As Integer = 0 To m_Name.Length - 1
-                If Char.IsNumber(m_Name(i)) = False Then
-                    firstNonNumber = i
-                    Exit For
-                End If
-            Next
-            If Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_ExpectedErrorCode) Then
-                If m_ExpectedErrorCode >= 40000 AndAlso m_ExpectedErrorCode < 50000 Then
-                    m_ExpectedExitCode = 0
-                Else
-                    m_ExpectedExitCode = 1
-                End If
-            End If
-        End If
 
         target = GetAttributeValue(xml.Attributes("target"))
         If target IsNot Nothing Then target = target.ToLower()
@@ -274,8 +267,9 @@ Public Class Test
                 m_Target = Targets.Library
             Case "module"
                 m_Target = Targets.Module
-            Case "", Nothing, "none"
-                'Console.WriteLine("Warning: {0} does not have a target specified.", m_ID)
+            Case "", Nothing
+                m_Target = Targets.Library
+            Case "none"
                 m_Target = Targets.None
             Case Else
                 Throw New InvalidOperationException("Invalid target: " & target)
@@ -312,6 +306,16 @@ Public Class Test
         For Each file As XmlNode In xml.SelectNodes("dependency")
             m_Dependencies.Add(file.InnerText)
         Next
+
+        m_Description = GetNodeValue(xml.SelectSingleNode("description"))
+
+        For Each e As XmlNode In xml.SelectNodes("error")
+            m_Errors.Add(New ErrorInfo(GetAttributeIntValue(e.Attributes("line")), GetAttributeIntValue(e.Attributes("number")), GetAttributeValue(e.Attributes("message"))))
+        Next
+        For Each e As XmlNode In xml.SelectNodes("vbcerror")
+            If m_VBCErrors Is Nothing Then m_VBCErrors = New Generic.List(Of ErrorInfo)
+            m_VBCErrors.Add(New ErrorInfo(GetAttributeIntValue(e.Attributes("line")), GetAttributeIntValue(e.Attributes("number")), GetAttributeValue(e.Attributes("message"))))
+        Next
     End Sub
 
     Private Function GetFullPath(ByVal path As String) As String
@@ -339,8 +343,6 @@ Public Class Test
         xml.WriteAttributeString("id", m_ID)
         If results = False Then
             xml.WriteAttributeString("name", m_Name)
-            xml.WriteAttributeString("category", m_Category)
-            xml.WriteAttributeString("priority", m_Priority.ToString())
             If Not String.IsNullOrEmpty(m_KnownFailure) Then
                 xml.WriteAttributeString("knownfailure", m_KnownFailure)
             End If
@@ -352,11 +354,11 @@ Public Class Test
             End If
 
             If m_ExpectedExitCode <> 0 Then xml.WriteAttributeString("expectedexitcode", m_ExpectedExitCode.ToString())
-            If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
+            'If m_ExpectedErrorCode <> 0 Then xml.WriteAttributeString("expectederrorcode", m_ExpectedErrorCode.ToString())
             If m_ExpectedVBCExitCode.HasValue Then xml.WriteAttributeString("expectedvbcexitcode", m_ExpectedVBCExitCode.Value.ToString())
-            If m_ExpectedVBCErrorCode.HasValue Then xml.WriteAttributeString("expectedvbcerrorcode", m_ExpectedVBCErrorCode.Value.ToString())
+            'If m_ExpectedVBCErrorCode.HasValue Then xml.WriteAttributeString("expectedvbcerrorcode", m_ExpectedVBCErrorCode.Value.ToString())
 
-            xml.WriteAttributeString("target", m_Target.ToString().ToLower())
+            If m_Target <> Targets.Library Then xml.WriteAttributeString("target", m_Target.ToString().ToLower())
             If m_MyType <> MyTypes.Default Then xml.WriteAttributeString("mytype", m_MyType.ToString().ToLower())
 
             If Not String.IsNullOrEmpty(m_WorkingDirectory) Then xml.WriteAttributeString("workingdirectory", m_WorkingDirectory)
@@ -364,11 +366,32 @@ Public Class Test
             If Not String.IsNullOrEmpty(m_VBCArguments) Then xml.WriteElementString("vbcarguments", m_VBCArguments)
             If Not String.IsNullOrEmpty(m_TestArguments) Then xml.WriteElementString("testarguments", m_TestArguments)
             For Each file As String In m_Files
+                If IO.Path.IsPathRooted(file) AndAlso file.StartsWith(IO.Path.GetDirectoryName(Parent.Filename)) Then
+                    file = file.Substring(IO.Path.GetDirectoryName(Parent.Filename).Length)
+                    If file.StartsWith(IO.Path.DirectorySeparatorChar) Then file = file.Substring(1)
+                End If
                 xml.WriteElementString("file", file)
             Next
             For Each file As String In m_Dependencies
                 xml.WriteElementString("dependency", file)
             Next
+            If Not String.IsNullOrEmpty(m_Description) Then xml.WriteElementString("description", m_Description)
+            For Each Err As ErrorInfo In m_Errors
+                xml.WriteStartElement("error")
+                If Err.Line <> 0 Then xml.WriteAttributeString("line", Err.Line.ToString())
+                If Err.Number <> 0 Then xml.WriteAttributeString("number", Err.Number.ToString())
+                If String.IsNullOrEmpty(Err.Message) = False Then xml.WriteAttributeString("message", Err.Message)
+                xml.WriteEndElement()
+            Next
+            If m_VBCErrors IsNot Nothing Then
+                For Each Err As ErrorInfo In m_VBCErrors
+                    xml.WriteStartElement("vbcerror")
+                    If Err.Line <> 0 Then xml.WriteAttributeString("line", Err.Line.ToString())
+                    If Err.Number <> 0 Then xml.WriteAttributeString("number", Err.Number.ToString())
+                    If String.IsNullOrEmpty(Err.Message) = False Then xml.WriteAttributeString("message", Err.Message)
+                    xml.WriteEndElement()
+                Next
+            End If
         Else
             xml.WriteAttributeString("result", m_Result.ToString().ToLower())
             For Each vb As VerificationBase In Me.Verifications
@@ -376,7 +399,6 @@ Public Class Test
                 xml.WriteAttributeString("Type", vb.GetType().FullName)
                 xml.WriteAttributeString("Name", vb.Name)
                 xml.WriteAttributeString("DescriptiveMessage", vb.DescriptiveMessage)
-                xml.WriteAttributeString("ExpectedErrorCode", vb.ExpectedErrorCode.ToString())
                 xml.WriteAttributeString("ExpectedExitCode", vb.ExpectedExitCode.ToString())
                 xml.WriteAttributeString("Result", vb.Result.ToString())
                 xml.WriteAttributeString("Run", vb.Run.ToString())
@@ -404,24 +426,6 @@ Public Class Test
         End Get
         Set(ByVal value As Integer)
             m_ExpectedExitCode = value
-        End Set
-    End Property
-
-    Property ExpectedErrorCode() As Integer
-        Get
-            Return m_ExpectedErrorCode
-        End Get
-        Set(ByVal value As Integer)
-            m_ExpectedErrorCode = value
-        End Set
-    End Property
-
-    Property ExpectedVBCErrorCode() As Nullable(Of Integer)
-        Get
-            Return m_ExpectedVBCErrorCode
-        End Get
-        Set(ByVal value As Nullable(Of Integer))
-            m_ExpectedVBCErrorCode = value
         End Set
     End Property
 
@@ -464,15 +468,6 @@ Public Class Test
         End Get
         Set(ByVal value As Object)
             m_Tag = value
-        End Set
-    End Property
-
-    Public Property Category() As String
-        Get
-            Return m_Category
-        End Get
-        Set(ByVal value As String)
-            m_Category = value
         End Set
     End Property
 
@@ -845,6 +840,17 @@ Public Class Test
         End Get
     End Property
 
+    ReadOnly Property VBNCVerification As ExternalProcessVerification
+        Get
+            For Each v As VerificationBase In m_Verifications
+                Dim epv As ExternalProcessVerification = TryCast(v, ExternalProcessVerification)
+                If epv Is Nothing Then Continue For
+                If epv.Name.StartsWith("VBNC ") Then Return epv
+            Next
+            Return Nothing
+        End Get
+    End Property
+
     ''' <summary>
     ''' Returns true if new verifications have been created (only if source files has changed
     ''' or vbnc compiler has changed since last run).
@@ -875,10 +881,10 @@ Public Class Test
             Else
                 vbc.ExpectedExitCode = m_ExpectedExitCode
             End If
-            If m_ExpectedVBCErrorCode.HasValue Then
-                vbc.ExpectedErrorCode = m_ExpectedVBCErrorCode.Value
+            If m_VBCErrors IsNot Nothing Then
+                vbc.ExpectedErrors = m_VBCErrors
             Else
-                vbc.ExpectedErrorCode = m_ExpectedErrorCode
+                vbc.ExpectedErrors = m_Errors
             End If
         End If
 
@@ -898,7 +904,7 @@ Public Class Test
 
         m_Compilation.Name = "VBNC Compile"
         external_compilation.Process.UseTemporaryExecutable = True
-        m_Compilation.ExpectedErrorCode = m_ExpectedErrorCode
+        m_Compilation.ExpectedErrors = m_Errors
         m_Compilation.ExpectedExitCode = m_ExpectedExitCode
 
         m_Verifications.Clear()
@@ -1061,40 +1067,6 @@ Public Class Test
         Load(xml)
     End Sub
 
-    'Sub New(ByVal Path As String, ByVal Parent As Tests)
-    '    m_Parent = Parent
-    '    If Path.EndsWith(IO.Path.DirectorySeparatorChar) Then
-    '        Path = Path.Remove(Path.Length - 1, 1)
-    '    End If
-
-    '    m_BasePath = IO.Path.GetDirectoryName(Path)
-    '    m_Files.Add(Path)
-
-    '    m_Name = GetTestName(Path)
-
-    '    'Test to see if it is a negative test.
-    '    'Negative tests are:
-    '    '0001.vb
-    '    '0001-2.vb
-    '    '0001-3 sometest.vb
-    '    If m_NegativeRegExpTest.IsMatch(m_Name) Then
-    '        Dim firstNonNumber As Integer = m_Name.Length
-    '        For i As Integer = 0 To m_Name.Length - 1
-    '            If Char.IsNumber(m_Name(i)) = False Then
-    '                firstNonNumber = i
-    '                Exit For
-    '            End If
-    '        Next
-    '        m_IsNegativeTest = Integer.TryParse(m_Name.Substring(0, firstNonNumber), m_NegativeError)
-    '        If m_IsNegativeTest AndAlso m_NegativeError >= 40000 AndAlso m_NegativeError < 50000 Then
-    '            m_IsNegativeTest = False
-    '            m_IsWarning = True
-    '        End If
-    '    End If
-    '    m_OutputPath = IO.Path.Combine(m_BasePath, DefaultOutputPath)
-    '    Initialize()
-    'End Sub
-
     Private Function IsNoConfig(ByVal text As String) As Boolean
         Return text.IndexOf("/noconfig", StringComparison.OrdinalIgnoreCase) >= 0
     End Function
@@ -1123,3 +1095,4 @@ Public Class Test
         End Select
     End Function
 End Class
+

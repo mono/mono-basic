@@ -44,17 +44,6 @@ Public Class ExternalProcessVerification
         m_Process.ExpandCmdLine(New String() {"%OUTPUTASSEMBLY%", "%OUTPUTVBCASSEMBLY%"}, New String() {Test.OutputAssembly(), Test.OutputVBCAssembly()})
     End Sub
 
-    Private Function StdOutContainsNumber(ByVal Number As Integer, ByRef ContainsMyGenerator As Boolean, ByRef ContainsCHANGEME As Boolean, ByRef Contains9999Error As Boolean) As Boolean
-        Dim str As String
-        str = m_Process.StdOut & ""
-        If str.Contains("<MyGenerator>") Then ContainsMyGenerator = True
-        If str.Contains("CHANGEME") Then ContainsCHANGEME = True
-        If str.Contains("VBNC9999") Then Contains9999Error = True
-        If str.Contains("BC" & Number.ToString) Then Return True
-        If str.Contains("VBNC" & Number.ToString) Then Return True
-        Return False
-    End Function
-
     Protected Overrides Function RunVerification() As Boolean
         Dim result As Boolean
 
@@ -69,22 +58,54 @@ Public Class ExternalProcessVerification
             If m_Process.ExitCode <> Me.ExpectedExitCode Then
                 MyBase.DescriptiveMessage = Name & " failed, expected exit code " & Me.ExpectedExitCode & " but process exited with exit code " & m_Process.ExitCode & vbNewLine
                 result = False
-            ElseIf Me.ExpectedErrorCode <> 0 Then
-                Dim myGenerator As Boolean
-                Dim changeme As Boolean
-                Dim notimplerr As Boolean
-                If StdOutContainsNumber(Me.ExpectedErrorCode, myGenerator, changeme, notimplerr) = False Then
-                    MyBase.DescriptiveMessage = Name & " failed, expected error code " & Me.ExpectedErrorCode & vbNewLine
-                    result = False
-                ElseIf myGenerator Then
-                    MyBase.DescriptiveMessage = Name & " failed, <MyGenerator> shown in error message" & vbNewLine
-                    result = False
-                ElseIf changeme Then
-                    MyBase.DescriptiveMessage = Name & " failed, CHANGEME shown in error message" & vbNewLine
-                    result = False
-                ElseIf notimplerr Then
-                    MyBase.DescriptiveMessage = Name & " failed, VBNC9999? shown in error message" & vbNewLine
-                    result = False
+            Else
+                Dim actualErrors As New Generic.List(Of ErrorInfo)
+                Dim errorReport As String
+                Dim ei As ErrorInfo
+                Dim line As String
+                Dim stdout As String = m_Process.StdOut
+
+                Using reader As New System.IO.StringReader(stdout)
+                    line = reader.ReadLine
+                    Do While line IsNot Nothing
+                        If line.Contains("<MyGenerator>") Then
+                            MyBase.DescriptiveMessage = Name & " failed, <MyGenerator> shown in error message" & vbNewLine
+                            result = False
+                        ElseIf line.Contains("VBNC9999") AndAlso line.Contains("VBNC99998") = False Then
+                            MyBase.DescriptiveMessage = Name & " failed, VBNC9999? shown in error message" & vbNewLine
+                            result = False
+                        ElseIf line.Contains("CHANGEME") Then
+                            MyBase.DescriptiveMessage = Name & " failed, CHANGEME shown in error message" & vbNewLine
+                            result = False
+                        Else
+                            ei = ErrorInfo.ParseLine(line)
+                            If ei IsNot Nothing Then actualErrors.Add(ei)
+                        End If
+
+                        line = reader.ReadLine
+                    Loop
+                End Using
+
+                If result Then
+                    If (ExpectedErrors Is Nothing OrElse ExpectedErrors.Count = 0) AndAlso actualErrors.Count > 0 Then
+                        MyBase.DescriptiveMessage = String.Format("{0} failed, expected 0 errors, got {1} errors{2}", Name, actualErrors.Count, vbNewLine)
+                        result = False
+                    ElseIf ExpectedErrors IsNot Nothing AndAlso ExpectedErrors.Count <> actualErrors.Count Then
+                        MyBase.DescriptiveMessage = String.Format("{0} failed, expected {1} errors, got {2} errors{3}", Name, ExpectedErrors.Count, actualErrors.Count, vbNewLine)
+                        result = False
+                    ElseIf ExpectedErrors IsNot Nothing Then
+                        errorReport = String.Empty
+                        For i As Integer = 0 To ExpectedErrors.Count - 1
+                            Dim msg As String = Nothing
+                            If ErrorInfo.Compare(ExpectedErrors(i), actualErrors(i), msg) = False Then
+                                errorReport += String.Format("Error #{0}: {1}", i + 1, msg)
+                            End If
+                        Next
+                        If errorReport <> String.Empty Then
+                            MyBase.DescriptiveMessage = String.Format("{0} failed error verification: {2}", Name, vbNewLine, errorReport)
+                            result = False
+                        End If
+                    End If
                 End If
             End If
 
@@ -108,3 +129,4 @@ Public Class ExternalProcessVerification
         Return result
     End Function
 End Class
+

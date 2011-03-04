@@ -24,7 +24,7 @@ Public MustInherit Class VerificationBase
     Private m_Test As Test
     Private m_DescriptiveMessage As String
     Private m_ExpectedExitCode As Integer
-    Private m_ExpectedErrorCode As Integer
+    Private m_ExpectedErrors As Generic.List(Of ErrorInfo)
 
     Private m_Name As String = "Verification"
 
@@ -37,12 +37,12 @@ Public MustInherit Class VerificationBase
         End Set
     End Property
 
-    Property ExpectedErrorCode() As Integer
+    Property ExpectedErrors() As Generic.List(Of ErrorInfo)
         Get
-            Return m_ExpectedErrorCode
+            Return m_ExpectedErrors
         End Get
-        Set(ByVal value As Integer)
-            m_ExpectedErrorCode = value
+        Set(ByVal value As Generic.List(Of ErrorInfo))
+            m_ExpectedErrors = value
         End Set
     End Property
 

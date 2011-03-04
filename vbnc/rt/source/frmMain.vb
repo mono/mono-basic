@@ -173,6 +173,7 @@ Class frmMain
                 SelectTest(Me.GetSelectedTests(0))
             Else
                 SelectTest(Nothing)
+                gridTestProperties.SelectedObjects = Me.GetSelectedTests().ToArray()
             End If
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
@@ -186,16 +187,6 @@ Class frmMain
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
-    End Sub
-
-    ''' <summary>
-    ''' Thread-safe.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub DoTestOf(ByVal Test As Test)
-        UpdateUITestRunning(Test)
-        Test.DoTest()
-        UpdateUI(Test)
     End Sub
 
     Private Sub UpdateUI()
@@ -354,6 +345,18 @@ Class frmMain
     Private Sub cmdRun_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdRun.Click
         Try
             AddWork(m_Tests.Values, True)
+            UpdateState()
+        Catch ex As Exception
+            MsgBox(String.Format("Error while executing tests: ") & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cmdRunFailed_Click(ByVal sender As Object, ByVal e As EventArgs) Handles cmdRunFailed.Click
+        Try
+            For Each Test As Test In m_Tests.Values
+                If Test.Success Then Continue For
+                AddWork(Test, True)
+            Next
             UpdateState()
         Catch ex As Exception
             MsgBox(String.Format("Error while executing tests: ") & ex.Message)
@@ -840,20 +843,18 @@ Class frmMain
 
             If test.VBCVerification Is Nothing Then Throw New ApplicationException("No VBC results")
 
-            Dim output As String
             Dim errnumber As String
             Dim source As String = IO.Path.Combine(test.FullWorkingDirectory, test.Files(0))
-            Dim iStart, iEnd As Integer
-            Dim vStart As String = ": error BC"
-            Dim vEnd As String = ":"
-            output = test.VBCVerification.DescriptiveMessage
-            iStart = output.IndexOf(vStart)
-            iEnd = output.IndexOf(vEnd, iStart + vStart.Length)
-            errnumber = output.Substring(iStart + vStart.Length, iEnd - iStart - vEnd.Length - vStart.Length + 1)
+        
+            Dim errors As New Generic.List(Of ErrorInfo)
+            Dim ei As ErrorInfo
+            For Each line As String In test.VBCVerification.Process.StdOut.Split(New String() {vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+                ei = ErrorInfo.ParseLine(line)
+                If ei IsNot Nothing Then errors.Add(ei)
+            Next
 
-            If output.IndexOf(vStart, iEnd) > 0 Then
-                Throw New ApplicationException("The test has more than one error message.")
-            End If
+            If errors.Count = 0 Then Throw New ApplicationException("The test doesn't have any compiler errors")
+            errnumber = errors(0).Number.ToString()
 
             Dim errdir As String
             errdir = IO.Path.Combine(IO.Path.GetDirectoryName(m_Tests.Filename), "Errors")
@@ -865,6 +866,7 @@ Class frmMain
             Dim destination As String
             Dim counter As Integer
             Dim name As String
+
             name = errnumber
             destination = IO.Path.Combine(errdir, name & ".vb")
             Do While IO.File.Exists(destination)
@@ -878,9 +880,9 @@ Class frmMain
             Dim new_test As Test
             new_test = New Test(m_Tests)
             new_test.ExpectedExitCode = 1
-            new_test.ExpectedErrorCode = CInt(errnumber)
             new_test.Arguments = test.Arguments
             new_test.Name = name
+            new_test.Errors.AddRange(errors)
             new_test.Files.Add(Path.Combine("Errors", Path.GetFileName(destination)))
             m_Tests.Append(new_test)
 
@@ -1091,7 +1093,9 @@ Class frmMain
 
     Private Sub CreateNewTestToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreateNewTestToolStripMenuItem.Click
         Try
-            CreateTest(InputBox("The name of the test:"))
+            Using frm As New frmNewTest(Me)
+                frm.ShowDialog(Me)
+            End Using
         Catch ex As Exception
             MsgBox(ex.Message & vbNewLine & ex.StackTrace)
         End Try
@@ -1146,6 +1150,120 @@ Class frmMain
 
     Private Sub MakeErrorTestToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MakeErrorTestToolStripMenuItem1.Click
         MakeErrorTestToolStripMenuItem_Click(sender, e)
+    End Sub
+
+    Private Sub UpdateErrorsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdateErrorsToolStripMenuItem.Click
+        Try
+            Dim ei As ErrorInfo
+
+            For Each test As Test In GetSelectedTests()
+                test.DoTest()
+
+                If test.VBCVerification Is Nothing Then Throw New ApplicationException("No VBC results")
+
+                test.Errors.Clear()
+                For Each line As String In test.VBCVerification.Process.StdOut.Split(New String() {vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+                    ei = ErrorInfo.ParseLine(line)
+                    If ei IsNot Nothing Then test.Errors.Add(ei)
+                Next
+                test.ExpectedExitCode = test.VBCVerification.Process.ExitCode
+
+                test.DoTest()
+                MsgBox(String.Format("Updated {0}", test.Name), MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
+            Next
+        Catch ex As Exception
+            MsgBox(ex.ToString())
+        End Try
+    End Sub
+
+    Private Sub SetVbcErrorsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SetVbcErrorsToolStripMenuItem.Click
+        Try
+            For Each Test As Test In GetSelectedTests()
+                Test.VBCErrors = New Generic.List(Of ErrorInfo)
+                For Each ei As ErrorInfo In Test.Errors
+                    Test.VBCErrors.Add(New ErrorInfo(ei.Line, ei.Number, ei.Message))
+                Next
+            Next
+        Catch ex As Exception
+            MsgBox(ex.ToString())
+        End Try
+    End Sub
+
+    Private Sub ClearVbcErrorsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ClearVbcErrorsToolStripMenuItem.Click
+        Try
+            For Each Test As Test In GetSelectedTests()
+                Test.VBCErrors = Nothing
+            Next
+        Catch ex As Exception
+            MsgBox(ex.ToString())
+        End Try
+    End Sub
+
+    Private Sub UpdateVbncErrorsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UpdateVbncErrorsToolStripMenuItem.Click
+        Try
+            Dim ei As ErrorInfo
+
+            For Each test As Test In GetSelectedTests()
+                test.DoTest()
+
+                If test.vbncVerification Is Nothing Then Throw New ApplicationException("No VBNC results")
+
+                test.Errors.Clear()
+                For Each line As String In test.VBNCVerification.Process.StdOut.Split(New String() {vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+                    ei = ErrorInfo.ParseLine(line)
+                    If ei IsNot Nothing Then test.Errors.Add(ei)
+                Next
+                test.ExpectedExitCode = test.VBNCVerification.Process.ExitCode
+
+                test.DoTest()
+                MsgBox(String.Format("Updated {0}", test.Name), MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
+            Next
+        Catch ex As Exception
+            MsgBox(ex.ToString())
+        End Try
+    End Sub
+
+    Private Sub JustFixTheErrrsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles JustFixTheErrrsToolStripMenuItem.Click
+        Try
+            Dim ei As ErrorInfo
+
+            For Each test As Test In GetSelectedTests()
+                test.Errors.Clear()
+                test.VBCErrors = Nothing
+
+                test.DoTest()
+
+                If test.VBNCVerification Is Nothing Then Throw New ApplicationException("No VBNC results")
+                If test.VBCVerification Is Nothing Then Throw New ApplicationException("No VBC results")
+
+                For Each line As String In test.VBCVerification.Process.StdOut.Split(New String() {vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+                    ei = ErrorInfo.ParseLine(line)
+                    If ei IsNot Nothing Then test.Errors.Add(ei)
+                Next
+                test.ExpectedExitCode = test.VBCVerification.Process.ExitCode
+                test.ExpectedVBCExitCode = Nothing
+
+                test.DoTest() ' run the test again
+
+                If test.Success OrElse test.Result = rt.Test.Results.KnownFailureSucceeded Then Return
+
+                'No success, set vbnc results
+                test.ExpectedVBCExitCode = test.ExpectedExitCode
+                test.ExpectedExitCode = test.VBNCVerification.Process.ExitCode
+
+                test.VBCErrors = New Generic.List(Of ErrorInfo)(test.Errors)
+                test.Errors.Clear()
+
+                For Each line As String In test.VBNCVerification.Process.StdOut.Split(New String() {vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
+                    ei = ErrorInfo.ParseLine(line)
+                    If ei IsNot Nothing Then test.Errors.Add(ei)
+                Next
+
+                test.DoTest()
+            Next
+        Catch ex As Exception
+            MsgBox(ex.ToString())
+        End Try
     End Sub
 End Class
 
