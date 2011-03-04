@@ -524,12 +524,17 @@ Public Class Parser
         Helper.Assert(Attributes IsNot Nothing)
 
         tm.AcceptIfNotInternalError(KS.LT)
+        tm.AcceptNewLine()
 
         If ParseAttributeList(Parent, Attributes) = False Then
             Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
+        tm.AcceptNewLine()
         result = tm.AcceptIfNotError(KS.GT) AndAlso result
+        If Attributes(0).IsAssembly = False AndAlso Attributes(0).IsModule = False Then
+            tm.AcceptNewLine()
+        End If
 
         Return result
     End Function

@@ -10321,4 +10321,14 @@
 		<file>CompileTime2\TypeConversionIntrinsic.vb</file>
 		<file>CompileTime2\TypeConversionIntrinsicGenerator.vb</file>
 	</test>
+	<test id="2236" name="ImplicitLineContinuations" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>CompileTime2\ImplicitLineContinuations.vb</file>
+	</test>
+	<test id="2237" name="30636" knownfailure="vbnc's scsanner joins multiple eol into one, so we can't detect this situation without changing that" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30636.vb</file>
+		<error line="13" number="30636" message="'&gt;' expected." />
+		<error line="15" number="30035" message="Syntax error." />
+	</test>
 </rt>
