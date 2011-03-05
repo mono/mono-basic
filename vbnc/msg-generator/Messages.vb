@@ -98,7 +98,7 @@ Class Messages
 
             strid = Mid(line, 1, splitter)
             id = CInt(strid)
-            Console.WriteLine("Read ID=" & strid & ", converted into: " & id.ToString())
+            'Console.WriteLine("Read ID=" & strid & ", converted into: " & id.ToString())
 			value = Trim(Mid(line, splitter + 1))
 			If value.StartsWith("""") AndAlso value.EndsWith("""") Then
 				value = Mid(value, 2, value.Length - 2)
@@ -146,7 +146,7 @@ nextline:
 					Dim id As Integer, level As String
                     id = CInt(xml.GetAttribute("id"))
 					level = xml.GetAttribute("level")
-                    Console.WriteLine("Read ID=" & xml.GetAttribute("id") & ", level: " & level & ", converted into: " & id.ToString())
+                    'Console.WriteLine("Read ID=" & xml.GetAttribute("id") & ", level: " & level & ", converted into: " & id.ToString())
 					xml.Read()
                     Dim msg As New Message(id, level)
 					While xml.Name <> "Message"
@@ -271,7 +271,7 @@ nextline:
             c.Append("    ''' <remarks></remarks>" & vbNewLine)
             c.Append("    <Message(MessageLevel." & msg.Level & ")> VBNC" & msg.ID.ToString & " = " & msg.ID.ToString & vbNewLine)
             c.Append("" & vbNewLine)
-            Console.WriteLine("Written ID=" & msg.ID.ToString)
+            'Console.WriteLine("Written ID=" & msg.ID.ToString)
         Next
 		c.Append("End Enum" & vbNewLine)
 

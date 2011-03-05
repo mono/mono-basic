@@ -23,7 +23,7 @@ Class Message
 	Else
 		Me.Level = level
 	End If
-        Console.WriteLine("Created ID=" & ID)
+        'Console.WriteLine("Created ID=" & ID)
     End Sub
 
     ''' <summary>
@@ -40,3 +40,4 @@ Class Message
         End If
     End Function
 End Class
+
