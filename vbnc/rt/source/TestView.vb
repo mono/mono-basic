@@ -41,10 +41,11 @@ Friend Class TestView
         newItem.Tag = Test
 
         newItem.ImageIndex = m_Form.GetIconIndex(rt.Test.Results.NotRun)
-        newItem.SubItems.Add("")
-        newItem.SubItems.Add("")
-        newItem.SubItems.Add("")
+        newItem.SubItems.Add(String.Empty)
+        newItem.SubItems.Add(String.Empty)
+        newItem.SubItems.Add(String.Empty)
         newItem.SubItems.Add(Test.KnownFailure)
+        newItem.SubItems.Add(If(Test.VBCErrors IsNot Nothing, "Yes", String.Empty))
 
         Update(newItem)
 

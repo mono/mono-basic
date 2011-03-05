@@ -110,6 +110,7 @@ Partial Class frmMain
         Me.cmdFindTests = New System.Windows.Forms.Button()
         Me.cmdCreateTest = New System.Windows.Forms.Button()
         Me.cmdRunFailed = New System.Windows.Forms.Button()
+        Me.colCustomErrors = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.mnuMain.SuspendLayout()
         Me.cmnuTest.SuspendLayout()
         Me.tblLayoutMain.SuspendLayout()
@@ -473,7 +474,7 @@ Partial Class frmMain
         '
         'lstTests
         '
-        Me.lstTests.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.colName, Me.colResult, Me.colFailedVerification, Me.colDate, Me.colKnownFailureReason})
+        Me.lstTests.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.colName, Me.colResult, Me.colFailedVerification, Me.colDate, Me.colKnownFailureReason, Me.colCustomErrors})
         Me.lstTests.ContextMenuStrip = Me.cmnuTest
         Me.lstTests.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lstTests.FullRowSelect = True
@@ -662,6 +663,10 @@ Partial Class frmMain
         Me.cmdRunFailed.Tag = ""
         Me.cmdRunFailed.Text = "Run failed"
         '
+        'colCustomErrors
+        '
+        Me.colCustomErrors.Text = "Custom Errors"
+        '
         'frmMain
         '
         Me.AcceptButton = Me.cmdCreateTest
@@ -763,5 +768,6 @@ Partial Class frmMain
     Friend WithEvents cmdRunFailed As System.Windows.Forms.Button
     Friend WithEvents UpdateVbncErrorsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents JustFixTheErrrsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents colCustomErrors As System.Windows.Forms.ColumnHeader
 End Class
 

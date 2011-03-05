@@ -95,12 +95,27 @@ Public Class ExternalProcessVerification
                         result = False
                     ElseIf ExpectedErrors IsNot Nothing Then
                         errorReport = String.Empty
-                        For i As Integer = 0 To ExpectedErrors.Count - 1
-                            Dim msg As String = Nothing
-                            If ErrorInfo.Compare(ExpectedErrors(i), actualErrors(i), msg) = False Then
-                                errorReport += String.Format("Error #{0}: {1}", i + 1, msg)
-                            End If
+                        Dim expectedFound As New Generic.List(Of ErrorInfo)(ExpectedErrors)
+                        Dim actualFound As New Generic.List(Of ErrorInfo)(actualErrors)
+
+                        For i As Integer = expectedFound.Count - 1 To 0 Step -1
+                            For j As Integer = actualFound.Count - 1 To 0 Step -1
+                                If ErrorInfo.Compare(expectedFound(i), actualFound(j), Nothing) Then
+                                    expectedFound.RemoveAt(i)
+                                    actualFound.RemoveAt(j)
+                                    Exit For
+                                End If
+                            Next
                         Next
+
+                        For i As Integer = 0 To expectedFound.Count - 1
+                            errorReport += String.Format("Expected error not reported: {0}: {1} {2}{3}", expectedFound(i).Line, expectedFound(i).Number, expectedFound(i).Message, Environment.NewLine)
+                        Next
+
+                        For i As Integer = 0 To actualFound.Count - 1
+                            errorReport += String.Format("Unexpected reported error: {0}: {1} {2}{3}", actualFound(i).Line, actualFound(i).Number, actualFound(i).Message, Environment.NewLine)
+                        Next
+
                         If errorReport <> String.Empty Then
                             MyBase.DescriptiveMessage = String.Format("{0} failed error verification: {2}", Name, vbNewLine, errorReport)
                             result = False
