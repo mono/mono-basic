@@ -3213,7 +3213,7 @@
 		<file>Errors\30070.vb</file>
 		<error number="30070" />
 	</test>
-	<test id="802" name="30070-1" knownfailure="We should show an error" expectedexitcode="1">
+	<test id="802" name="30070-1" expectedexitcode="1">
 		<file>Errors\30070-1.vb</file>
 		<error number="30070" />
 	</test>
@@ -3253,7 +3253,7 @@
 	</test>
 	<test id="810" name="32035-1" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\32035-1.vb</file>
-		<error line="1" number="30203" message="Not valid as identifier." />
+		<error line="1" number="30203" message="Identifier expected." />
 		<vbcerror line="1" number="32035" message="Attribute specifier is not a complete statement. Use a line continuation to apply the attribute to the following statement." />
 	</test>
 	<test id="811" name="30203-1" expectedexitcode="1">
@@ -3525,10 +3525,9 @@
 		<file>Errors\30451.vb</file>
 		<error number="30451" />
 	</test>
-	<test id="865" name="30451-1" expectedexitcode="1" expectedvbcexitcode="1">
+	<test id="865" name="30451-1" expectedexitcode="1">
 		<file>Errors\30451-1.vb</file>
-		<error line="6" number="30070" message="The variable specified after Next doesn't match the variable specified in the for loop (i)." />
-		<vbcerror line="6" number="30451" message="'j' is not declared. It may be inaccessible due to its protection level." />
+		<error line="6" number="30451" message="'j' is not declared. It may be inaccessible due to its protection level." />
 	</test>
 	<test id="866" name="30455" expectedexitcode="1" target="exe">
 		<arguments>-target:library</arguments>
@@ -3561,12 +3560,12 @@
 	<test id="872" name="30506-1" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30506-1.vb</file>
 		<error line="8" number="30491" message="Expression does not produce a value." />
-		<error line="9" number="30506" message="Handles clause requires a variable declared with WithEvents." />
+		<error line="10" number="30506" message="Handles clause requires a variable declared with WithEvents." />
 		<vbcerror line="8" number="30506" message="Handles clause requires a WithEvents variable defined in the containing type or one of its base types." />
 	</test>
 	<test id="873" name="30506-2" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30506-2.vb</file>
-		<error line="9" number="30456" message="'Load' is not a member of 'System.Int32'." />
+		<error line="10" number="30456" message="'Load' is not a member of 'System.Int32'." />
 		<vbcerror line="8" number="30506" message="Handles clause requires a WithEvents variable defined in the containing type or one of its base types." />
 	</test>
 	<test id="874" name="30506-3" expectedexitcode="1" expectedvbcexitcode="1">
@@ -3616,7 +3615,7 @@
 	</test>
 	<test id="883" name="30590" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30590.vb</file>
-		<error line="9" number="30456" message="'Load' is not a member of 'Form1'." />
+		<error line="10" number="30456" message="'Load' is not a member of 'Form1'." />
 		<vbcerror line="8" number="30590" message="Event 'Load' cannot be found." />
 	</test>
 	<test id="884" name="30620" expectedexitcode="1">
@@ -7381,12 +7380,12 @@
 	</test>
 	<test id="1726" name="30203" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30203.vb</file>
-		<error line="1" number="30203" message="Not valid as identifier." />
+		<error line="1" number="30203" message="Identifier expected." />
 		<vbcerror line="1" number="32035" message="Attribute specifier is not a complete statement. Use a line continuation to apply the attribute to the following statement." />
 	</test>
 	<test id="1727" name="30035" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30035.vb</file>
-		<error line="1" number="30203" message="Not valid as identifier." />
+		<error line="1" number="30203" message="Identifier expected." />
 		<error line="1" number="30037" message="Symbol is not valid." />
 		<vbcerror line="1" number="30035" message="Syntax error." />
 	</test>
@@ -7535,9 +7534,12 @@
 	<test id="1847" name="Boolean2" target="exe">
 		<file>CompileTime2\Boolean2.vb</file>
 	</test>
-	<test id="1848" name="30201-1" expectedexitcode="1">
+	<test id="1848" name="30201-1" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\30201-1.vb</file>
-		<error number="30201" />
+		<error line="3" number="30201" message="Expected expression." />
+		<error line="3" number="90018" message="Expected end of line." />
+		<error line="3" number="90019" message="Expected 'End'." />
+		<vbcerror line="2" number="30201" message="Expression expected." />
 	</test>
 	<test id="1849" name="ByRef13" target="exe">
 		<file>CompileTime2\ByRef13.vb</file>
@@ -8063,32 +8065,32 @@
 	<test id="1980" name="bug-438656" mytype="empty">
 		<file>Bugs\bug-438656.vb</file>
 	</test>
-	<test id="1981" name="ImplicitLineContinuationsAssignmentOperator" knownfailure="Pending implementation of implicit line continuations">
+	<test id="1981" name="ImplicitLineContinuationsAssignmentOperator">
 		<file>CompileTime2\AssignmentOperator.vb</file>
 	</test>
-	<test id="1982" name="ImplicitLineContinuationsBinaryOperator" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1982" name="ImplicitLineContinuationsBinaryOperator" mytype="empty">
 		<file>CompileTime2\BinaryOperator.vb</file>
 	</test>
-	<test id="1983" name="ImplicitLineContinuationsComma" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1983" name="ImplicitLineContinuationsComma" mytype="empty">
 		<file>CompileTime2\Comma.vb</file>
 	</test>
-	<test id="1984" name="ImplicitLineContinuationsConcatenation" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1984" name="ImplicitLineContinuationsConcatenation" mytype="empty">
 		<file>CompileTime2\Concatenation.vb</file>
 	</test>
-	<test id="1985" name="ImplicitLineContinuationsCurlyBraces" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1985" name="ImplicitLineContinuationsCurlyBraces" knownfailure="Pending implementation of object initializers" mytype="empty">
 		<file>CompileTime2\CurlyBraces.vb</file>
 	</test>
-	<test id="1986" name="ImplicitLineContinuationsForEach" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1986" name="ImplicitLineContinuationsForEach" mytype="empty">
 		<file>CompileTime2\ForEach.vb</file>
 	</test>
 	<test id="1987" name="ImplicitLineContinuationsFrom" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
 		<arguments>-imports:System.Collections.Generic</arguments>
 		<file>CompileTime2\From.vb</file>
 	</test>
-	<test id="1988" name="ImplicitLineContinuationsIsandIsNotOperators" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1988" name="ImplicitLineContinuationsIsandIsNotOperators" mytype="empty">
 		<file>CompileTime2\IsandIsNotOperators.vb</file>
 	</test>
-	<test id="1989" name="ImplicitLineContinuationsParenthesis" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
+	<test id="1989" name="ImplicitLineContinuationsParenthesis" mytype="empty">
 		<file>CompileTime2\Parenthesis.vb</file>
 	</test>
 	<test id="1990" name="30203-ImplicitLineContinuationsClassonnewline" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" mytype="empty">
@@ -8556,9 +8558,9 @@
 	<test id="2106.2" name="30183" category="" priority="0" expectedexitcode="1" expectederrorcode="30183" target="exe">
 		<file>Errors\30183.vb</file>
 		<error line="11" number="30183" message="Keyword is not valid as an identifier." />
-		<error line="11" number="30203" message="Not valid as identifier." />
-		<error line="12" number="30203" message="Not valid as identifier." />
-		<error line="13" number="30203" message="Not valid as identifier." />
+		<error line="11" number="30203" message="Identifier expected." />
+		<error line="12" number="30203" message="Identifier expected." />
+		<error line="13" number="30203" message="Identifier expected." />
 		<error line="14" number="30623" message="'End Namespace' must be preceded by a matching 'Namespace'." />
 		<vbcerror line="11" number="30183" message="Keyword is not valid as an identifier." />
 	</test>
@@ -10330,5 +10332,37 @@
 		<file>Errors\30636.vb</file>
 		<error line="13" number="30636" message="'&gt;' expected." />
 		<error line="15" number="30035" message="Syntax error." />
+	</test>
+	<test id="2238" name="30650" expectedexitcode="1">
+		<file>Errors\30650.vb</file>
+		<error line="1" number="30650" message="Enums must be declared as an integral type." />
+	</test>
+	<test id="2239" name="Enum" mytype="empty">
+		<file>CompileTime2\Enum.vb</file>
+	</test>
+	<test id="2240" name="EnumErrors" expectedexitcode="1" mytype="empty">
+		<arguments>/quiet</arguments>
+		<file>Errors\EnumErrors.vb</file>
+		<error line="2" number="30280" message="Enum 'E2' must contain at least one member." />
+		<error line="6" number="30182" message="Type expected." />
+		<error line="11" number="30183" message="Keyword is not valid as an identifier." />
+		<error line="16" number="30203" message="Identifier expected." />
+		<error line="21" number="30468" message="Type declaration characters are not valid in this context." />
+		<error line="24" number="30468" message="Type declaration characters are not valid in this context." />
+		<error line="29" number="30205" message="End of statement expected." />
+		<error line="36" number="30205" message="End of statement expected." />
+	</test>
+	<test id="2241" name="EnumErrors2" expectedexitcode="1" mytype="empty">
+		<file>Errors\EnumErrors2.vb</file>
+		<error line="2" number="30650" message="Enums must be declared as an integral type." />
+	</test>
+	<test id="2242" name="30451-3" expectedexitcode="1">
+		<file>Errors\30451-3.vb</file>
+		<error line="5" number="30451" message="'item2' is not declared. It may be inaccessible due to its protection level." />
+	</test>
+	<test id="2243" name="30070-2" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
+		<file>Errors\30070-2.vb</file>
+		<error line="5" number="30070" message="Next control variable does not match For loop control variable 'item'." />
 	</test>
 </rt>

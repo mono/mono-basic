@@ -41,6 +41,12 @@ Public Class VariableClassification
     Private m_ArrayVariable As Expression
     Private m_Arguments As ArgumentList
 
+    ReadOnly Property LocalVariable As LocalVariableDeclaration
+        Get
+            Return m_LocalVariable
+        End Get
+    End Property
+
     ReadOnly Property Method() As IMethod
         Get
             Return m_Method
@@ -434,3 +440,4 @@ Public Class VariableClassification
         End Get
     End Property
 End Class
+

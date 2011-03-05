@@ -90,14 +90,12 @@ Public Class Scanner
 
     Private m_Files As Generic.Queue(Of CodeFile)
 
-    Private m_Peeked As Token
-
     'Data about the current token
     Private m_LastWasNewline As Boolean
     Private m_Current As Token
     Private m_CurrentTypeCharacter As TypeCharacters.Characters
-    Private m_CurrentTokenType As TokenType
     Private m_CurrentData As Object
+    Private m_Peeked As Token?
 
 #Region "Conditional Compilation"
     'Data related to conditional compilation
@@ -464,7 +462,6 @@ Public Class Scanner
             NextUnconditionally()
 
             If m_Current.IsEndOfCode Then
-                m_Peeked = m_Current
                 Return m_Current
             End If
 
@@ -505,12 +502,6 @@ Public Class Scanner
             End If
         Loop While m_Current.IsEndOfCode = False AndAlso m_Current.IsEndOfFile = False
         Return m_Current
-    End Function
-
-    Public Function Peek() As Token
-        If Token.IsSomething(m_Peeked) Then Return m_Peeked
-        m_Peeked = Me.Next
-        Return m_Peeked
     End Function
 #End Region
 
@@ -1587,9 +1578,12 @@ Public Class Scanner
     End Sub
 
     Public Sub NextUnconditionally()
+        Dim lastTokenType As TokenType
+        Dim lastKS As KS
 
-        If Token.IsSomething(m_Peeked) Then
-            m_Current = m_Peeked
+        If m_Peeked.HasValue Then
+            m_Current = m_Peeked.Value
+            m_CurrentData = m_Current.m_TokenType
             m_Peeked = Nothing
             Return
         End If
@@ -1603,22 +1597,29 @@ Public Class Scanner
             Return
         End If
 
+        lastTokenType = m_Current.m_TokenType
+        If lastTokenType = TokenType.Symbol Then
+            lastKS = DirectCast(m_CurrentData, KS)
+        End If
+
         m_CurrentTypeCharacter = TypeCharacters.Characters.None
         m_Current = GetNextToken()
 
-        'Console.WriteLine("Scanned token: " & result.FriendlyString())
-
-        'If m_Current.IsEndOfFile() Then
-        '    If Token.IsSomething(m_Current) AndAlso Not m_Current.IsEndOfLineOnly Then
-        '        m_Peeked = m_Current
-        '        m_Current = Token.CreateEndOfLineToken(Me.GetCurrentLocation)
-        '    End If
-        '    'NextFile()
-        'End If
-
-        m_CurrentTokenType = m_Current.m_TokenType
         m_CurrentData = m_Current.m_TokenObject
 
+        If m_Current.m_TokenType = TokenType.EndOfLine Then
+            If lastTokenType = TokenType.Symbol AndAlso (lastKS = KS.Comma OrElse lastKS = KS.LParenthesis OrElse lastKS = KS.LBrace) Then
+                m_CurrentTypeCharacter = TypeCharacters.Characters.None
+                m_Current = GetNextToken()
+                m_CurrentData = m_Current.m_TokenObject
+            Else
+                m_Peeked = GetNextToken()
+
+                If m_Peeked.Value.IsSymbol AndAlso (m_Peeked.Value.Symbol = KS.RParenthesis OrElse m_Peeked.Value.Symbol = KS.RBrace) Then
+                    NextUnconditionally()
+                End If
+            End If
+        End If
     End Sub
 
     Public ReadOnly Property Current() As Token
@@ -1644,10 +1645,5 @@ Public Class Scanner
             Return m_CurrentData
         End Get
     End Property
-
-    Public ReadOnly Property TokenType() As TokenType
-        Get
-            Return m_CurrentTokenType
-        End Get
-    End Property
 End Class
+

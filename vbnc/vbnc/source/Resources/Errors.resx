@@ -102,7 +102,7 @@
   <data name="30067"><value>It is not valid to use 'Exit Function' in a Sub or Property.</value></data>
   <data name="30068"><value>CHANGEME</value></data>
   <data name="30069"><value>CHANGEME</value></data>
-  <data name="30070"><value>The variable specified after Next doesn't match the variable specified in the for loop ({0}).</value></data>
+  <data name="30070"><value>Next control variable does not match For loop control variable '{0}'.</value></data>
   <data name="30071"><value>CHANGEME</value></data>
   <data name="30072"><value>CHANGEME</value></data>
   <data name="30074"><value>CHANGEME</value></data>
@@ -176,7 +176,7 @@
   <data name="30179"><value>{0} '{1}' and {2} '{3}' conflict in {4} '{5}'.</value></data>
   <data name="30180"><value>Keyword does not name a type.</value></data>
   <data name="30181"><value>CHANGEME</value></data>
-  <data name="30182"><value>Epxected type.</value></data>
+  <data name="30182"><value>Type expected.</value></data>
   <data name="30183"><value>Keyword is not valid as an identifier.</value></data>
   <data name="30184"><value>CHANGEME</value></data>
   <data name="30185"><value>CHANGEME</value></data>
@@ -192,9 +192,9 @@
   <data name="30200"><value>CHANGEME</value></data>
   <data name="30201"><value>Expected expression.</value></data>
   <data name="30202"><value>CHANGEME</value></data>
-  <data name="30203"><value>Not valid as identifier.</value></data>
+  <data name="30203"><value>Identifier expected.</value></data>
   <data name="30204"><value>CHANGEME</value></data>
-  <data name="30205"><value>Expected end of statement.</value></data>
+  <data name="30205"><value>End of statement expected.</value></data>
   <data name="30206"><value>'Option' must be followed by 'Compare', 'Explicit', or 'Strict'.</value></data>
   <data name="30207"><value>'Option Compare' must be followed by 'Text' or 'Binary'.</value></data>
   <data name="30208"><value>CHANGEME</value></data>
@@ -243,7 +243,7 @@
   <data name="30275"><value>CHANGEME</value></data>
   <data name="30277"><value>CHANGEME</value></data>
   <data name="30278"><value>CHANGEME</value></data>
-  <data name="30280"><value>CHANGEME</value></data>
+  <data name="30280"><value>Enum '{0}' must contain at least one member.</value></data>
   <data name="30281"><value>CHANGEME</value></data>
   <data name="30282"><value>CHANGEME</value></data>
   <data name="30283"><value>CHANGEME</value></data>
@@ -332,7 +332,7 @@
   <data name="30443"><value>CHANGEME</value></data>
   <data name="30444"><value>CHANGEME</value></data>
   <data name="30445"><value>CHANGEME</value></data>
-  <data name="30451"><value>Could not resolve the name '{0}'</value></data>
+  <data name="30451"><value>'{0}' is not declared. It may be inaccessible due to its protection level.</value></data>
   <data name="30452"><value>Operator '{0}' is not defined for the types '{1}' and '{2}'.</value></data>
   <data name="30454"><value>CHANGEME</value></data>
   <data name="30455"><value>Argument not specified for parameter '{0}' of '{1}'.</value></data>
@@ -344,7 +344,7 @@
   <data name="30465"><value>CHANGEME</value></data>
   <data name="30466"><value>CHANGEME</value></data>
   <data name="30467"><value>CHANGEME</value></data>
-  <data name="30468"><value>CHANGEME</value></data>
+  <data name="30468"><value>Type declaration characters are not valid in this context.</value></data>
   <data name="30469"><value>Reference to a non-shared member requires an object reference.</value></data>
   <data name="30470"><value>CHANGEME</value></data>
   <data name="30471"><value>Only arrays and methods can have argument lists.</value></data>
@@ -469,7 +469,7 @@
   <data name="30647"><value>CHANGEME</value></data>
   <data name="30648"><value>String constants must end with a double quote.</value></data>
   <data name="30649"><value>CHANGEME</value></data>
-  <data name="30650"><value>Invalid enum type.</value></data>
+  <data name="30650"><value>Enums must be declared as an integral type.</value></data>
   <data name="30651"><value>CHANGEME</value></data>
   <data name="30652"><value>CHANGEME</value></data>
   <data name="30653"><value>CHANGEME</value></data>

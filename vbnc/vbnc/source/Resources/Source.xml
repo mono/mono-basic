@@ -359,7 +359,7 @@
 	</Message>
 	<Message id="30070" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>The variable specified after Next doesn't match the variable specified in the for loop ({0}).</VBNCValue>
+		<VBNCValue>Next control variable does not match For loop control variable '{0}'.</VBNCValue>
 		<VBValue>Next control variable does not match For loop control variable '|1'.</VBValue>
 	</Message>
 	<Message id="30071" level="Error">
@@ -729,7 +729,7 @@
 	</Message>
 	<Message id="30182" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Epxected type.</VBNCValue>
+		<VBNCValue>Type expected.</VBNCValue>
 		<VBValue>Type expected.</VBValue>
 	</Message>
 	<Message id="30183" level="Error">
@@ -809,7 +809,7 @@
 	</Message>
 	<Message id="30203" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Not valid as identifier.</VBNCValue>
+		<VBNCValue>Identifier expected.</VBNCValue>
 		<VBValue>Identifier expected.</VBValue>
 	</Message>
 	<Message id="30204" level="Error">
@@ -819,7 +819,7 @@
 	</Message>
 	<Message id="30205" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Expected end of statement.</VBNCValue>
+		<VBNCValue>End of statement expected.</VBNCValue>
 		<VBValue>End of statement expected.</VBValue>
 	</Message>
 	<Message id="30206" level="Error">
@@ -1064,7 +1064,7 @@
 	</Message>
 	<Message id="30280" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Enum '{0}' must contain at least one member.</VBNCValue>
 		<VBValue>Enum '|1' must contain at least one member.</VBValue>
 	</Message>
 	<Message id="30281" level="Error">
@@ -1509,7 +1509,7 @@
 	</Message>
 	<Message id="30451" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Could not resolve the name '{0}'</VBNCValue>
+		<VBNCValue>'{0}' is not declared. It may be inaccessible due to its protection level.</VBNCValue>
 		<VBValue>Name '|1' is not declared.</VBValue>
 	</Message>
 	<Message id="30452" level="Error">
@@ -1569,7 +1569,7 @@
 	</Message>
 	<Message id="30468" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Type declaration characters are not valid in this context.</VBNCValue>
 		<VBValue>Type declaration characters are not valid in this context.</VBValue>
 	</Message>
 	<Message id="30469" level="Error">
@@ -2194,7 +2194,7 @@
 	</Message>
 	<Message id="30650" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Invalid enum type.</VBNCValue>
+		<VBNCValue>Enums must be declared as an integral type.</VBNCValue>
 		<VBValue>Enums must be declared as an integral type.</VBValue>
 	</Message>
 	<Message id="30651" level="Error">

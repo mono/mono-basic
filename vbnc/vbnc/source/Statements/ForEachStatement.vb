@@ -205,17 +205,25 @@ Public Class ForEachStatement
         End If
 
         result = m_InExpression.ResolveExpression(Info) AndAlso result
+        If result = False Then Return False
         result = Helper.VerifyValueClassification(m_InExpression, Info) AndAlso result
 
         result = CodeBlock.ResolveCode(Info) AndAlso result
 
         If m_NextExpression IsNot Nothing Then
-            'TODO: Add check here. Seems like this expression can be arbitrarily complex
-            Dim sneNext As SimpleNameExpression = TryCast(m_NextExpression, SimpleNameExpression)
-            If sneNext IsNot Nothing Then
-                If Helper.CompareName(sneNext.Identifier.Identifier, m_LoopControlVariable.Identifier.Identifier) = False Then
-                    result = Compiler.Report.ShowMessage(Messages.VBNC30070, sneNext.Location, m_LoopControlVariable.Identifier.Identifier) AndAlso result
+            result = m_NextExpression.ResolveExpression(Info) AndAlso result
+            If result = False Then Return False
+
+            If m_NextExpression.Classification.IsVariableClassification Then
+                If m_LoopControlVariable.Expression IsNot Nothing Then
+                    If Not (m_LoopControlVariable.Expression.Classification.IsVariableClassification AndAlso m_LoopControlVariable.Expression.Classification.AsVariableClassification.LocalVariable Is m_NextExpression.Classification.AsVariableClassification.LocalVariable) Then
+                        result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
+                    End If
+                ElseIf m_NextExpression.Classification.AsVariableClassification.LocalVariable IsNot m_LoopControlVariable.GetVariableDeclaration Then
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
                 End If
+            Else
+                result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
             End If
         End If
 
@@ -228,3 +236,4 @@ Public Class ForEachStatement
         Return result
     End Function
 End Class
+

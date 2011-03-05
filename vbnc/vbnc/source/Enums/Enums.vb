@@ -88,12 +88,6 @@ Module Enums
     Public ReadOnly FloatingPointTypeNames As KS() = New KS() {KS.Single, KS.Double}
 
     ''' <summary>
-    ''' IntegralTypeName  ::= "Byte" | "SByte "| "UShort" | "Short "| "UInteger" | "Integer" | "ULong" | "Long"
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public ReadOnly IntegralTypeNames As KS() = New KS() {KS.Byte, KS.SByte, KS.UShort, KS.Short, KS.UInteger, KS.Integer, KS.ULong, KS.Long}
-
-    ''' <summary>
     ''' NumericTypeName  ::=  IntegralTypeName  |  FloatingPointTypeName  | "Decimal"
     ''' </summary>
     ''' <remarks></remarks>

@@ -513,7 +513,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30069 = 30069
 
     ''' <summary>
-    ''' VBNC = "The variable specified after Next doesn't match the variable specified in the for loop ({0})."
+    ''' VBNC = "Next control variable does not match For loop control variable '{0}'."
     ''' VB   = "Next control variable does not match For loop control variable '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1031,7 +1031,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30181 = 30181
 
     ''' <summary>
-    ''' VBNC = "Epxected type."
+    ''' VBNC = "Type expected."
     ''' VB   = "Type expected."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1143,7 +1143,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30202 = 30202
 
     ''' <summary>
-    ''' VBNC = "Not valid as identifier."
+    ''' VBNC = "Identifier expected."
     ''' VB   = "Identifier expected."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1157,7 +1157,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30204 = 30204
 
     ''' <summary>
-    ''' VBNC = "Expected end of statement."
+    ''' VBNC = "End of statement expected."
     ''' VB   = "End of statement expected."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1500,7 +1500,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30278 = 30278
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Enum '{0}' must contain at least one member."
     ''' VB   = "Enum '|1' must contain at least one member."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2123,7 +2123,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30445 = 30445
 
     ''' <summary>
-    ''' VBNC = "Could not resolve the name '{0}'"
+    ''' VBNC = "'{0}' is not declared. It may be inaccessible due to its protection level."
     ''' VB   = "Name '|1' is not declared."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2207,7 +2207,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30467 = 30467
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Type declaration characters are not valid in this context."
     ''' VB   = "Type declaration characters are not valid in this context."
     ''' </summary>
     ''' <remarks></remarks>
@@ -3082,7 +3082,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30649 = 30649
 
     ''' <summary>
-    ''' VBNC = "Invalid enum type."
+    ''' VBNC = "Enums must be declared as an integral type."
     ''' VB   = "Enums must be declared as an integral type."
     ''' </summary>
     ''' <remarks></remarks>

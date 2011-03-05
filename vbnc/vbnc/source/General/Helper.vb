@@ -2216,6 +2216,7 @@ Public Class Helper
     Shared Sub ErrorRecoveryNotImplemented(ByVal Location As Span)
         Console.WriteLine("{0}: Compiler error around this location, the compiler hasn't implemented the error message, nor error recovery, so the compiler will probably crash soon.", Location.AsString(BaseObject.m_Compiler))
         Console.WriteLine(New System.Diagnostics.StackTrace().ToString())
+        Helper.StopIfDebugging()
     End Sub
 
     <Diagnostics.DebuggerHidden()> Private Shared Sub IndirectedStop()

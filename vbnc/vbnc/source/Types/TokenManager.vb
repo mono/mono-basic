@@ -377,9 +377,6 @@ Public Class tm
         If OnlyColon Then
             result = Accept(KS.Colon)
             If ReportError AndAlso result = False AndAlso CurrentToken.IsEndOfLineOnly = False Then
-#If DEBUG Then
-                System.Console.WriteLine("Found: " & CurrentToken.ToString)
-#End If
                 Compiler.Report.ShowMessage(Messages.VBNC30205, CurrentLocation)
             End If
             Return result
@@ -393,9 +390,6 @@ Public Class tm
                 Return True
             Else
                 If ReportError Then
-#If DEBUG Then
-                    System.Console.WriteLine("Found: " & CurrentToken.ToString)
-#End If
                     Compiler.Report.ShowMessage(Messages.VBNC30205, CurrentLocation)
                 End If
                 Return False
