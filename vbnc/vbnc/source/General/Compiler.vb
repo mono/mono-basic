@@ -308,6 +308,7 @@ Public Class Compiler
             Case vbnc.CommandLine.Targets.Module
                 Report.ShowMessage(Messages.VBNC99999, Span.CommandLineSpan, "Compiling modules (-target:module) hasn't been implemented yet.")
                 kind = Mono.Cecil.ModuleKind.NetModule
+                Return False
             Case vbnc.CommandLine.Targets.Winexe
                 kind = Mono.Cecil.ModuleKind.Windows
             Case Else
