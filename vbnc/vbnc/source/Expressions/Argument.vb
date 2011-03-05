@@ -91,6 +91,8 @@ Public MustInherit Class Argument
         If m_Expression IsNot Nothing Then
             result = m_Expression.ResolveExpression(Info) AndAlso result
 
+            If result = False Then Return False
+
             If m_Expression.Classification Is Nothing Then
                 Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
             End If

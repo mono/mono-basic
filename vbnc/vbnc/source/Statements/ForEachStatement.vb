@@ -216,24 +216,35 @@ Public Class ForEachStatement
 
             If m_NextExpression.Classification.IsVariableClassification Then
                 If m_LoopControlVariable.Expression IsNot Nothing Then
-                    If Not (m_LoopControlVariable.Expression.Classification.IsVariableClassification AndAlso m_LoopControlVariable.Expression.Classification.AsVariableClassification.LocalVariable Is m_NextExpression.Classification.AsVariableClassification.LocalVariable) Then
+                    Dim lcvVar As VariableClassification = Nothing
+                    Dim nextExpVar As VariableClassification = m_NextExpression.Classification.AsVariableClassification
+
+                    If m_LoopControlVariable.Expression.Classification.IsVariableClassification Then
+                        lcvVar = m_LoopControlVariable.Expression.Classification.AsVariableClassification
+                    End If
+
+                    If lcvVar IsNot Nothing AndAlso lcvVar.LocalVariable Is nextExpVar.LocalVariable Then
+                        'OK
+                    ElseIf lcvVar IsNot Nothing AndAlso lcvVar.ArrayVariable IsNot Nothing AndAlso lcvVar.ArrayVariable.Classification.IsVariableClassification AndAlso lcvVar.ArrayVariable.Classification.AsVariableClassification.LocalVariable Is nextExpVar.LocalVariable Then
+                        'OK
+                    Else
                         result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
                     End If
                 ElseIf m_NextExpression.Classification.AsVariableClassification.LocalVariable IsNot m_LoopControlVariable.GetVariableDeclaration Then
                     result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
                 End If
-            Else
-                result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
+                Else
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30070, m_NextExpression.Location, m_LoopControlVariable.Identifier.Name)
+                End If
             End If
-        End If
 
-        Compiler.Helper.AddCheck("It is not valid to branch into a For Each statement block from outside the block.")
-        Compiler.Helper.AddCheck("The loop control variable is specified either through an identifier followed by an As clause or an expression. (...) In the case of an expression, the expression must be classified as a variable. ")
-        Compiler.Helper.AddCheck("The enumerator expression must be classified as a value and its type must be a collection type or Object. ")
-        Compiler.Helper.AddCheck("If the type of the enumerator expression is Object, then all processing is deferred until run-time. Otherwise, a conversion must exist from the element type of the collection to the type of the loop control variable")
-        Compiler.Helper.AddCheck("The loop control variable cannot be used by another enclosing For Each statement. ")
+            Compiler.Helper.AddCheck("It is not valid to branch into a For Each statement block from outside the block.")
+            Compiler.Helper.AddCheck("The loop control variable is specified either through an identifier followed by an As clause or an expression. (...) In the case of an expression, the expression must be classified as a variable. ")
+            Compiler.Helper.AddCheck("The enumerator expression must be classified as a value and its type must be a collection type or Object. ")
+            Compiler.Helper.AddCheck("If the type of the enumerator expression is Object, then all processing is deferred until run-time. Otherwise, a conversion must exist from the element type of the collection to the type of the loop control variable")
+            Compiler.Helper.AddCheck("The loop control variable cannot be used by another enclosing For Each statement. ")
 
-        Return result
+            Return result
     End Function
 End Class
 

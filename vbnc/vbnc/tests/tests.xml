@@ -7369,10 +7369,8 @@
 	<test id="1723" name="Narrowing1" target="exe">
 		<file>CompileTime\Narrowing1.vb</file>
 	</test>
-	<test id="1724" name="42021" knownfailure="Error code # has changed">
+	<test id="1724" name="42021">
 		<file>Errors\42021.vb</file>
-		<error number="42021" />
-		<vbcerror number="42021" />
 	</test>
 	<test id="1725" name="30512" expectedexitcode="1">
 		<file>Errors\30512.vb</file>
@@ -7570,17 +7568,14 @@
 		<file>Errors\30491.vb</file>
 		<error number="30491" />
 	</test>
-	<test id="1857" name="Delegate8" knownfailure="Need to update rt to support &quot;vbc compiles, vbnc doesn't&quot;" expectedexitcode="1" expectedvbcexitcode="0">
+	<test id="1857" name="Delegate8" knownfailure="Need to update rt to support &quot;vbc compiles, vbnc doesn't&quot;" expectedvbcexitcode="0">
 		<file>1Declarations\Delegate8.vb</file>
-		<error line="12" number="30408" message="Method 'Sub Invoke(client As System.IO.Stream)' does not have the same signature as delegate 'Delegate Sub ParameterizedThreadStart(obj As Object)'." />
 	</test>
 	<test id="1858" name="ByRefCType1" target="exe">
 		<file>RunTime\ByRefCType1.vb</file>
 	</test>
 	<test id="1859" name="ArrayCreationExpression6" knownfailure="We crash instead of showing correct error message (or compile like vb10 does)" expectedvbcexitcode="0">
 		<file>CompileTime\ArrayCreationExpression6.vb</file>
-		<error number="30201" />
-		<vbcerror number="30201" />
 	</test>
 	<test id="1860" name="MethodsWithPointers1">
 		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
@@ -8093,24 +8088,39 @@
 	<test id="1989" name="ImplicitLineContinuationsParenthesis" mytype="empty">
 		<file>CompileTime2\Parenthesis.vb</file>
 	</test>
-	<test id="1990" name="30203-ImplicitLineContinuationsClassonnewline" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" mytype="empty">
+	<test id="1990" name="30203-ImplicitLineContinuationsClassonnewline" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\Classonnewline.vb</file>
-		<error line="2" number="30203" message="Identifier expected." />
-		<error line="4" number="30188" message="Declaration expected." />
+		<error line="4" number="30203" message="Identifier expected." />
+		<error line="4" number="90019" message="Expected 'End'." />
+		<error line="4" number="30203" message="Identifier expected." />
+		<error line="6" number="30203" message="Identifier expected." />
+		<error line="7" number="30203" message="Identifier expected." />
+		<vbcerror line="2" number="30203" message="Identifier expected." />
+		<vbcerror line="4" number="30188" message="Declaration expected." />
 	</test>
-	<test id="1991" name="30203-ImplicitLineContinuationsDimonnewline" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" mytype="empty">
+	<test id="1991" name="30203-ImplicitLineContinuationsDimonnewline" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\Dimonnewline.vb</file>
-		<error line="3" number="30203" message="Identifier expected." />
-		<error line="4" number="30451" message="'a' is not declared. It may be inaccessible due to its protection level." />
+		<error line="4" number="30203" message="Identifier expected." />
+		<error line="4" number="90019" message="Expected 'End'." />
+		<error line="5" number="90019" message="Expected 'Module'." />
+		<error line="6" number="30203" message="Identifier expected." />
+		<vbcerror line="3" number="30203" message="Identifier expected." />
+		<vbcerror line="4" number="30451" message="'a' is not declared. It may be inaccessible due to its protection level." />
 	</test>
-	<test id="1992" name="30198-ImplicitLineContinuationsFunctionDec" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" mytype="empty">
+	<test id="1992" name="30198-ImplicitLineContinuationsFunctionDec" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\FunctionDec.vb</file>
-		<error line="3" number="30198" message="')' expected." />
-		<error line="4" number="30035" message="Syntax error." />
+		<error line="4" number="90019" message="Expected ')'." />
+		<error line="4" number="30205" message="End of statement expected." />
+		<vbcerror line="3" number="30198" message="')' expected." />
+		<vbcerror line="4" number="30035" message="Syntax error." />
 	</test>
-	<test id="1993" name="30203-ImplicitLineContinuationsSub" knownfailure="Pending implementation of implicit line continuations" expectedexitcode="1" mytype="empty">
+	<test id="1993" name="30203-ImplicitLineContinuationsSub" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\Sub.vb</file>
-		<error number="30203" />
+		<error line="3" number="90019" message="Expected 'End'." />
+		<error line="3" number="30203" message="Identifier expected." />
+		<error line="4" number="30203" message="Identifier expected." />
+		<error line="5" number="30203" message="Identifier expected." />
+		<vbcerror line="2" number="30203" message="Identifier expected." />
 	</test>
 	<test id="1994" name="TypeNameResolution3" knownfailure="doesn't work" mytype="empty">
 		<file>CompileTime\TypeNameResolution3.vb</file>
@@ -10327,11 +10337,11 @@
 		<arguments>/nowarn</arguments>
 		<file>CompileTime2\ImplicitLineContinuations.vb</file>
 	</test>
-	<test id="2237" name="30636" knownfailure="vbnc's scsanner joins multiple eol into one, so we can't detect this situation without changing that" expectedexitcode="1">
+	<test id="2237" name="30636" knownfailure="vbnc's scsanner joins multiple eol into one, so we can't detect this situation without changing that" expectedexitcode="1" expectedvbcexitcode="1">
 		<arguments>/nowarn</arguments>
 		<file>Errors\30636.vb</file>
-		<error line="13" number="30636" message="'&gt;' expected." />
-		<error line="15" number="30035" message="Syntax error." />
+		<error line="4" number="30636" message="'&gt;' expected." />
+		<error line="6" number="30035" message="Syntax error." />
 	</test>
 	<test id="2238" name="30650" expectedexitcode="1">
 		<file>Errors\30650.vb</file>

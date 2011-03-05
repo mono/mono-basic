@@ -3545,7 +3545,7 @@ Public Class Parser
         Dim result As New VariableIdentifiers(Parent)
 
         If ParseList(Of VariableIdentifier)(result, New ParseDelegate_Parent(Of VariableIdentifier)(AddressOf ParseVariableIdentifier), Parent) = False Then
-            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            tm.GotoNewline(True)
         End If
 
         Return result
@@ -3831,7 +3831,7 @@ Public Class Parser
         Dim m_TypeName As TypeName = Nothing
 
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
-            Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+            tm.GotoNewline(True)
         End If
 
         If tm.Accept(KS.As) Then
@@ -4381,7 +4381,7 @@ Public Class Parser
             If m_HandlesOrImplements Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         End If
 
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If tm.AcceptEndOfStatement(, True) = False Then tm.GotoNewline(True)
 
         If m_Modifiers.Is(ModifierMasks.MustOverride) = False Then
             m_Block = ParseCodeBlock(result, False)
@@ -6241,7 +6241,7 @@ Public Class Parser
 
         m_Identifier = ParseIdentifier(CType(Nothing, ParsedObject))
         If m_Identifier Is Nothing Then
-            Compiler.Report.ShowMessage(Messages.VBNC30183, tm.CurrentLocation)
+            ShowIdentifierExpected(tm.CurrentLocation())
             Return Nothing
         End If
 
