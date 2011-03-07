@@ -124,6 +124,11 @@ Public Class EnumMemberDeclaration
     Function GetConstantValue(ByRef result As Object) As Boolean
         Dim obj As Object = Nothing
 
+        If m_FieldBuilderCecil.Constant IsNot Nothing Then
+            result = m_FieldBuilderCecil.Constant
+            Return True
+        End If
+
         If m_ConstantExpression IsNot Nothing Then
             If Not m_ConstantExpression.GetConstant(obj, True) Then Return False
         Else
@@ -183,3 +188,4 @@ Public Class EnumMemberDeclaration
         End Get
     End Property
 End Class
+

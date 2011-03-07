@@ -153,7 +153,7 @@ Public Class EmitInfo
         End Get
     End Property
 
-    Private m_FakeGenerator As EmitLog
+    Private Shared m_FakeGenerator As EmitLog
     ''' <summary>
     ''' The ILGenerator used to emit the code.
     ''' </summary>
@@ -162,10 +162,10 @@ Public Class EmitInfo
     ''' <remarks></remarks>
     ReadOnly Property ILGen() As EmitLog
         Get
-            If m_FakeGenerator Is Nothing Then
+            If m_FakeGenerator Is Nothing OrElse m_FakeGenerator.Compiler IsNot Compiler Then
                 m_FakeGenerator = New EmitLog(Compiler)
-                m_FakeGenerator.CilBody = CilBody
             End If
+            m_FakeGenerator.CilBody = CilBody
             Return m_FakeGenerator
         End Get
     End Property
