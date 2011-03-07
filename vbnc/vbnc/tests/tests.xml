@@ -10375,4 +10375,10 @@
 		<file>Errors\30070-2.vb</file>
 		<error line="5" number="30070" message="Next control variable does not match For loop control variable 'item'." />
 	</test>
+	<test id="2244" name="MethodOverloads" mytype="empty">
+		<file>CompileTime2\MethodOverloads.vb</file>
+	</test>
+	<test id="2245" name="MethodOverloadsStrict" mytype="empty">
+		<file>CompileTime2\MethodOverloadsStrict.vb</file>
+	</test>
 </rt>

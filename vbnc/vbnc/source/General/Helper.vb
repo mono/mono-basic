@@ -2775,10 +2775,11 @@ Public Class Helper
         Dim ifaces As Mono.Collections.Generic.Collection(Of TypeReference)
         ifaces = CecilHelper.GetInterfaces(Type, True)
         For Each iface As Mono.Cecil.TypeReference In ifaces
-            If Helper.IsAssignable(Context, iface, [Interface]) Then Return True
+            'If Helper.IsAssignable(Context, iface, [Interface]) Then Return True
+            If Helper.CompareType(iface, [Interface]) Then Return True
+            If DoesTypeImplementInterface(Context, iface, [Interface]) Then Return True
         Next
         Return False
-        '        Return Array.IndexOf(CecilHelper.GetInterfaces(Type), [Interface]) >= 0
     End Function
 
     Shared Function GetEnumType(ByVal Compiler As Compiler, ByVal EnumType As Mono.Cecil.TypeReference) As Mono.Cecil.TypeReference
@@ -2811,7 +2812,7 @@ Public Class Helper
         Return res
     End Function
 
-    Shared Function IsConvertible(ByVal Parent As ParsedObject, ByVal FromExpression As Expression, ByVal FromType As TypeReference, ByVal DestinationType As TypeReference, ByVal CreateConversionExpression As Boolean, ByRef convExpr As Expression, ByVal ShowError As Boolean, ByVal isStrict As Boolean?) As Boolean
+    Shared Function IsConvertible(ByVal Parent As ParsedObject, ByVal FromExpression As Expression, ByVal FromType As TypeReference, ByVal DestinationType As TypeReference, ByVal CreateConversionExpression As Boolean, ByRef convExpr As Expression, ByVal ShowError As Boolean, ByVal isStrict As Boolean?, Optional ByVal considerConstantExpressions As Boolean = True) As Boolean
         Dim Compiler As Compiler = Parent.Compiler
         Dim TypeCache As CecilTypeCache = Compiler.TypeCache
         Dim toArray As ArrayType
@@ -2906,7 +2907,7 @@ Public Class Helper
         If isFromNullable = False AndAlso isToNullable = False AndAlso isFromEnum = False AndAlso isToEnum = False Then
             Select Case fromTC
                 Case TypeCode.Byte, TypeCode.SByte, TypeCode.UInt16, TypeCode.Int16, TypeCode.UInt32, TypeCode.Int32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single
-                    If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, fromTC, toTC) Then
+                    If (toTC <> TypeCode.Object OrElse Helper.CompareType(DestinationType, TypeCache.System_Object)) AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, fromTC, toTC) Then
                         If CreateConversionExpression Then
                             convExpr = New CTypeExpression(Parent, FromExpression, DestinationType)
                             If Not convExpr.ResolveExpression(ResolveInfo.Default(Compiler)) Then Return False
@@ -2924,7 +2925,7 @@ Public Class Helper
             Return True
         End If
         '•	From an enumerated type to its underlying numeric type, or to a numeric type that its underlying numeric type has a widening conversion to.
-        If Helper.IsEnum(Compiler, FromType) AndAlso toTC <> TypeCode.Object Then
+        If Helper.IsEnum(Compiler, FromType) AndAlso toTC <> TypeCode.Object AndAlso Helper.IsEnum(Compiler, DestinationType) = False Then
             Dim enumType As TypeReference = Helper.GetEnumType(Compiler, FromType)
             If Compiler.TypeResolution.IsImplicitlyConvertible(Compiler, Helper.GetTypeCode(Compiler, enumType), toTC) Then
                 convExpr = New CTypeExpression(Parent, FromExpression, DestinationType, CTypeConversionType.Intrinsic)
@@ -2934,7 +2935,7 @@ Public Class Helper
         End If
         '•	From a constant expression of type ULong, Long, UInteger, Integer, UShort, Short, Byte, or SByte to a narrower type, provided the value of the constant expression is within the range of the destination type.
         'SPECBUG: this doesn't include the other numeric types, Single, Double and Decimal
-        If fromTC = TypeCode.UInt64 OrElse fromTC = TypeCode.Int64 OrElse fromTC = TypeCode.UInt32 OrElse fromTC = TypeCode.Int32 OrElse fromTC = TypeCode.UInt16 OrElse fromTC = TypeCode.Int16 OrElse fromTC = TypeCode.Byte OrElse fromTC = TypeCode.SByte OrElse fromTC = TypeCode.Single OrElse fromTC = TypeCode.Double OrElse fromTC = TypeCode.Decimal Then
+        If considerConstantExpressions AndAlso (fromTC = TypeCode.UInt64 OrElse fromTC = TypeCode.Int64 OrElse fromTC = TypeCode.UInt32 OrElse fromTC = TypeCode.Int32 OrElse fromTC = TypeCode.UInt16 OrElse fromTC = TypeCode.Int16 OrElse fromTC = TypeCode.Byte OrElse fromTC = TypeCode.SByte OrElse fromTC = TypeCode.Single OrElse fromTC = TypeCode.Double OrElse fromTC = TypeCode.Decimal) Then
             If FromExpression.GetConstant(constant, False) Then
                 If Helper.CompareType(DestinationType, TypeCache.System_DBNull) = False AndAlso Compiler.TypeResolution.CheckNumericRange(constant, constant, DestinationType) Then
                     'No conversion should be required here
@@ -3030,6 +3031,22 @@ Public Class Helper
         '•	From an interface type to a variant compatible interface type.
         '•	From a delegate type to a variant compatible delegate type.
 
+        'https://connect.microsoft.com/VisualStudio/feedback/details/649909/vb-10-specification-does-not-cover-conversion-from-array-type-derived-to-ilist-of-base
+        'This is from C#'s ECMA-334:
+        '•	From a one-dimensional array-type S[] to System.Collections.Generic.IList<T> and base interfaces of this interface, provided there is an implicit reference conversion from S to T.
+        If fromArray IsNot Nothing AndAlso fromArray.Rank = 1 AndAlso toTD IsNot Nothing AndAlso toTD.IsInterface AndAlso toTD.GenericParameters.Count = 1 Then
+            Dim isIList As Boolean = Helper.CompareType(toTD, TypeCache.System_Collections_Generic_IList1)
+            isIList = isIList OrElse Helper.CompareType(toTD, TypeCache.System_Collections_Generic_IEnumerable1)
+            isIList = isIList OrElse Helper.CompareType(toTD, TypeCache.System_Collections_Generic_ICollection1)
+            If isIList Then
+                Dim git As GenericInstanceType = TryCast(DestinationType, GenericInstanceType)
+                If git IsNot Nothing AndAlso git.GenericArguments.Count = 1 AndAlso IsConvertible(Parent, FromExpression, fromArray.GetElementType(), git.GenericArguments(0), False, Nothing, False, True) Then
+                    'No conversion expression is required I think
+                    Return True
+                End If
+            End If
+        End If
+
         'Narrowing conversions for reference conversions are done at the end of the widening conversions
 
         'Anonymous Delegate conversions
@@ -3059,7 +3076,7 @@ Public Class Helper
             '   •	Both SE and TE are reference types or are type parameters known to be a reference type.
             '   •	A widening reference, array, or type parameter conversion exists from SE to TE.
             If CecilHelper.IsReferenceTypeOrGenericReferenceTypeParameter(toElement) AndAlso CecilHelper.IsReferenceTypeOrGenericReferenceTypeParameter(fromElement) Then
-                If IsConvertible(Parent, FromExpression, fromElement, toElement, False, Nothing, False, Nothing) Then
+                If IsConvertible(Parent, FromExpression, fromElement, toElement, False, Nothing, False, True) Then
                     If CreateConversionExpression Then
                         convExpr = New CTypeExpression(Parent, FromExpression, DestinationType, CTypeConversionType.Castclass)
                         If Not convExpr.ResolveExpression(ResolveInfo.Default(Compiler)) Then Return False
@@ -3191,7 +3208,7 @@ Public Class Helper
         If isFromNullable = False AndAlso isToNullable = False Then
             Select Case fromTC
                 Case TypeCode.Byte, TypeCode.SByte, TypeCode.UInt16, TypeCode.Int16, TypeCode.UInt32, TypeCode.Int32, TypeCode.UInt64, TypeCode.Int64, TypeCode.Decimal, TypeCode.Single
-                    If Compiler.TypeResolution.IsExplicitlyConvertible(Compiler, fromTC, toTC) Then
+                    If toTC <> TypeCode.Object AndAlso Compiler.TypeResolution.IsExplicitlyConvertible(Compiler, fromTC, toTC) Then
                         If isStrict Then
                             If ShowError Then
                                 If Helper.CompareType(TypeCache.System_Char, DestinationType) Then
@@ -4244,7 +4261,8 @@ Public Class Helper
             isEqual = Helper.CompareType(MTypes(i), NTypes(i))
 
             '*	There exists a widening conversion from the type of Mj to the type Nj, or
-            isWidening = Compiler.TypeResolution.IsImplicitlyConvertible(Context, MTypes(i), NTypes(i))
+            'isWidening = Compiler.TypeResolution.IsImplicitlyConvertible(Context, MTypes(i), NTypes(i))
+            isWidening = Helper.IsConvertible(Arguments(i), Arguments(i).Expression, MTypes(i), NTypes(i), False, Nothing, False, True, False)
 
             '*	Aj is the literal 0, Mj is a numeric type and Nj is an enumerated type, or
             isLiteral0 = IsLiteral0Expression(Compiler, Arguments(i).Expression) AndAlso Compiler.TypeResolution.IsNumericType(MTypes(i)) AndAlso Helper.IsEnum(Compiler, NTypes(i))

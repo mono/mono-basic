@@ -309,6 +309,10 @@ Public Class Attribute
 
         Dim groupClassification As New MethodGroupClassification(Me, Nothing, Nothing, Nothing, ctors)
         result = groupClassification.ResolveGroup(argList) AndAlso result
+        If result = False Then
+            groupClassification.ResolveGroup(argList, True)
+            Return result
+        End If
         m_ResolvedTypeConstructor = groupClassification.ResolvedConstructor
         result = m_ResolvedTypeConstructor IsNot Nothing AndAlso result
         result = argList.FillWithOptionalParameters(m_ResolvedTypeConstructor) AndAlso result
@@ -573,3 +577,4 @@ Public Class Attribute
         Return result
     End Function
 End Class
+

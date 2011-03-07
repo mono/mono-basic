@@ -460,7 +460,7 @@ Public Class CTypeExpression
                         result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
                     End If
                 Else
-                    result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Expression.ExpressionType.FullName, ExpressionType.FullName) AndAlso result
+                    result = Compiler.Report.ShowMessage(Messages.VBNC30311, Me.Location, Helper.ToString(Compiler, Expression.ExpressionType), Helper.ToString(Compiler, ExpressionType)) AndAlso result
                 End If
             End If
         ElseIf Helper.IsInterface(Compiler, SourceType) Then

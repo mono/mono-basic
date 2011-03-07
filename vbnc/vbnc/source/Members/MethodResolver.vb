@@ -809,14 +809,10 @@ Public Class MemberCandidate
                 elementType = CType(param.ParameterType, Mono.Cecil.ArrayType).ElementType
                 For k As Integer = 0 To ParamArrayExpression.ArrayElementInitalizer.Initializers.Count - 1
                     initializer = ParamArrayExpression.ArrayElementInitalizer.Initializers(k).AsRegularInitializer
-                    IsConvertible = IsConvertible AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(arg, initializer.ExpressionType, elementType)
+                    If Not Helper.IsConvertible(arg, initializer, initializer.ExpressionType, elementType, False, Nothing, False, True, False) Then Return True
                 Next
             Else
-                IsConvertible = Compiler.TypeResolution.IsImplicitlyConvertible(arg, arg.Expression.ExpressionType, param.ParameterType)
-            End If
-
-            If IsConvertible = False Then
-                Return True
+                If Not Helper.IsConvertible(arg, arg.Expression, arg.Expression.ExpressionType, param.ParameterType, False, Nothing, False, True, False) Then Return True
             End If
         Next
 
