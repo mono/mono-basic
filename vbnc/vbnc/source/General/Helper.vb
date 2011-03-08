@@ -2917,7 +2917,7 @@ Public Class Helper
             End Select
         End If
         '•	From the literal 0 to an enumerated type. (widening)
-        If Helper.IsEnum(Compiler, DestinationType) AndAlso Helper.IsLiteral0Expression(Compiler, FromExpression) Then
+        If considerConstantExpressions AndAlso Helper.IsEnum(Compiler, DestinationType) AndAlso Helper.IsLiteral0Expression(Compiler, FromExpression) Then
             If CreateConversionExpression Then
                 convExpr = New CTypeExpression(Parent, FromExpression, DestinationType)
                 If Not convExpr.ResolveExpression(ResolveInfo.Default(Compiler)) Then Return False

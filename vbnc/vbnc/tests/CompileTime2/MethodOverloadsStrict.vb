@@ -1,5 +1,9 @@
 Option Strict On
 Class C1
+    Sub F()
+        Math.Round(2.2, 0)
+    End Sub
+
     Sub E()
         Dim s() As String
         Dim e As String
@@ -31,7 +35,6 @@ Class C1
     End Sub
 
 End Class
-
 
 Class Base
 End Class
