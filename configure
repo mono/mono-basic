@@ -31,7 +31,7 @@ while test x$1 != x; do
         shift
 done
 
-if test "x$moonlight_sdk_location" == "x"; then
+if test "x$moonlight_sdk_location" = "x"; then
 	if test "x`echo $configured_profiles | grep moonlight`" != "x"; then
 		echo Configure error: --with-moonlight=yes requires --moonlight-sdk-location
 		exit 1
@@ -50,5 +50,5 @@ echo "VERSION :=$VERSION" >> build/config.make
 echo "CONFIGURED_PROFILES :=$configured_profiles" >> build/config.make
 echo "MOONLIGHT_SDK_LOCATION :=$sdk_location" >> build/config.make
 
-echo "mono-basic $VERSION module configure to use prefix=$prefix"
+echo "mono-basic $VERSION module configured to use prefix=$prefix"
 
