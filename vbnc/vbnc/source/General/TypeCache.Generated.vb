@@ -150,6 +150,7 @@ Public Partial Class CecilTypeCache
     Public System_Runtime_InteropServices_StructLayoutAttribute As Mono.Cecil.TypeDefinition
     Public System_Runtime_InteropServices_FieldOffsetAttribute As Mono.Cecil.TypeDefinition
     Public System_Runtime_InteropServices_CoClassAttribute As Mono.Cecil.TypeDefinition
+    Public System_Runtime_InteropServices_OutAttribute As Mono.Cecil.TypeDefinition
     Public System_Security_Permissions_SecurityAttribute As Mono.Cecil.TypeDefinition
     Public System_Windows_Forms_Form As Mono.Cecil.TypeDefinition
     Public System_Windows_Forms_Application As Mono.Cecil.TypeDefinition
@@ -422,6 +423,7 @@ Public Partial Class CecilTypeCache
         System_Runtime_InteropServices_StructLayoutAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.StructLayoutAttribute")
         System_Runtime_InteropServices_FieldOffsetAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.FieldOffsetAttribute")
         System_Runtime_InteropServices_CoClassAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.CoClassAttribute")
+        System_Runtime_InteropServices_OutAttribute = [GetType](mscorlib, "System.Runtime.InteropServices.OutAttribute")
         System_Security_Permissions_SecurityAttribute = [GetType](mscorlib, "System.Security.Permissions.SecurityAttribute")
         System_Windows_Forms_Form = [GetType](winforms, "System.Windows.Forms.Form")
         System_Windows_Forms_Application = [GetType](winforms, "System.Windows.Forms.Application")

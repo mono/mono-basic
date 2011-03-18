@@ -8134,4 +8134,7 @@
 	<test id="2105" name="30132" category="" priority="0" expectedexitcode="1" expectederrorcode="30132" target="exe">
 		<file>Errors\30132.vb</file>
 	</test>
+	<test id="2106" name="bug-680380" mytype="empty">
+		<file>Bugs\bug-680380.vb</file>
+	</test>
 </rt>

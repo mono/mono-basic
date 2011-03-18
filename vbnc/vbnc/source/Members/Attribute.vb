@@ -488,7 +488,11 @@ Public Class Attribute
                 ElseIf prop IsNot Nothing Then
                     prop.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 ElseIf param IsNot Nothing Then
-                    param.CecilBuilder.CustomAttributes.Add(CecilBuilder)
+                    If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_OutAttribute) Then
+                        param.CecilBuilder.IsOut = True
+                    Else
+                        param.CecilBuilder.CustomAttributes.Add(CecilBuilder)
+                    End If
                 ElseIf evt IsNot Nothing Then
                     evt.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                 Else

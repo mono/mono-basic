@@ -164,6 +164,7 @@ type mscorlib "System.Runtime.InteropServices.MarshalAsAttribute"
 type mscorlib "System.Runtime.InteropServices.StructLayoutAttribute"
 type mscorlib "System.Runtime.InteropServices.FieldOffsetAttribute"
 type mscorlib "System.Runtime.InteropServices.CoClassAttribute"
+type mscorlib "System.Runtime.InteropServices.OutAttribute"
 
 type mscorlib "System.Security.Permissions.SecurityAttribute"
 
