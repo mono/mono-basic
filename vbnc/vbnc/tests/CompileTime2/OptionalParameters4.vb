@@ -14,7 +14,9 @@ Class OptionalParameters4
 
     End Sub
 
+    Shared Sub Bar(Optional ByVal Param1 As Decimal = 2)
 
+    End Sub
 
     Shared Function Main() As Integer
         Return Test(0, Nothing, 0)

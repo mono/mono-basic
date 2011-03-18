@@ -490,6 +490,9 @@ Public Class Attribute
                 ElseIf param IsNot Nothing Then
                     If Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_OutAttribute) Then
                         param.CecilBuilder.IsOut = True
+                    ElseIf Helper.CompareType(CecilBuilder.Constructor.DeclaringType, Compiler.TypeCache.System_Runtime_InteropServices_MarshalAsAttribute) Then
+                        param.CecilBuilder.MarshalInfo = New MarshalInfo(CType(CecilBuilder.ConstructorArguments(0).Value, Mono.Cecil.NativeType))
+                        param.CecilBuilder.Attributes = param.CecilBuilder.Attributes Or Mono.Cecil.ParameterAttributes.HasFieldMarshal
                     Else
                         param.CecilBuilder.CustomAttributes.Add(CecilBuilder)
                     End If

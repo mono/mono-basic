@@ -80,7 +80,7 @@ Public Class PropertySetDeclaration
 
         ' Setter without a 'value', create it automatically
         If manualValue = False Then
-            Dim valueName As String = "value"
+            Dim valueName As String = "Value"
             Dim param As Parameter
             If PropertySignature.ReturnType IsNot Nothing Then
                 param = New Parameter(params, valueName, PropertySignature.ReturnType)

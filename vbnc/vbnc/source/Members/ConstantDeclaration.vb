@@ -220,26 +220,30 @@ Public Class ConstantDeclaration
         m_FieldBuilderCecil.HasConstant = Not m_RequiresSharedInitialization
 
         If constant IsNot Nothing AndAlso constant IsNot DBNull.Value Then
-            If TypeOf constant Is Decimal Then
-                Dim value As Decimal = DirectCast(constant, Decimal)
-                Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32
-                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
-                Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_UInt32_UInt32_UInt32()
-                For i As Integer = 0 To params.Length - 1
-                    attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
-                Next
-                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
-            ElseIf TypeOf constant Is Date Then
-                Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
-                attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(constant, Date).Ticks))
-                m_FieldBuilderCecil.CustomAttributes.Add(attrib)
-            End If
+            CreateConstantAttribute(Compiler, constant, m_FieldBuilderCecil.CustomAttributes)
         End If
 
         m_FieldBuilderCecil.Attributes = Helper.GetAttributes(Compiler, Me)
 
         Return result
     End Function
+
+    Public Shared Sub CreateConstantAttribute(ByVal Compiler As Compiler, ByVal constant As Object, ByVal CustomAttributes As Mono.Collections.Generic.Collection(Of CustomAttribute))
+        If TypeOf constant Is Decimal Then
+            Dim value As Decimal = DirectCast(constant, Decimal)
+            Dim ctor As MethodDefinition = Compiler.TypeCache.System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32
+            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, ctor))
+            Dim params As Object() = New Emitter.DecimalFields(value).AsByte_Byte_UInt32_UInt32_UInt32()
+            For i As Integer = 0 To params.Length - 1
+                attrib.ConstructorArguments.Add(New CustomAttributeArgument(ctor.Parameters(i).ParameterType, params(i)))
+            Next
+            CustomAttributes.Add(attrib)
+        ElseIf TypeOf constant Is Date Then
+            Dim attrib As New Mono.Cecil.CustomAttribute(Helper.GetMethodOrMethodReference(Compiler, Compiler.TypeCache.System_Runtime_CompilerServices_DateTimeConstantAttribute__ctor_Int64))
+            attrib.ConstructorArguments.Add(New CustomAttributeArgument(Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Int64), DirectCast(constant, Date).Ticks))
+            CustomAttributes.Add(attrib)
+        End If
+    End Sub
 
     Public Overrides Function CreateDefinition() As Boolean
         Dim result As Boolean = True
@@ -304,3 +308,4 @@ Public Class ConstantDeclaration
         End Get
     End Property
 End Class
+

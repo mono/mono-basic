@@ -177,6 +177,7 @@ Public Class TypeVariableDeclaration
         End If
 
         propertyAccessor.Init(modifiers, Name, Me.TypeName)
+        propertyAccessor.SetDeclaration.Signature.Parameters(0).Name = "WithEventsValue"
         result = propertyAccessor.CreateDefinition AndAlso result
 
         propertyAccessor.HandlesField = Me

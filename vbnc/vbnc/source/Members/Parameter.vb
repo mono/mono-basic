@@ -240,6 +240,7 @@ Public Class Parameter
                     constant = Nothing
                 End If
                 ConstantValue = constant
+                ConstantDeclaration.CreateConstantAttribute(Compiler, constant, m_ParameterBuilderCecil.CustomAttributes)
             End If
         Else
             If m_ConstantExpression IsNot Nothing Then
