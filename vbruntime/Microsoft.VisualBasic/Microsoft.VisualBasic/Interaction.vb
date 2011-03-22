@@ -177,10 +177,22 @@ Namespace Microsoft.VisualBasic
         Public Shared Function GetSetting(ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal [Default] As String = "") As String
 #If TARGET_JVM = False Then
             Dim rkey As RegistryKey
+            Dim ret As Object
+            If ([Default] Is Nothing) Then
+                [Default] = ""
+            End If
             rkey = Registry.CurrentUser
             rkey = rkey.OpenSubKey("Software\VB and VBA Program Settings\" + AppName)
             rkey = rkey.OpenSubKey(Section)
-            Return rkey.GetValue(Key, CObj([Default])).ToString
+            If (rkey Is Nothing) Then
+                Return [Default]
+            End If
+
+            ret = rkey.GetValue(Key, CObj([Default]))
+            If (ret Is Nothing) Then
+                Return Nothing
+            End If
+            Return ret.ToString
 #Else
             Throw New NotImplementedException
 #End If
