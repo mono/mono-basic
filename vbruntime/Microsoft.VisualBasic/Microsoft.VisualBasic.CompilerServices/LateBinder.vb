@@ -1118,7 +1118,7 @@ Namespace Microsoft.VisualBasic.CompilerServices
                     End If
                 End If
 
-                If type1.IsSubclassOf(type2) Then
+                If type1.IsSubclassOf(type2) OrElse type2.IsAssignableFrom (type1) Then
                     Return TypeConversion.Widening
                 ElseIf type2.IsSubclassOf(type1) Then
                     Return TypeConversion.Narrowing
