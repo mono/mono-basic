@@ -45,5 +45,16 @@ Friend Class Hashtable
             Return Me
         End Get
     End Property
+
+    Public Default Property Item (Key As Object) As Object
+        Get
+            Dim result As Object
+            If Not MyBase.TryGetValue (Key, result) Then Return Nothing
+            Return result
+        End Get
+        Set
+            MyBase (Key) = Value
+        End Set
+    End Property
 End Class
 #End If
