@@ -100,6 +100,12 @@ Public Class ArrayElementInitializer
         Return result
     End Function
 
+    ReadOnly Property ElementCount As Integer
+        Get
+            Return If(m_Elements Is Nothing, 0, m_Elements.Count)
+        End Get
+    End Property
+
     ReadOnly Property Elements() As Generic.List(Of Integer)
         Get
             Return m_Elements
@@ -183,7 +189,7 @@ Public Class ArrayElementInitializer
         Dim result As Mono.Cecil.MethodReference
         Dim elementType As Mono.Cecil.TypeReference = CecilHelper.GetElementType(ArrayType)
         Dim ranks As Integer = CecilHelper.GetArrayRank(ArrayType)
-        
+
         ArrayType = Helper.GetTypeOrTypeBuilder(Compiler, ArrayType)
         elementType = Helper.GetTypeOrTypeBuilder(Compiler, elementType)
         result = New Mono.Cecil.MethodReference("Get", ArrayType, elementType, True, False, Mono.Cecil.MethodCallingConvention.Default)
@@ -267,3 +273,4 @@ Public Class ArrayElementInitializer
         Return tm.CurrentToken.Equals(KS.LBrace)
     End Function
 End Class
+

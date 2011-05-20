@@ -27,31 +27,38 @@ Public Class ConcatExpression
 
         If result = False Then Return result
 
-        Dim l, r, other As Boolean
+        Dim l, r As Boolean
+        Dim lObj, rObj As Boolean
+
         l = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
         r = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_DBNull)
+        
         If l AndAlso r = False Then 'DBNull & whatever
             m_LeftExpression = New NothingConstantExpression(Me)
             result = m_LeftExpression.ResolveExpression(Info) AndAlso result
         ElseIf l = False AndAlso r Then 'whatever & DBNull
             m_RightExpression = New NothingConstantExpression(Me)
             result = m_RightExpression.ResolveExpression(Info) AndAlso result
-        Else
-            other = True
+        ElseIf l AndAlso r Then 'DBNull & DBNull
+            Return Compiler.Report.ShowMessage(Messages.VBNC30452, Me.Location, "&", Helper.ToString(Compiler, LeftType), Helper.ToString(Compiler, RightType))
         End If
 
         If l = False Then
-            If Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_Char_Array) Then
-                m_LeftExpression = New CStrExpression(Me, m_LeftExpression)
-                result = m_LeftExpression.ResolveExpression(Info) AndAlso result
+            lObj = Helper.CompareType(m_LeftExpression.ExpressionType, Compiler.TypeCache.System_Object)
+            If Location.File(Compiler).IsOptionStrictOn AndAlso lObj Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30038, Me.Location, "&")
             End If
+            If LeftTypeCode <> TypeCode.Object Then m_LeftExpression = New CStrExpression(Me, m_LeftExpression)
+            result = m_LeftExpression.ResolveExpression(Info) AndAlso result
         End If
 
         If r = False Then
-            If Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_Char_Array) Then
-                m_RightExpression = New CStrExpression(Me, m_RightExpression)
-                result = m_RightExpression.ResolveExpression(Info) AndAlso result
+            rObj = Helper.CompareType(m_RightExpression.ExpressionType, Compiler.TypeCache.System_Object)
+            If Location.File(Compiler).IsOptionStrictOn AndAlso rObj Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC30038, Me.Location, "&")
             End If
+            If RightTypeCode <> TypeCode.Object Then m_RightExpression = New CStrExpression(Me, m_RightExpression)
+            result = m_RightExpression.ResolveExpression(Info) AndAlso result
         End If
 
         Return result
@@ -106,3 +113,4 @@ Public Class ConcatExpression
         Return True
     End Function
 End Class
+

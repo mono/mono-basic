@@ -1353,6 +1353,13 @@ Public Class Helper
         Return attrib
     End Function
 
+    Shared Function IsDefaultProperty(ByVal Compiler As Compiler, ByVal P As PropertyDefinition) As Boolean
+        Dim ca As CustomAttribute = GetDefaultMemberAttribute(Compiler, P.DeclaringType)
+        If ca Is Nothing Then Return False
+        Return Helper.CompareName(DirectCast(ca.ConstructorArguments(0).Value, String), P.Name)
+    End Function
+
+
     Shared Function IsShadows(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As Boolean
         Dim result As Boolean = True
         Select Case CecilHelper.GetMemberType(Member)
@@ -3234,7 +3241,7 @@ Public Class Helper
                         Return True
                     End If
                 Case TypeCode.Boolean, TypeCode.Double
-                    If Compiler.TypeResolution.IsExplicitlyConvertible(Compiler, fromTC, toTC) Then
+                    If toTC <> TypeCode.Object AndAlso Compiler.TypeResolution.IsExplicitlyConvertible(Compiler, fromTC, toTC) Then
                         If isStrict Then
                             If ShowError Then
                                 If Helper.CompareType(TypeCache.System_Char, DestinationType) Then
@@ -3870,29 +3877,37 @@ Public Class Helper
     ''' <returns></returns>
     ''' <remarks></remarks>
     Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Params As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As String
-        Dim result As String = ""
-        Dim sep As String = ""
+        Dim result As New Text.StringBuilder()
 
+        result.Append("(")
         For i As Integer = 0 To Params.Count - 1
             Dim t As Mono.Cecil.ParameterDefinition = Params(i)
-            Dim tmp As String
-            If CecilHelper.IsByRef(t.ParameterType) Then
-                tmp = "ByRef " & CecilHelper.GetElementType(t.ParameterType).ToString
-            Else
-                tmp = t.ParameterType.ToString
+            Dim tmp As String = String.Empty
+            Dim tp As TypeReference
+
+            tp = t.ParameterType
+            If CecilHelper.IsByRef(tp) Then
+                result.Append("ByRef ")
+                tp = CecilHelper.GetElementType(tp)
             End If
             If t.IsOptional Then
-                tmp = "Optional " & tmp
+                result.Append("Optional ")
             End If
             If Helper.IsParamArrayParameter(Context, t) Then
-                tmp = "ParamArray " & tmp
+                result.Append("ParamArray ")
             End If
-            result = result & sep & tmp
-            sep = ", "
+            result.Append(t.Name)
+            If CecilHelper.IsArray(tp) AndAlso CecilHelper.GetArrayRank(tp) = 1 Then
+                result.Append("()")
+                tp = CecilHelper.GetElementType(tp)
+            End If
+            result.Append(" As ")
+            result.Append(ToString(Context, tp))
+            If i < Params.Count - 1 Then result.Append(", ")
         Next
+        result.Append(")")
 
-        Return "(" & result & ")"
-
+        Return result.ToString()
     End Function
 
     Shared Function IsParamArrayParameter(ByVal Context As BaseObject, ByVal Parameter As Mono.Cecil.ParameterReference) As Boolean
@@ -3901,6 +3916,63 @@ Public Class Helper
         result = CecilHelper.IsDefined(pD.CustomAttributes, Context.Compiler.TypeCache.System_ParamArrayAttribute)
         LogResolutionMessage(Context.Compiler, "IsParamArrayParameter: result=" & result & ", ParamArrayAttribute=" & Context.Compiler.TypeCache.System_ParamArrayAttribute.FullName)
         Return result
+    End Function
+
+    Shared Function GetMemberName(ByVal Member As MemberReference) As String
+        Dim mr As MethodReference = TryCast(Member, MethodReference)
+        If mr IsNot Nothing Then Return GetMethodName(mr)
+        Return Member.Name
+    End Function
+
+    Shared Function GetMethodName(ByVal Method As MethodReference) As String
+        Select Case Method.Name
+            Case "op_BitwiseAnd", "op_LogicalAnd"
+                Return "And"
+            Case "op_Like"
+                Return "Like"
+            Case "op_Modulus"
+                Return "Mod"
+            Case "op_BitwiseOr", "op_LogicalOr"
+                Return "Or"
+            Case "op_ExclusiveOr"
+                Return "XOr"
+            Case "op_LessThan"
+                Return "<"
+            Case "op_GreaterThan"
+                Return ">"
+            Case "op_Equality"
+                Return "="
+            Case "op_Inequality"
+                Return "<>"
+            Case "op_LessThanOrEqual"
+                Return "<="
+            Case "op_GreaterThanOrEqual"
+                Return ">="
+            Case "op_Concatenate"
+                Return "&"
+            Case "op_Multiply"
+                Return "*"
+            Case "op_Addition"
+                Return "+"
+            Case "op_Subtraction"
+                Return "-"
+            Case "op_Exponent"
+                Return "^"
+            Case "op_Division"
+                Return "/"
+            Case "op_IntegerDivision"
+                Return "\"
+            Case "op_LeftShift", "op_SignedRightShift"
+                Return "<<"
+            Case "op_RightShift", "op_UnsignedRightShift"
+                Return ">>"
+            Case "op_True"
+                Return "IsTrue"
+            Case "op_False"
+                Return "IsFalse"
+            Case Else
+                Return Method.Name
+        End Select
     End Function
 
     Overloads Shared Function ToString(ByVal Types As Mono.Cecil.TypeReference()) As String
@@ -3947,7 +4019,6 @@ Public Class Helper
                 Return "<unknown>"
         End Select
     End Function
-
 
     Overloads Shared Function ToString(ByVal Accessibility As Mono.Cecil.FieldAttributes) As String
         Select Case Accessibility
@@ -4010,6 +4081,8 @@ Public Class Helper
         Dim builder As New Text.StringBuilder()
         Dim isSub As Boolean = Helper.CompareType(Member.ReturnType, Context.Compiler.TypeCache.System_Void)
 
+        builder.Append(ToString(GetAccessibility(Member)))
+        builder.Append(" ")
         If Helper.CompareNameOrdinal(Member.Name, ".ctor") Then
             builder.Append("Sub New(")
             builder.Append(Helper.ToString(Context, Helper.GetParameters(Context, Member)))
@@ -4061,16 +4134,17 @@ Public Class Helper
                 Next
                 builder.Append(")")
             End If
-            builder.Append("(")
-            For i As Integer = 0 To Member.Parameters.Count - 1
-                If i > 0 Then builder.Append(", ")
-                Dim param As ParameterDefinition = Member.Parameters(i)
-                If CecilHelper.IsByRef(param.ParameterType) Then builder.Append("ByRef ")
-                builder.Append(param.Name)
-                builder.Append(" As ")
-                builder.Append(Helper.ToString(Context, param.ParameterType))
-            Next
-            builder.Append(")")
+            'builder.Append("(")
+            'For i As Integer = 0 To Member.Parameters.Count - 1
+            'If i > 0 Then builder.Append(", ")
+            'Dim param As ParameterDefinition = Member.Parameters(i)
+            'If CecilHelper.IsByRef(param.ParameterType) Then builder.Append("ByRef ")
+            'builder.Append(param.Name)
+            'builder.Append(" As ")
+            'builder.Append(Helper.ToString(Context, param.ParameterType))
+            builder.Append(Helper.ToString(Context, Member.Parameters))
+            'Next
+            'builder.Append(")")
             If isSub = False Then
                 builder.Append(" As ")
                 builder.Append(Helper.ToString(Context, Member.ReturnType))
@@ -4142,6 +4216,29 @@ Public Class Helper
         End If
     End Function
 
+    Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As PropertyReference) As String
+        Dim builder As New Text.StringBuilder()
+        Dim pd As PropertyDefinition = CecilHelper.FindDefinition(Member)
+
+        builder.Append(ToString(GetAccessibility(pd)))
+        builder.Append(" ")
+        If pd.GetMethod Is Nothing Then
+            builder.Append("WriteOnly ")
+        ElseIf pd.SetMethod Is Nothing Then
+            builder.Append("ReadOnly ")
+        End If
+        If IsDefaultProperty(Context.Compiler, pd) Then
+            builder.Append("Default ")
+        End If
+        builder.Append("Property ")
+        builder.Append(Member.Name)
+        builder.Append(Helper.ToString(Context, Helper.GetParameters(Context, Member)))
+        builder.Append(" As ")
+        builder.Append(Helper.ToString(Context, pd.PropertyType))
+
+        Return builder.ToString()
+    End Function
+
     Overloads Shared Function ToString(ByVal Context As BaseObject, ByVal Member As Mono.Cecil.MemberReference) As String
         Dim methodReference As MethodReference
         Dim propertyReference As PropertyReference
@@ -4151,7 +4248,7 @@ Public Class Helper
         If methodReference IsNot Nothing Then Return ToString(Context, methodReference)
 
         propertyReference = TryCast(Member, PropertyReference)
-        If propertyReference IsNot Nothing Then Return Member.Name & "(" & Helper.ToString(Context, Helper.GetParameters(Context, Member)) & ")"
+        If propertyReference IsNot Nothing Then Return ToString(Context, propertyReference)
 
         typeReference = TryCast(Member, TypeReference)
         If typeReference IsNot Nothing Then Return ToString(Context, DirectCast(Member, TypeReference))
@@ -4777,7 +4874,7 @@ Public Class Helper
         Return GetMostEncompassedType(Compiler, types)
     End Function
 
-    Public Shared Function VerifyConstraints(ByVal Context As ParsedObject, ByVal parameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByVal arguments As Mono.Collections.Generic.Collection(Of TypeReference)) As Boolean
+    Public Shared Function VerifyConstraints(ByVal Context As ParsedObject, ByVal parameters As Mono.Collections.Generic.Collection(Of GenericParameter), ByVal arguments As Mono.Collections.Generic.Collection(Of TypeReference), ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
         For i As Integer = 0 To Math.Min(parameters.Count, arguments.Count) - 1
@@ -4789,17 +4886,21 @@ Public Class Helper
                 If gt IsNot Nothing Then
                     If gt.HasDefaultConstructorConstraint = False AndAlso gt.HasNotNullableValueTypeConstraint = False Then
                         Dim tr As TypeReference = TryCast(param.Owner, TypeReference)
-                        If Helper.CompareType(tr, Context.Compiler.TypeCache.System_Nullable1) Then
-                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC33101, Context.Location, Helper.ToString(Context, arg))
-                        Else
-                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC32084, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then
+                            If Helper.CompareType(tr, Context.Compiler.TypeCache.System_Nullable1) Then
+                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC33101, Context.Location, Helper.ToString(Context, arg))
+                            Else
+                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC32084, Context.Location, Helper.ToString(Context, arg), param.Name)
+                            End If
                         End If
+                        result = False
                         Continue For
                     End If
                 Else
                     Dim ctor As MethodReference = Helper.GetDefaultConstructor(arg)
                     If (ctor Is Nothing OrElse Helper.IsPublic(ctor) = False) AndAlso CecilHelper.IsValueType(arg) = False Then
-                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32083, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32083, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        result = False
                         Continue For
                     End If
                 End If
@@ -4808,11 +4909,13 @@ Public Class Helper
             If param.HasNotNullableValueTypeConstraint Then
                 If gt Is Nothing Then
                     If CecilHelper.IsValueType(arg) = False Then
-                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        result = False
                     End If
                 Else
                     If gt.HasNotNullableValueTypeConstraint = False Then
-                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32105, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        result = False
                     End If
                 End If
             End If
@@ -4820,11 +4923,13 @@ Public Class Helper
             If param.HasReferenceTypeConstraint Then
                 If gt IsNot Nothing Then
                     If gt.HasReferenceTypeConstraint = False Then
-                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        result = False
                     End If
                 Else
                     If CecilHelper.IsClass(arg) = False Then
-                        result = Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32106, Context.Location, Helper.ToString(Context, arg), param.Name)
+                        result = False
                     End If
                 End If
             End If
@@ -4839,11 +4944,13 @@ Public Class Helper
                     If gt Is Nothing Then
                         If Helper.IsInterface(Context, constr) Then
                             If Helper.DoesTypeImplementInterface(Context, arg, constr) = False Then
-                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                                If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                                result = False
                             End If
                         Else
                             If Helper.IsSubclassOf(constr, arg) = False Then
-                                result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                                If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                                result = False
                             End If
                         End If
                     Else
@@ -4860,7 +4967,8 @@ Public Class Helper
                             End If
                         Next
                         If found = False Then
-                            result = Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                            If ShowErrors Then Context.Compiler.Report.ShowMessage(Messages.VBNC32044, Context.Location, Helper.ToString(Context, arg), Helper.ToString(Context, constr))
+                            result = False
                         End If
                     End If
                 Next

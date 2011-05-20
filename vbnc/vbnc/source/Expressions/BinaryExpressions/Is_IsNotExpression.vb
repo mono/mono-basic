@@ -33,6 +33,27 @@ Public Class Is_IsNotExpression
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
+        result = MyBase.ResolveExpressions(Info) AndAlso result
+
+        If Not result Then Return False
+
+        If CecilHelper.IsValueType(m_LeftExpression.ExpressionType) AndAlso CecilHelper.IsNullable(m_LeftExpression.ExpressionType) = False Then
+            If Keyword = KS.Is Then
+                Compiler.Report.ShowMessage(Messages.VBNC30020, Me.Location, Helper.ToString(Compiler, m_LeftExpression.ExpressionType))
+            Else
+                Compiler.Report.ShowMessage(Messages.VBNC31419, Me.Location, Helper.ToString(Compiler, m_LeftExpression.ExpressionType))
+            End If
+        End If
+        If CecilHelper.IsValueType(m_RightExpression.ExpressionType) AndAlso CecilHelper.IsNullable(m_RightExpression.ExpressionType) = False Then
+            If Keyword = KS.Is Then
+                Compiler.Report.ShowMessage(Messages.VBNC30020, Me.Location, Helper.ToString(Compiler, m_RightExpression.ExpressionType))
+            Else
+                Compiler.Report.ShowMessage(Messages.VBNC31419, Me.Location, Helper.ToString(Compiler, m_RightExpression.ExpressionType))
+            End If
+        End If
+
+        If result = False Then Return False
+
         result = MyBase.ResolveExpressionInternal(Info) AndAlso result
 
         If result AndAlso CecilHelper.IsGenericParameter(m_LeftExpression.ExpressionType) Then
@@ -124,3 +145,4 @@ Public Class Is_IsNotExpression
         End Get
     End Property
 End Class
+

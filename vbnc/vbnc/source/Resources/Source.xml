@@ -149,7 +149,7 @@
 	</Message>
 	<Message id="30020" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Is' operator does not accept operands of type '{0}'. Operands must be reference or nullable types.</VBNCValue>
 		<VBValue>'Is' requires operands that have reference types, but this operand has the value type '|1'.</VBValue>
 	</Message>
 	<Message id="30021" level="Error">
@@ -239,7 +239,7 @@
 	</Message>
 	<Message id="30038" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Option Strict On prohibits operands of type Object for operator '{0}'.</VBNCValue>
 		<VBValue>Option Strict On prohibits operands of type Object for operator '|1'.</VBValue>
 	</Message>
 	<Message id="30039" level="Error">
@@ -304,7 +304,7 @@
 	</Message>
 	<Message id="30057" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Too many arguments provided to '{0}'.</VBNCValue>
+		<VBNCValue>Too many arguments to '{0}'.</VBNCValue>
 		<VBValue>Too many arguments to '|1'.</VBValue>
 	</Message>
 	<Message id="30058" level="Error">
@@ -1264,7 +1264,7 @@
 	</Message>
 	<Message id="30367" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Class '{0}' cannot be indexed because it has no default property.</VBNCValue>
 		<VBValue>Class '|1' cannot be indexed because it has no default property.</VBValue>
 	</Message>
 	<Message id="30368" level="Error">
@@ -1514,7 +1514,7 @@
 	</Message>
 	<Message id="30452" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Operator '{0}' is not defined for the types '{1}' and '{2}'.</VBNCValue>
+		<VBNCValue>Operator '{0}' is not defined for types '{1}' and '{2}'.</VBNCValue>
 		<VBValue>Operator '|1' is not defined for types '|2' and '|3'.</VBValue>
 	</Message>
 	<Message id="30454" level="Error">
@@ -1609,12 +1609,12 @@
 	</Message>
 	<Message id="30481" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>CHANGEME</VBNCValue> 
 		<VBValue>'Class' statement must end with a matching 'End Class'.</VBValue>
 	</Message>
 	<Message id="30487" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Operator '{0}' is not defined for type '{1}'.</VBNCValue>
 		<VBValue>Operator '|1' is not defined for type '|2'.</VBValue>
 	</Message>
 	<Message id="30490" level="Error">
@@ -1704,7 +1704,7 @@
 	</Message>
 	<Message id="30516" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Overload resolution failed because no '{0}' is accessible with the specified number of arguments.</VBNCValue>
+		<VBNCValue>Overload resolution failed because no accessible '{0}' accepts this number of arguments.</VBNCValue>
 		<VBValue>Overload resolution failed because no accessible '|1' accepts this number of arguments.</VBValue>
 	</Message>
 	<Message id="30517" level="Error">
@@ -1714,12 +1714,12 @@
 	</Message>
 	<Message id="30518" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Overload resolution failed because no accessible '{0}' can be called with these arguments:{1}</VBNCValue>
 		<VBValue>Overload resolution failed because no accessible '|1' can be called with these arguments:|2</VBValue>
 	</Message>
 	<Message id="30519" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Overload resolution failed because no accessible '{0}' can be called without a narrowing conversion:{1}</VBNCValue>
 		<VBValue>Overload resolution failed because no accessible '|1' can be called without a narrowing conversion:|2</VBValue>
 	</Message>
 	<Message id="30520" level="Error">
@@ -1929,12 +1929,12 @@
 	</Message>
 	<Message id="30587" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Named argument cannot match a ParamArray parameter.</VBNCValue>
 		<VBValue>Named argument cannot match a ParamArray parameter.</VBValue>
 	</Message>
 	<Message id="30588" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Omitted argument cannot match a ParamArray parameter.</VBNCValue>
 		<VBValue>Omitted argument cannot match a ParamArray parameter.</VBValue>
 	</Message>
 	<Message id="30590" level="Error">
@@ -3519,7 +3519,7 @@
 	</Message>
 	<Message id="31419" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'IsNot' requires operands that have reference types, but this operand has the value type '{0}'.</VBNCValue>
 		<VBValue>'IsNot' requires operands that have reference types, but this operand has the value type '|1'.</VBValue>
 	</Message>
 	<Message id="31420" level="Error">
@@ -3724,7 +3724,7 @@
 	</Message>
 	<Message id="32013" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Option Strict On disallows operands of type Object for operator '{0}'. Use the 'Is' operator to test for object identity.</VBNCValue>
 		<VBValue>Option Strict On disallows operands of type Object for operator '|1'. Use the 'Is' operator to test for object identity.</VBValue>
 	</Message>
 	<Message id="32014" level="Error">
@@ -3759,7 +3759,7 @@
 	</Message>
 	<Message id="32021" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Parameter '{0}' in '{1}' already has a matching omitted argument.</VBNCValue>
 		<VBValue>Parameter '|1' in '|2' already has a matching omitted argument.</VBValue>
 	</Message>
 	<Message id="32022" level="Error">

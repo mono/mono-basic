@@ -65,30 +65,30 @@ Public Class ArgumentList
         If NewArguments IsNot Nothing Then m_Arguments.AddRange(NewArguments.Arguments)
     End Sub
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.MethodReference) As Boolean
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.MethodReference, ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
-        result = VerifyArguments(Method) AndAlso result
+        result = VerifyArguments(Method, ShowErrors) AndAlso result
 
         Return result
     End Function
 
-    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.PropertyReference) As Boolean
+    Function ReplaceAndVerifyArguments(ByVal NewArguments As ArgumentList, ByVal Method As Mono.Cecil.PropertyReference, ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
         ReplaceArguments(NewArguments)
-        result = VerifyArguments(Method) AndAlso result
+        result = VerifyArguments(Method, ShowErrors) AndAlso result
 
         Return result
     End Function
 
-    Function VerifyArguments(ByVal Method As Mono.Cecil.PropertyReference) As Boolean
-        Return VerifyArguments(Method.Parameters)
+    Function VerifyArguments(ByVal Method As Mono.Cecil.PropertyReference, ByVal ShowErrors As Boolean) As Boolean
+        Return VerifyArguments(Method.Parameters, ShowErrors)
     End Function
 
-    Function VerifyArguments(ByVal Method As Mono.Cecil.MethodReference) As Boolean
-        Return VerifyArguments(Method.Parameters)
+    Function VerifyArguments(ByVal Method As Mono.Cecil.MethodReference, ByVal ShowErrors As Boolean) As Boolean
+        Return VerifyArguments(Method.Parameters, ShowErrors)
     End Function
 
     ''' <summary>
@@ -97,7 +97,7 @@ Public Class ArgumentList
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Function VerifyArguments(ByVal parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition)) As Boolean
+    Function VerifyArguments(ByVal parameters As Mono.Collections.Generic.Collection(Of ParameterDefinition), ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
 #If EXTENDEDDEBUG Then
@@ -115,7 +115,7 @@ Public Class ArgumentList
                 Helper.Assert(aoe IsNot Nothing)
                 Helper.Assert(delegateType IsNot Nothing)
 
-                result = aoe.Resolve(delegateType) AndAlso result
+                result = aoe.Resolve(delegateType, True) AndAlso result
 
                 Dim del As DelegateOrObjectCreationExpression
                 del = New DelegateOrObjectCreationExpression(Me)
@@ -129,7 +129,8 @@ Public Class ArgumentList
                     Dim propRef As PropertyReference = arg.Expression.Classification.AsPropertyAccess.Property
                     Dim propDef As PropertyDefinition = CecilHelper.FindDefinition(propRef)
                     If propDef.GetMethod Is Nothing Then
-                        result = Compiler.Report.ShowMessage(Messages.VBNC30524, m_Arguments(i).Location, propDef.Name)
+                        If ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC30524, m_Arguments(i).Location, propDef.Name)
+                        result = False
                     End If
                     exp = arg.Expression
                 ElseIf Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.Nothing) = False Then
@@ -166,7 +167,8 @@ Public Class ArgumentList
 #If EXTENDEDDEBUG Then
                 Compiler.Report.WriteLine("VerifyArguments, needs convertion from " & arg.Expression.ExpressionType.FullName & " to " & par.ParameterType.FullName)
 #End If
-                exp = Helper.CreateTypeConversion(arg, arg.Expression, par.ParameterType, result)
+                exp = Nothing
+                result = Helper.IsConvertible(arg, arg.Expression, arg.Expression.ExpressionType, par.ParameterType, True, exp, ShowErrors, Nothing) AndAlso result
             End If
             If exp IsNot arg.Expression Then
                 m_Arguments(i) = New PositionalArgument(Me, i, exp)

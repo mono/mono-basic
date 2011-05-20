@@ -89,7 +89,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXFXFHHJJLLPNOPX-O" & _
+            "XBXHXFHHJJLLPNOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXFHHJJLLPNOPX-O" & _
             "XBXHXHGHIJKLMNOPX-O" & _
@@ -99,9 +99,9 @@ Public Class TypeConverter
             "XBXLXLKLKLKLMNOPX-O" & _
             "XBXLXLLLLLLLPNOPX-O" & _
             "XBXPXPMPMPMPMNOPX-O" & _
-            "XBXNXNNNNNNNNNOPX-O" & _
+            "XBXNXNNNNNNNNNONX-O" & _
             "XBXOXOOOOOOOOOOOX-O" & _
-            "XBXPXPPPPPPPPPOPX-O" & _
+            "XBXPXPPPPPPPPNOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
@@ -111,11 +111,11 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXFXHHJJJLLLLLLX-L" & _
+            "XBXHXFHHJJLLLLLLX-L" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXHXFHJJJLLLLLLX-L" & _
-            "XBXHXHHIIJKLMLLLX-L" & _
-            "XBXJXJIHJJLLLLLLX-L" & _
+            "XBXFXFHHJJLLLLLLX-L" & _
+            "XBXHXHGHIJKLMLLLX-L" & _
+            "XBXHXHHHJJLLLLLLX-L" & _
             "XBXJXJIJIJKLMLLLX-L" & _
             "XBXJXJJJJJLLLLLLX-L" & _
             "XBXLXLKLKLKLMLLLX-L" & _
@@ -133,19 +133,19 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXOXOOOOOOOONOOX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXOXOOOOOOOONOOX-O" & _
-            "XBXNXNNNNNNNNNOOX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXOXOOOOOOOONOPX-O" & _
+            "XBXNXNNNNNNNNNONX-O" & _
             "XBXOXOOOOOOOOOOOX-O" & _
-            "XBXOXOOOOOOOOOOOX-O" & _
+            "XBXPXPPPPPPPPNOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
@@ -155,7 +155,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBBBBBBBBBBBBBB-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXFXFHHJJLLPNOPX-O" & _
+            "XBXHXFHHJJLLPNOPX-O" & _
             "XBXXSXXXXXXXXXXXX-S" & _
             "XBXFXFHHJJLLPNOPX-O" & _
             "XBXHXHGHIJKLMNOPX-O" & _
@@ -165,10 +165,10 @@ Public Class TypeConverter
             "XBXLXLKLKLKLMNOPX-O" & _
             "XBXLXLLLLLLLPNOPX-O" & _
             "XBXPXPMPMPMPMNOPX-O" & _
-            "XBXNXNNNNNNNNNOPX-O" & _
+            "XBXNXNNNNNNNNNONX-O" & _
             "XBXOXOOOOOOOOOOOX-O" & _
-            "XBXPXPPPPPPPPPOPX-O" & _
-            "XBXXXXXXXXXXXXXXX-S" & _
+            "XBXPXPPPPPPPPNOPX-O" & _
+            "XBXXXXXXXXXXXXXXS-S" & _
             "-------------------" & _
             "XBXOSOOOOOOOOOOOS-S"
     Public Shared AddDefinedTypes As String = "FGHIJKLMNOPS"
@@ -177,7 +177,7 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBXBBBBBBBBBBBX-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXFXFHHJJLLPNOPX-O" & _
+            "XBXHXFHHJJLLPNOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXFXFHHJJLLPNOPX-O" & _
             "XBXHXHGHIJKLMNOPX-O" & _
@@ -187,9 +187,9 @@ Public Class TypeConverter
             "XBXLXLKLKLKLMNOPX-O" & _
             "XBXLXLLLLLLLPNOPX-O" & _
             "XBXPXPMPMPMPMNOPX-O" & _
-            "XBXNXNNNNNNNNNOPX-O" & _
+            "XBXNXNNNNNNNNNONX-O" & _
             "XBXOXOOOOOOOOOOOX-O" & _
-            "XBXPXPPPPPPPPPOPX-O" & _
+            "XBXPXPPPPPPPPNOPX-O" & _
             "XXXXXXXXXXXXXXXXX-X" & _
             "-------------------" & _
             "XBXOXOOOOOOOOOOOX-O"
@@ -246,19 +246,19 @@ Public Class TypeConverter
             "XXXXXXXXXXXXXXXXX-X" & _
             "XBXBBBBBBBBBBBBBB-B" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXDXFHHJJPLPNOPX-D" & _
+            "XBXDXFHHJJLLPNOPX-D" & _
             "XBXXEXXXXXXXXXXXX-S" & _
             "XBXFXFHHJJPLPNOPX-O" & _
             "XBXHXHGHIJKLMNOPX-O" & _
             "XBXHXHHHJJPLPNOPX-O" & _
-            "XBXIXJIJIJKLMNOPX-O" & _
+            "XBXJXJIJIJKLMNOPX-O" & _
             "XBXJXJJJJJPLPNOPX-O" & _
-            "XBXPXPKPKPKLMNOPX-O" & _
+            "XBXLXPKPKPKLMNOPX-O" & _
             "XBXLXLLLLLLLPNOPX-O" & _
             "XBXPXPMPMPMPMNOPX-O" & _
-            "XBXNXNNNNNNNNNOPX-O" & _
-            "XBXOXOOOOOOOOOOPX-O" & _
-            "XBXPXPPPPPPPPPPPX-O" & _
+            "XBXNXNNNNNNNNNONX-O" & _
+            "XBXOXOOOOOOOOOOOX-O" & _
+            "XBXPXPPPPPPPPNOPX-O" & _
             "XBXXXXXXXXXXXXXXQ-Q" & _
             "-------------------" & _
             "XBXDSOOOOOOOOOOOQ-S"
@@ -288,35 +288,32 @@ Public Class TypeConverter
     Public Shared ExponentDefinedTypes As String = "O"
 
     Public Shared NotOperatorResultType As String = "XBXDXFGHIJKLMLLLX-L"
-    Public Shared NotDefinedTypes As String = "DFGHIJKLM"
 
-    Public Shared UnaryPlusResultType As String = "XBXFXFGHIJKLMNOPX-O"
-    Public Shared UnaryPlusDefinedTypes As String = "FGHIJKLMNOP"
+    Public Shared UnaryPlusResultType As String = "XBXHXFGHIJKLMNOPX-O"
 
-    Public Shared UnaryMinusResultType As String = "XBXFXFHHJJLLPNOPX-O"
-    Public Shared UnaryMinusDefinedTypes As String = "FHJLNOP"
+    Public Shared UnaryMinusResultType As String = "XBXHXFHHJJLLPNOPX-O"
 
     Public Shared ShiftDefinedTypes As String = "FGHIJKLM"
     Public Shared ShiftResultType As String = _
- "XXXXXXXXXXXXXXXXX-X" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XXXXXXXXXXXXXXXXX-X" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XXXXXXXXXXXXXXXXX-X" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XBXFXFGHIJKLMLLLX-L" & _
- "XXXXXXXXXXXXXXXXX-X" & _
- "-------------------" & _
- "XBXFXFGHIJKLMLLLX-L"
+             "XXXXXXXXXXXXXXXXX-X" & _
+             "XBXBXBBBBBBBBBBBX-B" & _
+             "XXXXXXXXXXXXXXXXX-X" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXXXXXXXXXXXXXXX-X" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXHXFGHIJKLMLLLX-L" & _
+             "XBXXXXXXXXXXXXXXX-X" & _
+             "-------------------" & _
+             "XBXHXFGHIJKLMLLLX-L"
 
 
     ''' <summary>
@@ -465,32 +462,38 @@ Public Class TypeConverter
     End Function
 
     Shared Function GetEqualsResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetEqualsOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetEqualsOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
     Shared Function GetLTResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetLTOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetLTOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
     Shared Function GetGTResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetGTOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetGTOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
     Shared Function GetLEResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetLEOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetLEOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
     Shared Function GetGEResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetGEOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetGEOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
     Shared Function GetNotEqualsResultType(ByVal op1 As TypeCode, ByVal op2 As TypeCode) As TypeCode
-        If GetNotEqualsOperandType(op1, op2) = TypeCode.Empty Then Return TypeCode.Empty
+        Dim tp As TypeCode = GetNotEqualsOperandType(op1, op2)
+        If tp = TypeCode.Empty OrElse tp = TypeCode.Object Then Return tp
         Return TypeCode.Boolean
     End Function
 
@@ -1691,3 +1694,4 @@ Public Class TypeConverter
     End Function
 
 End Class
+

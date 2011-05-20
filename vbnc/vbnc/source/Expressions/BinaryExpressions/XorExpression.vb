@@ -49,7 +49,7 @@ Public Class XOrExpression
 
     Public Overrides ReadOnly Property Keyword() As KS
         Get
-            Return KS.Or
+            Return KS.Xor
         End Get
     End Property
 

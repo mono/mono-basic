@@ -515,6 +515,9 @@ Public Class CecilHelper
 
         If mD IsNot Nothing Then Return GetCorrectMember(mD, Type, Emittable)
 
+        mD = FindDefinition(Member)
+        If mD IsNot Nothing Then Return GetCorrectMember(mD, Type, Emittable)
+
         Throw New NotImplementedException
     End Function
 
@@ -1289,14 +1292,13 @@ Public Class CecilHelper
         If method Is Nothing Then Return Nothing
         Dim pD As PropertyDefinition
 
+        pD = TryCast(method, PropertyDefinition)
+        If pD IsNot Nothing Then Return pD
+
         If method.Annotations.Contains("OriginalProperty") Then
             pD = DirectCast(method.Annotations("OriginalProperty"), PropertyDefinition)
             Return pD
         End If
-
-        pD = TryCast(method, PropertyDefinition)
-
-        If pD IsNot Nothing Then Return pD
 
         Dim type As TypeDefinition = FindDefinition(method.DeclaringType)
         'method = method.GetOriginalMethod

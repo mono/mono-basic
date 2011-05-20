@@ -112,14 +112,15 @@ Public Class ArrayCreationExpression
     ''' <param name="Elements"></param>
     ''' <remarks></remarks>
     Public Shared Sub EmitArrayCreation(ByVal Info As EmitInfo, ByVal ArrayType As Mono.Cecil.TypeReference, ByVal Elements As Generic.List(Of Integer))
-        If Elements.Count = 0 Then
+        Dim count As Integer = If(Elements Is Nothing, 0, Elements.Count)
+        If count = 0 Then
             Emitter.EmitLoadI4Value(Info, 0)
         Else
             For i As Integer = 0 To Elements.Count - 1
                 Emitter.EmitLoadI4Value(Info, Elements(i))
             Next
         End If
-        EmitArrayConstructor(Info, ArrayType, Elements.Count)
+        EmitArrayConstructor(Info, ArrayType, count)
     End Sub
 
     ''' <summary>

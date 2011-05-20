@@ -48,7 +48,11 @@ Public Class LEExpression
             Case TypeCode.Object
                 Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConditionalCompareObjectLessEqual_Object_Object_Boolean)
+                If Helper.CompareType(ExpressionType, Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__CompareObjectLessEqual_Object_Object_Boolean)
+                Else
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConditionalCompareObjectLessEqual_Object_Object_Boolean)
+                End If
             Case TypeCode.String
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
                 Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__CompareString_String_String_Boolean)
@@ -140,3 +144,4 @@ Public Class LEExpression
         Return True
     End Function
 End Class
+

@@ -161,7 +161,7 @@ Public Class DelegateOrObjectCreationExpression
                 result = Compiler.Report.ShowMessage(Messages.VBNC32008, Me.Location, type.FullName) AndAlso result
             End If
             If result Then
-                result = m_ArgumentList(0).Expression.ResolveAddressOfExpression(type) AndAlso result
+                result = m_ArgumentList(0).Expression.ResolveAddressOfExpression(type, True) AndAlso result
                 Classification = New ValueClassification(Me, type)
             End If
         Else
@@ -210,7 +210,7 @@ Public Class DelegateOrObjectCreationExpression
                     'Show the error
                     result = m_MethodClassification.AsMethodGroupClassification.ResolveGroup(m_ArgumentList, True, False) AndAlso result
                 Else
-                    result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod) AndAlso result
+                    result = m_ArgumentList.ReplaceAndVerifyArguments(m_MethodClassification.FinalArguments, m_MethodClassification.ResolvedMethod, True) AndAlso result
                 End If
             Else
                 Compiler.Report.ShowMessage(Messages.VBNC99999, Me.Location, String.Format("Delegate type {0} is neither ValueType, GenericParameter nor Class. This is a problem in the compiler, please file a bug report here: http://bugzilla.novell.com", resolvedType.FullName))

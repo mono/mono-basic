@@ -48,7 +48,12 @@ Public Class EqualsExpression
                 Helper.Assert(Helper.CompareType(OperandType, Compiler.TypeCache.System_Object))
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
                 'Compiler.Report.WriteLine("MS_VB_CS_Operators_ConditionalCompareObjectEqual__Object_Object_Bool: " & Me.Location.ToString)
-                Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConditionalCompareObjectEqual_Object_Object_Boolean)
+
+                If Helper.CompareType(ExpressionType, Compiler.TypeCache.System_Object) Then
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__CompareObjectEqual_Object_Object_Boolean)
+                Else
+                    Emitter.EmitCall(Info, Compiler.TypeCache.MS_VB_CS_Operators__ConditionalCompareObjectEqual_Object_Object_Boolean)
+                End If
             Case TypeCode.String
                 Helper.Assert(Compiler.TypeCache.MS_VB_CS_Operators__CompareString_String_String_Boolean IsNot Nothing, "MS_VB_CS_Operators_CompareString__String_String_Bool Is Nothing")
                 Emitter.EmitLoadI4Value(Info, Info.IsOptionCompareText)
@@ -136,3 +141,4 @@ Public Class EqualsExpression
         Return True
     End Function
 End Class
+

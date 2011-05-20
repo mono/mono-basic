@@ -1168,7 +1168,7 @@ Class frmMain
                 test.ExpectedExitCode = test.VBCVerification.Process.ExitCode
 
                 test.DoTest()
-                MsgBox(String.Format("Updated {0}", test.Name), MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
+                'MsgBox(String.Format("Updated {0}", test.Name), MsgBoxStyle.OkOnly Or MsgBoxStyle.Information)
             Next
         Catch ex As Exception
             MsgBox(ex.ToString())

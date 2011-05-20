@@ -219,7 +219,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30019 = 30019
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Is' operator does not accept operands of type '{0}'. Operands must be reference or nullable types."
     ''' VB   = "'Is' requires operands that have reference types, but this operand has the value type '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -345,7 +345,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30037 = 30037
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Option Strict On prohibits operands of type Object for operator '{0}'."
     ''' VB   = "Option Strict On prohibits operands of type Object for operator '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -436,7 +436,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30053 = 30053
 
     ''' <summary>
-    ''' VBNC = "Too many arguments provided to '{0}'."
+    ''' VBNC = "Too many arguments to '{0}'."
     ''' VB   = "Too many arguments to '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1780,7 +1780,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30366 = 30366
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Class '{0}' cannot be indexed because it has no default property."
     ''' VB   = "Class '|1' cannot be indexed because it has no default property."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2130,7 +2130,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30451 = 30451
 
     ''' <summary>
-    ''' VBNC = "Operator '{0}' is not defined for the types '{1}' and '{2}'."
+    ''' VBNC = "Operator '{0}' is not defined for types '{1}' and '{2}'."
     ''' VB   = "Operator '|1' is not defined for types '|2' and '|3'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2270,7 +2270,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30481 = 30481
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Operator '{0}' is not defined for type '{1}'."
     ''' VB   = "Operator '|1' is not defined for type '|2'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2396,7 +2396,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30512 = 30512
 
     ''' <summary>
-    ''' VBNC = "Overload resolution failed because no '{0}' is accessible with the specified number of arguments."
+    ''' VBNC = "Overload resolution failed because no accessible '{0}' accepts this number of arguments."
     ''' VB   = "Overload resolution failed because no accessible '|1' accepts this number of arguments."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2410,14 +2410,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30517 = 30517
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Overload resolution failed because no accessible '{0}' can be called with these arguments:{1}"
     ''' VB   = "Overload resolution failed because no accessible '|1' can be called with these arguments:|2"
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30518 = 30518
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Overload resolution failed because no accessible '{0}' can be called without a narrowing conversion:{1}"
     ''' VB   = "Overload resolution failed because no accessible '|1' can be called without a narrowing conversion:|2"
     ''' </summary>
     ''' <remarks></remarks>
@@ -2711,14 +2711,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30585 = 30585
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Named argument cannot match a ParamArray parameter."
     ''' VB   = "Named argument cannot match a ParamArray parameter."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30587 = 30587
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Omitted argument cannot match a ParamArray parameter."
     ''' VB   = "Omitted argument cannot match a ParamArray parameter."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4937,7 +4937,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31418 = 31418
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'IsNot' requires operands that have reference types, but this operand has the value type '{0}'."
     ''' VB   = "'IsNot' requires operands that have reference types, but this operand has the value type '|1'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5224,7 +5224,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32012 = 32012
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Option Strict On disallows operands of type Object for operator '{0}'. Use the 'Is' operator to test for object identity."
     ''' VB   = "Option Strict On disallows operands of type Object for operator '|1'. Use the 'Is' operator to test for object identity."
     ''' </summary>
     ''' <remarks></remarks>
@@ -5273,7 +5273,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC32020 = 32020
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Parameter '{0}' in '{1}' already has a matching omitted argument."
     ''' VB   = "Parameter '|1' in '|2' already has a matching omitted argument."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6946,3 +6946,4 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC99999 = 99999
 
 End Enum
+

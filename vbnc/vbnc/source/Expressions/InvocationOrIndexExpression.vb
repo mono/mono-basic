@@ -333,7 +333,7 @@ Public Class InvocationOrIndexExpression
             Dim propGroup As New PropertyGroupClassification(Me, m_Expression, defaultProperties)
             result = propGroup.ResolveGroup(m_ArgumentList)
             If result Then
-                m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty)
+                m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty, True)
             End If
             Classification = New PropertyAccessClassification(propGroup)
             'Classification = propGroup
@@ -454,7 +454,7 @@ Public Class InvocationOrIndexExpression
 
             Return tmpResult
         Else
-            result = m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty) AndAlso result
+            result = m_ArgumentList.ReplaceAndVerifyArguments(propGroup.FinalArguments, propGroup.ResolvedProperty, True) AndAlso result
         End If
 
         Classification = New PropertyAccessClassification(propGroup)
@@ -508,11 +508,7 @@ Public Class InvocationOrIndexExpression
         Else
             result = mgc.ResolveGroup(m_ArgumentList)
             If result Then
-                If mgc.IsLateBound = False Then
-                    m_ArgumentList.ReplaceAndVerifyArguments(mgc.FinalArguments, mgc.ResolvedMethod)
-                End If
-                result = mgc.VerifyConstraints AndAlso result
-                If result = False Then Return False
+                If Not mgc.VerifyGroup(m_ArgumentList, True) Then Return False
             Else
                 mgc.ResolveGroup(m_ArgumentList, True)
                 Return False

@@ -145,7 +145,7 @@ Public Class MethodResolver
         Get
             Dim result As Integer
             For i As Integer = 0 To m_Candidates.Count - 1
-                If m_Candidates(i) IsNot Nothing Then result += 1
+                If m_Candidates(i).RemovedBy Is Nothing Then result += 1
             Next
             Return result
         End Get
@@ -167,8 +167,10 @@ Public Class MethodResolver
             If IsLateBound Then
                 m_ResolvedCandidate = Nothing
             Else
+                SelectMostApplicableParamArraysVersion()
+
                 For Each member As MemberCandidate In m_Candidates
-                    If member Is Nothing Then Continue For
+                    If member.RemovedBy IsNot Nothing Then Continue For
 
                     If IsValidCandidate(member) = False Then
                         result = Compiler.Report.ShowMessage(Messages.VBNC30657, Parent.Location, member.Member.Name)
@@ -205,33 +207,11 @@ Public Class MethodResolver
             End If
         End If
 
-        ExpandParamArrays()
-        Log("After expanding paramarrays, there are " & CandidatesLeft & " candidates left.")
-        If ShowErrors AndAlso CandidatesLeft = 0 Then
-            Throw New InternalException("Expanding paramarrays resulted in fewer candidates: " & Parent.Location.ToString(Compiler))
-        End If
-
-        RemoveInapplicable()
-        Log("After removing inapplicable candidates, there are " & CandidatesLeft & " candidates left.")
-        If ShowErrors AndAlso CandidatesLeft = 0 Then
-            If m_InitialCandidates.Length = 1 Then
-                Dim argsGiven, argsRequired As Integer
-                Dim params As Mono.Collections.Generic.Collection(Of ParameterDefinition)
-                params = Helper.GetParameters(Compiler, m_InitialCandidates(0).Member)
-                argsRequired = params.Count
-                argsGiven = m_Arguments.Length
-                If argsGiven >= argsRequired Then
-                    Return Compiler.Report.ShowMessage(Messages.VBNC30057, Parent.Location, m_InitialCandidates(0).ToString())
-                Else
-                    For i As Integer = argsGiven To argsRequired - 1
-                        Compiler.Report.ShowMessage(Messages.VBNC30455, Parent.Location, params(i).Name, m_InitialCandidates(0).ToString())
-                    Next
-                    Return False
-                End If
-            Else
-                Return Compiler.Report.ShowMessage(Messages.VBNC30516, Parent.Location, MethodName)
-            End If
-        End If
+        'ExpandParamArrays()
+        'Log("After expanding paramarrays, there are " & CandidatesLeft & " candidates left.")
+        'If ShowErrors AndAlso CandidatesLeft = 0 Then
+        '    Throw New InternalException("Expanding paramarrays resulted in fewer candidates: " & Parent.Location.ToString(Compiler))
+        'End If
 
         InferTypeArguments()
         Log("After inferring type arguments, there are " & CandidatesLeft & " candidates left.")
@@ -240,9 +220,41 @@ Public Class MethodResolver
             Return False
         End If
 
-        If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
+        'Remove inapplicable candidates
+        RemoveInapplicable_ParameterCount()
+        Log("After removing inapplicable pc candidates, there are " & CandidatesLeft & " candidates left.")
+        If CandidatesLeft = 0 Then
+            If ShowErrors Then
+                If m_InitialCandidates.Length = 1 Then
+                    If m_InitialCandidates(0).InputParameters.Count < m_InitialCandidates(0).Arguments.Count Then
+                        Compiler.Report.ShowMessage(Messages.VBNC30057, m_Parent.Location, Helper.ToString(Compiler, m_InitialCandidates(0).Member))
+                    Else
+                        Compiler.Report.ShowMessage(Messages.VBNC30455, m_Parent.Location, m_InitialCandidates(0).InputParameters(m_InitialCandidates(0).Arguments.Count).Name, Helper.ToString(Compiler, m_InitialCandidates(0).Member))
+                    End If
+                Else
+                    Compiler.Report.ShowMessage(Messages.VBNC30516, m_Parent.Location, m_Name)
+                End If
+            End If
+            Return False
+        End If
 
-        RemoveNarrowingExceptObject()
+        RemoveInapplicable(Nothing)
+        Log("After removing inapplicable candidates, there are " & CandidatesLeft & " candidates left.")
+        If CandidatesLeft = 1 Then
+            Return True
+        ElseIf CandidatesLeft = 0 Then
+            If ShowErrors Then
+                Dim lines As New Generic.List(Of String)
+                RemoveInapplicable(lines)
+                If lines.Count > 0 Then
+                    'If there are no lines, an error has been shown already
+                    Compiler.Report.ShowMessage(Messages.VBNC30518, m_Parent.Location, Helper.GetMemberName(m_InitialCandidates(0).Member), Environment.NewLine & "    " & String.Join(Environment.NewLine & "    ", lines.ToArray()))
+                End If
+            End If
+            Return False
+        End If
+
+        RemoveNarrowingExceptObject(Nothing)
         Log("After removing narrowing (except object) candidates, there are " & CandidatesLeft & " candidates left.")
         If CandidatesLeft = 1 Then
             Return True
@@ -252,15 +264,11 @@ Public Class MethodResolver
                 Return True
             End If
             If ShowErrors Then
-                Helper.AddError(Me.m_Parent, String.Format("After removing narrowing (except object) candidates for method '{0}', nothing was found", Me.m_InitialCandidates(0).Member.Name))
-                Helper.AddError(Me.m_Parent, String.Format("Tried to select using invocation list: '{0}' of {1} initial candidates", Me.ArgumentsTypesAsString, m_InitialCandidates.Length))
-                Dim reported As Integer = 0
-                For i As Integer = 0 To m_InitialCandidates.Length - 1
-                    reported += 1
-                    Dim mi As Mono.Cecil.MemberReference = m_InitialCandidates(i).Member
-                    Helper.AddError(Me.m_Parent, String.Format("Candidate #{0}: {1} {2}", reported, mi.Name, Helper.ToString(Me.m_Parent, Helper.GetParameters(Me.m_Parent, mi))))
-                Next
+                Dim lines As New Generic.List(Of String)
+                RemoveNarrowingExceptObject(lines)
+                Compiler.Report.ShowMessage(Messages.VBNC30519, m_Parent.Location, m_InitialCandidates(0).Member.Name, Environment.NewLine & "    " & String.Join(Environment.NewLine & "    ", lines.ToArray()))
             End If
+            Return False
         End If
 
         If CandidatesLeft <= 1 Then Return CandidatesLeft = 1
@@ -290,6 +298,12 @@ Public Class MethodResolver
             Return True
         End If
 
+        SelectUsingTieBreak()
+        Log("After tie break, there are " & CandidatesLeft & " candidates left.")
+        If ShowErrors AndAlso CandidatesLeft = 0 Then
+            Helper.AddError(Me.m_Parent, "Tie break failed")
+        End If
+
         SelectLessGeneric()
         Log("After selecting the less generic candidates, there are " & CandidatesLeft & " candidates left.")
         If CandidatesLeft = 1 Then
@@ -304,7 +318,8 @@ Public Class MethodResolver
                 Helper.AddError(Me.m_Parent, String.Format("Tried to select using invocation list: '{0}'", Me.ArgumentsTypesAsString))
                 Dim reported As Integer = 0
                 For i As Integer = 0 To m_Candidates.Count - 1
-                    If m_Candidates(i) Is Nothing Then Continue For
+                    If m_Candidates(i) Is Nothing OrElse m_Candidates(i).RemovedBy IsNot Nothing Then Continue For
+
                     reported += 1
                     Dim mi As Mono.Cecil.MemberReference = m_InitialCandidates(i).Member
                     Helper.AddError(Me.m_Parent, String.Format("Candidate #{0}: {1} {2}", reported, mi.Name, Helper.ToString(Me.m_Parent, Helper.GetParameters(Me.m_Parent, mi))))
@@ -325,11 +340,46 @@ Public Class MethodResolver
         Return True
     End Function
 
+    Sub SelectUsingTieBreak()
+        'Otherwise, given any two members of the set, M and N, apply the following tie-breaking rules, in order:
+
+        '•	If M has fewer parameters from an expanded paramarray than N, eliminate N from the set. For example:
+        For i As Integer = 0 To m_Candidates.Count - 1
+            If m_Candidates(i).IsRemoved("ParamArrayTieBreak") Then Continue For
+
+            For j As Integer = i + 1 To m_Candidates.Count - 1
+                If m_Candidates(j).IsRemoved("ParamArrayTieBreak") Then Continue For
+
+                If m_Candidates(i).ParametersFromExpandedParamArray > m_Candidates(j).ParametersFromExpandedParamArray Then
+                    m_Candidates(i).RemovedBy = "ParamArrayTieBreak"
+                ElseIf m_Candidates(i).ParametersFromExpandedParamArray < m_Candidates(j).ParametersFromExpandedParamArray Then
+                    m_Candidates(j).RemovedBy = "ParamArrayTieBreak"
+                End If
+            Next
+        Next
+
+        If CandidatesLeft <= 1 Then Return
+
+        '7.1.	If M is defined in a more derived type than N, eliminate N from the set
+        '7.2.	If M and N are extension methods and the target type of M is a class or structure and the target type of N is an interface, eliminate N from the set.
+        '7.3.	If M and N are extension methods and the target type of M has fewer type parameters than the target type of N, eliminate N from the set.
+        '7.4.	If M is less generic than N, eliminate N from the set.
+        '7.5.	If M is not an extension method and N is, eliminate N from the set.
+        '7.6.	If M and N are extension methods and M was found before N, eliminate N from the set.
+        '7.7.	If M and N both required type inference to produce type arguments, and M did not require determining the dominant type for any of its type arguments (i.e. each the type arguments inferred to a single type), but N did, eliminate N from the set.
+        '7.8.	If one or more arguments are AddressOf or lambda expressions, and all of the corresponding delegate types in M match exactly, but not all do in N, eliminate N from the set.
+        '7.9.	If one or more arguments are AddressOf or lambda expressions, and all of the corresponding delegate types in M are widening conversions, but not all are in N, eliminate N from the set.
+        '7.10.	If the overload resolution is being done to resolve the target of a delegate-creation expression from an AddressOf expression and M is a function, while N is a subroutine, eliminate N from the set.
+
+    End Sub
+
     Sub RemoveInvalid()
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim m As MemberCandidate = m_Candidates(i)
-            If m Is Nothing Then Continue For
-            If IsValidCandidate(m) = False Then m_Candidates(i) = Nothing
+            If m.IsRemoved("RemoveInvalid") Then Continue For
+            If IsValidCandidate(m) = False Then
+                m_Candidates(i).RemovedBy = "RemoveInvalid"
+            End If
         Next
     End Sub
 
@@ -377,10 +427,10 @@ Public Class MethodResolver
         Dim gp() As Mono.Collections.Generic.Collection(Of GenericParameter) = Nothing
 
         For i As Integer = 0 To m_Candidates.Count - 1
-            If m_Candidates(i) Is Nothing Then Continue For
+            If m_Candidates(i).IsRemoved("SelectLessGeneric") Then Continue For
 
             For j As Integer = i + 1 To m_Candidates.Count - 1
-                If m_Candidates(j) Is Nothing Then Continue For
+                If m_Candidates(j).IsRemoved("SelectLessGeneric") Then Continue For
 
                 Dim candidateI As MemberCandidate = m_Candidates(i)
                 Dim candidateJ As MemberCandidate = m_Candidates(j)
@@ -428,11 +478,11 @@ Public Class MethodResolver
 
                 If timesLessGenericI > 0 AndAlso timesLessGenericJ = 0 Then
                     Log("MORE METHOD GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
-                    m_Candidates(j) = Nothing
+                    m_Candidates(j).RemovedBy = "SelectLessGeneric"
                     Exit For
                 ElseIf timesLessGenericI = 0 AndAlso timesLessGenericJ > 0 Then
                     Log("MORE METHOD GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
-                    m_Candidates(i) = Nothing
+                    m_Candidates(i).RemovedBy = "SelectLessGeneric"
                     Exit For
                 End If
 
@@ -462,11 +512,11 @@ Public Class MethodResolver
 
                 If timesLessGenericI > 0 AndAlso timesLessGenericJ = 0 Then
                     Log("MORE TYPE GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
-                    m_Candidates(j) = Nothing
+                    m_Candidates(j).RemovedBy = "SelectLessGeneric"
                     Exit For
                 ElseIf timesLessGenericI = 0 AndAlso timesLessGenericJ > 0 Then
                     Log("MORE TYPE GENERIC: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
-                    m_Candidates(i) = Nothing
+                    m_Candidates(i).RemovedBy = "SelectLessGeneric"
                     Exit For
                 End If
 
@@ -479,11 +529,11 @@ Public Class MethodResolver
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If candidate.IsRemoved("RemoveInaccessible") Then Continue For
 
             If candidate.IsAccessible = False Then
                 Log("NOT ACCESSIBLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
-                m_Candidates(i) = Nothing
+                m_Candidates(i).RemovedBy = "RemoveInaccessible"
             Else
                 Log("ACCESSIBLE    : Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
             End If
@@ -499,51 +549,56 @@ Public Class MethodResolver
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If candidate.IsRemoved("InferTypeArguments") Then Continue For
 
             If candidate.InferTypeArguments = False Then
                 Log("TYPE INFERENCE FAILED: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
-                m_Candidates(i) = Nothing
+                m_Candidates(i).RemovedBy = "InferTypeArguments"
             Else
                 Log("TYPE INFERENCE PASSED: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
             End If
         Next
     End Sub
 
-    Sub ExpandParamArrays()
+    Sub RemoveInapplicable_ParameterCount()
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If m_Candidates(i).IsRemoved("RemoveInapplicable_ParameterCount") Then Continue For
 
-            candidate.ExpandParamArray()
+            If candidate.IsApplicable_ParameterCount() = False Then
+                Log("NOT PC APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
+                m_Candidates(i).RemovedBy = "RemoveInapplicable_ParameterCount"
+            Else
+                Log("PC APPLICABLE    : Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
+            End If
         Next
     End Sub
 
-    Sub RemoveInapplicable()
+    Sub RemoveInapplicable(ByVal error_lines As Generic.List(Of String))
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If m_Candidates(i).IsRemoved("RemoveInapplicable") Then Continue For
 
-            If candidate.DefineApplicability = False Then
+            If candidate.IsApplicable(error_lines) = False Then
                 Log("NOT APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
-                m_Candidates(i) = Nothing
+                m_Candidates(i).RemovedBy = "RemoveInapplicable"
             Else
                 Log("APPLICABLE    : Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
             End If
         Next
     End Sub
 
-    Sub RemoveNarrowingExceptObject()
+    Sub RemoveNarrowingExceptObject(ByVal error_lines As Generic.List(Of String))
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If candidate.IsRemoved("RemoveNarrowingExceptObject") Then Continue For
 
-            If candidate.IsNarrowingExceptObject Then
+            If candidate.IsNarrowingInternal(True, error_lines) Then
                 Log("NARROWING (EXCEPT OBJECT)    : Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
-                m_Candidates(i) = Nothing
+                m_Candidates(i).RemovedBy = "RemoveNarrowingExceptObject"
             Else
                 Log("NOT NARROWING (EXCEPT OBJECT): Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
             End If
@@ -554,11 +609,11 @@ Public Class MethodResolver
         For i As Integer = 0 To m_Candidates.Count - 1
             Dim candidate As MemberCandidate = m_Candidates(i)
 
-            If candidate Is Nothing Then Continue For
+            If candidate.IsRemoved("RemoveNarrowing") Then Continue For
 
-            If candidate.IsNarrowing Then
+            If candidate.IsNarrowingInternal(False, Nothing) Then
                 Log("NARROWING    : Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
-                m_Candidates(i) = Nothing
+                candidate.RemovedBy = "RemoveNarrowing"
             Else
                 Log("NOT NARROWING: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
             End If
@@ -570,10 +625,11 @@ Public Class MethodResolver
         Dim expandedArgumentTypes(m_Candidates.Count - 1)() As Mono.Cecil.TypeReference
 
         For i As Integer = 0 To m_Candidates.Count - 1
-            If m_Candidates(i) Is Nothing Then Continue For
+            If m_Candidates(i).RemovedBy IsNot Nothing Then Continue For
 
             For j As Integer = i + 1 To m_Candidates.Count - 1
                 If m_Candidates(j) Is Nothing Then Continue For
+                If m_Candidates(j).RemovedBy IsNot Nothing Then Continue For
 
                 Dim candidateI As MemberCandidate = m_Candidates(i)
                 Dim candidateJ As MemberCandidate = m_Candidates(j)
@@ -583,49 +639,77 @@ Public Class MethodResolver
 
                 Dim a, b As Boolean
 
-                If expandedArgumentTypes(i) Is Nothing Then
-                    expandedArgumentTypes(i) = candidateI.TypesInInvokedOrder() ' Helper.GetExpandedTypes(Compiler, candidateI.InputParameters, Arguments.Count)
+                If candidateI.IsParamArray Then
+                    If candidateI.ApplicableExpandedAndUnexpanded Then
+                        expandedArgumentTypes(i) = candidateI.DefinedParametersTypes
+                    Else
+                        expandedArgumentTypes(i) = candidateI.TypesInInvokedOrder
+                    End If
+                Else
+                    expandedArgumentTypes(i) = candidateI.DefinedParametersTypes
                 End If
-                If expandedArgumentTypes(j) Is Nothing Then
-                    expandedArgumentTypes(j) = candidateJ.TypesInInvokedOrder() 'Helper.GetExpandedTypes(Compiler, candidateJ.InputParameters, Arguments.Count)
+                If candidateJ.IsParamArray Then
+                    If candidateJ.ApplicableExpandedAndUnexpanded Then
+                        expandedArgumentTypes(j) = candidateJ.DefinedParametersTypes
+                    Else
+                        expandedArgumentTypes(j) = candidateJ.TypesInInvokedOrder
+                    End If
+                Else
+                    expandedArgumentTypes(j) = candidateJ.DefinedParametersTypes
                 End If
 
                 a = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, expandedArgumentTypes(i), expandedArgumentTypes(j))
                 b = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, expandedArgumentTypes(j), expandedArgumentTypes(i))
 
-                If a = b Then ' AndAlso b = False Then
-                    'It is possible for M and N to have the same signature if one or both contains an expanded 
-                    'paramarray parameter. In that case, the member with the fewest number of arguments matching
-                    'expanded paramarray parameters is considered more applicable. 
-                    Dim iParamArgs, jParamArgs As Integer
-
-                    If candidateI.IsParamArrayCandidate Then
-                        iParamArgs = candidateI.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
-                    End If
-                    If candidateJ.IsParamArrayCandidate Then
-                        jParamArgs = candidateJ.ParamArrayExpression.ArrayElementInitalizer.Initializers.Count + 1
-                    End If
-                    If jParamArgs > iParamArgs Then
-                        a = True : b = False
-                    ElseIf iParamArgs > jParamArgs Then
-                        b = True : a = False
-                    End If
-                    Helper.Assert(iParamArgs <> jParamArgs OrElse (iParamArgs = 0 AndAlso jParamArgs = 0), MethodName)
-                End If
-
                 If a Xor b Then
                     If a = False Then
                         Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateI.DefinedParametersTypes), ArgumentsTypesAsString)
-                        m_Candidates(i) = Nothing
+                        m_Candidates(i).RemovedBy = "SelectMostApplicable"
                         Exit For
                     Else
                         Log("NOT MOST APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidateJ.DefinedParametersTypes), ArgumentsTypesAsString)
-                        m_Candidates(j) = Nothing
+                        m_Candidates(j).RemovedBy = "SelectMostApplicable"
                     End If
                 Else
                     Log("EQUALLY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", ArgumentsTypesAsString, Helper.ToString(candidateI.DefinedParametersTypes), Helper.ToString(candidateJ.DefinedParametersTypes))
                 End If
             Next
+        Next
+
+    End Sub
+
+    Sub SelectMostApplicableParamArraysVersion()
+        For i As Integer = 0 To m_Candidates.Count - 1
+            Dim a, b As Boolean
+            Dim paramArgTypesA() As Mono.Cecil.TypeReference
+            Dim paramArgTypesB() As Mono.Cecil.TypeReference
+            Dim candidate As MemberCandidate = m_Candidates(i)
+
+            If candidate.RemovedBy IsNot Nothing Then Continue For
+            If candidate.ApplicableExpandedAndUnexpanded = False Then Continue For
+
+            'We need to select between the expanded and unexpanded forms
+
+            paramArgTypesA = candidate.TypesInInvokedOrder() 'expanded
+            paramArgTypesB = candidate.DefinedParametersTypes() 'unexpanded
+
+            a = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, paramArgTypesA, paramArgTypesB)
+            b = Helper.IsFirstMoreApplicable(m_Parent, Arguments.Arguments, paramArgTypesB, paramArgTypesA)
+
+            If a Xor b Then
+                If a = False Then
+                    Log("NOT MOST PARAMARRAY APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.TypesInInvokedOrder), ArgumentsTypesAsString)
+                    candidate.ApplicableExpandedAndUnexpanded = False
+                    candidate.IsParamArray = False
+                    'we need to unexpand
+                    candidate.UnexpandParamArrayArgument()
+                Else
+                    Log("NOT MOST PARAMARRAY APPLICABLE: Method call to '{0}{1}' with arguments '{2}'", Helper.ToString(candidate.DefinedParametersTypes), ArgumentsTypesAsString)
+                    candidate.ApplicableExpandedAndUnexpanded = False 'expanded is the good one
+                End If
+            Else
+                Log("EQUALLY PARAMARRAY APPLICABLE: Method call to '{0}{1}' with arguments '{2}' and with arguments '{3}'", ArgumentsTypesAsString, Helper.ToString(candidate.DefinedParametersTypes), Helper.ToString(candidate.DefinedParametersTypes))
+            End If
         Next
     End Sub
 
@@ -686,7 +770,21 @@ Public Class MemberCandidate
     Private m_ExactArguments As Generic.List(Of Argument)
     Private m_TypesInInvokedOrder As Mono.Cecil.TypeReference()
 
-    Private m_IsParamArray As Boolean
+    Public IsParamArray As Boolean
+    Public ApplicableExpandedAndUnexpanded As Boolean
+    Public RemovedBy As String
+    Public ParametersFromExpandedParamArray As Integer
+
+    Public Sub UnexpandParamArrayArgument()
+        Dim paramArrayExpression As ArrayCreationExpression = DirectCast(m_ExactArguments(m_ExactArguments.Count - 1).Expression, ArrayCreationExpression)
+        m_ExactArguments(m_ExactArguments.Count - 1).Expression = ParamArrayExpression.ArrayElementInitalizer.Initializers(0).InitializerExpression
+        m_TypesInInvokedOrder(m_ExactArguments.Count - 1) = m_DefinedParametersTypes(m_ExactArguments.Count - 1)
+    End Sub
+
+    Public Function IsRemoved(ByVal By As String) As Boolean
+        If RemovedBy Is Nothing Then Return False
+        Return By IsNot RemovedBy
+    End Function
 
     Public Overrides Function ToString() As String
         Return Helper.ToString(m_Parent.Parent, m_Member)
@@ -754,15 +852,9 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property IsParamArrayCandidate() As Boolean
-        Get
-            Return m_IsParamArray
-        End Get
-    End Property
-
     ReadOnly Property ParamArrayExpression() As ArrayCreationExpression
         Get
-            If m_IsParamArray = False Then Return Nothing
+            If IsParamArray = False Then Return Nothing
             Return DirectCast(m_ExactArguments(m_ExactArguments.Count - 1).Expression, ArrayCreationExpression)
         End Get
     End Property
@@ -777,19 +869,7 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property IsNarrowingExceptObject() As Boolean
-        Get
-            Return IsNarrowingInternal(True)
-        End Get
-    End Property
-
-    ReadOnly Property IsNarrowing() As Boolean
-        Get
-            Return IsNarrowingInternal(False)
-        End Get
-    End Property
-
-    Private Function IsNarrowingInternal(ByVal ExceptObject As Boolean) As Boolean
+    Function IsNarrowingInternal(ByVal ExceptObject As Boolean, ByVal error_lines As Generic.List(Of String)) As Boolean
         For j As Integer = 0 To InputParameters.Count - 1
             Dim arg As Argument
             Dim param As Mono.Cecil.ParameterDefinition
@@ -800,26 +880,38 @@ Public Class MemberCandidate
             param = InputParameters(j)
             arg = ExactArguments(j)
 
+            If arg Is Nothing Then Continue For
+
             If ExceptObject AndAlso Helper.CompareType(arg.Expression.ExpressionType, Compiler.TypeCache.System_Object) Then Continue For
 
-            If m_IsParamArray AndAlso j = InputParameters.Count - 1 AndAlso ParamArrayExpression IsNot Nothing Then
+            If IsParamArray AndAlso j = InputParameters.Count - 1 AndAlso ParamArrayExpression IsNot Nothing Then
                 'To match the automatically created array for the paramarray parameter each argument has to be 
                 'implicitly convertible to the element type of the paramarray parameter type.
                 IsConvertible = True
                 elementType = CType(param.ParameterType, Mono.Cecil.ArrayType).ElementType
                 For k As Integer = 0 To ParamArrayExpression.ArrayElementInitalizer.Initializers.Count - 1
                     initializer = ParamArrayExpression.ArrayElementInitalizer.Initializers(k).AsRegularInitializer
-                    If Not Helper.IsConvertible(arg, initializer, initializer.ExpressionType, elementType, False, Nothing, False, True, False) Then Return True
+                    If Not Helper.IsConvertible(arg, initializer, initializer.ExpressionType, elementType, False, Nothing, False, True, False) Then
+                        If error_lines IsNot Nothing Then
+                            error_lines.Add(String.Format("'{0}': Argument matching parameter '{1}' narrows from '{2}' to '{3}'.", Helper.ToString(Compiler, Me.Member), param.Name, Helper.ToString(Compiler, initializer.ExpressionType), Helper.ToString(Compiler, param.ParameterType)))
+                        End If
+                        Return True
+                    End If
                 Next
             Else
-                If Not Helper.IsConvertible(arg, arg.Expression, arg.Expression.ExpressionType, param.ParameterType, False, Nothing, False, True, False) Then Return True
+                If Not Helper.IsConvertible(arg, arg.Expression, arg.Expression.ExpressionType, param.ParameterType, False, Nothing, False, True, False) Then
+                    If error_lines IsNot Nothing Then
+                        error_lines.Add(String.Format("'{0}': Argument matching parameter '{1}' narrows from '{2}' to '{3}'.", Helper.ToString(Compiler, Me.Member), param.Name, Helper.ToString(Compiler, arg.Expression.ExpressionType), Helper.ToString(Compiler, param.ParameterType)))
+                    End If
+                    Return True
+                End If
             End If
         Next
 
         Return False
     End Function
 
-    ReadOnly Property Arguments() As ArgumentList
+    Public ReadOnly Property Arguments() As ArgumentList
         Get
             Return Resolver.Arguments
         End Get
@@ -831,7 +923,7 @@ Public Class MemberCandidate
         End Get
     End Property
 
-    ReadOnly Property InputParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
+    Public ReadOnly Property InputParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
         Get
             Return DefinedParameters
         End Get
@@ -839,7 +931,7 @@ Public Class MemberCandidate
 
     ReadOnly Property ParamArrayParameter() As Mono.Cecil.ParameterDefinition
         Get
-            If m_IsParamArray = False Then Return Nothing
+            If IsParamArray = False Then Return Nothing
             Return m_DefinedParameters(m_DefinedParameters.Count - 1)
         End Get
     End Property
@@ -885,8 +977,8 @@ Public Class MemberCandidate
         End If
 
         If DefinedParameters.Count <> Arguments.Count Then
-            If m_Parent.ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Parent.Location)
-            Return False
+            'If m_Parent.ShowErrors Then Compiler.Report.ShowMessage(Messages.VBNC30057, Me.Parent.Location, Helper.ToString(Compiler, Member))
+            Return True
         End If
 
         '* Generate a dependency graph *
@@ -1097,10 +1189,6 @@ Public Class MemberCandidate
         m_DefinedParametersTypes = Nothing
         m_TypesInInvokedOrder = Nothing
 
-        If DefineApplicability() = False Then
-            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Parent.Location, "Applicability changed after inferring type arguments")
-        End If
-
         'The success of type inference does not, in and of itself, guarantee that the method is applicable.
         Return True
     End Function
@@ -1234,27 +1322,7 @@ Public Class MemberCandidate
         End Function
     End Class
 
-    Sub ExpandParamArray()
-        If DefinedParameters.Count = 0 Then Return
-        If Helper.IsParamArrayParameter(Compiler, DefinedParameters(DefinedParameters.Count - 1)) = False Then Return
-
-        Dim candidate As New MemberCandidate(Resolver, m_Member)
-        candidate.m_IsParamArray = True
-        Resolver.Candidates.Add(candidate)
-    End Sub
-
-    Function DefineApplicability() As Boolean
-        Dim matchedParameters As Generic.List(Of Mono.Cecil.ParameterReference)
-        Dim exactArguments As Generic.List(Of Argument)
-        Dim method As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
-        Dim prop As Mono.Cecil.PropertyReference = TryCast(Member, Mono.Cecil.PropertyReference)
-
-        Dim isLastParamArray As Boolean
-        Dim paramArrayExpression As ArrayCreationExpression = Nothing
-        Dim inputParametersCount As Integer = InputParameters.Count
-
-        isLastParamArray = m_IsParamArray
-
+    Function IsApplicable_ParameterCount() As Boolean
         '(if there are more arguments than parameters and the last parameter is not a 
         'paramarray parameter the method should not be applicable)
         If Arguments.Count > InputParameters.Count Then
@@ -1262,28 +1330,64 @@ Public Class MemberCandidate
                 'LogResolutionMessage(Parent.Compiler, "N/A: 1")
                 Return False
             End If
-            If isLastParamArray = False Then
+            If InputParameters.Count > 0 AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Count - 1)) = False Then
                 'LogResolutionMessage(Parent.Compiler, "N/A: 2")
                 Return False
             End If
         End If
 
-        matchedParameters = New Generic.List(Of Mono.Cecil.ParameterReference)
-        exactArguments = New Generic.List(Of Argument)(Helper.CreateArray(Of Argument)(Nothing, inputParametersCount))
+        If Arguments.Count < InputParameters.Count Then
+            If InputParameters(Arguments.Count).IsOptional Then Return True 'The remaining parameters must be optional too
+            If Arguments.Count + 1 = InputParameters.Count AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Count - 1)) Then Return True 'One missing argument for a paramarray argument -> OK
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    ''' <summary>
+    ''' if error_lines is empty upon exit, an error has been shown
+    ''' </summary>
+    ''' <param name="error_lines"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function IsApplicable(ByVal error_lines As Generic.List(Of String)) As Boolean
+        Dim matchedParameters As Argument()
+        Dim exactArguments As Generic.List(Of Argument)
+
+        Dim isLastParamArray As Boolean
+        Dim paramArrayExpression As ArrayCreationExpression = Nothing
+        Dim inputParametersCount As Integer = InputParameters.Count
+        Dim paramArrayParameter As ParameterDefinition = Nothing
+
+        If inputParametersCount > 0 AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(inputParametersCount - 1)) Then
+            isLastParamArray = True
+            paramArrayParameter = InputParameters(inputParametersCount - 1)
+        End If
+
+        '(if there are more arguments than parameters and the last parameter is not a 
+        'paramarray parameter the method should not be applicable)
+        'This has already been checked
+
+        ReDim matchedParameters(inputParametersCount - 1)
+        exactArguments = New Generic.List(Of Argument)(inputParametersCount)
+        For i As Integer = 0 To inputParametersCount - 1
+            exactArguments.Add(Nothing)
+        Next
 
         ReDim m_TypesInInvokedOrder(Math.Max(Arguments.Count - 1, inputParametersCount - 1))
 
         If isLastParamArray Then
             Dim paramArrayArg As New PositionalArgument(Parent)
 
-            Helper.Assert(paramArrayExpression Is Nothing)
             paramArrayExpression = New ArrayCreationExpression(paramArrayArg)
             paramArrayExpression.Init(ParamArrayParameter.ParameterType, New Expression() {})
 
             paramArrayArg.Init(ParamArrayParameter.Sequence, paramArrayExpression)
             exactArguments(inputParametersCount - 1) = paramArrayArg
 
-            m_TypesInInvokedOrder(inputParametersCount - 1) = ParamArrayParameter.ParameterType
+            m_TypesInInvokedOrder(inputParametersCount - 1) = paramArrayParameter.ParameterType
+            ParametersFromExpandedParamArray += 1
         End If
 
         Dim firstNamedArgument As Integer = Arguments.Count + 1
@@ -1300,60 +1404,49 @@ Public Class MemberCandidate
 
             If inputParametersCount - 1 < i Then
                 '(more positional arguments than parameters)
-                If isLastParamArray = False Then '(last parameter is not a paramarray)
-                    'LogResolutionMessage(Parent.Compiler, "N/A: 3")
-                    Return False
-                End If
+                Helper.Assert(isLastParamArray) 'We've already checked the case where we're not a paramarray candidate
 
                 'Add the additional expressions to the param array creation expression.
-                Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1)
-                For j As Integer = i To Arguments.Count - 1
-                    'A paramarray element has to be specified.
-                    If Arguments(j).Expression Is Nothing Then
-                        'LogResolutionMessage(Parent.Compiler, "N/A: 4")
-                        Return False
+                'Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1)
+                'A paramarray element has to be specified.
+                If Arguments(i).Expression Is Nothing Then
+                    If error_lines IsNot Nothing Then
+                        error_lines.Clear()
+                        Compiler.Report.ShowMessage(Messages.VBNC30588, m_Parent.Parent.Location)
                     End If
-                    paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(j).Expression)
+                    Return False
+                End If
+                paramArrayExpression.ArrayElementInitalizer.AddInitializer(Arguments(i).Expression)
 
-                    Helper.Assert(m_TypesInInvokedOrder(j) Is Nothing)
-                    m_TypesInInvokedOrder(j) = CecilHelper.GetElementType(ParamArrayParameter.ParameterType)
-                Next
-                Exit For
+                Helper.Assert(m_TypesInInvokedOrder(i) Is Nothing)
+                m_TypesInInvokedOrder(i) = CecilHelper.GetElementType(InputParameters(inputParametersCount - 1).ParameterType)
+                ParametersFromExpandedParamArray += 1
+                IsParamArray = True
             Else
-                matchedParameters.Add(InputParameters(i))
+                matchedParameters(i) = Arguments(i)
 
                 'Helper.Assert(m_TypesInInvokedOrder(i) Is Nothing)
                 m_TypesInInvokedOrder(i) = InputParameters(i).ParameterType
 
                 'Get the default value of the parameter if the specified argument has no expression.
                 Dim arg As Argument = Nothing
-                If Arguments(i).Expression Is Nothing Then
-                    If InputParameters(i).IsOptional = False Then
-                        Helper.Assert(False)
-                    Else
-                        Dim exp As Expression
-                        Dim pArg As New PositionalArgument(Parent)
-                        exp = Helper.GetOptionalValueExpression(pArg, InputParameters(i))
-                        pArg.Init(InputParameters(i).Sequence, exp)
-                        arg = pArg
-                    End If
-                Else
+                If Arguments(i).Expression IsNot Nothing Then
                     arg = Arguments(i)
                 End If
 
                 If isLastParamArray = False Then exactArguments(i) = arg
                 If isLastParamArray AndAlso inputParametersCount - 1 = i Then
-                    Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 0)
+                    'Helper.Assert(paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 0)
                     paramArrayExpression.ArrayElementInitalizer.AddInitializer(arg.Expression)
                     'Helper.Assert(m_TypesInInvokedOrder(i) Is Nothing)
-                    m_TypesInInvokedOrder(i) = CecilHelper.GetElementType(ParamArrayParameter.ParameterType)
+                    m_TypesInInvokedOrder(i) = CecilHelper.GetElementType(InputParameters(inputParametersCount - 1).ParameterType)
+                    ParametersFromExpandedParamArray += 1
                 Else
                     If isLastParamArray Then exactArguments(i) = arg
                 End If
             End If
             '??? If a positional argument is omitted, the method is not applicable.
         Next
-
 
         For i As Integer = firstNamedArgument To Arguments.Count - 1
             Helper.Assert(Arguments(i).IsNamedArgument)
@@ -1370,18 +1463,29 @@ Public Class MemberCandidate
                 'Next, match each named argument to a parameter with the given name. 
                 Dim inputParam As Mono.Cecil.ParameterReference = InputParameters(j)
                 If Helper.CompareName(inputParam.Name, namedArgument.Name) Then
-                    If matchedParameters.Contains(inputParam) Then
+                    If matchedParameters(j) IsNot Nothing Then
                         'If one of the named arguments (...) matches an argument already matched with 
                         'another positional or named argument, the method is not applicable
                         'LogResolutionMessage(Parent.Compiler, "N/A: 5")
+                        If error_lines IsNot Nothing Then
+                            If matchedParameters(j).Expression Is Nothing Then
+                                error_lines.Clear()
+                                Compiler.Report.ShowMessage(Messages.VBNC32021, m_Parent.Parent.Location, inputParam.Name, Helper.ToString(Compiler, Member))
+                            Else
+                                error_lines.Add(String.Format("'{0}': Parameter '{1}' already has a matching argument.", Helper.ToString(Compiler, m_Member), inputParam.Name))
+                            End If
+                        End If
                         Return False
                     ElseIf Helper.IsParamArrayParameter(Parent.Compiler, inputParam) Then
                         'If one of the named arguments (...) matches a paramarray parameter, 
                         '(...) the method is not applicable.
-                        'LogResolutionMessage(Parent.Compiler, "N/A: 6")
+                        If error_lines IsNot Nothing Then
+                            error_lines.Clear()
+                            Compiler.Report.ShowMessage(Messages.VBNC30587, m_Parent.Parent.Location)
+                        End If
                         Return False
                     Else
-                        matchedParameters.Add(inputParam)
+                        matchedParameters(j) = Arguments(i)
                         exactArguments(j) = Arguments(i)
 
                         Helper.Assert(m_TypesInInvokedOrder(j) Is Nothing)
@@ -1407,14 +1511,22 @@ Public Class MemberCandidate
         'then the literal 1 is supplied for text comparisons and the literal 0 otherwise.
 
         For i As Integer = 0 To inputParametersCount - 1
-            If matchedParameters.Contains(InputParameters(i)) = False Then
+            If matchedParameters(i) Is Nothing Then
                 'if parameters that have not been matched are not optional, the method is not applicable
                 If isLastParamArray = False AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(i)) Then
                     Return False
                 End If
                 If InputParameters(i).IsOptional = False AndAlso InputParameters(i) Is ParamArrayParameter = False Then
                     'LogResolutionMessage(Parent.Compiler, "N/A: 8")
+                    If error_lines IsNot Nothing Then
+                        error_lines.Clear()
+                        Compiler.Report.ShowMessage(Messages.VBNC30455, m_Parent.Parent.Location, InputParameters(i).Name, Helper.ToString(Compiler, Member))
+                    End If
                     Return False
+                End If
+
+                If InputParameters(i) Is paramArrayParameter AndAlso isLastParamArray Then
+                    Continue For
                 End If
 
                 Dim exp As Expression
@@ -1442,11 +1554,10 @@ Public Class MemberCandidate
         'type parameters in the signature.
         Dim genericTypeArgumentCount As Integer
         Dim genericTypeArguments As Mono.Collections.Generic.Collection(Of TypeReference)
+        Dim method As Mono.Cecil.MethodReference = TryCast(Member, Mono.Cecil.MethodReference)
         If method IsNot Nothing AndAlso CecilHelper.IsGenericMethod(method) Then
             genericTypeArguments = CecilHelper.GetGenericArguments(method)
             genericTypeArgumentCount = genericTypeArguments.Count
-        ElseIf prop IsNot Nothing Then
-            'property cannot be generic.
         End If
 
         If genericTypeArgumentCount > 0 AndAlso (TypeArguments Is Nothing OrElse TypeArguments.List.Count = 0) Then
@@ -1465,6 +1576,88 @@ Public Class MemberCandidate
         End If
 
         m_ExactArguments = exactArguments
+
+        'We need to check for delegate creation expressions, and resolve those against the parameter's type
+        For i As Integer = 0 To m_ExactArguments.Count - 1
+            Dim aoe As AddressOfExpression
+            Dim aoeExact As AddressOfExpression
+            If m_ExactArguments(i) Is Nothing Then Continue For
+            aoe = TryCast(m_ExactArguments(i).Expression, AddressOfExpression)
+            If aoe Is Nothing Then Continue For
+            aoeExact = aoe.Clone()
+            If Not aoeExact.ResolveExpression(ResolveInfo.Default(Compiler)) Then
+                'Not applicable
+                If error_lines IsNot Nothing Then
+                    error_lines.Clear()
+                    Helper.AddError(Me.Parent)
+                End If
+                Return False
+            End If
+            If Not aoeExact.ResolveAddressOfExpression(InputParameters(i).ParameterType, False) Then
+                'Not applicable
+                If error_lines IsNot Nothing Then
+                    error_lines.Clear()
+                    Helper.AddError(Me.Parent)
+                End If
+                Return False
+            End If
+            m_ExactArguments(i) = New PositionalArgument(m_ExactArguments(i).Parent, i, aoeExact)
+        Next
+
+        Dim convertible As Boolean = True
+        For i As Integer = 0 To m_ExactArguments.Count - 1
+            If m_ExactArguments(i) Is Nothing Then
+                'Argument not supplied for an optional parameter, create it
+                Dim exp As Expression
+                Dim pArg As New PositionalArgument(Parent)
+                exp = Helper.GetOptionalValueExpression(pArg, InputParameters(i))
+                pArg.Init(InputParameters(i).Sequence, exp)
+                m_ExactArguments(i) = pArg
+                'The optional parameter's default value can always be converted to the parameter's type, so no need to check anything here.
+                Continue For
+            End If
+            If Helper.IsConvertible(m_ExactArguments(i), m_ExactArguments(i).Expression, m_ExactArguments(i).Expression.ExpressionType, m_DefinedParametersTypes(i), False, Nothing, False, Nothing) = False Then
+                convertible = False
+                If error_lines Is Nothing Then Exit For
+                error_lines.Add(String.Format("'{0}': Value of type '{1}' cannot be converted to '{2}'.", Helper.ToString(Compiler, m_Member), Helper.ToString(Compiler, m_ExactArguments(i).Expression.ExpressionType), Helper.ToString(Compiler, m_DefinedParametersTypes(i))))
+            End If
+        Next
+        If Not convertible Then Return False
+
+        If isLastParamArray AndAlso paramArrayExpression.ArrayElementInitalizer.Initializers.Count = 1 Then
+            Dim exp As Expression = paramArrayExpression.ArrayElementInitalizer.Initializers(0).InitializerExpression
+            'If a single argument expression matches a paramarray parameter and the type of the argument expression 
+            'is convertible to both the type of the paramarray parameter and the paramarray element type, 
+            'the method is applicable in both its expanded and unexpanded forms, with two exceptions. 
+
+            If Helper.IsConvertible(exp, exp, exp.ExpressionType, CecilHelper.GetElementType(paramArrayParameter.ParameterType), False, Nothing, False, Nothing) Then
+                IsParamArray = True
+                If Helper.IsConvertible(exp, exp, exp.ExpressionType, paramArrayParameter.ParameterType, False, Nothing, False, Nothing) Then
+                    ApplicableExpandedAndUnexpanded = True
+
+                    'If the conversion from the type of the argument expression to the paramarray type is narrowing, 
+                    'then the method is only applicable in its expanded form. 
+                    If Helper.IsConvertible(exp, exp, exp.ExpressionType, paramArrayParameter.ParameterType, False, Nothing, False, True) = False Then
+                        ApplicableExpandedAndUnexpanded = False
+                    End If
+
+                    'If the argument expression is the literal Nothing,  then the method is only applicable in its unexpanded form. 
+                    If TypeOf exp Is NothingConstantExpression Then
+                        ApplicableExpandedAndUnexpanded = False
+                        IsParamArray = False
+                    End If
+                End If
+            End If
+
+            If IsParamArray = False AndAlso m_ExactArguments(m_ExactArguments.Count - 1).Expression Is paramArrayExpression Then
+                'Unwrap the paramarray argument we created.
+                UnexpandParamArrayArgument()
+            End If
+        End If
+
+        'if m_IsParamArray is true: applicable expanded.
+        'if also m_ApplicableExpandedAndUnexpanded is true: applicable both expanded and unexpanded.
+        'if m_IsParamArray is false: not applicable expanded.
 
         Helper.AssertNotNothing(m_TypesInInvokedOrder)
 
@@ -1503,7 +1696,7 @@ Public Class MemberCandidate
     End Function
 
     Sub SelectOutputArguments()
-        If IsParamArrayCandidate Then
+        If IsParamArray Then
             Dim ace As ArrayCreationExpression
             ace = ParamArrayExpression ' TryCast(OutputArguments.Item(OutputArguments.Count - 1).Expression, ArrayCreationExpression)
             If ace IsNot Nothing AndAlso ace.IsResolved = False AndAlso Helper.IsParamArrayParameter(Compiler, InputParameters(InputParameters.Count - 1)) Then

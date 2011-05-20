@@ -515,7 +515,9 @@
     <Compile Include="Types\TypeParameters.vb" />
     <Compile Include="General\TypeResolution.vb" />
     <Compile Include="Expressions\Classifications\ExpressionClassification.Classifications.vb" />
-    <EmbeddedResource Include="Resources\Errors.resx" />
+    <EmbeddedResource Include="Resources\Errors.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="vbnc.rsp" />
     <Content Include="Notes.txt" />
     <None Include="app.config" />

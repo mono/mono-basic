@@ -30,6 +30,7 @@ Public Class DictionaryAccessExpression
     ''' <remarks></remarks>
     Private m_FirstPart As Expression
     Private m_SecondPart As IdentifierOrKeyword
+    Private m_SecondExpression As Expression
 
     Private m_DefaultProperty As Mono.Cecil.PropertyReference
     Private m_WithStatement As WithStatement
@@ -80,7 +81,7 @@ Public Class DictionaryAccessExpression
             Else
                 Emitter.EmitLoadVariable(Info, m_WithStatement.WithVariable)
             End If
-            Emitter.EmitLoadValue(Info, m_SecondPart.Identifier)
+            result = m_SecondExpression.GenerateCode(Info) AndAlso result
             If Info.IsRHS Then
                 Emitter.EmitCallOrCallVirt(Info, CecilHelper.FindDefinition(m_DefaultProperty).GetMethod)
             ElseIf Info.IsLHS Then
@@ -115,19 +116,36 @@ Public Class DictionaryAccessExpression
             Return True
         End If
         Dim attr As Mono.Cecil.CustomAttribute = Helper.GetDefaultMemberAttribute(Compiler, firsttp)
-        If attr IsNot Nothing Then
-            Dim name As String = DirectCast(attr.ConstructorArguments(0).Value, String)
-            Dim props As Mono.Collections.Generic.Collection(Of PropertyDefinition) = CecilHelper.FindProperties(CecilHelper.FindDefinition(firsttp).Properties, name)
-            If props IsNot Nothing AndAlso props.Count = 1 Then
-                m_DefaultProperty = props(0)
-            End If
-            If m_DefaultProperty IsNot Nothing Then
-                Classification = New ValueClassification(Me, m_DefaultProperty.PropertyType)
-            Else
-                result = Helper.AddError(Me) AndAlso result
-            End If
+        If attr Is Nothing Then Return Compiler.Report.ShowMessage(Messages.VBNC30367, Me.Location, firsttp.Name)
+
+        Dim name As String = DirectCast(attr.ConstructorArguments(0).Value, String)
+        Dim props As Mono.Collections.Generic.Collection(Of PropertyDefinition)
+        Dim pgc As PropertyGroupClassification
+        Dim arguments As New ArgumentList(Me)
+        Dim instanceExpression As Expression
+
+        If m_FirstPart IsNot Nothing Then
+            instanceExpression = m_FirstPart
         Else
-            Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
+            instanceExpression = m_WithStatement.WithVariableExpression
+        End If
+
+        m_SecondExpression = New ConstantExpression(Me, m_SecondPart.Identifier, Compiler.TypeCache.System_String)
+
+        props = CecilHelper.FindProperties(CecilHelper.FindDefinition(firsttp).Properties, name)
+        pgc = New PropertyGroupClassification(Me, instanceExpression, props)
+        arguments.Arguments.Add(New PositionalArgument(arguments, 0, m_SecondExpression))
+        If Not pgc.ResolveGroup(arguments) Then
+            pgc.ResolveGroup(arguments, True)
+            Return False
+        End If
+
+        m_DefaultProperty = pgc.ResolvedProperty
+        Classification = pgc
+
+        result = Helper.IsConvertible(Me, m_SecondExpression, m_SecondExpression.ExpressionType, m_DefaultProperty.Parameters(0).ParameterType, True, m_SecondExpression, True, Nothing) AndAlso result
+        If result Then
+            arguments.Arguments(0).Expression = m_SecondExpression
         End If
 
         Return result
@@ -145,3 +163,4 @@ Public Class DictionaryAccessExpression
         Return result.Compiler.Report.ShowMessage(Messages.VBNC99997, result.Location)
     End Function
 End Class
+

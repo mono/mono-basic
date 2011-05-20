@@ -64,6 +64,8 @@ Public Class MethodGroupClassification
 
     Private m_FinalArguments As ArgumentList
 
+    Public MethodDeclaration As MethodDeclaration
+
 #If DEBUG Then
 
     Private m_OriginalGroup As Generic.List(Of Mono.Cecil.MemberReference)
@@ -365,6 +367,18 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
+    Function VerifyGroup(ByVal Arguments As ArgumentList, ByVal ShowErrors As Boolean) As Boolean
+        Dim result As Boolean = True
+
+        If IsLateBound = False Then
+            result = Arguments.ReplaceAndVerifyArguments(FinalArguments, ResolvedMethod, ShowErrors) AndAlso result
+        End If
+
+        result = VerifyConstraints(ShowErrors) AndAlso result
+
+        Return result
+    End Function
+
     ''' <summary>
     ''' Resolve this group with the specified parameters.
     ''' </summary>
@@ -435,6 +449,7 @@ Public Class MethodGroupClassification
         m_Resolved = True
         m_InstanceExpression = InstanceExpression
         m_TypeArguments = TypeArguments
+        Me.MethodDeclaration = Method
     End Sub
 
     Private Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal TypeArguments As TypeArgumentList, ByVal Parameters() As Expression)
@@ -474,7 +489,7 @@ Public Class MethodGroupClassification
         End Get
     End Property
 
-    Function VerifyConstraints() As Boolean
+    Function VerifyConstraints(ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
         Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter)
@@ -490,8 +505,9 @@ Public Class MethodGroupClassification
         parameters = md.GenericParameters
         arguments = mit.GenericArguments
 
-        result = Helper.VerifyConstraints(Me.Parent, parameters, arguments)
+        result = Helper.VerifyConstraints(Me.Parent, parameters, arguments, ShowErrors)
 
         Return result
     End Function
 End Class
+

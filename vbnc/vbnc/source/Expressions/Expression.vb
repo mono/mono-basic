@@ -304,14 +304,14 @@ Public MustInherit Class Expression
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)
     End Function
 
-    Function ResolveAddressOfExpression(ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
+    Function ResolveAddressOfExpression(ByVal DelegateType As Mono.Cecil.TypeReference, ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
         Dim aoe As AddressOfExpression = TryCast(Me, AddressOfExpression)
 
         If aoe Is Nothing Then
             result = False
         Else
-            result = aoe.Resolve(DelegateType) AndAlso result
+            result = aoe.Resolve(DelegateType, ShowErrors) AndAlso result
         End If
 
         Return result

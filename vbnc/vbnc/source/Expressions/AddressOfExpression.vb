@@ -50,6 +50,18 @@ Public Class AddressOfExpression
         Return result
     End Function
 
+    Public Function Clone() As AddressOfExpression
+        Dim result As New AddressOfExpression(Parent, m_Expression)
+        Dim mpc As MethodPointerClassification
+        If Classification IsNot Nothing Then
+            mpc = Classification.AsMethodPointerClassification
+            If mpc.MethodGroup.MethodDeclaration IsNot Nothing Then
+                result.Init(mpc.MethodGroup.MethodDeclaration, mpc.MethodGroup.InstanceExpression)
+            End If
+        End If
+        Return result
+    End Function
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Return m_Expression.ResolveTypeReferences
     End Function
@@ -75,10 +87,10 @@ Public Class AddressOfExpression
         Return tm.CurrentToken.Equals(KS.AddressOf)
     End Function
 
-    Function Resolve(ByVal DelegateType As Mono.Cecil.TypeReference) As Boolean
+    Function Resolve(ByVal DelegateType As Mono.Cecil.TypeReference, ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
-        result = Classification.AsMethodPointerClassification.Resolve(DelegateType) AndAlso result
+        result = Classification.AsMethodPointerClassification.Resolve(DelegateType, ShowErrors) AndAlso result
         m_ExpressionType = DelegateType
 
         Return result
@@ -117,7 +129,3 @@ Public Class AddressOfExpression
     End Property
 End Class
 
-
-Class DelegateUnresolvedType
-
-End Class

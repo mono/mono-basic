@@ -51,7 +51,7 @@ Public Class PropertyGroupClassification
         End Get
     End Property
 
-    Function ResolveGroup(ByVal SourceParameters As ArgumentList) As Boolean
+    Function ResolveGroup(ByVal SourceParameters As ArgumentList, Optional ByVal ShowErrors As Boolean = False) As Boolean
         Dim result As Boolean = True
         Dim destinationParameterTypes()() As Mono.Cecil.TypeReference
         Dim destinationParameters() As Mono.Collections.Generic.Collection(Of ParameterDefinition)
@@ -73,7 +73,7 @@ Public Class PropertyGroupClassification
         Next
 
         If m_Resolver Is Nothing Then m_Resolver = New MethodResolver(Parent)
-        m_Resolver.ShowErrors = False
+        m_Resolver.ShowErrors = ShowErrors
         m_Resolver.Init(inputGroup, SourceParameters, Nothing)
         result = m_Resolver.Resolve AndAlso result
 
@@ -185,14 +185,6 @@ Public Class PropertyGroupClassification
                 Throw New InternalException(Me)
             End If
         Next
-
-#If DEBUG Then
-        For i As Integer = 0 To Members.Count - 1
-            For j As Integer = i + 1 To Members.Count - 1
-                Helper.Assert(Members(i) IsNot Members(j))
-            Next
-        Next
-#End If
     End Sub
 
     Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference))
@@ -201,12 +193,16 @@ Public Class PropertyGroupClassification
 
         m_Members = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)()
         m_Members.AddRange(Members)
-#If DEBUG Then
+    End Sub
+
+    Sub New(ByVal Parent As ParsedObject, ByVal InstanceExpression As Expression, ByVal Members As Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyDefinition))
+        MyBase.New(Classifications.PropertyGroup, Parent)
+        m_InstanceExpression = InstanceExpression
+
+        m_Members = New Mono.Collections.Generic.Collection(Of Mono.Cecil.PropertyReference)(Members.Count)
         For i As Integer = 0 To Members.Count - 1
-            For j As Integer = i + 1 To Members.Count - 1
-                Helper.Assert(Members(i) IsNot Members(j))
-            Next
+            m_Members.Add(Members(i))
         Next
-#End If
     End Sub
 End Class
+

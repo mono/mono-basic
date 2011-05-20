@@ -193,12 +193,12 @@ Public Class ConstructedTypeName
     Public Overrides Function ResolveCode(ByVal Info As ResolveInfo) As Boolean
         Dim result As Boolean = True
 
-        result = VerifyConstraints() AndAlso result
+        result = VerifyConstraints(True) AndAlso result
 
         Return result
     End Function
 
-    Function VerifyConstraints() As Boolean
+    Function VerifyConstraints(ByVal ShowErrors As Boolean) As Boolean
         Dim result As Boolean = True
 
         Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter)
@@ -214,7 +214,7 @@ Public Class ConstructedTypeName
         parameters = td.GenericParameters
         arguments = git.GenericArguments
 
-        result = Helper.VerifyConstraints(Me, parameters, arguments)
+        result = Helper.VerifyConstraints(Me, parameters, arguments, ShowErrors)
 
         Return result
     End Function
