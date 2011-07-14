@@ -64,8 +64,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
             Return array.GetLength(dimension)
         End Function
 
-        Friend Shared Sub Array_Copy(ByVal sourceArray As System.Array, ByVal sourceIndex As Integer, ByVal destinationArray As System.Array, ByVal destinationIndex As Integer, ByVal length As Integer)
-            System.Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length)
+        Friend Shared Sub Array_Copy(ByVal sourceArray As System.Array, ByVal sourceIndex As Long, ByVal destinationArray As System.Array, ByVal destinationIndex As Long, ByVal length As Long)
+            System.Array.Copy(sourceArray, CInt(sourceIndex), destinationArray, CInt(destinationIndex), CInt(length))
         End Sub
 #End If
 
