@@ -33,9 +33,9 @@ using Microsoft.VisualBasic;
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
 	[TestFixture]
-	public class LongTypeTest 
+	public class LongTypeTestCS
 	{
-		public LongTypeTest()
+		public LongTypeTestCS()
 		{
 		}
 
