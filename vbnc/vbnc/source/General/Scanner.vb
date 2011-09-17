@@ -344,10 +344,14 @@ Public Class Scanner
             Me.EatLine(False)
             Return
         End If
+
+        'Save the location of the #Region token to use as the location of any missing string literal
+        Dim regionLoc As Span = GetCurrentLocation()
+
         Me.NextUnconditionally()
 
         If Not m_Current.IsStringLiteral Then
-            Helper.AddError(Me, "Expected string literal")
+            Compiler.Report.ShowMessage(Messages.VBNC30217, regionLoc)
             EatLine(False)
             Return
         End If
@@ -471,7 +475,17 @@ Public Class Scanner
             End If
 
             If TokensSeenOnLine = 1 AndAlso m_Current = KS.Numeral Then
+
                 Me.NextUnconditionally()
+
+                If m_Current.IsEndOfFile Then
+                    ResetCurrentConstants()
+                    Return m_Current
+                ElseIf m_Current.IsEndOfLine Then
+                    EatLine(True)
+                    Return Me.Next()
+                End If
+
                 If m_Current = KS.If Then
                     ParseIf()
                 ElseIf m_Current = KS.Else Then

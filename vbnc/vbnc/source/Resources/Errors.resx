@@ -635,7 +635,7 @@
     <value>Expected 'Sub' or 'Function'</value>
   </data>
   <data name="30217" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>String constant expected.</value>
   </data>
   <data name="30218" xml:space="preserve">
     <value>CHANGEME</value>

@@ -1213,7 +1213,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30215 = 30215
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "String constant expected."
     ''' VB   = "String constant expected."
     ''' </summary>
     ''' <remarks></remarks>

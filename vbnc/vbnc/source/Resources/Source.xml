@@ -859,7 +859,7 @@
 	</Message>
 	<Message id="30217" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>String constant expected.</VBNCValue>
 		<VBValue>String constant expected.</VBValue>
 	</Message>
 	<Message id="30218" level="Error">
