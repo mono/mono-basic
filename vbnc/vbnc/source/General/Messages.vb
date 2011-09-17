@@ -4643,7 +4643,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31086 = 31086
 
     ''' <summary>
-    ''' VBNC = "A variable can't declare array modifiers both on the variable name and on the type."
+    ''' VBNC = "Array modifiers cannot be specified on both a variable and its type."
     ''' VB   = "Array modifiers cannot be specified on both a variable and its type."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6946,4 +6946,3 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC99999 = 99999
 
 End Enum
-

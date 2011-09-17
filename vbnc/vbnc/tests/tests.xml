@@ -24247,4 +24247,9 @@
 		<file>Errors\30057-2.vb</file>
 		<error line="11" number="30057" message="Too many arguments to 'Public Sub Z()'." />
 	</test>
+	<test id="3133" name="31087" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<file>Errors\31087.vb</file>
+		<error line="5" number="31087" message="Array modifiers cannot be specified on both a variable and its type." />
+		<vbcerror line="5" number="31087" message="Array modifiers cannot be specified on both a variable and its type." />
+	</test>
 </rt>

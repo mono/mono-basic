@@ -175,7 +175,7 @@ Public MustInherit Class VariableDeclaration
 
         If m_VariableIdentifier IsNot Nothing AndAlso m_VariableIdentifier.HasArrayNameModifier Then
             If CecilHelper.IsArray(m_VariableType) Then
-                result = Helper.AddError(Me, "Cannot specify array modifier on both type name and on variable name.") AndAlso result
+                result = Compiler.Report.ShowMessage(Messages.VBNC31087, Location) AndAlso result
             Else
                 If m_VariableIdentifier.ArrayNameModifier.IsArraySizeInitializationModifier Then
                     m_VariableType = m_VariableIdentifier.ArrayNameModifier.AsArraySizeInitializationModifier.CreateArrayType(m_VariableType)

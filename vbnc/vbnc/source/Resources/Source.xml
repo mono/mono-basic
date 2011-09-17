@@ -3309,7 +3309,7 @@
 	</Message>
 	<Message id="31087" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>A variable can't declare array modifiers both on the variable name and on the type.</VBNCValue>
+		<VBNCValue>Array modifiers cannot be specified on both a variable and its type.</VBNCValue>
 		<VBValue>Array modifiers cannot be specified on both a variable and its type.</VBValue>
 	</Message>
 	<Message id="31088" level="Error">
