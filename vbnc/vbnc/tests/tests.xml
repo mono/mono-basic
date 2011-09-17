@@ -24269,4 +24269,12 @@
 		<file>Errors\30248.vb</file>
 		<error line="1" number="30248" message="'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected." />
 	</test>
+	<test id="3144" name="30443" expectedexitcode="1" mytype="empty">
+		<file>Errors\30443.vb</file>
+		<error line="7" number="30443" message="'Get' is already declared." />
+	</test>
+	<test id="3145" name="30444" expectedexitcode="1" mytype="empty">
+		<file>Errors\30444.vb</file>
+		<error line="6" number="30444" message="'Set' is already declared." />
+	</test>
 </rt>

@@ -1016,10 +1016,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30443" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'Get' is already declared.</value>
   </data>
   <data name="30444" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'Set' is already declared.</value>
   </data>
   <data name="30445" xml:space="preserve">
     <value>CHANGEME</value>

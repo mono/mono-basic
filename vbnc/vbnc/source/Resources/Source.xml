@@ -1494,12 +1494,12 @@
 	</Message>
 	<Message id="30443" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Get' is already declared.</VBNCValue>
 		<VBValue>'Get' is already declared.</VBValue>
 	</Message>
 	<Message id="30444" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Set' is already declared.</VBNCValue>
 		<VBValue>'Set' is already declared.</VBValue>
 	</Message>
 	<Message id="30445" level="Error">

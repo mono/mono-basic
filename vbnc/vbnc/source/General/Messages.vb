@@ -2102,14 +2102,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30442 = 30442
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Get' is already declared."
     ''' VB   = "'Get' is already declared."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30443 = 30443
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Set' is already declared."
     ''' VB   = "'Set' is already declared."
     ''' </summary>
     ''' <remarks></remarks>
