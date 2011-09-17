@@ -206,10 +206,14 @@ Public Class Scanner
             Me.EatLine(False)
             Return
         End If
+
+        'All errors are reported against the line that the #Const directive appears on
+        Dim constDirectiveLoc As New Span(m_CodeFileIndex, m_CurrentLine)
+
         Me.NextUnconditionally()
 
         If m_Current.IsIdentifier = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30203, GetCurrentLocation())
+            Compiler.Report.ShowMessage(Messages.VBNC30203, constDirectiveLoc)
             Me.EatLine(False)
             Return
         End If
@@ -217,7 +221,7 @@ Public Class Scanner
         Me.NextUnconditionally()
 
         If m_Current <> KS.Equals Then
-            Helper.AddError(Compiler, GetCurrentLocation, "Expected '='")
+            Compiler.Report.ShowMessage(Messages.VBNC30249, constDirectiveLoc)
             Return
         End If
         Me.NextUnconditionally()

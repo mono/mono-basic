@@ -969,7 +969,7 @@
 	</Message>
 	<Message id="30249" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'=' expected.</VBNCValue>
 		<VBValue>'=' expected.</VBValue>
 	</Message>
 	<Message id="30251" level="Error">

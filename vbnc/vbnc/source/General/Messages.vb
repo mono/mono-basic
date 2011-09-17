@@ -1367,7 +1367,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30248 = 30248
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'=' expected."
     ''' VB   = "'=' expected."
     ''' </summary>
     ''' <remarks></remarks>

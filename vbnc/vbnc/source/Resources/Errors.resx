@@ -701,7 +701,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30249" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'=' expected.</value>
   </data>
   <data name="30251" xml:space="preserve">
     <value>Type '{0}' has no constructors.</value>
