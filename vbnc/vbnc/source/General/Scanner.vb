@@ -505,7 +505,7 @@ Public Class Scanner
                 ElseIf m_Current = KS.End Then
                     ParseEnd()
                 Else
-                    Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'If', 'ElseIf', 'Else', 'Const' or 'Region'.")
+                    Compiler.Report.ShowMessage(Messages.VBNC30248, GetCurrentLocation())
                     EatLine(False)
                 End If
             ElseIf IfdOut Then

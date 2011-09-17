@@ -1360,8 +1360,8 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30247 = 30247
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
-    ''' VB   = "'If', 'ElseIf', 'Else', 'End If', or 'Const' expected."
+    ''' VBNC = "'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected."
+    ''' VB   = "'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30248 = 30248

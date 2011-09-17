@@ -698,7 +698,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30248" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</value>
   </data>
   <data name="30249" xml:space="preserve">
     <value>'=' expected.</value>

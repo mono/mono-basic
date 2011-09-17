@@ -964,8 +964,8 @@
 	</Message>
 	<Message id="30248" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
-		<VBValue>'If', 'ElseIf', 'Else', 'End If', or 'Const' expected.</VBValue>
+		<VBNCValue>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</VBNCValue>
+		<VBValue>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</VBValue>
 	</Message>
 	<Message id="30249" level="Error">
 		<Comment>NC</Comment>
