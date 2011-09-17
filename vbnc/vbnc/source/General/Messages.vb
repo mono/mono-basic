@@ -695,14 +695,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30103 = 30103
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Number of indices is less than the number of dimensions of the indexed array."
     ''' VB   = "Number of indices is less than the number of dimensions of the indexed array."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30105 = 30105
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Number of indices exceeds the number of dimensions of the indexed array."
     ''' VB   = "Number of indices exceeds the number of dimensions of the indexed array."
     ''' </summary>
     ''' <remarks></remarks>

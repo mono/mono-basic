@@ -489,12 +489,12 @@
 	</Message>
 	<Message id="30105" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Number of indices is less than the number of dimensions of the indexed array.</VBNCValue>
 		<VBValue>Number of indices is less than the number of dimensions of the indexed array.</VBValue>
 	</Message>
 	<Message id="30106" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Number of indices exceeds the number of dimensions of the indexed array.</VBNCValue>
 		<VBValue>Number of indices exceeds the number of dimensions of the indexed array.</VBValue>
 	</Message>
 	<Message id="30107" level="Error">

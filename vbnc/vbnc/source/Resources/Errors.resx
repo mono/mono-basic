@@ -413,10 +413,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30105" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Number of indices is less than the number of dimensions of the indexed array.</value>
   </data>
   <data name="30106" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Number of indices exceeds the number of dimensions of the indexed array.</value>
   </data>
   <data name="30107" xml:space="preserve">
     <value>CHANGEME</value>
