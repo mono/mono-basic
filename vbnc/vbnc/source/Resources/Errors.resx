@@ -404,7 +404,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30099" xml:space="preserve">
-    <value>This 'Exit Select' statement is not contained within a 'Select' statement.</value>
+    <value>'Exit Select' can only appear inside a 'Select' statement.</value>
   </data>
   <data name="30101" xml:space="preserve">
     <value>CHANGEME</value>

@@ -5173,17 +5173,19 @@ Public Class Parser
     ''' <remarks></remarks>
     Private Function ParseExitStatement(ByVal Parent As ParsedObject) As ExitStatement
         Dim m_ExitWhat As KS
+        Dim exitLocation As Span
 
         tm.AcceptIfNotInternalError(KS.Exit)
         If tm.CurrentToken.Equals(KS.Sub, KS.Function, KS.Property, KS.Do, KS.For, KS.Try, KS.While, KS.Select) Then
             m_ExitWhat = tm.CurrentToken.Keyword
+            exitLocation = tm.CurrentLocation
             tm.NextToken()
         Else
             Compiler.Report.ShowMessage(Messages.VBNC30240, tm.CurrentLocation)
             Return Nothing
         End If
 
-        Return New ExitStatement(Parent, m_ExitWhat)
+        Return New ExitStatement(Parent, m_ExitWhat, exitLocation)
     End Function
 
     ''' <summary>

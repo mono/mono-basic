@@ -674,7 +674,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30098 = 30098
 
     ''' <summary>
-    ''' VBNC = "This 'Exit Select' statement is not contained within a 'Select' statement."
+    ''' VBNC = "'Exit Select' can only appear inside a 'Select' statement."
     ''' VB   = "'Exit Select' can only appear inside a 'Select' statement."
     ''' </summary>
     ''' <remarks></remarks>

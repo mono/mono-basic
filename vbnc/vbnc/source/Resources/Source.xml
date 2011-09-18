@@ -474,7 +474,7 @@
 	</Message>
 	<Message id="30099" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>This 'Exit Select' statement is not contained within a 'Select' statement.</VBNCValue>
+		<VBNCValue>'Exit Select' can only appear inside a 'Select' statement.</VBNCValue>
 		<VBValue>'Exit Select' can only appear inside a 'Select' statement.</VBValue>
 	</Message>
 	<Message id="30101" level="Error">

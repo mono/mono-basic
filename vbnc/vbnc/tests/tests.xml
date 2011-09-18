@@ -24285,4 +24285,8 @@
 		<file>Errors\30106.vb</file>
 		<error line="6" number="30106" message="Number of indices exceeds the number of dimensions of the indexed array." />
 	</test>
+	<test id="3148" name="30099" expectedexitcode="1" mytype="empty">
+		<file>Errors\30099.vb</file>
+		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
+	</test>
 </rt>
