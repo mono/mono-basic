@@ -39,9 +39,9 @@ DISTFILES =	\
 	$(wildcard *.sln)			\
 	$(wildcard *.vbproj)
 
-Microsoft.VisualBasic.dll.sources: 2005VB.vbproj
-	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -x:r -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l
-	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -x:r -s:2005VB.vbproj -d:Microsoft.VisualBasic.dll.sources.win -m:w
+Microsoft.VisualBasic.dll.sources: 2010VB.vbproj
+	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -x:r -s:2010VB.vbproj -d:Microsoft.VisualBasic.dll.sources -m:l
+	MONO_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../../tools/extract-source/extract-source.exe -x:r -s:2010VB.vbproj -d:Microsoft.VisualBasic.dll.sources.win -m:w
 
 install-binary: default
 	cp ../../class/lib/net_4_0/Microsoft.VisualBasic.* ../../class/lib/bootstrap

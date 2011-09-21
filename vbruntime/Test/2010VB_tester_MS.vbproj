@@ -79,13 +79,13 @@
     <Compile Include="Tester.vb" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="2008VB_test_MS_CS.csproj">
+    <ProjectReference Include="2010VB_test_MS_CS.csproj">
       <Project>{D1E99600-0061-4184-9778-85422E238DB9}</Project>
-      <Name>2008VB_test_MS_CS</Name>
+      <Name>2010VB_test_MS_CS</Name>
     </ProjectReference>
-    <ProjectReference Include="2008VB_test_VB.vbproj">
+    <ProjectReference Include="2010VB_test_MS_VB.vbproj">
       <Project>{8F18790F-3A66-4267-98F0-B9980C1F8383}</Project>
-      <Name>2008VB_test_VB</Name>
+      <Name>2010VB_test_MS_VB</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
