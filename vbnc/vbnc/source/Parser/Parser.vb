@@ -3634,14 +3634,14 @@ Public Class Parser
             m_Attributes = ParseAttributes(result)
             If PropertyGetDeclaration.IsMe(tm) Then
                 If m_Get IsNot Nothing Then
-                    Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Get Property.")
+                    Compiler.Report.ShowMessage(Messages.VBNC30443, tm.CurrentLocation)
                 End If
                 m_Get = ParsePropertyGetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Get Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
                 m_Attributes = Nothing
             ElseIf PropertySetDeclaration.IsMe(tm) Then
                 If m_Set IsNot Nothing Then
-                    Helper.AddError(Compiler, tm.CurrentLocation, "Found more than one Set Property.")
+                    Compiler.Report.ShowMessage(Messages.VBNC30444, tm.CurrentLocation)
                 End If
                 m_Set = ParsePropertySetMember(result, New ParseAttributableInfo(Compiler, m_Attributes), m_Signature, m_ImplementsClause, m_Modifiers.Mask)
                 If m_Set Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -5173,17 +5173,19 @@ Public Class Parser
     ''' <remarks></remarks>
     Private Function ParseExitStatement(ByVal Parent As ParsedObject) As ExitStatement
         Dim m_ExitWhat As KS
+        Dim exitLocation As Span
 
         tm.AcceptIfNotInternalError(KS.Exit)
         If tm.CurrentToken.Equals(KS.Sub, KS.Function, KS.Property, KS.Do, KS.For, KS.Try, KS.While, KS.Select) Then
             m_ExitWhat = tm.CurrentToken.Keyword
+            exitLocation = tm.CurrentLocation
             tm.NextToken()
         Else
             Compiler.Report.ShowMessage(Messages.VBNC30240, tm.CurrentLocation)
             Return Nothing
         End If
 
-        Return New ExitStatement(Parent, m_ExitWhat)
+        Return New ExitStatement(Parent, m_ExitWhat, exitLocation)
     End Function
 
     ''' <summary>

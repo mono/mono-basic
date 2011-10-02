@@ -674,7 +674,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30098 = 30098
 
     ''' <summary>
-    ''' VBNC = "This 'Exit Select' statement is not contained within a 'Select' statement."
+    ''' VBNC = "'Exit Select' can only appear inside a 'Select' statement."
     ''' VB   = "'Exit Select' can only appear inside a 'Select' statement."
     ''' </summary>
     ''' <remarks></remarks>
@@ -695,14 +695,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30103 = 30103
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Number of indices is less than the number of dimensions of the indexed array."
     ''' VB   = "Number of indices is less than the number of dimensions of the indexed array."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30105 = 30105
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Number of indices exceeds the number of dimensions of the indexed array."
     ''' VB   = "Number of indices exceeds the number of dimensions of the indexed array."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1213,7 +1213,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30215 = 30215
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "String constant expected."
     ''' VB   = "String constant expected."
     ''' </summary>
     ''' <remarks></remarks>
@@ -1360,14 +1360,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30247 = 30247
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
-    ''' VB   = "'If', 'ElseIf', 'Else', 'End If', or 'Const' expected."
+    ''' VBNC = "'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected."
+    ''' VB   = "'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30248 = 30248
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'=' expected."
     ''' VB   = "'=' expected."
     ''' </summary>
     ''' <remarks></remarks>
@@ -2102,14 +2102,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30442 = 30442
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Get' is already declared."
     ''' VB   = "'Get' is already declared."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30443 = 30443
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Set' is already declared."
     ''' VB   = "'Set' is already declared."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4643,7 +4643,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31086 = 31086
 
     ''' <summary>
-    ''' VBNC = "A variable can't declare array modifiers both on the variable name and on the type."
+    ''' VBNC = "Array modifiers cannot be specified on both a variable and its type."
     ''' VB   = "Array modifiers cannot be specified on both a variable and its type."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6946,4 +6946,3 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC99999 = 99999
 
 End Enum
-

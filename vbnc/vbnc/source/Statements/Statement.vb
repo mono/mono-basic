@@ -36,6 +36,10 @@ Public MustInherit Class Statement
         MyBase.New(Parent)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, Location As Span)
+        MyBase.New(Parent, Location)
+    End Sub
+
     ReadOnly Property FindParentCodeBlock() As CodeBlock
         Get
             Return MyBase.FindFirstParent(Of CodeBlock)()

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="warning" xml:space="preserve">
     <value>'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -404,7 +404,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30099" xml:space="preserve">
-    <value>This 'Exit Select' statement is not contained within a 'Select' statement.</value>
+    <value>'Exit Select' can only appear inside a 'Select' statement.</value>
   </data>
   <data name="30101" xml:space="preserve">
     <value>CHANGEME</value>
@@ -413,10 +413,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30105" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Number of indices is less than the number of dimensions of the indexed array.</value>
   </data>
   <data name="30106" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Number of indices exceeds the number of dimensions of the indexed array.</value>
   </data>
   <data name="30107" xml:space="preserve">
     <value>CHANGEME</value>
@@ -635,7 +635,7 @@
     <value>Expected 'Sub' or 'Function'</value>
   </data>
   <data name="30217" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>String constant expected.</value>
   </data>
   <data name="30218" xml:space="preserve">
     <value>CHANGEME</value>
@@ -698,10 +698,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30248" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</value>
   </data>
   <data name="30249" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'=' expected.</value>
   </data>
   <data name="30251" xml:space="preserve">
     <value>Type '{0}' has no constructors.</value>
@@ -1016,10 +1016,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30443" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'Get' is already declared.</value>
   </data>
   <data name="30444" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'Set' is already declared.</value>
   </data>
   <data name="30445" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2105,7 +2105,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31087" xml:space="preserve">
-    <value>A variable can't declare array modifiers both on the variable name and on the type.</value>
+    <value>Array modifiers cannot be specified on both a variable and its type.</value>
   </data>
   <data name="31088" xml:space="preserve">
     <value>CHANGEME</value>
@@ -3092,4 +3092,3 @@
     <value>{0}</value>
   </data>
 </root>
-

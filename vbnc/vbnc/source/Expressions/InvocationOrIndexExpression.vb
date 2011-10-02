@@ -368,8 +368,13 @@ Public Class InvocationOrIndexExpression
             Return False
         End If
 
-        If CecilHelper.GetArrayRank(ArrayType) <> m_ArgumentList.Count Then
-            Helper.AddError(Me, "Array dimensions are not correct.")
+        Dim arrayRank As Integer = CecilHelper.GetArrayRank(ArrayType)
+
+        If m_ArgumentList.Count > arrayRank Then
+            Compiler.Report.ShowMessage(Messages.VBNC30106, Location)
+            Return False
+        ElseIf m_ArgumentList.Count < arrayRank Then
+            Compiler.Report.ShowMessage(Messages.VBNC30105, Location)
             Return False
         End If
 

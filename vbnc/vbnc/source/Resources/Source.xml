@@ -474,7 +474,7 @@
 	</Message>
 	<Message id="30099" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>This 'Exit Select' statement is not contained within a 'Select' statement.</VBNCValue>
+		<VBNCValue>'Exit Select' can only appear inside a 'Select' statement.</VBNCValue>
 		<VBValue>'Exit Select' can only appear inside a 'Select' statement.</VBValue>
 	</Message>
 	<Message id="30101" level="Error">
@@ -489,12 +489,12 @@
 	</Message>
 	<Message id="30105" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Number of indices is less than the number of dimensions of the indexed array.</VBNCValue>
 		<VBValue>Number of indices is less than the number of dimensions of the indexed array.</VBValue>
 	</Message>
 	<Message id="30106" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Number of indices exceeds the number of dimensions of the indexed array.</VBNCValue>
 		<VBValue>Number of indices exceeds the number of dimensions of the indexed array.</VBValue>
 	</Message>
 	<Message id="30107" level="Error">
@@ -859,7 +859,7 @@
 	</Message>
 	<Message id="30217" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>String constant expected.</VBNCValue>
 		<VBValue>String constant expected.</VBValue>
 	</Message>
 	<Message id="30218" level="Error">
@@ -964,12 +964,12 @@
 	</Message>
 	<Message id="30248" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
-		<VBValue>'If', 'ElseIf', 'Else', 'End If', or 'Const' expected.</VBValue>
+		<VBNCValue>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</VBNCValue>
+		<VBValue>'If', 'ElseIf', 'Else', 'End If', 'Const', or 'Region' expected.</VBValue>
 	</Message>
 	<Message id="30249" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'=' expected.</VBNCValue>
 		<VBValue>'=' expected.</VBValue>
 	</Message>
 	<Message id="30251" level="Error">
@@ -1494,12 +1494,12 @@
 	</Message>
 	<Message id="30443" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Get' is already declared.</VBNCValue>
 		<VBValue>'Get' is already declared.</VBValue>
 	</Message>
 	<Message id="30444" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Set' is already declared.</VBNCValue>
 		<VBValue>'Set' is already declared.</VBValue>
 	</Message>
 	<Message id="30445" level="Error">
@@ -3309,7 +3309,7 @@
 	</Message>
 	<Message id="31087" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>A variable can't declare array modifiers both on the variable name and on the type.</VBNCValue>
+		<VBNCValue>Array modifiers cannot be specified on both a variable and its type.</VBNCValue>
 		<VBValue>Array modifiers cannot be specified on both a variable and its type.</VBValue>
 	</Message>
 	<Message id="31088" level="Error">
