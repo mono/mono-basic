@@ -206,10 +206,14 @@ Public Class Scanner
             Me.EatLine(False)
             Return
         End If
+
+        'All errors are reported against the line that the #Const directive appears on
+        Dim constDirectiveLoc As New Span(m_CodeFileIndex, m_CurrentLine)
+
         Me.NextUnconditionally()
 
         If m_Current.IsIdentifier = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30203, GetCurrentLocation())
+            Compiler.Report.ShowMessage(Messages.VBNC30203, constDirectiveLoc)
             Me.EatLine(False)
             Return
         End If
@@ -217,7 +221,7 @@ Public Class Scanner
         Me.NextUnconditionally()
 
         If m_Current <> KS.Equals Then
-            Helper.AddError(Compiler, GetCurrentLocation, "Expected '='")
+            Compiler.Report.ShowMessage(Messages.VBNC30249, constDirectiveLoc)
             Return
         End If
         Me.NextUnconditionally()
@@ -344,10 +348,14 @@ Public Class Scanner
             Me.EatLine(False)
             Return
         End If
+
+        'Save the location of the #Region token to use as the location of any missing string literal
+        Dim regionLoc As Span = GetCurrentLocation()
+
         Me.NextUnconditionally()
 
         If Not m_Current.IsStringLiteral Then
-            Helper.AddError(Me, "Expected string literal")
+            Compiler.Report.ShowMessage(Messages.VBNC30217, regionLoc)
             EatLine(False)
             Return
         End If
@@ -471,7 +479,17 @@ Public Class Scanner
             End If
 
             If TokensSeenOnLine = 1 AndAlso m_Current = KS.Numeral Then
+
                 Me.NextUnconditionally()
+
+                If m_Current.IsEndOfFile Then
+                    ResetCurrentConstants()
+                    Return m_Current
+                ElseIf m_Current.IsEndOfLine Then
+                    EatLine(True)
+                    Return Me.Next()
+                End If
+
                 If m_Current = KS.If Then
                     ParseIf()
                 ElseIf m_Current = KS.Else Then
@@ -487,7 +505,7 @@ Public Class Scanner
                 ElseIf m_Current = KS.End Then
                     ParseEnd()
                 Else
-                    Helper.AddError(Me.Compiler, Me.GetCurrentLocation, "Expected 'If', 'ElseIf', 'Else', 'Const' or 'Region'.")
+                    Compiler.Report.ShowMessage(Messages.VBNC30248, GetCurrentLocation())
                     EatLine(False)
                 End If
             ElseIf IfdOut Then

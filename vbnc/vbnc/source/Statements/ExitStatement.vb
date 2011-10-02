@@ -38,6 +38,11 @@ Public Class ExitStatement
         m_ExitWhat = ExitWhat
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal ExitWhat As KS, Location As Span)
+        MyBase.New(Parent, Location)
+        m_ExitWhat = ExitWhat
+    End Sub
+
     Friend Overrides Function GenerateCode(ByVal Info As EmitInfo) As Boolean
         Dim result As Boolean = True
 
