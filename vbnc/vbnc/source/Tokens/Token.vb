@@ -20,6 +20,7 @@
 Public Structure Token
     Public m_TokenType As TokenType
     Public m_TokenObject As Object
+    Public m_Location As Span
 
     Shared Function IsSomething(ByVal Token As Token) As Boolean
         'Return Token IsNot Nothing AndAlso Token.IsSomething
@@ -164,6 +165,7 @@ Public Structure Token
     End Function
 
     Sub New(ByVal Span As Span)
+        m_Location = Span
     End Sub
 
     Function IdentiferOrKeywordIdentifier() As String
@@ -474,6 +476,13 @@ Public Structure Token
             Return "not a symbol"
         End Get
     End Property
+
+    ReadOnly Property Location As Span
+        Get
+            Return m_Location
+        End Get
+    End Property
+
 End Structure
 
 
