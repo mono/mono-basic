@@ -207,13 +207,10 @@ Public Class Scanner
             Return
         End If
 
-        'All errors are reported against the line that the #Const directive appears on
-        Dim constDirectiveLoc As New Span(m_CodeFileIndex, m_CurrentLine)
-
         Me.NextUnconditionally()
 
         If m_Current.IsIdentifier = False Then
-            Compiler.Report.ShowMessage(Messages.VBNC30203, constDirectiveLoc)
+            Compiler.Report.ShowMessage(Messages.VBNC30203, m_Current.Location)
             Me.EatLine(False)
             Return
         End If
@@ -221,7 +218,7 @@ Public Class Scanner
         Me.NextUnconditionally()
 
         If m_Current <> KS.Equals Then
-            Compiler.Report.ShowMessage(Messages.VBNC30249, constDirectiveLoc)
+            Compiler.Report.ShowMessage(Messages.VBNC30249, m_Current.Location)
             Return
         End If
         Me.NextUnconditionally()
@@ -1348,8 +1345,12 @@ Public Class Scanner
                 Case COMMENTCHAR1, COMMENTCHAR2, COMMENTCHAR3 'VB Comment
                     EatComment()
                 Case nlD, nlA, nl2028, nl2029 'New line
-                    EatNewLine()
+
+                    'Keep the current line of the end of line token to the current line so we get better
+                    'location info for errors and warnings
                     Result = Token.CreateEndOfLineToken(GetCurrentLocation)
+                    EatNewLine()
+
                 Case nl0 'End of file
                     Result = Token.CreateEndOfFileToken(GetCurrentLocation)
                 Case ":"c ':
