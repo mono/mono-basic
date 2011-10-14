@@ -233,14 +233,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30021 = 30021
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' VB   = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30022 = 30022
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' VB   = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -786,14 +786,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30124 = 30124
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'WriteOnly' property must provide a 'Set'."
     ''' VB   = "'WriteOnly' property must provide a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30125 = 30125
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'ReadOnly' property must provide a 'Get'."
     ''' VB   = "'ReadOnly' property must provide a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>

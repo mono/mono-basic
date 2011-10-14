@@ -24289,4 +24289,24 @@
 		<file>Errors\30099.vb</file>
 		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
 	</test>
+	<test id="3135" name="30022" expectedexitcode="1" mytype="empty">
+		<file>Errors\30022.vb</file>
+		<error line="4" number="30022" message="Properties declared 'ReadOnly' cannot have a 'Set'." />
+	</test>
+	<test id="3136" name="30023" expectedexitcode="1" mytype="empty">
+		<file>Errors\30023.vb</file>
+		<error line="6" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
+	</test>
+	<test id="3137" name="30125" expectedexitcode="1" mytype="empty">
+		<file>Errors\30125.vb</file>
+		<error line="3" number="30125" message="'WriteOnly' property must provide a 'Set'." />
+	</test>
+	<test id="3138" name="30126" expectedexitcode="1" mytype="empty">
+		<file>Errors\30126.vb</file>
+		<error line="3" number="30126" message="'ReadOnly' property must provide a 'Get'." />
+	</test>
+	<test id="3139" name="30124-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30124-1.vb</file>
+		<error line="2" number="30124" message="Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'." />
+	</test>
 </rt>
