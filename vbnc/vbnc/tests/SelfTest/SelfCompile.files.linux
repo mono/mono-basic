@@ -65,6 +65,7 @@
 ../../source/Interfaces/IHasImplicitMembers.vb
 ../../source/Interfaces/IHasImplicitTypes.vb
 ../../source/Interfaces/ITokenReader.vb
+../../source/Members/AutoPropertyDeclaration.vb
 ../../source/Members/EventHandlerDeclaration.vb
 ../../source/Members/EventDeclaration.vb
 ../../source/Members/LocalVariableDeclaration.vb

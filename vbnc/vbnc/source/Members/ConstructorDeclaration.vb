@@ -214,15 +214,23 @@ Public Class ConstructorDeclaration
 
     Private Function EmitVariableInitialization(ByVal Info As EmitInfo) As Boolean
         Dim variables As Generic.List(Of TypeVariableDeclaration)
+        Dim autoProps As Generic.List(Of AutoPropertyDeclaration)
         Dim parent As TypeDeclaration
         Dim result As Boolean = True
 
         parent = Me.DeclaringType
         variables = parent.Members.GetSpecificMembers(Of TypeVariableDeclaration)()
+        autoProps = parent.Members.GetSpecificMembers(Of AutoPropertyDeclaration)()
 
         For Each variable As TypeVariableDeclaration In variables
             If variable.HasInitializer AndAlso variable.IsShared = Me.IsShared Then
                 result = variable.EmitVariableInitializer(Info) AndAlso result
+            End If
+        Next
+
+        For Each autoProp As AutoPropertyDeclaration In autoProps
+            If autoProp.InitialisationExpression IsNot Nothing Then
+                autoProp.EmitPropertyInitialiser(Info)
             End If
         Next
 

@@ -1482,7 +1482,7 @@ Public Class Parser
                 newMember = ParseFunctionDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf RegularPropertyDeclaration.IsMe(tm) Then
-                newMember = ParseRegularPropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
+                newMember = ParseRegularOrAutoPropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
                 If newMember Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
             ElseIf MustOverridePropertyDeclaration.IsMe(tm) Then
                 newMember = ParseMustOverridePropertyMemberDeclaration(Parent, New ParseAttributableInfo(Compiler, attributes))
@@ -3602,30 +3602,62 @@ Public Class Parser
     '''		LineTerminator
     '''	PropertyAccessorDeclaration+
     '''	"End" "Property" StatementTerminator
+    ''' 
+    ''' AutoPropertyMemberDeclaration  ::= 
+    ''' [  Attributes  ]  [  AutoPropertyModifier+  ]  Property  Identifier
+    '''	[  OpenParenthesis  [  ParameterList  ]  CloseParenthesis  ]
+    '''	[  As  [  Attributes  ]  TypeName  ]  [  Equals  Expression  ]  [  ImplementsClause  ]  
     ''' </summary>
     ''' <remarks></remarks>
-    Private Function ParseRegularPropertyMemberDeclaration(ByVal Parent As TypeDeclaration, ByVal Info As ParseAttributableInfo) As RegularPropertyDeclaration
-        Dim result As New RegularPropertyDeclaration(Parent)
+    Private Function ParseRegularOrAutoPropertyMemberDeclaration(ByVal Parent As TypeDeclaration, ByVal Info As ParseAttributableInfo) As PropertyDeclaration
+        Dim result As PropertyDeclaration = New RegularPropertyDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers
-        Dim m_Signature As FunctionSignature
-        Dim m_ImplementsClause As MemberImplementsClause
+        Dim m_Signature As PropertySignature
+        Dim m_ImplementsClause As MemberImplementsClause = Nothing
         Dim m_Attributes As New Attributes(result)
         Dim m_Get As PropertyGetDeclaration = Nothing
         Dim m_Set As PropertySetDeclaration = Nothing
+        Dim m_Initialiser As Expression = Nothing
 
         m_Modifiers = ParseModifiers(ModifierMasks.PropertyModifiers)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
-        m_Signature = ParseFunctionSignature(result)
+        m_Signature = ParsePropertySignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
 
         If tm.AcceptEndOfStatement() = False Then
-            m_ImplementsClause = ParseImplementsClause(result)
-            If m_ImplementsClause Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+            'We may have an initialisation expression or an implements clause. See which one it is.
+            Do
+
+                If tm.CurrentToken().Equals(KS.Implements) Then
+
+                    m_ImplementsClause = ParseImplementsClause(result)
+
+                    If m_ImplementsClause Is Nothing Then
+                        tm.GotoNewline(True)
+                        Exit Do
+                    End If
+
+                    If tm.AcceptEndOfStatement(, True) = False Then
+                        m_ImplementsClause = Nothing
+                        tm.GotoNewline(True)
+                        Exit Do
+                    End If
+
+                ElseIf tm.CurrentToken().Equals(KS.Equals) Then
+                    tm.Accept(KS.Equals)
+                    m_Initialiser = ParseExpression(result)
+                    tm.AcceptEndOfStatement(, False)
+                Else
+                    Exit Do
+                End If
+
+            Loop
+
         Else
             m_ImplementsClause = Nothing
         End If
@@ -3655,32 +3687,51 @@ Public Class Parser
             End If
         Loop
 
-        If tm.AcceptIfNotError(KS.End, KS.Property) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-        If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        'If that's all there is, we have an auto implemented property
+        If Not tm.CurrentToken().Equals(KS.End) _
+           OrElse (tm.CurrentToken().Equals(KS.End) _
+                   AndAlso Not tm.PeekToken().Equals(KS.Property)) Then
 
-        If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
-            Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
-        End If
-        If m_Modifiers.Is(ModifierMasks.WriteOnly) AndAlso m_Set Is Nothing Then
-            Compiler.Report.ShowMessage(Messages.VBNC30125, m_Signature.Location)
-        End If
-
-        If m_Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso m_Modifiers.Is(ModifierMasks.WriteOnly) = False Then
-            If m_Get Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC30124, m_Signature.Location)
+            result = New AutoPropertyDeclaration(Parent, m_Initialiser)
+            
+            'Auto-implemented properties cannot have parameters
+            If m_Signature.Parameters.Count <> 0 Then
+                Compiler.Report.ShowMessage(Messages.VBNC36759, m_Signature.Location)
             End If
-            If m_Set Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC30124, m_Signature.Location)
+
+        ElseIf tm.AcceptSequence(New KS() {KS.End, KS.Property}) Then
+
+            If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+            If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
             End If
+            If m_Modifiers.Is(ModifierMasks.WriteOnly) AndAlso m_Set Is Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC30125, m_Signature.Location)
+            End If
+
+            If m_Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso m_Modifiers.Is(ModifierMasks.WriteOnly) = False Then
+                If m_Get Is Nothing OrElse m_Set Is Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30124, m_Signature.Location)
+                End If
+            End If
+
+            'Expanded properties cannot have an initialiser
+            If m_Initialiser IsNot Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC36714, m_Initialiser.Location)
+            ElseIf m_Signature.AsNew Then
+                Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+            End If
+
         End If
 
-
+        result.Signature = m_Signature
         result.CustomAttributes = Info.Attributes
         result.Init(m_Modifiers, m_Signature, m_Get, m_Set, m_ImplementsClause)
 
         Return result
-    End Function
 
+    End Function
     ''' <summary>
     ''' PropertySetDeclaration  ::=
     '''	[  Attributes  ]  [  AccessModifier  ]  "Set" [  (  ParameterList  )  ]  LineTerminator
@@ -3818,6 +3869,67 @@ Public Class Parser
     End Function
 
     ''' <summary>
+    ''' PropertySignature  ::=  SubSignature  [  "As"  [ New ] [  Attributes  ]  TypeName  [  (  ArgumentList  )  ] ]
+    ''' </summary>
+    ''' <param name="Parent"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function ParsePropertySignature(ByVal Parent As ParsedObject) As PropertySignature
+
+        Dim result As New PropertySignature(Parent)
+        Dim m_Identifier As Identifier = Nothing
+        Dim m_TypeParameters As TypeParameters = Nothing
+        Dim m_ParameterList As New ParameterList(result)
+        Dim m_ReturnTypeAttributes As Attributes = Nothing
+        Dim m_TypeName As TypeName = Nothing
+        Dim m_AsNew As Boolean
+        Dim m_AsNewLocation As Span
+        Dim m_ArgumentList As New ArgumentList(Parent)
+
+        If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
+            tm.GotoNewline(True)
+        End If
+
+        If tm.Accept(KS.As) Then
+
+            m_AsNewLocation = tm.CurrentLocation
+
+            If tm.Accept(KS.New) Then
+                m_AsNew = True
+            End If
+
+            If Attributes.IsMe(tm) Then
+
+                If ParseAttributes(result, m_ReturnTypeAttributes) = False Then
+                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                End If
+
+            End If
+
+            m_TypeName = ParseTypeName(result)
+            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+            If tm.Accept(KS.LParenthesis) Then
+
+                If tm.Accept(KS.RParenthesis) = False Then
+
+                    m_ArgumentList = ParseArgumentList(Parent)
+
+                    If m_ArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                    If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+                End If
+
+            End If
+
+        End If
+
+        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation), m_AsNew, m_AsNewLocation, m_ArgumentList)
+        Return result
+
+    End Function
+
+    ''' <summary>
     ''' FunctionSignature  ::=  SubSignature  [  "As"  [  Attributes  ]  TypeName  ]
     ''' </summary>
     ''' <remarks></remarks>
@@ -3829,12 +3941,17 @@ Public Class Parser
         Dim m_ParameterList As New ParameterList(result)
         Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_TypeName As TypeName = Nothing
-
+        
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
             tm.GotoNewline(True)
         End If
 
         If tm.Accept(KS.As) Then
+
+            If tm.Accept(KS.New) Then
+                Compiler.Report.ShowMessage(Messages.VBNC30200, tm.CurrentLocation)
+            End If
+
             If Attributes.IsMe(tm) Then
                 If ParseAttributes(result, m_ReturnTypeAttributes) = False Then
                     Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
@@ -4130,16 +4247,20 @@ Public Class Parser
         Dim result As New MustOverridePropertyDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers = Nothing
-        Dim m_Signature As FunctionSignature = Nothing
+        Dim m_Signature As PropertySignature = Nothing
         Dim m_ImplementsClause As MemberImplementsClause = Nothing
 
         m_Modifiers = ParseModifiers(ModifierMasks.MustOverridePropertyModifiers)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
-        m_Signature = ParseFunctionSignature(result)
+        m_Signature = ParsePropertySignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
+
+        If m_Signature.AsNew Then
+            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+        End If
 
         If MemberImplementsClause.IsMe(tm) Then
             m_ImplementsClause = ParseImplementsClause(result)
@@ -4985,15 +5106,19 @@ Public Class Parser
         Dim result As New InterfacePropertyMemberDeclaration(Parent)
 
         Dim m_Modifiers As Modifiers = Nothing
-        Dim m_Signature As FunctionSignature = Nothing
+        Dim m_Signature As PropertySignature = Nothing
 
         m_Modifiers = ParseModifiers(ModifierMasks.InterfacePropertyModifier)
 
         tm.AcceptIfNotInternalError(KS.Property)
 
-        m_Signature = ParseFunctionSignature(result)
+        m_Signature = ParsePropertySignature(result)
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
+
+        If m_Signature.AsNew Then
+            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+        End If
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 

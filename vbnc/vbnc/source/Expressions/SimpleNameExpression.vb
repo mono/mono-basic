@@ -40,6 +40,11 @@ Public Class SimpleNameExpression
         MyBase.New(Parent)
     End Sub
 
+    Sub New(ByVal Parent As ParsedObject, ByVal Identifier As Identifier, ByVal TypeArgumentList As TypeArgumentList)
+        MyBase.New(Parent)
+        Init(Identifier, TypeArgumentList)
+    End Sub
+
     Sub Init(ByVal Identifier As Identifier, ByVal TypeArgumentList As TypeArgumentList)
         m_Identifier = Identifier
         m_TypeArgumentList = TypeArgumentList
@@ -325,7 +330,7 @@ Public Class SimpleNameExpression
         If method IsNot Nothing Then
             If method.HasReturnValue AndAlso Info.SkipFunctionReturnVariable = False Then
                 Dim pgd As PropertyGetDeclaration = TryCast(method, PropertyGetDeclaration)
-                If pgd IsNot Nothing AndAlso Helper.CompareName(pgd.PropertySignature.Name, Name) Then
+                If pgd IsNot Nothing AndAlso Helper.CompareName(pgd.Parent.Signature.Name, Name) Then
                     'The expression is classified as a variable if it is a local variable, static variable (...)
                     Classification = New VariableClassification(Me, method)
                     Return True

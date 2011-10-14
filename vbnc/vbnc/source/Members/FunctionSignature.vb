@@ -27,7 +27,7 @@ Public Class FunctionSignature
 
     Private m_ReturnTypeAttributes As Attributes
     Private m_TypeName As TypeName
-
+    
     Private m_ReturnType As Mono.Cecil.TypeReference
 
     Sub New(ByVal Parent As ParsedObject)

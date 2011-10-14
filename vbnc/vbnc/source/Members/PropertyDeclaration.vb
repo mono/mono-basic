@@ -21,7 +21,7 @@ Public Class PropertyDeclaration
     Inherits MemberDeclaration
     Implements INonTypeMember
 
-    Private m_Signature As FunctionSignature
+    Private m_Signature As PropertySignature
     Private m_Get As MethodDeclaration
     Private m_Set As MethodDeclaration
     Private m_MemberImplementsClause As MemberImplementsClause
@@ -36,14 +36,14 @@ Public Class PropertyDeclaration
     End Sub
 
     Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As TypeName)
-        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+        Me.Init(Modifiers, New PropertySignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
     End Sub
 
     Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Name As String, ByVal ReturnType As Mono.Cecil.TypeReference)
-        Me.Init(Modifiers, New FunctionSignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
+        Me.Init(Modifiers, New PropertySignature(Me, Name, Nothing, ReturnType, Me.Location), Nothing)
     End Sub
 
-    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As FunctionSignature, Optional ByVal GetMethod As PropertyGetDeclaration = Nothing, Optional ByVal SetMethod As PropertySetDeclaration = Nothing, Optional ByVal MemberImplementsClause As MemberImplementsClause = Nothing)
+    Overloads Sub Init(ByVal Modifiers As Modifiers, ByVal Signature As PropertySignature, Optional ByVal GetMethod As PropertyGetDeclaration = Nothing, Optional ByVal SetMethod As PropertySetDeclaration = Nothing, Optional ByVal MemberImplementsClause As MemberImplementsClause = Nothing)
         MyBase.Init(Modifiers, Signature.Name)
 
         m_Signature = Signature
@@ -112,16 +112,22 @@ Public Class PropertyDeclaration
         End Get
     End Property
 
-    ReadOnly Property GetDeclaration() As MethodDeclaration
+    Property GetDeclaration() As MethodDeclaration
         Get
             Return m_Get
         End Get
+        Protected Set(value As MethodDeclaration)
+            m_Get = value
+        End Set
     End Property
 
-    ReadOnly Property SetDeclaration() As MethodDeclaration
+    Property SetDeclaration() As MethodDeclaration
         Get
             Return m_Set
         End Get
+        Protected Set(value As MethodDeclaration)
+            m_Set = value
+        End Set
     End Property
 
     Public ReadOnly Property GetMethod() As Mono.Cecil.MethodDefinition
@@ -150,11 +156,11 @@ Public Class PropertyDeclaration
         End Get
     End Property
 
-    Public Property Signature() As FunctionSignature
+    Public Property Signature() As PropertySignature
         Get
             Return m_Signature
         End Get
-        Set(ByVal value As FunctionSignature)
+        Set(ByVal value As PropertySignature)
             m_Signature = value
         End Set
     End Property

@@ -24289,4 +24289,67 @@
 		<file>Errors\30099.vb</file>
 		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
 	</test>
+	<test id="3135" name="AutoImpProp" mytype="empty">
+		<file>1Declarations\AutoImpProp.vb</file>
+	</test>
+	<test id="3136" name="30205-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205-1.vb</file>
+		<error line="9" number="30205" message="End of statement expected." />
+	</test>
+	<test id="3137" name="30205" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205.vb</file>
+		<error line="10" number="30205" message="End of statement expected." />
+	</test>
+	<test id="3138" name="31061" expectedexitcode="1" mytype="empty">
+		<file>Errors\31061.vb</file>
+		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
+	</test>
+	<test id="3139" name="36759" expectedexitcode="1" mytype="empty">
+		<file>Errors\36759.vb</file>
+		<error line="3" number="36759" message="Auto-implemented properties cannot have parameters." />
+	</test>
+	<test id="3140" name="36714" expectedexitcode="1" mytype="empty">
+		<file>Errors\36714.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3149" name="30451-4" expectedexitcode="1" mytype="empty">
+		<file>Errors\30451-4.vb</file>
+		<error line="3" number="30451" message="'SomeFunc' is not declared. It may be inaccessible due to its protection level." />
+	</test>
+	<test id="3150" name="30200-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-1.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3151" name="30200-2" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-2.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3152" name="30200" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3155" name="30714-3" expectedexitcode="1" mytype="empty">
+		<file>Errors\30714-3.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3154" name="36714-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\36714-1.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3153" name="30200-3" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-3.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3156" name="31061-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\31061-1.vb</file>
+		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
+	</test>
+	<test id="3157" name="30368" expectedexitcode="1" mytype="empty">
+		<file>Errors\30368.vb</file>
+		<error line="3" number="30638" message="Array bounds cannot appear in type specifiers." />
+	</test>
+	<test id="3158" name="30205-2" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205-2.vb</file>
+		<error line="3" number="30205" message="End of statement expected." />
+	</test>
 </rt>

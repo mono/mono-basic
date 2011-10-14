@@ -208,6 +208,7 @@
     <Compile Include="Interfaces\IHasImplicitMembers.vb" />
     <Compile Include="Interfaces\IHasImplicitTypes.vb" />
     <Compile Include="Interfaces\ITokenReader.vb" />
+    <Compile Include="Members\AutoPropertyDeclaration.vb" />
     <Compile Include="Members\EventHandlerDeclaration.vb" />
     <Compile Include="Members\EventDeclaration.vb" />
     <Compile Include="Members\LocalVariableDeclaration.vb" />
@@ -216,6 +217,7 @@
     <Compile Include="Members\MethodResolver.vb" />
     <Compile Include="Members\PropertyDeclaration.vb" />
     <Compile Include="Members\PropertyHandlerDeclaration.vb" />
+    <Compile Include="Members\PropertySignature.vb" />
     <Compile Include="Members\TypeVariableDeclaration.vb" />
     <Compile Include="Names\Identifier.vb" />
     <Compile Include="Parser\ParsedObject.vb" />
