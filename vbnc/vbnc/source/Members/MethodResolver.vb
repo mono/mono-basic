@@ -1616,7 +1616,7 @@ Public Class MemberCandidate
                 'The optional parameter's default value can always be converted to the parameter's type, so no need to check anything here.
                 Continue For
             End If
-            If Helper.IsConvertible(m_ExactArguments(i), m_ExactArguments(i).Expression, m_ExactArguments(i).Expression.ExpressionType, m_DefinedParametersTypes(i), False, Nothing, False, Nothing) = False Then
+            If Helper.IsConvertible(m_ExactArguments(i), m_ExactArguments(i).Expression, m_ExactArguments(i).Expression.ExpressionType, DefinedParametersTypes(i), False, Nothing, False, Nothing) = False Then
                 convertible = False
                 If error_lines Is Nothing Then Exit For
                 error_lines.Add(String.Format("'{0}': Value of type '{1}' cannot be converted to '{2}'.", Helper.ToString(Compiler, m_Member), Helper.ToString(Compiler, m_ExactArguments(i).Expression.ExpressionType), Helper.ToString(Compiler, m_DefinedParametersTypes(i))))
