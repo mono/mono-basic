@@ -24289,4 +24289,8 @@
 		<file>Errors\30099.vb</file>
 		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
 	</test>
+	<test id="3135" name="bug-2087" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-2087.vb</file>
+		<error line="14" number="32000" message="Local variable 'p' cannot be referred to before it is declared." />
+	</test>
 </rt>

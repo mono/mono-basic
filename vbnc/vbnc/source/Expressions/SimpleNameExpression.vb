@@ -288,6 +288,11 @@ Public Class SimpleNameExpression
                 Else
                     Classification = New VariableClassification(Me, varDecl)
                 End If
+
+                If var.Location > Me.Location Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC32000, Me.Location, var.Name)
+                End If
+
                 Return True
             ElseIf var IsNot Nothing Then
                 Throw New InternalException(Me)

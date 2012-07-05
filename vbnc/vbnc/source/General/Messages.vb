@@ -5147,7 +5147,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31526 = 31526
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Local variable '{0}' cannot be referred to before it is declared."
     ''' VB   = "Local variable '|1' cannot be referred to before it is declared."
     ''' </summary>
     ''' <remarks></remarks>

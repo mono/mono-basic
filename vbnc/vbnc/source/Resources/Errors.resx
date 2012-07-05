@@ -2321,7 +2321,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="32000" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Local variable '{0}' cannot be referred to before it is declared.</value>
   </data>
   <data name="32001" xml:space="preserve">
     <value>CHANGEME</value>
