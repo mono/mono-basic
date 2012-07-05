@@ -24296,4 +24296,8 @@
 	<test id="3136" name="DoLoopWhile2" target="exe" mytype="empty">
 		<file>CompileTime2\DoLoopWhile2.vb</file>
 	</test>
+	<test id="3137" name="bug-3769" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-3769.vb</file>
+		<error line="8" number="32000" message="Local variable 'a' cannot be referred to before it is declared." />
+	</test>
 </rt>
