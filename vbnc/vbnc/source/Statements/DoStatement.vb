@@ -109,6 +109,11 @@ Public Class DoStatement
                 Emitter.EmitBranchIfTrue(Info, EndLabel)
             End If
         End If
+
+        If m_PreCondition Is Nothing AndAlso m_PostCondition Is Nothing Then
+            Emitter.MarkLabel(Info, m_NextIteration)
+        End If
+
         Emitter.EmitBranch(Info, startLabel)
 
         Emitter.MarkLabel(Info, EndLabel)
@@ -153,3 +158,4 @@ Public Class DoStatement
         End Get
     End Property
 End Class
+

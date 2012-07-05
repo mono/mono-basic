@@ -24293,4 +24293,7 @@
 		<file>Bugs\bug-2087.vb</file>
 		<error line="14" number="32000" message="Local variable 'p' cannot be referred to before it is declared." />
 	</test>
+	<test id="3136" name="DoLoopWhile2" target="exe" mytype="empty">
+		<file>CompileTime2\DoLoopWhile2.vb</file>
+	</test>
 </rt>
