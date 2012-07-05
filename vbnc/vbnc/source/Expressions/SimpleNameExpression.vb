@@ -439,7 +439,7 @@ Public Class SimpleNameExpression
                     'type containing the matching member and E is the identifier. In this case, it is an error for the                    
                     'identifier to refer to a non-shared member.
                     Classification = GetTypeClassification(members, firstcontainer)
-                    Return True
+                    Return Classification IsNot Nothing
                 End If
             End If
             container = DirectCast(container, BaseObject).FindFirstParent(Of IType)()
@@ -604,6 +604,9 @@ Public Class SimpleNameExpression
             If varD.IsStatic AndAlso varD.IsInitOnly AndAlso _
              (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                 Return New ValueClassification(Me, var, Nothing)
+            ElseIf Not varD.IsStatic Then
+                Compiler.Report.ShowMessage(Messages.VBNC30469, Me.Location)
+                Return Nothing
             Else
                 Return New VariableClassification(Me, var, Nothing)
             End If
