@@ -215,10 +215,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30022" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'ReadOnly' cannot have a 'Set'.</value>
   </data>
   <data name="30023" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'WriteOnly' cannot have a 'Get'.</value>
   </data>
   <data name="30024" xml:space="preserve">
     <value>CHANGEME</value>
@@ -452,10 +452,10 @@
     <value>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</value>
   </data>
   <data name="30125" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'WriteOnly' property must provide a 'Set'.</value>
   </data>
   <data name="30126" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'ReadOnly' property must provide a 'Get'.</value>
   </data>
   <data name="30127" xml:space="preserve">
     <value>Attribute '{0}' is not valid: {1}</value>

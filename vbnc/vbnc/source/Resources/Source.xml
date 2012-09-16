@@ -159,12 +159,12 @@
 	</Message>
 	<Message id="30022" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBNCValue>
 		<VBValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBValue>
 	</Message>
 	<Message id="30023" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBNCValue>
 		<VBValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBValue>
 	</Message>
 	<Message id="30024" level="Error">
@@ -554,12 +554,12 @@
 	</Message>
 	<Message id="30125" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'WriteOnly' property must provide a 'Set'.</VBNCValue>
 		<VBValue>'WriteOnly' property must provide a 'Set'.</VBValue>
 	</Message>
 	<Message id="30126" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'ReadOnly' property must provide a 'Get'.</VBNCValue>
 		<VBValue>'ReadOnly' property must provide a 'Get'.</VBValue>
 	</Message>
 	<Message id="30127" level="Error">
