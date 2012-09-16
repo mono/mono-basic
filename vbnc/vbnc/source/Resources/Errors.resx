@@ -139,6 +139,9 @@
   <data name="2011" xml:space="preserve">
     <value>No files to compile! Cannot do anything!</value>
   </data>
+  <data name="2012" xml:space="preserve">
+    <value>can't open '{0}' for writing</value>
+  </data>
   <data name="2014" xml:space="preserve">
     <value>The response file '{0}' has already been included</value>
   </data>
@@ -1949,7 +1952,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31019" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Unable to write to output file '{0}'</value>
   </data>
   <data name="31020" xml:space="preserve">
     <value>CHANGEME</value>

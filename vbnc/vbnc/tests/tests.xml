@@ -8049,7 +8049,7 @@
 	<test id="1976" name="bug-652241" knownfailure="Need to update rt to support &quot;vbc compiles, vbnc doesn't&quot;" expectedvbcexitcode="0" mytype="empty">
 		<file>Bugs\bug-652241.vb</file>
 	</test>
-	<test id="1977" name="30737" expectedexitcode="1" target="exe">
+	<test id="1977" name="30737" outputvbcassembly="testoutput\30737.exe" expectedexitcode="1" target="exe">
 		<file>Errors\30737.vb</file>
 		<error number="30737" />
 	</test>
@@ -24312,17 +24312,5 @@
 	<test id="3140" name="30023" expectedexitcode="1" mytype="empty">
 		<file>Errors\30023.vb</file>
 		<error line="3" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
-	</test>
-	<test id="3141" name="30125" expectedexitcode="1" mytype="empty">
-		<file>Errors\30125.vb</file>
-		<error line="2" number="30125" message="'WriteOnly' property must provide a 'Set'." />
-	</test>
-	<test id="3142" name="30126" expectedexitcode="1" mytype="empty">
-		<file>Errors\30126.vb</file>
-		<error line="2" number="30126" message="'ReadOnly' property must provide a 'Get'." />
-	</test>
-	<test id="3143" name="30124-1" expectedexitcode="1" mytype="empty">
-		<file>Errors\30124-1.vb</file>
-		<error line="2" number="30124" message="Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'." />
 	</test>
 </rt>

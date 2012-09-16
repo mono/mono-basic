@@ -32,6 +32,11 @@
 		<VBNCValue>No files to compile! Cannot do anything!</VBNCValue>
 		<VBValue>no input sources specified</VBValue>
 	</Message>
+  <Message id="2012" level="Error">
+    <Comment />
+    <VBNCValue>can't open '{0}' for writing</VBNCValue>
+    <VBValue>can't open '%s' for writing</VBValue>
+  </Message>
 	<Message id="2014" level="Error">
 		<Comment>Shows up as BC2003 when compiling.</Comment>
 		<VBNCValue>The response file '{0}' has already been included</VBNCValue>
@@ -3049,7 +3054,7 @@
 	</Message>
 	<Message id="31019" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Unable to write to output file '{0}'</VBNCValue>
 		<VBValue>Unable to write to output file '|1': |0</VBValue>
 	</Message>
 	<Message id="31020" level="Error">

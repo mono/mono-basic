@@ -58,6 +58,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2011 = 2011
 
     ''' <summary>
+    ''' VBNC = "can't open '{0}' for writing"
+    ''' VB   = "can't open '%s' for writing"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2012 = 2012
+
+    ''' <summary>
     ''' VBNC = "The response file '{0}' has already been included"
     ''' VB   = "response file '%s' included multiple times"
     ''' </summary>
@@ -4279,7 +4286,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31014 = 31014
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to write to output file '{0}'"
     ''' VB   = "Unable to write to output file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>
