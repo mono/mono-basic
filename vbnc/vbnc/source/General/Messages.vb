@@ -6614,6 +6614,13 @@ Public Enum Messages
     ''' VB   = "Function without an 'As' clause; return type of Object assumed."
     ''' </summary>
     ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC42021 = 42021
+
+    ''' <summary>
+    ''' VBNC = "Unused local variable '{0}'."
+    ''' VB   = "Unused local variable '|1'."
+    ''' </summary>
+    ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42024 = 42024
 
     ''' <summary>
