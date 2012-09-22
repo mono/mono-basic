@@ -4707,10 +4707,15 @@
     <VBNCValue>Variable declaration without an 'As' clause; Object type assumed.</VBNCValue>
     <VBValue>Variable declaration without an 'As' clause; type of Object assumed.</VBValue>
   </Message>
-  <Message id="42024" level="Warning">
+  <Message id="42021" level="Warning">
     <Comment>NC</Comment>
     <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
     <VBValue>Function without an 'As' clause; return type of Object assumed.</VBValue>
+  </Message>
+	<Message id="42024" level="Warning">
+    <Comment>NC</Comment>
+    <VBNCValue>Unused local variable '{0}'.</VBNCValue>
+    <VBValue>Unused local variable '|1'.</VBValue>
   </Message>
 	<Message id="42101" level="Warning">
 		<Comment>NC</Comment>

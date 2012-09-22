@@ -281,6 +281,7 @@ Public Class SimpleNameExpression
                 'The expression is classified as a variable if it is a local variable, static variable (...)
                 Dim varDecl As VariableDeclaration
                 varDecl = DirectCast(var, VariableDeclaration)
+                varDecl.IsReferenced = True
                 If varDecl.Modifiers.Is(ModifierMasks.Static) AndAlso varDecl.DeclaringMethod.IsShared = False Then
                     Classification = New VariableClassification(Me, varDecl, CreateMeExpression)
                 ElseIf varDecl.Modifiers.Is(ModifierMasks.Const) Then
