@@ -3645,14 +3645,23 @@ Public Class Parser
                     If tm.AcceptEndOfStatement(, True) = False Then
                         m_ImplementsClause = Nothing
                         tm.GotoNewline(True)
-                        Exit Do
                     End If
+
+                    Exit Do
+
+                ElseIf m_Signature.AsNew Then
+
+                    If Not tm.AcceptEndOfStatement(, True) Then
+                        tm.GotoNewline(True)
+                    End If
+
+                    Exit Do
 
                 ElseIf tm.CurrentToken().Equals(KS.Equals) Then
                     tm.Accept(KS.Equals)
                     m_Initialiser = ParseExpression(result)
-                    tm.AcceptEndOfStatement(, False)
                 Else
+                    tm.AcceptEndOfStatement(, True)
                     Exit Do
                 End If
 
