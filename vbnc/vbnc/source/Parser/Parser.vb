@@ -3702,7 +3702,19 @@ Public Class Parser
                    AndAlso Not tm.PeekToken().Equals(KS.Property)) Then
 
             result = New AutoPropertyDeclaration(Parent, m_Initialiser)
-            
+
+            'Any implements clause will still be attached to the old regular property declaration as it's parent
+            'so map it across to the new auto property decl instead
+            If m_ImplementsClause IsNot Nothing Then
+
+                m_ImplementsClause.Parent = result
+
+                For Each Impl As ParsedObject In m_ImplementsClause.ImplementsList
+                    Impl.Parent = result
+                Next
+
+            End If
+
             'Auto-implemented properties cannot have parameters
             If m_Signature.Parameters.Count <> 0 Then
                 Compiler.Report.ShowMessage(Messages.VBNC36759, m_Signature.Location)
