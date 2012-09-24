@@ -40,6 +40,13 @@ Public Class AutoPropertyDeclaration
     Private m_BackingField As TypeVariableDeclaration
 
     ''' <summary>
+    ''' If this property has an initialiser, the statement which will be executed in the body of 
+    ''' the containing type's constructor.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private m_ConstructorAssignStmt As AssignmentStatement
+
+    ''' <summary>
     ''' Constructor to pass in the declaring type of this property declaration.
     ''' </summary>
     ''' <param name="Parent">Parent type declaration containing this property.</param>
@@ -91,10 +98,9 @@ Public Class AutoPropertyDeclaration
 
         Dim result As Boolean = MyBase.ResolveCode(Info)
         result = m_BackingField.ResolveCode(Info) AndAlso result
-        'result = m_ConstructorAssignStmt.ResolveStatement(Info) AndAlso result
 
-        If m_Initialiser IsNot Nothing Then
-            result = m_Initialiser.ResolveExpression(Info) AndAlso result
+        If m_ConstructorAssignStmt IsNot Nothing Then
+            result = m_ConstructorAssignStmt.ResolveStatement(Info) AndAlso result
         End If
 
         Return result
@@ -108,7 +114,7 @@ Public Class AutoPropertyDeclaration
     ''' <param name="Info">MSIL emit params.</param>
     ''' <remarks></remarks>
     Public Sub EmitPropertyInitialiser(Info As EmitInfo)
-        'm_ConstructorAssignStmt.GenerateCode(Info)
+        m_ConstructorAssignStmt.GenerateCode(Info)
     End Sub
 
     ''' <summary>
@@ -132,8 +138,8 @@ Public Class AutoPropertyDeclaration
         'Build the assignment statement that will be inserted into the declaring type's constructor to initialise
         'the property with any default value
         If m_Initialiser IsNot Nothing Then
-            'm_ConstructorAssignStmt = New AssignmentStatement(Me)
-            'm_ConstructorAssignStmt.Init(New SimpleNameExpression(Me, New Identifier(Name), Nothing), m_Initialiser)
+            m_ConstructorAssignStmt = New AssignmentStatement(Me)
+            m_ConstructorAssignStmt.Init(New SimpleNameExpression(Me, New Identifier(Name), Nothing), m_Initialiser)
         End If
 
         'Fill out the Get method to return the value of the backing field
