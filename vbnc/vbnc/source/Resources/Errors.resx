@@ -139,6 +139,9 @@
   <data name="2011" xml:space="preserve">
     <value>No files to compile! Cannot do anything!</value>
   </data>
+  <data name="2012" xml:space="preserve">
+    <value>can't open '{0}' for writing</value>
+  </data>
   <data name="2014" xml:space="preserve">
     <value>The response file '{0}' has already been included</value>
   </data>
@@ -215,10 +218,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30022" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'ReadOnly' cannot have a 'Set'.</value>
   </data>
   <data name="30023" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'WriteOnly' cannot have a 'Get'.</value>
   </data>
   <data name="30024" xml:space="preserve">
     <value>CHANGEME</value>
@@ -452,10 +455,10 @@
     <value>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</value>
   </data>
   <data name="30125" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'WriteOnly' property must provide a 'Set'.</value>
   </data>
   <data name="30126" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'ReadOnly' property must provide a 'Get'.</value>
   </data>
   <data name="30127" xml:space="preserve">
     <value>Attribute '{0}' is not valid: {1}</value>
@@ -1949,7 +1952,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31019" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Unable to write to output file '{0}'</value>
   </data>
   <data name="31020" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2944,8 +2947,11 @@
   <data name="42020" xml:space="preserve">
     <value>Variable declaration without an 'As' clause; Object type assumed.</value>
   </data>
-  <data name="42024" xml:space="preserve">
+  <data name="42021" xml:space="preserve">
     <value>Function without an 'As' clause; Object return type assumed.</value>
+  </data>
+  <data name="42024" xml:space="preserve">
+    <value>Unused local variable '{0}'.</value>
   </data>
   <data name="42101" xml:space="preserve">
     <value>CHANGEME</value>

@@ -35,7 +35,7 @@ Public Class Message
     ''' The location of the code corresponding to the the message.
     ''' </summary>
     ''' <remarks></remarks>
-    Private m_Location As Span
+    Private m_Location As Nullable(Of Span)
 
     ''' <summary>
     ''' The parameters of the message(s)
@@ -49,10 +49,16 @@ Public Class Message
     Private Const MESSAGEFORMATWITHLOCATION As String = "%LOCATION% : %MESSAGELEVEL% %MESSAGE%"
 
     ''' <summary>
+    ''' Format of messages without a location.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Const MESSAGEFORMATNOLOCATION As String = "vbnc : %MESSAGELEVEL% %MESSAGE%"
+
+    ''' <summary>
     ''' The format of the message
     ''' </summary>
     ''' <remarks></remarks>
-    Private Const MESSAGEFORMAT As String = "vbnc: %MESSAGELEVEL% : %MESSAGE%"
+    Private Const MESSAGEFORMAT As String = "vbnc : %MESSAGELEVEL% : %MESSAGE%"
 
     ''' <summary>
     ''' Get the severity level of this message.
@@ -82,7 +88,7 @@ Public Class Message
     ''' <remarks></remarks>
     ReadOnly Property Location() As Span
         Get
-            Return m_Location
+            Return m_Location.GetValueOrDefault()
         End Get
     End Property
 
@@ -131,6 +137,20 @@ Public Class Message
         End If
     End Sub
 
+    ''' <summary>
+    ''' Create a new message with the specified data.
+    ''' </summary>
+    Sub New(ByVal Compiler As Compiler, ByVal Message As Messages, ByVal Parameters() As String)
+        Me.m_Compiler = Compiler
+        Me.m_Message = New Messages() {Message}
+        Me.m_Location = Nothing
+        If Parameters Is Nothing Then
+            Me.m_Parameters = New String()() {New String() {}}
+        Else
+            Me.m_Parameters = New String()() {Parameters}
+        End If
+    End Sub
+
     ReadOnly Property Compiler() As Compiler
         Get
             Return m_Compiler
@@ -164,9 +184,12 @@ Public Class Message
         If Location.HasFile Then
             strLocation = Location.ToString(Compiler)
             result = MESSAGEFORMATWITHLOCATION
-        Else
-            strLocation = "vbnc: Command line"
+        ElseIf m_Location.HasValue Then
+            strLocation = "vbnc : Command line"
             result = MESSAGEFORMATWITHLOCATION
+        Else
+            strLocation = String.Empty
+            result = MESSAGEFORMATNOLOCATION
         End If
 
         'Format the entire message.

@@ -58,6 +58,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2011 = 2011
 
     ''' <summary>
+    ''' VBNC = "can't open '{0}' for writing"
+    ''' VB   = "can't open '%s' for writing"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2012 = 2012
+
+    ''' <summary>
     ''' VBNC = "The response file '{0}' has already been included"
     ''' VB   = "response file '%s' included multiple times"
     ''' </summary>
@@ -233,14 +240,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30021 = 30021
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' VB   = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30022 = 30022
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' VB   = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -786,14 +793,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30124 = 30124
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'WriteOnly' property must provide a 'Set'."
     ''' VB   = "'WriteOnly' property must provide a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30125 = 30125
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'ReadOnly' property must provide a 'Get'."
     ''' VB   = "'ReadOnly' property must provide a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4279,7 +4286,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31014 = 31014
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to write to output file '{0}'"
     ''' VB   = "Unable to write to output file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>
@@ -6605,6 +6612,13 @@ Public Enum Messages
     ''' <summary>
     ''' VBNC = "Function without an 'As' clause; Object return type assumed."
     ''' VB   = "Function without an 'As' clause; return type of Object assumed."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC42021 = 42021
+
+    ''' <summary>
+    ''' VBNC = "Unused local variable '{0}'."
+    ''' VB   = "Unused local variable '|1'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42024 = 42024

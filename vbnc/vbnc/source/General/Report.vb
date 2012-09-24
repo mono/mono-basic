@@ -264,8 +264,7 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
     Function ShowMessageNoLocation(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
-        Dim Location As Span = Nothing
-        Return ShowMessage(False, New Message(Compiler, Message, Parameters, Location))
+        Return ShowMessage(False, New Message(Compiler, Message, Parameters))
     End Function
 
     ''' <summary>
@@ -288,7 +287,6 @@ Public Class Report
     ''' Shows the specified message. Can optionally save it (not show it)
     ''' to show it later with ShowSavedMessages()
     ''' </summary>
-    <Diagnostics.DebuggerHidden()> _
     Private Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
         Dim isOnlyWarning As Boolean = False
 

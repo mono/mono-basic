@@ -32,6 +32,11 @@
 		<VBNCValue>No files to compile! Cannot do anything!</VBNCValue>
 		<VBValue>no input sources specified</VBValue>
 	</Message>
+  <Message id="2012" level="Error">
+    <Comment />
+    <VBNCValue>can't open '{0}' for writing</VBNCValue>
+    <VBValue>can't open '%s' for writing</VBValue>
+  </Message>
 	<Message id="2014" level="Error">
 		<Comment>Shows up as BC2003 when compiling.</Comment>
 		<VBNCValue>The response file '{0}' has already been included</VBNCValue>
@@ -159,12 +164,12 @@
 	</Message>
 	<Message id="30022" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBNCValue>
 		<VBValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBValue>
 	</Message>
 	<Message id="30023" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBNCValue>
 		<VBValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBValue>
 	</Message>
 	<Message id="30024" level="Error">
@@ -554,12 +559,12 @@
 	</Message>
 	<Message id="30125" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'WriteOnly' property must provide a 'Set'.</VBNCValue>
 		<VBValue>'WriteOnly' property must provide a 'Set'.</VBValue>
 	</Message>
 	<Message id="30126" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'ReadOnly' property must provide a 'Get'.</VBNCValue>
 		<VBValue>'ReadOnly' property must provide a 'Get'.</VBValue>
 	</Message>
 	<Message id="30127" level="Error">
@@ -3049,7 +3054,7 @@
 	</Message>
 	<Message id="31019" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Unable to write to output file '{0}'</VBNCValue>
 		<VBValue>Unable to write to output file '|1': |0</VBValue>
 	</Message>
 	<Message id="31020" level="Error">
@@ -4702,10 +4707,15 @@
     <VBNCValue>Variable declaration without an 'As' clause; Object type assumed.</VBNCValue>
     <VBValue>Variable declaration without an 'As' clause; type of Object assumed.</VBValue>
   </Message>
-  <Message id="42024" level="Warning">
+  <Message id="42021" level="Warning">
     <Comment>NC</Comment>
     <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
     <VBValue>Function without an 'As' clause; return type of Object assumed.</VBValue>
+  </Message>
+	<Message id="42024" level="Warning">
+    <Comment>NC</Comment>
+    <VBNCValue>Unused local variable '{0}'.</VBNCValue>
+    <VBValue>Unused local variable '|1'.</VBValue>
   </Message>
 	<Message id="42101" level="Warning">
 		<Comment>NC</Comment>
