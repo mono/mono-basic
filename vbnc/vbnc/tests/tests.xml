@@ -24313,4 +24313,16 @@
 		<file>Errors\30023.vb</file>
 		<error line="3" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
 	</test>
+	<test id="3149" name="30124-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30124-1.vb</file>
+		<error line="2" number="30124" message="Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'." />
+	</test>
+	<test id="3150" name="30125" expectedexitcode="1" mytype="empty">
+		<file>Errors\30125.vb</file>
+		<error line="2" number="30125" message="'WriteOnly' property must provide a 'Set'." />
+	</test>
+	<test id="3151" name="30126" expectedexitcode="1" mytype="empty">
+		<file>Errors\30126.vb</file>
+		<error line="2" number="30126" message="'ReadOnly' property must provide a 'Get'." />
+	</test>
 </rt>
