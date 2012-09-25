@@ -1,3 +1,11 @@
+Imports System
+
+<AttributeUsage(AttributeTargets.ReturnValue)>
+Public Class RetValueAttr
+		Inherits Attribute
+
+End Class
+
 Public Interface SomeInterface
 
     Property Foo As Integer
@@ -20,8 +28,8 @@ Public Class SomeClass(Of T)
     Public Property LiteralInitialisedAutoProp As Integer = 123
     Public Property UnitialisedAutoProp As Integer
     Public Property GenericProp As T
-		
-    Public Property AutoPropNewInit As New String("Init")
+		Public Property PropWithRetValueAttr As <RetValueAttr> String
+    Public Property AutoPropNewInit As New String("A"c, 3)
 		
     'Accepted without any diagnostic by VBC
     Public Property Prop As Integer = 42 = 42
@@ -51,7 +59,7 @@ Module MainModule
             Return 1
         End If
 
-        If Inst.AutoPropNewInit Is Nothing OrElse Inst.AutoPropNewInit <> "Init" Then
+        If Inst.AutoPropNewInit Is Nothing OrElse Inst.AutoPropNewInit <> "AAA" Then
             Return 1
         End If
 
