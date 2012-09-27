@@ -24,8 +24,7 @@
 Public Class PropertySignature
     Inherits FunctionSignature
 
-    Private m_AsNew As Boolean
-    Private m_AsNewLocation As Span
+    Private m_Initialiser As Expression
     Private m_ArgumentList As ArgumentList
 
     Sub New(ByVal Parent As ParsedObject)
@@ -40,12 +39,27 @@ Public Class PropertySignature
         MyBase.New(Parent, Name, Parameters, ReturnType, Location)
     End Sub
 
-    Shadows Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Location As Span, ByVal AsNew As Boolean, ByVal AsNewLocation As Span, ByVal ArgumentList As ArgumentList)
+    Shadows Sub Init(ByVal Identifier As Identifier, ByVal TypeParameters As TypeParameters, ByVal ParameterList As ParameterList, ByVal ReturnTypeAttributes As Attributes, ByVal TypeName As TypeName, ByVal Location As Span, ByVal Initialiser As Expression, ByVal ArgumentList As ArgumentList)
         MyBase.Init(Identifier, TypeParameters, ParameterList, ReturnTypeAttributes, TypeName, Location)
-        m_AsNew = AsNew
-        m_AsNewLocation = AsNewLocation
+        m_Initialiser = Initialiser
         m_ArgumentList = ArgumentList
     End Sub
+
+    Public Overrides Function ResolveTypeReferences() As Boolean
+
+        Dim result As Boolean = MyBase.ResolveTypeReferences()
+
+        If m_ArgumentList IsNot Nothing Then
+            result = m_ArgumentList.ResolveTypeReferences() AndAlso result
+        End If
+
+        If m_Initialiser IsNot Nothing Then
+            result = m_Initialiser.ResolveTypeReferences() AndAlso result
+        End If
+
+        Return result
+
+    End Function
 
     Public Overrides Function ResolveCode(Info As ResolveInfo) As Boolean
 
@@ -55,20 +69,21 @@ Public Class PropertySignature
             result = m_ArgumentList.ResolveCode(Info) AndAlso result
         End If
 
+        If m_Initialiser IsNot Nothing Then
+            result = m_Initialiser.ResolveExpression(Info) AndAlso result
+        End If
+
         Return result
 
     End Function
 
-    ReadOnly Property AsNew As Boolean
+    Public Property Initialiser As Expression
         Get
-            Return m_AsNew
+            Return m_Initialiser
         End Get
-    End Property
-
-    ReadOnly Property AsNewLocation As Span
-        Get
-            Return m_AsNewLocation
-        End Get
+        Set(value As Expression)
+            m_Initialiser = value
+        End Set
     End Property
 
     ReadOnly Property ArgumentList As ArgumentList

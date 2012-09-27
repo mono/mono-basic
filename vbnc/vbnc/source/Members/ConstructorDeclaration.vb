@@ -229,7 +229,7 @@ Public Class ConstructorDeclaration
         Next
 
         For Each autoProp As AutoPropertyDeclaration In autoProps
-            If autoProp.InitialisationExpression IsNot Nothing Then
+            If autoProp.Signature.Initialiser IsNot Nothing Then
                 autoProp.EmitPropertyInitialiser(Info)
             End If
         Next

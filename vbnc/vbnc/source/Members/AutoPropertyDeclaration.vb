@@ -28,12 +28,6 @@ Public Class AutoPropertyDeclaration
     Inherits PropertyDeclaration
 
     ''' <summary>
-    ''' The intitialisation expression (if any) for this property.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private m_Initialiser As Expression
-
-    ''' <summary>
     ''' Backing field for this property.
     ''' </summary>
     ''' <remarks></remarks>
@@ -50,24 +44,10 @@ Public Class AutoPropertyDeclaration
     ''' Constructor to pass in the declaring type of this property declaration.
     ''' </summary>
     ''' <param name="Parent">Parent type declaration containing this property.</param>
-    ''' <param name="Initialiser">Any initialisation expression for this property.</param>
     ''' <remarks></remarks>
-    Public Sub New(Parent As TypeDeclaration, Initialiser As Expression)
+    Public Sub New(Parent As TypeDeclaration)
         MyBase.New(Parent)
-        m_Initialiser = Initialiser
     End Sub
-
-    ''' <summary>
-    ''' Accessor for the expression forming the default value of the property.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public ReadOnly Property InitialisationExpression As Expression
-        Get
-            Return m_Initialiser
-        End Get
-    End Property
 
     ''' <summary>
     ''' Instantiates the get/set methods and adds a new backing field to the declaring type declaration then
@@ -137,9 +117,9 @@ Public Class AutoPropertyDeclaration
 
         'Build the assignment statement that will be inserted into the declaring type's constructor to initialise
         'the property with any default value
-        If m_Initialiser IsNot Nothing Then
+        If Signature.Initialiser IsNot Nothing Then
             m_ConstructorAssignStmt = New AssignmentStatement(Me)
-            m_ConstructorAssignStmt.Init(New SimpleNameExpression(Me, New Identifier(Name), Nothing), m_Initialiser)
+            m_ConstructorAssignStmt.Init(New SimpleNameExpression(Me, New Identifier(Name), Nothing), Signature.Initialiser)
         End If
 
         'Fill out the Get method to return the value of the backing field

@@ -3649,7 +3649,7 @@ Public Class Parser
 
                     Exit Do
 
-                ElseIf m_Signature.AsNew Then
+                ElseIf m_Signature.Initialiser IsNot Nothing Then
 
                     If Not tm.AcceptEndOfStatement(, True) Then
                         tm.GotoNewline(True)
@@ -3701,7 +3701,14 @@ Public Class Parser
            OrElse (tm.CurrentToken().Equals(KS.End) _
                    AndAlso Not tm.PeekToken().Equals(KS.Property)) Then
 
-            result = New AutoPropertyDeclaration(Parent, m_Initialiser)
+            result = New AutoPropertyDeclaration(Parent)
+            result.Signature = m_Signature
+
+            'If the property wasn't declared using "As New" but as "As Type = Initialiser" then copy the initialiser
+            'expression over to the property signature
+            If result.Signature.Initialiser Is Nothing AndAlso m_Initialiser IsNot Nothing Then
+                result.Signature.Initialiser = m_Initialiser
+            End If
 
             'Any implements clause will still be attached to the old regular property declaration as it's parent
             'so map it across to the new auto property decl instead
@@ -3740,8 +3747,8 @@ Public Class Parser
             'Expanded properties cannot have an initialiser
             If m_Initialiser IsNot Nothing Then
                 Compiler.Report.ShowMessage(Messages.VBNC36714, m_Initialiser.Location)
-            ElseIf m_Signature.AsNew Then
-                Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+            ElseIf m_Signature.Initialiser IsNot Nothing Then
+                Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.Initialiser.Location)
             End If
 
         End If
@@ -3903,8 +3910,7 @@ Public Class Parser
         Dim m_ParameterList As New ParameterList(result)
         Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_TypeName As TypeName = Nothing
-        Dim m_AsNew As Boolean
-        Dim m_AsNewLocation As Span
+        Dim m_Initialiser As Expression = Nothing
         Dim m_ArgumentList As New ArgumentList(Parent)
 
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
@@ -3913,40 +3919,55 @@ Public Class Parser
 
         If tm.Accept(KS.As) Then
 
-            m_AsNewLocation = tm.CurrentLocation
+            If tm.CurrentToken().Equals(KS.New) Then
 
-            If tm.Accept(KS.New) Then
-                m_AsNew = True
+                m_TypeName = New TypeName(result)
+
+                'Dig out the type name for this property
+                Dim NewExp As NewExpression = ParseNewExpression(result)
+
+                If NewExp.IsArrayCreationExpression Then
+                    m_TypeName.Init(DirectCast(NewExp.Expression, ArrayCreationExpression).NonArrayTypeName)
+                Else
+                    m_TypeName.Init(DirectCast(NewExp.Expression, DelegateOrObjectCreationExpression).NonArrayTypeName)
+                End If
+
+                m_Initialiser = NewExp
+
             End If
 
-            If Attributes.IsMe(tm) Then
+                If Attributes.IsMe(tm) Then
 
-                If ParseAttributes(result, m_ReturnTypeAttributes) = False Then
-                    Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                    If ParseAttributes(result, m_ReturnTypeAttributes) = False Then
+                        Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                    End If
+
+                End If
+
+                If m_Initialiser Is Nothing Then
+
+                    m_TypeName = ParseTypeName(result)
+                    If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+                    If tm.Accept(KS.LParenthesis) Then
+
+                        If tm.Accept(KS.RParenthesis) = False Then
+
+                            m_ArgumentList = ParseArgumentList(Parent)
+
+                            If m_ArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+                            If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+
+                        End If
+
+                    End If
+
                 End If
 
             End If
 
-            m_TypeName = ParseTypeName(result)
-            If m_TypeName Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-
-            If tm.Accept(KS.LParenthesis) Then
-
-                If tm.Accept(KS.RParenthesis) = False Then
-
-                    m_ArgumentList = ParseArgumentList(Parent)
-
-                    If m_ArgumentList Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-                    If tm.AcceptIfNotError(KS.RParenthesis) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
-
-                End If
-
-            End If
-
-        End If
-
-        result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation), m_AsNew, m_AsNewLocation, m_ArgumentList)
-        Return result
+            result.Init(m_Identifier, m_TypeParameters, m_ParameterList, m_ReturnTypeAttributes, m_TypeName, New Span(m_Identifier.Location, tm.CurrentLocation), m_Initialiser, m_ArgumentList)
+            Return result
 
     End Function
 
@@ -4279,8 +4300,8 @@ Public Class Parser
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
 
-        If m_Signature.AsNew Then
-            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+        If m_Signature.Initialiser IsNot Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.Initialiser.Location)
         End If
 
         If MemberImplementsClause.IsMe(tm) Then
@@ -5137,8 +5158,8 @@ Public Class Parser
         If m_Signature Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
         result.Signature = m_Signature
 
-        If m_Signature.AsNew Then
-            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.AsNewLocation)
+        If m_Signature.Initialiser IsNot Nothing Then
+            Compiler.Report.ShowMessage(Messages.VBNC36714, m_Signature.Initialiser.Location)
         End If
 
         If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)

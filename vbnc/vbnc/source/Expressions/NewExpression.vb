@@ -72,6 +72,12 @@ Public Class NewExpression
         End Get
     End Property
 
+    ReadOnly Property Expression As Expression
+        Get
+            Return m_Expression
+        End Get
+    End Property
+
     Overrides ReadOnly Property ExpressionType() As Mono.Cecil.TypeReference
         Get
             Return m_Expression.ExpressionType
