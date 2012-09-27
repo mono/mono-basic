@@ -2738,7 +2738,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime2\Nullable1.vb</file>
 	</test>
-	<test id="691" name="NullChar" expectedvbcexitcode="1">
+	<test id="691" name="NullChar" knownfailure="Error message has full path in it" expectedvbcexitcode="1">
 		<file>CompileTime2\NullChar.vb</file>
 		<vbcerror number="31007" message="Unable to open module file 'D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\NullChar.vb': System Error &amp;H80041feb&amp;" />
 	</test>
