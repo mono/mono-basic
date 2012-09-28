@@ -2945,10 +2945,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="42020" xml:space="preserve">
-    <value>Variable declaration without an 'As' clause; Object type assumed.</value>
+    <value>Variable declaration without an 'As' clause; type of Object assumed.</value>
   </data>
   <data name="42021" xml:space="preserve">
-    <value>Function without an 'As' clause; Object return type assumed.</value>
+    <value>Function without an 'As' clause; return type of Object assumed.</value>
   </data>
   <data name="42024" xml:space="preserve">
     <value>Unused local variable: '{0}'.</value>

@@ -4704,12 +4704,12 @@
 	</Message>
   <Message id="42020" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>Variable declaration without an 'As' clause; Object type assumed.</VBNCValue>
+    <VBNCValue>Variable declaration without an 'As' clause; type of Object assumed.</VBNCValue>
     <VBValue>Variable declaration without an 'As' clause; type of Object assumed.</VBValue>
   </Message>
   <Message id="42021" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
+    <VBNCValue>Function without an 'As' clause; return type of Object assumed.</VBNCValue>
     <VBValue>Function without an 'As' clause; return type of Object assumed.</VBValue>
   </Message>
 	<Message id="42024" level="Warning">

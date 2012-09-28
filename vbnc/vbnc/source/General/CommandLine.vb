@@ -1061,8 +1061,14 @@ Public Class CommandLine
                 m_eOptionExplicit = OptionExplicitTypes.On
             Case "optionexplicit-"
                 m_eOptionExplicit = OptionExplicitTypes.Off
-            Case "optionstrict+", "optionstrict"
+            Case "optionstrict+"
                 m_eOptionStrict = OptionStrictTypes.On
+            Case "optionstrict"
+                If strValue = "custom" Then
+                    m_eOptionStrict = OptionStrictTypes.Off
+                Else
+                    m_eOptionStrict = OptionStrictTypes.On
+                End If
             Case "optionstrict-"
                 m_eOptionStrict = OptionStrictTypes.Off
             Case "optioninfer+", "optioninfer"

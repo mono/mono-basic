@@ -6603,14 +6603,14 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC42015 = 42015
 
     ''' <summary>
-    ''' VBNC = "Variable declaration without an 'As' clause; Object type assumed."
+    ''' VBNC = "Variable declaration without an 'As' clause; type of Object assumed."
     ''' VB   = "Variable declaration without an 'As' clause; type of Object assumed."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42020 = 42020
 
     ''' <summary>
-    ''' VBNC = "Function without an 'As' clause; Object return type assumed."
+    ''' VBNC = "Function without an 'As' clause; return type of Object assumed."
     ''' VB   = "Function without an 'As' clause; return type of Object assumed."
     ''' </summary>
     ''' <remarks></remarks>

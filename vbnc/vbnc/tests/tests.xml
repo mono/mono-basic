@@ -7355,9 +7355,10 @@
 	<test id="1716" name="ConstantBounds1">
 		<file>CompileTime\ConstantBounds1.vb</file>
 	</test>
-	<test id="1717" name="42020" knownfailure="Earlier VB compilers (&lt;10) showed an warning (#42020) for this code" expectedvbcexitcode="0">
+	<test id="1717" name="42020" expectedvbcexitcode="0">
+		<arguments>/optionstrict:custom</arguments>
 		<file>Errors\42020.vb</file>
-		<error number="42020" />
+		<error line="5" number="42020" message="Variable declaration without an 'As' clause; type of Object assumed." />
 	</test>
 	<test id="766" name="MultDimArray1" target="exe">
 		<file>CompileTime2\MultDimArray1.vb</file>
@@ -7386,7 +7387,9 @@
 		<file>CompileTime\Narrowing1.vb</file>
 	</test>
 	<test id="1724" name="42021">
+		<arguments>/optionstrict:custom</arguments>
 		<file>Errors\42021.vb</file>
+		<error line="4" number="42021" message="Function without an 'As' clause; return type of Object assumed." />
 	</test>
 	<test id="1725" name="30512" expectedexitcode="1">
 		<file>Errors\30512.vb</file>
