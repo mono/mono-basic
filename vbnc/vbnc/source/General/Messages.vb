@@ -4566,7 +4566,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31071 = 31071
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Warning treated as error : {0}"
     ''' VB   = "Warning treated as error : |1"
     ''' </summary>
     ''' <remarks></remarks>
@@ -6617,8 +6617,8 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC42021 = 42021
 
     ''' <summary>
-    ''' VBNC = "Unused local variable '{0}'."
-    ''' VB   = "Unused local variable '|1'."
+    ''' VBNC = "Unused local variable: '{0}'."
+    ''' VB   = "Unused local variable: '|1'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42024 = 42024

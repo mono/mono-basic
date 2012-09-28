@@ -2072,7 +2072,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31072" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Warning treated as error : {0}</value>
   </data>
   <data name="31073" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2951,7 +2951,7 @@
     <value>Function without an 'As' clause; Object return type assumed.</value>
   </data>
   <data name="42024" xml:space="preserve">
-    <value>Unused local variable '{0}'.</value>
+    <value>Unused local variable: '{0}'.</value>
   </data>
   <data name="42101" xml:space="preserve">
     <value>CHANGEME</value>

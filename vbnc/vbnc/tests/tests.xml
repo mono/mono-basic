@@ -3788,8 +3788,24 @@
 		<error line="3" number="32304" message="The 'DefaultMemberAttribute' defined on 'DefaultProperty4' specifies 'iIeM' as the default member, while the property marked as the default property is 'Item'." />
 		<vbcerror line="2" number="32304" message="Conflict between the default property and the 'DefaultMemberAttribute' defined on 'DefaultProperty4'." />
 	</test>
-	<test id="918" name="42024" expectedvbcexitcode="0">
+	<test id="918" name="42024" expectedexitcode="1" expectedvbcexitcode="1">
+		<arguments>/warnaserror /quiet</arguments>
 		<file>Errors\42024.vb</file>
+		<error line="15" number="42024" message="Unused local variable: 'NotAssigned'." />
+		<error line="15" number="31072" message="Warning treated as error : Unused local variable: 'NotAssigned'." />
+		<error line="26" number="42024" message="Unused local variable: 'UnusedAsParam'." />
+		<error line="36" number="42024" message="Unused local variable: 'UnusedInArithExpr'." />
+		<error line="45" number="42024" message="Unused local variable: 'UnusedCondExpr'." />
+		<error line="51" number="42024" message="Unused local variable: 'UnusedElseifExpr'." />
+		<error line="65" number="42024" message="Unused local variable: 'UnusedSelectExpr'." />
+		<error line="68" number="42024" message="Unused local variable: 'UnusedCaseExpr'." />
+		<error line="82" number="42024" message="Unused local variable: 'UnusedItr'." />
+		<error line="96" number="42024" message="Unused local variable: 'UnusedCtrlVar'." />
+		<error line="104" number="42024" message="Unused local variable: 'UnusedStepVar'." />
+		<error line="115" number="42024" message="Unused local variable: 'UnusedWhileLoopVar'." />
+		<error line="126" number="42024" message="Unused local variable: 'UnusedDoWhileVar'." />
+		<error line="136" number="42024" message="Unused local variable: 'UnusedInEvent'." />
+		<error line="145" number="42024" message="Unused local variable: 'NotUsedInTernaryIf'." />
 	</test>
 	<test id="919" name="PrivateScope1" knownfailure="Needs to build IL code first" target="exe">
 		<arguments>/r:PrivateScope1_Ext.dll /define:_MYTYPE=\"Empty\"</arguments>
@@ -24336,5 +24352,12 @@
 		<file>Errors\31019.vb</file>
 		<error number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Access to the path 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll' is denied." />
 		<vbcerror number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Acceso denegado." />
+	</test>
+	<test id="3154" name="42024-1" knownfailure="Need to report 42104 too" expectedexitcode="1" mytype="empty">
+		<arguments>/warnaserror  /quiet</arguments>
+		<file>Errors\42024-1.vb</file>
+		<error line="7" number="42024" message="Unused local variable: 'UnusedInSyncLock'." />
+		<error line="9" number="42104" message="Variable 'UsedInSyncLock' is used before it has been assigned a value. A null reference exception could result at runtime." />
+		<error line="9" number="31072" message="Warning treated as error : Variable 'UsedInSyncLock' is used before it has been assigned a value. A null reference exception could result at runtime." />
 	</test>
 </rt>

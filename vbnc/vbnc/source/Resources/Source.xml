@@ -3254,7 +3254,7 @@
 	</Message>
 	<Message id="31072" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Warning treated as error : {0}</VBNCValue>
 		<VBValue>Warning treated as error : |1</VBValue>
 	</Message>
 	<Message id="31073" level="Error">
@@ -4714,8 +4714,8 @@
   </Message>
 	<Message id="42024" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>Unused local variable '{0}'.</VBNCValue>
-    <VBValue>Unused local variable '|1'.</VBValue>
+    <VBNCValue>Unused local variable: '{0}'.</VBNCValue>
+    <VBValue>Unused local variable: '|1'.</VBValue>
   </Message>
 	<Message id="42101" level="Warning">
 		<Comment>NC</Comment>

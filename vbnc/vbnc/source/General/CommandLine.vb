@@ -231,7 +231,12 @@ Public Class CommandLine
     ''' <summary>
     ''' /warnaserror[+|-]       Treat warnings as errors.
     ''' </summary>
-    Private m_bWarnAsError As Boolean
+    Private m_bWarnAsError As Boolean?
+
+    ''' <summary>
+    ''' /warnaserror:list       Treat the specified warnings as errors.
+    ''' </summary>
+    Private m_WarningsAsError As Generic.List(Of String)
 
     ' - LANGUAGE -
 
@@ -514,9 +519,18 @@ Public Class CommandLine
     End Property
 
     ''' <summary>
+    ''' /warnaserror:list       Treat the specified warnings as errors.
+    ''' </summary>
+    ReadOnly Property WarningsAsError As Generic.List(Of String)
+        Get
+            Return m_WarningsAsError
+        End Get
+    End Property
+
+    ''' <summary>
     ''' /warnaserror[+|-]       Treat warnings as errors.
     ''' </summary>
-    ReadOnly Property WarnAsError() As Boolean
+    ReadOnly Property WarnAsError() As Boolean?
         Get
             Return m_bWarnAsError
         End Get
@@ -1003,9 +1017,24 @@ Public Class CommandLine
             Case "nowarn"
                 m_bNoWarn = True
             Case "warnaserror+", "warnaserror"
-                m_bWarnAsError = True
+                If strValue <> String.Empty Then
+                    If m_WarningsAsError Is Nothing Then
+                        m_WarningsAsError = New Generic.List(Of String)
+                    End If
+                    m_WarningsAsError.AddRange(strValue.Split("."c))
+                Else
+                    m_bWarnAsError = True
+                End If
             Case "warnaserror-"
-                m_bWarnAsError = False
+                If strValue <> String.Empty Then
+                    If m_WarningsAsError IsNot Nothing Then
+                        For Each val As String In strValue.Split("."c)
+                            m_WarningsAsError.Remove(val)
+                        Next
+                    End If
+                Else
+                    m_bWarnAsError = False
+                End If
                 ' - LANGUAGE -
             Case "define", "d"
                 'FIXME: This does not work with commas inside strings.
@@ -1283,3 +1312,4 @@ Partial Public Class CommandLine
         V8
     End Enum
 End Class
+

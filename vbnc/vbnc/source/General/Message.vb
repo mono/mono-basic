@@ -63,13 +63,26 @@ Public Class Message
     ''' <summary>
     ''' Get the severity level of this message.
     ''' </summary>
-    ReadOnly Property Level() As MessageLevel
+    Function GetLevel() As MessageLevel
+        If IsWarningAsError() Then Return MessageLevel.Error
+        Return Level
+    End Function
+
+    ReadOnly Property Level As MessageLevel
         Get
-            Dim attr As MessageAttribute
-            attr = DirectCast(System.Attribute.GetCustomAttribute(GetType(Messages).GetField(m_Message(0).ToString), GetType(MessageAttribute)), MessageAttribute)
-            Return attr.Level
+            Return DirectCast(System.Attribute.GetCustomAttribute(GetType(Messages).GetField(m_Message(0).ToString), GetType(MessageAttribute)), MessageAttribute).Level
         End Get
     End Property
+
+    Function IsWarningAsError() As Boolean
+        If Compiler.CommandLine.WarnAsError.HasValue AndAlso Compiler.CommandLine.WarnAsError.Value Then
+            Return Level = MessageLevel.Warning
+        ElseIf Compiler.CommandLine.WarningsAsError IsNot Nothing AndAlso Compiler.CommandLine.WarningsAsError.Contains(CInt(m_Message(0)).ToString()) Then
+            Return Level = MessageLevel.Warning
+        Else
+            Return False
+        End If
+    End Function
 
     ''' <summary>
     ''' The actual message itself.
@@ -157,28 +170,35 @@ Public Class Message
         End Get
     End Property
 
-    ''' <summary>
-    ''' Formats the message to a string.
-    ''' The returned string might have several lines.
-    ''' </summary>
-    Overrides Function ToString() As String
-        Dim strMessages(), strMessage, strLocation As String
-        Dim result As String
+    Function GetText(IncludeNumber As Boolean) As String
+        Dim strMessages() As String
 
         Helper.Assert(m_Message IsNot Nothing, "m_Message Is Nothing")
         Helper.Assert(m_Parameters IsNot Nothing, "m_Parameters Is Nothing")
 
         'Get the message string and format it with the message parameters.
+
         ReDim strMessages(m_Message.GetUpperBound(0))
         For i As Integer = 0 To m_Message.GetUpperBound(0)
             strMessages(i) = Report.LookupErrorCode(m_Message(i))
             Helper.Assert(m_Parameters(i) IsNot Nothing, "m_Parameters(" & i.ToString & ") Is Nothing")
-			If m_Parameters IsNot Nothing AndAlso m_Parameters.Length > i Then
-            	strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
-			End If
-            If i = 0 Then strMessages(i) = m_Message(i).ToString & ": " & strMessages(i)
+            If m_Parameters IsNot Nothing AndAlso m_Parameters.Length > i Then
+                strMessages(i) = String.Format(strMessages(i), m_Parameters(i))
+            End If
+            If IncludeNumber AndAlso i = 0 Then strMessages(i) = m_Message(i).ToString & ": " & strMessages(i)
         Next
-        strMessage = Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
+        Return Microsoft.VisualBasic.Join(strMessages, Microsoft.VisualBasic.vbNewLine)
+    End Function
+
+    ''' <summary>
+    ''' Formats the message to a string.
+    ''' The returned string might have several lines.
+    ''' </summary>
+    Overrides Function ToString() As String
+        Dim strMessage, strLocation As String
+        Dim result As String
+
+        strMessage = GetText(True)
 
         'Get the location string
         If Location.HasFile Then
@@ -195,7 +215,7 @@ Public Class Message
         'Format the entire message.
         result = result.Replace("%LOCATION%", strLocation)
         result = result.Replace("%MESSAGE%", strMessage)
-        result = result.Replace("%MESSAGELEVEL%", Level.ToString.ToLower())
+        result = result.Replace("%MESSAGELEVEL%", GetLevel().ToString.ToLower())
 
         Return result
     End Function
