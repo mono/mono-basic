@@ -74,6 +74,10 @@ Public Class ErrorInfo
 
         idx = line.IndexOf(" : error ")
         If idx = -1 Then
+            idx = line.IndexOf(" : warning ")
+            foundSize = 11
+        End If
+        If idx = -1 Then
             idx = line.IndexOf(" : Command line error ")
             foundSize = 22
         End If
