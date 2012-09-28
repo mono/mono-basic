@@ -3054,7 +3054,7 @@
 	</Message>
 	<Message id="31019" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Unable to write to output file '{0}'</VBNCValue>
+		<VBNCValue>Unable to write to output file '{0}': {1}</VBNCValue>
 		<VBValue>Unable to write to output file '|1': |0</VBValue>
 	</Message>
 	<Message id="31020" level="Error">

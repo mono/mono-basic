@@ -4286,7 +4286,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31014 = 31014
 
     ''' <summary>
-    ''' VBNC = "Unable to write to output file '{0}'"
+    ''' VBNC = "Unable to write to output file '{0}': {1}"
     ''' VB   = "Unable to write to output file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>

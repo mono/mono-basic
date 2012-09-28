@@ -1952,7 +1952,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31019" xml:space="preserve">
-    <value>Unable to write to output file '{0}'</value>
+    <value>Unable to write to output file '{0}': {1}</value>
   </data>
   <data name="31020" xml:space="preserve">
     <value>CHANGEME</value>

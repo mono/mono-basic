@@ -24325,4 +24325,16 @@
 		<file>Errors\30124-1.vb</file>
 		<error line="2" number="30124" message="Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'." />
 	</test>
+	<test id="3152" name="2012" knownfailure="Error message has full path in it" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<arguments>/out:inexistent-dir/2012.dll</arguments>
+		<file>Errors\2012.vb</file>
+		<error number="2012" message="can't open 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\inexistent-dir\2012.dll' for writing" />
+		<vbcerror number="2012" message="can't open 'inexistent-dir/2012.dll' for writing" />
+	</test>
+	<test id="3153" name="31019" knownfailure="Error message has full path in it" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<arguments>/out:testoutput\31019.dll</arguments>
+		<file>Errors\31019.vb</file>
+		<error number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Access to the path 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll' is denied." />
+		<vbcerror number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Acceso denegado." />
+	</test>
 </rt>

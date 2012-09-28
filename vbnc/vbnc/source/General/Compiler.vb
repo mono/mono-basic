@@ -559,7 +559,7 @@ Public Class Compiler
                 AssemblyBuilderCecil.Write(m_OutFilename, writerParameters)
                 Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Debug, String.Format("Assembly '{0}' saved successfully to '{1}'.", AssemblyBuilderCecil.Name.FullName, m_OutFilename))
             Catch uae As UnauthorizedAccessException
-                Compiler.Report.ShowMessageNoLocation(Messages.VBNC31019, m_OutFilename)
+                Compiler.Report.ShowMessageNoLocation(Messages.VBNC31019, m_OutFilename, uae.Message)
             Catch dnfe As IO.DirectoryNotFoundException
                 Compiler.Report.ShowMessage(Messages.VBNC2012, Span.CommandLineSpan, m_OutFilename)
             End Try
