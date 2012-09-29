@@ -113,10 +113,12 @@ Public Class Tests
         settings.Indent = True
         settings.IndentChars = vbTab
         settings.NewLineHandling = NewLineHandling.None
+        settings.NewLineChars = vbLf
         settings.NewLineOnAttributes = False
         settings.OmitXmlDeclaration = False
 
         Using fs As New IO.StreamWriter(If(results, m_ResultsFilename, m_Filename), False, New System.Text.UTF8Encoding(False))
+            fs.NewLine = settings.NewLineChars
             writer = XmlWriter.Create(fs, settings)
 
             writer.WriteStartElement("rt")
