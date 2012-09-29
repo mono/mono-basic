@@ -30,6 +30,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2001 = 2001
 
     ''' <summary>
+    ''' VBNC = "response file '{0}' included multiple times"
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2003 = 2003
+
+    ''' <summary>
     ''' VBNC = "Option '{0}' requires ':{1}'"
     ''' VB   = "option '%s' requires ':%s'"
     ''' </summary>
@@ -65,8 +72,8 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2012 = 2012
 
     ''' <summary>
-    ''' VBNC = "The response file '{0}' has already been included"
-    ''' VB   = "response file '%s' included multiple times"
+    ''' VBNC = "the value '{0}' is invalid for option '{1}'"
+    ''' VB   = "(No corresponding vbc error)"
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC2014 = 2014
@@ -107,7 +114,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30001 = 30001
 
     ''' <summary>
-    ''' VBNC = "Could not find the type '{0}'."
+    ''' VBNC = "Type '{0}' is not defined."
     ''' VB   = "Type '|1' is not defined."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6512,7 +6519,7 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC40041 = 40041
 
     ''' <summary>
-    ''' VBNC = "The import '{0}' could not be found."
+    ''' VBNC = "Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases."
     ''' VB   = "Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases."
     ''' </summary>
     ''' <remarks></remarks>

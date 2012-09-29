@@ -225,8 +225,10 @@ Public Class CommandLine
 
     ''' <summary>
     ''' /nowarn                 Disable warnings.
+    ''' /nowarn:&lt;number_list&gt;   Disable a list of individual warnings.
     ''' </summary>
     Private m_bNoWarn As Boolean
+    Private m_NoWarnings As Generic.HashSet(Of Integer)
 
     ''' <summary>
     ''' /warnaserror[+|-]       Treat warnings as errors.
@@ -236,7 +238,7 @@ Public Class CommandLine
     ''' <summary>
     ''' /warnaserror:list       Treat the specified warnings as errors.
     ''' </summary>
-    Private m_WarningsAsError As Generic.List(Of String)
+    Private m_WarningsAsError As Generic.HashSet(Of Integer)
 
     ' - LANGUAGE -
 
@@ -514,14 +516,23 @@ Public Class CommandLine
     ''' </summary>
     ReadOnly Property NoWarn() As Boolean
         Get
-            Return m_bNoLogo
+            Return m_bNoWarn
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' /nowarn:&lt;number_list&gt;  Disable a list of individual warnings.
+    ''' </summary>
+    ReadOnly Property NoWarnings As Generic.HashSet(Of Integer)
+        Get
+            Return m_NoWarnings
         End Get
     End Property
 
     ''' <summary>
     ''' /warnaserror:list       Treat the specified warnings as errors.
     ''' </summary>
-    ReadOnly Property WarningsAsError As Generic.List(Of String)
+    ReadOnly Property WarningsAsError As Generic.HashSet(Of Integer)
         Get
             Return m_WarningsAsError
         End Get
@@ -874,7 +885,7 @@ Public Class CommandLine
     ''' </summary>
     Private Function ParseResponseFile(ByVal Filename As String) As Boolean
         If m_lstResponseFiles.Contains(Filename) Then
-            Compiler.Report.ShowMessage(Messages.VBNC2014, Span.CommandLineSpan, Filename)
+            Compiler.Report.SaveMessage(Messages.VBNC2003, Span.CommandLineSpan, IO.Path.GetFullPath(Filename))
             Return False
         Else
             m_lstResponseFiles.Add(Filename)
@@ -1015,21 +1026,42 @@ Public Class CommandLine
                 End Select
                 ' - ERRORS AND WARNINGS -
             Case "nowarn"
+                If strValue <> String.Empty Then
+                    For Each number As String In strValue.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+                        Dim n As Integer
+                        If Integer.TryParse(number, Globalization.NumberStyles.AllowLeadingWhite Or Globalization.NumberStyles.AllowTrailingWhite, System.Globalization.CultureInfo.InvariantCulture.NumberFormat, n) Then
+                            If m_NoWarnings Is Nothing Then m_NoWarnings = New Generic.HashSet(Of Integer)
+                            m_NoWarnings.Add(n)
+                        Else
+                            Compiler.Report.SaveMessage(Messages.VBNC2014, Span.CommandLineSpan, number, "nowarn")
+                        End If
+                    Next
+                End If
                 m_bNoWarn = True
             Case "warnaserror+", "warnaserror"
                 If strValue <> String.Empty Then
-                    If m_WarningsAsError Is Nothing Then
-                        m_WarningsAsError = New Generic.List(Of String)
-                    End If
-                    m_WarningsAsError.AddRange(strValue.Split("."c))
+                    For Each number As String In strValue.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+                        Dim n As Integer
+                        If Integer.TryParse(number, Globalization.NumberStyles.AllowLeadingWhite Or Globalization.NumberStyles.AllowTrailingWhite, System.Globalization.CultureInfo.InvariantCulture.NumberFormat, n) Then
+                            If m_WarningsAsError Is Nothing Then m_WarningsAsError = New Generic.HashSet(Of Integer)
+                            m_WarningsAsError.Add(n)
+                        Else
+                            Compiler.Report.SaveMessage(Messages.VBNC2014, Span.CommandLineSpan, number, "warnaserror")
+                        End If
+                    Next
                 Else
                     m_bWarnAsError = True
                 End If
             Case "warnaserror-"
                 If strValue <> String.Empty Then
                     If m_WarningsAsError IsNot Nothing Then
-                        For Each val As String In strValue.Split("."c)
-                            m_WarningsAsError.Remove(val)
+                        For Each number As String In strValue.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+                            Dim n As Integer
+                            If Integer.TryParse(number, Globalization.NumberStyles.AllowLeadingWhite Or Globalization.NumberStyles.AllowTrailingWhite, System.Globalization.CultureInfo.InvariantCulture.NumberFormat, n) Then
+                                m_WarningsAsError.Remove(n)
+                            Else
+                                Compiler.Report.SaveMessage(Messages.VBNC2014, Span.CommandLineSpan, number, "warnaserror")
+                            End If
                         Next
                     End If
                 Else

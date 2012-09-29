@@ -75,13 +75,27 @@ Public Class Message
     End Property
 
     Function IsWarningAsError() As Boolean
+        If Level <> MessageLevel.Warning Then Return False
+
         If Compiler.CommandLine.WarnAsError.HasValue AndAlso Compiler.CommandLine.WarnAsError.Value Then
-            Return Level = MessageLevel.Warning
-        ElseIf Compiler.CommandLine.WarningsAsError IsNot Nothing AndAlso Compiler.CommandLine.WarningsAsError.Contains(CInt(m_Message(0)).ToString()) Then
-            Return Level = MessageLevel.Warning
+            Return True
+        ElseIf Compiler.CommandLine.WarningsAsError IsNot Nothing AndAlso Compiler.CommandLine.WarningsAsError.Contains(CInt(m_Message(0))) Then
+            Return True
         Else
             Return False
         End If
+    End Function
+
+    Function IsSuppressedWarning() As Boolean
+        If Level <> MessageLevel.Warning Then Return False
+
+        If IsWarningAsError() Then Return False
+
+        If Compiler.CommandLine.NoWarn Then Return True
+
+        If Compiler.CommandLine.NoWarnings Is Nothing Then Return False
+
+        Return Compiler.CommandLine.NoWarnings.Contains((CInt(m_Message(0))))
     End Function
 
     ''' <summary>

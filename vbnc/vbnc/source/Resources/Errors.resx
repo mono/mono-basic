@@ -127,6 +127,9 @@
   <data name="2001" xml:space="preserve">
     <value>file not found: {0}</value>
   </data>
+  <data name="2003" xml:space="preserve">
+    <value>response file '{0}' included multiple times</value>
+  </data>
   <data name="2006" xml:space="preserve">
     <value>Option '{0}' requires ':{1}'</value>
   </data>
@@ -143,7 +146,7 @@
     <value>can't open '{0}' for writing</value>
   </data>
   <data name="2014" xml:space="preserve">
-    <value>The response file '{0}' has already been included</value>
+    <value>the value '{0}' is invalid for option '{1}'</value>
   </data>
   <data name="2016" xml:space="preserve">
     <value>Code page '{0}' is invalid or not supported</value>
@@ -161,7 +164,7 @@
     <value>There cannot be any statements in a namespace.</value>
   </data>
   <data name="30002" xml:space="preserve">
-    <value>Could not find the type '{0}'.</value>
+    <value>Type '{0}' is not defined.</value>
   </data>
   <data name="30003" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2906,7 +2909,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="40056" xml:space="preserve">
-    <value>The import '{0}' could not be found.</value>
+    <value>Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</value>
   </data>
   <data name="41000" xml:space="preserve">
     <value>CHANGEME</value>

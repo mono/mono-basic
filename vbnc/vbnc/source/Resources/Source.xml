@@ -12,6 +12,10 @@
 		<VBNCValue>file not found: {0}</VBNCValue>
 		<VBValue>file '%1!ls!' could not be found</VBValue>
 	</Message>
+  <Message id="2003" level="Error">
+    <Comment>ND</Comment>
+    <VBNCValue>response file '{0}' included multiple times</VBNCValue>
+  </Message>
   <Message id="2006" level="Error">
     <Comment>Shows up as BC2001 when compiling.</Comment>
     <VBNCValue>Option '{0}' requires ':{1}'</VBNCValue>
@@ -38,9 +42,7 @@
     <VBValue>can't open '%s' for writing</VBValue>
   </Message>
 	<Message id="2014" level="Error">
-		<Comment>Shows up as BC2003 when compiling.</Comment>
-		<VBNCValue>The response file '{0}' has already been included</VBNCValue>
-		<VBValue>response file '%s' included multiple times</VBValue>
+		<VBNCValue>the value '{0}' is invalid for option '{1}'</VBNCValue>
 	</Message>
   <Message id="2016" level="Error">
     <Comment>NC</Comment>
@@ -69,7 +71,7 @@
 	</Message>
 	<Message id="30002" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Could not find the type '{0}'.</VBNCValue>
+		<VBNCValue>Type '{0}' is not defined.</VBNCValue>
 		<VBValue>Type '|1' is not defined.</VBValue>
 	</Message>
 	<Message id="30003" level="Error">
@@ -4639,7 +4641,7 @@
 	</Message>
   <Message id="40056" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>The import '{0}' could not be found.</VBNCValue>
+    <VBNCValue>Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</VBNCValue>
     <VBValue>Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</VBValue>
   </Message>
 	<Message id="41000" level="Warning">

@@ -292,6 +292,8 @@ Public Class Report
     Private Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
         Dim isOnlyWarning As Boolean = False
 
+        If Message.IsSuppressedWarning Then Return True
+
         isOnlyWarning = Message.GetLevel() <= MessageLevel.Warning
 
         If SaveIt Then
