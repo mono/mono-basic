@@ -3038,13 +3038,11 @@
 		<file>Errors\2017-aspnet1.vb</file>
 		<error number="2017" />
 	</test>
-	<test id="767" name="30039" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="767" name="30039" expectedexitcode="1">
 		<file>Errors\30039.vb</file>
 		<error number="30039" />
 	</test>
-	<test id="768" name="30039-1" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="768" name="30039-1" expectedexitcode="1">
 		<file>Errors\30039-1.vb</file>
 		<error number="30039" />
 	</test>
@@ -3058,8 +3056,7 @@
 		<file>Errors\30039-3.vb</file>
 		<error number="30039" />
 	</test>
-	<test id="771" name="30057" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="771" name="30057" expectedexitcode="1">
 		<file>Errors\30057.vb</file>
 		<error number="30057" />
 	</test>
@@ -3208,8 +3205,7 @@
 		<file>Errors\30068.vb</file>
 		<error number="30068" />
 	</test>
-	<test id="801" name="30070" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="801" name="30070" expectedexitcode="1">
 		<file>Errors\30070.vb</file>
 		<error number="30070" />
 	</test>
@@ -3588,8 +3584,7 @@
 		<file>Errors\30506-6.vb</file>
 		<error number="30506" />
 	</test>
-	<test id="878" name="30517" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="878" name="30517" expectedexitcode="1">
 		<file>Errors\30517.vb</file>
 		<error number="30517" />
 	</test>
@@ -3603,8 +3598,7 @@
 		<file>Errors\30533.vb</file>
 		<error number="30533" />
 	</test>
-	<test id="881" name="30574" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="881" name="30574" expectedexitcode="1">
 		<file>Errors\30574.vb</file>
 		<error number="30574" />
 	</test>
@@ -3733,7 +3727,7 @@
 		<error number="32035" />
 	</test>
 	<test id="907" name="32042" expectedexitcode="1" expectedvbcexitcode="1">
-		<arguments>-target:library -nowarn</arguments>
+		<arguments>/nowarn</arguments>
 		<file>Errors\32042.vb</file>
 		<error line="10" number="30002" message="Could not find the type 'A1.b2'." />
 		<vbcerror line="10" number="32042" message="Too few type arguments to 'A1.B2(Of TKey, TValue)'." />
@@ -3781,8 +3775,7 @@
 		<file>Errors\32106.vb</file>
 		<error number="32106" />
 	</test>
-	<test id="917" name="32304-DefaultProperty4" expectedexitcode="1" expectedvbcexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="917" name="32304-DefaultProperty4" expectedexitcode="1" expectedvbcexitcode="1">
 		<file>Errors\32304-DefaultProperty4.vb</file>
 		<error line="3" number="32304" message="The 'DefaultMemberAttribute' defined on 'DefaultProperty4' specifies 'iIeM' as the default member, while the property marked as the default property is 'Item'." />
 		<error line="3" number="32304" message="The 'DefaultMemberAttribute' defined on 'DefaultProperty4' specifies 'iIeM' as the default member, while the property marked as the default property is 'Item'." />
