@@ -576,6 +576,13 @@ Public Class CodeBlock
             counter += 1
         End While
 
+        'Warn about unused local variables
+        For Each Var As VariableDeclaration In Variables
+            'VBC doesn't warn for unused variables if they are initialised 
+            If Not Var.IsReferenced AndAlso Not Var.HasInitializer Then
+                result = Compiler.Report.ShowMessage(Messages.VBNC42024, Var.Location, Var.Name) AndAlso result
+            End If
+        Next
         Return result
     End Function
 
@@ -593,3 +600,4 @@ Public Class CodeBlock
         End If
     End Function
 End Class
+

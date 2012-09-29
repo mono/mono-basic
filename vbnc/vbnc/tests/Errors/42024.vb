@@ -45,7 +45,7 @@ Module Module1
         Dim UnusedCondExpr As Boolean
 
         If CondExpr Then
-
+            Dim inBlock As Boolean
         End If
 
         Dim UnusedElseifExpr As Boolean
@@ -53,8 +53,11 @@ Module Module1
         Dim UsedElseIfExpr2 As Integer
 
         If False Then
+            Dim inBlock As Boolean
         ElseIf UsedElseIfExpr Then
+            Dim inBlock As Boolean
         ElseIf UsedElseIfExpr2 > 10 Then
+            Dim inBlock As Boolean
         End If
 
     End Sub
@@ -85,6 +88,7 @@ Module Module1
         Dim UnusedList As New System.Collections.Generic.List(Of Integer)
 
         For Each UsedItr In UsedLIst
+            Dim inBlock As Boolean
 
         Next
 
@@ -96,6 +100,7 @@ Module Module1
         Dim UnusedCtrlVar As Integer
 
         For UsedCtrlVar = 10 To 20
+            Dim inBlock As Boolean
 
         Next
 
@@ -104,6 +109,7 @@ Module Module1
         Dim UnusedStepVar As Integer
 
         For UsedCtrlVar2 = 2 To 20 Step UsedStepVar
+            Dim inBlock As Boolean
 
         Next
 
@@ -115,6 +121,7 @@ Module Module1
         Dim UnusedWhileLoopVar As Boolean
 
         While UsedWhileLoopVar
+            Dim inBlock As Boolean
 
         End While
 
@@ -126,6 +133,7 @@ Module Module1
         Dim UnusedDoWhileVar As Boolean
 
         Do While UsedDoWhileVar <> False
+            Dim inBlock As Boolean
         Loop
 
     End Sub

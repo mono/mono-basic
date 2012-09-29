@@ -329,19 +329,6 @@ Public MustInherit Class MethodBaseDeclaration
 
         If m_Code IsNot Nothing Then
             result = m_Code.ResolveCode(Info) AndAlso result
-
-            'Warn about unused local variables
-            For Each Var As VariableDeclaration In m_Code.Variables
-
-                'VBC doesn't warn for unused variables if they are initialised 
-                If Not Var.IsReferenced AndAlso Not Var.HasInitializer Then
-
-                    Compiler.Report.ShowMessage(Messages.VBNC42024, Var.Location, Var.Name)
-
-                End If
-
-            Next
-
         End If
 
         Return result
