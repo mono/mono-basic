@@ -30,6 +30,13 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2001 = 2001
 
     ''' <summary>
+    ''' VBNC = "response file '{0}' included multiple times"
+    ''' VB   = "(No corresponding vbc error)"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2003 = 2003
+
+    ''' <summary>
     ''' VBNC = "Option '{0}' requires ':{1}'"
     ''' VB   = "option '%s' requires ':%s'"
     ''' </summary>
@@ -58,8 +65,15 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC2011 = 2011
 
     ''' <summary>
-    ''' VBNC = "The response file '{0}' has already been included"
-    ''' VB   = "response file '%s' included multiple times"
+    ''' VBNC = "can't open '{0}' for writing"
+    ''' VB   = "can't open '%s' for writing"
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC2012 = 2012
+
+    ''' <summary>
+    ''' VBNC = "the value '{0}' is invalid for option '{1}'"
+    ''' VB   = "(No corresponding vbc error)"
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC2014 = 2014
@@ -100,7 +114,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30001 = 30001
 
     ''' <summary>
-    ''' VBNC = "Could not find the type '{0}'."
+    ''' VBNC = "Type '{0}' is not defined."
     ''' VB   = "Type '|1' is not defined."
     ''' </summary>
     ''' <remarks></remarks>
@@ -233,14 +247,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30021 = 30021
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' VB   = "Properties declared 'ReadOnly' cannot have a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30022 = 30022
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' VB   = "Properties declared 'WriteOnly' cannot have a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -786,14 +800,14 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30124 = 30124
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'WriteOnly' property must provide a 'Set'."
     ''' VB   = "'WriteOnly' property must provide a 'Set'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC30125 = 30125
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'ReadOnly' property must provide a 'Get'."
     ''' VB   = "'ReadOnly' property must provide a 'Get'."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4279,7 +4293,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31014 = 31014
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Unable to write to output file '{0}': {1}"
     ''' VB   = "Unable to write to output file '|1': |0"
     ''' </summary>
     ''' <remarks></remarks>
@@ -4559,7 +4573,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31071 = 31071
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Warning treated as error : {0}"
     ''' VB   = "Warning treated as error : |1"
     ''' </summary>
     ''' <remarks></remarks>
@@ -5147,7 +5161,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31526 = 31526
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Local variable '{0}' cannot be referred to before it is declared."
     ''' VB   = "Local variable '|1' cannot be referred to before it is declared."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6519,7 +6533,7 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC40041 = 40041
 
     ''' <summary>
-    ''' VBNC = "The import '{0}' could not be found."
+    ''' VBNC = "Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases."
     ''' VB   = "Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases."
     ''' </summary>
     ''' <remarks></remarks>
@@ -6610,15 +6624,22 @@ Public Enum Messages
     <Message(MessageLevel.Warning)> VBNC42015 = 42015
 
     ''' <summary>
-    ''' VBNC = "Variable declaration without an 'As' clause; Object type assumed."
+    ''' VBNC = "Variable declaration without an 'As' clause; type of Object assumed."
     ''' VB   = "Variable declaration without an 'As' clause; type of Object assumed."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42020 = 42020
 
     ''' <summary>
-    ''' VBNC = "Function without an 'As' clause; Object return type assumed."
+    ''' VBNC = "Function without an 'As' clause; return type of Object assumed."
     ''' VB   = "Function without an 'As' clause; return type of Object assumed."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Warning)> VBNC42021 = 42021
+
+    ''' <summary>
+    ''' VBNC = "Unused local variable: '{0}'."
+    ''' VB   = "Unused local variable: '|1'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Warning)> VBNC42024 = 42024

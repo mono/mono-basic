@@ -3731,11 +3731,28 @@ Public Class Parser
 
             If tm.AcceptEndOfStatement(, True) = False Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
 
-            If m_Modifiers.Is(ModifierMasks.ReadOnly) AndAlso m_Get Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
+            If m_Modifiers.Is(ModifierMasks.ReadOnly) Then
+
+                If m_Get Is Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30126, m_Signature.Location)
+                End If
+
+                If m_Set IsNot Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30022, m_Set.Location)
+                End If
+
             End If
-            If m_Modifiers.Is(ModifierMasks.WriteOnly) AndAlso m_Set Is Nothing Then
-                Compiler.Report.ShowMessage(Messages.VBNC30125, m_Signature.Location)
+
+            If m_Modifiers.Is(ModifierMasks.WriteOnly) Then
+
+                If m_Set Is Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30125, m_Signature.Location)
+                End If
+
+                If m_Get IsNot Nothing Then
+                    Compiler.Report.ShowMessage(Messages.VBNC30023, m_Get.Location)
+                End If
+
             End If
 
             If m_Modifiers.Is(ModifierMasks.ReadOnly) = False AndAlso m_Modifiers.Is(ModifierMasks.WriteOnly) = False Then

@@ -35,9 +35,9 @@ using Microsoft.VisualBasic.CompilerServices;
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
 	[TestFixture]
-	public class UtilsTests 
+	public class UtilsTestsCS
 	{
-		public UtilsTests()
+		public UtilsTestsCS()
 		{
 		}
 

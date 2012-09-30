@@ -12,6 +12,10 @@
 		<VBNCValue>file not found: {0}</VBNCValue>
 		<VBValue>file '%1!ls!' could not be found</VBValue>
 	</Message>
+  <Message id="2003" level="Error">
+    <Comment>ND</Comment>
+    <VBNCValue>response file '{0}' included multiple times</VBNCValue>
+  </Message>
   <Message id="2006" level="Error">
     <Comment>Shows up as BC2001 when compiling.</Comment>
     <VBNCValue>Option '{0}' requires ':{1}'</VBNCValue>
@@ -32,10 +36,13 @@
 		<VBNCValue>No files to compile! Cannot do anything!</VBNCValue>
 		<VBValue>no input sources specified</VBValue>
 	</Message>
+  <Message id="2012" level="Error">
+    <Comment />
+    <VBNCValue>can't open '{0}' for writing</VBNCValue>
+    <VBValue>can't open '%s' for writing</VBValue>
+  </Message>
 	<Message id="2014" level="Error">
-		<Comment>Shows up as BC2003 when compiling.</Comment>
-		<VBNCValue>The response file '{0}' has already been included</VBNCValue>
-		<VBValue>response file '%s' included multiple times</VBValue>
+		<VBNCValue>the value '{0}' is invalid for option '{1}'</VBNCValue>
 	</Message>
   <Message id="2016" level="Error">
     <Comment>NC</Comment>
@@ -64,7 +71,7 @@
 	</Message>
 	<Message id="30002" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>Could not find the type '{0}'.</VBNCValue>
+		<VBNCValue>Type '{0}' is not defined.</VBNCValue>
 		<VBValue>Type '|1' is not defined.</VBValue>
 	</Message>
 	<Message id="30003" level="Error">
@@ -159,12 +166,12 @@
 	</Message>
 	<Message id="30022" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBNCValue>
 		<VBValue>Properties declared 'ReadOnly' cannot have a 'Set'.</VBValue>
 	</Message>
 	<Message id="30023" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBNCValue>
 		<VBValue>Properties declared 'WriteOnly' cannot have a 'Get'.</VBValue>
 	</Message>
 	<Message id="30024" level="Error">
@@ -554,12 +561,12 @@
 	</Message>
 	<Message id="30125" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'WriteOnly' property must provide a 'Set'.</VBNCValue>
 		<VBValue>'WriteOnly' property must provide a 'Set'.</VBValue>
 	</Message>
 	<Message id="30126" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'ReadOnly' property must provide a 'Get'.</VBNCValue>
 		<VBValue>'ReadOnly' property must provide a 'Get'.</VBValue>
 	</Message>
 	<Message id="30127" level="Error">
@@ -3049,7 +3056,7 @@
 	</Message>
 	<Message id="31019" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Unable to write to output file '{0}': {1}</VBNCValue>
 		<VBValue>Unable to write to output file '|1': |0</VBValue>
 	</Message>
 	<Message id="31020" level="Error">
@@ -3249,7 +3256,7 @@
 	</Message>
 	<Message id="31072" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Warning treated as error : {0}</VBNCValue>
 		<VBValue>Warning treated as error : |1</VBValue>
 	</Message>
 	<Message id="31073" level="Error">
@@ -3669,7 +3676,7 @@
 	</Message>
 	<Message id="32000" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Local variable '{0}' cannot be referred to before it is declared.</VBNCValue>
 		<VBValue>Local variable '|1' cannot be referred to before it is declared.</VBValue>
 	</Message>
 	<Message id="32001" level="Error">
@@ -4644,7 +4651,7 @@
 	</Message>
   <Message id="40056" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>The import '{0}' could not be found.</VBNCValue>
+    <VBNCValue>Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</VBNCValue>
     <VBValue>Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</VBValue>
   </Message>
 	<Message id="41000" level="Warning">
@@ -4709,13 +4716,18 @@
 	</Message>
   <Message id="42020" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>Variable declaration without an 'As' clause; Object type assumed.</VBNCValue>
+    <VBNCValue>Variable declaration without an 'As' clause; type of Object assumed.</VBNCValue>
     <VBValue>Variable declaration without an 'As' clause; type of Object assumed.</VBValue>
   </Message>
-  <Message id="42024" level="Warning">
+  <Message id="42021" level="Warning">
     <Comment>NC</Comment>
-    <VBNCValue>Function without an 'As' clause; Object return type assumed.</VBNCValue>
+    <VBNCValue>Function without an 'As' clause; return type of Object assumed.</VBNCValue>
     <VBValue>Function without an 'As' clause; return type of Object assumed.</VBValue>
+  </Message>
+	<Message id="42024" level="Warning">
+    <Comment>NC</Comment>
+    <VBNCValue>Unused local variable: '{0}'.</VBNCValue>
+    <VBValue>Unused local variable: '|1'.</VBValue>
   </Message>
 	<Message id="42101" level="Warning">
 		<Comment>NC</Comment>

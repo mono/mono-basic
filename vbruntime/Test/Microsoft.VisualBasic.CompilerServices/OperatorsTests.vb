@@ -2990,6 +2990,26 @@ Public Class OperatorsTests
     End Sub
 
     <Test()> _
+    Sub TestOperatorsLikeString()
+        Assert.IsTrue(LikeOperator.LikeString("-1d", "-#*", CompareMethod.Binary), "1")
+        Assert.IsTrue(LikeOperator.LikeString("1", "#", CompareMethod.Binary), "2")
+        Assert.IsFalse(LikeOperator.LikeString("12", "#", CompareMethod.Binary), "3")
+        Assert.IsFalse(LikeOperator.LikeString("aa", "?", CompareMethod.Binary), "4")
+        Assert.IsTrue(LikeOperator.LikeString("F", "F", CompareMethod.Binary), "5")
+        Assert.IsTrue(LikeOperator.LikeString("F", "F", CompareMethod.Text), "6")
+        Assert.IsFalse(LikeOperator.LikeString("F", "f", CompareMethod.Binary), "7")
+        Assert.IsTrue(LikeOperator.LikeString("F", "f", CompareMethod.Text), "8")
+        Assert.IsFalse(LikeOperator.LikeString("F", "FFF", CompareMethod.Binary), "9")
+        Assert.IsTrue(LikeOperator.LikeString("aBBBa", "a*a", CompareMethod.Binary), "10")
+        Assert.IsTrue(LikeOperator.LikeString("F", "[A-Z]", CompareMethod.Binary), "11")
+        Assert.IsFalse(LikeOperator.LikeString("F", "[!A-Z]", CompareMethod.Binary), "12")
+        Assert.IsTrue(LikeOperator.LikeString("a2a", "a#a", CompareMethod.Binary), "13")
+        Assert.IsTrue(LikeOperator.LikeString("aM5b", "a[L-P]#[!c-e]", CompareMethod.Binary), "14")
+        Assert.IsTrue(LikeOperator.LikeString("BAT123khg", "B?T*", CompareMethod.Binary), "15")
+        Assert.IsFalse(LikeOperator.LikeString("CAT123khg", "B?T*", CompareMethod.Binary), "16")
+    End Sub
+
+    <Test()> _
     Sub TestOperatorsCompare()
         Dim _false As Object = False
         Dim _true As Object = True

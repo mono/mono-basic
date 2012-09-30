@@ -156,4 +156,16 @@ Public Structure Span
         Helper.Assert(FromLocation.FileIndex = ToLocation.FileIndex)
     End Sub
 
+    Public Shared Operator >(ByVal a As Span, ByVal b As Span) As Boolean
+        If a.FileIndex <> b.FileIndex Then Throw New ArgumentException("The spans are in different files, cannot compare them")
+        If a.Line > b.Line Then Return True
+        If a.Line < b.Line Then Return False
+        Return a.Column > b.Column
+    End Operator
+
+    Public Shared Operator <(ByVal a As Span, ByVal b As Span) As Boolean
+        Return b > a
+    End Operator
+
 End Structure
+

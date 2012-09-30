@@ -34,9 +34,9 @@ using Microsoft.VisualBasic;
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
 	[TestFixture]
-	public class SingleTypeTest 
+	public class SingleTypeTestCS
 	{
-		public SingleTypeTest()
+		public SingleTypeTestCS()
 		{
 		}
 

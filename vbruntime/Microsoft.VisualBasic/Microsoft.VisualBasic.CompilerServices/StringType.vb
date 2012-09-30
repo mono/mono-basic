@@ -236,7 +236,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
 
         Private Shared Function ConvertLikeExpression(ByVal expression As String) As String
             Dim sb As StringBuilder = New StringBuilder
-            Dim bDigit As Boolean = False '' need it in order to clode the string pattern
+
+            sb.Append("^")
 
             For pos As Integer = 0 To expression.Length - 1
                 Select Case expression(pos)
@@ -244,13 +245,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         sb.Append("."c)
                     Case "*"c
                         sb.Append("."c).Append("*"c)
-                    Case "#"c  '' only one digit and only once ->  "^\d{1}$"
-                        If bDigit Then
-                            sb.Append("\d{1}")
-                        Else
-                            sb.Append("^\d{1}")
-                            bDigit = True
-                        End If
+                    Case "#"c
+                        sb.Append("\d{1}")
                     Case "["c
                         Dim gsb As StringBuilder = ConvertGroupSubexpression(expression, pos)
                         ' skip groups of form [], i.e. empty strings
@@ -261,7 +257,8 @@ Namespace Microsoft.VisualBasic.CompilerServices
                         sb.Append(Regex.Escape(expression(pos).ToString()))
                 End Select
             Next
-            If bDigit Then sb.Append("$"c)
+
+            sb.Append("$")
 
             Return sb.ToString()
         End Function

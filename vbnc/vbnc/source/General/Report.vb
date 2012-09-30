@@ -86,6 +86,7 @@ Public Class Report
 
     Private m_ReportLevel As ReportLevels = ReportLevels.Debug
     Private m_Listeners As New Generic.List(Of Diagnostics.TraceListener)
+    Private m_WarningAsErrorShown As Boolean
 
     ''' <summary>
     ''' The listeners who will receive text output.
@@ -221,7 +222,7 @@ Public Class Report
 
         For Each msg As Message In m_SavedMessages
             ShowMessage(False, msg) 'Compiler.Report.WriteLine(str)
-            If msg.Level >= MessageLevel.Error Then result = True
+            If msg.GetLevel() >= MessageLevel.Error Then result = True
         Next
         m_SavedMessages.Clear()
         Return result
@@ -264,8 +265,7 @@ Public Class Report
     ''' </summary>
     <Diagnostics.DebuggerHidden()> _
     Function ShowMessageNoLocation(ByVal Message As Messages, ByVal ParamArray Parameters() As String) As Boolean
-        Dim Location As Span = Nothing
-        Return ShowMessage(False, New Message(Compiler, Message, Parameters, Location))
+        Return ShowMessage(False, New Message(Compiler, Message, Parameters))
     End Function
 
     ''' <summary>
@@ -292,14 +292,22 @@ Public Class Report
     Private Function ShowMessage(ByVal SaveIt As Boolean, ByVal Message As Message) As Boolean
         Dim isOnlyWarning As Boolean = False
 
-        isOnlyWarning = Message.Level <= MessageLevel.Warning
+        If Message.IsSuppressedWarning Then Return True
+
+        isOnlyWarning = Message.GetLevel() <= MessageLevel.Warning
 
         If SaveIt Then
             m_SavedMessages.Add(Message)
         Else
             m_Messages.Add(Message)
             Compiler.Report.WriteLine(vbnc.Report.ReportLevels.Always, Message.ToString())
-            m_MessageCount(Message.Level) += 1
+            m_MessageCount(Message.GetLevel()) += 1
+
+            If m_WarningAsErrorShown = False AndAlso Message.IsWarningAsError() Then
+                m_WarningAsErrorShown = True
+                ShowMessage(Messages.VBNC31072, Message.Location, Message.GetText(False))
+            End If
+
             If m_MessageCount(MessageLevel.Error) > MAXERRORS Then
                 Throw New TooManyErrorsException()
             End If
@@ -310,7 +318,7 @@ Public Class Report
 #End If
 
 #If STOPONERROR Then
-        If Helper.IsDebugging AndAlso Message.Level = MessageLevel.Error Then
+        If Helper.IsDebugging AndAlso Message.GetLevel() = MessageLevel.Error Then
             Helper.Stop()
         ElseIf Helper.IsBootstrapping Then
             Throw New InternalException(Message.ToString)

@@ -34,6 +34,7 @@ Public MustInherit Class VariableDeclaration
     Private m_TypeName As TypeName
     Private m_VariableInitializer As VariableInitializer
     Private m_ArgumentList As ArgumentList
+    Private m_Referenced As Boolean
 
     Private m_VariableType As Mono.Cecil.TypeReference
 
@@ -134,6 +135,15 @@ Public MustInherit Class VariableDeclaration
         Get
             Return m_ArgumentList
         End Get
+    End Property
+
+    Public Property IsReferenced() As Boolean
+        Get
+            Return m_Referenced
+        End Get
+        Set(ByVal value As Boolean)
+            m_Referenced = value
+        End Set
     End Property
 
     Public Overrides Function ResolveTypeReferences() As Boolean

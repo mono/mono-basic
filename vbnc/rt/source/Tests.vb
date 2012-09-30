@@ -108,26 +108,27 @@ Public Class Tests
         Dim settings As New XmlWriterSettings
         Dim writer As XmlWriter
 
-        settings.CloseOutput = True
+        settings.CloseOutput = False
         settings.ConformanceLevel = ConformanceLevel.Document
         settings.Indent = True
         settings.IndentChars = vbTab
         settings.NewLineHandling = NewLineHandling.None
+        settings.NewLineChars = vbLf
         settings.NewLineOnAttributes = False
         settings.OmitXmlDeclaration = False
 
-        If results Then
-            writer = XmlWriter.Create(m_ResultsFilename, settings)
-        Else
-            writer = XmlWriter.Create(m_Filename, settings)
-        End If
+        Using fs As New IO.StreamWriter(If(results, m_ResultsFilename, m_Filename), False, New System.Text.UTF8Encoding(False))
+            fs.NewLine = settings.NewLineChars
+            writer = XmlWriter.Create(fs, settings)
 
-        writer.WriteStartElement("rt")
-        For Each Test As Test In Me.Values
-            Test.Save(writer, results)
-        Next
-        writer.WriteEndElement()
-        writer.Close()
+            writer.WriteStartElement("rt")
+            For Each Test As Test In Me.Values
+                Test.Save(writer, results)
+            Next
+            writer.WriteEndElement()
+            writer.Close()
+            fs.WriteLine()
+        End Using
     End Sub
 
     ReadOnly Property GetGreenCount() As Integer

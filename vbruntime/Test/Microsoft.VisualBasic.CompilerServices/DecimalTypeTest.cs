@@ -34,9 +34,9 @@ using Microsoft.VisualBasic;
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
 	[TestFixture]
-	public class DecimalTypeTest 
+	public class DecimalTypeTestCS
 	{
-		public DecimalTypeTest()
+		public DecimalTypeTestCS()
 		{
 		}
 

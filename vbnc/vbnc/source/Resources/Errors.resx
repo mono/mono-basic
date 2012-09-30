@@ -127,6 +127,9 @@
   <data name="2001" xml:space="preserve">
     <value>file not found: {0}</value>
   </data>
+  <data name="2003" xml:space="preserve">
+    <value>response file '{0}' included multiple times</value>
+  </data>
   <data name="2006" xml:space="preserve">
     <value>Option '{0}' requires ':{1}'</value>
   </data>
@@ -139,8 +142,11 @@
   <data name="2011" xml:space="preserve">
     <value>No files to compile! Cannot do anything!</value>
   </data>
+  <data name="2012" xml:space="preserve">
+    <value>can't open '{0}' for writing</value>
+  </data>
   <data name="2014" xml:space="preserve">
-    <value>The response file '{0}' has already been included</value>
+    <value>the value '{0}' is invalid for option '{1}'</value>
   </data>
   <data name="2016" xml:space="preserve">
     <value>Code page '{0}' is invalid or not supported</value>
@@ -158,7 +164,7 @@
     <value>There cannot be any statements in a namespace.</value>
   </data>
   <data name="30002" xml:space="preserve">
-    <value>Could not find the type '{0}'.</value>
+    <value>Type '{0}' is not defined.</value>
   </data>
   <data name="30003" xml:space="preserve">
     <value>CHANGEME</value>
@@ -215,10 +221,10 @@
     <value>CHANGEME</value>
   </data>
   <data name="30022" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'ReadOnly' cannot have a 'Set'.</value>
   </data>
   <data name="30023" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Properties declared 'WriteOnly' cannot have a 'Get'.</value>
   </data>
   <data name="30024" xml:space="preserve">
     <value>CHANGEME</value>
@@ -452,10 +458,10 @@
     <value>Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.</value>
   </data>
   <data name="30125" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'WriteOnly' property must provide a 'Set'.</value>
   </data>
   <data name="30126" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'ReadOnly' property must provide a 'Get'.</value>
   </data>
   <data name="30127" xml:space="preserve">
     <value>Attribute '{0}' is not valid: {1}</value>
@@ -1949,7 +1955,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31019" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Unable to write to output file '{0}': {1}</value>
   </data>
   <data name="31020" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2069,7 +2075,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31072" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Warning treated as error : {0}</value>
   </data>
   <data name="31073" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2321,7 +2327,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="32000" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Local variable '{0}' cannot be referred to before it is declared.</value>
   </data>
   <data name="32001" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2909,7 +2915,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="40056" xml:space="preserve">
-    <value>The import '{0}' could not be found.</value>
+    <value>Namespace or type specified in the Imports '{0}' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases.</value>
   </data>
   <data name="41000" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2948,10 +2954,13 @@
     <value>CHANGEME</value>
   </data>
   <data name="42020" xml:space="preserve">
-    <value>Variable declaration without an 'As' clause; Object type assumed.</value>
+    <value>Variable declaration without an 'As' clause; type of Object assumed.</value>
+  </data>
+  <data name="42021" xml:space="preserve">
+    <value>Function without an 'As' clause; return type of Object assumed.</value>
   </data>
   <data name="42024" xml:space="preserve">
-    <value>Function without an 'As' clause; Object return type assumed.</value>
+    <value>Unused local variable: '{0}'.</value>
   </data>
   <data name="42101" xml:space="preserve">
     <value>CHANGEME</value>

@@ -77,6 +77,10 @@ Public Class ErrorInfo
             idx = line.IndexOf(" : Command line error ")
             foundSize = 22
         End If
+        If idx = -1 Then
+            idx = line.IndexOf(" : warning ")
+            foundSize = 11
+        End If
         If idx = -1 Then Return Nothing
 
         If idx > 2 AndAlso line(idx - 1) = ")"c Then
@@ -96,7 +100,7 @@ Public Class ErrorInfo
         End If
 
         idx = line.IndexOf(":"c)
-        errnumber = Integer.Parse(line.Substring(0, idx))
+        errnumber = Integer.Parse(line.Substring(0, idx), Globalization.NumberStyles.AllowTrailingWhite Or Globalization.NumberStyles.AllowLeadingWhite)
         errmessage = line.Substring(idx + 1).Trim()
 
         Return New ErrorInfo(errline, errnumber, errmessage)

@@ -286,6 +286,7 @@ Public Class SimpleNameExpression
                 'The expression is classified as a variable if it is a local variable, static variable (...)
                 Dim varDecl As VariableDeclaration
                 varDecl = DirectCast(var, VariableDeclaration)
+                varDecl.IsReferenced = True
                 If varDecl.Modifiers.Is(ModifierMasks.Static) AndAlso varDecl.DeclaringMethod.IsShared = False Then
                     Classification = New VariableClassification(Me, varDecl, CreateMeExpression)
                 ElseIf varDecl.Modifiers.Is(ModifierMasks.Const) Then
@@ -293,6 +294,11 @@ Public Class SimpleNameExpression
                 Else
                     Classification = New VariableClassification(Me, varDecl)
                 End If
+
+                If var.Location > Me.Location Then
+                    Return Compiler.Report.ShowMessage(Messages.VBNC32000, Me.Location, var.Name)
+                End If
+
                 Return True
             ElseIf var IsNot Nothing Then
                 Throw New InternalException(Me)
@@ -439,7 +445,7 @@ Public Class SimpleNameExpression
                     'type containing the matching member and E is the identifier. In this case, it is an error for the                    
                     'identifier to refer to a non-shared member.
                     Classification = GetTypeClassification(members, firstcontainer)
-                    Return True
+                    Return Classification IsNot Nothing
                 End If
             End If
             container = DirectCast(container, BaseObject).FindFirstParent(Of IType)()
@@ -604,6 +610,9 @@ Public Class SimpleNameExpression
             If varD.IsStatic AndAlso varD.IsInitOnly AndAlso _
              (constructor Is Nothing OrElse constructor.Modifiers.Is(ModifierMasks.Shared) = False) Then
                 Return New ValueClassification(Me, var, Nothing)
+            ElseIf Not varD.IsStatic Then
+                Compiler.Report.ShowMessage(Messages.VBNC30469, Me.Location)
+                Return Nothing
             Else
                 Return New VariableClassification(Me, var, Nothing)
             End If

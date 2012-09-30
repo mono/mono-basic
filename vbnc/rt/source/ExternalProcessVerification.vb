@@ -58,68 +58,68 @@ Public Class ExternalProcessVerification
             If m_Process.ExitCode <> Me.ExpectedExitCode Then
                 MyBase.DescriptiveMessage = Name & " failed, expected exit code " & Me.ExpectedExitCode & " but process exited with exit code " & m_Process.ExitCode & vbNewLine
                 result = False
-            Else
-                Dim actualErrors As New Generic.List(Of ErrorInfo)
-                Dim errorReport As String
-                Dim ei As ErrorInfo
-                Dim line As String
-                Dim stdout As String = m_Process.StdOut
+            End If
 
-                Using reader As New System.IO.StringReader(stdout)
+            Dim actualErrors As New Generic.List(Of ErrorInfo)
+            Dim errorReport As String
+            Dim ei As ErrorInfo
+            Dim line As String
+            Dim stdout As String = m_Process.StdOut
+
+            Using reader As New System.IO.StringReader(stdout)
+                line = reader.ReadLine
+                Do While line IsNot Nothing
+                    If line.Contains("<MyGenerator>") Then
+                        MyBase.DescriptiveMessage = Name & " failed, <MyGenerator> shown in message" & vbNewLine
+                        result = False
+                    ElseIf line.Contains("VBNC9999") AndAlso line.Contains("VBNC99998") = False Then
+                        MyBase.DescriptiveMessage = Name & " failed, VBNC9999? shown in message" & vbNewLine
+                        result = False
+                    ElseIf line.Contains("CHANGEME") Then
+                        MyBase.DescriptiveMessage = Name & " failed, CHANGEME shown in message" & vbNewLine
+                        result = False
+                    Else
+                        ei = ErrorInfo.ParseLine(line)
+                        If ei IsNot Nothing Then actualErrors.Add(ei)
+                    End If
+
                     line = reader.ReadLine
-                    Do While line IsNot Nothing
-                        If line.Contains("<MyGenerator>") Then
-                            MyBase.DescriptiveMessage = Name & " failed, <MyGenerator> shown in error message" & vbNewLine
-                            result = False
-                        ElseIf line.Contains("VBNC9999") AndAlso line.Contains("VBNC99998") = False Then
-                            MyBase.DescriptiveMessage = Name & " failed, VBNC9999? shown in error message" & vbNewLine
-                            result = False
-                        ElseIf line.Contains("CHANGEME") Then
-                            MyBase.DescriptiveMessage = Name & " failed, CHANGEME shown in error message" & vbNewLine
-                            result = False
-                        Else
-                            ei = ErrorInfo.ParseLine(line)
-                            If ei IsNot Nothing Then actualErrors.Add(ei)
-                        End If
+                Loop
+            End Using
 
-                        line = reader.ReadLine
-                    Loop
-                End Using
+            If result Then
+                If (ExpectedErrors Is Nothing OrElse ExpectedErrors.Count = 0) AndAlso actualErrors.Count > 0 Then
+                    MyBase.DescriptiveMessage = String.Format("{0} failed, expected 0 messages, got {1} messages{2}", Name, actualErrors.Count, vbNewLine)
+                    result = False
+                ElseIf ExpectedErrors IsNot Nothing AndAlso ExpectedErrors.Count <> actualErrors.Count Then
+                    MyBase.DescriptiveMessage = String.Format("{0} failed, expected {1} messages, got {2} messages{3}", Name, ExpectedErrors.Count, actualErrors.Count, vbNewLine)
+                    result = False
+                ElseIf ExpectedErrors IsNot Nothing Then
+                    errorReport = String.Empty
+                    Dim expectedFound As New Generic.List(Of ErrorInfo)(ExpectedErrors)
+                    Dim actualFound As New Generic.List(Of ErrorInfo)(actualErrors)
 
-                If result Then
-                    If (ExpectedErrors Is Nothing OrElse ExpectedErrors.Count = 0) AndAlso actualErrors.Count > 0 Then
-                        MyBase.DescriptiveMessage = String.Format("{0} failed, expected 0 errors, got {1} errors{2}", Name, actualErrors.Count, vbNewLine)
+                    For i As Integer = expectedFound.Count - 1 To 0 Step -1
+                        For j As Integer = actualFound.Count - 1 To 0 Step -1
+                            If ErrorInfo.Compare(expectedFound(i), actualFound(j), Nothing) Then
+                                expectedFound.RemoveAt(i)
+                                actualFound.RemoveAt(j)
+                                Exit For
+                            End If
+                        Next
+                    Next
+
+                    For i As Integer = 0 To expectedFound.Count - 1
+                        errorReport += String.Format("Expected message not reported: {0}: {1} {2}{3}", expectedFound(i).Line, expectedFound(i).Number, expectedFound(i).Message, Environment.NewLine)
+                    Next
+
+                    For i As Integer = 0 To actualFound.Count - 1
+                        errorReport += String.Format("Unexpected reported message: {0}: {1} {2}{3}", actualFound(i).Line, actualFound(i).Number, actualFound(i).Message, Environment.NewLine)
+                    Next
+
+                    If errorReport <> String.Empty Then
+                        MyBase.DescriptiveMessage = String.Format("{0} failed message verification: {2}", Name, vbNewLine, errorReport)
                         result = False
-                    ElseIf ExpectedErrors IsNot Nothing AndAlso ExpectedErrors.Count <> actualErrors.Count Then
-                        MyBase.DescriptiveMessage = String.Format("{0} failed, expected {1} errors, got {2} errors{3}", Name, ExpectedErrors.Count, actualErrors.Count, vbNewLine)
-                        result = False
-                    ElseIf ExpectedErrors IsNot Nothing Then
-                        errorReport = String.Empty
-                        Dim expectedFound As New Generic.List(Of ErrorInfo)(ExpectedErrors)
-                        Dim actualFound As New Generic.List(Of ErrorInfo)(actualErrors)
-
-                        For i As Integer = expectedFound.Count - 1 To 0 Step -1
-                            For j As Integer = actualFound.Count - 1 To 0 Step -1
-                                If ErrorInfo.Compare(expectedFound(i), actualFound(j), Nothing) Then
-                                    expectedFound.RemoveAt(i)
-                                    actualFound.RemoveAt(j)
-                                    Exit For
-                                End If
-                            Next
-                        Next
-
-                        For i As Integer = 0 To expectedFound.Count - 1
-                            errorReport += String.Format("Expected error not reported: {0}: {1} {2}{3}", expectedFound(i).Line, expectedFound(i).Number, expectedFound(i).Message, Environment.NewLine)
-                        Next
-
-                        For i As Integer = 0 To actualFound.Count - 1
-                            errorReport += String.Format("Unexpected reported error: {0}: {1} {2}{3}", actualFound(i).Line, actualFound(i).Number, actualFound(i).Message, Environment.NewLine)
-                        Next
-
-                        If errorReport <> String.Empty Then
-                            MyBase.DescriptiveMessage = String.Format("{0} failed error verification: {2}", Name, vbNewLine, errorReport)
-                            result = False
-                        End If
                     End If
                 End If
             End If

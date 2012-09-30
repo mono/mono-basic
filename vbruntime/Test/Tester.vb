@@ -18,6 +18,7 @@ Module Tester
         objects.Add(New MonoTests.Microsoft_VisualBasic.CompilerServices.DoubleTypeTest)
         objects.Add(New MonoTests.Microsoft_VisualBasic.CompilerServices.DateTypeTest)
         objects.Add(New MonoTests.Microsoft_VisualBasic.CompilerServices.DecimalTypeTest)
+        objects.Add(New MonoTests.Microsoft_VisualBasic.OperatorsTests)
         objects.Add(New MonoTests.Microsoft_VisualBasic.FileSystemTests2)
 
         Dim ms As New Microsoft.VisualBasic.CompilerServices.OptionCompareAttribute

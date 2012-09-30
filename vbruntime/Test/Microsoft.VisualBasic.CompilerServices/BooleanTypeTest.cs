@@ -34,9 +34,9 @@ using Microsoft.VisualBasic;
 namespace MonoTests.Microsoft_VisualBasic.CompilerServices
 {
 	[TestFixture]
-	public class BooleanTypeTest 
+	public class BooleanTypeTestCS
 	{
-		public BooleanTypeTest()
+		public BooleanTypeTestCS()
 		{
 		}
 

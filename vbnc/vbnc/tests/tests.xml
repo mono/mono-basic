@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <rt>
 	<test id="1" name="ArrayType1">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
@@ -546,7 +546,9 @@
 	</test>
 	<test id="137" name="30099-bug-80999" expectedexitcode="1">
 		<file>Bugs\30099-bug-80999.vb</file>
-		<error number="30099" />
+		<error line="1" number="40056" message="Namespace or type specified in the Imports 'VIA.Workcamps' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases." />
+		<error line="2" number="40056" message="Namespace or type specified in the Imports 'VIA.Core' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases." />
+		<error line="8" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
 	</test>
 	<test id="138" name="30145-bug-328101" expectedexitcode="1">
 		<arguments>-linkresource:foo.res</arguments>
@@ -591,16 +593,19 @@
 		<file>Bugs\aspnet3.vb</file>
 	</test>
 	<test id="148" name="bug-320964" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-320964.vb</file>
 	</test>
 	<test id="149" name="bug-325331" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-325331.vb</file>
 	</test>
 	<test id="150" name="bug-325332">
-		<arguments>-doc:foo.xml</arguments>
+		<arguments>-doc:foo.xml /nowarn</arguments>
 		<file>Bugs\bug-325332.vb</file>
 	</test>
 	<test id="151" name="bug-325339" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-325339.vb</file>
 	</test>
 	<test id="152" name="bug-325346" target="exe">
@@ -625,15 +630,19 @@
 		<file>Bugs\bug-333403.vb</file>
 	</test>
 	<test id="158" name="bug-333962" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-333962.vb</file>
 	</test>
 	<test id="159" name="bug-359234-ProtectedDefaultBaseCtor">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-359234-ProtectedDefaultBaseCtor.vb</file>
 	</test>
 	<test id="160" name="bug-392456" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-392456.vb</file>
 	</test>
 	<test id="161" name="bug-428340" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-428340.vb</file>
 	</test>
 	<test id="162" name="bug-428340-2" target="exe">
@@ -681,6 +690,7 @@
 	</test>
 	<test id="175" name="bug-80990">
 		<file>Bugs\bug-80990.vb</file>
+		<error line="1" number="40056" message="Namespace or type specified in the Imports 'Foo' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases." />
 	</test>
 	<test id="176" name="bug-80995" target="exe">
 		<file>Bugs\bug-80995.vb</file>
@@ -707,6 +717,7 @@
 		<file>Bugs\bug-81162.vb</file>
 	</test>
 	<test id="183" name="bug-81243" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-81243.vb</file>
 	</test>
 	<test id="184" name="bug-82382">
@@ -1778,7 +1789,7 @@
 		<file>CompileTime\PowerAssignStatement1.vb</file>
 	</test>
 	<test id="451" name="PropertyAccess5">
-		<arguments>/r:System.Data.dll /imports:System.Data</arguments>
+		<arguments>/r:System.Data.dll /imports:System.Data /nowarn</arguments>
 		<file>CompileTime\PropertyAccess5.vb</file>
 	</test>
 	<test id="452" name="RaiseEvent1">
@@ -2738,7 +2749,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /target:exe /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\" /optionstrict+ /optionexplicit+ /optioncompare:binary</arguments>
 		<file>CompileTime2\Nullable1.vb</file>
 	</test>
-	<test id="691" name="NullChar" expectedvbcexitcode="1">
+	<test id="691" name="NullChar" knownfailure="Error message has full path in it" expectedvbcexitcode="1">
 		<file>CompileTime2\NullChar.vb</file>
 		<vbcerror number="31007" message="Unable to open module file 'D:\Documentos\Rolf\Proyectos\VB.NET\vbnc\mono-basic\vbnc\vbnc\tests\CompileTime2\NullChar.vb': System Error &amp;H80041feb&amp;" />
 	</test>
@@ -2835,6 +2846,7 @@
 		<file>CompileTime2\PEFileKind-Console.vb</file>
 	</test>
 	<test id="715" name="PEFileKind-Winexe" target="winexe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\PEFileKind-Winexe.vb</file>
 	</test>
 	<test id="716" name="PropertyAccess1" target="exe">
@@ -3038,13 +3050,13 @@
 		<file>Errors\2017-aspnet1.vb</file>
 		<error number="2017" />
 	</test>
-	<test id="767" name="30039" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="767" name="30039" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30039.vb</file>
 		<error number="30039" />
 	</test>
-	<test id="768" name="30039-1" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="768" name="30039-1" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30039-1.vb</file>
 		<error number="30039" />
 	</test>
@@ -3058,8 +3070,8 @@
 		<file>Errors\30039-3.vb</file>
 		<error number="30039" />
 	</test>
-	<test id="771" name="30057" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="771" name="30057" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30057.vb</file>
 		<error number="30057" />
 	</test>
@@ -3208,12 +3220,13 @@
 		<file>Errors\30068.vb</file>
 		<error number="30068" />
 	</test>
-	<test id="801" name="30070" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="801" name="30070" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30070.vb</file>
 		<error number="30070" />
 	</test>
 	<test id="802" name="30070-1" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30070-1.vb</file>
 		<error number="30070" />
 	</test>
@@ -3296,6 +3309,7 @@
 		<error number="30225" />
 	</test>
 	<test id="819" name="30311" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30311.vb</file>
 		<error number="30311" />
 	</test>
@@ -3526,6 +3540,7 @@
 		<error number="30451" />
 	</test>
 	<test id="865" name="30451-1" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30451-1.vb</file>
 		<error line="6" number="30451" message="'j' is not declared. It may be inaccessible due to its protection level." />
 	</test>
@@ -3588,8 +3603,8 @@
 		<file>Errors\30506-6.vb</file>
 		<error number="30506" />
 	</test>
-	<test id="878" name="30517" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="878" name="30517" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30517.vb</file>
 		<error number="30517" />
 	</test>
@@ -3603,8 +3618,8 @@
 		<file>Errors\30533.vb</file>
 		<error number="30533" />
 	</test>
-	<test id="881" name="30574" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="881" name="30574" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30574.vb</file>
 		<error number="30574" />
 	</test>
@@ -3733,9 +3748,9 @@
 		<error number="32035" />
 	</test>
 	<test id="907" name="32042" expectedexitcode="1" expectedvbcexitcode="1">
-		<arguments>-target:library -nowarn</arguments>
+		<arguments>/nowarn</arguments>
 		<file>Errors\32042.vb</file>
-		<error line="10" number="30002" message="Could not find the type 'A1.b2'." />
+		<error line="10" number="30002" message="Type 'A1.b2' is not defined." />
 		<vbcerror line="10" number="32042" message="Too few type arguments to 'A1.B2(Of TKey, TValue)'." />
 	</test>
 	<test id="908" name="32046" expectedexitcode="1" expectedvbcexitcode="1">
@@ -3781,15 +3796,39 @@
 		<file>Errors\32106.vb</file>
 		<error number="32106" />
 	</test>
-	<test id="917" name="32304-DefaultProperty4" expectedexitcode="1" expectedvbcexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="917" name="32304-DefaultProperty4" expectedexitcode="1" expectedvbcexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\32304-DefaultProperty4.vb</file>
 		<error line="3" number="32304" message="The 'DefaultMemberAttribute' defined on 'DefaultProperty4' specifies 'iIeM' as the default member, while the property marked as the default property is 'Item'." />
 		<error line="3" number="32304" message="The 'DefaultMemberAttribute' defined on 'DefaultProperty4' specifies 'iIeM' as the default member, while the property marked as the default property is 'Item'." />
 		<vbcerror line="2" number="32304" message="Conflict between the default property and the 'DefaultMemberAttribute' defined on 'DefaultProperty4'." />
 	</test>
-	<test id="918" name="42024" expectedvbcexitcode="0">
+	<test id="918" name="42024">
+		<arguments>/quiet</arguments>
 		<file>Errors\42024.vb</file>
+		<error line="15" number="42024" message="Unused local variable: 'NotAssigned'." />
+		<error line="26" number="42024" message="Unused local variable: 'UnusedAsParam'." />
+		<error line="36" number="42024" message="Unused local variable: 'UnusedInArithExpr'." />
+		<error line="45" number="42024" message="Unused local variable: 'UnusedCondExpr'." />
+		<error line="48" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="51" number="42024" message="Unused local variable: 'UnusedElseifExpr'." />
+		<error line="56" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="58" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="60" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="68" number="42024" message="Unused local variable: 'UnusedSelectExpr'." />
+		<error line="71" number="42024" message="Unused local variable: 'UnusedCaseExpr'." />
+		<error line="85" number="42024" message="Unused local variable: 'UnusedItr'." />
+		<error line="91" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="100" number="42024" message="Unused local variable: 'UnusedCtrlVar'." />
+		<error line="103" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="109" number="42024" message="Unused local variable: 'UnusedStepVar'." />
+		<error line="112" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="121" number="42024" message="Unused local variable: 'UnusedWhileLoopVar'." />
+		<error line="124" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="133" number="42024" message="Unused local variable: 'UnusedDoWhileVar'." />
+		<error line="136" number="42024" message="Unused local variable: 'inBlock'." />
+		<error line="144" number="42024" message="Unused local variable: 'UnusedInEvent'." />
+		<error line="153" number="42024" message="Unused local variable: 'NotUsedInTernaryIf'." />
 	</test>
 	<test id="919" name="PrivateScope1" knownfailure="Needs to build IL code first" target="exe">
 		<arguments>/r:PrivateScope1_Ext.dll /define:_MYTYPE=\"Empty\"</arguments>
@@ -4516,10 +4555,11 @@
 		<file>Mono\DefaultPropH.vb</file>
 	</test>
 	<test id="1104" name="Delegate_dll">
+		<arguments>/nowarn</arguments>
 		<file>Mono\Delegate_dll.vb</file>
 	</test>
 	<test id="1105" name="Delegate_exe" target="exe">
-		<arguments>/r:testoutput\Delegate_dll.dll</arguments>
+		<arguments>/r:testoutput\Delegate_dll.dll /nowarn</arguments>
 		<file>Mono\Delegate_exe.vb</file>
 	</test>
 	<test id="1106" name="DelegateA" target="exe">
@@ -4598,7 +4638,7 @@
 		<file>Mono\Event_dll.vb</file>
 	</test>
 	<test id="1125" name="Event_exe" target="exe">
-		<arguments>/r:testoutput\Event_dll.dll</arguments>
+		<arguments>/r:testoutput\Event_dll.dll /nowarn</arguments>
 		<file>Mono\Event_exe.vb</file>
 	</test>
 	<test id="1126" name="EventA" target="exe">
@@ -6394,7 +6434,7 @@
 		<file>Mono\Override_dll.vb</file>
 	</test>
 	<test id="1574" name="Override_exe" target="exe">
-		<arguments>/r:testoutput\Override_dll.dll</arguments>
+		<arguments>/r:testoutput\Override_dll.dll /nowarn</arguments>
 		<file>Mono\Override_exe.vb</file>
 	</test>
 	<test id="1575" name="OverrideA" target="exe">
@@ -6874,7 +6914,7 @@
 		<file>My\EmptyString.vb</file>
 	</test>
 	<test id="1694" name="My.Application1" target="exe">
-		<arguments>-r:System.Web.dll</arguments>
+		<arguments>-r:System.Web.dll /nowarn</arguments>
 		<file>My\My.Application1.vb</file>
 	</test>
 	<test id="1695" name="My.Forms1" target="winexe">
@@ -6922,9 +6962,11 @@
 		<file>My\WindowsFormsWithCustomSubMain.vb</file>
 	</test>
 	<test id="1706" name="GenericNestedType2" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>NonCecilRelated\GenericNestedType2.vb</file>
 	</test>
 	<test id="1707" name="GenericType3">
+		<arguments>/nowarn</arguments>
 		<file>NonCecilRelated\GenericType3.vb</file>
 	</test>
 	<test id="1708" name="AddressOfExpression1">
@@ -7283,7 +7325,7 @@
 		<dependency>..\..\..\class\lib\bootstrap\Mono.Cecil.VB.dll</dependency>
 	</test>
 	<test id="1808" name="SelfCompile" outputvbcassembly="SelfTest\vbnc_vbc.exe" outputassembly="SelfTest\vbnc.exe" target="exe" workingdirectory="SelfTest">
-		<arguments>@SelfCompileWindows.response</arguments>
+		<arguments>@SelfCompileWindows.response /nowarn</arguments>
 		<vbcarguments>/out:vbnc_vbc.exe</vbcarguments>
 		<testarguments>/help</testarguments>
 	</test>
@@ -7302,12 +7344,13 @@
 		<file>CompileTime\MarshalAs.vb</file>
 	</test>
 	<test id="1814" name="Microsoft.VisualBasic" workingdirectory="VBRunTime">
-		<arguments>@Microsoft.VisualBasic.windows.response /noconfig /nowarn:41008,40010</arguments>
+		<arguments>@Microsoft.VisualBasic.windows.response /noconfig /nowarn:41008,40010,42353,40000</arguments>
 	</test>
 	<test id="1816" name="DefaultCtor">
 		<file>CompileTime\DefaultCtor.vb</file>
 	</test>
 	<test id="0" name="NUnitTests" target="exe" workingdirectory="NUnitTests">
+		<arguments>/nowarn</arguments>
 		<file>AddHandler.vb</file>
 		<file>ArrayCreation1.vb</file>
 		<file>ArrayIndexExpressions.vb</file>
@@ -7337,20 +7380,23 @@
 		<file>CompileTime2\AttributeFileVersion.vb</file>
 	</test>
 	<test id="1716" name="ConstantBounds1">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\ConstantBounds1.vb</file>
 	</test>
-	<test id="1717" name="42020" knownfailure="Earlier VB compilers (&lt;10) showed an warning (#42020) for this code" expectedvbcexitcode="0">
+	<test id="1717" name="42020" expectedvbcexitcode="0">
+		<arguments>/optionstrict:custom</arguments>
 		<file>Errors\42020.vb</file>
-		<error number="42020" />
+		<error line="5" number="42020" message="Variable declaration without an 'As' clause; type of Object assumed." />
 	</test>
 	<test id="766" name="MultDimArray1" target="exe">
 		<file>CompileTime2\MultDimArray1.vb</file>
 	</test>
 	<test id="923" name="DefaultMember1">
-		<arguments>-r:System.Data.dll</arguments>
+		<arguments>-r:System.Data.dll /nowarn</arguments>
 		<file>CompileTime\DefaultMember1.vb</file>
 	</test>
 	<test id="1718" name="TryCatch5">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\TryCatch5.vb</file>
 	</test>
 	<test id="1719" name="DebugInfo1">
@@ -7363,16 +7409,21 @@
 	<test id="1721" name="bug-504822">
 		<file>Bugs\bug-504822.vb</file>
 	</test>
-	<test id="1722" name="DoLoopWhile3">
+	<test id="1722" name="DoLoopWhile3" mytype="empty">
 		<file>CompileTime\DoLoopWhile3.vb</file>
+		<error line="5" number="42024" message="Unused local variable: 'i'." />
 	</test>
 	<test id="1723" name="Narrowing1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\Narrowing1.vb</file>
 	</test>
 	<test id="1724" name="42021">
+		<arguments>/optionstrict:custom</arguments>
 		<file>Errors\42021.vb</file>
+		<error line="4" number="42021" message="Function without an 'As' clause; return type of Object assumed." />
 	</test>
 	<test id="1725" name="30512" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512.vb</file>
 		<error number="30512" />
 	</test>
@@ -7395,6 +7446,7 @@
 		<file>CompileTime2\UsingStatement6.vb</file>
 	</test>
 	<test id="1730" name="FunctionReturnVariable1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\FunctionReturnVariable1.vb</file>
 	</test>
 	<test id="1732" name="DefaultInstance1" target="exe">
@@ -7476,6 +7528,7 @@
 		<file>CompileTime\ByRefStructureReturn1.vb</file>
 	</test>
 	<test id="1831" name="ImplicitNullableConversions1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\ImplicitNullableConversions1.vb</file>
 	</test>
 	<test id="1832" name="30311-36" expectedexitcode="1" target="exe">
@@ -7483,6 +7536,7 @@
 		<error number="30311" />
 	</test>
 	<test id="1833" name="30512-4" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-4.vb</file>
 		<error number="30512" />
 	</test>
@@ -7514,7 +7568,8 @@
 	</test>
 	<test id="1842" name="30002" expectedexitcode="1">
 		<file>Errors\30002.vb</file>
-		<error number="30002" />
+		<error line="1" number="40056" message="Namespace or type specified in the Imports 'System.Collections.Hashtabl' doesn't contain any public member or cannot be found. Make sure the namespace or the type is defined and contains at least one public member. Make sure the imported element name doesn't use any aliases." />
+		<error line="4" number="30002" message="Type 'Hashtable' is not defined." />
 	</test>
 	<test id="1843" name="30182" expectedexitcode="1">
 		<file>Errors\30182.vb</file>
@@ -7530,6 +7585,7 @@
 		<file>CompileTime\MethodResolution1.vb</file>
 	</test>
 	<test id="1847" name="Boolean2" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Boolean2.vb</file>
 	</test>
 	<test id="1848" name="30201-1" expectedexitcode="1" expectedvbcexitcode="1">
@@ -7540,6 +7596,7 @@
 		<vbcerror line="2" number="30201" message="Expression expected." />
 	</test>
 	<test id="1849" name="ByRef13" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\ByRef13.vb</file>
 	</test>
 	<test id="1850" name="30311-38" expectedexitcode="1" target="exe">
@@ -7550,6 +7607,7 @@
 		<file>1Declarations\Optional3.vb</file>
 	</test>
 	<test id="1851" name="For7" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\For7.vb</file>
 	</test>
 	<test id="1853" name="30108-1" expectedexitcode="1" target="exe">
@@ -7572,13 +7630,14 @@
 		<file>1Declarations\Delegate8.vb</file>
 	</test>
 	<test id="1858" name="ByRefCType1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>RunTime\ByRefCType1.vb</file>
 	</test>
 	<test id="1859" name="ArrayCreationExpression6" knownfailure="We crash instead of showing correct error message (or compile like vb10 does)" expectedvbcexitcode="0">
 		<file>CompileTime\ArrayCreationExpression6.vb</file>
 	</test>
 	<test id="1860" name="MethodsWithPointers1">
-		<arguments>-r:MethodsWithPointers1_CS.dll</arguments>
+		<arguments>-r:MethodsWithPointers1_CS.dll /nowarn</arguments>
 		<file>CompileTime\MethodsWithPointers1.vb</file>
 		<dependency>Bin\MethodsWithPointers1_CS.dll</dependency>
 	</test>
@@ -7589,21 +7648,26 @@
 		<vbcerror line="6" number="30657" message="'C' has a return type that is not supported or parameter types that are not supported." />
 	</test>
 	<test id="1862" name="InferFor1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\InferFor1.vb</file>
 	</test>
 	<test id="1863" name="30983" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30983.vb</file>
 		<error number="30983" />
 	</test>
 	<test id="1864" name="30983-1" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30983-1.vb</file>
 		<error number="30983" />
 	</test>
 	<test id="1865" name="30983-2" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30983-2.vb</file>
 		<error number="30983" />
 	</test>
 	<test id="1866" name="30983-3" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30983-3.vb</file>
 		<error number="30983" />
 	</test>
@@ -7616,6 +7680,7 @@
 		<error number="30451" />
 	</test>
 	<test id="1869" name="MethodInvocation24" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\MethodInvocation24.vb</file>
 	</test>
 	<test id="1870" name="30375" expectedexitcode="1">
@@ -7666,6 +7731,7 @@
 		<error number="30524" />
 	</test>
 	<test id="1883" name="ArrayRef2">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\ArrayRef2.vb</file>
 	</test>
 	<test id="1884" name="Attributes7">
@@ -7684,6 +7750,7 @@
 		<error number="30562" />
 	</test>
 	<test id="1888" name="Module3" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Module3.vb</file>
 	</test>
 	<test id="1889" name="PropertyAccess6" target="exe">
@@ -7701,6 +7768,7 @@
 		<error number="30469" />
 	</test>
 	<test id="1893" name="AddressOfExpression4" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\AddressOfExpression4.vb</file>
 	</test>
 	<test id="1894" name="Nullable2" mytype="empty">
@@ -7774,6 +7842,7 @@
 		<error number="32050" />
 	</test>
 	<test id="1910" name="Nullable3" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Nullable3.vb</file>
 	</test>
 	<test id="1911" name="30311-40" expectedexitcode="1" target="exe">
@@ -7844,6 +7913,7 @@
 		<error number="30530" />
 	</test>
 	<test id="1928" name="Property9" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Property9.vb</file>
 	</test>
 	<test id="1929" name="33101-1" expectedexitcode="1" target="exe">
@@ -7874,6 +7944,7 @@
 		<file>CompileTime2\TypeArguments17.vb</file>
 	</test>
 	<test id="1936" name="32083-5" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\32083-5.vb</file>
 		<error number="32083" />
 	</test>
@@ -8005,6 +8076,7 @@
 		<error number="30512" />
 	</test>
 	<test id="1965" name="UserConversion2" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\UserConversion2.vb</file>
 	</test>
 	<test id="1966" name="30311-54" expectedexitcode="1" target="exe">
@@ -8022,6 +8094,7 @@
 		<error number="30512" />
 	</test>
 	<test id="1969" name="UserConversion3" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\UserConversion3.vb</file>
 	</test>
 	<test id="1970" name="30311-55" expectedexitcode="1" target="exe">
@@ -8029,12 +8102,15 @@
 		<error number="30311" />
 	</test>
 	<test id="1971" name="CType7" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\CType7.vb</file>
 	</test>
 	<test id="1972" name="Nullable4" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Nullable4.vb</file>
 	</test>
 	<test id="1973" name="30512-22" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-22.vb</file>
 		<error number="30512" />
 	</test>
@@ -8061,24 +8137,30 @@
 		<file>Bugs\bug-504791.vb</file>
 	</test>
 	<test id="1980" name="bug-438656" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-438656.vb</file>
 	</test>
 	<test id="1981" name="ImplicitLineContinuationsAssignmentOperator">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\AssignmentOperator.vb</file>
 	</test>
 	<test id="1982" name="ImplicitLineContinuationsBinaryOperator" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\BinaryOperator.vb</file>
 	</test>
 	<test id="1983" name="ImplicitLineContinuationsComma" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Comma.vb</file>
 	</test>
 	<test id="1984" name="ImplicitLineContinuationsConcatenation" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Concatenation.vb</file>
 	</test>
 	<test id="1985" name="ImplicitLineContinuationsCurlyBraces" knownfailure="Pending implementation of object initializers" mytype="empty">
 		<file>CompileTime2\CurlyBraces.vb</file>
 	</test>
 	<test id="1986" name="ImplicitLineContinuationsForEach" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\ForEach.vb</file>
 	</test>
 	<test id="1987" name="ImplicitLineContinuationsFrom" knownfailure="Pending implementation of implicit line continuations" mytype="empty">
@@ -8086,9 +8168,11 @@
 		<file>CompileTime2\From.vb</file>
 	</test>
 	<test id="1988" name="ImplicitLineContinuationsIsandIsNotOperators" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\IsandIsNotOperators.vb</file>
 	</test>
 	<test id="1989" name="ImplicitLineContinuationsParenthesis" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Parenthesis.vb</file>
 	</test>
 	<test id="1990" name="30203-ImplicitLineContinuationsClassonnewline" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
@@ -8136,6 +8220,7 @@
 		<error number="30002" />
 	</test>
 	<test id="1997" name="NestedDeclarations2" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\NestedDeclarations2.vb</file>
 	</test>
 	<test id="1998" name="30002-2" expectedexitcode="1">
@@ -8174,9 +8259,11 @@
 		<error number="30002" />
 	</test>
 	<test id="2007" name="NestedType4" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\NestedType4.vb</file>
 	</test>
 	<test id="2008" name="StaticVariable6" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime\StaticVariable6.vb</file>
 	</test>
 	<test id="2009" name="bug-674365" mytype="empty">
@@ -8187,6 +8274,7 @@
 		<error number="30648" />
 	</test>
 	<test id="2011" name="bug-438669" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>Bugs\bug-438669.vb</file>
 	</test>
 	<test id="2012" name="bug-438672" mytype="empty">
@@ -8229,326 +8317,407 @@
 		<error number="30512" />
 	</test>
 	<test id="2022" name="30512-31" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-31.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2023" name="30512-32" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-32.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2024" name="30512-33" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-33.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2025" name="30512-34" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-34.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2026" name="30512-35" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-35.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2027" name="30512-36" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-36.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2028" name="30512-37" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-37.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2029" name="30512-38" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-38.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2030" name="30512-39" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-39.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2031" name="30512-40" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-40.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2032" name="30512-41" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-41.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2033" name="30512-42" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-42.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2034" name="30512-43" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-43.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2035" name="30512-44" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-44.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2036" name="30512-45" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-45.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2037" name="30512-46" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-46.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2038" name="30512-47" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-47.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2039" name="30512-48" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-48.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2040" name="30512-49" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-49.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2041" name="30512-50" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-50.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2042" name="30512-51" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-51.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2043" name="30512-52" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-52.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2044" name="30512-53" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-53.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2045" name="30512-54" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-54.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2046" name="30512-55" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-55.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2047" name="30512-56" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-56.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2048" name="30512-57" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-57.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2049" name="30512-58" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-58.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2050" name="30512-59" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-59.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2051" name="30512-60" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-60.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2052" name="30512-61" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-61.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2053" name="30512-62" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-62.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2054" name="30512-63" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-63.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2055" name="30512-64" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-64.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2056" name="30512-65" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-65.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2057" name="30512-66" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-66.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2058" name="30512-67" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-67.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2059" name="30512-68" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-68.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2060" name="30512-69" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-69.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2061" name="30512-70" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-70.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2062" name="30512-71" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-71.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2063" name="30512-72" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-72.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2064" name="30512-73" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-73.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2065" name="30512-74" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-74.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2066" name="30512-75" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-75.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2067" name="30512-76" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-76.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2068" name="30512-77" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-77.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2069" name="30512-78" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-78.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2070" name="30512-79" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-79.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2071" name="30512-80" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-80.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2072" name="30512-81" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-81.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2073" name="30512-82" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-82.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2074" name="30512-83" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-83.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2075" name="30512-84" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-84.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2076" name="30512-85" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-85.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2077" name="30512-86" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-86.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2078" name="30512-87" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-87.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2079" name="30512-88" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-88.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2080" name="30512-89" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-89.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2081" name="30512-90" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-90.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2082" name="30512-91" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-91.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2083" name="30512-92" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-92.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2084" name="30512-93" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-93.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2085" name="30512-94" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-94.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2086" name="30512-95" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-95.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2087" name="30512-96" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-96.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2088" name="30512-97" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-97.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2089" name="30512-98" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-98.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2090" name="30512-99" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-99.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2091" name="30512-100" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-100.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2092" name="30512-101" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-101.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2093" name="30512-102" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-102.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2094" name="30512-103" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-103.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2095" name="30512-104" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-104.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2096" name="30512-105" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-105.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2097" name="30512-106" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-106.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2098" name="30512-107" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-107.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2099" name="30512-108" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-108.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2100" name="30512-109" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-109.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2101" name="30512-110" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-110.vb</file>
 		<error number="30512" />
 	</test>
 	<test id="2102" name="30512-111" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30512-111.vb</file>
 		<error number="30512" />
 	</test>
@@ -8558,6 +8727,7 @@
 		<error number="30124" />
 	</test>
 	<test id="2104" name="30491-1" expectedexitcode="1" target="exe">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30491-1.vb</file>
 		<error number="30491" />
 	</test>
@@ -8828,10 +8998,12 @@
 		<file>CompileTime2\TypeConversion.vb</file>
 	</test>
 	<test id="2161" name="30311-66" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30311-66.vb</file>
 		<error number="30311" />
 	</test>
 	<test id="2162" name="30311-67" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30311-67.vb</file>
 		<error number="30311" />
 	</test>
@@ -8842,17 +9014,19 @@
 		<vbcerror line="6" number="30311" message="Value of type 'X' cannot be converted to 'D'." />
 	</test>
 	<test id="2164" name="TypeConversionIntrinsicChar" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicChar.vb</file>
 	</test>
 	<test id="2165" name="TypeConversionIntrinsicDateTimeStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDateTime.vb</file>
 	</test>
 	<test id="2166" name="TypeConversionIntrinsicDateTime" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDateTime.vb</file>
 	</test>
 	<test id="2167" name="TypeConversionIntrinsicDateTimeStrictErrors" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDateTime.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'Date'." />
 		<error line="9" number="30311" message="Value of type 'Byte' cannot be converted to 'Date'." />
@@ -8920,7 +9094,7 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Date'." />
 	</test>
 	<test id="2168" name="TypeConversionIntrinsicDateTimeErrors" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDateTime.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'Date'." />
 		<error line="9" number="30311" message="Value of type 'Byte' cannot be converted to 'Date'." />
@@ -8980,11 +9154,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Date'." />
 	</test>
 	<test id="2169" name="TypeConversionIntrinsicCharStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicChar.vb</file>
 	</test>
 	<test id="2170" name="TypeConversionIntrinsicCharError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS /quiet</arguments>
+		<arguments>/define:ERRORS /quiet /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicChar.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'Char'." />
 		<error line="9" number="32007" message="'Byte' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit." />
@@ -9044,7 +9218,7 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Char'." />
 	</test>
 	<test id="2171" name="TypeConversionIntrinsicCharStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicChar.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'Char'." />
 		<error line="9" number="32007" message="'Byte' values cannot be converted to 'Char'. Use 'Microsoft.VisualBasic.ChrW' to interpret a numeric value as a Unicode character or first convert it to 'String' to produce a digit." />
@@ -9176,10 +9350,11 @@
 		<vbcerror line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Char'." />
 	</test>
 	<test id="2172" name="TypeConversionIntrinsicBoolean" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicBoolean.vb</file>
 	</test>
 	<test id="2173" name="TypeConversionIntrinsicBooleanError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS  /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicBoolean.vb</file>
 		<error line="40" number="30311" message="Value of type 'Char' cannot be converted to 'Boolean'." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Boolean'." />
@@ -9197,9 +9372,73 @@
 	<test id="2174" name="TypeConversionIntrinsicBooleanStrict" mytype="empty">
 		<arguments>/optionstrict+ /define:STRICT</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicBoolean.vb</file>
+		<error line="3" number="42024" message="Unused local variable: 'i_byte'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_sbyte'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_short'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_ushort'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_int'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_uint'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_long'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_ulong'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_dec'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_sng'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_dbl'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_chr'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_str'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_dt'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_dbnull'." />
+		<error line="3" number="42024" message="Unused local variable: 'i_obj'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_byte'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_sbyte'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_short'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_ushort'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_int'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_uint'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_long'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_ulong'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_dec'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_sng'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_dbl'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_chr'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_str'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_dt'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_dbnull'." />
+		<error line="4" number="42024" message="Unused local variable: 'o_obj'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_byte'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_sbyte'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_short'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_ushort'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_int'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_uint'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_long'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_ulong'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_dec'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_sng'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_dbl'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_chr'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_str'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_dt'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_dbnull'." />
+		<error line="56" number="42024" message="Unused local variable: 'i_obj'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_byte'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_sbyte'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_short'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_ushort'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_int'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_uint'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_long'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_ulong'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_dec'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_sng'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_dbl'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_chr'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_str'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_dt'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_dbnull'." />
+		<error line="108" number="42024" message="Unused local variable: 'o_obj'." />
 	</test>
 	<test id="2175" name="TypeConversionIntrinsicBooleanStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicBoolean.vb</file>
 		<error line="7" number="30512" message="Option Strict On disallows implicit conversions from 'Byte' to 'Boolean'." />
 		<error line="10" number="30512" message="Option Strict On disallows implicit conversions from 'SByte' to 'Boolean'." />
@@ -9267,14 +9506,15 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Boolean'." />
 	</test>
 	<test id="2176" name="TypeConversionIntrinsicString" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicString.vb</file>
 	</test>
 	<test id="2177" name="TypeConversionIntrinsicStringStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicString.vb</file>
 	</test>
 	<test id="2178" name="TypeConversionIntrinsicStringError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicString.vb</file>
 		<error line="49" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'String'." />
 		<error line="101" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'String'." />
@@ -9282,7 +9522,7 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'String'." />
 	</test>
 	<test id="2179" name="TypeConversionIntrinsicStringStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicString.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'String'." />
 		<error line="9" number="30512" message="Option Strict On disallows implicit conversions from 'Byte' to 'String'." />
@@ -9346,25 +9586,27 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'String'." />
 	</test>
 	<test id="2180" name="TypeConversionIntrinsicObject" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicObject.vb</file>
 	</test>
 	<test id="2181" name="TypeConversionIntrinsicObjectError" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicObject.vb</file>
 	</test>
 	<test id="2182" name="TypeConversionIntrinsicObjectStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicObject.vb</file>
 	</test>
 	<test id="2183" name="TypeConversionIntrinsicObjectStrictError" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicObject.vb</file>
 	</test>
 	<test id="2184" name="TypeConversionIntrinsicDBNull" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDBNull.vb</file>
 	</test>
 	<test id="2185" name="TypeConversionIntrinsicDBNullError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDBNull.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'System.DBNull'." />
 		<error line="9" number="30311" message="Value of type 'Byte' cannot be converted to 'System.DBNull'." />
@@ -9428,11 +9670,11 @@
 		<error line="209" number="30311" message="Value of type 'Date' cannot be converted to 'System.DBNull'." />
 	</test>
 	<test id="2186" name="TypeConversionIntrinsicDBNullStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDBNull.vb</file>
 	</test>
 	<test id="2187" name="TypeConversionIntrinsicDBNullStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDBNull.vb</file>
 		<error line="6" number="30311" message="Value of type 'Boolean' cannot be converted to 'System.DBNull'." />
 		<error line="9" number="30311" message="Value of type 'Byte' cannot be converted to 'System.DBNull'." />
@@ -9500,10 +9742,11 @@
 		<error line="215" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'System.DBNull'." />
 	</test>
 	<test id="2188" name="TypeConversionIntrinsicDecimal" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDecimal.vb</file>
 	</test>
 	<test id="2189" name="TypeConversionIntrinsicDecimalError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDecimal.vb</file>
 		<error line="40" number="30311" message="Value of type 'Char' cannot be converted to 'Decimal'." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Decimal'." />
@@ -9519,11 +9762,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Decimal'." />
 	</test>
 	<test id="2190" name="TypeConversionIntrinsicDecimalStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDecimal.vb</file>
 	</test>
 	<test id="2191" name="TypeConversionIntrinsicDecimalStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDecimal.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Decimal'." />
 		<error line="34" number="30512" message="Option Strict On disallows implicit conversions from 'Single' to 'Decimal'." />
@@ -9559,10 +9802,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Decimal'." />
 	</test>
 	<test id="2192" name="TypeConversionIntrinsicSingle" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSingle.vb</file>
 	</test>
 	<test id="2193" name="TypeConversionIntrinsicSingleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSingle.vb</file>
 		<error line="40" number="30311" message="Value of type 'Char' cannot be converted to 'Single'." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Single'." />
@@ -9578,11 +9822,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Single'." />
 	</test>
 	<test id="2194" name="TypeConversionIntrinsicSingleStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSingle.vb</file>
 	</test>
 	<test id="2195" name="TypeConversionIntrinsicSingleStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSingle.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Single'." />
 		<error line="37" number="30512" message="Option Strict On disallows implicit conversions from 'Double' to 'Single'." />
@@ -9614,10 +9858,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Single'." />
 	</test>
 	<test id="2196" name="TypeConversionIntrinsicDouble" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDouble.vb</file>
 	</test>
 	<test id="2197" name="TypeConversionIntrinsicDoubleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDouble.vb</file>
 		<error line="40" number="30311" message="Value of type 'Char' cannot be converted to 'Double'." />
 		<error line="46" number="30532" message="Conversion from 'Date' to 'Double' requires calling the 'Date.ToOADate' method." />
@@ -9633,11 +9878,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Double'." />
 	</test>
 	<test id="2198" name="TypeConversionIntrinsicDoubleStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDouble.vb</file>
 	</test>
 	<test id="2199" name="TypeConversionIntrinsicDoubleStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicDouble.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Double'." />
 		<error line="40" number="30311" message="Value of type 'Char' cannot be converted to 'Double'." />
@@ -9665,10 +9910,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Double'." />
 	</test>
 	<test id="2200" name="TypeConversionIntrinsicByte" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicByte.vb</file>
 	</test>
 	<test id="2201" name="TypeConversionIntrinsicByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicByte.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'Byte'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Byte'." />
@@ -9684,11 +9930,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Byte'." />
 	</test>
 	<test id="2202" name="TypeConversionIntrinsicByteStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicByte.vb</file>
 	</test>
 	<test id="2203" name="TypeConversionIntrinsicByteStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicByte.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Byte'." />
 		<error line="10" number="30512" message="Option Strict On disallows implicit conversions from 'SByte' to 'Byte'." />
@@ -9756,10 +10002,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Byte'." />
 	</test>
 	<test id="2204" name="TypeConversionIntrinsicSByte" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSByte.vb</file>
 	</test>
 	<test id="2205" name="TypeConversionIntrinsicSByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSByte.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'SByte'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'SByte'." />
@@ -9775,11 +10022,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'SByte'." />
 	</test>
 	<test id="2206" name="TypeConversionIntrinsicSByteStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSByte.vb</file>
 	</test>
 	<test id="2207" name="TypeConversionIntrinsicSByteStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicSByte.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'SByte'." />
 		<error line="9" number="30512" message="Option Strict On disallows implicit conversions from 'Byte' to 'SByte'." />
@@ -9847,10 +10094,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'SByte'." />
 	</test>
 	<test id="2208" name="TypeConversionIntrinsicUInt16" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt16.vb</file>
 	</test>
 	<test id="2209" name="TypeConversionIntrinsicUInt16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt16.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'UShort'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'UShort'." />
@@ -9866,11 +10114,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'UShort'." />
 	</test>
 	<test id="2210" name="TypeConversionIntrinsicUInt16Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt16.vb</file>
 	</test>
 	<test id="2211" name="TypeConversionIntrinsicUInt16StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt16.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'UShort'." />
 		<error line="12" number="30512" message="Option Strict On disallows implicit conversions from 'SByte' to 'UShort'." />
@@ -9934,10 +10182,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'UShort'." />
 	</test>
 	<test id="2212" name="TypeConversionIntrinsicInt16" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt16.vb</file>
 	</test>
 	<test id="2213" name="TypeConversionIntrinsicInt16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt16.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'Short'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Short'." />
@@ -9953,11 +10202,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Short'." />
 	</test>
 	<test id="2214" name="TypeConversionIntrinsicInt16Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt16.vb</file>
 	</test>
 	<test id="2215" name="TypeConversionIntrinsicInt16StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt16.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Short'." />
 		<error line="16" number="30512" message="Option Strict On disallows implicit conversions from 'UShort' to 'Short'." />
@@ -10017,10 +10266,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Short'." />
 	</test>
 	<test id="2216" name="TypeConversionIntrinsicUInt32" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt32.vb</file>
 	</test>
 	<test id="2217" name="TypeConversionIntrinsicUInt32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt32.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'UInteger'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'UInteger'." />
@@ -10036,11 +10286,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'UInteger'." />
 	</test>
 	<test id="2218" name="TypeConversionIntrinsicUInt32Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt32.vb</file>
 	</test>
 	<test id="2219" name="TypeConversionIntrinsicUInt32StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt32.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'UInteger'." />
 		<error line="12" number="30512" message="Option Strict On disallows implicit conversions from 'SByte' to 'UInteger'." />
@@ -10100,10 +10350,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'UInteger'." />
 	</test>
 	<test id="2220" name="TypeConversionIntrinsicInt32" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt32.vb</file>
 	</test>
 	<test id="2221" name="TypeConversionIntrinsicInt32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt32.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Integer'." />
@@ -10119,11 +10370,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Integer'." />
 	</test>
 	<test id="2222" name="TypeConversionIntrinsicInt32Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt32.vb</file>
 	</test>
 	<test id="2223" name="TypeConversionIntrinsicInt32StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt32.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Integer'." />
 		<error line="22" number="30512" message="Option Strict On disallows implicit conversions from 'UInteger' to 'Integer'." />
@@ -10175,10 +10426,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Integer'." />
 	</test>
 	<test id="2224" name="TypeConversionIntrinsicUInt64" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt64.vb</file>
 	</test>
 	<test id="2225" name="TypeConversionIntrinsicUInt64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt64.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'ULong'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'ULong'." />
@@ -10194,11 +10446,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'ULong'." />
 	</test>
 	<test id="2226" name="TypeConversionIntrinsicUInt64Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt64.vb</file>
 	</test>
 	<test id="2227" name="TypeConversionIntrinsicUInt64StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicUInt64.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'ULong'." />
 		<error line="12" number="30512" message="Option Strict On disallows implicit conversions from 'SByte' to 'ULong'." />
@@ -10254,10 +10506,11 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'ULong'." />
 	</test>
 	<test id="2228" name="TypeConversionIntrinsicInt64" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt64.vb</file>
 	</test>
 	<test id="2229" name="TypeConversionIntrinsicInt64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:ERRORS</arguments>
+		<arguments>/define:ERRORS /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt64.vb</file>
 		<error line="40" number="32006" message="'Char' values cannot be converted to 'Long'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
 		<error line="46" number="30311" message="Value of type 'Date' cannot be converted to 'Long'." />
@@ -10273,11 +10526,11 @@
 		<error line="204" number="30311" message="Value of type 'System.DBNull' cannot be converted to 'Long'." />
 	</test>
 	<test id="2230" name="TypeConversionIntrinsicInt64Strict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt64.vb</file>
 	</test>
 	<test id="2231" name="TypeConversionIntrinsicInt64StrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\TypeConversionIntrinsicInt64.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Boolean' to 'Long'." />
 		<error line="28" number="30512" message="Option Strict On disallows implicit conversions from 'ULong' to 'Long'." />
@@ -10321,6 +10574,7 @@
 		<error line="207" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Long'." />
 	</test>
 	<test id="2232" name="Enum6" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\Enum6.vb</file>
 	</test>
 	<test id="2233" name="Nullable5" knownfailure="Not implemented: binary/unary operators on nullable types" mytype="empty">
@@ -10370,6 +10624,7 @@
 		<error line="2" number="30650" message="Enums must be declared as an integral type." />
 	</test>
 	<test id="2242" name="30451-3" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30451-3.vb</file>
 		<error line="5" number="30451" message="'item2' is not declared. It may be inaccessible due to its protection level." />
 	</test>
@@ -10379,9 +10634,11 @@
 		<error line="5" number="30070" message="Next control variable does not match For loop control variable 'item'." />
 	</test>
 	<test id="2244" name="MethodOverloads" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\MethodOverloads.vb</file>
 	</test>
 	<test id="2245" name="MethodOverloadsStrict" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\MethodOverloadsStrict.vb</file>
 	</test>
 	<test id="2246" name="DictionaryAccessExpressionStrict" target="exe" mytype="empty">
@@ -10404,11 +10661,12 @@
 		<error line="9" number="30367" message="Class 'A' cannot be indexed because it has no default property." />
 	</test>
 	<test id="2251" name="OperatorIntrinsicUnaryMinus" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryMinus.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
 	<test id="2252" name="OperatorIntrinsicUnaryMinusStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryMinus.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
@@ -10432,11 +10690,12 @@
 		<error line="46" number="30038" message="Option Strict On prohibits operands of type Object for operator '-'." />
 	</test>
 	<test id="2255" name="OperatorIntrinsicUnaryNot" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryNot.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
 	<test id="2256" name="OperatorIntrinsicUnaryNotStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryNot.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
@@ -10462,11 +10721,12 @@
 		<error line="50" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Not'." />
 	</test>
 	<test id="2259" name="OperatorIntrinsicUnaryPlus" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryPlus.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
 	<test id="2260" name="OperatorIntrinsicUnaryPlusStrict" mytype="empty">
-		<arguments>/optionstrict+ /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicUnaryPlus.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
@@ -18870,6 +19130,7 @@
 		<vbcerror line="1118" number="30038" message="Option Strict On prohibits operands of type Object for operator '...'." />
 	</test>
 	<test id="2767" name="OperatorIntrinsic_LShift_" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
@@ -18879,7 +19140,7 @@
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
 	<test id="2769" name="OperatorIntrinsic_LShift_BooleanError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Boolean_ERRORS</arguments>
+		<arguments>/define:Boolean_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="54" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -18944,7 +19205,7 @@
 		<vbcerror line="68" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2771" name="OperatorIntrinsic_LShift_ByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Byte_ERRORS</arguments>
+		<arguments>/define:Byte_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="109" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -18969,7 +19230,7 @@
 		<error line="123" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2773" name="OperatorIntrinsic_LShift_SByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:SByte_ERRORS</arguments>
+		<arguments>/define:SByte_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="164" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -18994,7 +19255,7 @@
 		<error line="178" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2775" name="OperatorIntrinsic_LShift_Int16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int16_ERRORS</arguments>
+		<arguments>/define:Int16_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="219" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19019,7 +19280,7 @@
 		<error line="233" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2777" name="OperatorIntrinsic_LShift_UInt16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt16_ERRORS</arguments>
+		<arguments>/define:UInt16_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="274" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19044,7 +19305,7 @@
 		<error line="288" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2779" name="OperatorIntrinsic_LShift_Int32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int32_ERRORS</arguments>
+		<arguments>/define:Int32_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="329" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19069,7 +19330,7 @@
 		<error line="343" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2781" name="OperatorIntrinsic_LShift_UInt32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt32_ERRORS</arguments>
+		<arguments>/define:UInt32_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="384" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19094,7 +19355,7 @@
 		<error line="398" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2783" name="OperatorIntrinsic_LShift_Int64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int64_ERRORS</arguments>
+		<arguments>/define:Int64_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="439" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19119,7 +19380,7 @@
 		<error line="453" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2785" name="OperatorIntrinsic_LShift_UInt64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt64_ERRORS</arguments>
+		<arguments>/define:UInt64_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="494" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19144,7 +19405,7 @@
 		<error line="508" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2787" name="OperatorIntrinsic_LShift_DecimalError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Decimal_ERRORS</arguments>
+		<arguments>/define:Decimal_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="559" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19209,7 +19470,7 @@
 		<vbcerror line="573" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2789" name="OperatorIntrinsic_LShift_SingleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Single_ERRORS</arguments>
+		<arguments>/define:Single_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="624" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19274,7 +19535,7 @@
 		<vbcerror line="638" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2791" name="OperatorIntrinsic_LShift_DoubleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Double_ERRORS</arguments>
+		<arguments>/define:Double_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="689" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19339,7 +19600,7 @@
 		<vbcerror line="703" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2793" name="OperatorIntrinsic_LShift_CharError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Char_ERRORS</arguments>
+		<arguments>/define:Char_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="706" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Char' and 'Boolean'." />
@@ -19383,7 +19644,7 @@
 		<error line="754" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Char' and 'Object'." />
 	</test>
 	<test id="2795" name="OperatorIntrinsic_LShift_StringError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:String_ERRORS</arguments>
+		<arguments>/define:String_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="805" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -19448,7 +19709,7 @@
 		<vbcerror line="819" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
 	<test id="2797" name="OperatorIntrinsic_LShift_DateTimeError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:DateTime_ERRORS</arguments>
+		<arguments>/define:DateTime_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="822" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Date' and 'Boolean'." />
@@ -19492,7 +19753,7 @@
 		<error line="870" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Date' and 'Object'." />
 	</test>
 	<test id="2799" name="OperatorIntrinsic_LShift_DBNullError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:DBNull_ERRORS</arguments>
+		<arguments>/define:DBNull_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="873" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Boolean'." />
@@ -19536,13 +19797,13 @@
 		<error line="921" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Object'." />
 	</test>
 	<test id="2801" name="OperatorIntrinsic_LShift_ObjectError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Object_ERRORS</arguments>
+		<arguments>/define:Object_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="990" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2802" name="OperatorIntrinsic_LShift_ObjectStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="925" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
@@ -22992,6 +23253,7 @@
 		<error line="800" number="30038" message="Option Strict On prohibits operands of type Object for operator '/'." />
 	</test>
 	<test id="3055" name="OperatorIntrinsic_RShift_" target="exe" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
@@ -23001,7 +23263,7 @@
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
 	<test id="3057" name="OperatorIntrinsic_RShift_BooleanError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Boolean_ERRORS</arguments>
+		<arguments>/define:Boolean_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="54" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23066,7 +23328,7 @@
 		<vbcerror line="68" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3059" name="OperatorIntrinsic_RShift_ByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Byte_ERRORS</arguments>
+		<arguments>/define:Byte_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="109" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23091,7 +23353,7 @@
 		<error line="123" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3061" name="OperatorIntrinsic_RShift_SByteError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:SByte_ERRORS</arguments>
+		<arguments>/define:SByte_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="164" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23116,7 +23378,7 @@
 		<error line="178" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3063" name="OperatorIntrinsic_RShift_Int16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int16_ERRORS</arguments>
+		<arguments>/define:Int16_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="219" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23141,7 +23403,7 @@
 		<error line="233" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3065" name="OperatorIntrinsic_RShift_UInt16Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt16_ERRORS</arguments>
+		<arguments>/define:UInt16_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="274" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23166,7 +23428,7 @@
 		<error line="288" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3067" name="OperatorIntrinsic_RShift_Int32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int32_ERRORS</arguments>
+		<arguments>/define:Int32_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="329" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23191,7 +23453,7 @@
 		<error line="343" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3069" name="OperatorIntrinsic_RShift_UInt32Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt32_ERRORS</arguments>
+		<arguments>/define:UInt32_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="384" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23216,7 +23478,7 @@
 		<error line="398" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3071" name="OperatorIntrinsic_RShift_Int64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Int64_ERRORS</arguments>
+		<arguments>/define:Int64_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="439" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23241,7 +23503,7 @@
 		<error line="453" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3073" name="OperatorIntrinsic_RShift_UInt64Error" expectedexitcode="1" mytype="empty">
-		<arguments>/define:UInt64_ERRORS</arguments>
+		<arguments>/define:UInt64_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="494" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23266,7 +23528,7 @@
 		<error line="508" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3075" name="OperatorIntrinsic_RShift_DecimalError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Decimal_ERRORS</arguments>
+		<arguments>/define:Decimal_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="559" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23331,7 +23593,7 @@
 		<vbcerror line="573" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3077" name="OperatorIntrinsic_RShift_SingleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Single_ERRORS</arguments>
+		<arguments>/define:Single_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="624" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23396,7 +23658,7 @@
 		<vbcerror line="638" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3079" name="OperatorIntrinsic_RShift_DoubleError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Double_ERRORS</arguments>
+		<arguments>/define:Double_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="689" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23461,7 +23723,7 @@
 		<vbcerror line="703" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3081" name="OperatorIntrinsic_RShift_CharError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Char_ERRORS</arguments>
+		<arguments>/define:Char_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="706" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Char' and 'Boolean'." />
@@ -23505,7 +23767,7 @@
 		<error line="754" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Char' and 'Object'." />
 	</test>
 	<test id="3083" name="OperatorIntrinsic_RShift_StringError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:String_ERRORS</arguments>
+		<arguments>/define:String_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="805" number="32006" message="'Char' values cannot be converted to 'Integer'. Use 'Microsoft.VisualBasic.AscW' to interpret a character as a Unicode value or 'Microsoft.VisualBasic.Val' to interpret it as a digit." />
@@ -23570,7 +23832,7 @@
 		<vbcerror line="819" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
 	<test id="3085" name="OperatorIntrinsic_RShift_DateTimeError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:DateTime_ERRORS</arguments>
+		<arguments>/define:DateTime_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="822" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Date' and 'Boolean'." />
@@ -23614,7 +23876,7 @@
 		<error line="870" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Date' and 'Object'." />
 	</test>
 	<test id="3087" name="OperatorIntrinsic_RShift_DBNullError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:DBNull_ERRORS</arguments>
+		<arguments>/define:DBNull_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="873" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
@@ -23658,13 +23920,13 @@
 		<error line="921" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Object'." />
 	</test>
 	<test id="3089" name="OperatorIntrinsic_RShift_ObjectError" expectedexitcode="1" mytype="empty">
-		<arguments>/define:Object_ERRORS</arguments>
+		<arguments>/define:Object_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="990" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="3090" name="OperatorIntrinsic_RShift_ObjectStrictError" expectedexitcode="1" mytype="empty">
-		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
+		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 		<error line="925" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
@@ -24232,10 +24494,12 @@
 		<error line="10" number="30518" message="Overload resolution failed because no accessible 'N' can be called with these arguments:" />
 	</test>
 	<test id="3129" name="30588" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30588.vb</file>
 		<error line="11" number="30588" message="Omitted argument cannot match a ParamArray parameter." />
 	</test>
 	<test id="3130" name="30587" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30587.vb</file>
 		<error line="11" number="30587" message="Named argument cannot match a ParamArray parameter." />
 	</test>
@@ -24244,6 +24508,7 @@
 		<error line="4" number="32021" message="Parameter 'i' in 'Public Sub G(i As Integer, ParamArray args() As String)' already has a matching omitted argument." />
 	</test>
 	<test id="3132" name="30057-2" expectedexitcode="1">
+		<arguments>/nowarn</arguments>
 		<file>Errors\30057-2.vb</file>
 		<error line="11" number="30057" message="Too many arguments to 'Public Sub Z()'." />
 	</test>
@@ -24255,6 +24520,31 @@
 	<test id="3134" name="30217" expectedexitcode="1" mytype="empty">
 		<file>Errors\30217.vb</file>
 		<error line="1" number="30217" message="String constant expected." />
+	</test>
+	<test id="3135" name="bug-2087" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-2087.vb</file>
+		<error line="14" number="32000" message="Local variable 'p' cannot be referred to before it is declared." />
+	</test>
+	<test id="3136" name="DoLoopWhile2" target="exe" mytype="empty">
+		<file>CompileTime2\DoLoopWhile2.vb</file>
+	</test>
+	<test id="3137" name="bug-3769" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-3769.vb</file>
+		<error line="8" number="32000" message="Local variable 'a' cannot be referred to before it is declared." />
+	</test>
+	<test id="3138" name="bug-5630" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-5630.vb</file>
+		<error line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
+		<vbcerror line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
+	</test>
+	<test id="3139" name="30022" expectedexitcode="1" mytype="empty">
+		<file>Errors\30022.vb</file>
+		<error line="6" number="30022" message="Properties declared 'ReadOnly' cannot have a 'Set'." />
+	</test>
+	<test id="3140" name="30023" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn:42355</arguments>
+		<file>Errors\30023.vb</file>
+		<error line="3" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
 	</test>
 	<test id="3141" name="30249" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\30249.vb</file>
@@ -24289,63 +24579,111 @@
 		<file>Errors\30099.vb</file>
 		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
 	</test>
-	<test id="3135" name="AutoImpProp" outputvbcassembly="testoutput\AutoImpProp_vbc.exe" outputassembly="testoutput\AutoImpProp.exe" target="exe" mytype="empty">
+	<test id="3149" name="30125" expectedexitcode="1" mytype="empty">
+		<file>Errors\30125.vb</file>
+		<error line="2" number="30125" message="'WriteOnly' property must provide a 'Set'." />
+	</test>
+	<test id="3150" name="30126" expectedexitcode="1" mytype="empty">
+		<file>Errors\30126.vb</file>
+		<error line="2" number="30126" message="'ReadOnly' property must provide a 'Get'." />
+	</test>
+	<test id="3151" name="30124-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30124-1.vb</file>
+		<error line="2" number="30124" message="Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'." />
+	</test>
+	<test id="3152" name="2012" knownfailure="Error message has full path in it" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<arguments>/out:inexistent-dir/2012.dll</arguments>
+		<file>Errors\2012.vb</file>
+		<error number="2012" message="can't open 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\inexistent-dir\2012.dll' for writing" />
+		<vbcerror number="2012" message="can't open 'inexistent-dir/2012.dll' for writing" />
+	</test>
+	<test id="3153" name="31019" knownfailure="Error message has full path in it" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<arguments>/out:testoutput\31019.dll</arguments>
+		<file>Errors\31019.vb</file>
+		<error number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Access to the path 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll' is denied." />
+		<vbcerror number="31019" message="Unable to write to output file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\testoutput\31019.dll': Acceso denegado." />
+	</test>
+	<test id="3154" name="42024-1" knownfailure="Need to report 42104 too" expectedexitcode="1" mytype="empty">
+		<arguments>/warnaserror  /quiet</arguments>
+		<file>Errors\42024-1.vb</file>
+		<error line="7" number="42024" message="Unused local variable: 'UnusedInSyncLock'." />
+		<error line="9" number="42104" message="Variable 'UsedInSyncLock' is used before it has been assigned a value. A null reference exception could result at runtime." />
+		<error line="9" number="31072" message="Warning treated as error : Variable 'UsedInSyncLock' is used before it has been assigned a value. A null reference exception could result at runtime." />
+	</test>
+	<test id="3155" name="2003" knownfailure="Error message has full path in it" expectedexitcode="1" expectedvbcexitcode="-1073740940" mytype="empty">
+		<arguments>@Errors\2003.response @Errors\2003.response</arguments>
+		<file>Errors\2003.vb</file>
+		<error number="2003" message="response file 'D:\Documentos\Rolf\Xamarin\git\mono-basic\vbnc\vbnc\tests\Errors\2003.response' included multiple times" />
+	</test>
+	<test id="3156" name="2014" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn:a,42024 /warnaserror:b,42021</arguments>
+		<file>Errors\Empty.vb</file>
+		<error number="2014" message="the value 'a' is invalid for option 'nowarn'" />
+		<error number="2014" message="the value 'b' is invalid for option 'warnaserror'" />
+	</test>
+	<test id="3157" name="42021-1" expectedexitcode="1" mytype="empty">
+		<arguments>/warnaserror:42021 /optionstrict:custom</arguments>
+		<file>Errors\42021.vb</file>
+		<error line="4" number="42021" message="Function without an 'As' clause; return type of Object assumed." />
+		<error line="4" number="31072" message="Warning treated as error : Function without an 'As' clause; return type of Object assumed." />
+	</test>
+	<test id="3158" name="AutoImpProp" outputvbcassembly="testoutput\AutoImpProp_vbc.exe" outputassembly="testoutput\AutoImpProp.exe" target="exe" mytype="empty">
 		<file>1Declarations\AutoImpProp.vb</file>
 	</test>
-	<test id="3136" name="30205-1" expectedexitcode="1" mytype="empty">
+	<test id="3159" name="30205-1" expectedexitcode="1" mytype="empty">
 		<file>Errors\30205-1.vb</file>
 		<error line="9" number="30205" message="End of statement expected." />
 	</test>
-	<test id="3137" name="30205" expectedexitcode="1" mytype="empty">
+	<test id="3160" name="30205" expectedexitcode="1" mytype="empty">
 		<file>Errors\30205.vb</file>
 		<error line="10" number="30205" message="End of statement expected." />
 	</test>
-	<test id="3138" name="31061" expectedexitcode="1" mytype="empty">
+	<test id="3161" name="31061" expectedexitcode="1" mytype="empty">
 		<file>Errors\31061.vb</file>
 		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
 	</test>
-	<test id="3139" name="36759" expectedexitcode="1" mytype="empty">
+	<test id="3162" name="36759" expectedexitcode="1" mytype="empty">
 		<file>Errors\36759.vb</file>
 		<error line="3" number="36759" message="Auto-implemented properties cannot have parameters." />
 	</test>
-	<test id="3140" name="36714" expectedexitcode="1" mytype="empty">
+	<test id="3163" name="36714" expectedexitcode="1" mytype="empty">
 		<file>Errors\36714.vb</file>
 		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
 		<error line="10" number="36714" message="Expanded Properties cannot be initialized." />
 	</test>
-	<test id="3149" name="30451-4" expectedexitcode="1" mytype="empty">
+	<test id="3164" name="30451-4" expectedexitcode="1" mytype="empty">
 		<file>Errors\30451-4.vb</file>
 		<error line="3" number="30451" message="'SomeFunc' is not declared. It may be inaccessible due to its protection level." />
 	</test>
-	<test id="3150" name="30200-1" expectedexitcode="1" mytype="empty">
+	<test id="3165" name="30200-1" expectedexitcode="1" mytype="empty">
 		<file>Errors\30200-1.vb</file>
 		<error line="3" number="30200" message="'New' is not valid in this context." />
 	</test>
-	<test id="3151" name="30200-2" expectedexitcode="1" mytype="empty">
+	<test id="3166" name="30200-2" expectedexitcode="1" mytype="empty">
 		<file>Errors\30200-2.vb</file>
 		<error line="3" number="30200" message="'New' is not valid in this context." />
 	</test>
-	<test id="3152" name="30200" expectedexitcode="1" mytype="empty">
+	<test id="3167" name="30200" expectedexitcode="1" mytype="empty">
 		<file>Errors\30200.vb</file>
 		<error line="3" number="30200" message="'New' is not valid in this context." />
 	</test>
-	<test id="3155" name="30714-3" expectedexitcode="1" mytype="empty">
+	<test id="3168" name="30714-3" expectedexitcode="1" mytype="empty">
 		<file>Errors\30714-3.vb</file>
 		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
 	</test>
-	<test id="3154" name="36714-1" expectedexitcode="1" mytype="empty">
+	<test id="3169" name="36714-1" expectedexitcode="1" mytype="empty">
 		<file>Errors\36714-1.vb</file>
 		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
 	</test>
-	<test id="3153" name="30200-3" expectedexitcode="1" mytype="empty">
+	<test id="3170" name="30200-3" expectedexitcode="1" mytype="empty">
 		<file>Errors\30200-3.vb</file>
 		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
 	</test>
-	<test id="3156" name="31061-1" expectedexitcode="1" mytype="empty">
+	<test id="3171" name="31061-1" expectedexitcode="1" mytype="empty">
 		<file>Errors\31061-1.vb</file>
 		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
 	</test>
-	<test id="3157" name="30205-2" expectedexitcode="1" mytype="empty">
+	<test id="3172" name="30205-2" expectedexitcode="1" mytype="empty">
 		<file>Errors\30205-2.vb</file>
 		<error line="3" number="30205" message="End of statement expected." />
 	</test>
