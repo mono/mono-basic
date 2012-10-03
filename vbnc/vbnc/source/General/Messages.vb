@@ -1689,7 +1689,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30311 = 30311
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'Case' cannot follow a 'Case Else' in the same 'Select' statement."
     ''' VB   = "'Case' cannot follow a 'Case Else' in the same 'Select' statement."
     ''' </summary>
     ''' <remarks></remarks>

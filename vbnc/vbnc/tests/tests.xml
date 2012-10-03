@@ -24627,4 +24627,8 @@
 		<error line="4" number="42021" message="Function without an 'As' clause; return type of Object assumed." />
 		<error line="4" number="31072" message="Warning treated as error : Function without an 'As' clause; return type of Object assumed." />
 	</test>
+	<test id="3158" name="bug-7616" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-7616.vb</file>
+		<error line="6" number="30321" message="'Case' cannot follow a 'Case Else' in the same 'Select' statement." />
+	</test>
 </rt>
