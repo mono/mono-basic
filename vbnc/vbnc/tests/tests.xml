@@ -24631,4 +24631,11 @@
 		<file>Bugs\bug-7616.vb</file>
 		<error line="6" number="30321" message="'Case' cannot follow a 'Case Else' in the same 'Select' statement." />
 	</test>
+	<test id="3159" name="bug-7646" target="exe" mytype="empty">
+		<file>Bugs\bug-7646.vb</file>
+	</test>
+	<test id="3160" name="30132-1" expectedexitcode="1">
+		<file>Errors\30132-1.vb</file>
+		<error line="25" number="30132" message="Label 'ExitHere2' is not defined." />
+	</test>
 </rt>

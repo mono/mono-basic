@@ -20,10 +20,15 @@ Public Class ResumeStatement
     Inherits Statement
 
     Private m_IsResumeNext As Boolean
+    Private m_TargetLabel As Token?
+    Private m_TargetLocation As Span?
+    Private m_TargetLabelDeclaration As LabelDeclarationStatement
 
-    Sub New(ByVal Parent As ParsedObject, ByVal IsResumeNext As Boolean)
+    Sub New(ByVal Parent As ParsedObject, ByVal IsResumeNext As Boolean, TargetLabel As Token?, TargetLocation As Span?)
         MyBase.New(Parent)
         m_IsResumeNext = IsResumeNext
+        m_TargetLabel = TargetLabel
+        m_TargetLocation = TargetLocation
     End Sub
 
     Public Overrides Function ResolveTypeReferences() As Boolean
@@ -55,15 +60,19 @@ Public Class ResumeStatement
         Emitter.EmitThrow(Info)
 
         Emitter.MarkLabel(Info, ResumeOK)
-        'Load the instruction switch index
-        Emitter.EmitLoadVariable(Info, block.VB_CurrentInstruction)
-        'Increment the instruction pointer if it is a Resume Next statement
-        If m_IsResumeNext Then
-            Emitter.EmitLoadI4Value(Info, 1)
-            Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
+        If m_TargetLabelDeclaration IsNot Nothing Then
+            Emitter.EmitBranchOrLeave(Info, m_TargetLabelDeclaration.GetLabel(Info), Me, m_TargetLabelDeclaration)
+        Else
+            'Load the instruction switch index
+            Emitter.EmitLoadVariable(Info, block.VB_CurrentInstruction)
+            'Increment the instruction pointer if it is a Resume Next statement
+            If m_IsResumeNext Then
+                Emitter.EmitLoadI4Value(Info, 1)
+                Emitter.EmitAdd(Info, Compiler.TypeCache.System_Int32)
+            End If
+            'If everything is ok, jump to the instruction switch (adding one to the instruction if necessary)
+            Emitter.EmitLeave(Info, block.UnstructuredResumeHandler)
         End If
-        'If everything is ok, jump to the instruction switch (adding one to the instruction if necessary)
-        Emitter.EmitLeave(Info, block.UnstructuredResumeHandler)
 
         Return result
     End Function
@@ -77,6 +86,14 @@ Public Class ResumeStatement
         block.HasUnstructuredExceptionHandling = True
         block.HasResume = True
 
+        If m_TargetLabel.HasValue Then
+            m_TargetLabelDeclaration = FindFirstParent(Of CodeBlock)().FindLabel(m_TargetLabel.Value)
+            If m_TargetLabelDeclaration Is Nothing Then
+                result = Report.ShowMessage(Messages.VBNC30132, m_TargetLocation.Value, m_TargetLabel.Value.Identifier) AndAlso result
+            End If
+        End If
+
         Return True
     End Function
 End Class
+
