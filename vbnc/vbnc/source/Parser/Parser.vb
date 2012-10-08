@@ -4000,7 +4000,7 @@ Public Class Parser
         Dim m_ParameterList As New ParameterList(result)
         Dim m_ReturnTypeAttributes As Attributes = Nothing
         Dim m_TypeName As TypeName = Nothing
-        
+
         If ParseSubSignature(result, m_Identifier, m_TypeParameters, m_ParameterList) = False Then
             tm.GotoNewline(True)
         End If
