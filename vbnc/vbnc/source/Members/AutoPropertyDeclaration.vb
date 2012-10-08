@@ -181,9 +181,8 @@ Public Class AutoPropertyDeclaration
         If FieldNames.ContainsKey(BackingFieldName) Then
 
             'variable '{0}' conflicts with a member implicitly declared for property '{1}' in {2} '{3}'
-            Compiler.Report.ShowMessage(Messages.VBNC31061, FieldNames(BackingFieldName).Location,
-                                        FieldNames(BackingFieldName).Name, Name, DeclaringType.DescriptiveType, DeclaringType.Name)
-            Result = False
+            Result = Compiler.Report.ShowMessage(Messages.VBNC31061, FieldNames(BackingFieldName).Location,
+                                                 FieldNames(BackingFieldName).Name, Name, DeclaringType.DescriptiveType, DeclaringType.Name)
 
         Else
             BuildGetSetMethodBodies()
