@@ -5245,11 +5245,19 @@ Public Class Parser
 
     Private Function ParseResumeStatement(ByVal Parent As ParsedObject) As ResumeStatement
         Dim m_IsResumeNext As Boolean
+        Dim m_TargetLabel As Token? = Nothing
+        Dim m_TargetLocation As Span? = Nothing
 
         tm.AcceptIfNotInternalError(KS.Resume)
-        m_IsResumeNext = tm.Accept(KS.Next)
+        If tm.Accept(KS.Next) Then
+            m_IsResumeNext = True
+        ElseIf tm.CurrentToken.IsIdentifier OrElse tm.CurrentToken.IsIntegerLiteral Then
+            m_TargetLabel = tm.CurrentToken
+            m_TargetLocation = tm.CurrentLocation
+            tm.NextToken()
+        End If
 
-        Return New ResumeStatement(Parent, m_IsResumeNext)
+        Return New ResumeStatement(Parent, m_IsResumeNext, m_TargetLabel, m_TargetLocation)
     End Function
 
     ''' <summary>

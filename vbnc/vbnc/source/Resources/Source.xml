@@ -1196,7 +1196,7 @@
 	</Message>
 	<Message id="30321" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'Case' cannot follow a 'Case Else' in the same 'Select' statement.</VBNCValue>
 		<VBValue>'Case' cannot follow a 'Case Else' in the same 'Select' statement.</VBValue>
 	</Message>
 	<Message id="30332" level="Error">

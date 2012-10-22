@@ -96,10 +96,18 @@ Public Class SelectStatement
 
         m_CachedTest = New CachedExpression(m_Test, m_Test)
 
-        result = m_Cases.ResolveCode(info) AndAlso result
+        result = m_Cases.ResolveCode(Info) AndAlso result
 
-        Compiler.Helper.AddCheck("Check that there is at most one else block, and only at the end.")
+        For i As Integer = 0 To m_Cases.Count - 1
+            Dim aCase As CaseStatement = m_Cases(i)
+            If aCase.IsElse AndAlso i < m_Cases.Count - 1 Then
+                result = Report.ShowMessage(Messages.VBNC30321, m_Cases(i + 1).Location) AndAlso result
+                Exit For
+            End If
+        Next
+
         Return result
     End Function
 
 End Class
+

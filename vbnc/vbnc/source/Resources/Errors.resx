@@ -839,7 +839,7 @@
     <value>Value of type '{0}' cannot be converted to '{1}'.</value>
   </data>
   <data name="30321" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'Case' cannot follow a 'Case Else' in the same 'Select' statement.</value>
   </data>
   <data name="30332" xml:space="preserve">
     <value>Value of type '{0}' cannot be converted to '{1}' because '{2}' is not derived from '{3}'.</value>
