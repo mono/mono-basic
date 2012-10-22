@@ -515,6 +515,7 @@ Public Partial Class CecilTypeCache
     Public System_Decimal__Zero As Mono.Cecil.FieldDefinition
     Public System_Decimal__One As Mono.Cecil.FieldDefinition
     Public System_Decimal__MinusOne As Mono.Cecil.FieldDefinition
+    Public System_Runtime_CompilerServices_CompilerGeneratedAttribute As Mono.Cecil.TypeDefinition
     Public System_Runtime_CompilerServices_DecimalConstantAttribute As Mono.Cecil.TypeDefinition
     Public System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32 As Mono.Cecil.MethodDefinition
     Public System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32 As Mono.Cecil.MethodDefinition
@@ -788,6 +789,7 @@ Public Partial Class CecilTypeCache
         System_Decimal__Zero = GetField(System_Decimal, "Zero")
         System_Decimal__One = GetField(System_Decimal, "One")
         System_Decimal__MinusOne = GetField(System_Decimal, "MinusOne")
+        System_Runtime_CompilerServices_CompilerGeneratedAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
         System_Runtime_CompilerServices_DecimalConstantAttribute = [GetType](mscorlib, "System.Runtime.CompilerServices.DecimalConstantAttribute")
         System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_UInt32_UInt32_UInt32 = GetConstructor(System_Runtime_CompilerServices_DecimalConstantAttribute, System_Byte, System_Byte, System_UInt32, System_UInt32, System_UInt32)
         System_Runtime_CompilerServices_DecimalConstantAttribute__ctor_Byte_Byte_Int32_Int32_Int32 = GetConstructor(System_Runtime_CompilerServices_DecimalConstantAttribute, System_Byte, System_Byte, System_Int32, System_Int32, System_Int32)

@@ -602,7 +602,7 @@
     <value>Expected '('.</value>
   </data>
   <data name="30200" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'New' is not valid in this context.</value>
   </data>
   <data name="30201" xml:space="preserve">
     <value>Expected expression.</value>
@@ -2045,7 +2045,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="31061" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>variable '{0}' conflicts with a member implicitly declared for property '{1}' in {2} '{3}'.</value>
   </data>
   <data name="31063" xml:space="preserve">
     <value>CHANGEME</value>
@@ -2802,6 +2802,12 @@
   </data>
   <data name="36657" xml:space="preserve">
     <value>Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because they do not convert to the same type. Specifying the data type(s) explicitly might correct this error.</value>
+  </data>
+  <data name="36714" xml:space="preserve">
+    <value>Expanded Properties cannot be initialized.</value>
+  </data>
+  <data name="36759" xml:space="preserve">
+    <value>Auto-implemented properties cannot have parameters.</value>
   </data>
   <data name="40000" xml:space="preserve">
     <value>CHANGEME</value>

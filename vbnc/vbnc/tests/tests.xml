@@ -24521,6 +24521,31 @@
 		<file>Errors\30217.vb</file>
 		<error line="1" number="30217" message="String constant expected." />
 	</test>
+	<test id="3135" name="bug-2087" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-2087.vb</file>
+		<error line="14" number="32000" message="Local variable 'p' cannot be referred to before it is declared." />
+	</test>
+	<test id="3136" name="DoLoopWhile2" target="exe" mytype="empty">
+		<file>CompileTime2\DoLoopWhile2.vb</file>
+	</test>
+	<test id="3137" name="bug-3769" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-3769.vb</file>
+		<error line="8" number="32000" message="Local variable 'a' cannot be referred to before it is declared." />
+	</test>
+	<test id="3138" name="bug-5630" expectedexitcode="1" mytype="empty">
+		<file>Bugs\bug-5630.vb</file>
+		<error line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
+		<vbcerror line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
+	</test>
+	<test id="3139" name="30022" expectedexitcode="1" mytype="empty">
+		<file>Errors\30022.vb</file>
+		<error line="6" number="30022" message="Properties declared 'ReadOnly' cannot have a 'Set'." />
+	</test>
+	<test id="3140" name="30023" expectedexitcode="1" mytype="empty">
+		<arguments>/nowarn:42355</arguments>
+		<file>Errors\30023.vb</file>
+		<error line="3" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
+	</test>
 	<test id="3141" name="30249" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<file>Errors\30249.vb</file>
 		<error line="1" number="30249" message="'=' expected." />
@@ -24553,31 +24578,6 @@
 	<test id="3148" name="30099" expectedexitcode="1" mytype="empty">
 		<file>Errors\30099.vb</file>
 		<error line="6" number="30099" message="'Exit Select' can only appear inside a 'Select' statement." />
-	</test>
-	<test id="3135" name="bug-2087" expectedexitcode="1" mytype="empty">
-		<file>Bugs\bug-2087.vb</file>
-		<error line="14" number="32000" message="Local variable 'p' cannot be referred to before it is declared." />
-	</test>
-	<test id="3136" name="DoLoopWhile2" target="exe" mytype="empty">
-		<file>CompileTime2\DoLoopWhile2.vb</file>
-	</test>
-	<test id="3137" name="bug-3769" expectedexitcode="1" mytype="empty">
-		<file>Bugs\bug-3769.vb</file>
-		<error line="8" number="32000" message="Local variable 'a' cannot be referred to before it is declared." />
-	</test>
-	<test id="3138" name="bug-5630" expectedexitcode="1" mytype="empty">
-		<file>Bugs\bug-5630.vb</file>
-		<error line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
-		<vbcerror line="11" number="30469" message="Reference to a non-shared member requires an object reference." />
-	</test>
-	<test id="3139" name="30022" expectedexitcode="1" mytype="empty">
-		<file>Errors\30022.vb</file>
-		<error line="6" number="30022" message="Properties declared 'ReadOnly' cannot have a 'Set'." />
-	</test>
-	<test id="3140" name="30023" expectedexitcode="1" mytype="empty">
-		<arguments>/nowarn:42355</arguments>
-		<file>Errors\30023.vb</file>
-		<error line="3" number="30023" message="Properties declared 'WriteOnly' cannot have a 'Get'." />
 	</test>
 	<test id="3149" name="30125" expectedexitcode="1" mytype="empty">
 		<file>Errors\30125.vb</file>
@@ -24637,5 +24637,65 @@
 	<test id="3160" name="30132-1" expectedexitcode="1">
 		<file>Errors\30132-1.vb</file>
 		<error line="25" number="30132" message="Label 'ExitHere2' is not defined." />
+	</test>
+	<test id="3161" name="AutoImpProp" outputvbcassembly="testoutput\AutoImpProp_vbc.exe" outputassembly="testoutput\AutoImpProp.exe" target="exe" mytype="empty">
+		<file>1Declarations\AutoImpProp.vb</file>
+	</test>
+	<test id="3162" name="30205-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205-1.vb</file>
+		<error line="9" number="30205" message="End of statement expected." />
+	</test>
+	<test id="3163" name="30205" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205.vb</file>
+		<error line="10" number="30205" message="End of statement expected." />
+	</test>
+	<test id="3164" name="31061" expectedexitcode="1" mytype="empty">
+		<file>Errors\31061.vb</file>
+		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
+	</test>
+	<test id="3165" name="36759" expectedexitcode="1" mytype="empty">
+		<file>Errors\36759.vb</file>
+		<error line="3" number="36759" message="Auto-implemented properties cannot have parameters." />
+	</test>
+	<test id="3166" name="36714" expectedexitcode="1" mytype="empty">
+		<file>Errors\36714.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+		<error line="10" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3167" name="30451-4" expectedexitcode="1" mytype="empty">
+		<file>Errors\30451-4.vb</file>
+		<error line="3" number="30451" message="'SomeFunc' is not declared. It may be inaccessible due to its protection level." />
+	</test>
+	<test id="3168" name="30200-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-1.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3169" name="30200-2" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-2.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3170" name="30200" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200.vb</file>
+		<error line="3" number="30200" message="'New' is not valid in this context." />
+	</test>
+	<test id="3171" name="30714-3" expectedexitcode="1" mytype="empty">
+		<file>Errors\30714-3.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3172" name="36714-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\36714-1.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3173" name="30200-3" expectedexitcode="1" mytype="empty">
+		<file>Errors\30200-3.vb</file>
+		<error line="3" number="36714" message="Expanded Properties cannot be initialized." />
+	</test>
+	<test id="3174" name="31061-1" expectedexitcode="1" mytype="empty">
+		<file>Errors\31061-1.vb</file>
+		<error line="3" number="31061" message="variable '_prop' conflicts with a member implicitly declared for property 'Prop' in class 'Test'." />
+	</test>
+	<test id="3175" name="30205-2" expectedexitcode="1" mytype="empty">
+		<file>Errors\30205-2.vb</file>
+		<error line="3" number="30205" message="End of statement expected." />
 	</test>
 </rt>

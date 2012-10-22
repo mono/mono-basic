@@ -1136,7 +1136,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30199 = 30199
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'New' is not valid in this context."
     ''' VB   = "'New' is not valid in this context."
     ''' </summary>
     ''' <remarks></remarks>
@@ -4503,8 +4503,8 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC31060 = 31060
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
-    ''' VB   = "|1 '|2' conflicts with a member implicitly declared for |3 '|4' in |5 '|6'."
+    ''' VBNC = "variable '{0}' conflicts with a member implicitly declared for property '{1}' in {2} '{3}'."
+    ''' VB   = "variable '|1' conflicts with a member implicitly declared for property '|2' in |3 '|4'."
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC31061 = 31061
@@ -6272,6 +6272,20 @@ Public Enum Messages
     ''' </summary>
     ''' <remarks></remarks>
     <Message(MessageLevel.Error)> VBNC36657 = 36657
+
+    ''' <summary>
+    ''' VBNC = "Expanded Properties cannot be initialized."
+    ''' VB   = "Expanded Properties cannot be initialized.."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC36714 = 36714
+
+    ''' <summary>
+    ''' VBNC = "Auto-implemented properties cannot have parameters."
+    ''' VB   = "Auto-implemented properties cannot have parameters."
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Message(MessageLevel.Error)> VBNC36759 = 36759
 
     ''' <summary>
     ''' VBNC = "CHANGEME"

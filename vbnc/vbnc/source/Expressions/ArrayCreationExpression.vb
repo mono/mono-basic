@@ -42,6 +42,12 @@ Public Class ArrayCreationExpression
         End Get
     End Property
 
+    ReadOnly Property NonArrayTypeName As NonArrayTypeName
+        Get
+            Return m_NonArrayTypeName
+        End Get
+    End Property
+
     Public Overrides Function ResolveTypeReferences() As Boolean
         Dim result As Boolean = True
 

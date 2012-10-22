@@ -65,6 +65,7 @@
 ../../source/Interfaces/IHasImplicitMembers.vb
 ../../source/Interfaces/IHasImplicitTypes.vb
 ../../source/Interfaces/ITokenReader.vb
+../../source/Members/AutoPropertyDeclaration.vb
 ../../source/Members/EventHandlerDeclaration.vb
 ../../source/Members/EventDeclaration.vb
 ../../source/Members/LocalVariableDeclaration.vb
@@ -73,6 +74,7 @@
 ../../source/Members/MethodResolver.vb
 ../../source/Members/PropertyDeclaration.vb
 ../../source/Members/PropertyHandlerDeclaration.vb
+../...source/Members/PropertySignature.vb
 ../../source/Members/TypeVariableDeclaration.vb
 ../../source/Names/Identifier.vb
 ../../source/Parser/ParsedObject.vb

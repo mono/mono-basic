@@ -801,7 +801,7 @@
 	</Message>
 	<Message id="30200" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'New' is not valid in this context.</VBNCValue>
 		<VBValue>'New' is not valid in this context.</VBValue>
 	</Message>
 	<Message id="30201" level="Error">
@@ -3206,8 +3206,8 @@
 	</Message>
 	<Message id="31061" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
-		<VBValue>|1 '|2' conflicts with a member implicitly declared for |3 '|4' in |5 '|6'.</VBValue>
+		<VBNCValue>variable '{0}' conflicts with a member implicitly declared for property '{1}' in {2} '{3}'.</VBNCValue>
+		<VBValue>variable '|1' conflicts with a member implicitly declared for property '|2' in |3 '|4'.</VBValue>
 	</Message>
 	<Message id="31063" level="Error">
 		<Comment>NC</Comment>
@@ -4464,6 +4464,16 @@
     <Comment>NC</Comment>
     <VBNCValue>Data type(s) of the type parameter(s) in method '{0}' cannot be inferred from these arguments because they do not convert to the same type. Specifying the data type(s) explicitly might correct this error.</VBNCValue>
   </Message>
+		<Message id="36714" level="Error">
+		<Comment>NC</Comment>
+		<VBNCValue>Expanded Properties cannot be initialized.</VBNCValue>
+		<VBValue>Expanded Properties cannot be initialized..</VBValue>
+	</Message>
+	<Message id="36759" level="Error">
+		<Comment>NC</Comment>
+		<VBNCValue>Auto-implemented properties cannot have parameters.</VBNCValue>
+		<VBValue>Auto-implemented properties cannot have parameters.</VBValue>
+	</Message>
 	<Message id="40000" level="Warning">
 		<Comment>NC</Comment>
 		<VBNCValue>CHANGEME</VBNCValue>
