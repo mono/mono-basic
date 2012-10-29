@@ -93,7 +93,7 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-PROFILE = net_4_0
+PROFILE = net_4_5
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
@@ -101,7 +101,7 @@ include $(topdir)/build/profiles/$(PROFILE).make
 
 
 # vbnc is built in one the profiles (currently net_2_0, this will likely change to net_4_0 soon)
-PROFILES = net_2_0 net_4_0 $(CONFIGURED_PROFILES)
+PROFILES = net_2_0 net_4_0 net_4_5 $(CONFIGURED_PROFILES)
 PLATFORMS = linux win32
 
 

@@ -1,2 +1,2 @@
 #!/bin/sh
-exec mono --debug $MONO_OPTIONS @prefix@/lib/mono/4.0/vbnc.exe "$@"
+exec @prefix@/bin/mono --debug $MONO_OPTIONS @prefix@/lib/mono/4.0/vbnc.exe "$@"

@@ -65,7 +65,19 @@ Imports System.Security
 <Assembly: AssemblyFileVersion("1.1.20806.0")> 
 <Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
 #Else
-#If NET_VER >= 4.0 Then
+#If NET_VER >= 4.5 Then
+<Assembly: AssemblyVersion("11.0.0.0")> 
+<Assembly: ComVisible(True)> 
+'<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
+<Assembly: CLSCompliant(True)> 
+<Assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default Or DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)> 
+<Assembly: CompilationRelaxations(CompilationRelaxations.NoStringInterning)> 
+<Assembly: RuntimeCompatibility(WrapNonExceptionThrows:=True)> 
+<Assembly: SatelliteContractVersion("11.0.0.0")> 
+<Assembly: AssemblyInformationalVersion("11.0.30319.17020")> 
+<Assembly: AssemblyFileVersion("11.0.30319.17020")> 
+<Assembly: AssemblyDefaultAlias("Microsoft.VisualBasic.dll")> 
+#ElseIf NET_VER >= 4.0 Then
 <Assembly: AssemblyVersion("10.0.0.0")> 
 <Assembly: ComVisible(True)> 
 '<Assembly: Guid("aa353322-85a4-4601-a6b7-e3b724e9350c")> 
