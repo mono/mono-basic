@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=2.11
+VERSION=3.0
 prefix=/usr/local
 configured_profiles=
 moonlight_sdk_location=
