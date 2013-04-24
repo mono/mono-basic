@@ -1,0 +1,4 @@
+-r:nunit.framework.dll,Microsoft.VisualBasic.dll,System.Windows.Forms.dll,System.dll
+-target:library
+-nowarn:219,168,169
+-debug:full
