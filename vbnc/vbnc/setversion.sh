@@ -3,8 +3,8 @@
 VERSION_VB=$1
 VERSION_TMP=version.tmp
 
-GIT_BRANCH=`git branch | grep '^\*' | cut -d ' ' -f 2`
-GIT_REVISION=`git log --no-color --first-parent -n1 --pretty=format:%h`
+GIT_BRANCH=`git branch | grep '^\*' | cut -d ' ' -f 2; true`
+GIT_REVISION=`git log --no-color --first-parent -n1 --pretty=format:%h; true`
 
 cat ../LicenseFileHeader.txt > $VERSION_TMP
 echo "" >> $VERSION_TMP
