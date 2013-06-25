@@ -2585,7 +2585,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30560 = 30560
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'{0}' is ambiguous, imported from the namespaces or types '{1}'."
     ''' VB   = "'|1' is ambiguous, imported from the namespaces or types '|2'."
     ''' </summary>
     ''' <remarks></remarks>

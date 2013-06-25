@@ -1223,7 +1223,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30561" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'{0}' is ambiguous, imported from the namespaces or types '{1}'.</value>
   </data>
   <data name="30562" xml:space="preserve">
     <value>'{0}' is ambiguous between declarations in Modules '{1}' and '{2}'.</value>

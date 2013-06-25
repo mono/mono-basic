@@ -180,6 +180,7 @@ Public Class SimpleNameExpression
 
     Protected Overrides Function ResolveExpressionInternal(ByVal Info As ResolveInfo) As Boolean
         Dim Name As String = m_Identifier.Identifier
+        Dim wasError As Boolean
 
         '---------------------------------------------------------------------------------------------------------
         'A simple name expression consists of a single identifier followed by an optional type argument list. 
@@ -512,7 +513,11 @@ Public Class SimpleNameExpression
         '   the result is exactly the same as a member access of the form M.E, where M is the standard 
         '   module containing the matching member and E is the identifier. If the identifier matches 
         '   accessible type members in more than one standard module, a compile-time error occurs.
-        If ResolveImports(Me.Location.File(Compiler).Imports, Name) Then Return True
+        If ResolveImports(Me.Location.File(Compiler).Imports, Name, wasError) Then
+            Return True
+        ElseIf wasError Then
+            Return False
+        End If
 
         '* If the compilation environment defines one or more import aliases, and the identifier matches 
         '  the name of one of them, then the identifier refers to that namespace or type.
@@ -530,7 +535,11 @@ Public Class SimpleNameExpression
         '   is exactly the same as a member access of the form M.E, where M is the standard module containing 
         '   the matching member and E is the identifier. If the identifier matches accessible type members in 
         '   more than one standard module, a compile-time error occurs.
-        If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name) Then Return True
+        If ResolveImports(Me.Compiler.CommandLine.Imports.Clauses, Name, wasError) Then
+            Return True
+        ElseIf wasError Then
+            Return False
+        End If
 
         If Location.File(Compiler).IsOptionExplicitOn = False AndAlso Info.CanBeImplicitSimpleName Then
             Dim parent_method As MethodBaseDeclaration
@@ -812,7 +821,7 @@ Public Class SimpleNameExpression
         Return False
     End Function
 
-    Private Function ResolveImports(ByVal imps As ImportsClauses, ByVal Name As String) As Boolean
+    Private Function ResolveImports(ByVal imps As ImportsClauses, ByVal Name As String, ByRef wasError As Boolean) As Boolean
         '---------------------------------------------------------------------------------------------------------
         '* If the (source file / compilation environment) containing the name reference has one or more imports:
         '** If the identifier matches the name of an accessible type or type member in exactly one import, 
@@ -847,7 +856,16 @@ Public Class SimpleNameExpression
             End If
             If result IsNot Nothing AndAlso result.Count > 0 Then
                 If impmembers.Count > 0 Then
-                    Return Helper.AddError(Me, "If the identifier matches the name of an accessible type or type member in more than one import, a compile-time error occurs.")
+                    Dim lst As New Generic.List(Of String)
+                    For Each lst2 As IEnumerable In New IEnumerable() {impmembers, result}
+                        For Each memb As MemberReference In lst2
+                            Dim membname As String = memb.DeclaringType.FullName
+                            If Not lst.Contains(membname) Then lst.Add(memb.DeclaringType.FullName)
+                        Next
+                    Next
+                    wasError = True
+                    lst.Reverse()
+                    Return Compiler.Report.ShowMessage(Messages.VBNC30561, Me.Location, Name, String.Join(", ", lst.ToArray()))
                 End If
                 impmembers.AddRange(result)
                 result = Nothing
@@ -867,9 +885,18 @@ Public Class SimpleNameExpression
                 Return True
             End If
             If Helper.IsFieldDeclaration(impmembers(0)) Then
-                Classification = New ValueClassification(Me, DirectCast(impmembers(0), Mono.Cecil.FieldReference), Nothing)
+                Classification = New VariableClassification(Me, DirectCast(impmembers(0), Mono.Cecil.FieldReference), Nothing)
                 Return True
             End If
+            If Helper.IsPropertyDeclaration(impmembers(0)) Then
+                Classification = New PropertyGroupClassification(Me, Nothing, impmembers)
+                Return True
+            End If
+            If Helper.IsEventDeclaration(impmembers(0)) Then
+                Classification = New EventAccessClassification(Me, DirectCast(impmembers(0), Mono.Cecil.EventReference), Nothing)
+                Return True
+            End If
+            wasError = True
             Return Compiler.Report.ShowMessage(Messages.VBNC99997, Location)
         End If
 
@@ -882,6 +909,7 @@ Public Class SimpleNameExpression
             Classification = New NamespaceClassification(Me, nsmembers(0))
             Return True
         ElseIf nsmembers.Count > 1 Then
+            wasError = True
             Return Helper.AddError(Me)
         End If
 
@@ -909,6 +937,10 @@ Public Class SimpleNameExpression
             Classification = New MethodGroupClassification(Me, Nothing, m_TypeArgumentList, Nothing, found)
             Return True
         End If
+        If Helper.IsPropertyDeclaration(found(0)) Then
+            Classification = New PropertyGroupClassification(Me, Nothing, found)
+            Return True
+        End If
         If found.Count > 1 Then
             Return Helper.AddError(Me)
         End If
@@ -926,6 +958,10 @@ Public Class SimpleNameExpression
         End If
         If Helper.IsPropertyDeclaration(first) Then
             Classification = New PropertyGroupClassification(Me, Nothing, found)
+            Return True
+        End If
+        If Helper.IsEventDeclaration(first) Then
+            Classification = New EventAccessClassification(Me, DirectCast(first, EventReference))
             Return True
         End If
         Return Compiler.Report.ShowMessage(Messages.VBNC99997, Me.Location)

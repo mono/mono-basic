@@ -24638,4 +24638,40 @@
 		<file>Errors\30132-1.vb</file>
 		<error line="25" number="30132" message="Label 'ExitHere2' is not defined." />
 	</test>
+	<test id="3161" name="bug-12861" mytype="empty">
+		<file>Bugs\bug-12861.vb</file>
+	</test>
+	<test id="3162" name="ImportsType3" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>CompileTime\ImportsType3.vb</file>
+	</test>
+	<test id="3163" name="ImportsType4" mytype="empty">
+		<arguments>/nowarn</arguments>
+		<file>CompileTime\ImportsType4.vb</file>
+	</test>
+	<test id="3164" name="ImportTypeErrors" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+		<arguments>/nowarn /quiet</arguments>
+		<file>Errors\ImportTypeErrors.vb</file>
+		<error line="8" number="30561" message="'D' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="9" number="30561" message="'I' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="10" number="30561" message="'C' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="11" number="30561" message="'E' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="12" number="30561" message="'S' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+	</test>
+	<test id="3165" name="ImportTypeErrors2" expectedexitcode="1" mytype="empty">
+		<file>Errors\ImportTypeErrors2.vb</file>
+		<error line="7" number="30561" message="'F' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="8" number="30561" message="'P' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="9" number="30561" message="'P' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="10" number="30561" message="'P' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="11" number="30561" message="'p' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="12" number="30561" message="'p' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="13" number="30561" message="'M' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="14" number="30561" message="'M' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="15" number="30561" message="'MF' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="16" number="30561" message="'MF' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="17" number="30561" message="'MF' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="18" number="30561" message="'MF' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+		<error line="19" number="30561" message="'Ev' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
+	</test>
 </rt>

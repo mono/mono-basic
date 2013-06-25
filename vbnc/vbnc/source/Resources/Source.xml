@@ -1836,7 +1836,7 @@
 	</Message>
 	<Message id="30561" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'{0}' is ambiguous, imported from the namespaces or types '{1}'.</VBNCValue>
 		<VBValue>'|1' is ambiguous, imported from the namespaces or types '|2'.</VBValue>
 	</Message>
 	<Message id="30562" level="Error">

@@ -678,7 +678,7 @@ Public Class TypeNameResolutionInfo
         Return False
     End Function
 
-    Private Function CheckImports(ByVal R As String, ByVal [Imports] As ImportsClauses, ByVal TypeArgumentCount As Integer) As Boolean
+    Private Function CheckImports(ByVal R As String, ByVal [Imports] As ImportsClauses, ByVal TypeArgumentCount As Integer, ByRef wasError As Boolean) As Boolean
         '---------------------------------------------------------------------------------------------------------
         '*	If the source file containing the name reference has one or more imports:
         '**	If R matches the name of an accessible type in exactly one import, then the unqualified name refers to 
@@ -700,7 +700,8 @@ Public Class TypeNameResolutionInfo
         '**	If R matches the name of a namespace in exactly one import, then the unqualified name refers to that
         '** namespace. If R matches the name of a namespace in more than one import, a compile-time error occurs.
         '**	If the imports contain one or more accessible standard modules, and R matches the name of an accessible
-        '** nested type in exactly one standard module, then the unqualified name refers to that type. If R matches the        '** name of accessible nested types in more than one standard module, a compile-time error occurs.
+        '** nested type in exactly one standard module, then the unqualified name refers to that type. If R matches the       
+        '** name of accessible nested types in more than one standard module, a compile-time error occurs.
         '---------------------------------------------------------------------------------------------------------
         Dim nsclauses As New Generic.List(Of ImportsNamespaceClause)
         For Each imp As ImportsClause In [Imports]
@@ -733,8 +734,18 @@ Public Class TypeNameResolutionInfo
             m_FoundObjects.Add(tpFound(0))
             Return True
         ElseIf tpFound.Count > 0 Then
-            Helper.AddError(Name)
-            Return False
+            Dim lst As New Generic.List(Of String)
+            For Each found As Object In tpFound
+                Dim m As MemberReference = TryCast(found, MemberReference)
+                If m IsNot Nothing Then
+                    lst.Add(m.DeclaringType.FullName)
+                Else
+                    lst.Add(found.ToString())
+                End If
+            Next
+            lst.Reverse()
+            wasError = True
+            Return FromWhere.Compiler.Report.ShowMessage(Messages.VBNC30561, FromWhere.Location, R, String.Join(", ", lst.ToArray()))
         End If
 
         '**	If R matches the name of a namespace in exactly one import, then the unqualified name refers to that
@@ -757,6 +768,7 @@ Public Class TypeNameResolutionInfo
             m_FoundObjects.Add(tpFound(0))
             Return True
         ElseIf tpFound.Count > 0 Then
+            wasError = True
             Helper.AddError(Name)
             Return False
         End If
@@ -784,6 +796,7 @@ Public Class TypeNameResolutionInfo
     End Function
 
     Private Function ResolveUnqualifiedName(ByVal Rs As String(), ByVal TypeArgumentCount As Integer) As Boolean
+        Dim wasError As Boolean
 
         For Each R As String In Rs
             '---------------------------------------------------------------------------------------------------------
@@ -836,7 +849,11 @@ Public Class TypeNameResolutionInfo
             '** nested type in exactly one standard module, then the unqualified name refers to that type. If R matches 
             '** the name of accessible nested types in more than one standard module, a compile-time error occurs.
             '---------------------------------------------------------------------------------------------------------
-            If CheckImports(R, FromWhere.File.Imports, TypeArgumentCount) Then Return True
+            If CheckImports(R, FromWhere.File.Imports, TypeArgumentCount, wasError) Then
+                Return True
+            ElseIf wasError Then
+                Return False
+            End If
 
             '---------------------------------------------------------------------------------------------------------
             '* If the compilation environment defines one or more import aliases, and R matches the name of one of 
@@ -855,7 +872,11 @@ Public Class TypeNameResolutionInfo
             '** nested type in exactly one standard module, then the unqualified name refers to that type. If R matches the                 
             '** name of accessible nested types in more than one standard module, a compile-time error occurs.
             '---------------------------------------------------------------------------------------------------------
-            If CheckImports(R, FromWhere.Compiler.CommandLine.Imports.Clauses, TypeArgumentCount) Then Return True
+            If CheckImports(R, FromWhere.Compiler.CommandLine.Imports.Clauses, TypeArgumentCount, wasError) Then
+                Return True
+            ElseIf wasError Then
+                Return False
+            End If
         Next
         '---------------------------------------------------------------------------------------------------------
         '* Otherwise, a compile-time error occurs.
