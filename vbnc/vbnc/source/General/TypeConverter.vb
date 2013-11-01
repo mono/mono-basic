@@ -42,8 +42,8 @@ Public Class TypeConverter
     Public Shared LikeDefinedTypes As String = "S"
     Public Shared LikeResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXBBBBBBBBBBBBBB-B" & _
-            "XXXXXXXXXXXXXXXXX-X" & _
+            "XBBBBBBBBBBBBBBBB-B" & _
+            "XBXXXXXXXXXXXXXXX-X" & _
             "XBXDDDDDDDDDDDDDD-D" & _
             "XBXDDDDDDDDDDDDDD-D" & _
             "XBXDDDDDDDDDDDDDD-D" & _
@@ -62,8 +62,8 @@ Public Class TypeConverter
             "XBXDDDDDDDDDDDDDD-D"
     Public Shared LikeOperandType As String = "" & _
                 "XXXXXXXXXXXXXXXXX-X" & _
-                "XBXBBBBBBBBBBBBBB-B" & _
-                "XXXXXXXXXXXXXXXXX-X" & _
+                "XBBBBBBBBBBBBBBBB-B" & _
+                "XBXXXXXXXXXXXXXXX-X" & _
                 "XBXSSSSSSSSSSSSSS-S" & _
                 "XBXSSSSSSSSSSSSSS-S" & _
                 "XBXSSSSSSSSSSSSSS-S" & _
@@ -153,8 +153,8 @@ Public Class TypeConverter
 
     Public Shared AddResultType As String = "" & _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXBBBBBBBBBBBBBB-B" & _
-            "XXXXXXXXXXXXXXXXX-X" & _
+            "XBBBBBBBBBBBBBBBB-B" & _
+            "XBXXXXXXXXXXXXXXX-X" & _
             "XBXHXFHHJJLLPNOPX-O" & _
             "XBXXSXXXXXXXXXXXX-S" & _
             "XBXFXFHHJJLLPNOPX-O" & _
@@ -244,8 +244,8 @@ Public Class TypeConverter
 
     Public Shared RelationalOperandTypes As String = _
             "XXXXXXXXXXXXXXXXX-X" & _
-            "XBXBBBBBBBBBBBBBB-B" & _
-            "XXXXXXXXXXXXXXXXX-X" & _
+            "XBBBBBBBBBBBBBBBB-B" & _
+            "XBXXXXXXXXXXXXXXX-X" & _
             "XBXDXFHHJJLLPNOPX-D" & _
             "XBXXEXXXXXXXXXXXX-S" & _
             "XBXFXFHHJJPLPNOPX-O" & _
@@ -296,8 +296,8 @@ Public Class TypeConverter
     Public Shared ShiftDefinedTypes As String = "FGHIJKLM"
     Public Shared ShiftResultType As String = _
              "XXXXXXXXXXXXXXXXX-X" & _
-             "XBXBXBBBBBBBBBBBX-B" & _
-             "XXXXXXXXXXXXXXXXX-X" & _
+             "XBBBXBBBBBBBBBBBX-B" & _
+             "XBXXXXXXXXXXXXXXX-X" & _
              "XBXHXFGHIJKLMLLLX-L" & _
              "XBXXXXXXXXXXXXXXX-X" & _
              "XBXHXFGHIJKLMLLLX-L" & _

@@ -12568,11 +12568,10 @@
 		<vbcerror line="761" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="764" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 	</test>
-	<test id="2369" name="OperatorIntrinsic_BinaryAdd_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2369" name="OperatorIntrinsic_BinaryAdd_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicBinaryAdd.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="827" number="30452" message="Operator '+' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2370" name="OperatorIntrinsic_BinaryAdd_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -13837,11 +13836,10 @@
 		<vbcerror line="707" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 	</test>
-	<test id="2477" name="OperatorIntrinsic_Equals_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2477" name="OperatorIntrinsic_Equals_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicEquals.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '=' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2478" name="OperatorIntrinsic_Equals_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -14868,11 +14866,10 @@
 		<vbcerror line="707" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 	</test>
-	<test id="2549" name="OperatorIntrinsic_GE_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2549" name="OperatorIntrinsic_GE_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicGE.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '&gt;=' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2550" name="OperatorIntrinsic_GE_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -15401,11 +15398,10 @@
 		<vbcerror line="707" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 	</test>
-	<test id="2585" name="OperatorIntrinsic_GT_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2585" name="OperatorIntrinsic_GT_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicGT.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '&gt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2586" name="OperatorIntrinsic_GT_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -18790,11 +18786,10 @@
 		<vbcerror line="707" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 	</test>
-	<test id="2729" name="OperatorIntrinsic_LE_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2729" name="OperatorIntrinsic_LE_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicLE.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '&lt;=' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2730" name="OperatorIntrinsic_LE_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -19928,11 +19923,10 @@
 		<vbcerror line="1048" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="1051" number="30038" message="Option Strict On prohibits operands of type Object for operator '...'." />
 	</test>
-	<test id="2765" name="OperatorIntrinsic_Like_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2765" name="OperatorIntrinsic_Like_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicLike.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="1114" number="30452" message="Operator 'Like' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2766" name="OperatorIntrinsic_Like_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -20675,11 +20669,10 @@
 		<vbcerror line="918" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="921" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 	</test>
-	<test id="2801" name="OperatorIntrinsic_LShift_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2801" name="OperatorIntrinsic_LShift_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicLShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="990" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2802" name="OperatorIntrinsic_LShift_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT /nowarn</arguments>
@@ -21208,11 +21201,10 @@
 		<vbcerror line="707" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 	</test>
-	<test id="2837" name="OperatorIntrinsic_LT_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2837" name="OperatorIntrinsic_LT_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicLT.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '&lt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2838" name="OperatorIntrinsic_LT_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -22771,11 +22763,10 @@
 		<vbcerror line="707" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="710" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 	</test>
-	<test id="2945" name="OperatorIntrinsic_NotEquals_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="2945" name="OperatorIntrinsic_NotEquals_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS</arguments>
 		<file>CompileTime2\OperatorIntrinsicNotEquals.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="772" number="30452" message="Operator '&lt;&gt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="2946" name="OperatorIntrinsic_NotEquals_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
@@ -25373,11 +25364,10 @@
 		<vbcerror line="918" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
 		<vbcerror line="921" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 	</test>
-	<test id="3089" name="OperatorIntrinsic_RShift_ObjectError" expectedexitcode="1" mytype="empty">
+	<test id="3089" name="OperatorIntrinsic_RShift_ObjectError" mytype="empty">
 		<arguments>/define:Object_ERRORS /nowarn</arguments>
 		<file>CompileTime2\OperatorIntrinsicRShift.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
-		<error line="990" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Object' and 'System.DBNull'." />
 	</test>
 	<test id="3090" name="OperatorIntrinsic_RShift_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT /nowarn</arguments>
