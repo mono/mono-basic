@@ -128,18 +128,18 @@ Public Class DoStatement
             result = m_PreCondition.ResolveExpression(Info) AndAlso result
             result = Helper.VerifyValueClassification(m_PreCondition, Info) AndAlso result
 
-            If Me.Location.File(Compiler).IsOptionStrictOn AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Me, m_PreCondition.ExpressionType, Compiler.TypeCache.System_Boolean) = False Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC30512, m_PreCondition.Location, m_PreCondition.ExpressionType.FullName, "Boolean")
-            End If
+            If Not result Then Return result
+
+            m_PreCondition = Helper.CreateTypeConversion(Me, m_PreCondition, Compiler.TypeCache.System_Boolean, result)
         End If
 
         If m_PostCondition IsNot Nothing Then
             result = m_PostCondition.ResolveExpression(info) AndAlso result
             result = Helper.VerifyValueClassification(m_PostCondition, Info) AndAlso result
 
-            If Me.Location.File(Compiler).IsOptionStrictOn AndAlso Compiler.TypeResolution.IsImplicitlyConvertible(Me, m_PostCondition.ExpressionType, Compiler.TypeCache.System_Boolean) = False Then
-                result = Compiler.Report.ShowMessage(Messages.VBNC30512, m_PostCondition.Location, m_PostCondition.ExpressionType.FullName, "Boolean")
-            End If
+            If Not result Then Return result
+
+            m_PostCondition = Helper.CreateTypeConversion(Me, m_PostCondition, Compiler.TypeCache.System_Boolean, result)
         End If
         result = CodeBlock.ResolveCode(info) AndAlso result
 

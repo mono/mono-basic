@@ -26200,4 +26200,17 @@
 		<error line="18" number="30561" message="'MF' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
 		<error line="19" number="30561" message="'Ev' is ambiguous, imported from the namespaces or types 'A.B, A.A'." />
 	</test>
+	<test id="3166" name="bug-15863" target="exe" mytype="empty">
+		<file>Bugs\bug-15863.vb</file>
+	</test>
+	<test id="3167" name="30038" expectedexitcode="1" mytype="empty">
+		<arguments>/optionstrict+</arguments>
+		<file>Errors\30038.vb</file>
+		<error line="6" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Not'." />
+	</test>
+	<test id="3168" name="30038-1" expectedexitcode="1" mytype="empty">
+		<arguments>/optionstrict+</arguments>
+		<file>Errors\30038-1.vb</file>
+		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Boolean'." />
+	</test>
 </rt>
