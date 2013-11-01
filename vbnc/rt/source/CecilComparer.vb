@@ -110,7 +110,25 @@ Public Class CecilComparer
 
 
     Private Function AttributeAsString(ByVal Info As CustomAttribute) As String
-        Return TypeAsString(Info.Constructor.DeclaringType) & ParametersToString(Info.Constructor.Parameters)
+        Dim str As New System.Text.StringBuilder
+
+        str.Append(TypeAsString(Info.Constructor.DeclaringType))
+        str.Append("(")
+        For i As Integer = 0 To Info.Constructor.Parameters.Count - 1
+            If i > 0 Then
+                str.Append(", ")
+            End If
+            Dim arg As Object = Info.ConstructorArguments(i).Value
+            If TypeOf arg Is String Then
+                str.Append("""")
+                str.Append(CStr(arg))
+                str.Append("""")
+            Else
+                str.Append(CStr(arg))
+            End If
+        Next
+        str.Append(")")
+        Return str.ToString()
     End Function
 
     Private Sub CompareAttribute(ByVal Attribute1 As CustomAttribute, ByVal Attribute2 As CustomAttribute)
