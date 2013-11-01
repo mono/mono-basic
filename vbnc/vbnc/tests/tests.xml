@@ -7328,6 +7328,8 @@
 		<arguments>@SelfCompileWindows.response /nowarn</arguments>
 		<vbcarguments>/out:vbnc_vbc.exe</vbcarguments>
 		<testarguments>/help</testarguments>
+		<dependency>..\..\bin\Mono.Cecil.VB.dll</dependency>
+		<dependency>..\..\bin\Mono.Cecil.VB.Mdb.dll</dependency>
 	</test>
 	<test id="1809" name="GenericNestedType1" target="exe" mytype="empty">
 		<file>Unfixable\GenericNestedType1.vb</file>
