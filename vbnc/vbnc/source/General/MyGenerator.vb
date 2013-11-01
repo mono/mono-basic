@@ -93,7 +93,7 @@ Public Class MyGenerator
 
         If Code.Length > 0 OrElse m_MyType = MyTypes.Custom Then
             Dim projectPrepend As New System.Text.StringBuilder()
-            projectPrepend.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""10.0.0.0"")> _")
+            projectPrepend.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""11.0.0.0"")> _")
             projectPrepend.AppendLine("    <Global.Microsoft.VisualBasic.HideModuleName> _")
             projectPrepend.AppendLine("    Friend Module MyProject")
             projectPrepend.AppendLine("        <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Never)> _")
@@ -188,7 +188,7 @@ Public Class MyGenerator
         End Select
 
         Code.AppendLine("    <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Never)> _")
-        Code.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""10.0.0.0"")> _")
+        Code.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""11.0.0.0"")> _")
         Code.AppendLine("    Friend Class MyApplication")
         Code.Append("        Inherits ") : Code.AppendLine(baseClass)
         'Code.AppendLine("        Public Sub New()")
@@ -537,7 +537,7 @@ Public Class MyGenerator
         End Select
 
         Code.AppendLine("    <Global.System.ComponentModel.EditorBrowsable(Global.System.ComponentModel.EditorBrowsableState.Never)> _")
-        Code.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""10.0.0.0"")> _")
+        Code.AppendLine("    <Global.System.CodeDom.Compiler.GeneratedCode(""MyTemplate"", ""11.0.0.0"")> _")
         Code.AppendLine("    Friend Class MyComputer")
         Code.Append("        Inherits ") : Code.AppendLine(baseClass)
         Code.AppendLine("        <Global.System.Diagnostics.DebuggerHidden()> _")
