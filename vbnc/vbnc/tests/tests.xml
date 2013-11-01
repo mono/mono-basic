@@ -12514,7 +12514,6 @@
 		<error line="752" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Char'." />
 		<error line="758" number="30518" message="Overload resolution failed because no accessible '+' can be called with these arguments:" />
 		<error line="761" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="764" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="716" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="719" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="722" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -12551,7 +12550,7 @@
 		<error line="752" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Char'." />
 		<error line="758" number="30518" message="Overload resolution failed because no accessible '+' can be called with these arguments:" />
 		<error line="761" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="764" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="764" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 		<vbcerror line="716" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="719" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="722" number="30452" message="Operator '+' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -12575,7 +12574,7 @@
 		<file>CompileTime2\OperatorIntrinsicBinaryAdd.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
-	<test id="2370" name="OperatorIntrinsic_BinaryAdd_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+	<test id="2370" name="OperatorIntrinsic_BinaryAdd_ObjectStrictError" expectedexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
 		<file>CompileTime2\OperatorIntrinsicBinaryAdd.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
@@ -12594,27 +12593,9 @@
 		<error line="816" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 		<error line="820" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 		<error line="824" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<error line="827" number="30452" message="Operator '+' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="827" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 		<error line="831" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 		<error line="831" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="768" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="780" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="784" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="788" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="792" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="796" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="800" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="804" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="808" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="812" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="816" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="820" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="824" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="827" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="831" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
-		<vbcerror line="831" number="30038" message="Option Strict On prohibits operands of type Object for operator '+'." />
 	</test>
 	<test id="2371" name="OperatorIntrinsic_BinarySub_" target="exe" mytype="empty">
 		<file>CompileTime2\OperatorIntrinsicBinarySub.vb</file>
@@ -13781,7 +13762,6 @@
 		<error line="701" number="30518" message="Overload resolution failed because no accessible '=' can be called with these arguments:" />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -13819,7 +13799,7 @@
 		<error line="701" number="30518" message="Overload resolution failed because no accessible '=' can be called with these arguments:" />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 		<vbcerror line="662" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -13843,7 +13823,7 @@
 		<file>CompileTime2\OperatorIntrinsicEquals.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
-	<test id="2478" name="OperatorIntrinsic_Equals_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+	<test id="2478" name="OperatorIntrinsic_Equals_ObjectStrictError" expectedexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
 		<file>CompileTime2\OperatorIntrinsicEquals.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
@@ -13862,27 +13842,9 @@
 		<error line="761" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 		<error line="765" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 		<error line="769" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<error line="772" number="30452" message="Operator '=' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 		<error line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 		<error line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="714" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="718" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="722" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="726" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="730" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="734" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="738" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="742" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="746" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="750" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="754" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="758" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="761" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="765" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="769" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="772" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
-		<vbcerror line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '='. Use the 'Is' operator to test for object identity." />
 	</test>
 	<test id="2479" name="OperatorIntrinsic_Exponent_" target="exe" mytype="empty">
 		<file>CompileTime2\OperatorIntrinsicExponent.vb</file>
@@ -14811,7 +14773,6 @@
 		<error line="701" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&gt;=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -14849,7 +14810,7 @@
 		<error line="701" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&gt;=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 		<vbcerror line="662" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&gt;=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -14873,7 +14834,7 @@
 		<file>CompileTime2\OperatorIntrinsicGE.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
 	</test>
-	<test id="2550" name="OperatorIntrinsic_GE_ObjectStrictError" expectedexitcode="1" expectedvbcexitcode="1" mytype="empty">
+	<test id="2550" name="OperatorIntrinsic_GE_ObjectStrictError" expectedexitcode="1" mytype="empty">
 		<arguments>/optionstrict+ /define:Object_ERRORS /define:STRICT</arguments>
 		<file>CompileTime2\OperatorIntrinsicGE.vb</file>
 		<file>CompileTime2\OperatorIntrinsic.vb</file>
@@ -14892,27 +14853,9 @@
 		<error line="761" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 		<error line="765" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 		<error line="769" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<error line="772" number="30452" message="Operator '&gt;=' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="714" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="718" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="722" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="726" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="730" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="734" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="738" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="742" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="746" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="750" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="754" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="758" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="761" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="765" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="769" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
-		<vbcerror line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;='." />
 	</test>
 	<test id="2551" name="OperatorIntrinsic_GT_" target="exe" mytype="empty">
 		<file>CompileTime2\OperatorIntrinsicGT.vb</file>
@@ -15343,7 +15286,6 @@
 		<error line="701" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&gt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -15381,7 +15323,7 @@
 		<error line="701" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&gt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<vbcerror line="662" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -15424,7 +15366,7 @@
 		<error line="761" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<error line="765" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<error line="769" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
-		<error line="772" number="30452" message="Operator '&gt;' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
 		<vbcerror line="714" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;'." />
@@ -18731,7 +18673,6 @@
 		<error line="701" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -18769,7 +18710,7 @@
 		<error line="701" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;=' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;=' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -18812,7 +18753,7 @@
 		<error line="761" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<error line="765" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<error line="769" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
-		<error line="772" number="30452" message="Operator '&lt;=' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
 		<vbcerror line="714" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;='." />
@@ -19868,7 +19809,6 @@
 		<error line="1042" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="1045" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="1048" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="1051" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="1003" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="1006" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="1009" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -19906,7 +19846,7 @@
 		<error line="1042" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="1045" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="1048" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="1051" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="1051" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<vbcerror line="1003" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="1006" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="1009" number="30452" message="Operator 'Like' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -19949,7 +19889,7 @@
 		<error line="1103" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<error line="1107" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<error line="1111" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
-		<error line="1114" number="30452" message="Operator 'Like' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="1114" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<error line="1118" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<error line="1118" number="30038" message="Option Strict On prohibits operands of type Object for operator 'Like'." />
 		<vbcerror line="1055" number="30038" message="Option Strict On prohibits operands of type Object for operator '...'." />
@@ -20614,7 +20554,6 @@
 		<error line="912" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="915" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="918" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="921" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="873" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="876" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="879" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -20652,7 +20591,7 @@
 		<error line="912" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="915" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="918" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="921" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="921" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<vbcerror line="873" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="876" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="879" number="30452" message="Operator '&lt;&lt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -20695,7 +20634,7 @@
 		<error line="974" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<error line="980" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<error line="985" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
-		<error line="990" number="30452" message="Operator '&lt;&lt;' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="990" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<error line="994" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<error line="994" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
 		<vbcerror line="925" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;&lt;'." />
@@ -21146,7 +21085,6 @@
 		<error line="701" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -21184,7 +21122,7 @@
 		<error line="701" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -21227,7 +21165,7 @@
 		<error line="761" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<error line="765" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<error line="769" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
-		<error line="772" number="30452" message="Operator '&lt;' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<error line="776" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
 		<vbcerror line="714" number="30038" message="Option Strict On prohibits operands of type Object for operator '&lt;'." />
@@ -22708,7 +22646,6 @@
 		<error line="701" number="30518" message="Overload resolution failed because no accessible '&lt;&gt;' can be called with these arguments:" />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;&gt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -22746,7 +22683,7 @@
 		<error line="701" number="30518" message="Overload resolution failed because no accessible '&lt;&gt;' can be called with these arguments:" />
 		<error line="704" number="30518" message="Overload resolution failed because no accessible '&lt;&gt;' can be called with these arguments:" />
 		<error line="707" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="710" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="710" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<vbcerror line="662" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="665" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="668" number="30452" message="Operator '&lt;&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -22789,7 +22726,7 @@
 		<error line="761" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<error line="765" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<error line="769" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
-		<error line="772" number="30452" message="Operator '&lt;&gt;' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="772" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<error line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<error line="776" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
 		<vbcerror line="714" number="32013" message="Option Strict On disallows operands of type Object for operator '&lt;&gt;'. Use the 'Is' operator to test for object identity." />
@@ -25309,7 +25246,6 @@
 		<error line="912" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="915" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="918" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="921" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Object'." />
 		<vbcerror line="873" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="876" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="879" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -25347,7 +25283,7 @@
 		<error line="912" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'String'." />
 		<error line="915" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Date'." />
 		<error line="918" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'System.DBNull'." />
-		<error line="921" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Object'." />
+		<error line="921" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<vbcerror line="873" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Boolean'." />
 		<vbcerror line="876" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'Byte'." />
 		<vbcerror line="879" number="30452" message="Operator '&gt;&gt;' is not defined for types 'System.DBNull' and 'SByte'." />
@@ -25390,7 +25326,7 @@
 		<error line="974" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<error line="980" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<error line="985" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
-		<error line="990" number="30452" message="Operator '&gt;&gt;' is not defined for types 'Object' and 'System.DBNull'." />
+		<error line="990" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<error line="994" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<error line="994" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
 		<vbcerror line="925" number="30038" message="Option Strict On prohibits operands of type Object for operator '&gt;&gt;'." />
