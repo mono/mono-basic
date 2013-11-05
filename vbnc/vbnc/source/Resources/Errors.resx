@@ -350,7 +350,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30074" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Constant cannot be the target of an assignment.</value>
   </data>
   <data name="30075" xml:space="preserve">
     <value>CHANGEME</value>

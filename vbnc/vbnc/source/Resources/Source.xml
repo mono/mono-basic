@@ -381,7 +381,7 @@
 	</Message>
 	<Message id="30074" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Constant cannot be the target of an assignment.</VBNCValue>
 		<VBValue>Constant cannot be the target of an assignment.</VBValue>
 	</Message>
 	<Message id="30075" level="Error">

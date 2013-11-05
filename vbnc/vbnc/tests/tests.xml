@@ -3230,7 +3230,7 @@
 		<file>Errors\30070-1.vb</file>
 		<error number="30070" />
 	</test>
-	<test id="803" name="30074" knownfailure="Parser error" expectedexitcode="1">
+	<test id="803" name="30074" expectedexitcode="1">
 		<file>Errors\30074.vb</file>
 		<error number="30074" />
 	</test>

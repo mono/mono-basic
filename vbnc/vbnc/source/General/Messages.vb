@@ -548,7 +548,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30072 = 30072
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Constant cannot be the target of an assignment."
     ''' VB   = "Constant cannot be the target of an assignment."
     ''' </summary>
     ''' <remarks></remarks>

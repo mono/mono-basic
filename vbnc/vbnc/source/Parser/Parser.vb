@@ -2467,7 +2467,15 @@ Public Class Parser
         Dim iCurrent As RestorablePoint = tm.GetRestorablePoint
         Dim doExpression As Boolean = True
         m_Identifier = ParseIdentifier(result)
-        If m_Identifier Is Nothing Then Helper.ErrorRecoveryNotImplemented(tm.CurrentLocation)
+        If m_Identifier Is Nothing Then
+            Dim exp As Expression = ParseExpression(result)
+            Dim constant As Object = Nothing
+            If exp IsNot Nothing AndAlso exp.GetConstant(constant, False) Then
+                Compiler.Report.ShowMessage(Messages.VBNC30074, tm.CurrentLocation)
+            Else
+                Compiler.Report.ShowMessage(Messages.VBNC30203, tm.CurrentLocation)
+            End If
+        End If
         If m_Identifier IsNot Nothing Then
             If ArrayNameModifier.CanBeMe(tm) Then
                 tmpANM = ParseArrayNameModifier(result)
