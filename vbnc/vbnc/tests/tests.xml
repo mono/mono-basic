@@ -6993,7 +6993,7 @@
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\DecimalConstant1.vb</file>
 	</test>
-	<test id="1714" name="DelegateAsMethodParameter1" knownfailure="NotImplementedYet">
+	<test id="1714" name="DelegateAsMethodParameter1">
 		<arguments>/r:System.dll,System.Xml.dll /define:DEBUG /debug:FULL /nowarn /define:_MYTYPE=\"Empty\"</arguments>
 		<file>NotImplementedYet\DelegateAsMethodParameter1.vb</file>
 	</test>

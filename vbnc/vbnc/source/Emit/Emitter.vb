@@ -324,6 +324,7 @@ Partial Public Class Emitter
         Dim methodinf As Mono.Cecil.MethodReference = Method '= TryCast(Method, Mono.Cecil.MethodReference)
         If methodinf IsNot Nothing Then
             methodinf = Helper.GetMethodOrMethodReference(Info.Compiler, methodinf)
+            methodinf = CecilHelper.MakeEmittable(methodinf)
             If CecilHelper.FindDefinition(methodinf).IsStatic Then
                 Info.ILGen.Emit(OpCodes.Ldftn, methodinf)
             Else
