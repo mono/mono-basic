@@ -3210,7 +3210,7 @@
 		<file>Errors\30060-9.vb</file>
 		<error number="30060" />
 	</test>
-	<test id="799" name="30064" knownfailure="We give the wrong error" expectedexitcode="1" target="exe">
+	<test id="799" name="30064" expectedexitcode="1" target="exe">
 		<arguments>-target:library</arguments>
 		<file>Errors\30064.vb</file>
 		<error number="30064" />

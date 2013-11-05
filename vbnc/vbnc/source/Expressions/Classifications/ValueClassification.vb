@@ -80,7 +80,7 @@ Public Class ValueClassification
         Return result
     End Function
 
-    ReadOnly Property ReclassifiedClassification() As ExpressionClassification
+    Public ReadOnly Property ReclassifiedClassification() As ExpressionClassification
         Get
             Return m_Classification
         End Get

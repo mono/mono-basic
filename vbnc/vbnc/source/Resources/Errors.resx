@@ -323,7 +323,7 @@
     <value>CHANGEME</value>
   </data>
   <data name="30064" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>'ReadOnly' variable cannot be the target of an assignment.</value>
   </data>
   <data name="30065" xml:space="preserve">
     <value>It is not valid to use 'Exit Sub' in a Function or Property.</value>

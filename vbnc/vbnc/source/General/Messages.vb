@@ -485,7 +485,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30062 = 30062
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "'ReadOnly' variable cannot be the target of an assignment."
     ''' VB   = "'ReadOnly' variable cannot be the target of an assignment."
     ''' </summary>
     ''' <remarks></remarks>

@@ -4803,6 +4803,13 @@ Public Class Helper
                 Dim constant As Object = Nothing
                 If vC.GetConstant(constant, False) Then
                     Return Compiler.Report.ShowMessage(Messages.VBNC30074, Location)
+                ElseIf vC.ReclassifiedClassification IsNot Nothing AndAlso vC.ReclassifiedClassification.IsVariableClassification Then
+                    Dim vVar As VariableClassification = vC.ReclassifiedClassification.AsVariableClassification
+                    If vVar.FieldDefinition IsNot Nothing AndAlso (vVar.FieldDefinition.Attributes And Mono.Cecil.FieldAttributes.InitOnly) = Mono.Cecil.FieldAttributes.InitOnly Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30064, Location)
+                    Else
+                        Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
+                    End If
                 Else
                     Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
                 End If

@@ -336,7 +336,7 @@
 	</Message>
 	<Message id="30064" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>'ReadOnly' variable cannot be the target of an assignment.</VBNCValue>
 		<VBValue>'ReadOnly' variable cannot be the target of an assignment.</VBValue>
 	</Message>
 	<Message id="30065" level="Error">
