@@ -3215,8 +3215,8 @@
 		<file>Errors\30064.vb</file>
 		<error number="30064" />
 	</test>
-	<test id="800" name="30068" knownfailure="We give the wrong error" expectedexitcode="1" target="exe">
-		<arguments>-target:library</arguments>
+	<test id="800" name="30068" expectedexitcode="1" target="exe">
+		<arguments>-target:library -nowarn</arguments>
 		<file>Errors\30068.vb</file>
 		<error number="30068" />
 	</test>

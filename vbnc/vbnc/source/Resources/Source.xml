@@ -356,7 +356,7 @@
 	</Message>
 	<Message id="30068" level="Error">
 		<Comment>NC</Comment>
-		<VBNCValue>CHANGEME</VBNCValue>
+		<VBNCValue>Expression is a value and therefore cannot be the target of an assignment.</VBNCValue>
 		<VBValue>Expression is a value and therefore cannot be the target of an assignment.</VBValue>
 	</Message>
 	<Message id="30069" level="Error">

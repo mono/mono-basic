@@ -513,7 +513,7 @@ Public Enum Messages
     <Message(MessageLevel.Error)> VBNC30067 = 30067
 
     ''' <summary>
-    ''' VBNC = "CHANGEME"
+    ''' VBNC = "Expression is a value and therefore cannot be the target of an assignment."
     ''' VB   = "Expression is a value and therefore cannot be the target of an assignment."
     ''' </summary>
     ''' <remarks></remarks>

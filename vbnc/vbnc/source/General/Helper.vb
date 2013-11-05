@@ -4806,6 +4806,8 @@ Public Class Helper
                 Else
                     Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
                 End If
+            Case ExpressionClassification.Classifications.MethodGroup
+                Return Compiler.Report.ShowMessage(Messages.VBNC30068, Location)
             Case Else
                 Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
         End Select

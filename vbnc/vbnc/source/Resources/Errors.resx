@@ -335,7 +335,7 @@
     <value>It is not valid to use 'Exit Function' in a Sub or Property.</value>
   </data>
   <data name="30068" xml:space="preserve">
-    <value>CHANGEME</value>
+    <value>Expression is a value and therefore cannot be the target of an assignment.</value>
   </data>
   <data name="30069" xml:space="preserve">
     <value>CHANGEME</value>
