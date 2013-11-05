@@ -304,6 +304,11 @@ Public Class SimpleNameExpression
 
         Dim method As IMethod
         method = Me.FindFirstParent(Of IMethod)()
+
+        If Me.FindFirstParent(Of Parameter)() IsNot Nothing Then
+            method = Nothing
+        End If
+
         If method IsNot Nothing Then
             If method.Signature.TypeParameters IsNot Nothing Then
                 Dim typeparam As TypeParameter = method.Signature.TypeParameters.Parameters.Item(Name)

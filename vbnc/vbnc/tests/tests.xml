@@ -8210,7 +8210,7 @@
 		<error line="5" number="30203" message="Identifier expected." />
 		<vbcerror line="2" number="30203" message="Identifier expected." />
 	</test>
-	<test id="1994" name="TypeNameResolution3" knownfailure="doesn't work" mytype="empty">
+	<test id="1994" name="TypeNameResolution3" mytype="empty">
 		<file>CompileTime\TypeNameResolution3.vb</file>
 	</test>
 	<test id="1995" name="GenericNestedType3" mytype="empty">
