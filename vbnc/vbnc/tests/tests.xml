@@ -3234,7 +3234,7 @@
 		<file>Errors\30074.vb</file>
 		<error number="30074" />
 	</test>
-	<test id="804" name="30074-1" knownfailure="We give the wrong error" expectedexitcode="1" target="exe">
+	<test id="804" name="30074-1" expectedexitcode="1" target="exe">
 		<arguments>-target:library</arguments>
 		<file>Errors\30074-1.vb</file>
 		<error number="30074" />
@@ -26139,5 +26139,9 @@
 		<arguments>/optionstrict+</arguments>
 		<file>Errors\30038-1.vb</file>
 		<error line="6" number="30512" message="Option Strict On disallows implicit conversions from 'Object' to 'Boolean'." />
+	</test>
+	<test id="3169" name="30074-2" expectedexitcode="1">
+		<file>Errors\30074-2.vb</file>
+		<error line="5" number="30074" message="Constant cannot be the target of an assignment." />
 	</test>
 </rt>

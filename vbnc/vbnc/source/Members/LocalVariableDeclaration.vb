@@ -103,6 +103,12 @@ Public Class LocalVariableDeclaration
         End Get
     End Property
 
+    ReadOnly Property IsConst As Boolean
+        Get
+            Return Modifiers.Is(ModifierMasks.Const)
+        End Get
+    End Property
+
     ReadOnly Property LocalBuilder() As Mono.Cecil.Cil.VariableDefinition
         Get
             Return m_LocalBuilder

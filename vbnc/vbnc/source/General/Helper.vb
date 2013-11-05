@@ -4807,6 +4807,8 @@ Public Class Helper
                     Dim vVar As VariableClassification = vC.ReclassifiedClassification.AsVariableClassification
                     If vVar.FieldDefinition IsNot Nothing AndAlso (vVar.FieldDefinition.Attributes And Mono.Cecil.FieldAttributes.InitOnly) = Mono.Cecil.FieldAttributes.InitOnly Then
                         Return Compiler.Report.ShowMessage(Messages.VBNC30064, Location)
+                    ElseIf vVar.GetConstant(constant, False) Then
+                        Return Compiler.Report.ShowMessage(Messages.VBNC30074, Location)
                     Else
                         Helper.AddError(Compiler, Location, "Expected " & Expected & " got " & ActualClassification.Classification.ToString())
                     End If

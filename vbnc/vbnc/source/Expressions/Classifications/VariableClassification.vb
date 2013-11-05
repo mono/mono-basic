@@ -106,6 +106,14 @@ Public Class VariableClassification
                 If ShowError Then Parent.Show30059()
                 Return False
             End If
+        ElseIf m_LocalVariable IsNot Nothing Then
+            If m_LocalVariable.IsConst Then
+                If m_LocalVariable.VariableInitializer.IsRegularInitializer Then
+                    Return m_LocalVariable.VariableInitializer.AsRegularInitializer.GetConstant(value, ShowError)
+                End If
+                If ShowError Then Parent.Show30059()
+                Return False
+            End If
         Else
             If ShowError Then Parent.Show30059()
             Return False
