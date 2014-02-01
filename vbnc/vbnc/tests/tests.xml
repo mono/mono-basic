@@ -26144,4 +26144,7 @@
 		<file>Errors\30074-2.vb</file>
 		<error line="5" number="30074" message="Constant cannot be the target of an assignment." />
 	</test>
+	<test id="3171" name="AddHandlerWithStaticVariable" mytype="empty">
+		<file>CompileTime\AddHandlerWithStaticVariable.vb</file>
+	</test>
 </rt>

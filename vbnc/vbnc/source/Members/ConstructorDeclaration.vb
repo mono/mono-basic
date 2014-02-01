@@ -194,9 +194,11 @@ Public Class ConstructorDeclaration
         If m_BaseCtorCall Is Nothing OrElse (exCtorCall IsNot Nothing AndAlso Helper.CompareType(exCtorCall.DeclaringType, Me.DeclaringType.CecilType) = False) Then
             result = EmitVariableInitialization(Info) AndAlso result
 
-            For Each arhs As AddOrRemoveHandlerStatement In Me.DeclaringType.AddHandlers
-                result = arhs.GenerateCode(Info) AndAlso result
-            Next
+            If Not IsShared Then
+                For Each arhs As AddOrRemoveHandlerStatement In Me.DeclaringType.AddHandlers
+                    result = arhs.GenerateCode(Info) AndAlso result
+                Next
+            End If
         End If
 
         If Me.IsShared Then
