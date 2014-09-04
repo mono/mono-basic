@@ -25,7 +25,7 @@ Mono's VB runtime.
 %_prefix/bin/vbnc*
 %_prefix/lib/mono/*/Microsoft.VisualBasic.dll
 %_prefix/lib/mono/*/Mono.Cecil.VB*.dll
-%_prefix/lib/mono/4.0/vbnc*
+%_prefix/lib/mono/4.5/vbnc*
 %_prefix/lib/mono/gac/Microsoft.VisualBasic
 %_prefix/lib/mono/gac/Mono.Cecil.VB*
 
