@@ -2,10 +2,11 @@
 
 VERSION=3.8
 prefix=/usr/local
-configured_profiles=
+configured_profiles="net_4_0 net_4_5"
 moonlight_sdk_location=
 monotouch_sdk_location="`pwd`/../mono/mcs/class/lib/monotouch"
 monodroid_sdk_location="`pwd`/../mono/mcs/class/lib/monodroid"
+with_profile2=yes
 while test x$1 != x; do
         case $1 in
                 --prefix=*)
@@ -35,11 +36,21 @@ while test x$1 != x; do
                 --with-moonlight=yes)
                         configured_profiles="moonlight $configured_profiles"
                         ;;
+                --with-profile2=yes)
+                        with_profile2=yes
+                        ;;
+                --with-profile2=no)
+                        with_profile2=no
+                        ;;
                 *)
                         echo Unknown argument $1 >&2
         esac
         shift
 done
+
+if test "x$with_profile2" = "xyes"; then
+	configured_profiles="net_2_0 $configured_profiles"
+fi
 
 if test "x$moonlight_sdk_location" = "x"; then
 	if test "x`echo $configured_profiles | grep moonlight`" != "x"; then
