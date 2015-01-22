@@ -316,11 +316,13 @@ Public Class Compiler
         End Select
 
         Dim an As AssemblyNameDefinition = New AssemblyNameDefinition("dummy", New Version())
-        AssemblyBuilderCecil = AssemblyDefinition.CreateAssembly(an, IO.Path.GetFileNameWithoutExtension(OutFileName), kind)
+        Dim moduleParameters As New ModuleParameters()
+        moduleParameters.Kind = kind
+        moduleParameters.AssemblyResolver = AssemblyResolver
+        AssemblyBuilderCecil = AssemblyDefinition.CreateAssembly(an, IO.Path.GetFileNameWithoutExtension(OutFileName), moduleParameters)
         ModuleBuilderCecil = AssemblyBuilderCecil.MainModule
         ModuleBuilderCecil.Name = IO.Path.GetFileName(OutFileName)
         ModuleBuilderCecil.Runtime = TypeManager.Corlib.MainModule.Runtime
-        ModuleBuilderCecil.AssemblyResolver = AssemblyResolver
         If CommandLine.Verbose Then Report.WriteLine(String.Format("Using runtime version: {0}", ModuleBuilderCecil.Runtime))
         Return Compiler.Report.Errors = 0
     End Function

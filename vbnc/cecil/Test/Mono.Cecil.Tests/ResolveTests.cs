@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Mono.Cecil;
@@ -94,6 +95,75 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("mscorlib", definition.Module.Assembly.Name.Name);
 		}
 
+		class CustomResolver : DefaultAssemblyResolver {
+
+			public void Register (AssemblyDefinition assembly)
+			{
+				this.RegisterAssembly (assembly);
+				this.AddSearchDirectory (Path.GetDirectoryName (assembly.MainModule.FullyQualifiedName));
+			}
+		}
+
+		[Test]
+		public void ExportedTypeFromModule ()
+		{
+			var resolver = new CustomResolver ();
+			var parameters = new ReaderParameters { AssemblyResolver = resolver };
+			var mma = GetResourceModule ("mma.exe", parameters);
+
+			resolver.Register (mma.Assembly);
+
+			var current_module = GetCurrentModule (parameters);
+			var reference = new TypeReference ("Module.A", "Foo", current_module, AssemblyNameReference.Parse (mma.Assembly.FullName), false);
+
+			var definition = reference.Resolve ();
+			Assert.IsNotNull (definition);
+			Assert.AreEqual ("Module.A.Foo", definition.FullName);
+		}
+
+		[Test]
+		public void TypeForwarder ()
+		{
+			var resolver = new CustomResolver ();
+			var parameters = new ReaderParameters { AssemblyResolver = resolver };
+
+			var types = ModuleDefinition.ReadModule (
+				CompilationService.CompileResource (GetCSharpResourcePath ("CustomAttributes.cs", typeof (ResolveTests).Assembly)),
+				parameters);
+
+			resolver.Register (types.Assembly);
+
+			var current_module = GetCurrentModule (parameters);
+			var reference = new TypeReference ("System.Diagnostics", "DebuggableAttribute", current_module, AssemblyNameReference.Parse (types.Assembly.FullName), false);
+
+			var definition = reference.Resolve ();
+			Assert.IsNotNull (definition);
+			Assert.AreEqual ("System.Diagnostics.DebuggableAttribute", definition.FullName);
+			Assert.AreEqual ("mscorlib", definition.Module.Assembly.Name.Name);
+		}
+
+		[Test]
+		public void NestedTypeForwarder ()
+		{
+			var resolver = new CustomResolver ();
+			var parameters = new ReaderParameters { AssemblyResolver = resolver };
+
+			var types = ModuleDefinition.ReadModule (
+				CompilationService.CompileResource (GetCSharpResourcePath ("CustomAttributes.cs", typeof (ResolveTests).Assembly)),
+				parameters);
+
+			resolver.Register (types.Assembly);
+
+			var current_module = GetCurrentModule (parameters);
+			var reference = new TypeReference ("", "DebuggingModes", current_module, null, true);
+			reference.DeclaringType = new TypeReference ("System.Diagnostics", "DebuggableAttribute", current_module, AssemblyNameReference.Parse (types.Assembly.FullName), false);
+
+			var definition = reference.Resolve ();
+			Assert.IsNotNull (definition);
+			Assert.AreEqual ("System.Diagnostics.DebuggableAttribute/DebuggingModes", definition.FullName);
+			Assert.AreEqual ("mscorlib", definition.Module.Assembly.Name.Name);
+		}
+
 		[Test]
 		public void RectangularArrayResolveGetMethod ()
 		{
@@ -104,7 +174,59 @@ namespace Mono.Cecil.Tests {
 			Assert.IsNull (get_a_b.Resolve ());
 		}
 
-		static TRet GetReference<TDel, TRet> (TDel code)
+		[Test]
+		public void ResolveFunctionPointer ()
+		{
+			var module = GetResourceModule ("cppcli.dll");
+			var global = module.GetType ("<Module>");
+			var field = global.GetField ("__onexitbegin_app_domain");
+
+			var type = field.FieldType as PointerType;
+			Assert.IsNotNull(type);
+
+			var fnptr = type.ElementType as FunctionPointerType;
+			Assert.IsNotNull (fnptr);
+
+			Assert.IsNull (fnptr.Resolve ());
+		}
+
+		[Test]
+		public void ResolveGenericParameter ()
+		{
+			var collection = typeof (Mono.Collections.Generic.Collection<>).ToDefinition ();
+			var parameter = collection.GenericParameters [0];
+
+			Assert.IsNotNull (parameter);
+
+			Assert.IsNull (parameter.Resolve ());
+		}
+
+		[Test]
+		public void ResolveNullVersionAssembly ()
+		{
+			var reference = AssemblyNameReference.Parse ("System.Core");
+			reference.Version = null;
+
+			var resolver = new DefaultAssemblyResolver ();
+			Assert.IsNotNull (resolver.Resolve (reference));
+		}
+
+		[Test]
+		public void ResolvePortableClassLibraryReference ()
+		{
+			var resolver = new DefaultAssemblyResolver ();
+			var parameters = new ReaderParameters { AssemblyResolver = resolver };
+			var pcl = GetResourceModule ("PortableClassLibrary.dll", parameters);
+
+			foreach (var reference in pcl.AssemblyReferences) {
+				Assert.IsTrue (reference.IsRetargetable);
+				var assembly = resolver.Resolve (reference);
+				Assert.IsNotNull (assembly);
+				Assert.AreEqual (typeof (object).Assembly.GetName ().Version, assembly.Name.Version);
+			}
+		}
+
+		TRet GetReference<TDel, TRet> (TDel code)
 		{
 			var @delegate = code as Delegate;
 			if (@delegate == null)
@@ -142,7 +264,7 @@ namespace Mono.Cecil.Tests {
 			throw new InvalidOperationException ();
 		}
 
-		static MethodDefinition GetMethodFromDelegate (Delegate @delegate)
+		MethodDefinition GetMethodFromDelegate (Delegate @delegate)
 		{
 			var method = @delegate.Method;
 			var type = (TypeDefinition) TypeParser.ParseType (GetCurrentModule (), method.DeclaringType.FullName);

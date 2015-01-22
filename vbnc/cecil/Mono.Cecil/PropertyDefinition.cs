@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -76,7 +76,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
 		}
 
 		public MethodReference GetMethod {
@@ -127,6 +127,8 @@ namespace Mono.Cecil {
 
 		public bool HasParameters {
 			get {
+				InitializeMethods ();
+
 				if (get_method != null)
 					return get_method.HasParameters;
 
@@ -168,7 +170,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get {
-				ResolveConstant ();
+				this.ResolveConstant (ref constant, Module);
 
 				return constant != Mixin.NoValue;
 			}
@@ -178,14 +180,6 @@ namespace Mono.Cecil {
 		public object Constant {
 			get { return HasConstant ? constant : null;	}
 			set { constant = value; }
-		}
-
-		void ResolveConstant ()
-		{
-			if (constant != Mixin.NotResolved)
-				return;
-
-			this.ResolveConstant (ref constant, Module);
 		}
 
 		#region PropertyAttributes
@@ -251,14 +245,24 @@ namespace Mono.Cecil {
 
 		void InitializeMethods ()
 		{
-			if (get_method != null || set_method != null)
-				return;
-
 			var module = this.Module;
-			if (!module.HasImage ())
+			if (module == null)
 				return;
 
-			module.Read (this, (property, reader) => reader.ReadMethods (property));
+			lock (module.SyncRoot) {
+				if (get_method != null || set_method != null)
+					return;
+
+				if (!module.HasImage ())
+					return;
+
+				module.Read (this, (property, reader) => reader.ReadMethods (property));
+			}
+		}
+
+		public override PropertyDefinition Resolve ()
+		{
+			return this;
 		}
 	}
 }

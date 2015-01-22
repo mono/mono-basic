@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -129,11 +129,15 @@ namespace Mono.Cecil {
 
 		string ParsePart ()
 		{
-			int start = position;
-			while (position < length && !IsDelimiter (fullname [position]))
-				position++;
+			var part = new StringBuilder ();
+			while (position < length && !IsDelimiter (fullname [position])) {
+				if (fullname [position] == '\\')
+					position++;
 
-			return fullname.Substring (start, position - start);
+				part.Append (fullname [position++]);
+			}
+
+			return part.ToString ();
 		}
 
 		static bool IsDelimiter (char chr)
@@ -173,13 +177,7 @@ namespace Mono.Cecil {
 				return;
 			}
 
-#if !CF
-			Array.Resize (ref array, array.Length + 1);
-#else
-			var copy = new T [array.Length + 1];
-			Array.Copy (array, copy, array.Length);
-			array = copy;
-#endif
+			array = array.Resize (array.Length + 1);
 			array [array.Length - 1] = item;
 		}
 
@@ -272,7 +270,7 @@ namespace Mono.Cecil {
 
 		public static TypeReference ParseType (ModuleDefinition module, string fullname)
 		{
-			if (fullname == null)
+			if (string.IsNullOrEmpty (fullname))
 				return null;
 
 			var parser = new TypeParser (fullname);
@@ -355,9 +353,8 @@ namespace Mono.Cecil {
 			string @namespace, name;
 			SplitFullName (type_info.type_fullname, out @namespace, out name);
 
-			var type = new TypeReference (@namespace, name, scope) {
-				module = module,
-			};
+			var type = new TypeReference (@namespace, name, module, scope);
+			MetadataSystem.TryProcessPrimitiveTypeReference (type);
 
 			AdjustGenericParameters (type);
 
@@ -366,9 +363,8 @@ namespace Mono.Cecil {
 				return type;
 
 			for (int i = 0; i < nested_names.Length; i++) {
-				type = new TypeReference (string.Empty, nested_names [i], null) {
+				type = new TypeReference (string.Empty, nested_names [i], module, null) {
 					DeclaringType = type,
-					module = module,
 				};
 
 				AdjustGenericParameters (type);
@@ -449,6 +445,16 @@ namespace Mono.Cecil {
 			return name.ToString ();
 		}
 
+		static void AppendNamePart (string part, StringBuilder name)
+		{
+			foreach (var c in part) {
+				if (IsDelimiter (c))
+					name.Append ('\\');
+
+				name.Append (c);
+			}
+		}
+
 		static void AppendType (TypeReference type, StringBuilder name, bool fq_name, bool top_level)
 		{
 			var declaring_type = type.DeclaringType;
@@ -459,11 +465,11 @@ namespace Mono.Cecil {
 
 			var @namespace = type.Namespace;
 			if (!string.IsNullOrEmpty (@namespace)) {
-				name.Append (@namespace);
+				AppendNamePart (@namespace, name);
 				name.Append ('.');
 			}
 
-			name.Append (type.GetElementType ().Name);
+			AppendNamePart (type.GetElementType ().Name, name);
 
 			if (!fq_name)
 				return;

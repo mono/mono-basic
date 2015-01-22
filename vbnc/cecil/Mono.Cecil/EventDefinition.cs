@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -113,7 +113,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
 		}
 
 		#region EventAttributes
@@ -124,8 +124,8 @@ namespace Mono.Cecil {
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.RTSpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.RTSpecialName, value); }
+			get { return attributes.GetAttributes ((ushort) EventAttributes.RTSpecialName); }
+			set { attributes = attributes.SetAttributes ((ushort) EventAttributes.RTSpecialName, value); }
 		}
 
 		#endregion
@@ -148,16 +148,26 @@ namespace Mono.Cecil {
 
 		void InitializeMethods ()
 		{
-			if (add_method != null
-				|| invoke_method != null
-				|| remove_method != null)
-				return;
-
 			var module = this.Module;
-			if (!module.HasImage ())
+			if (module == null)
 				return;
 
-			module.Read (this, (@event, reader) => reader.ReadMethods (@event));
+			lock (module.SyncRoot) {
+				if (add_method != null
+					|| invoke_method != null
+					|| remove_method != null)
+					return;
+
+				if (!module.HasImage ())
+					return;
+
+				module.Read (this, (@event, reader) => reader.ReadMethods (@event));
+			}
+		}
+
+		public override EventDefinition Resolve ()
+		{
+			return this;
 		}
 	}
 }

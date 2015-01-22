@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -86,16 +86,15 @@ namespace Mono.Cecil.Pdb {
 		bool PopulateFunctions ()
 		{
 			using (pdb_file) {
+				Dictionary<uint, PdbTokenLine> tokenToSourceMapping;
+				string sourceServerData;
 				int age;
 				Guid guid;
-				var funcs = PdbFile.LoadFunctions (pdb_file, true, out age, out guid);
 
-				if (this.age != 0) {
-					if (this.age != age)
-						return false;
-					if (this.guid != guid)
-						return false;
-				}
+				var funcs = PdbFile.LoadFunctions (pdb_file, out tokenToSourceMapping,  out sourceServerData, out age, out guid);
+
+				if (this.guid != guid)
+					return false;
 
 				foreach (PdbFunction function in funcs)
 					functions.Add (function.token, function);

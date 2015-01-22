@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,40 @@ using Mono.Cecil.Metadata;
 using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
+
+	public enum MetadataType : byte {
+		Void = ElementType.Void,
+		Boolean = ElementType.Boolean,
+		Char = ElementType.Char,
+		SByte = ElementType.I1,
+		Byte = ElementType.U1,
+		Int16 = ElementType.I2,
+		UInt16 = ElementType.U2,
+		Int32 = ElementType.I4,
+		UInt32 = ElementType.U4,
+		Int64 = ElementType.I8,
+		UInt64 = ElementType.U8,
+		Single = ElementType.R4,
+		Double = ElementType.R8,
+		String = ElementType.String,
+		Pointer = ElementType.Ptr,
+		ByReference = ElementType.ByRef,
+		ValueType = ElementType.ValueType,
+		Class = ElementType.Class,
+		Var = ElementType.Var,
+		Array = ElementType.Array,
+		GenericInstance = ElementType.GenericInst,
+		TypedByReference = ElementType.TypedByRef,
+		IntPtr = ElementType.I,
+		UIntPtr = ElementType.U,
+		FunctionPointer = ElementType.FnPtr,
+		Object = ElementType.Object,
+		MVar = ElementType.MVar,
+		RequiredModifier = ElementType.CModReqD,
+		OptionalModifier = ElementType.CModOpt,
+		Sentinel = ElementType.Sentinel,
+		Pinned = ElementType.Pinned,
+	}
 
 	public class TypeReference : MemberReference, IGenericParameterProvider, IGenericContext {
 
@@ -101,7 +135,7 @@ namespace Mono.Cecil {
 				if (generic_parameters != null)
 					return generic_parameters;
 
-				return generic_parameters = new Collection<GenericParameter> ();
+				return generic_parameters = new GenericParameterCollection (this);
 			}
 		}
 
@@ -112,6 +146,15 @@ namespace Mono.Cecil {
 					return declaring_type.Scope;
 
 				return scope;
+			}
+			set {
+				var declaring_type = this.DeclaringType;
+				if (declaring_type != null) {
+					declaring_type.Scope = value;
+					return;
+				}
+
+				scope = value;
 			}
 		}
 
@@ -132,13 +175,12 @@ namespace Mono.Cecil {
 				if (fullname != null)
 					return fullname;
 
+				fullname = this.TypeFullName ();
+
 				if (IsNested)
-					return fullname = DeclaringType.FullName + "/" + Name;
+					fullname = DeclaringType.FullName + "/" + fullname;
 
-				if (string.IsNullOrEmpty (@namespace))
-					return fullname = Name;
-
-				return fullname = @namespace + "." + Name;
+				return fullname;
 			}
 		}
 
@@ -182,26 +224,17 @@ namespace Mono.Cecil {
 			get { return false; }
 		}
 
-		public bool IsPrimitive {
+		public virtual bool IsPrimitive {
+			get { return etype.IsPrimitive (); }
+		}
+
+		public virtual MetadataType MetadataType {
 			get {
 				switch (etype) {
-				case ElementType.Boolean:
-				case ElementType.Char:
-				case ElementType.I:
-				case ElementType.U:
-				case ElementType.I1:
-				case ElementType.U1:
-				case ElementType.I2:
-				case ElementType.U2:
-				case ElementType.I4:
-				case ElementType.U4:
-				case ElementType.I8:
-				case ElementType.U8:
-				case ElementType.R4:
-				case ElementType.R8:
-					return true;
+				case ElementType.None:
+					return IsValueType ? MetadataType.ValueType : MetadataType.Class;
 				default:
-					return false;
+					return (MetadataType) etype;
 				}
 			}
 		}
@@ -213,14 +246,15 @@ namespace Mono.Cecil {
 			this.token = new MetadataToken (TokenType.TypeRef, 0);
 		}
 
-		public TypeReference (string @namespace, string name, IMetadataScope scope)
+		public TypeReference (string @namespace, string name, ModuleDefinition module, IMetadataScope scope)
 			: this (@namespace, name)
 		{
+			this.module = module;
 			this.scope = scope;
 		}
 
-		public TypeReference (string @namespace, string name, IMetadataScope scope, bool valueType) :
-			this (@namespace, name, scope)
+		public TypeReference (string @namespace, string name, ModuleDefinition module, IMetadataScope scope, bool valueType) :
+			this (@namespace, name, module, scope)
 		{
 			value_type = valueType;
 		}
@@ -242,6 +276,36 @@ namespace Mono.Cecil {
 
 	static partial class Mixin {
 
+		public static bool IsPrimitive (this ElementType self)
+		{
+			switch (self) {
+			case ElementType.Boolean:
+			case ElementType.Char:
+			case ElementType.I:
+			case ElementType.U:
+			case ElementType.I1:
+			case ElementType.U1:
+			case ElementType.I2:
+			case ElementType.U2:
+			case ElementType.I4:
+			case ElementType.U4:
+			case ElementType.I8:
+			case ElementType.U8:
+			case ElementType.R4:
+			case ElementType.R8:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		public static string TypeFullName (this TypeReference self)
+		{
+			return string.IsNullOrEmpty (self.Namespace)
+				? self.Name
+				: self.Namespace + '.' + self.Name;
+		}
+
 		public static bool IsTypeOf (this TypeReference self, string @namespace, string name)
 		{
 			return self.Name == name
@@ -261,6 +325,7 @@ namespace Mono.Cecil {
 			case ElementType.Pinned:
 			case ElementType.Ptr:
 			case ElementType.SzArray:
+			case ElementType.Sentinel:
 			case ElementType.Var:
 				return true;
 			}
@@ -272,7 +337,7 @@ namespace Mono.Cecil {
 		{
 			var type = self.Resolve ();
 			if (type == null)
-				throw new InvalidOperationException (string.Format ("Failed to resolve type: {0}", self.FullName));
+				throw new ResolutionException (self);
 
 			return type;
 		}

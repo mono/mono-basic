@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +30,7 @@ namespace Mono.Cecil {
 
 	public interface IConstantProvider : IMetadataTokenProvider {
 
-		bool HasConstant { get; }
+		bool HasConstant { get; set; }
 		object Constant { get; set; }
 	}
 
@@ -44,9 +44,19 @@ namespace Mono.Cecil {
 			ref object constant,
 			ModuleDefinition module)
 		{
-			constant = module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.ReadConstant (provider))
-				: Mixin.NoValue;
+			if (module == null) {
+				constant = Mixin.NoValue;
+				return;
+			}
+
+			lock (module.SyncRoot) {
+				if (constant != Mixin.NotResolved)
+					return;
+				if (module.HasImage ())
+					constant = module.Read (self, (provider, reader) => reader.ReadConstant (provider));
+				else
+					constant = Mixin.NoValue;
+			}
 		}
 	}
 }

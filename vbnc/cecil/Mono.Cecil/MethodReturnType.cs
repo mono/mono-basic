@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+using System.Threading;
 
 using Mono.Collections.Generic;
 
@@ -65,13 +67,22 @@ namespace Mono.Cecil {
 		}
 
 		internal ParameterDefinition Parameter {
-			get { return parameter ?? (parameter = new ParameterDefinition (return_type)); }
-			set { parameter = value; }
+			get {
+				if (parameter == null)
+					Interlocked.CompareExchange (ref parameter, new ParameterDefinition (return_type, method), null);
+
+				return parameter;
+			}
 		}
 
 		public MetadataToken MetadataToken {
 			get { return Parameter.MetadataToken; }
 			set { Parameter.MetadataToken = value; }
+		}
+
+		public ParameterAttributes Attributes {
+			get { return Parameter.Attributes; }
+			set { Parameter.Attributes = value; }
 		}
 
 		public bool HasCustomAttributes {
@@ -82,13 +93,24 @@ namespace Mono.Cecil {
 			get { return Parameter.CustomAttributes; }
 		}
 
+		public bool HasDefault {
+			get { return parameter != null && parameter.HasDefault; }
+			set { Parameter.HasDefault = value; }
+		}
+
 		public bool HasConstant {
 			get { return parameter != null && parameter.HasConstant; }
+			set { Parameter.HasConstant = value; }
 		}
 
 		public object Constant {
 			get { return Parameter.Constant; }
 			set { Parameter.Constant = value; }
+		}
+
+		public bool HasFieldMarshal {
+			get { return parameter != null && parameter.HasFieldMarshal; }
+			set { Parameter.HasFieldMarshal = value; }
 		}
 
 		public bool HasMarshalInfo {

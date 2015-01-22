@@ -1528,7 +1528,7 @@ Public Class Helper
             Helper.Assert(result IsNot Nothing)
         ElseIf CecilHelper.IsGenericType(OpenType) Then
             Dim typeParams As Mono.Collections.Generic.Collection(Of TypeReference)
-            Dim typeArgs As New Mono.Collections.Generic.Collection(Of TypeReference)(Nothing)
+            Dim typeArgs As New Mono.Collections.Generic.Collection(Of TypeReference)
 
             typeParams = CecilHelper.GetGenericArguments(OpenType)
 

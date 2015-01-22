@@ -187,7 +187,7 @@ Public Class Parameter
 
         Helper.Assert(m_ParameterBuilderCecil Is Nothing)
         m_ParameterBuilderCecil = New Mono.Cecil.ParameterDefinition(Nothing)
-        m_ParameterBuilderCecil.Sequence = -1
+        DirectCast(m_ParameterBuilderCecil, ParameterReference).Sequence = -1
         m_ParameterBuilderCecil.Annotations.Add(Compiler, Me)
         m_ParameterBuilderCecil.ParameterType = Helper.GetTypeOrTypeReference(Compiler, Compiler.TypeCache.System_Void)
 

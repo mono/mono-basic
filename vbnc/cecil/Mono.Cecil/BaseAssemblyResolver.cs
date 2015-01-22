@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,6 +51,33 @@ namespace Mono.Cecil {
 		}
 	}
 
+#if !SILVERLIGHT && !CF
+	[Serializable]
+#endif
+	public class AssemblyResolutionException : FileNotFoundException {
+
+		readonly AssemblyNameReference reference;
+
+		public AssemblyNameReference AssemblyReference {
+			get { return reference; }
+		}
+
+		public AssemblyResolutionException (AssemblyNameReference reference)
+			: base (string.Format ("Failed to resolve assembly: '{0}'", reference))
+		{
+			this.reference = reference;
+		}
+
+#if !SILVERLIGHT && !CF
+		protected AssemblyResolutionException (
+			System.Runtime.Serialization.SerializationInfo info,
+			System.Runtime.Serialization.StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
+	}
+
 	public abstract class BaseAssemblyResolver : IAssemblyResolver {
 
 		static readonly bool on_mono = Type.GetType ("Mono.Runtime") != null;
@@ -80,7 +107,15 @@ namespace Mono.Cecil {
 
 		public virtual AssemblyDefinition Resolve (string fullName)
 		{
-			return Resolve (AssemblyNameReference.Parse (fullName));
+			return Resolve (fullName, new ReaderParameters ());
+		}
+
+		public virtual AssemblyDefinition Resolve (string fullName, ReaderParameters parameters)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException ("fullName");
+
+			return Resolve (AssemblyNameReference.Parse (fullName), parameters);
 		}
 
 		public event AssemblyResolveEventHandler ResolveFailure;
@@ -90,37 +125,57 @@ namespace Mono.Cecil {
 			directories = new Collection<string> (2) { ".", "bin" };
 		}
 
-		AssemblyDefinition GetAssembly (string file)
+		AssemblyDefinition GetAssembly (string file, ReaderParameters parameters)
 		{
-			return ModuleDefinition.ReadModule (file, new ReaderParameters { AssemblyResolver = this}).Assembly;
+			if (parameters.AssemblyResolver == null)
+				parameters.AssemblyResolver = this;
+
+			return ModuleDefinition.ReadModule (file, parameters).Assembly;
 		}
 
 		public virtual AssemblyDefinition Resolve (AssemblyNameReference name)
 		{
-			var assembly = SearchDirectory (name, directories);
+			return Resolve (name, new ReaderParameters ());
+		}
+
+		public virtual AssemblyDefinition Resolve (AssemblyNameReference name, ReaderParameters parameters)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (parameters == null)
+				parameters = new ReaderParameters ();
+
+			var assembly = SearchDirectory (name, directories, parameters);
 			if (assembly != null)
 				return assembly;
 
 #if !SILVERLIGHT && !CF
+			if (name.IsRetargetable) {
+				// if the reference is retargetable, zero it
+				name = new AssemblyNameReference (name.Name, new Version (0, 0, 0, 0)) {
+					PublicKeyToken = Empty<byte>.Array,
+				};
+			}
+
 			var framework_dir = Path.GetDirectoryName (typeof (object).Module.FullyQualifiedName);
 
 			if (IsZero (name.Version)) {
-				assembly = SearchDirectory (name, new [] { framework_dir });
+				assembly = SearchDirectory (name, new [] { framework_dir }, parameters);
 				if (assembly != null)
 					return assembly;
 			}
 
 			if (name.Name == "mscorlib") {
-				assembly = GetCorlib (name);
+				assembly = GetCorlib (name, parameters);
 				if (assembly != null)
 					return assembly;
 			}
 
-			assembly = GetAssemblyInGac (name);
+			assembly = GetAssemblyInGac (name, parameters);
 			if (assembly != null)
 				return assembly;
 
-			assembly = SearchDirectory (name, new [] { framework_dir });
+			assembly = SearchDirectory (name, new [] { framework_dir }, parameters);
 			if (assembly != null)
 				return assembly;
 #endif
@@ -131,17 +186,17 @@ namespace Mono.Cecil {
 					return assembly;
 			}
 
-			throw new FileNotFoundException ("Could not resolve: " + name);
+			throw new AssemblyResolutionException (name);
 		}
 
-		AssemblyDefinition SearchDirectory (AssemblyNameReference name, IEnumerable<string> directories)
+		AssemblyDefinition SearchDirectory (AssemblyNameReference name, IEnumerable<string> directories, ReaderParameters parameters)
 		{
 			var extensions = new [] { ".exe", ".dll" };
 			foreach (var directory in directories) {
 				foreach (var extension in extensions) {
 					string file = Path.Combine (directory, name.Name + extension);
 					if (File.Exists (file))
-						return GetAssembly (file);
+						return GetAssembly (file, parameters);
 				}
 			}
 
@@ -150,17 +205,17 @@ namespace Mono.Cecil {
 
 		static bool IsZero (Version version)
 		{
-			return version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0;
+			return version == null || (version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0);
 		}
 
 #if !SILVERLIGHT && !CF
-		AssemblyDefinition GetCorlib (AssemblyNameReference reference)
+		AssemblyDefinition GetCorlib (AssemblyNameReference reference, ReaderParameters parameters)
 		{
 			var version = reference.Version;
 			var corlib = typeof (object).Assembly.GetName ();
 
 			if (corlib.Version == version || IsZero (version))
-				return GetAssembly (typeof (object).Module.FullyQualifiedName);
+				return GetAssembly (typeof (object).Module.FullyQualifiedName, parameters);
 
 			var path = Directory.GetParent (
 				Directory.GetParent (
@@ -200,7 +255,7 @@ namespace Mono.Cecil {
 
 			var file = Path.Combine (path, "mscorlib.dll");
 			if (File.Exists (file))
-				return GetAssembly (file);
+				return GetAssembly (file, parameters);
 
 			return null;
 		}
@@ -246,10 +301,13 @@ namespace Mono.Cecil {
 
 		static string GetCurrentMonoGac ()
 		{
-			return Path.Combine (Directory.GetParent (typeof (object).Module.FullyQualifiedName).FullName, "gac");
+			return Path.Combine (
+				Directory.GetParent (
+					Path.GetDirectoryName (typeof (object).Module.FullyQualifiedName)).FullName,
+				"gac");
 		}
 
-		AssemblyDefinition GetAssemblyInGac (AssemblyNameReference reference)
+		AssemblyDefinition GetAssemblyInGac (AssemblyNameReference reference, ReaderParameters parameters)
 		{
 			if (reference.PublicKeyToken == null || reference.PublicKeyToken.Length == 0)
 				return null;
@@ -258,26 +316,26 @@ namespace Mono.Cecil {
 				gac_paths = GetGacPaths ();
 
 			if (on_mono)
-				return GetAssemblyInMonoGac (reference);
+				return GetAssemblyInMonoGac (reference, parameters);
 
-			return GetAssemblyInNetGac (reference);
+			return GetAssemblyInNetGac (reference, parameters);
 		}
 
-		AssemblyDefinition GetAssemblyInMonoGac (AssemblyNameReference reference)
+		AssemblyDefinition GetAssemblyInMonoGac (AssemblyNameReference reference, ReaderParameters parameters)
 		{
 			for (int i = 0; i < gac_paths.Count; i++) {
 				var gac_path = gac_paths [i];
 				var file = GetAssemblyFile (reference, string.Empty, gac_path);
 				if (File.Exists (file))
-					return GetAssembly (file);
+					return GetAssembly (file, parameters);
 			}
 
 			return null;
 		}
 
-		AssemblyDefinition GetAssemblyInNetGac (AssemblyNameReference reference)
+		AssemblyDefinition GetAssemblyInNetGac (AssemblyNameReference reference, ReaderParameters parameters)
 		{
-			var gacs = new [] { "GAC_MSIL", "GAC_32", "GAC" };
+			var gacs = new [] { "GAC_MSIL", "GAC_32", "GAC_64", "GAC" };
 			var prefixes = new [] { string.Empty, "v4.0_" };
 
 			for (int i = 0; i < 2; i++) {
@@ -285,7 +343,7 @@ namespace Mono.Cecil {
 					var gac = Path.Combine (gac_paths [i], gacs [j]);
 					var file = GetAssemblyFile (reference, prefixes [i], gac);
 					if (Directory.Exists (gac) && File.Exists (file))
-						return GetAssembly (file);
+						return GetAssembly (file, parameters);
 				}
 			}
 
@@ -294,10 +352,11 @@ namespace Mono.Cecil {
 
 		static string GetAssemblyFile (AssemblyNameReference reference, string prefix, string gac)
 		{
-			var gac_folder = new StringBuilder ();
-			gac_folder.Append (prefix);
-			gac_folder.Append (reference.Version);
-			gac_folder.Append ("__");
+			var gac_folder = new StringBuilder ()
+				.Append (prefix)
+				.Append (reference.Version)
+				.Append ("__");
+
 			for (int i = 0; i < reference.PublicKeyToken.Length; i++)
 				gac_folder.Append (reference.PublicKeyToken [i].ToString ("x2"));
 

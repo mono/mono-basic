@@ -21,7 +21,7 @@ Microsoft.Cci.Pdb/PdbReader.cs
 Microsoft.Cci.Pdb/PdbScope.cs
 Microsoft.Cci.Pdb/PdbSlot.cs
 Microsoft.Cci.Pdb/PdbSource.cs
-Microsoft.Cci.Pdb/PdbWriter.cs
+Microsoft.Cci.Pdb/PdbTokenLine.cs
 Microsoft.Cci.Pdb/SourceLocationProvider.cs
 Mono.Cecil.Pdb/AssemblyInfo.cs
 Mono.Cecil.Pdb/ISymUnmanagedDocumentWriter.cs

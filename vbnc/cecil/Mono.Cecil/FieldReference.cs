@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,7 +43,7 @@ namespace Mono.Cecil {
 			get { return field_type.FullName + " " + MemberFullName (); }
 		}
 
-		internal override bool ContainsGenericParameter {
+		public override bool ContainsGenericParameter {
 			get { return field_type.ContainsGenericParameter || base.ContainsGenericParameter; }
 		}
 

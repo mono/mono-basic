@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +30,18 @@ using System;
 
 namespace Mono.Cecil.Rocks {
 
-	public static class MethodDefinitionRocks {
+#if INSIDE_ROCKS
+	public
+#endif
+	static class MethodDefinitionRocks {
 
 		public static MethodDefinition GetBaseMethod (this MethodDefinition self)
 		{
 			if (self == null)
 				throw new ArgumentNullException ("self");
 			if (!self.IsVirtual)
+				return self;
+			if (self.IsNewSlot)
 				return self;
 
 			var base_type = ResolveBaseType (self.DeclaringType);

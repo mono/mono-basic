@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -115,7 +115,7 @@ namespace Mono.Cecil {
 				if (generic_parameters != null)
 					return generic_parameters;
 
-				return generic_parameters = new Collection<GenericParameter> ();
+				return generic_parameters = new GenericParameterCollection (this);
 			}
 		}
 
@@ -139,9 +139,9 @@ namespace Mono.Cecil {
 		public override string FullName {
 			get {
 				var builder = new StringBuilder ();
-				builder.Append (ReturnType.FullName);
-				builder.Append (" ");
-				builder.Append (MemberFullName ());
+				builder.Append (ReturnType.FullName)
+					.Append (" ")
+					.Append (MemberFullName ());
 				this.MethodSignatureFullName (builder);
 				return builder.ToString ();
 			}
@@ -151,7 +151,7 @@ namespace Mono.Cecil {
 			get { return false; }
 		}
 
-		internal override bool ContainsGenericParameter {
+		public override bool ContainsGenericParameter {
 			get {
 				if (this.ReturnType.ContainsGenericParameter || base.ContainsGenericParameter)
 					return true;

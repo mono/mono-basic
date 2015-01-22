@@ -165,7 +165,7 @@ Public Class CecilHelper
         If genericType Is Nothing Then Return Member
 
         result = New Mono.Cecil.GenericInstanceType(Member)
-        result.DeclaringType = FindDefinition(Type)
+        ' result.DeclaringType = FindDefinition(Type)
 
         Dim tGI As Mono.Cecil.GenericInstanceType = TryCast(Type, Mono.Cecil.GenericInstanceType)
         If Member.DeclaringType IsNot Nothing AndAlso tGI IsNot Nothing AndAlso Helper.CompareType(Member.DeclaringType, tGI.ElementType) Then
@@ -468,6 +468,10 @@ Public Class CecilHelper
             End If
         Next
 
+        For i As Integer = 0 To arguments.Count - 1
+            If arguments(i) Is original Then Return arguments(i)
+        Next
+
         If original.IsNested Then
             Dim parentType As TypeReference = InflateType(original.DeclaringType, parameters, arguments)
             If parentType IsNot original Then
@@ -533,6 +537,24 @@ Public Class CecilHelper
         Throw New NotImplementedException
     End Function
 
+    Shared Function CloneGenericParameter(gp As GenericParameter) As GenericParameter
+        Dim rv As New GenericParameter(gp.Name, gp.Owner)
+        rv.Attributes = gp.Attributes
+        If gp.HasConstraints Then
+            For i As Integer = 0 To gp.Constraints.Count - 1
+                rv.Constraints.Add(gp.Constraints(i))
+            Next
+        End If
+        rv.HasDefaultConstructorConstraint = gp.HasDefaultConstructorConstraint
+        rv.HasNotNullableValueTypeConstraint = gp.HasNotNullableValueTypeConstraint
+        rv.HasReferenceTypeConstraint = gp.HasReferenceTypeConstraint
+        rv.IsContravariant = gp.IsContravariant
+        rv.IsCovariant = gp.IsCovariant
+        rv.IsNonVariant = gp.IsNonVariant
+
+        Return rv
+    End Function
+
     Public Shared Function GetCorrectMember(ByVal Member As MethodDefinition, ByVal Arguments As Mono.Collections.Generic.Collection(Of TypeReference), Optional ByVal Emittable As Boolean = False) As Mono.Cecil.MethodReference
         Dim result As Mono.Cecil.MethodReference
         Dim parameters As Mono.Collections.Generic.Collection(Of GenericParameter) = Member.GenericParameters
@@ -549,8 +571,8 @@ Public Class CecilHelper
         result.OriginalMethod = Member
 
         For i As Integer = 0 To Member.GenericParameters.Count - 1
-            result.GenericParameters.Add(Member.GenericParameters(i))
-            reflectableMember.GenericParameters.Add(Member.GenericParameters(i))
+            result.GenericParameters.Add(CloneGenericParameter(Member.GenericParameters(i)))
+            reflectableMember.GenericParameters.Add(CloneGenericParameter(Member.GenericParameters(i)))
         Next
 
         For i As Integer = 0 To Member.Parameters.Count - 1

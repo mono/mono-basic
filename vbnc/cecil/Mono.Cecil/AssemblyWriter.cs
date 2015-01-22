@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -82,7 +82,7 @@ namespace Mono.Cecil {
 		public static void WriteModuleTo (ModuleDefinition module, Stream stream, WriterParameters parameters)
 		{
 			if ((module.Attributes & ModuleAttributes.ILOnly) == 0)
-				throw new ArgumentException ();
+				throw new NotSupportedException ("Writing mixed-mode assemblies is not supported");
 
 			if (module.HasImage && module.ReadingMode == ReadingMode.Deferred)
 				ImmediateModuleReader.ReadModule (module);
@@ -97,20 +97,18 @@ namespace Mono.Cecil {
 			var symbol_writer = GetSymbolWriter (module, fq_name, symbol_writer_provider);
 
 #if !SILVERLIGHT && !CF
-			if (parameters.StrongNameKeyPair != null && name != null)
+			if (parameters.StrongNameKeyPair != null && name != null) {
 				name.PublicKey = parameters.StrongNameKeyPair.PublicKey;
-#endif
-
-			if (name != null && name.HasPublicKey)
 				module.Attributes |= ModuleAttributes.StrongNameSigned;
-
+			}
+#endif
 			var metadata = new MetadataBuilder (module, fq_name,
 				symbol_writer_provider, symbol_writer);
 
 			BuildMetadata (module, metadata);
 
-			if (module.SymbolReader != null)
-				module.SymbolReader.Dispose ();
+			if (module.symbol_reader != null)
+				module.symbol_reader.Dispose ();
 
 			var writer = ImageWriter.CreateWriter (module, metadata, stream);
 
@@ -786,7 +784,7 @@ namespace Mono.Cecil {
 		TextMap CreateTextMap ()
 		{
 			var map = new TextMap ();
-			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 16);
+			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 0);
 			map.AddMap (TextSegment.CLIHeader, 0x48, 8);
 			return map;
 		}
@@ -935,11 +933,13 @@ namespace Mono.Cecil {
 					? reference.PublicKeyToken
 					: reference.PublicKey;
 
+				var version = reference.Version;
+
 				var rid = table.AddRow (new AssemblyRefRow (
-					(ushort) reference.Version.Major,
-					(ushort) reference.Version.Minor,
-					(ushort) reference.Version.Build,
-					(ushort) reference.Version.Revision,
+					(ushort) version.Major,
+					(ushort) version.Minor,
+					(ushort) version.Build,
+					(ushort) version.Revision,
 					reference.Attributes,
 					GetBlobIndex (key_or_token),
 					GetStringIndex (reference.Name),
@@ -1175,14 +1175,25 @@ namespace Mono.Cecil {
 
 		TypeRefRow CreateTypeRefRow (TypeReference type)
 		{
-			var scope_token = type.IsNested
-				? GetTypeRefToken (type.DeclaringType)
-				: type.Scope.MetadataToken;
+			var scope_token = GetScopeToken (type);
 
 			return new TypeRefRow (
 				MakeCodedRID (scope_token, CodedIndex.ResolutionScope),
 				GetStringIndex (type.Name),
 				GetStringIndex (type.Namespace));
+		}
+
+		MetadataToken GetScopeToken (TypeReference type)
+		{
+			if (type.IsNested)
+				return GetTypeRefToken (type.DeclaringType);
+
+			var scope = type.Scope;
+
+			if (scope == null)
+				return MetadataToken.Zero;
+
+			return scope.MetadataToken;
 		}
 
 		static CodedRID MakeCodedRID (IMetadataTokenProvider provider, CodedIndex index)
@@ -1413,8 +1424,7 @@ namespace Mono.Cecil {
 				GetBlobIndex (GetMethodSignature (method)),
 				param_rid));
 
-			if (method.HasParameters)
-				AddParameters (method);
+			AddParameters (method);
 
 			if (method.HasGenericParameters)
 				AddGenericParameters (method);
@@ -1434,12 +1444,15 @@ namespace Mono.Cecil {
 
 		void AddParameters (MethodDefinition method)
 		{
-			var parameters = method.Parameters;
-
 			var return_parameter = method.MethodReturnType.parameter;
 
 			if (return_parameter != null && RequiresParameterRow (return_parameter))
 				AddParameter (0, return_parameter, param_table);
+
+			if (!method.HasParameters)
+				return;
+
+			var parameters = method.Parameters;
 
 			for (int i = 0; i < parameters.Count; i++) {
 				var parameter = parameters [i];
@@ -1454,7 +1467,7 @@ namespace Mono.Cecil {
 		{
 			var pinvoke = method.PInvokeInfo;
 			if (pinvoke == null)
-				throw new ArgumentException ();
+				return;
 
 			var table = GetTable<ImplMapTable> (Table.ImplMap);
 			table.AddRow (new ImplMapRow (
@@ -1617,6 +1630,9 @@ namespace Mono.Cecil {
 
 		static ElementType GetConstantType (TypeReference constant_type, object constant)
 		{
+			if (constant == null)
+				return ElementType.Class;
+
 			var etype = constant_type.etype;
 			switch (etype) {
 			case ElementType.None:
@@ -1626,26 +1642,40 @@ namespace Mono.Cecil {
 
 				return ElementType.Class;
 			case ElementType.String:
-				return constant != null ? ElementType.String : ElementType.Class;
+				return ElementType.String;
 			case ElementType.Object:
-				if (constant != null)
-					return GetConstantType (constant.GetType ());
-
-				return ElementType.Class;
+				return GetConstantType (constant.GetType ());
 			case ElementType.Array:
 			case ElementType.SzArray:
 			case ElementType.MVar:
 			case ElementType.Var:
-				if (constant != null)
-					throw new ArgumentException ();
-
 				return ElementType.Class;
 			case ElementType.GenericInst:
+				var generic_instance = (GenericInstanceType) constant_type;
+				if (generic_instance.ElementType.IsTypeOf ("System", "Nullable`1"))
+					return GetConstantType (generic_instance.GenericArguments [0], constant);
+
+				return GetConstantType (((TypeSpecification) constant_type).ElementType, constant);
 			case ElementType.CModOpt:
 			case ElementType.CModReqD:
 			case ElementType.ByRef:
 			case ElementType.Sentinel:
 				return GetConstantType (((TypeSpecification) constant_type).ElementType, constant);
+			case ElementType.Boolean:
+			case ElementType.Char:
+			case ElementType.I:
+			case ElementType.I1:
+			case ElementType.I2:
+			case ElementType.I4:
+			case ElementType.I8:
+			case ElementType.U:
+			case ElementType.U1:
+			case ElementType.U2:
+			case ElementType.U4:
+			case ElementType.U8:
+			case ElementType.R4:
+			case ElementType.R8:
+				return GetConstantType (constant.GetType ());
 			default:
 				return etype;
 			}
@@ -1891,7 +1921,7 @@ namespace Mono.Cecil {
 				signature.WriteConstantString ((string) value);
 				break;
 			default:
-				signature.WriteConstantPrimitive (type, value);
+				signature.WriteConstantPrimitive (value);
 				break;
 			}
 
@@ -1918,21 +1948,13 @@ namespace Mono.Cecil {
 		SignatureWriter GetSecurityDeclarationSignature (SecurityDeclaration declaration)
 		{
 			var signature = CreateSignatureWriter ();
-			if (!declaration.resolved) {
+
+			if (!declaration.resolved)
 				signature.WriteBytes (declaration.GetBlob ());
-				return signature;
-			}
-
-			signature.WriteByte ((byte) '.');
-
-			var attributes = declaration.security_attributes;
-			if (attributes == null)
-				throw new NotSupportedException ();
-
-			signature.WriteCompressedUInt32 ((uint) attributes.Count);
-
-			for (int i = 0; i < attributes.Count; i++)
-				signature.WriteSecurityAttribute (attributes [i]);
+			else if (module.Runtime < TargetRuntime.Net_2_0)
+				signature.WriteXmlSecurityDeclaration (declaration);
+			else
+				signature.WriteSecurityDeclaration (declaration);
 
 			return signature;
 		}
@@ -1946,10 +1968,19 @@ namespace Mono.Cecil {
 			return signature;
 		}
 
+		static Exception CreateForeignMemberException (MemberReference member)
+		{
+			return new ArgumentException (string.Format ("Member '{0}' is declared in another module and needs to be imported", member));
+		}
+
 		public MetadataToken LookupToken (IMetadataTokenProvider provider)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ();
+
+			var member = provider as MemberReference;
+			if (member == null || member.Module != module)
+				throw CreateForeignMemberException (member);
 
 			var token = provider.MetadataToken;
 
@@ -1967,7 +1998,7 @@ namespace Mono.Cecil {
 			case TokenType.MethodSpec:
 				return GetMethodSpecToken ((MethodSpecification) provider);
 			case TokenType.MemberRef:
-				return GetMemberRefToken ((MemberReference) provider);
+				return GetMemberRefToken (member);
 			default:
 				throw new NotSupportedException ();
 			}
@@ -2003,9 +2034,7 @@ namespace Mono.Cecil {
 
 		public void WriteMethodSignature (IMethodSignature method)
 		{
-			byte calling_convention = 0;
-			if (method.IsVarArg ())
-				calling_convention |= 0x5;
+			byte calling_convention = (byte) method.CallingConvention;
 			if (method.HasThis)
 				calling_convention |= 0x20;
 			if (method.ExplicitThis)
@@ -2200,9 +2229,9 @@ namespace Mono.Cecil {
 			WriteBytes (Encoding.Unicode.GetBytes (value));
 		}
 
-		public void WriteConstantPrimitive (ElementType type, object value)
+		public void WriteConstantPrimitive (object value)
 		{
-			WritePrimitiveValue (type, value);
+			WritePrimitiveValue (value);
 		}
 
 		public void WriteCustomAttributeConstructorArguments (CustomAttribute attribute)
@@ -2258,8 +2287,11 @@ namespace Mono.Cecil {
 			}
 
 			if (type.etype == ElementType.Object) {
-				WriteCustomAttributeFieldOrPropType (argument.Type);
-				WriteCustomAttributeElement (argument.Type, argument);
+				argument = (CustomAttributeArgument) argument.Value;
+				type = argument.Type;
+
+				WriteCustomAttributeFieldOrPropType (type);
+				WriteCustomAttributeElement (type, argument);
 				return;
 			}
 
@@ -2285,52 +2317,55 @@ namespace Mono.Cecil {
 					WriteCustomAttributeEnumValue (type, value);
 				break;
 			default:
-				WritePrimitiveValue (etype, value);
+				WritePrimitiveValue (value);
 				break;
 			}
 		}
 
-		void WritePrimitiveValue (ElementType type, object value)
+		void WritePrimitiveValue (object value)
 		{
-			switch (type) {
-			case ElementType.Boolean:
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Boolean:
 				WriteByte ((byte) (((bool) value) ? 1 : 0));
 				break;
-			case ElementType.U1:
+			case TypeCode.Byte:
 				WriteByte ((byte) value);
 				break;
-			case ElementType.I1:
-				WriteByte ((byte) (sbyte) value);
+			case TypeCode.SByte:
+				WriteSByte ((sbyte) value);
 				break;
-			case ElementType.I2:
+			case TypeCode.Int16:
 				WriteInt16 ((short) value);
 				break;
-			case ElementType.U2:
+			case TypeCode.UInt16:
 				WriteUInt16 ((ushort) value);
 				break;
-			case ElementType.Char:
+			case TypeCode.Char:
 				WriteInt16 ((short) (char) value);
 				break;
-			case ElementType.I4:
+			case TypeCode.Int32:
 				WriteInt32 ((int) value);
 				break;
-			case ElementType.U4:
+			case TypeCode.UInt32:
 				WriteUInt32 ((uint) value);
 				break;
-			case ElementType.R4:
+			case TypeCode.Single:
 				WriteSingle ((float) value);
 				break;
-			case ElementType.I8:
+			case TypeCode.Int64:
 				WriteInt64 ((long) value);
 				break;
-			case ElementType.U8:
+			case TypeCode.UInt64:
 				WriteUInt64 ((ulong) value);
 				break;
-			case ElementType.R8:
+			case TypeCode.Double:
 				WriteDouble ((double) value);
 				break;
 			default:
-				throw new NotSupportedException (type.ToString ());
+				throw new NotSupportedException (value.GetType ().FullName);
 			}
 		}
 
@@ -2422,24 +2457,67 @@ namespace Mono.Cecil {
 			WriteCustomAttributeFixedArgument (argument.Type, argument);
 		}
 
-		public void WriteSecurityAttribute (SecurityAttribute attribute)
+		void WriteSecurityAttribute (SecurityAttribute attribute)
 		{
 			WriteTypeReference (attribute.AttributeType);
 
 			var count = GetNamedArgumentCount (attribute);
 
 			if (count == 0) {
-				WriteCompressedUInt32 (0); // length
+				WriteCompressedUInt32 (1); // length
 				WriteCompressedUInt32 (0); // count
 				return;
 			}
 
-            var buffer = new SignatureWriter (metadata);
+			var buffer = new SignatureWriter (metadata);
 			buffer.WriteCompressedUInt32 ((uint) count);
 			buffer.WriteICustomAttributeNamedArguments (attribute);
 
 			WriteCompressedUInt32 ((uint) buffer.length);
 			WriteBytes (buffer);
+		}
+
+		public void WriteSecurityDeclaration (SecurityDeclaration declaration)
+		{
+			WriteByte ((byte) '.');
+
+			var attributes = declaration.security_attributes;
+			if (attributes == null)
+				throw new NotSupportedException ();
+
+			WriteCompressedUInt32 ((uint) attributes.Count);
+
+			for (int i = 0; i < attributes.Count; i++)
+				WriteSecurityAttribute (attributes [i]);
+		}
+
+		public void WriteXmlSecurityDeclaration (SecurityDeclaration declaration)
+		{
+			var xml = GetXmlSecurityDeclaration (declaration);
+			if (xml == null)
+				throw new NotSupportedException ();
+
+			WriteBytes (Encoding.Unicode.GetBytes (xml));
+		}
+
+		static string GetXmlSecurityDeclaration (SecurityDeclaration declaration)
+		{
+			if (declaration.security_attributes == null || declaration.security_attributes.Count != 1)
+				return null;
+
+			var attribute = declaration.security_attributes [0];
+
+			if (!attribute.AttributeType.IsTypeOf ("System.Security.Permissions", "PermissionSetAttribute"))
+				return null;
+
+			if (attribute.properties == null || attribute.properties.Count != 1)
+				return null;
+
+			var property = attribute.properties [0];
+			if (property.Name != "XML")
+				return null;
+
+			return (string) property.Argument.Value;
 		}
 
 		void WriteTypeReference (TypeReference type)

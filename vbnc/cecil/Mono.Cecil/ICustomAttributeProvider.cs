@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +27,6 @@
 //
 
 using System;
-
 using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
@@ -45,18 +44,17 @@ namespace Mono.Cecil {
 			this ICustomAttributeProvider self,
 			ModuleDefinition module)
 		{
-			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.HasCustomAttributes (provider))
-				: false;
+			return module.HasImage () && module.Read (self, (provider, reader) => reader.HasCustomAttributes (provider));
 		}
 
 		public static Collection<CustomAttribute> GetCustomAttributes (
 			this ICustomAttributeProvider self,
+			ref Collection<CustomAttribute> variable,
 			ModuleDefinition module)
 		{
 			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.ReadCustomAttributes (provider))
-				: new Collection<CustomAttribute> ();
+				? module.Read (ref variable, self, (provider, reader) => reader.ReadCustomAttributes (provider))
+				: variable = new Collection<CustomAttribute>();
 		}
 	}
 }

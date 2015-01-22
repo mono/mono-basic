@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,8 +39,9 @@ namespace Mono.Cecil.PE {
 	public sealed class Image {
 
 		public ModuleKind Kind;
-		public TargetRuntime Runtime;
+		public string RuntimeVersion;
 		public TargetArchitecture Architecture;
+		public ModuleCharacteristics Characteristics;
 		public string FileName;
 
 		public Section [] Sections;
@@ -52,6 +53,7 @@ namespace Mono.Cecil.PE {
 
 		public DataDirectory Debug;
 		public DataDirectory Resources;
+		public DataDirectory StrongName;
 
 		public StringHeap StringHeap;
 		public BlobHeap BlobHeap;
@@ -147,6 +149,11 @@ namespace Mono.Cecil.PE {
 				AddressOfRawData = buffer.ReadInt32 (),
 				PointerToRawData = buffer.ReadInt32 (),
 			};
+
+			if (directory.SizeOfData == 0 || directory.PointerToRawData == 0) {
+				header = Empty<byte>.Array;
+				return directory;
+			}
 
 			buffer.position = (int) (directory.PointerToRawData - section.PointerToRawData);
 

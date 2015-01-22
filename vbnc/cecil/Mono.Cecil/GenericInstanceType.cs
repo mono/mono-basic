@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,12 +44,12 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<TypeReference> GenericArguments {
-			get {
-				if (arguments == null)
-					arguments = new Collection<TypeReference> ();
+			get { return arguments ?? (arguments = new Collection<TypeReference> ()); }
+		}
 
-				return arguments;
-			}
+		public override TypeReference DeclaringType {
+			get { return ElementType.DeclaringType; }
+			set { throw new NotSupportedException (); }
 		}
 
 		public override string FullName {
@@ -65,7 +65,7 @@ namespace Mono.Cecil {
 			get { return true; }
 		}
 
-		internal override bool ContainsGenericParameter {
+		public override bool ContainsGenericParameter {
 			get { return this.ContainsGenericParameter () || base.ContainsGenericParameter; }
 		}
 

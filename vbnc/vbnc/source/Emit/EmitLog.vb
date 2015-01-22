@@ -172,8 +172,7 @@ Public Class EmitLog
             Dim block As TryBlock = m_ExceptionBlocks.Peek
             Dim ex As Mono.Cecil.Cil.ExceptionHandler = block.Handlers(block.Handlers.Count - 1)
             CilWorker.Emit(Mono.Cecil.Cil.OpCodes.Endfilter)
-            ex.FilterEnd = CreateAndEmitNop()
-            ex.HandlerStart = ex.FilterEnd
+            ex.HandlerStart = CreateAndEmitNop()
         Else
             Dim ex As New Mono.Cecil.Cil.ExceptionHandler(Mono.Cecil.Cil.ExceptionHandlerType.Catch)
             Dim block As TryBlock = m_ExceptionBlocks.Peek

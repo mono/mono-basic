@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +32,10 @@ using System.Linq;
 
 namespace Mono.Cecil.Rocks {
 
-	public static class TypeDefinitionRocks {
+#if INSIDE_ROCKS
+	public
+#endif
+	static class TypeDefinitionRocks {
 
 		public static IEnumerable<MethodDefinition> GetConstructors (this TypeDefinition self)
 		{

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,9 +62,9 @@ namespace Mono.Cecil {
 					return modules;
 
 				if (main_module.HasImage)
-					return modules = main_module.Read (this, (_, reader) => reader.ReadModules ());
+					return main_module.Read (ref modules, this, (_, reader) => reader.ReadModules ());
 
-				return modules = new Collection<ModuleDefinition> { main_module };
+				return modules = new Collection<ModuleDefinition> (1) { main_module };
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (main_module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, main_module)); }
 		}
 
 		public bool HasSecurityDeclarations {
@@ -100,7 +100,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<SecurityDeclaration> SecurityDeclarations {
-			get { return security_declarations ?? (security_declarations = this.GetSecurityDeclarations (main_module)); }
+			get { return security_declarations ?? (this.GetSecurityDeclarations (ref security_declarations, main_module)); }
 		}
 
 		internal AssemblyDefinition ()

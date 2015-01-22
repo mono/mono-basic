@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -85,13 +85,14 @@ namespace Mono.Cecil {
 
 		public override IMetadataScope Scope {
 			get { return function.ReturnType.Scope; }
+			set { throw new InvalidOperationException (); }
 		}
 
 		public override bool IsFunctionPointer {
 			get { return true; }
 		}
 
-		internal override bool ContainsGenericParameter {
+		public override bool ContainsGenericParameter {
 			get { return function.ContainsGenericParameter; }
 		}
 
@@ -113,6 +114,16 @@ namespace Mono.Cecil {
 			this.function = new MethodReference ();
 			this.function.Name = "method";
 			this.etype = MD.ElementType.FnPtr;
+		}
+
+		public override TypeDefinition Resolve ()
+		{
+			return null;
+		}
+
+		public override TypeReference GetElementType ()
+		{
+			return this;
 		}
 	}
 }

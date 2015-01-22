@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,7 +37,8 @@ namespace Mono.Cecil {
 
 		ushort attributes;
 		ushort impl_attributes;
-		MethodSemanticsAttributes? sem_attrs;
+		internal volatile bool sem_attrs_ready;
+		internal MethodSemanticsAttributes sem_attrs;
 		Collection<CustomAttribute> custom_attributes;
 		Collection<SecurityDeclaration> security_declarations;
 
@@ -59,34 +60,34 @@ namespace Mono.Cecil {
 
 		public MethodSemanticsAttributes SemanticsAttributes {
 			get {
-				if (sem_attrs.HasValue)
-					return sem_attrs.Value;
+				if (sem_attrs_ready)
+					return sem_attrs;
 
 				if (HasImage) {
 					ReadSemantics ();
-					return sem_attrs.Value;
+					return sem_attrs;
 				}
 
 				sem_attrs = MethodSemanticsAttributes.None;
-				return sem_attrs.Value;
+				sem_attrs_ready = true;
+				return sem_attrs;
 			}
 			set { sem_attrs = value; }
 		}
 
 		internal void ReadSemantics ()
 		{
-			var type = DeclaringType;
-			if (type == null)
+			if (sem_attrs_ready)
 				return;
 
-			var module = type.Module;
+			var module = this.Module;
 			if (module == null)
 				return;
 
 			if (!module.HasImage)
 				return;
 
-			sem_attrs = module.Read (this, (method, reader) => reader.ReadMethodSemantics (method));
+			module.Read (this, (method, reader) => reader.ReadAllSemantics (method));
 		}
 
 		public bool HasSecurityDeclarations {
@@ -99,7 +100,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<SecurityDeclaration> SecurityDeclarations {
-			get { return security_declarations ?? (security_declarations = this.GetSecurityDeclarations (Module)); }
+			get { return security_declarations ?? (this.GetSecurityDeclarations (ref security_declarations, Module)); }
 		}
 
 		public bool HasCustomAttributes {
@@ -112,7 +113,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
 		}
 
 		public int RVA {
@@ -132,18 +133,30 @@ namespace Mono.Cecil {
 
 		public MethodBody Body {
 			get {
-				if (body != null)
-					return body;
+				MethodBody localBody = this.body;
+				if (localBody != null)
+					return localBody;
 
 				if (!HasBody)
 					return null;
 
 				if (HasImage && rva != 0)
-					return body = Module.Read (this, (method, reader) => reader.ReadMethodBody (method));
+					return Module.Read (ref body, this, (method, reader) => reader.ReadMethodBody (method));
 
 				return body = new MethodBody (this);
 			}
-			set { body = value; }
+			set {
+				var module = this.Module;
+				if (module == null) {
+					body = value;
+					return;
+				}
+
+				// we reset Body to null in ILSpy to save memory; so we need that operation to be thread-safe
+				lock (module.SyncRoot) {
+					body = value;
+				}
+			}
 		}
 
 		public bool HasPInvokeInfo {
@@ -161,7 +174,7 @@ namespace Mono.Cecil {
 					return pinvoke;
 
 				if (HasImage && IsPInvokeImpl)
-					return pinvoke = Module.Read (this, (method, reader) => reader.ReadPInvokeInfo (method));
+					return Module.Read (ref pinvoke, this, (method, reader) => reader.ReadPInvokeInfo (method));
 
 				return null;
 			}
@@ -189,7 +202,7 @@ namespace Mono.Cecil {
 					return overrides;
 
 				if (HasImage)
-					return overrides = Module.Read (this, (method, reader) => reader.ReadOverrides (method));
+					return Module.Read (ref overrides, this, (method, reader) => reader.ReadOverrides (method));
 
 				return overrides = new Collection<MethodReference> ();
 			}
@@ -205,7 +218,7 @@ namespace Mono.Cecil {
 		}
 
 		public override Collection<GenericParameter> GenericParameters {
-			get { return generic_parameters ?? (generic_parameters = this.GetGenericParameters (Module)); }
+			get { return generic_parameters ?? (this.GetGenericParameters (ref generic_parameters, Module)); }
 		}
 
 		#region MethodAttributes
@@ -454,7 +467,22 @@ namespace Mono.Cecil {
 				index--;
 			}
 
-			return method.Parameters [index];
+			var parameters = method.Parameters;
+
+			if (index < 0 || index >= parameters.size)
+				return null;
+
+			return parameters [index];
+		}
+
+		public static VariableDefinition GetVariable (this MethodBody self, int index)
+		{
+			var variables = self.Variables;
+
+			if (index < 0 || index >= variables.size)
+				return null;
+
+			return variables [index];
 		}
 
 		public static bool GetSemantics (this MethodDefinition self, MethodSemanticsAttributes semantics)

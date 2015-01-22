@@ -1133,6 +1133,8 @@ Public Class AssemblyDeclaration
                 Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.TypeDefinition))
             ElseIf TypeOf gp.Owner Is Mono.Cecil.MethodDefinition Then
                 Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.MethodDefinition))
+            ElseIf TypeOf gp.Owner Is Mono.Cecil.MethodReference Then
+                Return IsDefinedHere(DirectCast(gp.Owner, Mono.Cecil.MethodReference))
             Else
                 Throw New NotImplementedException
             End If

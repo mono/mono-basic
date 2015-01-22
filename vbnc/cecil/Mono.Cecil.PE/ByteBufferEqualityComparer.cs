@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,12 +50,29 @@ namespace Mono.Cecil.PE {
 
 		public int GetHashCode (ByteBuffer buffer)
 		{
+#if !BYTE_BUFFER_WELL_DISTRIBUTED_HASH
 			var hash = 0;
 			var bytes = buffer.buffer;
 			for (int i = 0; i < buffer.length; i++)
 				hash = (hash * 37) ^ bytes [i];
 
 			return hash;
+#else
+			const uint p = 16777619;
+			uint hash = 2166136261;
+
+			var bytes = buffer.buffer;
+			for (int i = 0; i < buffer.length; i++)
+			    hash = (hash ^ bytes [i]) * p;
+
+			hash += hash << 13;
+			hash ^= hash >> 7;
+			hash += hash << 3;
+			hash ^= hash >> 17;
+			hash += hash << 5;
+
+			return (int) hash;
+#endif
 		}
 	}
 }
