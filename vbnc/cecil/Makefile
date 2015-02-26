@@ -4,7 +4,7 @@ SUBDIRS := symbols
 include ../../build/rules.make
 
 LIBRARY = Mono.Cecil.VB.dll
-LIBRARY_COMPILE = gmcs -keyfile:$(topdir)/$(thisdir)/mono.snk -d:CECIL -debug
+LIBRARY_COMPILE = mcs -keyfile:$(topdir)/$(thisdir)/mono.snk -d:CECIL -debug
 #LIBRARY_SNK = $(topdir)/$(thisdir)/mono.snk
 
 include ../../build/library.make

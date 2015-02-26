@@ -30,7 +30,6 @@ INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MCS = mcs
 INTERNAL_VBNC = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/vbnc.exe
-INTERNAL_GMCS = gmcs
 INTERNAL_ILASM = ilasm
 INTERNAL_RESGEN = resgen
 corlib = mscorlib.dll

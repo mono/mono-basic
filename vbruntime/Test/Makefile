@@ -18,6 +18,7 @@ DISTFILES += $(wildcard *.vb) $(wildcard *.cs) $(wildcard */*.vb) $(wildcard */*
 DISTFILES += $(wildcard bin/*config)
 
 MONO_VB_PATH="../../class/lib/bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+CSCOMPILER=mcs
 
 ifeq ("$(FXVERSION)", "")
 NUNIT_VERSION=2
@@ -26,10 +27,8 @@ NUNIT_VERSION=$(FXVERSION)
 endif
 
 ifeq ("$(NUNIT_VERSION)", "1")
-CSCOMPILER=mcs
 CSDEFINES=-define:NET_1_0,NET_1_1
 else
-CSCOMPILER=gmcs
 CSDEFINES=-define:NET_1_0,NET_1_1,NET_2_0
 endif
 
