@@ -11,7 +11,6 @@ include ../../build/library.make
 
 DISTFILES = \
 	$(wildcard *.csproj)	\
-	NOTES.txt	\
 	mono.snk	\
 	Mono.Cecil.VB.dll.sources
 

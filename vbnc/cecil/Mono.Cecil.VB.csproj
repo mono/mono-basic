@@ -185,9 +185,6 @@
     <Compile Include="Mono\Funcs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NOTES.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="mono.snk" />
   </ItemGroup>
   <ItemGroup>
