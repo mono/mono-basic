@@ -2,7 +2,7 @@
 
 VERSION=3.8
 prefix=/usr/local
-configured_profiles="net_4_0 net_4_5"
+configured_profiles="net_4_5"
 moonlight_sdk_location=
 monotouch_sdk_location="`pwd`/../mono/mcs/class/lib/monotouch"
 monodroid_sdk_location="`pwd`/../mono/mcs/class/lib/monodroid"
