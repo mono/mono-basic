@@ -39,8 +39,19 @@ Namespace Microsoft.VisualBasic.CompilerServices
         Private Sub New()
             'Nobody should see constructor
         End Sub
+        <MonoLimitation("CallType.Let options is not supported.")> _
         Public Shared Function CallByName(ByVal Instance As Object, ByVal MethodName As String, ByVal UseCallType As CallType, ByVal ParamArray Arguments As Object()) As Object
-            Return Interaction.CallByName(Instance, MethodName, UseCallType, Arguments)
+            Select Case UseCallType
+                Case CallType.Get
+                    Return LateBinding.LateGet(Instance, Instance.GetType(), MethodName, Arguments, Nothing, Nothing)
+                Case CallType.Let
+                    Throw New NotImplementedException("Microsoft.VisualBasic.Versioned.CallByName Case CallType.Let")
+                Case CallType.Method
+                    LateBinding.LateCall(Instance, Instance.GetType(), MethodName, Arguments, Nothing, Nothing)
+                Case CallType.Set
+                    LateBinding.LateSet(Instance, Instance.GetType(), MethodName, Arguments, Nothing)
+            End Select
+            Return Nothing
         End Function
         Public Shared Function IsNumeric(ByVal Expression As Object) As Boolean
 
