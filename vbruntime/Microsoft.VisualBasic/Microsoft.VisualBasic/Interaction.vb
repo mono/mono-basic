@@ -58,19 +58,8 @@ Namespace Microsoft.VisualBasic
         End Sub
 
 #End If
-        <MonoLimitation("CallType.Let options is not supported.")> _
         Public Shared Function CallByName(ByVal ObjectRef As Object, ByVal ProcName As String, ByVal UseCallType As Microsoft.VisualBasic.CallType, ByVal ParamArray Args() As Object) As Object
-            Select Case UseCallType
-                Case CallType.Get
-                    Return LateBinding.LateGet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing, Nothing)
-                Case CallType.Let
-                    Throw New NotImplementedException("Microsoft.VisualBasic.Interaction.CallByName Case CallType.Let")
-                Case CallType.Method
-                    LateBinding.LateCall(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing, Nothing)
-                Case CallType.Set
-                    LateBinding.LateSet(ObjectRef, ObjectRef.GetType(), ProcName, Args, Nothing)
-            End Select
-            Return Nothing
+            Return Versioned.CallByName(ObjectRef, ProcName, UseCallType, Args)
         End Function
 
         Public Shared Function Choose(ByVal Index As Double, ByVal ParamArray Choice() As Object) As Object
