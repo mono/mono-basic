@@ -361,6 +361,7 @@ Public Class CecilHelper
         Dim spec As TypeSpecification = TryCast(original, TypeSpecification)
         Dim array As ArrayType = TryCast(original, ArrayType)
         Dim reference As ByReferenceType = TryCast(original, ByReferenceType)
+        Dim reqmod As RequiredModifierType = TryCast(original, RequiredModifierType)
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
         Dim originalDef As TypeDefinition = TryCast(original, TypeDefinition)
 
@@ -413,13 +414,14 @@ Public Class CecilHelper
                 Return spec
             End If
 
-
             If array IsNot Nothing Then
                 Return New ArrayType(resolved, array.Dimensions.Count)
             ElseIf reference IsNot Nothing Then
                 Return New ByReferenceType(resolved)
+            ElseIf reqmod IsNot Nothing Then
+                Return New RequiredModifierType(reqmod.ModifierType, resolved)
             Else
-                Throw New System.NotImplementedException()
+                Throw New System.NotImplementedException(original.GetType().ToString())
             End If
         Else
             Return original
@@ -431,6 +433,7 @@ Public Class CecilHelper
         Dim array As ArrayType = TryCast(original, ArrayType)
         Dim reference As ByReferenceType = TryCast(original, ByReferenceType)
         Dim genericType As GenericInstanceType = TryCast(original, GenericInstanceType)
+        Dim reqmod as RequiredModifierType = TryCast(original, RequiredModifierType)
 
         If parameters.Count <> arguments.Count Then
             Throw New System.ArgumentException("Parameters and Arguments must have the same number of elements.")
@@ -457,8 +460,10 @@ Public Class CecilHelper
                 Return New ArrayType(resolved, array.Dimensions.Count)
             ElseIf (reference IsNot Nothing) Then
                 Return New ByReferenceType(resolved)
+            ElseIf (reqmod IsNot Nothing) Then
+                Return New RequiredModifierType(reqmod.ModifierType, resolved)
             Else
-                Throw New System.NotImplementedException()
+                Throw New System.NotImplementedException(spec.GetType().ToString())
             End If
         End If
 
