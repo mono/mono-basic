@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=4.6
+VERSION=4.7
 prefix=/usr/local
 configured_profiles="net_4_5"
 moonlight_sdk_location=
