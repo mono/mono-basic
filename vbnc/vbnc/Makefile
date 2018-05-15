@@ -4,6 +4,10 @@ include ../../build/rules.make
 
 LOCAL_VBNC_FLAGS = @vbnc.exe.rsp $(EXTERNAL_VBNC_FLAGS) /r:../../class/lib/$(PROFILE)/Mono.Cecil.VB.dll
 
+ifdef DEPRECATED
+LOCAL_VBNC_FLAGS += /d:DEPRECATED
+endif
+
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/vbnc.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE) /novbruntimeref /r:../../class/lib/bootstrap/Microsoft.VisualBasic.dll
 

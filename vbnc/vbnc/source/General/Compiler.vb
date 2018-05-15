@@ -255,6 +255,13 @@ Public Class Compiler
     End Function
 
     Function Compile(ByVal CommandLine As String()) As Integer
+#If DEPRECATED Then
+        Console.ForegroundColor = ConsoleColor.DarkRed
+        Console.WriteLine()
+        Console.WriteLine(">>>> vbnc is deprecated and will be removed in future updates, use vbc instead <<<<")
+        Console.WriteLine()
+        Console.ResetColor()
+#End If
         'Try
         If m_CommandLine.Parse(CommandLine) = False Then
             If m_CommandLine.NoLogo = False Then
