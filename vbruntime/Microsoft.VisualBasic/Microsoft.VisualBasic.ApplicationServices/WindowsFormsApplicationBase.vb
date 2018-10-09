@@ -193,7 +193,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
                 End If
             End If
 
-            Application.Run(MainForm)
+            Application.Run(ApplicationContext)
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
