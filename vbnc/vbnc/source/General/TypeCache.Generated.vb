@@ -78,6 +78,7 @@ Public Partial Class CecilTypeCache
     Public System_Reflection_AssemblyCompanyAttribute As Mono.Cecil.TypeDefinition
     Public System_Reflection_AssemblyCopyrightAttribute As Mono.Cecil.TypeDefinition
     Public System_Reflection_AssemblyTrademarkAttribute As Mono.Cecil.TypeDefinition
+    Public System_Reflection_AssemblyDescriptionAttribute As Mono.Cecil.TypeDefinition
     Public System_Reflection_AssemblyKeyNameAttribute As Mono.Cecil.TypeDefinition
     Public System_Reflection_AssemblyKeyFileAttribute As Mono.Cecil.TypeDefinition
     Public System_Reflection_AssemblyDelaySignAttribute As Mono.Cecil.TypeDefinition
@@ -351,6 +352,7 @@ Public Partial Class CecilTypeCache
         System_Reflection_AssemblyCompanyAttribute = [GetType](mscorlib, "System.Reflection.AssemblyCompanyAttribute")
         System_Reflection_AssemblyCopyrightAttribute = [GetType](mscorlib, "System.Reflection.AssemblyCopyrightAttribute")
         System_Reflection_AssemblyTrademarkAttribute = [GetType](mscorlib, "System.Reflection.AssemblyTrademarkAttribute")
+        System_Reflection_AssemblyDescriptionAttribute = [GetType](mscorlib, "System.Reflection.AssemblyDescriptionAttribute")
         System_Reflection_AssemblyKeyNameAttribute = [GetType](mscorlib, "System.Reflection.AssemblyKeyNameAttribute")
         System_Reflection_AssemblyKeyFileAttribute = [GetType](mscorlib, "System.Reflection.AssemblyKeyFileAttribute")
         System_Reflection_AssemblyDelaySignAttribute = [GetType](mscorlib, "System.Reflection.AssemblyDelaySignAttribute")
