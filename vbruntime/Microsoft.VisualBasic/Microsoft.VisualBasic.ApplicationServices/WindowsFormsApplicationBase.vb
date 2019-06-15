@@ -170,7 +170,6 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Sub OnCreateMainForm()
-            Throw New NotImplementedException
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
