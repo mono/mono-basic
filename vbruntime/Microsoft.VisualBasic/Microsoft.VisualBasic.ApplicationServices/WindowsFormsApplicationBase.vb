@@ -91,6 +91,8 @@ Namespace Microsoft.VisualBasic.ApplicationServices
             OnRun()
             'Throw New Exception("Visual Basic 2005 applications are not currently supported (try disabling 'Enable Application Framework')")
             'Application.Run()
+
+            OnShutdown()
 #Else
                         Throw New NotImplementedException
 #End If
@@ -211,7 +213,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Sub OnShutdown()
-            Throw New NotImplementedException
+            RaiseEvent Shutdown(new EventArgs())
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
