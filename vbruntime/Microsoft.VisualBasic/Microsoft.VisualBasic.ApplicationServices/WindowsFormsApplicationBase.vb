@@ -74,6 +74,12 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         Public Sub Run(ByVal commandLine() As String)
 #If TARGET_JVM = False Then 'Not Supported by Grasshopper
+            Dim args As ReadOnlyCollection(Of String)
+
+            args = new ReadOnlyCollection(Of String)(commandLine)
+
+            OnInitialize(args)
+
             OnRun()
             'Throw New Exception("Visual Basic 2005 applications are not currently supported (try disabling 'Enable Application Framework')")
             'Application.Run()
@@ -179,7 +185,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced), STAThread()> _
         Protected Overridable Function OnInitialize(ByVal commandLineArgs As ReadOnlyCollection(Of String)) As Boolean
-            Throw New NotImplementedException
+            'FIXME: call OnCreateSplashScreen
         End Function
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
