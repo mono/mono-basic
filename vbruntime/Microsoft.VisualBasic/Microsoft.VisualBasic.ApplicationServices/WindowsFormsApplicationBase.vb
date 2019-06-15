@@ -80,6 +80,14 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
             OnInitialize(args)
 
+            Dim startup as StartupEventArgs
+
+            startup = New StartupEventArgs(args)
+
+            If Not OnStartup(startup) Then
+                Exit Sub
+            End If
+
             OnRun()
             'Throw New Exception("Visual Basic 2005 applications are not currently supported (try disabling 'Enable Application Framework')")
             'Application.Run()
@@ -208,7 +216,8 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Function OnStartup(ByVal eventArgs As StartupEventArgs) As Boolean
-            Throw New NotImplementedException
+            RaiseEvent Startup(eventArgs)
+            OnStartup = Not eventArgs.Cancel
         End Function
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
