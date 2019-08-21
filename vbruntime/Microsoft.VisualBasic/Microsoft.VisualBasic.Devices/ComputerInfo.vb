@@ -26,8 +26,10 @@
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
 #If TARGET_JVM = False Then 'OSVersion Not Supported by Grasshopper
+Imports System.ComponentModel
 Imports System.Globalization
 Imports System.Diagnostics
+Imports System.Runtime.InteropServices
 
 Namespace Microsoft.VisualBasic.Devices
     <DebuggerTypeProxy(GetType(ComputerInfo.ComputerInfoDebugView))> _
@@ -36,17 +38,56 @@ Namespace Microsoft.VisualBasic.Devices
             'Empty
         End Sub
 
+        Private Function IsOnWindows() As Boolean
+            Return Environment.OSVersion.Platform <> PlatformID.Unix AndAlso Environment.OSVersion.Platform <> 128
+        End Function
+
+        <StructLayout(LayoutKind.Sequential)>
+        Private Structure MEMORYSTATUSEX
+            Public dwLength As Integer
+            Public dwMemoryLoad As Integer
+            Public ullTotalPhys As ULong
+            Public ullAvailPhys As ULong
+            Public ullTotalPageFile As ULong
+            Public ullAvailPageFile As ULong
+            Public ullTotalVirtual As ULong
+            Public ullAvailVirtual As ULong
+            Public ullAvailExtendedVirtual As ULong
+        End Structure
+
+        <DllImport("kernel32", CallingConvention:=CallingConvention.StdCall)>
+        Private Shared Function GlobalMemoryStatusEx(ByRef buf As MEMORYSTATUSEX) As Boolean
+        End Function
+
+        Private Function GetMemoryInfo() As MEMORYSTATUSEX
+            Dim buf As New MEMORYSTATUSEX()
+            buf.dwLength = Marshal.SizeOf(buf)
+            If GlobalMemoryStatusEx(buf) Then
+                Return buf
+            Else
+                Throw New Win32Exception()
+            End If
+        End Function
+
         <CLSCompliant(False)> _
         Public ReadOnly Property AvailablePhysicalMemory() As ULong
             Get
-                Throw New NotImplementedException()
+                If IsOnWindows() Then
+                    Return GetMemoryInfo().ullAvailPhys
+                Else
+                    Throw New NotImplementedException()
+                End If
             End Get
         End Property
 
         <CLSCompliant(False)> _
         Public ReadOnly Property AvailableVirtualMemory() As ULong
             Get
-                Throw New NotImplementedException()
+                If IsOnWindows() Then
+                    Return GetMemoryInfo().ullAvailVirtual
+                Else
+                    Throw New NotImplementedException()
+                End If
             End Get
         End Property
 
@@ -77,14 +118,22 @@ Namespace Microsoft.VisualBasic.Devices
         <CLSCompliant(False)> _
         Public ReadOnly Property TotalPhysicalMemory() As ULong
             Get
-                Throw New NotImplementedException()
+                If IsOnWindows() Then
+                    Return GetMemoryInfo().ullTotalPhys
+                Else
+                    Throw New NotImplementedException()
+                End If
             End Get
         End Property
 
         <CLSCompliant(False)> _
         Public ReadOnly Property TotalVirtualMemory() As ULong
             Get
-                Throw New NotImplementedException()
+                If IsOnWindows() Then
+                    Return GetMemoryInfo().ullTotalVirtual
+                Else
+                    Throw New NotImplementedException()
+                End If
             End Get
         End Property
 
