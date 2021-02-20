@@ -1,7 +1,6 @@
+# Mono Basic: Visual Basic Compiler and Runtime.
 
-Mono Basic: Visual Basic Compiler and Runtime.
-
-= Building =
+## Building
 
 	To configure this module, first configure it, like this:
 
@@ -15,9 +14,9 @@ Mono Basic: Visual Basic Compiler and Runtime.
 
 		make install
 
-= Package =
+## Package
 
-== Visual Basic Runtime ==
+### Visual Basic Runtime
 
-== Visual Basic Compiler ==
+### Visual Basic Compiler
 
