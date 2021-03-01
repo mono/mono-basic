@@ -74,9 +74,25 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         Public Sub Run(ByVal commandLine() As String)
 #If TARGET_JVM = False Then 'Not Supported by Grasshopper
+            Dim args As ReadOnlyCollection(Of String)
+
+            args = new ReadOnlyCollection(Of String)(commandLine)
+
+            OnInitialize(args)
+
+            Dim startup as StartupEventArgs
+
+            startup = New StartupEventArgs(args)
+
+            If Not OnStartup(startup) Then
+                Exit Sub
+            End If
+
             OnRun()
             'Throw New Exception("Visual Basic 2005 applications are not currently supported (try disabling 'Enable Application Framework')")
             'Application.Run()
+
+            OnShutdown()
 #Else
                         Throw New NotImplementedException
 #End If
@@ -170,7 +186,6 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Sub OnCreateMainForm()
-            Throw New NotImplementedException
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
@@ -180,7 +195,7 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced), STAThread()> _
         Protected Overridable Function OnInitialize(ByVal commandLineArgs As ReadOnlyCollection(Of String)) As Boolean
-            Throw New NotImplementedException
+            'FIXME: call OnCreateSplashScreen
         End Function
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
@@ -198,12 +213,13 @@ Namespace Microsoft.VisualBasic.ApplicationServices
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Sub OnShutdown()
-            Throw New NotImplementedException
+            RaiseEvent Shutdown(new EventArgs())
         End Sub
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
         Protected Overridable Function OnStartup(ByVal eventArgs As StartupEventArgs) As Boolean
-            Throw New NotImplementedException
+            RaiseEvent Startup(eventArgs)
+            OnStartup = Not eventArgs.Cancel
         End Function
 
         <EditorBrowsable(EditorBrowsableState.Advanced)> _
