@@ -655,6 +655,7 @@ Public Class AssemblyDeclaration
         Dim company As String = String.Empty
         Dim copyright As String = String.Empty
         Dim trademark As String = String.Empty
+        Dim description As String = String.Empty
 
         Dim att As Mono.Collections.Generic.Collection(Of CustomAttribute)
         Dim custom_attributes As Mono.Collections.Generic.Collection(Of CustomAttribute) = Me.Compiler.AssemblyBuilderCecil.CustomAttributes
@@ -669,6 +670,8 @@ Public Class AssemblyDeclaration
         If att IsNot Nothing AndAlso att.Count > 0 Then copyright = CecilHelper.GetAttributeCtorString(att(0), 0)
         att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyTrademarkAttribute)
         If att IsNot Nothing AndAlso att.Count > 0 Then trademark = CecilHelper.GetAttributeCtorString(att(0), 0)
+        att = CecilHelper.GetCustomAttributes(custom_attributes, Compiler.TypeCache.System_Reflection_AssemblyDescriptionAttribute)
+        If att IsNot Nothing AndAlso att.Count > 0 Then description = CecilHelper.GetAttributeCtorString(att(0), 0)
 
         'Dim rdt As New Mono.Cecil.PE.ResourceDirectoryTable()
         'Dim r1 As New Mono.Cecil.PE.ResourceDirectoryEntry(16)
@@ -737,6 +740,7 @@ Public Class AssemblyDeclaration
                 If company <> String.Empty Then properties("Company") = company
                 If copyright <> String.Empty Then properties("LegalCopyright") = copyright
                 If trademark <> String.Empty Then properties("LegalTrademark") = trademark
+                If description <> String.Empty Then properties("Comments") = description
 
                 'VS_VERSIONINFO
                 w.Write(CShort(0))
