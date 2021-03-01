@@ -85,8 +85,8 @@ Namespace Microsoft.VisualBasic
             Return String.Join(" ", Environment.GetCommandLineArgs)
         End Function
         Public Shared Function CreateObject(ByVal ProgId As String, Optional ByVal ServerName As String = "") As Object
-            'TODO: COM
-            Throw New NotImplementedException
+            Dim ObjType as Type = Type.GetTypeFromProgID(ProgId, ServerName)
+            Return Activator.CreateInstance(ObjType)
         End Function
         Public Shared Sub DeleteSetting(ByVal AppName As String, Optional ByVal Section As String = Nothing, Optional ByVal Key As String = Nothing)
 
